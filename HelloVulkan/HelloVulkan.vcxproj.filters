@@ -42,6 +42,9 @@
     <ClCompile Include="VulkanImage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RendererBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppSettings.h">
@@ -69,6 +72,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VulkanImage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererPBR.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

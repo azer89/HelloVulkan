@@ -28,10 +28,13 @@ public:
 
 	void Destroy();
 
-	VkDevice GetDevice() { return device; }
-	VkPhysicalDevice GetPhysicalDevice() { return physicalDevice; }
-	VkCommandPool GetCommandPool() { return commandPool; }
-	VkQueue GetGraphicsQueue() { return graphicsQueue; }
+	VkDevice GetDevice() const { return device; }
+	VkPhysicalDevice GetPhysicalDevice() const { return physicalDevice; }
+	VkCommandPool GetCommandPool() const { return commandPool; }
+	VkQueue GetGraphicsQueue() const { return graphicsQueue; }
+	uint32_t GetFrameBufferWidth() const { return framebufferWidth; }
+	uint32_t GetFrameBufferHeight() const { return framebufferHeight; }
+	size_t GetSwapChainImageSize() const { return swapchainImages.size(); }
 
 private:
 	VkResult CreatePhysicalDevice(VkInstance instance);

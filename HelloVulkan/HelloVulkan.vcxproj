@@ -139,6 +139,7 @@
     <ClCompile Include="AppTest.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="RendererBase.cpp" />
     <ClCompile Include="volk.c" />
     <ClCompile Include="VulkanImage.cpp" />
     <ClCompile Include="VulkanInstance.cpp" />
@@ -150,6 +151,8 @@
     <ClInclude Include="AppSettings.h" />
     <ClInclude Include="AppTest.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="RendererBase.h" />
+    <ClInclude Include="RendererPBR.h" />
     <ClInclude Include="volk.h" />
     <ClInclude Include="VulkanImage.h" />
     <ClInclude Include="VulkanInstance.h" />
