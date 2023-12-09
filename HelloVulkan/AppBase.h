@@ -1,7 +1,8 @@
-#ifndef APP_BASE_H
-#define APP_BASE_H
+#ifndef APP_BASE
+#define APP_BASE
 
 #include "Camera.h"
+#include "VulkanInstance.h"
 
 #include <memory>
 
@@ -24,6 +25,7 @@ protected:
 	void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 	void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
+	void InitVulkan();
 	void InitIMGUI();
 	void InitGLFW();
 	void InitCamera();
@@ -47,6 +49,9 @@ protected:
 	// Timing
 	float deltaTime; // Time between current frame and last frame
 	float lastFrame;
+
+	// Vulkan
+	VulkanInstance vulkanInstance;
 };
 
 #endif

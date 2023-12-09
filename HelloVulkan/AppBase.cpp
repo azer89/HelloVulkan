@@ -1,14 +1,28 @@
 #include "AppBase.h"
 #include "AppSettings.h"
 
+#define VK_NO_PROTOTYPES
+#include "volk.h"
+
 #include <iostream>
 
 AppBase::AppBase()
 {
 	InitGLFW();
+	InitVulkan();
 	InitIMGUI();
 	InitCamera();
 	InitTiming();
+}
+
+void AppBase::InitVulkan()
+{
+	VkResult res = volkInitialize();
+	if (res != VK_SUCCESS)
+	{
+		std::cerr << "Volk Cannot be initialized\n";
+	}
+	vulkanInstance.Create();
 }
 
 void AppBase::InitGLFW()
@@ -116,6 +130,8 @@ void AppBase::Terminate()
 {
 	glfwDestroyWindow(glfwWindow);
 	glfwTerminate();
+
+	vulkanInstance.Destroy();
 }
 
 void AppBase::FrameBufferSizeCallback(GLFWwindow* window, int width, int height)

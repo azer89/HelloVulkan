@@ -110,7 +110,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>vulkan-1.lib;volkd.lib;glfw3.lib;glfw3_mt.lib;glfw3dll.lib;assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;glfw3_mt.lib;glfw3dll.lib;assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Users\azer\workspace\HelloVulkan\External\ASSIMP\lib-vc2022\;C:\Users\azer\workspace\HelloVulkan\External\GLFW\lib-vc2022\;C:\Users\azer\workspace\HelloVulkan\External\TinyXML\x64\Debug\;C:\VulkanSDK\1.3.268.0\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -130,8 +130,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>vulkan-1.lib;volk.lib;glfw3.lib;glfw3_mt.lib;glfw3dll.lib;assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\azer\workspace\HelloVulkan\External\ASSIMP\lib-vc2022;C:\Users\azer\workspace\HelloVulkan\External\GLFW\lib-vc2022\;C:\Users\azer\workspace\HelloVulkan\External\TinyXML\x64\Release\;C:\Users\azer\workspace\HelloVulkan\External\IMGUI\x64\Release\;C:\VulkanSDK\1.3.268.0\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;glfw3_mt.lib;glfw3dll.lib;assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\azer\workspace\HelloVulkan\External\ASSIMP\lib-vc2022;C:\Users\azer\workspace\HelloVulkan\External\GLFW\lib-vc2022\;C:\Users\azer\workspace\HelloVulkan\External\TinyXML\x64\Release\;C:\Users\azer\workspace\HelloVulkan\External\IMGUI\x64\Release\;C:\VulkanSDK\1.3.268.0\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -139,12 +139,17 @@
     <ClCompile Include="AppTest.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="volk.c" />
+    <ClCompile Include="VulkanInstance.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppBase.h" />
     <ClInclude Include="AppSettings.h" />
     <ClInclude Include="AppTest.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="volk.h" />
+    <ClInclude Include="VulkanInstance.h" />
+    <ClInclude Include="VulkanUtility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

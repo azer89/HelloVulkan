@@ -1,5 +1,5 @@
 #ifndef APP_TEST
-#define __APPAPP_TEST_BOXES_H__
+#define APP_TEST
 
 #include "AppBase.h"
 
