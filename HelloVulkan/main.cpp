@@ -1,6 +1,8 @@
-#include <iostream>
+#include "AppTest.h"
 
 int main()
 {
-	std::cout << "Hello World!\n";
+	AppTest app;
+	auto returnValue = app.MainLoop();
+	return returnValue;
 }
