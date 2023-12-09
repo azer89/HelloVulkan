@@ -4,6 +4,8 @@
 #define VK_NO_PROTOTYPES
 #include "volk.h"
 
+#include "GLFW/glfw3.h"
+
 class VulkanInstance
 {
 public:
@@ -12,6 +14,9 @@ public:
 
 	void Create();
 	void Destroy();
+
+	void SetupDebugCallbacks();
+	void CreateWindowSurface(GLFWwindow* glfwWindow);
 
 	VkInstance GetInstance() { return instance; }
 

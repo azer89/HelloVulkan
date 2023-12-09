@@ -22,7 +22,11 @@ void AppBase::InitVulkan()
 	{
 		std::cerr << "Volk Cannot be initialized\n";
 	}
+
 	vulkanInstance.Create();
+	vulkanInstance.SetupDebugCallbacks();
+	vulkanInstance.CreateWindowSurface(glfwWindow);
+
 }
 
 void AppBase::InitGLFW()

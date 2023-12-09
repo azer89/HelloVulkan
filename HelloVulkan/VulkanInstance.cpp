@@ -66,3 +66,43 @@ void VulkanInstance::Destroy()
 
 	vkDestroyInstance(instance, nullptr);
 }
+
+void VulkanInstance::SetupDebugCallbacks()
+{
+	{
+		const VkDebugUtilsMessengerCreateInfoEXT ci = {
+			.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
+			.messageSeverity =
+				VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+				VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
+			.messageType =
+				VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+				VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+				VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT,
+			.pfnUserCallback = &VulkanDebugCallback,
+			.pUserData = nullptr
+		};
+
+		VK_CHECK(vkCreateDebugUtilsMessengerEXT(instance, &ci, nullptr, &messenger));
+	}
+	{
+		const VkDebugReportCallbackCreateInfoEXT ci = {
+			.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT,
+			.pNext = nullptr,
+			.flags =
+				VK_DEBUG_REPORT_WARNING_BIT_EXT |
+				VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT |
+				VK_DEBUG_REPORT_ERROR_BIT_EXT |
+				VK_DEBUG_REPORT_DEBUG_BIT_EXT,
+			.pfnCallback = &VulkanDebugReportCallback,
+			.pUserData = nullptr
+		};
+
+		VK_CHECK(vkCreateDebugReportCallbackEXT(instance, &ci, nullptr, &reportCallback));
+	}
+}
+
+void VulkanInstance::CreateWindowSurface(GLFWwindow* glfwWindow)
+{
+	VK_CHECK(glfwCreateWindowSurface(instance, glfwWindow, nullptr, &surface));
+}
