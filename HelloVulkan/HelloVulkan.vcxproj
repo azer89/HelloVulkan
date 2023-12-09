@@ -104,10 +104,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\GLFW\include;C:\Users\azer\workspace\HelloVulkan\External\STB;C:\Users\azer\workspace\HelloVulkan\External\GLM;C:\Users\azer\workspace\HelloVulkan\External\ASSIMP\include;C:\VulkanSDK\1.3.268.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>vulkan-1.lib;volkd.lib;glfw3.lib;glfw3_mt.lib;glfw3dll.lib;assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\azer\workspace\HelloVulkan\External\ASSIMP\lib-vc2022\;C:\Users\azer\workspace\HelloVulkan\External\GLFW\lib-vc2022\;C:\Users\azer\workspace\HelloVulkan\External\TinyXML\x64\Debug\;C:\VulkanSDK\1.3.268.0\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -118,12 +122,16 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\GLFW\include;C:\Users\azer\workspace\HelloVulkan\External\STB;C:\Users\azer\workspace\HelloVulkan\External\GLM;C:\Users\azer\workspace\HelloVulkan\External\ASSIMP\include;C:\VulkanSDK\1.3.268.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>vulkan-1.lib;volk.lib;glfw3.lib;glfw3_mt.lib;glfw3dll.lib;assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\azer\workspace\HelloVulkan\External\ASSIMP\lib-vc2022;C:\Users\azer\workspace\HelloVulkan\External\GLFW\lib-vc2022\;C:\Users\azer\workspace\HelloVulkan\External\TinyXML\x64\Release\;C:\Users\azer\workspace\HelloVulkan\External\IMGUI\x64\Release\;C:\VulkanSDK\1.3.268.0\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
