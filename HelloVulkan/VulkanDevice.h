@@ -9,7 +9,7 @@
 #include <vector>
 #include <functional>
 
-struct SwapchainSupportDetails final
+struct SwapchainSupportDetails
 {
 	VkSurfaceCapabilitiesKHR capabilities = {};
 	std::vector<VkSurfaceFormatKHR> formats;
@@ -27,6 +27,11 @@ public:
 	);
 
 	void Destroy();
+
+	VkDevice GetDevice() { return device; }
+	VkPhysicalDevice GetPhysicalDevice() { return physicalDevice; }
+	VkCommandPool GetCommandPool() { return commandPool; }
+	VkQueue GetGraphicsQueue() { return graphicsQueue; }
 
 private:
 	VkResult CreatePhysicalDevice(VkInstance instance);
@@ -62,8 +67,8 @@ private:
 	uint32_t framebufferHeight;
 
 	VkDevice device;
-	VkQueue graphicsQueue;
 	VkPhysicalDevice physicalDevice;
+	VkQueue graphicsQueue;
 
 	uint32_t graphicsFamily;
 

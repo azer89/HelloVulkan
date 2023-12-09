@@ -30,7 +30,6 @@ void AppBase::InitVulkan()
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
 		static_cast<uint32_t>(AppSettings::ScreenHeight),
 		VkPhysicalDeviceFeatures{});
-
 }
 
 void AppBase::InitGLFW()
