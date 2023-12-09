@@ -141,6 +141,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="volk.c" />
     <ClCompile Include="VulkanInstance.cpp" />
+    <ClCompile Include="VulkanDevice.cpp" />
+    <ClCompile Include="VulkanUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppBase.h" />
@@ -149,6 +151,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="volk.h" />
     <ClInclude Include="VulkanInstance.h" />
+    <ClInclude Include="VulkanDevice.h" />
     <ClInclude Include="VulkanUtility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

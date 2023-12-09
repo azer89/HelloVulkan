@@ -26,6 +26,10 @@ void AppBase::InitVulkan()
 	vulkanInstance.Create();
 	vulkanInstance.SetupDebugCallbacks();
 	vulkanInstance.CreateWindowSurface(glfwWindow);
+	vulkanDevice.CreateCompute(vulkanInstance,
+		static_cast<uint32_t>(AppSettings::ScreenWidth),
+		static_cast<uint32_t>(AppSettings::ScreenHeight),
+		VkPhysicalDeviceFeatures{});
 
 }
 
@@ -135,6 +139,7 @@ void AppBase::Terminate()
 	glfwDestroyWindow(glfwWindow);
 	glfwTerminate();
 
+	vulkanDevice.Destroy();
 	vulkanInstance.Destroy();
 }
 

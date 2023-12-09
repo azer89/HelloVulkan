@@ -3,6 +3,7 @@
 
 #include "Camera.h"
 #include "VulkanInstance.h"
+#include "VulkanDevice.h"
 
 #include <memory>
 
@@ -52,6 +53,7 @@ protected:
 
 	// Vulkan
 	VulkanInstance vulkanInstance;
+	VulkanDevice vulkanDevice;
 };
 
 #endif

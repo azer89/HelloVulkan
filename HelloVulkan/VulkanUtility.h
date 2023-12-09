@@ -6,17 +6,19 @@
 #define VK_NO_PROTOTYPES
 #include "volk.h"
 
-void CHECK(bool check, const char* fileName, int lineNumber)
-{
-	if (!check)
-	{
-		std::cerr << "CHECK() failed at filename:" << fileName << ", lineNumber:" << lineNumber;
-	}
-}
+void CHECK(bool check, const char* fileName, int lineNumber);
 
+#ifndef VK_CHECK
 #define VK_CHECK(value) CHECK(value == VK_SUCCESS, __FILE__, __LINE__);
+#endif
+
+#ifndef VK_CHECK_RET
 #define VK_CHECK_RET(value) if ( value != VK_SUCCESS ) { CHECK(false, __FILE__, __LINE__); return value; }
+#endif
+
+#ifndef BL_CHECK
 #define BL_CHECK(value) CHECK(value, __FILE__, __LINE__);
+#endif
 
 static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugCallback(
 	VkDebugUtilsMessageSeverityFlagBitsEXT Severity,

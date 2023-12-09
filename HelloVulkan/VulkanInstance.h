@@ -19,6 +19,7 @@ public:
 	void CreateWindowSurface(GLFWwindow* glfwWindow);
 
 	VkInstance GetInstance() { return instance; }
+	VkSurfaceKHR GetSurface() { return surface; }
 
 private:
 	VkInstance instance;
