@@ -28,6 +28,7 @@ protected:
 
 	void InitVulkan();
 	void InitIMGUI();
+	void InitGLSLang();
 	void InitGLFW();
 	void InitCamera();
 	void InitTiming();

@@ -4,11 +4,14 @@
 #define VK_NO_PROTOTYPES
 #include "volk.h"
 
+#include "glslang_c_interface.h"
+
 #include <iostream>
 
 AppBase::AppBase()
 {
 	InitGLFW();
+	InitGLSLang();
 	InitVulkan();
 	InitIMGUI();
 	InitCamera();
@@ -30,6 +33,11 @@ void AppBase::InitVulkan()
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
 		static_cast<uint32_t>(AppSettings::ScreenHeight),
 		VkPhysicalDeviceFeatures{});
+}
+
+void AppBase::InitGLSLang()
+{
+	glslang_initialize_process();
 }
 
 void AppBase::InitGLFW()

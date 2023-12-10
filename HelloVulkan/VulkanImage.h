@@ -13,6 +13,17 @@ public:
 
 	void Destroy(VulkanDevice& device);
 
+	VkImage* GetImagePtr() { return &image; }
+	VkDeviceMemory* GetImageMemoryPtr() { return &imageMemory; }
+	VkImageView* GetImageViewPtr() { return &imageView; }
+
+	bool CreateImageView(VkDevice device,
+		VkFormat format,
+		VkImageAspectFlags aspectFlags,
+		VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_2D,
+		uint32_t layerCount = 1,
+		uint32_t mipLevels = 1);
+
 private:
 	bool CreateImage(
 		VkDevice device, 
@@ -24,12 +35,6 @@ private:
 		VkImageUsageFlags usage, 
 		VkMemoryPropertyFlags properties,  
 		VkImageCreateFlags flags = 0, 
-		uint32_t mipLevels = 1);
-	bool CreateImageView(VkDevice device, 
-		VkFormat format, 
-		VkImageAspectFlags aspectFlags, 
-		VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_2D, 
-		uint32_t layerCount = 1, 
 		uint32_t mipLevels = 1);
 	uint32_t FindMemoryType(VkPhysicalDevice device, uint32_t typeFilter, VkMemoryPropertyFlags properties);
 	VkFormat FindDepthFormat(VkPhysicalDevice device);
