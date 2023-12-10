@@ -110,8 +110,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;glfw3_mt.lib;glfw3dll.lib;assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\azer\workspace\HelloVulkan\External\ASSIMP\lib-vc2022\;C:\Users\azer\workspace\HelloVulkan\External\GLFW\lib-vc2022\;C:\Users\azer\workspace\HelloVulkan\External\TinyXML\x64\Debug\;C:\VulkanSDK\1.3.268.0\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;glfw3_mt.lib;glfw3dll.lib;assimp-vc142-mtd.lib;GenericCodeGend.lib;glslangd.lib;MachineIndependentd.lib;SPIRVd.lib;OGLCompilerd.lib;OSDependentd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\azer\workspace\HelloVulkan\External\ASSIMP\lib-vc2022\;C:\Users\azer\workspace\HelloVulkan\External\GLFW\lib-vc2022\;C:\Users\azer\workspace\HelloVulkan\External\TinyXML\x64\Debug\;C:\VulkanSDK\1.3.268.0\Lib\;C:\Users\azer\workspace\HelloVulkan\External\glslang\bin\glslang\Debug\;C:\Users\azer\workspace\HelloVulkan\External\glslang\bin\SPIRV\Debug\;C:\Users\azer\workspace\HelloVulkan\External\glslang\bin\OGLCompilersDLL\Debug\;C:\Users\azer\workspace\HelloVulkan\External\glslang\bin\glslang\OSDependent\Windows\Debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -130,8 +130,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;glfw3_mt.lib;glfw3dll.lib;assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\azer\workspace\HelloVulkan\External\ASSIMP\lib-vc2022;C:\Users\azer\workspace\HelloVulkan\External\GLFW\lib-vc2022\;C:\Users\azer\workspace\HelloVulkan\External\TinyXML\x64\Release\;C:\Users\azer\workspace\HelloVulkan\External\IMGUI\x64\Release\;C:\VulkanSDK\1.3.268.0\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;glfw3_mt.lib;glfw3dll.lib;assimp-vc142-mtd.lib;GenericCodeGen.lib;glslang.lib;MachineIndependent.lib;SPIRV.lib;OGLCompiler.lib;OSDependent.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\azer\workspace\HelloVulkan\External\ASSIMP\lib-vc2022;C:\Users\azer\workspace\HelloVulkan\External\GLFW\lib-vc2022\;C:\Users\azer\workspace\HelloVulkan\External\TinyXML\x64\Release\;C:\VulkanSDK\1.3.268.0\Lib\;C:\Users\azer\workspace\HelloVulkan\External\glslang\bin\glslang\Release\;C:\Users\azer\workspace\HelloVulkan\External\glslang\bin\SPIRV\Release\;C:\Users\azer\workspace\HelloVulkan\External\glslang\bin\OGLCompilersDLL\Release\;C:\Users\azer\workspace\HelloVulkan\External\glslang\bin\glslang\OSDependent\Windows\Release\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -144,6 +144,7 @@
     <ClCompile Include="VulkanImage.cpp" />
     <ClCompile Include="VulkanInstance.cpp" />
     <ClCompile Include="VulkanDevice.cpp" />
+    <ClCompile Include="VulkanTexture.cpp" />
     <ClCompile Include="VulkanUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -152,11 +153,14 @@
     <ClInclude Include="AppTest.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="RendererBase.h" />
+    <ClInclude Include="RendererClear.h" />
+    <ClInclude Include="RendererFinish.h" />
     <ClInclude Include="RendererPBR.h" />
     <ClInclude Include="volk.h" />
     <ClInclude Include="VulkanImage.h" />
     <ClInclude Include="VulkanInstance.h" />
     <ClInclude Include="VulkanDevice.h" />
+    <ClInclude Include="VulkanTexture.h" />
     <ClInclude Include="VulkanUtility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
