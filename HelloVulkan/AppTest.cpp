@@ -33,7 +33,6 @@ int AppTest::MainLoop()
 	cubePtr = std::make_unique<RendererCube>(vulkanDevice, depthTexture, cubemapTextureFile.c_str());
 	clearPtr = std::make_unique<RendererClear>(vulkanDevice, depthTexture);
 	finishPtr = std::make_unique<RendererFinish>(vulkanDevice, depthTexture);
-
 	pbrPtr = std::make_unique<RendererPBR>(vulkanDevice,
 		(uint32_t)sizeof(UBO),
 		gltfFile.c_str(),
@@ -50,7 +49,8 @@ int AppTest::MainLoop()
 	{ 
 		clearPtr.get(),
 		cubePtr.get(),
-		finishPtr.get()
+		finishPtr.get(),
+		pbrPtr.get()
 	};
 
 	while (!GLFWWindowShouldClose())

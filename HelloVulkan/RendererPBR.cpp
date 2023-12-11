@@ -1,6 +1,7 @@
 #include "RendererPBR.h"
 #include "VulkanUtility.h"
 #include "Bitmap.h"
+#include "AppSettings.h"
 
 #include "gli/gli.hpp"
 #include "gli/load_ktx.hpp"
@@ -137,7 +138,9 @@ RendererPBR::RendererPBR(
 	LoadCubeMap(vkDev, texEnvMapFile, envMap_);
 	LoadCubeMap(vkDev, texIrrMapFile, envMapIrradiance_);
 
-	gli::texture gliTex = gli::load_ktx("data/brdfLUT.ktx");
+	std::string brdfLUTFile = AppSettings::TextureFolder + "brdfLUT.ktx";
+
+	gli::texture gliTex = gli::load_ktx(brdfLUTFile.c_str());
 	glm::tvec3<GLsizei> extent(gliTex.extent(0));
 
 	if (!CreateTextureImageFromData(vkDev, brdfLUT_.image.image, brdfLUT_.image.imageMemory,
@@ -160,14 +163,23 @@ RendererPBR::RendererPBR(
 		VK_FILTER_LINEAR, 
 		VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
 
+	std::string vertFile = AppSettings::ShaderFolder + "pbr_mesh.vert";
+	std::string fragFile = AppSettings::ShaderFolder + "pbr_mesh.frag";
+
 	if (!CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo()) ||
 		!CreateUniformBuffers(vkDev, uniformBufferSize) ||
 		!CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthTexture_.imageView, swapchainFramebuffers_) ||
 		!CreateDescriptorPool(vkDev, 1, 2, 8, &descriptorPool_) ||
 		!CreateDescriptorSet(vkDev, uniformBufferSize) ||
 		!CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_) ||
-		!CreateGraphicsPipeline(vkDev, renderPass_, pipelineLayout_,
-			{ "data/shaders/chapter06/VK05_mesh.vert", "data/shaders/chapter06/VK05_mesh.frag" },
+		!CreateGraphicsPipeline(
+			vkDev, 
+			renderPass_, 
+			pipelineLayout_,
+			{ 
+				vertFile.c_str(),
+				fragFile.c_str()
+			},
 			&graphicsPipeline_))
 	{
 		printf("PBRModelRenderer: failed to create pipeline\n");
