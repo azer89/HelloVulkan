@@ -120,6 +120,25 @@ bool RendererBase::CreateBuffer(VkDevice device,
 	return true;
 }
 
+void RendererBase::CopyBuffer(
+	VulkanDevice& vkDev,
+	VkBuffer srcBuffer,
+	VkBuffer dstBuffer,
+	VkDeviceSize size)
+{
+	VkCommandBuffer commandBuffer = BeginSingleTimeCommands(vkDev);
+
+	const VkBufferCopy copyRegion = {
+		.srcOffset = 0,
+		.dstOffset = 0,
+		.size = size
+	};
+
+	vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
+
+	EndSingleTimeCommands(vkDev, commandBuffer);
+}
+
 bool RendererBase::CreateImage(VkDevice device, VkPhysicalDevice physicalDevice, uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory, VkImageCreateFlags flags, uint32_t mipLevels)
 {
 	const VkImageCreateInfo imageInfo = {
@@ -898,6 +917,45 @@ void RendererBase::CopyImageToBuffer(
 	vkCmdCopyImageToBuffer(commandBuffer, image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, buffer, 1, &region);
 
 	EndSingleTimeCommands(vkDev, commandBuffer);
+}
+
+size_t RendererBase::AllocateVertexBuffer(
+	VulkanDevice& vkDev, 
+	VkBuffer* storageBuffer, 
+	VkDeviceMemory* storageBufferMemory, 
+	size_t vertexDataSize, 
+	const void* vertexData, 
+	size_t indexDataSize, 
+	const void* indexData)
+{
+	VkDeviceSize bufferSize = vertexDataSize + indexDataSize;
+
+	VkBuffer stagingBuffer;
+	VkDeviceMemory stagingBufferMemory;
+	CreateBuffer(
+		vkDev.GetDevice(), 
+		vkDev.GetPhysicalDevice(), 
+		bufferSize,
+		VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+		stagingBuffer, stagingBufferMemory);
+
+	void* data;
+	vkMapMemory(vkDev.GetDevice(), stagingBufferMemory, 0, bufferSize, 0, &data);
+	memcpy(data, vertexData, vertexDataSize);
+	memcpy((unsigned char*)data + vertexDataSize, indexData, indexDataSize);
+	vkUnmapMemory(vkDev.GetDevice(), stagingBufferMemory);
+
+	CreateBuffer(vkDev.GetDevice(), vkDev.GetPhysicalDevice(), bufferSize,
+		VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, *storageBuffer, *storageBufferMemory);
+
+	CopyBuffer(vkDev, stagingBuffer, *storageBuffer, bufferSize);
+
+	vkDestroyBuffer(vkDev.GetDevice(), stagingBuffer, nullptr);
+	vkFreeMemory(vkDev.GetDevice(), stagingBufferMemory, nullptr);
+
+	return bufferSize;
 }
 
 VkCommandBuffer RendererBase::BeginSingleTimeCommands(VulkanDevice& vkDev)

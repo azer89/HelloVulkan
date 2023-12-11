@@ -1,25 +1,15 @@
 #include "VulkanTexture.h"
 
-void VulkanTexture::Create(VulkanDevice& vkDev, const char* fileName)
+void VulkanTexture::DestroyVulkanTexture(VkDevice device)
 {
-
+	DestroyVulkanImage(device);
+	vkDestroySampler(device, sampler, nullptr);
 }
 
-bool VulkanTexture::CreateTextureImage(VulkanDevice& vkDev,
-	const char* filename,
-	//VkImage& textureImage, 
-	//VkDeviceMemory& textureImageMemory, 
-	uint32_t* outTexWidth,
-	uint32_t* outTexHeight)
-{
-	return false;
-}
 
-bool VulkanTexture::CreateTextureSampler(VkDevice device,
-	//VkSampler* sampler, 
-	VkFilter minFilter,
-	VkFilter maxFilter,
-	VkSamplerAddressMode addressMode)
+void VulkanTexture::DestroyVulkanImage(VkDevice device)
 {
-	return false;
+	vkDestroyImageView(device, image.imageView, nullptr);
+	vkDestroyImage(device, image.image, nullptr);
+	vkFreeMemory(device, image.imageMemory, nullptr);
 }

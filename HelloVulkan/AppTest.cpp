@@ -13,7 +13,7 @@ int AppTest::MainLoop()
 	depthTexture.CreateDepthResources(vulkanDevice, 
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
 		static_cast<uint32_t>(AppSettings::ScreenHeight));
-	std::string cubemapTextureFile = AppSettings::TextureFolder + "piazza_bologni_1k.hdr";
+	std::string cubemapTextureFile = AppSettings::TextureFolder + "the_sky_is_on_fire_4k.hdr";
 	cubePtr = std::make_unique<RendererCube>(vulkanDevice, depthTexture, cubemapTextureFile.c_str());
 	clearPtr = std::make_unique<RendererClear>(vulkanDevice, depthTexture);
 	finishPtr = std::make_unique<RendererFinish>(vulkanDevice, depthTexture);

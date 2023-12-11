@@ -35,7 +35,7 @@ private:
 
 	Bitmap ConvertVerticalCrossToCubeMapFaces(const Bitmap& b);
 
-	inline Bitmap ConvertEquirectangularMapToCubeMapFaces(const Bitmap& b);
+	Bitmap ConvertEquirectangularMapToCubeMapFaces(const Bitmap& b);
 
 	void ConvolveDiffuse(
 		const glm::vec3* data, 

@@ -69,6 +69,12 @@ protected:
 		VkBuffer& buffer,
 		VkDeviceMemory& bufferMemory);
 
+	void CopyBuffer(
+		VulkanDevice& vkDev, 
+		VkBuffer srcBuffer, 
+		VkBuffer dstBuffer, 
+		VkDeviceSize size);
+
 	bool CreateImage(
 		VkDevice device, 
 		VkPhysicalDevice physicalDevice, 
@@ -205,6 +211,17 @@ protected:
 		uint32_t width, 
 		uint32_t height, 
 		uint32_t layerCount = 1);
+
+	// Vertex buffer
+	size_t AllocateVertexBuffer(
+		VulkanDevice& vkDev, 
+		VkBuffer* storageBuffer, 
+		VkDeviceMemory* storageBufferMemory, 
+		size_t vertexDataSize, 
+		const void* vertexData, 
+		size_t indexDataSize, 
+		const void* indexData);
+
 
 	VkCommandBuffer BeginSingleTimeCommands(VulkanDevice& vkDev);
 
