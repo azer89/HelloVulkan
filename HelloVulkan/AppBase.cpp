@@ -1,5 +1,6 @@
 #include "AppBase.h"
 #include "AppSettings.h"
+#include "VulkanUtility.h"
 
 #define VK_NO_PROTOTYPES
 #include "volk.h"
@@ -95,6 +96,63 @@ void AppBase::InitGLFW()
 			};
 		glfwSetKeyCallback(glfwWindow, func);
 	}
+}
+
+bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
+{
+	uint32_t imageIndex = 0;
+	VkResult result = vkAcquireNextImageKHR(
+		vulkanDevice.GetDevice(), 
+		vulkanDevice.GetSwapChain(), 
+		0, 
+		vulkanDevice.GetSemaphore(), 
+		VK_NULL_HANDLE, 
+		&imageIndex);
+	VK_CHECK(vkResetCommandPool(vulkanDevice.GetDevice(), vulkanDevice.GetCommandPool(), 0));
+
+	if (result != VK_SUCCESS) return false;
+
+	ComposeFrame(imageIndex, renderers);
+
+	const VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT }; // or even VERTEX_SHADER_STAGE
+
+	const VkSubmitInfo si =
+	{
+		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+		.pNext = nullptr,
+		.waitSemaphoreCount = 1,
+		.pWaitSemaphores = &vulkanDevice.semaphore,
+		.pWaitDstStageMask = waitStages,
+		.commandBufferCount = 1,
+		.pCommandBuffers = &vulkanDevice.commandBuffers[imageIndex],
+		.signalSemaphoreCount = 1,
+		.pSignalSemaphores = &vulkanDevice.renderSemaphore
+	};
+
+	{
+		VK_CHECK(vkQueueSubmit(vulkanDevice.GetGraphicsQueue(), 1, &si, nullptr));
+	}
+
+	const VkPresentInfoKHR pi =
+	{
+		.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+		.pNext = nullptr,
+		.waitSemaphoreCount = 1,
+		.pWaitSemaphores = &vulkanDevice.renderSemaphore,
+		.swapchainCount = 1,
+		.pSwapchains = &vulkanDevice.swapchain,
+		.pImageIndices = &imageIndex
+	};
+
+	{
+		VK_CHECK(vkQueuePresentKHR(vulkanDevice.GetGraphicsQueue(), &pi));
+	}
+
+	{
+		VK_CHECK(vkDeviceWaitIdle(vulkanDevice.GetDevice()));
+	}
+
+	return true;
 }
 
 void AppBase::InitIMGUI()

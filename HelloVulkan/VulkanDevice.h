@@ -30,6 +30,8 @@ public:
 
 	VkDevice GetDevice() const { return device; }
 	VkPhysicalDevice GetPhysicalDevice() const { return physicalDevice; }
+	VkSwapchainKHR GetSwapChain() { return swapchain; }
+	VkSemaphore GetSemaphore() { return semaphore; }
 	VkCommandPool GetCommandPool() const { return commandPool; }
 	VkQueue GetGraphicsQueue() const { return graphicsQueue; }
 	uint32_t GetFrameBufferWidth() const { return framebufferWidth; }
@@ -77,7 +79,11 @@ private:
 	// Sync
 	VkResult CreateSemaphore(VkSemaphore* outSemaphore);
 
-	
+public:
+	VkSwapchainKHR swapchain;
+	VkSemaphore semaphore;
+	VkSemaphore renderSemaphore;
+	std::vector<VkCommandBuffer> commandBuffers;
 
 private:
 	uint32_t framebufferWidth;
@@ -89,17 +95,10 @@ private:
 
 	uint32_t graphicsFamily;
 
-	VkSwapchainKHR swapchain;
-	VkSemaphore semaphore;
-	VkSemaphore renderSemaphore;
-
 	std::vector<VkImage> swapchainImages;
 	std::vector<VkImageView> swapchainImageViews;
 
 	VkCommandPool commandPool;
-	std::vector<VkCommandBuffer> commandBuffers;
-
-	// For chapter5/6etc (compute shaders)
 
 	// Were we initialized with compute capabilities
 	bool useCompute = false;

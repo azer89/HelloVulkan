@@ -1,5 +1,6 @@
 #include "RendererCube.h"
 #include "VulkanUtility.h"
+#include "AppSettings.h"
 
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
@@ -91,6 +92,9 @@ RendererCube::RendererCube(VulkanDevice& vkDev, VulkanImage inDepthTexture, cons
 	CreateImageView(vkDev.GetDevice(), texture.image, VK_FORMAT_R32G32B32A32_SFLOAT, VK_IMAGE_ASPECT_COLOR_BIT, &texture.imageView, VK_IMAGE_VIEW_TYPE_CUBE, 6);
 	CreateTextureSampler(vkDev.GetDevice(), &textureSampler);
 
+	std::string vertexShader = AppSettings::ShaderFolder + "cube.vertex";
+	std::string fragmentShader = AppSettings::ShaderFolder + "cube.fragment";
+
 	// Pipeline initialization
 	if (!CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo()) ||
 		!CreateUniformBuffers(vkDev, sizeof(glm::mat4)) ||
@@ -98,7 +102,14 @@ RendererCube::RendererCube(VulkanDevice& vkDev, VulkanImage inDepthTexture, cons
 		!CreateDescriptorPool(vkDev, 1, 0, 1, &descriptorPool_) ||
 		!CreateDescriptorSet(vkDev) ||
 		!CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_) ||
-		!CreateGraphicsPipeline(vkDev, renderPass_, pipelineLayout_, { "data/shaders/chapter04/VKCube.vert", "data/shaders/chapter04/VKCube.frag" }, &graphicsPipeline_))
+		!CreateGraphicsPipeline(vkDev, 
+			renderPass_, 
+			pipelineLayout_, 
+			{ 
+				vertexShader.c_str(),
+				fragmentShader.c_str(),
+			}, 
+			&graphicsPipeline_))
 	{
 		printf("CubeRenderer: failed to create pipeline\n");
 		exit(EXIT_FAILURE);

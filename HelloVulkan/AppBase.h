@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "VulkanInstance.h"
 #include "VulkanDevice.h"
+#include "RendererBase.h"
 
 #include <memory>
 
@@ -14,7 +15,8 @@ class AppBase
 {
 public:
 	AppBase();
-	virtual int MainLoop() = 0; // Abstract class
+	virtual int MainLoop() = 0; 
+	virtual void ComposeFrame(uint32_t imageIndex, const std::vector<RendererBase*>& renderers) = 0;
 
 private:
 	GLFWwindow* glfwWindow;
@@ -38,6 +40,8 @@ protected:
 	void PollEvents();
 	void ProcessTiming();
 	void ProcessInput();
+
+	bool DrawFrame(const std::vector<RendererBase*>& renderers);
 
 protected:
 	// Camera
