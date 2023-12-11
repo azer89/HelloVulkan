@@ -2,6 +2,7 @@
 #define RENDERER_CUBE
 
 #include "RendererBase.h"
+#include "Bitmap.h"
 
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
@@ -22,8 +23,30 @@ private:
 
 	bool CreateDescriptorSet(VulkanDevice& vkDev);
 
-	
+	bool CreateCubeTextureImage(
+		VulkanDevice& vkDev,
+		const char* filename,
+		VkImage& textureImage,
+		VkDeviceMemory& textureImageMemory,
+		uint32_t* width = nullptr,
+		uint32_t* height = nullptr);
 
+	Bitmap ConvertEquirectangularMapToVerticalCross(const Bitmap& b);
+
+	Bitmap ConvertVerticalCrossToCubeMapFaces(const Bitmap& b);
+
+	inline Bitmap ConvertEquirectangularMapToCubeMapFaces(const Bitmap& b);
+
+	void ConvolveDiffuse(
+		const glm::vec3* data, 
+		int srcW, 
+		int srcH, 
+		int dstW, 
+		int dstH, 
+		glm::vec3* output, 
+		int numMonteCarloSamples);
+
+	glm::vec3 FaceCoordsToXYZ(int i, int j, int faceID, int faceSize);
 };
 
 #endif

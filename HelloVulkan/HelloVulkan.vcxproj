@@ -137,6 +137,7 @@
   <ItemGroup>
     <ClCompile Include="AppBase.cpp" />
     <ClCompile Include="AppTest.cpp" />
+    <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RendererBase.cpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="AppBase.h" />
     <ClInclude Include="AppSettings.h" />
     <ClInclude Include="AppTest.h" />
+    <ClInclude Include="Bitmap.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="RendererBase.h" />
     <ClInclude Include="RendererClear.h" />

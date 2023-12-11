@@ -8,6 +8,8 @@
 #include "VulkanImage.h"
 #include "RenderPassCreateInfo.h"
 
+void Float24to32(int w, int h, const float* img24, float* img32);
+
 class RendererBase
 {
 public:
@@ -45,6 +47,7 @@ protected:
 
 protected:
 	void BeginRenderPass(VkCommandBuffer commandBuffer, size_t currentImage);
+
 	bool CreateUniformBuffers(VulkanDevice& vkDev, size_t uniformDataSize);
 
 	bool CreateUniformBuffer(
@@ -52,6 +55,7 @@ protected:
 		VkBuffer& buffer,
 		VkDeviceMemory& bufferMemory,
 		VkDeviceSize bufferSize);
+
 	bool CreateBuffer(
 		VkDevice device,
 		VkPhysicalDevice physicalDevice,
@@ -60,15 +64,25 @@ protected:
 		VkMemoryPropertyFlags properties,
 		VkBuffer& buffer,
 		VkDeviceMemory& bufferMemory);
-	uint32_t FindMemoryType(VkPhysicalDevice device, uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
-	bool CreateCubeTextureImage(
-		VulkanDevice& vkDev, 
-		const char* filename, 
-		VkImage& textureImage, 
-		VkDeviceMemory& textureImageMemory, 
-		uint32_t* width = nullptr, 
-		uint32_t* height = nullptr);
+	bool CreateImage(
+		VkDevice device, 
+		VkPhysicalDevice physicalDevice, 
+		uint32_t width, 
+		uint32_t height, 
+		VkFormat format, 
+		VkImageTiling tiling, 
+		VkImageUsageFlags usage, 
+		VkMemoryPropertyFlags properties, 
+		VkImage& image, 
+		VkDeviceMemory& imageMemory, 
+		VkImageCreateFlags flags = 0, 
+		uint32_t mipLevels = 1);
+
+	uint32_t FindMemoryType(
+		VkPhysicalDevice device, 
+		uint32_t typeFilter, 
+		VkMemoryPropertyFlags properties);
 
 	bool CreateImageView(
 		VkDevice device, 
@@ -124,6 +138,17 @@ protected:
 		int32_t customWidth = -1,
 		int32_t customHeight = -1,
 		uint32_t numPatchControlPoints = 0);
+
+	bool CreateTextureImageFromData(
+		VulkanDevice& vkDev,
+		VkImage& textureImage, 
+		VkDeviceMemory& textureImageMemory,
+		void* imageData, 
+		uint32_t texWidth, 
+		uint32_t texHeight,
+		VkFormat texFormat,
+		uint32_t layerCount = 1, 
+		VkImageCreateFlags flags = 0);
 };
 
 #endif

@@ -287,3 +287,15 @@ bool RendererBase::CreateGraphicsPipeline(
 
 	return true;
 }
+
+void Float24to32(int w, int h, const float* img24, float* img32)
+{
+	const int numPixels = w * h;
+	for (int i = 0; i != numPixels; i++)
+	{
+		*img32++ = *img24++;
+		*img32++ = *img24++;
+		*img32++ = *img24++;
+		*img32++ = 1.0f;
+	}
+}
