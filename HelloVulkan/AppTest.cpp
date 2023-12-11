@@ -49,8 +49,8 @@ int AppTest::MainLoop()
 	{ 
 		clearPtr.get(),
 		cubePtr.get(),
-		finishPtr.get(),
-		pbrPtr.get()
+		pbrPtr.get(),
+		finishPtr.get()
 	};
 
 	while (!GLFWWindowShouldClose())
