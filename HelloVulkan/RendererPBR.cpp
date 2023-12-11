@@ -3,17 +3,13 @@
 #include "Bitmap.h"
 
 #include "gli/gli.hpp"
-#include "gli/texture2d.hpp"
 #include "gli/load_ktx.hpp"
 
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
 #include "assimp/cimport.h"
-#include "assimp/version.h"
 
-#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-
 #include "stb_image_resize2.h"
 
 #include <vector>

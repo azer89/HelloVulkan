@@ -5,6 +5,7 @@
 #include "RendererCube.h"
 #include "RendererClear.h"
 #include "RendererFinish.h"
+#include "RendererPBR.h"
 
 #include <memory>
 
@@ -19,6 +20,7 @@ private:
 	std::unique_ptr<RendererCube> cubePtr;
 	std::unique_ptr<RendererClear> clearPtr;
 	std::unique_ptr<RendererFinish> finishPtr;
+	std::unique_ptr<RendererPBR> pbrPtr;
 };
 
 #endif
