@@ -81,6 +81,9 @@ void AppTest::ComposeFrame(uint32_t imageIndex, const std::vector<RendererBase*>
 	glm::mat4 view = camera->GetViewMatrix();
 	cubePtr->UpdateUniformBuffer(vulkanDevice, imageIndex, projection * view * model);
 
+
+	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
 	ubo = UBO
 	{
 		.mvp = projection * view * model,
