@@ -1,8 +1,6 @@
 //
 #version 460
 
-using System;
-
 layout(location = 0) out vec3 worldPos;
 layout(location = 1) out vec2 tc;
 layout(location = 2) out vec3 normal;
