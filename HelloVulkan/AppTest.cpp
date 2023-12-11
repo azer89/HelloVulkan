@@ -20,7 +20,7 @@ int AppTest::MainLoop()
 		ProcessInput();
 	}
 
-	depthTexture.Destroy(vulkanDevice);
+	depthTexture.Destroy(vulkanDevice.GetDevice());
 
 	Terminate();
 

@@ -19,8 +19,9 @@ enum eBitmapFormat
 };
 
 /// R/RG/RGB/RGBA bitmaps
-struct Bitmap
+class Bitmap
 {
+public:
 	Bitmap() = default;
 	Bitmap(int w, int h, int comp, eBitmapFormat fmt)
 		:w_(w), h_(h), comp_(comp), fmt_(fmt), data_(w* h* comp* GetBytesPerComponent(fmt))

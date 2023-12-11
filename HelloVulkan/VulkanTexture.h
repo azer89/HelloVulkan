@@ -9,10 +9,10 @@ class VulkanTexture
 public:
 	void Create(VulkanDevice& vkDev, const char* fileName);
 
-	void Destroy(VulkanDevice& vkDev)
+	void Destroy(VkDevice device)
 	{
-		image.Destroy(vkDev);
-		vkDestroySampler(vkDev.GetDevice(), sampler, nullptr);
+		image.Destroy(device);
+		vkDestroySampler(device, sampler, nullptr);
 	}
 
 private:

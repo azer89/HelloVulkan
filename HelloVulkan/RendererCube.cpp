@@ -1,12 +1,17 @@
 #include "RendererCube.h"
+#include "VulkanUtility.h"
 
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include "stb_image_resize2.h"
 
 #include <cmath>
+#include <array>
 
 using glm::vec2;
 using glm::vec3;
@@ -42,6 +47,176 @@ float RadicalInverse_VdC(uint32_t bits)
 vec2 Hammersley2d(uint32_t i, uint32_t N)
 {
 	return vec2(float(i) / float(N), RadicalInverse_VdC(i));
+}
+
+inline VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(uint32_t binding, VkDescriptorType descriptorType, VkShaderStageFlags stageFlags, uint32_t descriptorCount = 1)
+{
+	return VkDescriptorSetLayoutBinding{
+		.binding = binding,
+		.descriptorType = descriptorType,
+		.descriptorCount = descriptorCount,
+		.stageFlags = stageFlags,
+		.pImmutableSamplers = nullptr
+	};
+}
+
+inline VkWriteDescriptorSet BufferWriteDescriptorSet(
+	VkDescriptorSet ds, 
+	const VkDescriptorBufferInfo* bi, 
+	uint32_t bindIdx, 
+	VkDescriptorType dType)
+{
+	return VkWriteDescriptorSet{ VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, nullptr,
+		ds, bindIdx, 0, 1, dType, nullptr, bi, nullptr
+	};
+}
+
+inline VkWriteDescriptorSet ImageWriteDescriptorSet(
+	VkDescriptorSet ds, 
+	const VkDescriptorImageInfo* ii, 
+	uint32_t bindIdx)
+{
+	return VkWriteDescriptorSet{ VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, nullptr,
+		ds, bindIdx, 0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+		ii, nullptr, nullptr
+	};
+}
+
+RendererCube::RendererCube(VulkanDevice& vkDev, VulkanImage inDepthTexture, const char* textureFile) :
+	RendererBase(vkDev, inDepthTexture)
+{
+	// Resource loading
+	CreateCubeTextureImage(vkDev, textureFile, texture.image, texture.imageMemory);
+
+	CreateImageView(vkDev.GetDevice(), texture.image, VK_FORMAT_R32G32B32A32_SFLOAT, VK_IMAGE_ASPECT_COLOR_BIT, &texture.imageView, VK_IMAGE_VIEW_TYPE_CUBE, 6);
+	CreateTextureSampler(vkDev.GetDevice(), &textureSampler);
+
+	// Pipeline initialization
+	if (!CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo()) ||
+		!CreateUniformBuffers(vkDev, sizeof(glm::mat4)) ||
+		!CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthTexture_.imageView, swapchainFramebuffers_) ||
+		!CreateDescriptorPool(vkDev, 1, 0, 1, &descriptorPool_) ||
+		!CreateDescriptorSet(vkDev) ||
+		!CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_) ||
+		!CreateGraphicsPipeline(vkDev, renderPass_, pipelineLayout_, { "data/shaders/chapter04/VKCube.vert", "data/shaders/chapter04/VKCube.frag" }, &graphicsPipeline_))
+	{
+		printf("CubeRenderer: failed to create pipeline\n");
+		exit(EXIT_FAILURE);
+	}
+}
+
+RendererCube::~RendererCube()
+{
+	vkDestroySampler(device_, textureSampler, nullptr);
+	texture.Destroy(device_);
+}
+
+void RendererCube::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
+{
+	BeginRenderPass(commandBuffer, currentImage);
+
+	vkCmdDraw(commandBuffer, 36, 1, 0, 0);
+
+	vkCmdEndRenderPass(commandBuffer);
+}
+
+void RendererCube::UpdateUniformBuffer(VulkanDevice& vkDev, uint32_t currentImage, const glm::mat4& m)
+{
+	UploadBufferData(vkDev, uniformBuffersMemory_[currentImage], 0, glm::value_ptr(m), sizeof(glm::mat4));
+}
+
+bool RendererCube::CreateDescriptorSet(VulkanDevice& vkDev)
+{
+	const std::array<VkDescriptorSetLayoutBinding, 2> bindings = {
+		DescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT),
+		DescriptorSetLayoutBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+	};
+
+	const VkDescriptorSetLayoutCreateInfo layoutInfo = {
+		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0,
+		.bindingCount = static_cast<uint32_t>(bindings.size()),
+		.pBindings = bindings.data()
+	};
+
+	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));
+
+	auto swapChainImageSize = vkDev.GetSwapChainImageSize();
+
+	std::vector<VkDescriptorSetLayout> layouts(swapChainImageSize, descriptorSetLayout_);
+
+	const VkDescriptorSetAllocateInfo allocInfo = {
+		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+		.pNext = nullptr,
+		.descriptorPool = descriptorPool_,
+		.descriptorSetCount = static_cast<uint32_t>(swapChainImageSize),
+		.pSetLayouts = layouts.data()
+	};
+
+	descriptorSets_.resize(swapChainImageSize);
+
+	VK_CHECK(vkAllocateDescriptorSets(vkDev.GetDevice(), &allocInfo, descriptorSets_.data()));
+
+	for (size_t i = 0; i < swapChainImageSize; i++)
+	{
+		VkDescriptorSet ds = descriptorSets_[i];
+
+		const VkDescriptorBufferInfo bufferInfo = { uniformBuffers_[i], 0, sizeof(glm::mat4) };
+		const VkDescriptorImageInfo  imageInfo = { textureSampler, texture.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
+
+		const std::array<VkWriteDescriptorSet, 2> descriptorWrites = {
+			BufferWriteDescriptorSet(ds, &bufferInfo,  0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER),
+			ImageWriteDescriptorSet(ds, &imageInfo,   1)
+		};
+
+		vkUpdateDescriptorSets(vkDev.GetDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+	}
+
+	return true;
+}
+
+bool RendererCube::CreateCubeTextureImage(
+	VulkanDevice& vkDev, const char* filename, 
+	VkImage& textureImage, 
+	VkDeviceMemory& textureImageMemory, 
+	uint32_t* width, 
+	uint32_t* height)
+{
+	int w, h, comp;
+	const float* img = stbi_loadf(filename, &w, &h, &comp, 3);
+	std::vector<float> img32(w * h * 4);
+
+	Float24to32(w, h, img, img32.data());
+
+	if (!img)
+	{
+		printf("Failed to load [%s] texture\n", filename); fflush(stdout);
+		return false;
+	}
+
+	stbi_image_free((void*)img);
+
+	Bitmap in(w, h, 4, eBitmapFormat_Float, img32.data());
+	Bitmap out = ConvertEquirectangularMapToVerticalCross(in);
+
+	Bitmap cube = ConvertVerticalCrossToCubeMapFaces(out);
+
+	if (width && height)
+	{
+		*width = w;
+		*height = h;
+	}
+
+	return CreateTextureImageFromData(
+		vkDev, 
+		textureImage, 
+		textureImageMemory,
+		cube.data_.data(), 
+		cube.w_, 
+		cube.h_,
+		VK_FORMAT_R32G32B32A32_SFLOAT,
+		6, VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT);
 }
 
 Bitmap RendererCube::ConvertEquirectangularMapToVerticalCross(const Bitmap& b)

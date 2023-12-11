@@ -10,6 +10,10 @@
 
 void Float24to32(int w, int h, const float* img24, float* img32);
 
+uint32_t BytesPerTexFormat(VkFormat fmt);
+
+bool HasStencilComponent(VkFormat format);
+
 class RendererBase
 {
 public:
@@ -149,6 +153,63 @@ protected:
 		VkFormat texFormat,
 		uint32_t layerCount = 1, 
 		VkImageCreateFlags flags = 0);
+
+	bool UpdateTextureImage(
+		VulkanDevice& vkDev, 
+		VkImage& textureImage, 
+		VkDeviceMemory& textureImageMemory, 
+		uint32_t texWidth, 
+		uint32_t texHeight, 
+		VkFormat texFormat, 
+		uint32_t layerCount, 
+		const void* imageData, 
+		VkImageLayout sourceImageLayout = VK_IMAGE_LAYOUT_UNDEFINED);
+
+	// UploadBufferData
+	void UploadBufferData(
+		VulkanDevice& vkDev, 
+		const VkDeviceMemory& bufferMemory, 
+		VkDeviceSize deviceOffset, 
+		const void* data, 
+		const size_t dataSize);
+
+	void TransitionImageLayout(
+		VulkanDevice& vkDev, 
+		VkImage image, 
+		VkFormat format, 
+		VkImageLayout oldLayout, 
+		VkImageLayout newLayout, 
+		uint32_t layerCount = 1, 
+		uint32_t mipLevels = 1);
+
+	void TransitionImageLayoutCmd(
+		VkCommandBuffer commandBuffer, 
+		VkImage image, 
+		VkFormat format, 
+		VkImageLayout oldLayout, 
+		VkImageLayout newLayout, 
+		uint32_t layerCount = 1, 
+		uint32_t mipLevels = 1);
+
+	void CopyBufferToImage(
+		VulkanDevice& vkDev, 
+		VkBuffer buffer, 
+		VkImage image, 
+		uint32_t width, 
+		uint32_t height, 
+		uint32_t layerCount = 1);
+	
+	void CopyImageToBuffer(VulkanDevice& vkDev, 
+		VkImage image, 
+		VkBuffer buffer, 
+		uint32_t width, 
+		uint32_t height, 
+		uint32_t layerCount = 1);
+
+	VkCommandBuffer BeginSingleTimeCommands(VulkanDevice& vkDev);
+
+	void EndSingleTimeCommands(VulkanDevice& vkDev, VkCommandBuffer commandBuffer);
+
 };
 
 #endif

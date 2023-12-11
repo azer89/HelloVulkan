@@ -9,13 +9,14 @@
 class VulkanImage
 {
 public:
+	VkImage image = nullptr;
+	VkDeviceMemory imageMemory = nullptr;
+	VkImageView imageView = nullptr;
+
+public:
 	bool CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint32_t height);
 
-	void Destroy(VulkanDevice& device);
-
-	VkImage* GetImagePtr() { return &image; }
-	VkDeviceMemory* GetImageMemoryPtr() { return &imageMemory; }
-	VkImageView* GetImageViewPtr() { return &imageView; }
+	void Destroy(VkDevice device);
 
 	bool CreateImageView(VkDevice device,
 		VkFormat format,
@@ -56,11 +57,6 @@ private:
 
 	VkCommandBuffer BeginSingleTimeCommands(VulkanDevice& vkDev);
 	void EndSingleTimeCommands(VulkanDevice& vkDev, VkCommandBuffer commandBuffer);
-
-private:
-	VkImage image = nullptr;
-	VkDeviceMemory imageMemory = nullptr;
-	VkImageView imageView = nullptr;
 };
 
 #endif

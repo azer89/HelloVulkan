@@ -36,6 +36,18 @@ public:
 	uint32_t GetFrameBufferHeight() const { return framebufferHeight; }
 	size_t GetSwapChainImageSize() const { return swapchainImages.size(); }
 
+	VkImageView GetSwapchainImageView(unsigned i)
+	{
+		return swapchainImageViews[i];
+	}
+
+	VkFormat FindDepthFormat();
+
+	VkFormat FindSupportedFormat(
+		const std::vector<VkFormat>& candidates,
+		VkImageTiling tiling,
+		VkFormatFeatureFlags features);
+
 private:
 	VkResult CreatePhysicalDevice(VkInstance instance);
 	uint32_t FindQueueFamilies(VkQueueFlags desiredFlags);
@@ -64,6 +76,8 @@ private:
 
 	// Sync
 	VkResult CreateSemaphore(VkSemaphore* outSemaphore);
+
+	
 
 private:
 	uint32_t framebufferWidth;

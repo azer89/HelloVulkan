@@ -2,11 +2,11 @@
 
 #include "VulkanUtility.h"
 
-void VulkanImage::Destroy(VulkanDevice& device)
+void VulkanImage::Destroy(VkDevice device)
 {
-	vkDestroyImageView(device.GetDevice(), imageView, nullptr);
-	vkDestroyImage(device.GetDevice(), image, nullptr);
-	vkFreeMemory(device.GetDevice(), imageMemory, nullptr);
+	vkDestroyImageView(device, imageView, nullptr);
+	vkDestroyImage(device, image, nullptr);
+	vkFreeMemory(device, imageMemory, nullptr);
 }
 
 bool VulkanImage::CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint32_t height)
