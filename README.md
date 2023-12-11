@@ -1,17 +1,9 @@
 # Simple Vulkan Renderer
 
-### Features
-* Cubemap from a HDR image
-* GLTF model loading
+A project about learning PBR using Vulkan. 
 
+<img width="795" alt="Screenshot 2023-12-11 185102" src="https://github.com/azer89/HelloVulkan/assets/790432/b029d4bb-dfb4-486f-a41e-12ffe9839f9c">
 
-### Demo
-
-<img width="300" alt="Cubemap" src="https://github.com/azer89/HelloVulkan/assets/790432/6587d974-0dca-4a94-ac6f-05399249ebad">
-
-<br/>
-
-<img width="300" alt="gltf model" src="https://github.com/azer89/HelloVulkan/assets/790432/3baddf36-98ca-4711-9edf-8ee940fa0153">
 
 
 
