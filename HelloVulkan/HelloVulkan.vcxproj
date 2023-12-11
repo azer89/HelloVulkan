@@ -141,7 +141,9 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RendererBase.cpp" />
+    <ClCompile Include="RendererClear.cpp" />
     <ClCompile Include="RendererCube.cpp" />
+    <ClCompile Include="RendererFinish.cpp" />
     <ClCompile Include="volk.c" />
     <ClCompile Include="VulkanImage.cpp" />
     <ClCompile Include="VulkanInstance.cpp" />

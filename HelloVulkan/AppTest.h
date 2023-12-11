@@ -3,6 +3,8 @@
 
 #include "AppBase.h"
 #include "RendererCube.h"
+#include "RendererClear.h"
+#include "RendererFinish.h"
 
 #include <memory>
 
@@ -15,7 +17,8 @@ public:
 
 private:
 	std::unique_ptr<RendererCube> cubePtr;
-	
+	std::unique_ptr<RendererClear> clearPtr;
+	std::unique_ptr<RendererFinish> finishPtr;
 };
 
 #endif

@@ -7,7 +7,7 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
-class RendererCube : RendererBase
+class RendererCube : public RendererBase
 {
 public:
 	RendererCube(VulkanDevice& vkDev, VulkanImage inDepthTexture, const char* textureFile);

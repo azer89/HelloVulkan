@@ -52,4 +52,12 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugReportCallback
 	return VK_FALSE;
 }
 
+enum eRenderPassBit : uint8_t
+{
+	eRenderPassBit_First = 0x01,
+	eRenderPassBit_Last = 0x02,
+	eRenderPassBit_Offscreen = 0x04,
+	eRenderPassBit_OffscreenInternal = 0x08,
+};
+
 #endif

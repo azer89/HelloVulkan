@@ -13,17 +13,32 @@ int AppTest::MainLoop()
 	depthTexture.CreateDepthResources(vulkanDevice, 
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
 		static_cast<uint32_t>(AppSettings::ScreenHeight));
-	cubePtr = std::make_unique<RendererCube>(vulkanDevice, depthTexture, AppSettings::TextureFolder + "piazza_bologni_1k.hdr");
+	std::string cubemapTextureFile = AppSettings::TextureFolder + "piazza_bologni_1k.hdr";
+	cubePtr = std::make_unique<RendererCube>(vulkanDevice, depthTexture, cubemapTextureFile.c_str());
+	clearPtr = std::make_unique<RendererClear>(vulkanDevice, depthTexture);
+	finishPtr = std::make_unique<RendererFinish>(vulkanDevice, depthTexture);
+
+	const std::vector<RendererBase*> renderers = 
+	{ 
+		clearPtr.get(),
+		cubePtr.get(),
+		finishPtr.get()
+	};
 
 	while (!GLFWWindowShouldClose())
 	{
 		PollEvents();
 		ProcessTiming();
 		ProcessInput();
+
+		const bool frameRendered = DrawFrame(renderers);
 	}
 
 	depthTexture.Destroy(vulkanDevice.GetDevice());
 
+	clearPtr = nullptr;
+	finishPtr = nullptr;
+	cubePtr = nullptr;
 	Terminate();
 
 	return 0;
