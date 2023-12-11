@@ -27,7 +27,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugCallback(
 	void* UserData
 )
 {
-	printf("Validation layer: %s\n", CallbackData->pMessage);
+	printf("Validation layer: %s\n\n", CallbackData->pMessage);
 	return VK_FALSE;
 }
 
@@ -48,7 +48,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugReportCallback
 	if (flags & VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT)
 		return VK_FALSE;
 
-	printf("Debug callback (%s): %s\n", pLayerPrefix, pMessage);
+	printf("Debug callback (%s): %s\n\n", pLayerPrefix, pMessage);
 	return VK_FALSE;
 }
 

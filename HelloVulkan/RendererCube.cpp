@@ -92,8 +92,8 @@ RendererCube::RendererCube(VulkanDevice& vkDev, VulkanImage inDepthTexture, cons
 	CreateImageView(vkDev.GetDevice(), texture.image, VK_FORMAT_R32G32B32A32_SFLOAT, VK_IMAGE_ASPECT_COLOR_BIT, &texture.imageView, VK_IMAGE_VIEW_TYPE_CUBE, 6);
 	CreateTextureSampler(vkDev.GetDevice(), &textureSampler);
 
-	std::string vertexShader = AppSettings::ShaderFolder + "cube.vertex";
-	std::string fragmentShader = AppSettings::ShaderFolder + "cube.fragment";
+	std::string vertexShader = AppSettings::ShaderFolder + "cube.vert";
+	std::string fragmentShader = AppSettings::ShaderFolder + "cube.frag";
 
 	// Pipeline initialization
 	if (!CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo()) ||
