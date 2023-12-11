@@ -124,10 +124,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Shaders\cube.fragment">
+    <None Include="..\Shaders\cube.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\Shaders\cube.vertex">
+    <None Include="..\Shaders\cube.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Shaders\pbr_mesh.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Shaders\pbr_mesh.vert">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

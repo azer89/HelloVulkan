@@ -174,8 +174,10 @@
     <ClInclude Include="VulkanUtility.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Shaders\cube.fragment" />
-    <None Include="..\Shaders\cube.vertex" />
+    <None Include="..\Shaders\cube.frag" />
+    <None Include="..\Shaders\cube.vert" />
+    <None Include="..\Shaders\pbr_mesh.frag" />
+    <None Include="..\Shaders\pbr_mesh.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

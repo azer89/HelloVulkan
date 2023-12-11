@@ -5,8 +5,8 @@
 
 namespace AppSettings
 {
-	const int ScreenWidth = 800;
-	const int ScreenHeight = 600;
+	const int ScreenWidth = 1600;
+	const int ScreenHeight = 1200;
 	const std::string ScreenTitle = "Hello Vulkan";
 	const std::string ShaderFolder = "C://Users//azer//workspace//HelloVulkan//Shaders//";
 	const std::string ModelFolder = "C://Users//azer//workspace//HelloVulkan//Models//";
