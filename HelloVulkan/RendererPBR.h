@@ -3,6 +3,7 @@
 
 #include "RendererBase.h"
 #include "VulkanTexture.h"
+#include "VulkanBuffer.h"
 #include "Bitmap.h"
 
 class RendererPBR : public RendererBase
@@ -66,8 +67,7 @@ private:
 	size_t vertexBufferSize_;
 	size_t indexBufferSize_;
 
-	VkBuffer storageBuffer_;
-	VkDeviceMemory storageBufferMemory_;
+	VulkanBuffer storageBuffer_;
 
 	VulkanTexture texAO_;
 	VulkanTexture texEmissive_;

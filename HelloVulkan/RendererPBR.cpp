@@ -119,8 +119,8 @@ RendererPBR::RendererPBR(
 	if (!CreatePBRVertexBuffer(
 		vkDev, 
 		modelFile, 
-		&storageBuffer_, 
-		&storageBufferMemory_, 
+		&storageBuffer_.buffer_, 
+		&storageBuffer_.bufferMemory_, 
 		&vertexBufferSize_, 
 		&indexBufferSize_))
 	{
@@ -189,9 +189,7 @@ RendererPBR::RendererPBR(
 
 RendererPBR::~RendererPBR()
 {
-
-	vkDestroyBuffer(device_, storageBuffer_, nullptr);
-	vkFreeMemory(device_, storageBufferMemory_, nullptr);
+	storageBuffer_.Destroy(device_);
 
 	texAO_.DestroyVulkanTexture(device_);
 	texEmissive_.DestroyVulkanTexture(device_);
@@ -269,8 +267,8 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, uint32_t uniformDataS
 		VkDescriptorSet ds = descriptorSets_[i];
 
 		const VkDescriptorBufferInfo bufferInfo = { uniformBuffers_[i], 0, uniformDataSize };
-		const VkDescriptorBufferInfo bufferInfo2 = { storageBuffer_, 0, vertexBufferSize_ };
-		const VkDescriptorBufferInfo bufferInfo3 = { storageBuffer_, vertexBufferSize_, indexBufferSize_ };
+		const VkDescriptorBufferInfo bufferInfo2 = { storageBuffer_.buffer_, 0, vertexBufferSize_ };
+		const VkDescriptorBufferInfo bufferInfo3 = { storageBuffer_.buffer_, vertexBufferSize_, indexBufferSize_ };
 		const VkDescriptorImageInfo  imageInfoAO = { texAO_.sampler, texAO_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
 		const VkDescriptorImageInfo  imageInfoEmissive = { texEmissive_.sampler, texEmissive_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
 		const VkDescriptorImageInfo  imageInfoAlbedo = { texAlbedo_.sampler, texAlbedo_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
