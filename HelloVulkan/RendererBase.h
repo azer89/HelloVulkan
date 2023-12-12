@@ -9,9 +9,7 @@
 #include "RenderPassCreateInfo.h"
 
 void Float24to32(int w, int h, const float* img24, float* img32);
-
 uint32_t BytesPerTexFormat(VkFormat fmt);
-
 bool HasStencilComponent(VkFormat format);
 
 class RendererBase
@@ -205,11 +203,9 @@ protected:
 		size_t indexDataSize, 
 		const void* indexData);
 
-
 	VkCommandBuffer BeginSingleTimeCommands(VulkanDevice& vkDev);
 
 	void EndSingleTimeCommands(VulkanDevice& vkDev, VkCommandBuffer commandBuffer);
-
 };
 
 #endif
