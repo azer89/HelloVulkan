@@ -127,7 +127,7 @@ void RendererBase::CopyBuffer(
 	VkBuffer dstBuffer,
 	VkDeviceSize size)
 {
-	VkCommandBuffer commandBuffer = BeginSingleTimeCommands(vkDev);
+	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
 
 	const VkBufferCopy copyRegion = {
 		.srcOffset = 0,
@@ -137,7 +137,7 @@ void RendererBase::CopyBuffer(
 
 	vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
 
-	EndSingleTimeCommands(vkDev, commandBuffer);
+	vkDev.EndSingleTimeCommands(commandBuffer);
 }
 
 bool RendererBase::CreateImage(VkDevice device, VkPhysicalDevice physicalDevice, uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory, VkImageCreateFlags flags, uint32_t mipLevels)
@@ -623,11 +623,11 @@ void RendererBase::TransitionImageLayout(
 	uint32_t layerCount, 
 	uint32_t mipLevels)
 {
-	VkCommandBuffer commandBuffer = BeginSingleTimeCommands(vkDev);
+	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
 
 	TransitionImageLayoutCmd(commandBuffer, image, format, oldLayout, newLayout, layerCount, mipLevels);
 
-	EndSingleTimeCommands(vkDev, commandBuffer);
+	vkDev.EndSingleTimeCommands(commandBuffer);
 }
 
 void RendererBase::TransitionImageLayoutCmd(
@@ -805,7 +805,7 @@ void RendererBase::CopyBufferToImage(
 	uint32_t height, 
 	uint32_t layerCount)
 {
-	VkCommandBuffer commandBuffer = BeginSingleTimeCommands(vkDev);
+	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
 
 	const VkBufferImageCopy region = {
 		.bufferOffset = 0,
@@ -823,7 +823,7 @@ void RendererBase::CopyBufferToImage(
 
 	vkCmdCopyBufferToImage(commandBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
-	EndSingleTimeCommands(vkDev, commandBuffer);
+	vkDev.EndSingleTimeCommands(commandBuffer);
 }
 
 void RendererBase::CopyImageToBuffer(
@@ -834,7 +834,7 @@ void RendererBase::CopyImageToBuffer(
 	uint32_t height, 
 	uint32_t layerCount)
 {
-	VkCommandBuffer commandBuffer = BeginSingleTimeCommands(vkDev);
+	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
 
 	const VkBufferImageCopy region = {
 		.bufferOffset = 0,
@@ -852,7 +852,7 @@ void RendererBase::CopyImageToBuffer(
 
 	vkCmdCopyImageToBuffer(commandBuffer, image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, buffer, 1, &region);
 
-	EndSingleTimeCommands(vkDev, commandBuffer);
+	vkDev.EndSingleTimeCommands(commandBuffer);
 }
 
 size_t RendererBase::AllocateVertexBuffer(
@@ -892,54 +892,6 @@ size_t RendererBase::AllocateVertexBuffer(
 	vkFreeMemory(vkDev.GetDevice(), stagingBufferMemory, nullptr);
 
 	return bufferSize;
-}
-
-VkCommandBuffer RendererBase::BeginSingleTimeCommands(VulkanDevice& vkDev)
-{
-	VkCommandBuffer commandBuffer;
-
-	const VkCommandBufferAllocateInfo allocInfo = {
-		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-		.pNext = nullptr,
-		.commandPool = vkDev.GetCommandPool(),
-		.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-		.commandBufferCount = 1
-	};
-
-	vkAllocateCommandBuffers(vkDev.GetDevice(), &allocInfo, &commandBuffer);
-
-	const VkCommandBufferBeginInfo beginInfo = {
-		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-		.pNext = nullptr,
-		.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
-		.pInheritanceInfo = nullptr
-	};
-
-	vkBeginCommandBuffer(commandBuffer, &beginInfo);
-
-	return commandBuffer;
-}
-
-void RendererBase::EndSingleTimeCommands(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
-{
-	vkEndCommandBuffer(commandBuffer);
-
-	const VkSubmitInfo submitInfo = {
-		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-		.pNext = nullptr,
-		.waitSemaphoreCount = 0,
-		.pWaitSemaphores = nullptr,
-		.pWaitDstStageMask = nullptr,
-		.commandBufferCount = 1,
-		.pCommandBuffers = &commandBuffer,
-		.signalSemaphoreCount = 0,
-		.pSignalSemaphores = nullptr
-	};
-
-	vkQueueSubmit(vkDev.GetGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
-	vkQueueWaitIdle(vkDev.GetGraphicsQueue());
-
-	vkFreeCommandBuffers(vkDev.GetDevice(), vkDev.GetCommandPool(), 1, &commandBuffer);
 }
 
 void Float24to32(int w, int h, const float* img24, float* img32)

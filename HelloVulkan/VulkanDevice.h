@@ -50,6 +50,10 @@ public:
 		VkImageTiling tiling,
 		VkFormatFeatureFlags features);
 
+	VkCommandBuffer BeginSingleTimeCommands();
+
+	void EndSingleTimeCommands(VkCommandBuffer commandBuffer);
+
 private:
 	VkResult CreatePhysicalDevice(VkInstance instance);
 	uint32_t FindQueueFamilies(VkQueueFlags desiredFlags);

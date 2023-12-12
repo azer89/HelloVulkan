@@ -405,3 +405,51 @@ VkFormat VulkanDevice::FindSupportedFormat(
 	printf("failed to find supported format!\n");
 	exit(0);
 }
+
+VkCommandBuffer VulkanDevice::BeginSingleTimeCommands()
+{
+	VkCommandBuffer commandBuffer;
+
+	const VkCommandBufferAllocateInfo allocInfo = {
+		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+		.pNext = nullptr,
+		.commandPool = commandPool,
+		.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+		.commandBufferCount = 1
+	};
+
+	vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer);
+
+	const VkCommandBufferBeginInfo beginInfo = {
+		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+		.pNext = nullptr,
+		.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+		.pInheritanceInfo = nullptr
+	};
+
+	vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
+	return commandBuffer;
+}
+
+void VulkanDevice::EndSingleTimeCommands(VkCommandBuffer commandBuffer)
+{
+	vkEndCommandBuffer(commandBuffer);
+
+	const VkSubmitInfo submitInfo = {
+		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+		.pNext = nullptr,
+		.waitSemaphoreCount = 0,
+		.pWaitSemaphores = nullptr,
+		.pWaitDstStageMask = nullptr,
+		.commandBufferCount = 1,
+		.pCommandBuffers = &commandBuffer,
+		.signalSemaphoreCount = 0,
+		.pSignalSemaphores = nullptr
+	};
+
+	vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+	vkQueueWaitIdle(graphicsQueue);
+
+	vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
+}

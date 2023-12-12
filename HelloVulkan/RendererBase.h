@@ -202,10 +202,6 @@ protected:
 		const void* vertexData, 
 		size_t indexDataSize, 
 		const void* indexData);
-
-	VkCommandBuffer BeginSingleTimeCommands(VulkanDevice& vkDev);
-
-	void EndSingleTimeCommands(VulkanDevice& vkDev, VkCommandBuffer commandBuffer);
 };
 
 #endif
