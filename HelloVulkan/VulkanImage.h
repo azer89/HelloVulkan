@@ -5,6 +5,7 @@
 #include "volk.h"
 
 #include "VulkanDevice.h"
+#include "VulkanBuffer.h"
 
 class VulkanImage
 {
@@ -25,6 +26,23 @@ public:
 		uint32_t layerCount = 1,
 		uint32_t mipLevels = 1);
 
+	// TODO Rename to CreateImageFromData
+	bool CreateTextureImageFromData(
+		VulkanDevice& vkDev,
+		void* imageData,
+		uint32_t texWidth,
+		uint32_t texHeight,
+		VkFormat texFormat,
+		uint32_t layerCount = 1,
+		VkImageCreateFlags flags = 0);
+
+	void CopyBufferToImage(
+		VulkanDevice& vkDev,
+		VkBuffer buffer,
+		uint32_t width,
+		uint32_t height,
+		uint32_t layerCount = 1);
+
 private:
 	bool CreateImage(
 		VkDevice device, 
@@ -41,12 +59,22 @@ private:
 	VkFormat FindDepthFormat(VkPhysicalDevice device);
 	VkFormat FindSupportedFormat(VkPhysicalDevice device, const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 
+	bool UpdateTextureImage(
+		VulkanDevice& vkDev,
+		uint32_t texWidth,
+		uint32_t texHeight,
+		VkFormat texFormat,
+		uint32_t layerCount,
+		const void* imageData,
+		VkImageLayout sourceImageLayout = VK_IMAGE_LAYOUT_UNDEFINED);
+
 	void TransitionImageLayout(VulkanDevice& vkDev, 
 		VkFormat format, 
 		VkImageLayout oldLayout, 
 		VkImageLayout newLayout, 
 		uint32_t layerCount = 1, 
 		uint32_t mipLevels = 1);
+
 	void TransitionImageLayoutCmd(VkCommandBuffer commandBuffer, 
 		VkFormat format, 
 		VkImageLayout oldLayout, 
@@ -55,8 +83,7 @@ private:
 		uint32_t mipLevels = 1);
 	bool HasStencilComponent(VkFormat format);
 
-	VkCommandBuffer BeginSingleTimeCommands(VulkanDevice& vkDev);
-	void EndSingleTimeCommands(VulkanDevice& vkDev, VkCommandBuffer commandBuffer);
+	uint32_t BytesPerTexFormat(VkFormat fmt);
 };
 
 #endif

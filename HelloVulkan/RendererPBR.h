@@ -46,16 +46,14 @@ private:
 	bool CreateTextureImage(
 		VulkanDevice& vkDev, 
 		const char* filename, 
-		VkImage& textureImage, 
-		VkDeviceMemory& textureImageMemory, 
+		VulkanTexture& texture,
 		uint32_t* outTexWidth = nullptr, 
 		uint32_t* outTexHeight = nullptr);
 
 	bool CreateCubeTextureImage(
 		VulkanDevice& vkDev, 
 		const char* filename, 
-		VkImage& textureImage, 
-		VkDeviceMemory& textureImageMemory, 
+		VulkanTexture& texture,
 		uint32_t* width = nullptr, 
 		uint32_t* height = nullptr);
 

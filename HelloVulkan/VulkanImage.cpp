@@ -36,6 +36,49 @@ bool VulkanImage::CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint
 	return true;
 }
 
+// TODO Rename to CreateImageFromData
+bool VulkanImage::CreateTextureImageFromData(
+	VulkanDevice& vkDev,
+	void* imageData,
+	uint32_t texWidth,
+	uint32_t texHeight,
+	VkFormat texFormat,
+	uint32_t layerCount,
+	VkImageCreateFlags flags)
+{
+	CreateImage(vkDev.GetDevice(), vkDev.GetPhysicalDevice(), texWidth, texHeight, texFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, flags);
+
+	return UpdateTextureImage(vkDev, texWidth, texHeight, texFormat, layerCount, imageData);
+}
+
+void VulkanImage::CopyBufferToImage(
+	VulkanDevice& vkDev,
+	VkBuffer buffer,
+	uint32_t width,
+	uint32_t height,
+	uint32_t layerCount)
+{
+	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
+
+	const VkBufferImageCopy region = {
+		.bufferOffset = 0,
+		.bufferRowLength = 0,
+		.bufferImageHeight = 0,
+		.imageSubresource = VkImageSubresourceLayers {
+			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+			.mipLevel = 0,
+			.baseArrayLayer = 0,
+			.layerCount = layerCount
+		},
+		.imageOffset = VkOffset3D {.x = 0, .y = 0, .z = 0 },
+		.imageExtent = VkExtent3D {.width = width, .height = height, .depth = 1 }
+	};
+
+	vkCmdCopyBufferToImage(commandBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+
+	vkDev.EndSingleTimeCommands(commandBuffer);
+}
+
 bool VulkanImage::CreateImage(
 	VkDevice device,
 	VkPhysicalDevice physicalDevice,
@@ -158,6 +201,39 @@ VkFormat VulkanImage::FindSupportedFormat(VkPhysicalDevice device, const std::ve
 	throw std::runtime_error("Failed to find supported format!\n");
 }
 
+bool VulkanImage::UpdateTextureImage(
+	VulkanDevice& vkDev,
+	uint32_t texWidth,
+	uint32_t texHeight,
+	VkFormat texFormat,
+	uint32_t layerCount,
+	const void* imageData,
+	VkImageLayout sourceImageLayout)
+{
+	uint32_t bytesPerPixel = BytesPerTexFormat(texFormat);
+
+	VkDeviceSize layerSize = texWidth * texHeight * bytesPerPixel;
+	VkDeviceSize imageSize = layerSize * layerCount;
+
+	VulkanBuffer stagingBuffer{};
+
+	stagingBuffer.CreateBuffer(
+		vkDev.GetDevice(),
+		vkDev.GetPhysicalDevice(),
+		imageSize,
+		VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+	stagingBuffer.UploadBufferData(vkDev, 0, imageData, imageSize);
+	TransitionImageLayout(vkDev, texFormat, sourceImageLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, layerCount);
+	CopyBufferToImage(vkDev, stagingBuffer.buffer_, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight), layerCount);
+	TransitionImageLayout(vkDev, texFormat, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, layerCount);
+
+	stagingBuffer.Destroy(vkDev.GetDevice());
+
+	return true;
+}
+
 void VulkanImage::TransitionImageLayout(VulkanDevice& vkDev,
 	VkFormat format,
 	VkImageLayout oldLayout,
@@ -165,11 +241,11 @@ void VulkanImage::TransitionImageLayout(VulkanDevice& vkDev,
 	uint32_t layerCount,
 	uint32_t mipLevels)
 {
-	VkCommandBuffer commandBuffer = BeginSingleTimeCommands(vkDev);
+	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
 
 	TransitionImageLayoutCmd(commandBuffer, format, oldLayout, newLayout, layerCount, mipLevels);
 
-	EndSingleTimeCommands(vkDev, commandBuffer);
+	vkDev.EndSingleTimeCommands(commandBuffer);
 }
 
 void VulkanImage::TransitionImageLayoutCmd(VkCommandBuffer commandBuffer,
@@ -341,50 +417,29 @@ bool VulkanImage::HasStencilComponent(VkFormat format)
 	return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
 }
 
-VkCommandBuffer VulkanImage::BeginSingleTimeCommands(VulkanDevice& vkDev)
+uint32_t VulkanImage::BytesPerTexFormat(VkFormat fmt)
 {
-	VkCommandBuffer commandBuffer;
-
-	const VkCommandBufferAllocateInfo allocInfo = {
-		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-		.pNext = nullptr,
-		.commandPool = vkDev.GetCommandPool(),
-		.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-		.commandBufferCount = 1
-	};
-
-	vkAllocateCommandBuffers(vkDev.GetDevice(), &allocInfo, &commandBuffer);
-
-	const VkCommandBufferBeginInfo beginInfo = {
-		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-		.pNext = nullptr,
-		.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
-		.pInheritanceInfo = nullptr
-	};
-
-	vkBeginCommandBuffer(commandBuffer, &beginInfo);
-
-	return commandBuffer;
-}
-
-void VulkanImage::EndSingleTimeCommands(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
-{
-	vkEndCommandBuffer(commandBuffer);
-
-	const VkSubmitInfo submitInfo = {
-		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-		.pNext = nullptr,
-		.waitSemaphoreCount = 0,
-		.pWaitSemaphores = nullptr,
-		.pWaitDstStageMask = nullptr,
-		.commandBufferCount = 1,
-		.pCommandBuffers = &commandBuffer,
-		.signalSemaphoreCount = 0,
-		.pSignalSemaphores = nullptr
-	};
-
-	vkQueueSubmit(vkDev.GetGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
-	vkQueueWaitIdle(vkDev.GetGraphicsQueue());
-
-	vkFreeCommandBuffers(vkDev.GetDevice(), vkDev.GetCommandPool(), 1, &commandBuffer);
+	switch (fmt)
+	{
+	case VK_FORMAT_R8_SINT:
+	case VK_FORMAT_R8_UNORM:
+		return 1;
+	case VK_FORMAT_R16_SFLOAT:
+		return 2;
+	case VK_FORMAT_R16G16_SFLOAT:
+		return 4;
+	case VK_FORMAT_R16G16_SNORM:
+		return 4;
+	case VK_FORMAT_B8G8R8A8_UNORM:
+		return 4;
+	case VK_FORMAT_R8G8B8A8_UNORM:
+		return 4;
+	case VK_FORMAT_R16G16B16A16_SFLOAT:
+		return 4 * sizeof(uint16_t);
+	case VK_FORMAT_R32G32B32A32_SFLOAT:
+		return 4 * sizeof(float);
+	default:
+		break;
+	}
+	return 0;
 }

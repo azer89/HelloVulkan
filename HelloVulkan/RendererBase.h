@@ -9,7 +9,6 @@
 #include "RenderPassCreateInfo.h"
 
 void Float24to32(int w, int h, const float* img24, float* img32);
-uint32_t BytesPerTexFormat(VkFormat fmt);
 bool HasStencilComponent(VkFormat format);
 
 class RendererBase
@@ -73,20 +72,6 @@ protected:
 		VkBuffer dstBuffer, 
 		VkDeviceSize size);
 
-	bool CreateImage(
-		VkDevice device, 
-		VkPhysicalDevice physicalDevice, 
-		uint32_t width, 
-		uint32_t height, 
-		VkFormat format, 
-		VkImageTiling tiling, 
-		VkImageUsageFlags usage, 
-		VkMemoryPropertyFlags properties, 
-		VkImage& image, 
-		VkDeviceMemory& imageMemory, 
-		VkImageCreateFlags flags = 0, 
-		uint32_t mipLevels = 1);
-
 	uint32_t FindMemoryType(
 		VkPhysicalDevice device, 
 		uint32_t typeFilter, 
@@ -129,28 +114,6 @@ protected:
 		int32_t customWidth = -1,
 		int32_t customHeight = -1,
 		uint32_t numPatchControlPoints = 0);
-
-	bool CreateTextureImageFromData(
-		VulkanDevice& vkDev,
-		VkImage& textureImage, 
-		VkDeviceMemory& textureImageMemory,
-		void* imageData, 
-		uint32_t texWidth, 
-		uint32_t texHeight,
-		VkFormat texFormat,
-		uint32_t layerCount = 1, 
-		VkImageCreateFlags flags = 0);
-
-	bool UpdateTextureImage(
-		VulkanDevice& vkDev, 
-		VkImage& textureImage, 
-		VkDeviceMemory& textureImageMemory, 
-		uint32_t texWidth, 
-		uint32_t texHeight, 
-		VkFormat texFormat, 
-		uint32_t layerCount, 
-		const void* imageData, 
-		VkImageLayout sourceImageLayout = VK_IMAGE_LAYOUT_UNDEFINED);
 
 	// UploadBufferData
 	void UploadBufferData(

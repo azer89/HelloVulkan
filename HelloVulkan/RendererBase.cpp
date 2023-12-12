@@ -140,45 +140,6 @@ void RendererBase::CopyBuffer(
 	vkDev.EndSingleTimeCommands(commandBuffer);
 }
 
-bool RendererBase::CreateImage(VkDevice device, VkPhysicalDevice physicalDevice, uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory, VkImageCreateFlags flags, uint32_t mipLevels)
-{
-	const VkImageCreateInfo imageInfo = {
-		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = flags,
-		.imageType = VK_IMAGE_TYPE_2D,
-		.format = format,
-		.extent = VkExtent3D {.width = width, .height = height, .depth = 1 },
-		.mipLevels = mipLevels,
-		.arrayLayers = (uint32_t)((flags == VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT) ? 6 : 1),
-		.samples = VK_SAMPLE_COUNT_1_BIT,
-		.tiling = tiling,
-		.usage = usage,
-		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
-		.queueFamilyIndexCount = 0,
-		.pQueueFamilyIndices = nullptr,
-		.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED
-	};
-
-	VK_CHECK(vkCreateImage(device, &imageInfo, nullptr, &image));
-
-	VkMemoryRequirements memRequirements;
-	vkGetImageMemoryRequirements(device, image, &memRequirements);
-
-	const VkMemoryAllocateInfo allocInfo = {
-		.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-		.pNext = nullptr,
-		.allocationSize = memRequirements.size,
-		.memoryTypeIndex = FindMemoryType(physicalDevice, memRequirements.memoryTypeBits, properties)
-	};
-
-	VK_CHECK(vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory));
-
-	vkBindImageMemory(device, image, imageMemory, 0);
-	return true;
-}
-
-
 uint32_t RendererBase::FindMemoryType(VkPhysicalDevice device, uint32_t typeFilter, VkMemoryPropertyFlags properties)
 {
 	VkPhysicalDeviceMemoryProperties memProperties;
@@ -550,57 +511,6 @@ bool RendererBase::CreateGraphicsPipeline(
 	return true;
 }
 
-bool RendererBase::CreateTextureImageFromData(
-	VulkanDevice& vkDev,
-	VkImage& textureImage, 
-	VkDeviceMemory& textureImageMemory,
-	void* imageData, 
-	uint32_t texWidth, 
-	uint32_t texHeight,
-	VkFormat texFormat,
-	uint32_t layerCount, 
-	VkImageCreateFlags flags)
-{
-	CreateImage(vkDev.GetDevice(), vkDev.GetPhysicalDevice(), texWidth, texHeight, texFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory, flags);
-
-	return UpdateTextureImage(vkDev, textureImage, textureImageMemory, texWidth, texHeight, texFormat, layerCount, imageData);
-}
-
-bool RendererBase::UpdateTextureImage(
-	VulkanDevice& vkDev, 
-	VkImage& textureImage, 
-	VkDeviceMemory& textureImageMemory, 
-	uint32_t texWidth, 
-	uint32_t texHeight, 
-	VkFormat texFormat, 
-	uint32_t layerCount, 
-	const void* imageData, 
-	VkImageLayout sourceImageLayout)
-{
-	uint32_t bytesPerPixel = BytesPerTexFormat(texFormat);
-
-	VkDeviceSize layerSize = texWidth * texHeight * bytesPerPixel;
-	VkDeviceSize imageSize = layerSize * layerCount;
-
-	VulkanBuffer stagingBuffer{};
-
-	stagingBuffer.CreateBuffer(
-		vkDev.GetDevice(), 
-		vkDev.GetPhysicalDevice(), 
-		imageSize, 
-		VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
-		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-	UploadBufferData(vkDev, stagingBuffer.bufferMemory_, 0, imageData, imageSize);
-	TransitionImageLayout(vkDev, textureImage, texFormat, sourceImageLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, layerCount);
-	CopyBufferToImage(vkDev, stagingBuffer.buffer_, textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight), layerCount);
-	TransitionImageLayout(vkDev, textureImage, texFormat, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, layerCount);
-
-	stagingBuffer.Destroy(vkDev.GetDevice());
-
-	return true;
-}
-
 void RendererBase::UploadBufferData(
 	VulkanDevice& vkDev, 
 	const VkDeviceMemory& bufferMemory, 
@@ -796,7 +706,6 @@ void RendererBase::TransitionImageLayoutCmd(
 	);
 }
 
-
 void RendererBase::CopyBufferToImage(
 	VulkanDevice& vkDev, 
 	VkBuffer buffer, 
@@ -904,33 +813,6 @@ void Float24to32(int w, int h, const float* img24, float* img32)
 		*img32++ = *img24++;
 		*img32++ = 1.0f;
 	}
-}
-
-uint32_t BytesPerTexFormat(VkFormat fmt)
-{
-	switch (fmt)
-	{
-	case VK_FORMAT_R8_SINT:
-	case VK_FORMAT_R8_UNORM:
-		return 1;
-	case VK_FORMAT_R16_SFLOAT:
-		return 2;
-	case VK_FORMAT_R16G16_SFLOAT:
-		return 4;
-	case VK_FORMAT_R16G16_SNORM:
-		return 4;
-	case VK_FORMAT_B8G8R8A8_UNORM:
-		return 4;
-	case VK_FORMAT_R8G8B8A8_UNORM:
-		return 4;
-	case VK_FORMAT_R16G16B16A16_SFLOAT:
-		return 4 * sizeof(uint16_t);
-	case VK_FORMAT_R32G32B32A32_SFLOAT:
-		return 4 * sizeof(float);
-	default:
-		break;
-	}
-	return 0;
 }
 
 bool HasStencilComponent(VkFormat format)

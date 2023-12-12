@@ -27,6 +27,18 @@ public:
 		VkBufferUsageFlags usage,
 		VkMemoryPropertyFlags properties);
 
+	void UploadBufferData(
+		VulkanDevice& vkDev,
+		VkDeviceSize deviceOffset,
+		const void* data,
+		const size_t dataSize)
+	{
+		void* mappedData = nullptr;
+		vkMapMemory(vkDev.GetDevice(), bufferMemory_, deviceOffset, dataSize, 0, &mappedData);
+		memcpy(mappedData, data, dataSize);
+		vkUnmapMemory(vkDev.GetDevice(), bufferMemory_);
+	}
+
 private:
 	uint32_t FindMemoryType(
 		VkPhysicalDevice device,

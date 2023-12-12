@@ -88,7 +88,7 @@ RendererCube::RendererCube(VulkanDevice& vkDev, VulkanImage inDepthTexture, cons
 	RendererBase(vkDev, inDepthTexture)
 {
 	// Resource loading
-	CreateCubeTextureImage(vkDev, textureFile, texture.image.image, texture.image.imageMemory);
+	CreateCubeTextureImage(vkDev, textureFile);
 	
 	texture.image.CreateImageView(
 		vkDev.GetDevice(), 
@@ -196,8 +196,8 @@ bool RendererCube::CreateDescriptorSet(VulkanDevice& vkDev)
 bool RendererCube::CreateCubeTextureImage(
 	VulkanDevice& vkDev, 
 	const char* filename, 
-	VkImage& textureImage, 
-	VkDeviceMemory& textureImageMemory, 
+	//VkImage& textureImage, 
+	//VkDeviceMemory& textureImageMemory, 
 	uint32_t* width, 
 	uint32_t* height)
 {
@@ -226,10 +226,8 @@ bool RendererCube::CreateCubeTextureImage(
 		*height = h;
 	}
 
-	return CreateTextureImageFromData(
+	return texture.image.CreateTextureImageFromData(
 		vkDev, 
-		textureImage, 
-		textureImageMemory,
 		cube.data_.data(), 
 		cube.w_, 
 		cube.h_,

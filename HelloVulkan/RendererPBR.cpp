@@ -143,8 +143,12 @@ RendererPBR::RendererPBR(
 	gli::texture gliTex = gli::load_ktx(brdfLUTFile.c_str());
 	glm::tvec3<GLsizei> extent(gliTex.extent(0));
 
-	if (!CreateTextureImageFromData(vkDev, brdfLUT_.image.image, brdfLUT_.image.imageMemory,
-		(uint8_t*)gliTex.data(0, 0, 0), extent.x, extent.y, VK_FORMAT_R16G16_SFLOAT))
+	if (!brdfLUT_.image.CreateTextureImageFromData(
+		vkDev,
+		(uint8_t*)gliTex.data(0, 0, 0), 
+		extent.x, 
+		extent.y, 
+		VK_FORMAT_R16G16_SFLOAT))
 	{
 		printf("ModelRenderer: failed to load BRDF LUT texture \n");
 		exit(EXIT_FAILURE);
@@ -361,7 +365,7 @@ bool RendererPBR::CreatePBRVertexBuffer(
 
 void RendererPBR::LoadTexture(VulkanDevice& vkDev, const char* fileName, VulkanTexture& texture)
 {
-	CreateTextureImage(vkDev, fileName, texture.image.image, texture.image.imageMemory);
+	CreateTextureImage(vkDev, fileName, texture);
 
 	texture.image.CreateImageView(
 		vkDev.GetDevice(), 
@@ -373,7 +377,7 @@ void RendererPBR::LoadTexture(VulkanDevice& vkDev, const char* fileName, VulkanT
 
 void RendererPBR::LoadCubeMap(VulkanDevice& vkDev, const char* fileName, VulkanTexture& cubemap)
 {
-	CreateCubeTextureImage(vkDev, fileName, cubemap.image.image, cubemap.image.imageMemory);
+	CreateCubeTextureImage(vkDev, fileName, cubemap);
 
 	uint32_t mipLevels = 1;
 	cubemap.image.CreateImageView(
@@ -390,8 +394,7 @@ void RendererPBR::LoadCubeMap(VulkanDevice& vkDev, const char* fileName, VulkanT
 bool RendererPBR::CreateTextureImage(
 	VulkanDevice& vkDev,
 	const char* filename,
-	VkImage& textureImage,
-	VkDeviceMemory& textureImageMemory,
+	VulkanTexture& texture,
 	uint32_t* outTexWidth,
 	uint32_t* outTexHeight)
 {
@@ -404,8 +407,12 @@ bool RendererPBR::CreateTextureImage(
 		return false;
 	}
 
-	bool result = CreateTextureImageFromData(vkDev, textureImage, textureImageMemory,
-		pixels, texWidth, texHeight, VK_FORMAT_R8G8B8A8_UNORM);
+	bool result = texture.image.CreateTextureImageFromData(
+		vkDev, 
+		pixels, 
+		texWidth, 
+		texHeight, 
+		VK_FORMAT_R8G8B8A8_UNORM);
 
 	stbi_image_free(pixels);
 
@@ -421,8 +428,7 @@ bool RendererPBR::CreateTextureImage(
 bool RendererPBR::CreateCubeTextureImage(
 	VulkanDevice& vkDev,
 	const char* filename,
-	VkImage& textureImage,
-	VkDeviceMemory& textureImageMemory,
+	VulkanTexture& texture,
 	uint32_t* width,
 	uint32_t* height)
 {
@@ -451,8 +457,10 @@ bool RendererPBR::CreateCubeTextureImage(
 		*height = h;
 	}
 
-	return CreateTextureImageFromData(vkDev, textureImage, textureImageMemory,
-		cube.data_.data(), cube.w_, cube.h_,
+	return texture.image.CreateTextureImageFromData(vkDev, 
+		cube.data_.data(), 
+		cube.w_, 
+		cube.h_,
 		VK_FORMAT_R32G32B32A32_SFLOAT,
 		6, VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT);
 }

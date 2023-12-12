@@ -26,8 +26,6 @@ private:
 	bool CreateCubeTextureImage(
 		VulkanDevice& vkDev,
 		const char* filename,
-		VkImage& textureImage,
-		VkDeviceMemory& textureImageMemory,
 		uint32_t* width = nullptr,
 		uint32_t* height = nullptr);
 
