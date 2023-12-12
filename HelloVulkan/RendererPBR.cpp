@@ -150,12 +150,12 @@ RendererPBR::RendererPBR(
 		exit(EXIT_FAILURE);
 	}
 
-	CreateImageView(
-		vkDev.GetDevice(), 
-		brdfLUT_.image.image, 
-		VK_FORMAT_R16G16_SFLOAT, 
-		VK_IMAGE_ASPECT_COLOR_BIT, 
-		&brdfLUT_.image.imageView);
+	brdfLUT_.image.CreateImageView(
+		vkDev.GetDevice(),
+		VK_FORMAT_R16G16_SFLOAT,
+		VK_IMAGE_ASPECT_COLOR_BIT
+	);
+
 	CreateTextureSampler(
 		vkDev.GetDevice(), 
 		&brdfLUT_.sampler, 
@@ -364,7 +364,13 @@ bool RendererPBR::CreatePBRVertexBuffer(
 void RendererPBR::LoadTexture(VulkanDevice& vkDev, const char* fileName, VulkanTexture& texture)
 {
 	CreateTextureImage(vkDev, fileName, texture.image.image, texture.image.imageMemory);
-	CreateImageView(vkDev.GetDevice(), texture.image.image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT, &texture.image.imageView);
+	//CreateImageView(vkDev.GetDevice(), texture.image.image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT, &texture.image.imageView);
+	
+	texture.image.CreateImageView(
+		vkDev.GetDevice(), 
+		VK_FORMAT_R8G8B8A8_UNORM, 
+		VK_IMAGE_ASPECT_COLOR_BIT);
+	
 	CreateTextureSampler(vkDev.GetDevice(), &texture.sampler);
 }
 
@@ -375,14 +381,12 @@ void RendererPBR::LoadCubeMap(VulkanDevice& vkDev, const char* fileName, VulkanT
 	else
 		CreateCubeTextureImage(vkDev, fileName, cubemap.image.image, cubemap.image.imageMemory);
 
-	CreateImageView(
-		vkDev.GetDevice(), 
-		cubemap.image.image, 
-		VK_FORMAT_R32G32B32A32_SFLOAT, 
-		VK_IMAGE_ASPECT_COLOR_BIT, 
-		&cubemap.image.imageView, 
-		VK_IMAGE_VIEW_TYPE_CUBE, 
-		6, 
+	cubemap.image.CreateImageView(
+		vkDev.GetDevice(),
+		VK_FORMAT_R32G32B32A32_SFLOAT,
+		VK_IMAGE_ASPECT_COLOR_BIT,
+		VK_IMAGE_VIEW_TYPE_CUBE,
+		6,
 		mipLevels);
 	CreateTextureSampler(vkDev.GetDevice(), &cubemap.sampler);
 }

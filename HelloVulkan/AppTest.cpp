@@ -5,7 +5,9 @@
 
 struct UBO
 {
-	glm::mat4 mvp, mv, m;
+	glm::mat4 mvp;
+	glm::mat4 mv;
+	glm::mat4 m;
 	glm::vec4 cameraPos;
 } ubo;
 
