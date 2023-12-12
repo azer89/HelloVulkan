@@ -40,7 +40,7 @@ private:
 
 	// Textures
 	void LoadTexture(VulkanDevice& vkDev, const char* fileName, VulkanTexture& texture);
-	void LoadCubeMap(VulkanDevice& vkDev, const char* fileName, VulkanTexture& cubemap, uint32_t mipLevels = 1);
+	void LoadCubeMap(VulkanDevice& vkDev, const char* fileName, VulkanTexture& cubemap);
 
 	bool CreateTextureImage(
 		VulkanDevice& vkDev, 
@@ -50,15 +50,6 @@ private:
 		uint32_t* outTexWidth = nullptr, 
 		uint32_t* outTexHeight = nullptr);
 
-	bool CreateMIPCubeTextureImage(
-		VulkanDevice& vkDev, 
-		const char* filename, 
-		uint32_t mipLevels, 
-		VkImage& textureImage, 
-		VkDeviceMemory& textureImageMemory, 
-		uint32_t* width = nullptr, 
-		uint32_t* height = nullptr);
-
 	bool CreateCubeTextureImage(
 		VulkanDevice& vkDev, 
 		const char* filename, 
@@ -66,28 +57,6 @@ private:
 		VkDeviceMemory& textureImageMemory, 
 		uint32_t* width = nullptr, 
 		uint32_t* height = nullptr);
-
-	bool CreateMIPTextureImageFromData(
-		VulkanDevice& vkDev,
-		VkImage& textureImage, 
-		VkDeviceMemory& textureImageMemory,
-		void* mipData, 
-		uint32_t mipLevels, 
-		uint32_t texWidth, 
-		uint32_t texHeight,
-		VkFormat texFormat,
-		uint32_t layerCount = 1, 
-		VkImageCreateFlags flags = 0);
-
-	void CopyMIPBufferToImage(
-		VulkanDevice& vkDev, 
-		VkBuffer buffer, 
-		VkImage image, 
-		uint32_t mipLevels, 
-		uint32_t width, 
-		uint32_t height, 
-		uint32_t bytesPP, 
-		uint32_t layerCount = 1);
 
 	Bitmap ConvertEquirectangularMapToVerticalCross(const Bitmap& b);
 

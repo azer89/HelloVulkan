@@ -146,6 +146,7 @@
     <ClCompile Include="RendererFinish.cpp" />
     <ClCompile Include="RendererPBR.cpp" />
     <ClCompile Include="volk.c" />
+    <ClCompile Include="VulkanBuffer.cpp" />
     <ClCompile Include="VulkanImage.cpp" />
     <ClCompile Include="VulkanInstance.cpp" />
     <ClCompile Include="VulkanDevice.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="RendererFinish.h" />
     <ClInclude Include="RendererPBR.h" />
     <ClInclude Include="RenderPassCreateInfo.h" />
+    <ClInclude Include="VulkanBuffer.h" />
     <ClInclude Include="VulkanShader.h" />
     <ClInclude Include="volk.h" />
     <ClInclude Include="VulkanImage.h" />

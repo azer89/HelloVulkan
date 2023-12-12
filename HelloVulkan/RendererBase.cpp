@@ -1,6 +1,7 @@
 #include "RendererBase.h"
 #include "VulkanUtility.h"
 #include "VulkanShader.h"
+#include "VulkanBuffer.h"
 
 #include <array>
 
@@ -581,24 +582,21 @@ bool RendererBase::UpdateTextureImage(
 	VkDeviceSize layerSize = texWidth * texHeight * bytesPerPixel;
 	VkDeviceSize imageSize = layerSize * layerCount;
 
-	VkBuffer stagingBuffer;
-	VkDeviceMemory stagingBufferMemory;
-	CreateBuffer(
+	VulkanBuffer stagingBuffer{};
+
+	stagingBuffer.CreateBuffer(
 		vkDev.GetDevice(), 
 		vkDev.GetPhysicalDevice(), 
 		imageSize, 
 		VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
-		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
-		stagingBuffer, 
-		stagingBufferMemory);
+		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-	UploadBufferData(vkDev, stagingBufferMemory, 0, imageData, imageSize);
+	UploadBufferData(vkDev, stagingBuffer.bufferMemory_, 0, imageData, imageSize);
 	TransitionImageLayout(vkDev, textureImage, texFormat, sourceImageLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, layerCount);
-	CopyBufferToImage(vkDev, stagingBuffer, textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight), layerCount);
+	CopyBufferToImage(vkDev, stagingBuffer.buffer_, textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight), layerCount);
 	TransitionImageLayout(vkDev, textureImage, texFormat, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, layerCount);
 
-	vkDestroyBuffer(vkDev.GetDevice(), stagingBuffer, nullptr);
-	vkFreeMemory(vkDev.GetDevice(), stagingBufferMemory, nullptr);
+	stagingBuffer.Destroy(vkDev.GetDevice());
 
 	return true;
 }

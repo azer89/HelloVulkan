@@ -373,13 +373,11 @@ void RendererPBR::LoadTexture(VulkanDevice& vkDev, const char* fileName, VulkanT
 	texture.CreateTextureSampler(vkDev.GetDevice());
 }
 
-void RendererPBR::LoadCubeMap(VulkanDevice& vkDev, const char* fileName, VulkanTexture& cubemap, uint32_t mipLevels)
+void RendererPBR::LoadCubeMap(VulkanDevice& vkDev, const char* fileName, VulkanTexture& cubemap)
 {
-	if (mipLevels > 1)
-		CreateMIPCubeTextureImage(vkDev, fileName, mipLevels, cubemap.image.image, cubemap.image.imageMemory);
-	else
-		CreateCubeTextureImage(vkDev, fileName, cubemap.image.image, cubemap.image.imageMemory);
+	CreateCubeTextureImage(vkDev, fileName, cubemap.image.image, cubemap.image.imageMemory);
 
+	uint32_t mipLevels = 1;
 	cubemap.image.CreateImageView(
 		vkDev.GetDevice(),
 		VK_FORMAT_R32G32B32A32_SFLOAT,
@@ -422,98 +420,6 @@ bool RendererPBR::CreateTextureImage(
 	return result;
 }
 
-bool RendererPBR::CreateMIPCubeTextureImage(
-	VulkanDevice& vkDev,
-	const char* filename,
-	uint32_t mipLevels,
-	VkImage& textureImage,
-	VkDeviceMemory& textureImageMemory,
-	uint32_t* width,
-	uint32_t* height)
-{
-	int comp;
-	int texWidth, texHeight;
-	const float* img = stbi_loadf(filename, &texWidth, &texHeight, &comp, 3);
-
-	if (!img)
-	{
-		printf("Failed to load [%s] texture\n", filename); fflush(stdout);
-		return false;
-	}
-
-	uint32_t imageSize = texWidth * texHeight * 4;
-	uint32_t mipSize = imageSize * 6;
-
-	uint32_t w = texWidth, h = texHeight;
-	for (uint32_t i = 1; i < mipLevels; i++)
-	{
-		imageSize = w * h * 4;
-		w >>= 1;
-		h >>= 1;
-		mipSize += imageSize;
-	}
-
-	std::vector<float> mipData(mipSize);
-	float* src = mipData.data();
-	float* dst = mipData.data();
-
-	w = texWidth;
-	h = texHeight;
-	Float24to32(w, h, img, dst);
-
-	for (uint32_t i = 1; i < mipLevels; i++)
-	{
-		imageSize = w * h * 4;
-		dst += w * h * 4;
-		stbir_resize(
-			src, w, h, 0, dst, w / 2, h / 2, 0, STBIR_RGBA, STBIR_TYPE_FLOAT,
-			STBIR_EDGE_WRAP, STBIR_FILTER_CUBICBSPLINE);
-
-		w >>= 1;
-		h >>= 1;
-		src = dst;
-	}
-
-	src = mipData.data();
-	dst = mipData.data();
-
-	std::vector<float> mipCube(mipSize * 6);
-	float* mip = mipCube.data();
-
-	w = texWidth;
-	h = texHeight;
-	uint32_t faceSize = w / 4;
-	for (uint32_t i = 0; i < mipLevels; i++)
-	{
-		Bitmap in(w, h, 4, eBitmapFormat_Float, src);
-		Bitmap out = ConvertEquirectangularMapToVerticalCross(in);
-		Bitmap cube = ConvertVerticalCrossToCubeMapFaces(out);
-
-		imageSize = faceSize * faceSize * 4;
-
-		memcpy(mip, cube.data_.data(), 6 * imageSize * sizeof(float));
-		mip += imageSize * 6;
-
-		src += w * h * 4;
-		w >>= 1;
-		h >>= 1;
-	}
-
-	stbi_image_free((void*)img);
-
-	if (width && height)
-	{
-		*width = texWidth;
-		*height = texHeight;
-	}
-
-	return CreateMIPTextureImageFromData(vkDev,
-		textureImage, textureImageMemory,
-		mipCube.data(), mipLevels, faceSize, faceSize,
-		VK_FORMAT_R32G32B32A32_SFLOAT,
-		6, VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT);
-}
-
 bool RendererPBR::CreateCubeTextureImage(
 	VulkanDevice& vkDev,
 	const char* filename,
@@ -551,111 +457,6 @@ bool RendererPBR::CreateCubeTextureImage(
 		cube.data_.data(), cube.w_, cube.h_,
 		VK_FORMAT_R32G32B32A32_SFLOAT,
 		6, VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT);
-}
-
-bool RendererPBR::CreateMIPTextureImageFromData(VulkanDevice& vkDev,
-	VkImage& textureImage, 
-	VkDeviceMemory& textureImageMemory,
-	void* mipData, 
-	uint32_t mipLevels, 
-	uint32_t texWidth, 
-	uint32_t texHeight,
-	VkFormat texFormat,
-	uint32_t layerCount, 
-	VkImageCreateFlags flags)
-{
-	CreateImage(
-		vkDev.GetDevice(),
-		vkDev.GetPhysicalDevice(),
-		texWidth, 
-		texHeight, 
-		texFormat, 
-		VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
-		textureImage, 
-		textureImageMemory, 
-		flags, 
-		mipLevels);
-
-	// now allocate staging buffer for all MIP levels
-	uint32_t bytesPerPixel = BytesPerTexFormat(texFormat);
-
-	VkDeviceSize layerSize = texWidth * texHeight * bytesPerPixel;
-	VkDeviceSize imageSize = layerSize * layerCount;
-
-	uint32_t w = texWidth, h = texHeight;
-	for (uint32_t i = 1; i < mipLevels; i++)
-	{
-		w >>= 1;
-		h >>= 1;
-		imageSize += w * h * bytesPerPixel * layerCount;
-	}
-
-	VkBuffer stagingBuffer;
-	VkDeviceMemory stagingBufferMemory;
-	CreateBuffer(
-		vkDev.GetDevice(), 
-		vkDev.GetPhysicalDevice(), 
-		imageSize, 
-		VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
-		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
-		stagingBuffer, 
-		stagingBufferMemory);
-
-	UploadBufferData(vkDev, stagingBufferMemory, 0, mipData, imageSize);
-
-	TransitionImageLayout(vkDev, textureImage, texFormat, VK_IMAGE_LAYOUT_UNDEFINED/*sourceImageLayout*/, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, layerCount, mipLevels);
-	CopyMIPBufferToImage(vkDev, stagingBuffer, textureImage, mipLevels, texWidth, texHeight, bytesPerPixel, layerCount);
-	TransitionImageLayout(vkDev, textureImage, texFormat, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, layerCount, mipLevels);
-
-	vkDestroyBuffer(vkDev.GetDevice(), stagingBuffer, nullptr);
-	vkFreeMemory(vkDev.GetDevice(), stagingBufferMemory, nullptr);
-
-	return true;
-}
-
-void RendererPBR::CopyMIPBufferToImage(
-	VulkanDevice& vkDev,
-	VkBuffer buffer,
-	VkImage image,
-	uint32_t mipLevels,
-	uint32_t width,
-	uint32_t height,
-	uint32_t bytesPP,
-	uint32_t layerCount)
-{
-	VkCommandBuffer commandBuffer = BeginSingleTimeCommands(vkDev);
-
-	uint32_t w = width, h = height;
-	uint32_t offset = 0;
-	std::vector<VkBufferImageCopy> regions(mipLevels);
-
-	for (uint32_t i = 0; i < mipLevels; i++)
-	{
-		const VkBufferImageCopy region = {
-			.bufferOffset = offset,
-			.bufferRowLength = 0,
-			.bufferImageHeight = 0,
-			.imageSubresource = VkImageSubresourceLayers {
-				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-				.mipLevel = i,
-				.baseArrayLayer = 0,
-				.layerCount = layerCount
-			},
-			.imageOffset = VkOffset3D {.x = 0, .y = 0, .z = 0 },
-			.imageExtent = VkExtent3D {.width = w, .height = h, .depth = 1 }
-		};
-
-		offset += w * h * layerCount * bytesPP;
-
-		regions[i] = region;
-
-		w >>= 1;
-		h >>= 1;
-	}
-
-	vkCmdCopyBufferToImage(commandBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, (uint32_t)regions.size(), regions.data());
-
-	EndSingleTimeCommands(vkDev, commandBuffer);
 }
 
 Bitmap RendererPBR::ConvertEquirectangularMapToVerticalCross(const Bitmap& b)
