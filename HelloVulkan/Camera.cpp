@@ -1,6 +1,8 @@
 #include "Camera.h"
 #include "AppSettings.h"
 
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 
 Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch) :
@@ -121,7 +123,7 @@ void Camera::UpdateInternal()
 	Up = glm::normalize(glm::cross(Right, Front));
 
 	// Projection matrix
-	float aspect = AppSettings::ScreenWidth / AppSettings::ScreenHeight;
+	float aspect = static_cast<float>(AppSettings::ScreenWidth) / static_cast<float>(AppSettings::ScreenHeight);
 	assert(glm::abs(aspect - std::numeric_limits<float>::epsilon()) > 0.0f);
 
 	float fovy = glm::radians(Zoom);
