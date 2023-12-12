@@ -18,12 +18,12 @@ int AppTest::MainLoop()
 	std::string cubemapTextureFile = AppSettings::TextureFolder + "piazza_bologni_1k.hdr";
 	std::string cubemapIrradianceFile = AppSettings::TextureFolder + "piazza_bologni_1k_irradiance.hdr";
 
-	std::string gltfFile = AppSettings::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf";
-	std::string aoFile = AppSettings::ModelFolder + "DamagedHelmet//Default_AO.jpg";
-	std::string emissiveFile = AppSettings::ModelFolder + "DamagedHelmet//Default_emissive.jpg";
-	std::string albedoFile = AppSettings::ModelFolder + "DamagedHelmet//Default_albedo.jpg";
-	std::string roughnessFile = AppSettings::ModelFolder + "DamagedHelmet//Default_metalRoughness.jpg";
-	std::string normalFile = AppSettings::ModelFolder + "DamagedHelmet//Default_normal.jpg";
+	std::string gltfFile = AppSettings::ModelFolder + "Dragon//Dragon.obj";
+	std::string aoFile = AppSettings::TextureFolder + "pbr//rusted_iron//ao.png";
+	std::string emissiveFile = AppSettings::TextureFolder + "Black1x1.png";
+	std::string albedoFile = AppSettings::TextureFolder + "pbr//rusted_iron//albedo.png";
+	std::string roughnessFile = AppSettings::TextureFolder + "pbr//rusted_iron//roughness.png";
+	std::string normalFile = AppSettings::TextureFolder + "pbr//rusted_iron//normal.png";
 
 	VulkanImage depthTexture;
 	depthTexture.CreateDepthResources(vulkanDevice, 
@@ -81,8 +81,7 @@ void AppTest::ComposeFrame(uint32_t imageIndex, const std::vector<RendererBase*>
 	glm::mat4 view = camera->GetViewMatrix();
 	cubePtr->UpdateUniformBuffer(vulkanDevice, imageIndex, projection * view * model);
 
-
-	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	//model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 	ubo = UBO
 	{
