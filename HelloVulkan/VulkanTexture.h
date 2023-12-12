@@ -19,6 +19,12 @@ public:
 	VkImageLayout desiredLayout;
 
 public:
+	bool CreateTextureSampler(
+		VkDevice device,
+		VkFilter minFilter = VK_FILTER_LINEAR,
+		VkFilter maxFilter = VK_FILTER_LINEAR,
+		VkSamplerAddressMode addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
+
 	void DestroyVulkanTexture(VkDevice device);
 
 private:

@@ -156,12 +156,12 @@ RendererPBR::RendererPBR(
 		VK_IMAGE_ASPECT_COLOR_BIT
 	);
 
-	CreateTextureSampler(
-		vkDev.GetDevice(), 
-		&brdfLUT_.sampler, 
-		VK_FILTER_LINEAR, 
-		VK_FILTER_LINEAR, 
-		VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
+	brdfLUT_.CreateTextureSampler(
+		vkDev.GetDevice(),
+		VK_FILTER_LINEAR,
+		VK_FILTER_LINEAR,
+		VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE
+	);
 
 	std::string vertFile = AppSettings::ShaderFolder + "pbr_mesh.vert";
 	std::string fragFile = AppSettings::ShaderFolder + "pbr_mesh.frag";
@@ -364,14 +364,13 @@ bool RendererPBR::CreatePBRVertexBuffer(
 void RendererPBR::LoadTexture(VulkanDevice& vkDev, const char* fileName, VulkanTexture& texture)
 {
 	CreateTextureImage(vkDev, fileName, texture.image.image, texture.image.imageMemory);
-	//CreateImageView(vkDev.GetDevice(), texture.image.image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT, &texture.image.imageView);
-	
+
 	texture.image.CreateImageView(
 		vkDev.GetDevice(), 
 		VK_FORMAT_R8G8B8A8_UNORM, 
 		VK_IMAGE_ASPECT_COLOR_BIT);
-	
-	CreateTextureSampler(vkDev.GetDevice(), &texture.sampler);
+
+	texture.CreateTextureSampler(vkDev.GetDevice());
 }
 
 void RendererPBR::LoadCubeMap(VulkanDevice& vkDev, const char* fileName, VulkanTexture& cubemap, uint32_t mipLevels)
@@ -388,7 +387,8 @@ void RendererPBR::LoadCubeMap(VulkanDevice& vkDev, const char* fileName, VulkanT
 		VK_IMAGE_VIEW_TYPE_CUBE,
 		6,
 		mipLevels);
-	CreateTextureSampler(vkDev.GetDevice(), &cubemap.sampler);
+
+	cubemap.CreateTextureSampler(vkDev.GetDevice());
 }
 
 bool RendererPBR::CreateTextureImage(

@@ -2,6 +2,7 @@
 #define RENDERER_CUBE
 
 #include "RendererBase.h"
+#include "VulkanTexture.h"
 #include "Bitmap.h"
 
 #include <glm/glm.hpp>
@@ -18,8 +19,7 @@ public:
 	void UpdateUniformBuffer(VulkanDevice& vkDev, uint32_t currentImage, const glm::mat4& m);
 
 private:
-	VkSampler textureSampler;
-	VulkanImage texture;
+	VulkanTexture texture;
 
 	bool CreateDescriptorSet(VulkanDevice& vkDev);
 

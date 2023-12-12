@@ -88,16 +88,16 @@ RendererCube::RendererCube(VulkanDevice& vkDev, VulkanImage inDepthTexture, cons
 	RendererBase(vkDev, inDepthTexture)
 {
 	// Resource loading
-	CreateCubeTextureImage(vkDev, textureFile, texture.image, texture.imageMemory);
+	CreateCubeTextureImage(vkDev, textureFile, texture.image.image, texture.image.imageMemory);
 	
-	texture.CreateImageView(
+	texture.image.CreateImageView(
 		vkDev.GetDevice(), 
 		VK_FORMAT_R32G32B32A32_SFLOAT, 
 		VK_IMAGE_ASPECT_COLOR_BIT, 
 		VK_IMAGE_VIEW_TYPE_CUBE, 
 		6);
 
-	CreateTextureSampler(vkDev.GetDevice(), &textureSampler);
+	texture.CreateTextureSampler(vkDev.GetDevice());
 
 	std::string vertexShader = AppSettings::ShaderFolder + "cube.vert";
 	std::string fragmentShader = AppSettings::ShaderFolder + "cube.frag";
@@ -125,8 +125,7 @@ RendererCube::RendererCube(VulkanDevice& vkDev, VulkanImage inDepthTexture, cons
 
 RendererCube::~RendererCube()
 {
-	vkDestroySampler(device_, textureSampler, nullptr);
-	texture.Destroy(device_);
+	texture.DestroyVulkanTexture(device_);
 }
 
 void RendererCube::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
@@ -181,7 +180,7 @@ bool RendererCube::CreateDescriptorSet(VulkanDevice& vkDev)
 		VkDescriptorSet ds = descriptorSets_[i];
 
 		const VkDescriptorBufferInfo bufferInfo = { uniformBuffers_[i], 0, sizeof(glm::mat4) };
-		const VkDescriptorImageInfo  imageInfo = { textureSampler, texture.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
+		const VkDescriptorImageInfo  imageInfo = { texture.sampler, texture.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
 
 		const std::array<VkWriteDescriptorSet, 2> descriptorWrites = {
 			BufferWriteDescriptorSet(ds, &bufferInfo,  0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER),
@@ -195,7 +194,8 @@ bool RendererCube::CreateDescriptorSet(VulkanDevice& vkDev)
 }
 
 bool RendererCube::CreateCubeTextureImage(
-	VulkanDevice& vkDev, const char* filename, 
+	VulkanDevice& vkDev, 
+	const char* filename, 
 	VkImage& textureImage, 
 	VkDeviceMemory& textureImageMemory, 
 	uint32_t* width, 

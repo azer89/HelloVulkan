@@ -94,13 +94,6 @@ protected:
 		uint32_t typeFilter, 
 		VkMemoryPropertyFlags properties);
 
-	bool CreateTextureSampler(
-		VkDevice device, 
-		VkSampler* sampler, 
-		VkFilter minFilter = VK_FILTER_LINEAR, 
-		VkFilter maxFilter = VK_FILTER_LINEAR, 
-		VkSamplerAddressMode addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
-
 	bool CreateColorAndDepthRenderPass(
 		VulkanDevice& device, 
 		bool useDepth, 
