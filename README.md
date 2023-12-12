@@ -1,6 +1,6 @@
 # Simple Vulkan Renderer
 
-A project about learning PBR using Vulkan. 
+A project about learning PBR using Vulkan. The project is still undergoing heavy development so the code is still a little bit disorganized.
 
 <img width="800" alt="Screenshot 2023-12-11 192409" src="https://github.com/azer89/HelloVulkan/assets/790432/89d84776-4faa-438e-adfe-65a03aa0c41e">
 
