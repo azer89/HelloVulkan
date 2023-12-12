@@ -2,10 +2,7 @@
 
 A project about learning PBR using Vulkan. 
 
-<img width="795" alt="Screenshot 2023-12-11 185102" src="https://github.com/azer89/HelloVulkan/assets/790432/b029d4bb-dfb4-486f-a41e-12ffe9839f9c">
-
-
-
+<img width="800" alt="Screenshot 2023-12-11 192409" src="https://github.com/azer89/HelloVulkan/assets/790432/89d84776-4faa-438e-adfe-65a03aa0c41e">
 
 ### Build
 * Visual Studio 2022 x64 and C++20
