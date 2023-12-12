@@ -3,6 +3,7 @@
 
 #include "VulkanImage.h"
 #include "VulkanDevice.h"
+#include "Bitmap.h"
 
 class VulkanTexture
 {
@@ -18,7 +19,18 @@ public:
 	// Offscreen buffers require VK_IMAGE_LAYOUT_GENERAL && static textures have VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	VkImageLayout desiredLayout;
 
-public:
+	bool CreateTextureImage(
+		VulkanDevice& vkDev,
+		const char* filename,
+		uint32_t* outTexWidth = nullptr,
+		uint32_t* outTexHeight = nullptr);
+
+	bool CreateCubeTextureImage(
+		VulkanDevice& vkDev,
+		const char* filename,
+		uint32_t* width = nullptr,
+		uint32_t* height = nullptr);
+
 	bool CreateTextureSampler(
 		VkDevice device,
 		VkFilter minFilter = VK_FILTER_LINEAR,
@@ -28,6 +40,10 @@ public:
 	void DestroyVulkanTexture(VkDevice device);
 
 private:
+	Bitmap ConvertEquirectangularMapToVerticalCross(const Bitmap& b);
+
+	Bitmap ConvertVerticalCrossToCubeMapFaces(const Bitmap& b);
+
 	void DestroyVulkanImage(VkDevice device);
 };
 

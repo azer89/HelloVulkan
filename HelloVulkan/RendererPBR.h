@@ -43,24 +43,6 @@ private:
 	void LoadTexture(VulkanDevice& vkDev, const char* fileName, VulkanTexture& texture);
 	void LoadCubeMap(VulkanDevice& vkDev, const char* fileName, VulkanTexture& cubemap);
 
-	bool CreateTextureImage(
-		VulkanDevice& vkDev, 
-		const char* filename, 
-		VulkanTexture& texture,
-		uint32_t* outTexWidth = nullptr, 
-		uint32_t* outTexHeight = nullptr);
-
-	bool CreateCubeTextureImage(
-		VulkanDevice& vkDev, 
-		const char* filename, 
-		VulkanTexture& texture,
-		uint32_t* width = nullptr, 
-		uint32_t* height = nullptr);
-
-	Bitmap ConvertEquirectangularMapToVerticalCross(const Bitmap& b);
-
-	Bitmap ConvertVerticalCrossToCubeMapFaces(const Bitmap& b);
-
 private:
 	size_t vertexBufferSize_;
 	size_t indexBufferSize_;

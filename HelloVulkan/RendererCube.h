@@ -22,29 +22,6 @@ private:
 	VulkanTexture texture;
 
 	bool CreateDescriptorSet(VulkanDevice& vkDev);
-
-	bool CreateCubeTextureImage(
-		VulkanDevice& vkDev,
-		const char* filename,
-		uint32_t* width = nullptr,
-		uint32_t* height = nullptr);
-
-	Bitmap ConvertEquirectangularMapToVerticalCross(const Bitmap& b);
-
-	Bitmap ConvertVerticalCrossToCubeMapFaces(const Bitmap& b);
-
-	Bitmap ConvertEquirectangularMapToCubeMapFaces(const Bitmap& b);
-
-	void ConvolveDiffuse(
-		const glm::vec3* data, 
-		int srcW, 
-		int srcH, 
-		int dstW, 
-		int dstH, 
-		glm::vec3* output, 
-		int numMonteCarloSamples);
-
-	glm::vec3 FaceCoordsToXYZ(int i, int j, int faceID, int faceSize);
 };
 
 #endif

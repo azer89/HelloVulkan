@@ -8,7 +8,6 @@
 #include "VulkanImage.h"
 #include "RenderPassCreateInfo.h"
 
-void Float24to32(int w, int h, const float* img24, float* img32);
 bool HasStencilComponent(VkFormat format);
 
 class RendererBase

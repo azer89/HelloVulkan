@@ -803,18 +803,6 @@ size_t RendererBase::AllocateVertexBuffer(
 	return bufferSize;
 }
 
-void Float24to32(int w, int h, const float* img24, float* img32)
-{
-	const int numPixels = w * h;
-	for (int i = 0; i != numPixels; i++)
-	{
-		*img32++ = *img24++;
-		*img32++ = *img24++;
-		*img32++ = *img24++;
-		*img32++ = 1.0f;
-	}
-}
-
 bool HasStencilComponent(VkFormat format)
 {
 	return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
