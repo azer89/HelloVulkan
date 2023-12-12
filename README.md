@@ -12,6 +12,7 @@ A project about learning PBR using Vulkan. The project is still undergoing heavy
 Technical Resources:
 * [3D Graphics Rendering Cookbook](https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook)
 * [learnopengl.com](https://learnopengl.com/) for rendering techniques
+* Brendan Galea's [Vulkan tutorial](https://www.youtube.com/watch?v=Y9U9IE0gVHA&list=PL8327DO66nu9qYVKLDmdLW_84-yE4auCR)
 
 Assets:
 * [Polyhaven](https://polyhaven.com/)
