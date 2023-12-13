@@ -8,8 +8,6 @@
 #include "VulkanImage.h"
 #include "RenderPassCreateInfo.h"
 
-bool HasStencilComponent(VkFormat format);
-
 class RendererBase
 {
 public:
