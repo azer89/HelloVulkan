@@ -2,7 +2,7 @@
 
 A project about learning Vulkan and PBR. 
 
-<img width="800" alt="Dragon" src="https://github.com/azer89/HelloVulkan/assets/790432/8124a287-96f9-4e81-88bf-efc527115d23">
+<img width="800" alt="Dragon" src="https://github.com/azer89/HelloVulkan/assets/790432/5ad0044f-a445-4587-90fc-ed7fca9d811d">
 
 ### Build
 * Vulkan 1.3
