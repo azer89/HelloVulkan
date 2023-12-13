@@ -122,24 +122,6 @@ protected:
 		const void* data, 
 		const size_t dataSize);
 
-	void TransitionImageLayout(
-		VulkanDevice& vkDev, 
-		VkImage image, 
-		VkFormat format, 
-		VkImageLayout oldLayout, 
-		VkImageLayout newLayout, 
-		uint32_t layerCount = 1, 
-		uint32_t mipLevels = 1);
-
-	void TransitionImageLayoutCmd(
-		VkCommandBuffer commandBuffer, 
-		VkImage image, 
-		VkFormat format, 
-		VkImageLayout oldLayout, 
-		VkImageLayout newLayout, 
-		uint32_t layerCount = 1, 
-		uint32_t mipLevels = 1);
-
 	void CopyBufferToImage(
 		VulkanDevice& vkDev, 
 		VkBuffer buffer, 
