@@ -2,9 +2,7 @@
 
 A project about learning Vulkan and PBR. 
 
-The source code is slightly disorganized as it is still undergoing heavy development.
-
-<img width="800" alt="Screenshot 2023-12-11 192409" src="https://github.com/azer89/HelloVulkan/assets/790432/89d84776-4faa-438e-adfe-65a03aa0c41e">
+<img width="800" alt="Dragon" src="https://github.com/azer89/HelloVulkan/assets/790432/8124a287-96f9-4e81-88bf-efc527115d23">
 
 ### Build
 * Vulkan 1.3
