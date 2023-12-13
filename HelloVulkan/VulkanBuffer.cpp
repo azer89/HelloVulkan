@@ -37,6 +37,18 @@ bool VulkanBuffer::CreateBuffer(
 	return true;
 }
 
+void VulkanBuffer::UploadBufferData(
+	VulkanDevice& vkDev,
+	VkDeviceSize deviceOffset,
+	const void* data,
+	const size_t dataSize)
+{
+	void* mappedData = nullptr;
+	vkMapMemory(vkDev.GetDevice(), bufferMemory_, deviceOffset, dataSize, 0, &mappedData);
+	memcpy(mappedData, data, dataSize);
+	vkUnmapMemory(vkDev.GetDevice(), bufferMemory_);
+}
+
 uint32_t VulkanBuffer::FindMemoryType(
 	VkPhysicalDevice device,
 	uint32_t typeFilter,

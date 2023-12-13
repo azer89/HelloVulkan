@@ -31,13 +31,7 @@ public:
 		VulkanDevice& vkDev,
 		VkDeviceSize deviceOffset,
 		const void* data,
-		const size_t dataSize)
-	{
-		void* mappedData = nullptr;
-		vkMapMemory(vkDev.GetDevice(), bufferMemory_, deviceOffset, dataSize, 0, &mappedData);
-		memcpy(mappedData, data, dataSize);
-		vkUnmapMemory(vkDev.GetDevice(), bufferMemory_);
-	}
+		const size_t dataSize);
 
 private:
 	uint32_t FindMemoryType(
