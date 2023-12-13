@@ -17,8 +17,8 @@ AppTest::AppTest()
 
 int AppTest::MainLoop()
 {
-	std::string cubemapTextureFile = AppSettings::TextureFolder + "piazza_bologni_1k.hdr";
-	std::string cubemapIrradianceFile = AppSettings::TextureFolder + "piazza_bologni_1k_irradiance.hdr";
+	std::string cubemapTextureFile = AppSettings::TextureFolder + "belfast_sunset_4k.hdr";
+	std::string cubemapIrradianceFile = AppSettings::TextureFolder + "belfast_sunset_4k_irradiance.hdr";
 
 	std::string gltfFile = AppSettings::ModelFolder + "Dragon//Dragon.obj";
 	std::string aoFile = AppSettings::TextureFolder + "pbr//rusted_iron//ao.png";
@@ -81,7 +81,9 @@ void AppTest::ComposeFrame(uint32_t imageIndex, const std::vector<RendererBase*>
 	glm::mat4 model(1.f);
 	glm::mat4 projection = camera->GetProjectionMatrix();
 	glm::mat4 view = camera->GetViewMatrix();
-	cubePtr->UpdateUniformBuffer(vulkanDevice, imageIndex, projection * view * model);
+
+	glm::mat4 cubeView = glm::mat4(glm::mat3(view)); // Remove translation from the view matrix
+	cubePtr->UpdateUniformBuffer(vulkanDevice, imageIndex, projection * cubeView * model);
 
 	//model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
