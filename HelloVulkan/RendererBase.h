@@ -92,15 +92,6 @@ protected:
 		VkDeviceSize deviceOffset, 
 		const void* data, 
 		const size_t dataSize);
-
-	// Vertex buffer
-	size_t AllocateVertexBuffer(
-		VulkanDevice& vkDev, 
-		VulkanBuffer* buffer, 
-		size_t vertexDataSize, 
-		const void* vertexData, 
-		size_t indexDataSize, 
-		const void* indexData);
 };
 
 #endif
