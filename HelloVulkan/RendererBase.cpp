@@ -2,6 +2,7 @@
 #include "VulkanUtility.h"
 #include "VulkanShader.h"
 #include "VulkanBuffer.h"
+#include "Mesh.h"
 
 #include <array>
 
@@ -307,9 +308,18 @@ bool RendererBase::CreateGraphicsPipeline(
 		shaderStages[i] = shaderModules[i].GetShaderStageInfo(stage, "main");
 	}
 
-	const VkPipelineVertexInputStateCreateInfo vertexInputInfo = {
-		.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO
-	};
+	std::vector<VkVertexInputBindingDescription> bindingDescriptions = VertexData::GetBindingDescriptions();
+	std::vector<VkVertexInputAttributeDescription> attributeDescriptions = VertexData::GetAttributeDescriptions();
+	//const VkPipelineVertexInputStateCreateInfo vertexInputInfo = {
+	//	.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
+	//};
+	VkPipelineVertexInputStateCreateInfo vertexInputInfo;
+	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+	vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+	vertexInputInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(bindingDescriptions.size());
+	vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+	vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
+
 
 	const VkPipelineInputAssemblyStateCreateInfo inputAssembly = {
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,

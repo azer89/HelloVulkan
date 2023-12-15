@@ -1,5 +1,9 @@
 #version 460 core
 
+layout(location = 0) in vec3 positionIn;
+layout(location = 2) in vec3 normalIn;
+layout(location = 3) in vec2 uvIn;
+
 layout(location = 0) out vec3 worldPos;
 layout(location = 1) out vec2 texCoord;
 layout(location = 2) out vec3 normal;

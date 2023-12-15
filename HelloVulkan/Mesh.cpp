@@ -31,13 +31,7 @@ void Mesh::Create(
 	}
 
 	const aiMesh* mesh = scene->mMeshes[0];
-	struct VertexData
-	{
-		glm::vec4 pos;
-		glm::vec4 n;
-		glm::vec4 tc;
-	};
-
+	
 	std::vector<VertexData> vertices;
 	for (unsigned i = 0; i != mesh->mNumVertices; i++)
 	{
@@ -62,7 +56,10 @@ void Mesh::Create(
 	vertexBufferSize_ = sizeof(VertexData) * vertices.size();
 	indexBufferSize_ = sizeof(unsigned int) * indices.size();
 
-	AllocateVertexBuffer(vkDev, vertices.data(), indices.data());
+	AllocateVertexBuffer(vkDev, vertices.data());
+	AllocateIndexBuffer(vkDev, indices.data());
+
+	AllocateSSBOBuffer(vkDev, vertices.data(), indices.data());
 }
 
 void Mesh::Destroy(VkDevice device)
@@ -75,7 +72,65 @@ void Mesh::Destroy(VkDevice device)
 	}
 }
 
-size_t Mesh::AllocateVertexBuffer(
+void Mesh::AllocateVertexBuffer(
+	VulkanDevice& vkDev,
+	const void* vertexData)
+{
+	VulkanBuffer stagingBuffer;
+	stagingBuffer.CreateBuffer(
+		vkDev.GetDevice(),
+		vkDev.GetPhysicalDevice(),
+		vertexBufferSize_,
+		VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+	);
+
+	void* data;
+	vkMapMemory(vkDev.GetDevice(), stagingBuffer.bufferMemory_, 0, vertexBufferSize_, 0, &data);
+	memcpy(data, vertexData, vertexBufferSize_);
+	vkUnmapMemory(vkDev.GetDevice(), stagingBuffer.bufferMemory_);
+
+	vertexBuffer_.CreateBuffer(
+		vkDev.GetDevice(),
+		vkDev.GetPhysicalDevice(),
+		vertexBufferSize_,
+		VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+	vertexBuffer_.CopyFrom(vkDev, stagingBuffer.buffer_, vertexBufferSize_);
+
+	stagingBuffer.Destroy(vkDev.GetDevice());
+}
+
+void Mesh::AllocateIndexBuffer(
+	VulkanDevice& vkDev,
+	const void* indexData)
+{
+	VulkanBuffer stagingBuffer;
+	stagingBuffer.CreateBuffer(
+		vkDev.GetDevice(),
+		vkDev.GetPhysicalDevice(),
+		indexBufferSize_,
+		VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+	);
+
+	void* data;
+	vkMapMemory(vkDev.GetDevice(), stagingBuffer.bufferMemory_, 0, indexBufferSize_, 0, &data);
+	memcpy(data, indexData, indexBufferSize_);
+	vkUnmapMemory(vkDev.GetDevice(), stagingBuffer.bufferMemory_);
+
+	indexBuffer_.CreateBuffer(
+		vkDev.GetDevice(),
+		vkDev.GetPhysicalDevice(),
+		indexBufferSize_,
+		VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+	indexBuffer_.CopyFrom(vkDev, stagingBuffer.buffer_, indexBufferSize_);
+
+	stagingBuffer.Destroy(vkDev.GetDevice());
+}
+
+size_t Mesh::AllocateSSBOBuffer(
 	VulkanDevice& vkDev,
 	const void* vertexData,
 	const void* indexData)
