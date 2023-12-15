@@ -178,22 +178,50 @@ void RendererPBR::UpdateUniformBuffer(
 
 bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, uint32_t uniformDataSize)
 {
-	const std::vector<VkDescriptorSetLayoutBinding> bindings = {
-		DescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT),
-		DescriptorSetLayoutBinding(1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT),
-		DescriptorSetLayoutBinding(2, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT),
+	std::vector<VkDescriptorSetLayoutBinding> bindings;
 
-		DescriptorSetLayoutBinding(3, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT),  // AO
-		DescriptorSetLayoutBinding(4, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT),  // Emissive
-		DescriptorSetLayoutBinding(5, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT),  // Albedo
-		DescriptorSetLayoutBinding(6, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT),  // MeR
-		DescriptorSetLayoutBinding(7, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT),  // Normal
+	uint32_t bindingIndex = 0;
+	bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT));
+	bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT));
+	bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT));
 
-		DescriptorSetLayoutBinding(8, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT),  // env
-		DescriptorSetLayoutBinding(9, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT),  // env_IRR
+	// PBR textures
+	for (VulkanTexture& tex : mesh_.textures_)
+	{
+		bindings.emplace_back(
+			DescriptorSetLayoutBinding(
+				// Note that we don't use bindIndex
+				tex.bindIndex, 
+				VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 
+				VK_SHADER_STAGE_FRAGMENT_BIT)
+		);
+		// Keep incrementing
+		bindingIndex++;
+	}
 
-		DescriptorSetLayoutBinding(10, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)  // brdfLUT
-	};
+	// env
+	bindings.emplace_back(
+		DescriptorSetLayoutBinding(
+			bindingIndex++, 
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 
+			VK_SHADER_STAGE_FRAGMENT_BIT)
+	);
+	
+	// env_IRR
+	bindings.emplace_back(
+		DescriptorSetLayoutBinding(
+			bindingIndex++, 
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 
+			VK_SHADER_STAGE_FRAGMENT_BIT)
+	);
+	
+	// brdfLUT
+	bindings.emplace_back(
+		DescriptorSetLayoutBinding(
+			bindingIndex++, 
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 
+			VK_SHADER_STAGE_FRAGMENT_BIT)
+	);
 
 	const VkDescriptorSetLayoutCreateInfo layoutInfo = 
 	{
