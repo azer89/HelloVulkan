@@ -4,6 +4,7 @@
 #include "RendererBase.h"
 #include "VulkanTexture.h"
 #include "VulkanBuffer.h"
+#include "Mesh.h"
 
 class RendererPBR : public RendererBase
 {
@@ -29,33 +30,14 @@ public:
 private:
 	bool CreateDescriptorSet(VulkanDevice& vkDev, uint32_t uniformDataSize);
 
-	// ASSIMP
-	bool CreateVertexBuffer(
-		VulkanDevice& vkDev, 
-		const char* filename, 
-		VulkanBuffer* storageBuffer, 
-		size_t* vertexBufferSize, 
-		size_t* indexBufferSize);
-
 	// Textures
-	void LoadTexture(VulkanDevice& vkDev, const char* fileName, VulkanTexture& texture);
 	void LoadCubeMap(VulkanDevice& vkDev, const char* fileName, VulkanTexture& cubemap);
 
 private:
-	size_t vertexBufferSize_;
-	size_t indexBufferSize_;
+	Mesh mesh_;
 
-	VulkanBuffer storageBuffer_;
-
-	VulkanTexture texAO_;
-	VulkanTexture texEmissive_;
-	VulkanTexture texAlbedo_;
-	VulkanTexture texMeR_;
-	VulkanTexture texNormal_;
-
-	VulkanTexture envMapIrradiance_;
 	VulkanTexture envMap_;
-
+	VulkanTexture envMapIrradiance_;
 	VulkanTexture brdfLUT_;
 };
 

@@ -14,6 +14,7 @@ public:
 	uint32_t width;
 	uint32_t height;
 	uint32_t depth;
+	uint32_t bindIndex;
 	VkFormat format;
 
 	// Offscreen buffers require VK_IMAGE_LAYOUT_GENERAL && static textures have VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL

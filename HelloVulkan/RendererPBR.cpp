@@ -85,23 +85,13 @@ RendererPBR::RendererPBR(
 {
 	depthTexture_ = depthTexture;
 
-	// Resource loading part
-	if (!CreateVertexBuffer(
-		vkDev, 
-		modelFile, 
-		&storageBuffer_, 
-		&vertexBufferSize_, 
-		&indexBufferSize_))
-	{
-		printf("ModelRenderer: createPBRVertexBuffer() failed\n");
-		exit(EXIT_FAILURE);
-	}
-
-	LoadTexture(vkDev, texAOFile, texAO_);
-	LoadTexture(vkDev, texEmissiveFile, texEmissive_);
-	LoadTexture(vkDev, texAlbedoFile, texAlbedo_);
-	LoadTexture(vkDev, texMeRFile, texMeR_);
-	LoadTexture(vkDev, texNormalFile, texNormal_);
+	mesh_.Create(vkDev, modelFile);
+	// The numbers are the bindIndices
+	mesh_.AddTexture(vkDev, texAOFile, 3);
+	mesh_.AddTexture(vkDev, texEmissiveFile, 4);
+	mesh_.AddTexture(vkDev, texAlbedoFile, 5);
+	mesh_.AddTexture(vkDev, texMeRFile, 6);
+	mesh_.AddTexture(vkDev, texNormalFile, 7);
 
 	// cube maps
 	LoadCubeMap(vkDev, texEnvMapFile, envMap_);
@@ -162,13 +152,7 @@ RendererPBR::RendererPBR(
 
 RendererPBR::~RendererPBR()
 {
-	storageBuffer_.Destroy(device_);
-
-	texAO_.DestroyVulkanTexture(device_);
-	texEmissive_.DestroyVulkanTexture(device_);
-	texAlbedo_.DestroyVulkanTexture(device_);
-	texMeR_.DestroyVulkanTexture(device_);
-	texNormal_.DestroyVulkanTexture(device_);
+	mesh_.Destroy(device_);
 
 	envMap_.DestroyVulkanTexture(device_);
 	envMapIrradiance_.DestroyVulkanTexture(device_);
@@ -179,8 +163,7 @@ RendererPBR::~RendererPBR()
 void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
 {
 	BeginRenderPass(commandBuffer, currentImage);
-
-	vkCmdDraw(commandBuffer, static_cast<uint32_t>(indexBufferSize_ / (sizeof(unsigned int))), 1, 0, 0);
+	vkCmdDraw(commandBuffer, static_cast<uint32_t>(mesh_.indexBufferSize_ / (sizeof(unsigned int))), 1, 0, 0);
 	vkCmdEndRenderPass(commandBuffer);
 }
 
@@ -243,33 +226,58 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, uint32_t uniformDataS
 	{
 		VkDescriptorSet ds = descriptorSets_[i];
 
-		const VkDescriptorBufferInfo bufferInfo = { uniformBuffers_[i].buffer_, 0, uniformDataSize };
-		const VkDescriptorBufferInfo bufferInfo2 = { storageBuffer_.buffer_, 0, vertexBufferSize_ };
-		const VkDescriptorBufferInfo bufferInfo3 = { storageBuffer_.buffer_, vertexBufferSize_, indexBufferSize_ };
-		const VkDescriptorImageInfo  imageInfoAO = { texAO_.sampler, texAO_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
-		const VkDescriptorImageInfo  imageInfoEmissive = { texEmissive_.sampler, texEmissive_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
-		const VkDescriptorImageInfo  imageInfoAlbedo = { texAlbedo_.sampler, texAlbedo_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
-		const VkDescriptorImageInfo  imageInfoMeR = { texMeR_.sampler, texMeR_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
-		const VkDescriptorImageInfo  imageInfoNormal = { texNormal_.sampler, texNormal_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+		const VkDescriptorBufferInfo bufferInfo1 = { uniformBuffers_[i].buffer_, 0, uniformDataSize };
+		const VkDescriptorBufferInfo bufferInfo2 = { mesh_.storageBuffer_.buffer_, 0, mesh_.vertexBufferSize_ };
+		const VkDescriptorBufferInfo bufferInfo3 = { mesh_.storageBuffer_.buffer_, mesh_.vertexBufferSize_, mesh_.indexBufferSize_ };
+
+		uint32_t bindIndex = 0;
+
+		std::vector<VkWriteDescriptorSet> descriptorWrites;
+		descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo1, bindIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
+		descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo2, bindIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER));
+		descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo3, bindIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER));
+
+		std::vector<VkDescriptorImageInfo> imageInfos;
+		std::vector<uint32_t> bindIndices;
+		for (VulkanTexture& tex : mesh_.textures_)
+		{
+			imageInfos.emplace_back<VkDescriptorImageInfo>
+			({
+				tex.sampler,
+				tex.image.imageView,
+				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+			});
+			bindIndices.emplace_back(tex.bindIndex);
+		}
+
+		for (size_t i = 0; i < imageInfos.size(); ++i)
+		{
+			descriptorWrites.emplace_back
+			(
+				ImageWriteDescriptorSet(
+					ds, 
+					&imageInfos[i], 
+					// Note that we don't use bindIndex
+					bindIndices[i])
+			);
+
+			// Keep incrementing
+			bindIndex++;
+		}
 
 		const VkDescriptorImageInfo  imageInfoEnv = { envMap_.sampler, envMap_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
 		const VkDescriptorImageInfo  imageInfoEnvIrr = { envMapIrradiance_.sampler, envMapIrradiance_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
 		const VkDescriptorImageInfo  imageInfoBRDF = { brdfLUT_.sampler, brdfLUT_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
 
-		const std::array<VkWriteDescriptorSet, 11> descriptorWrites = {
-			BufferWriteDescriptorSet(ds, &bufferInfo,  0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER),
-			BufferWriteDescriptorSet(ds, &bufferInfo2, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER),
-			BufferWriteDescriptorSet(ds, &bufferInfo3, 2, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER),
-			ImageWriteDescriptorSet(ds, &imageInfoAO,       3),
-			ImageWriteDescriptorSet(ds, &imageInfoEmissive, 4),
-			ImageWriteDescriptorSet(ds, &imageInfoAlbedo,   5),
-			ImageWriteDescriptorSet(ds, &imageInfoMeR,      6),
-			ImageWriteDescriptorSet(ds, &imageInfoNormal,   7),
-
-			ImageWriteDescriptorSet(ds, &imageInfoEnv,      8),
-			ImageWriteDescriptorSet(ds, &imageInfoEnvIrr,   9),
-			ImageWriteDescriptorSet(ds, &imageInfoBRDF,     10)
-		};
+		descriptorWrites.emplace_back(
+			ImageWriteDescriptorSet(ds, &imageInfoEnv, bindIndex++)
+		);
+		descriptorWrites.emplace_back(
+			ImageWriteDescriptorSet(ds, &imageInfoEnvIrr, bindIndex++)
+		);
+		descriptorWrites.emplace_back(
+			ImageWriteDescriptorSet(ds, &imageInfoBRDF, bindIndex++)
+		);
 
 		vkUpdateDescriptorSets
 		(
@@ -281,70 +289,6 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, uint32_t uniformDataS
 	}
 
 	return true;
-}
-
-bool RendererPBR::CreateVertexBuffer(
-	VulkanDevice& vkDev,
-	const char* filename,
-	VulkanBuffer* storageBuffer,
-	size_t* vertexBufferSize,
-	size_t* indexBufferSize)
-{
-	const aiScene* scene = aiImportFile(filename, aiProcess_Triangulate);
-
-	if (!scene || !scene->HasMeshes())
-	{
-		printf("Unable to load %s\n", filename);
-		exit(255);
-	}
-
-	const aiMesh* mesh = scene->mMeshes[0];
-	struct VertexData
-	{
-		glm::vec4 pos;
-		glm::vec4 n;
-		glm::vec4 tc;
-	};
-
-	std::vector<VertexData> vertices;
-	for (unsigned i = 0; i != mesh->mNumVertices; i++)
-	{
-		const aiVector3D v = mesh->mVertices[i];
-		const aiVector3D t = mesh->mTextureCoords[0][i];
-		const aiVector3D n = mesh->mNormals[i];
-		vertices.push_back(
-			{ 
-				.pos = glm::vec4(v.x, v.y, v.z, 1.0f), 
-				.n = glm::vec4(n.x, n.y, n.z, 0.0f),
-				.tc = glm::vec4(t.x, 1.0f - t.y, 0.0f, 0.0f) });
-	}
-
-	std::vector<unsigned int> indices;
-	for (unsigned i = 0; i != mesh->mNumFaces; i++)
-	{
-		for (unsigned j = 0; j != 3; j++)
-			indices.push_back(mesh->mFaces[i].mIndices[j]);
-	}
-	aiReleaseImport(scene);
-
-	*vertexBufferSize = sizeof(VertexData) * vertices.size();
-	*indexBufferSize = sizeof(unsigned int) * indices.size();
-
-	AllocateVertexBuffer(vkDev, storageBuffer, *vertexBufferSize, vertices.data(), *indexBufferSize, indices.data());
-
-	return true;
-}
-
-void RendererPBR::LoadTexture(VulkanDevice& vkDev, const char* fileName, VulkanTexture& texture)
-{
-	texture.CreateTextureImage(vkDev, fileName);
-
-	texture.image.CreateImageView(
-		vkDev.GetDevice(), 
-		VK_FORMAT_R8G8B8A8_UNORM, 
-		VK_IMAGE_ASPECT_COLOR_BIT);
-
-	texture.CreateTextureSampler(vkDev.GetDevice());
 }
 
 void RendererPBR::LoadCubeMap(VulkanDevice& vkDev, const char* fileName, VulkanTexture& cubemap)
