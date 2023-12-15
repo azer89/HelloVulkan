@@ -41,41 +41,12 @@ protected:
 	VkPipeline graphicsPipeline_ = nullptr;
 
 	// 5. Uniform buffer
-	//std::vector<VkBuffer> uniformBuffers_;
-	//std::vector<VkDeviceMemory> uniformBuffersMemory_;
 	std::vector<VulkanBuffer> uniformBuffers_;
 
 protected:
 	void BeginRenderPass(VkCommandBuffer commandBuffer, size_t currentImage);
 
 	bool CreateUniformBuffers(VulkanDevice& vkDev, size_t uniformDataSize);
-
-	/*bool CreateUniformBuffer(
-		VulkanDevice& vkDev,
-		//VkBuffer& buffer,
-		//VkDeviceMemory& bufferMemory,
-		VulkanBuffer& buffer,
-		VkDeviceSize bufferSize);*/
-
-	/*bool CreateBuffer(
-		VkDevice device,
-		VkPhysicalDevice physicalDevice,
-		VkDeviceSize size,
-		VkBufferUsageFlags usage,
-		VkMemoryPropertyFlags properties,
-		VkBuffer& buffer,
-		VkDeviceMemory& bufferMemory);*/
-
-	/*void CopyBuffer(
-		VulkanDevice& vkDev, 
-		VkBuffer srcBuffer, 
-		VkBuffer dstBuffer, 
-		VkDeviceSize size);*/
-
-	uint32_t FindMemoryType(
-		VkPhysicalDevice device, 
-		uint32_t typeFilter, 
-		VkMemoryPropertyFlags properties);
 
 	bool CreateColorAndDepthRenderPass(
 		VulkanDevice& device, 
