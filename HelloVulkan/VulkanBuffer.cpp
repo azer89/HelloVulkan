@@ -38,6 +38,21 @@ bool VulkanBuffer::CreateBuffer(
 	return true;
 }
 
+void VulkanBuffer::CopyFrom(VulkanDevice& vkDev, VkBuffer srcBuffer, VkDeviceSize size)
+{
+	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
+
+	const VkBufferCopy copyRegion = {
+		.srcOffset = 0,
+		.dstOffset = 0,
+		.size = size
+	};
+
+	vkCmdCopyBuffer(commandBuffer, srcBuffer, buffer_, 1, &copyRegion);
+
+	vkDev.EndSingleTimeCommands(commandBuffer);
+}
+
 void VulkanBuffer::UploadBufferData(
 	VulkanDevice& vkDev,
 	VkDeviceSize deviceOffset,

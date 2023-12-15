@@ -86,11 +86,10 @@ RendererPBR::RendererPBR(
 	depthTexture_ = depthTexture;
 
 	// Resource loading part
-	if (!CreatePBRVertexBuffer(
+	if (!CreateVertexBuffer(
 		vkDev, 
 		modelFile, 
-		&storageBuffer_.buffer_, 
-		&storageBuffer_.bufferMemory_, 
+		&storageBuffer_, 
 		&vertexBufferSize_, 
 		&indexBufferSize_))
 	{
@@ -187,7 +186,7 @@ void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t curren
 
 void RendererPBR::UpdateUniformBuffer(VulkanDevice& vkDev, uint32_t currentImage, const void* data, const size_t dataSize)
 {
-	UploadBufferData(vkDev, uniformBuffersMemory_[currentImage], 0, data, dataSize);
+	UploadBufferData(vkDev, uniformBuffers_[currentImage].bufferMemory_, 0, data, dataSize);
 }
 
 bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, uint32_t uniformDataSize)
@@ -240,7 +239,7 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, uint32_t uniformDataS
 	{
 		VkDescriptorSet ds = descriptorSets_[i];
 
-		const VkDescriptorBufferInfo bufferInfo = { uniformBuffers_[i], 0, uniformDataSize };
+		const VkDescriptorBufferInfo bufferInfo = { uniformBuffers_[i].buffer_, 0, uniformDataSize };
 		const VkDescriptorBufferInfo bufferInfo2 = { storageBuffer_.buffer_, 0, vertexBufferSize_ };
 		const VkDescriptorBufferInfo bufferInfo3 = { storageBuffer_.buffer_, vertexBufferSize_, indexBufferSize_ };
 		const VkDescriptorImageInfo  imageInfoAO = { texAO_.sampler, texAO_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
@@ -280,11 +279,10 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, uint32_t uniformDataS
 	return true;
 }
 
-bool RendererPBR::CreatePBRVertexBuffer(
+bool RendererPBR::CreateVertexBuffer(
 	VulkanDevice& vkDev,
 	const char* filename,
-	VkBuffer* storageBuffer,
-	VkDeviceMemory* storageBufferMemory,
+	VulkanBuffer* storageBuffer,
 	size_t* vertexBufferSize,
 	size_t* indexBufferSize)
 {
@@ -328,7 +326,7 @@ bool RendererPBR::CreatePBRVertexBuffer(
 	*vertexBufferSize = sizeof(VertexData) * vertices.size();
 	*indexBufferSize = sizeof(unsigned int) * indices.size();
 
-	AllocateVertexBuffer(vkDev, storageBuffer, storageBufferMemory, *vertexBufferSize, vertices.data(), *indexBufferSize, indices.data());
+	AllocateVertexBuffer(vkDev, storageBuffer, *vertexBufferSize, vertices.data(), *indexBufferSize, indices.data());
 
 	return true;
 }

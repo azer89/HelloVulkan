@@ -6,6 +6,7 @@
 
 #include "VulkanDevice.h"
 #include "VulkanImage.h"
+#include "VulkanBuffer.h"
 #include "RenderPassCreateInfo.h"
 
 class RendererBase
@@ -40,34 +41,36 @@ protected:
 	VkPipeline graphicsPipeline_ = nullptr;
 
 	// 5. Uniform buffer
-	std::vector<VkBuffer> uniformBuffers_;
-	std::vector<VkDeviceMemory> uniformBuffersMemory_;
+	//std::vector<VkBuffer> uniformBuffers_;
+	//std::vector<VkDeviceMemory> uniformBuffersMemory_;
+	std::vector<VulkanBuffer> uniformBuffers_;
 
 protected:
 	void BeginRenderPass(VkCommandBuffer commandBuffer, size_t currentImage);
 
 	bool CreateUniformBuffers(VulkanDevice& vkDev, size_t uniformDataSize);
 
-	bool CreateUniformBuffer(
+	/*bool CreateUniformBuffer(
 		VulkanDevice& vkDev,
-		VkBuffer& buffer,
-		VkDeviceMemory& bufferMemory,
-		VkDeviceSize bufferSize);
+		//VkBuffer& buffer,
+		//VkDeviceMemory& bufferMemory,
+		VulkanBuffer& buffer,
+		VkDeviceSize bufferSize);*/
 
-	bool CreateBuffer(
+	/*bool CreateBuffer(
 		VkDevice device,
 		VkPhysicalDevice physicalDevice,
 		VkDeviceSize size,
 		VkBufferUsageFlags usage,
 		VkMemoryPropertyFlags properties,
 		VkBuffer& buffer,
-		VkDeviceMemory& bufferMemory);
+		VkDeviceMemory& bufferMemory);*/
 
-	void CopyBuffer(
+	/*void CopyBuffer(
 		VulkanDevice& vkDev, 
 		VkBuffer srcBuffer, 
 		VkBuffer dstBuffer, 
-		VkDeviceSize size);
+		VkDeviceSize size);*/
 
 	uint32_t FindMemoryType(
 		VkPhysicalDevice device, 
@@ -137,8 +140,7 @@ protected:
 	// Vertex buffer
 	size_t AllocateVertexBuffer(
 		VulkanDevice& vkDev, 
-		VkBuffer* storageBuffer, 
-		VkDeviceMemory* storageBufferMemory, 
+		VulkanBuffer* buffer, 
 		size_t vertexDataSize, 
 		const void* vertexData, 
 		size_t indexDataSize, 

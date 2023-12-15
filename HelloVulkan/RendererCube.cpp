@@ -96,7 +96,7 @@ void RendererCube::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t curre
 
 void RendererCube::UpdateUniformBuffer(VulkanDevice& vkDev, uint32_t currentImage, const glm::mat4& m)
 {
-	UploadBufferData(vkDev, uniformBuffersMemory_[currentImage], 0, glm::value_ptr(m), sizeof(glm::mat4));
+	UploadBufferData(vkDev, uniformBuffers_[currentImage].bufferMemory_, 0, glm::value_ptr(m), sizeof(glm::mat4));
 }
 
 bool RendererCube::CreateDescriptorSet(VulkanDevice& vkDev)
@@ -136,7 +136,7 @@ bool RendererCube::CreateDescriptorSet(VulkanDevice& vkDev)
 	{
 		VkDescriptorSet ds = descriptorSets_[i];
 
-		const VkDescriptorBufferInfo bufferInfo = { uniformBuffers_[i], 0, sizeof(glm::mat4) };
+		const VkDescriptorBufferInfo bufferInfo = { uniformBuffers_[i].buffer_, 0, sizeof(glm::mat4) };
 		const VkDescriptorImageInfo  imageInfo = { texture.sampler, texture.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
 
 		const std::array<VkWriteDescriptorSet, 2> descriptorWrites = {

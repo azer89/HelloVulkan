@@ -15,17 +15,24 @@ RendererBase::RendererBase(const VulkanDevice& vkDev, VulkanImage depthTexture)
 
 RendererBase::~RendererBase()
 {
-	for (auto buf : uniformBuffers_)
+	/*for (auto buf : uniformBuffers_)
 		vkDestroyBuffer(device_, buf, nullptr);
 
 	for (auto mem : uniformBuffersMemory_)
-		vkFreeMemory(device_, mem, nullptr);
+		vkFreeMemory(device_, mem, nullptr);*/
+
+	for (auto buf : uniformBuffers_)
+	{
+		buf.Destroy(device_);
+	}
 
 	vkDestroyDescriptorSetLayout(device_, descriptorSetLayout_, nullptr);
 	vkDestroyDescriptorPool(device_, descriptorPool_, nullptr);
 
 	for (auto framebuffer : swapchainFramebuffers_)
+	{
 		vkDestroyFramebuffer(device_, framebuffer, nullptr);
+	}
 
 	vkDestroyRenderPass(device_, renderPass_, nullptr);
 	vkDestroyPipelineLayout(device_, pipelineLayout_, nullptr);
@@ -56,22 +63,35 @@ bool RendererBase::CreateUniformBuffers(VulkanDevice& vkDev, size_t uniformDataS
 {
 	auto swapChainImageSize = vkDev.GetSwapChainImageSize();
 	uniformBuffers_.resize(swapChainImageSize);
-	uniformBuffersMemory_.resize(swapChainImageSize);
+	//uniformBuffersMemory_.resize(swapChainImageSize);
 	for (size_t i = 0; i < swapChainImageSize; i++)
 	{
-		if (!CreateUniformBuffer(vkDev, uniformBuffers_[i], uniformBuffersMemory_[i], uniformDataSize))
+		bool res = uniformBuffers_[i].CreateBuffer(
+			vkDev.GetDevice(),
+			vkDev.GetPhysicalDevice(),
+			uniformDataSize,
+			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+		);
+		if (!res)
+		{
+			std::cerr << "Cannot create uniform buffer\n";
+			return false;
+		}
+		/*if (!CreateUniformBuffer(vkDev, uniformBuffers_[i], uniformBuffersMemory_[i], uniformDataSize))
 		{
 			printf("Cannot create uniform buffer\n");
 			fflush(stdout);
 			return false;
-		}
+		}*/
 	}
 	return true;
 }
 
-bool RendererBase::CreateUniformBuffer(VulkanDevice& vkDev,
-	VkBuffer& buffer,
-	VkDeviceMemory& bufferMemory,
+/*bool RendererBase::CreateUniformBuffer(VulkanDevice& vkDev,
+	//VkBuffer& buffer,
+	//VkDeviceMemory& bufferMemory,
+	VulkanBuffer& buffer,
 	VkDeviceSize bufferSize)
 {
 	return CreateBuffer(vkDev.GetDevice(), 
@@ -81,64 +101,64 @@ bool RendererBase::CreateUniformBuffer(VulkanDevice& vkDev,
 		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
 		buffer, 
 		bufferMemory);
-}
+}*/
 
-bool RendererBase::CreateBuffer(VkDevice device,
-	VkPhysicalDevice physicalDevice,
-	VkDeviceSize size,
-	VkBufferUsageFlags usage,
-	VkMemoryPropertyFlags properties,
-	VkBuffer& buffer,
-	VkDeviceMemory& bufferMemory)
-{
-	const VkBufferCreateInfo bufferInfo = {
-		.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.size = size,
-		.usage = usage,
-		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
-		.queueFamilyIndexCount = 0,
-		.pQueueFamilyIndices = nullptr
-	};
-
-	VK_CHECK(vkCreateBuffer(device, &bufferInfo, nullptr, &buffer));
-
-	VkMemoryRequirements memRequirements;
-	vkGetBufferMemoryRequirements(device, buffer, &memRequirements);
-
-	const VkMemoryAllocateInfo allocInfo = {
-		.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-		.pNext = nullptr,
-		.allocationSize = memRequirements.size,
-		.memoryTypeIndex = FindMemoryType(physicalDevice, memRequirements.memoryTypeBits, properties)
-	};
-
-	VK_CHECK(vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory));
-
-	vkBindBufferMemory(device, buffer, bufferMemory, 0);
-
-	return true;
-}
-
-void RendererBase::CopyBuffer(
-	VulkanDevice& vkDev,
-	VkBuffer srcBuffer,
-	VkBuffer dstBuffer,
-	VkDeviceSize size)
-{
-	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
-
-	const VkBufferCopy copyRegion = {
-		.srcOffset = 0,
-		.dstOffset = 0,
-		.size = size
-	};
-
-	vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
-
-	vkDev.EndSingleTimeCommands(commandBuffer);
-}
+//bool RendererBase::CreateBuffer(VkDevice device,
+//	VkPhysicalDevice physicalDevice,
+//	VkDeviceSize size,
+//	VkBufferUsageFlags usage,
+//	VkMemoryPropertyFlags properties,
+//	VkBuffer& buffer,
+//	VkDeviceMemory& bufferMemory)
+//{
+//	const VkBufferCreateInfo bufferInfo = {
+//		.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+//		.pNext = nullptr,
+//		.flags = 0,
+//		.size = size,
+//		.usage = usage,
+//		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+//		.queueFamilyIndexCount = 0,
+//		.pQueueFamilyIndices = nullptr
+//	};
+//
+//	VK_CHECK(vkCreateBuffer(device, &bufferInfo, nullptr, &buffer));
+//
+//	VkMemoryRequirements memRequirements;
+//	vkGetBufferMemoryRequirements(device, buffer, &memRequirements);
+//
+//	const VkMemoryAllocateInfo allocInfo = {
+//		.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+//		.pNext = nullptr,
+//		.allocationSize = memRequirements.size,
+//		.memoryTypeIndex = FindMemoryType(physicalDevice, memRequirements.memoryTypeBits, properties)
+//	};
+//
+//	VK_CHECK(vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory));
+//
+//	vkBindBufferMemory(device, buffer, bufferMemory, 0);
+//
+//	return true;
+//}
+//
+//void RendererBase::CopyBuffer(
+//	VulkanDevice& vkDev,
+//	VkBuffer srcBuffer,
+//	VkBuffer dstBuffer,
+//	VkDeviceSize size)
+//{
+//	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
+//
+//	const VkBufferCopy copyRegion = {
+//		.srcOffset = 0,
+//		.dstOffset = 0,
+//		.size = size
+//	};
+//
+//	vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
+//
+//	vkDev.EndSingleTimeCommands(commandBuffer);
+//}
 
 uint32_t RendererBase::FindMemoryType(VkPhysicalDevice device, uint32_t typeFilter, VkMemoryPropertyFlags properties)
 {
@@ -589,8 +609,7 @@ void RendererBase::CopyImageToBuffer(
 
 size_t RendererBase::AllocateVertexBuffer(
 	VulkanDevice& vkDev, 
-	VkBuffer* storageBuffer, 
-	VkDeviceMemory* storageBufferMemory, 
+	VulkanBuffer* buffer,
 	size_t vertexDataSize, 
 	const void* vertexData, 
 	size_t indexDataSize, 
@@ -598,30 +617,53 @@ size_t RendererBase::AllocateVertexBuffer(
 {
 	VkDeviceSize bufferSize = vertexDataSize + indexDataSize;
 
-	VkBuffer stagingBuffer;
-	VkDeviceMemory stagingBufferMemory;
-	CreateBuffer(
+	//VkBuffer stagingBuffer;
+	//VkDeviceMemory stagingBufferMemory;
+	VulkanBuffer stagingBuffer;
+	stagingBuffer.CreateBuffer(
+		vkDev.GetDevice(),
+		vkDev.GetPhysicalDevice(),
+		bufferSize,
+		VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+	);
+	/*CreateBuffer(
 		vkDev.GetDevice(), 
 		vkDev.GetPhysicalDevice(), 
 		bufferSize,
 		VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
 		stagingBuffer, stagingBufferMemory);
-
+	*/
 	void* data;
-	vkMapMemory(vkDev.GetDevice(), stagingBufferMemory, 0, bufferSize, 0, &data);
+	//vkMapMemory(vkDev.GetDevice(), stagingBufferMemory, 0, bufferSize, 0, &data);
+	vkMapMemory(vkDev.GetDevice(), stagingBuffer.bufferMemory_, 0, bufferSize, 0, &data);
 	memcpy(data, vertexData, vertexDataSize);
 	memcpy((unsigned char*)data + vertexDataSize, indexData, indexDataSize);
-	vkUnmapMemory(vkDev.GetDevice(), stagingBufferMemory);
+	vkUnmapMemory(vkDev.GetDevice(), stagingBuffer.bufferMemory_);
 
-	CreateBuffer(vkDev.GetDevice(), vkDev.GetPhysicalDevice(), bufferSize,
+	/*CreateBuffer(
+		vkDev.GetDevice(), 
+		vkDev.GetPhysicalDevice(), 
+		bufferSize,
 		VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, *storageBuffer, *storageBufferMemory);
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
+		buffer->buffer_, 
+		buffer->bufferMemory_);*/
 
-	CopyBuffer(vkDev, stagingBuffer, *storageBuffer, bufferSize);
+	buffer->CreateBuffer(
+		vkDev.GetDevice(),
+		vkDev.GetPhysicalDevice(),
+		bufferSize,
+		VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-	vkDestroyBuffer(vkDev.GetDevice(), stagingBuffer, nullptr);
-	vkFreeMemory(vkDev.GetDevice(), stagingBufferMemory, nullptr);
+	//CopyBuffer(vkDev, stagingBuffer, buffer->buffer_, bufferSize);
+	buffer->CopyFrom(vkDev, stagingBuffer.buffer_, bufferSize);
+
+	//vkDestroyBuffer(vkDev.GetDevice(), stagingBuffer, nullptr);
+	//vkFreeMemory(vkDev.GetDevice(), stagingBufferMemory, nullptr);
+	stagingBuffer.Destroy(vkDev.GetDevice());
 
 	return bufferSize;
 }

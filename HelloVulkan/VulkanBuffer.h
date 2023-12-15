@@ -26,6 +26,11 @@ public:
 		VkBufferUsageFlags usage,
 		VkMemoryPropertyFlags properties);
 
+	void CopyFrom(
+		VulkanDevice& vkDev,
+		VkBuffer srcBuffer,
+		VkDeviceSize size);
+
 	void UploadBufferData(
 		VulkanDevice& vkDev,
 		VkDeviceSize deviceOffset,

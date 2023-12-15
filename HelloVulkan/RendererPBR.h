@@ -30,11 +30,10 @@ private:
 	bool CreateDescriptorSet(VulkanDevice& vkDev, uint32_t uniformDataSize);
 
 	// ASSIMP
-	bool CreatePBRVertexBuffer(
+	bool CreateVertexBuffer(
 		VulkanDevice& vkDev, 
 		const char* filename, 
-		VkBuffer* storageBuffer, 
-		VkDeviceMemory* storageBufferMemory, 
+		VulkanBuffer* storageBuffer, 
 		size_t* vertexBufferSize, 
 		size_t* indexBufferSize);
 
