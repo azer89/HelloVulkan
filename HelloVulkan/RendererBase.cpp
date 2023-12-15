@@ -451,64 +451,6 @@ void RendererBase::UploadBufferData(
 	vkUnmapMemory(vkDev.GetDevice(), bufferMemory);
 }
 
-void RendererBase::CopyBufferToImage(
-	VulkanDevice& vkDev,
-	VkBuffer buffer,
-	VkImage image,
-	uint32_t width,
-	uint32_t height,
-	uint32_t layerCount)
-{
-	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
-
-	const VkBufferImageCopy region = {
-		.bufferOffset = 0,
-		.bufferRowLength = 0,
-		.bufferImageHeight = 0,
-		.imageSubresource = VkImageSubresourceLayers {
-			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-			.mipLevel = 0,
-			.baseArrayLayer = 0,
-			.layerCount = layerCount
-		},
-		.imageOffset = VkOffset3D {.x = 0, .y = 0, .z = 0 },
-		.imageExtent = VkExtent3D {.width = width, .height = height, .depth = 1 }
-	};
-
-	vkCmdCopyBufferToImage(commandBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
-
-	vkDev.EndSingleTimeCommands(commandBuffer);
-}
-
-void RendererBase::CopyImageToBuffer(
-	VulkanDevice& vkDev,
-	VkImage image,
-	VkBuffer buffer,
-	uint32_t width,
-	uint32_t height,
-	uint32_t layerCount)
-{
-	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
-
-	const VkBufferImageCopy region = {
-		.bufferOffset = 0,
-		.bufferRowLength = 0,
-		.bufferImageHeight = 0,
-		.imageSubresource = VkImageSubresourceLayers {
-			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-			.mipLevel = 0,
-			.baseArrayLayer = 0,
-			.layerCount = layerCount
-		},
-		.imageOffset = VkOffset3D {.x = 0, .y = 0, .z = 0 },
-		.imageExtent = VkExtent3D {.width = width, .height = height, .depth = 1 }
-	};
-
-	vkCmdCopyImageToBuffer(commandBuffer, image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, buffer, 1, &region);
-
-	vkDev.EndSingleTimeCommands(commandBuffer);
-}
-
 size_t RendererBase::AllocateVertexBuffer(
 	VulkanDevice& vkDev,
 	VulkanBuffer* buffer,

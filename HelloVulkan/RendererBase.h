@@ -35,12 +35,12 @@ protected:
 	// Framebuffers (one for each command buffer)
 	std::vector<VkFramebuffer> swapchainFramebuffers_;
 
-	// 4. Pipeline & render pass (using DescriptorSets & pipeline state options)
+	// Pipeline & render pass (using DescriptorSets & pipeline state options)
 	VkRenderPass renderPass_ = nullptr;
 	VkPipelineLayout pipelineLayout_ = nullptr;
 	VkPipeline graphicsPipeline_ = nullptr;
 
-	// 5. Uniform buffer
+	// UBOs
 	std::vector<VulkanBuffer> uniformBuffers_;
 
 protected:
@@ -92,21 +92,6 @@ protected:
 		VkDeviceSize deviceOffset, 
 		const void* data, 
 		const size_t dataSize);
-
-	void CopyBufferToImage(
-		VulkanDevice& vkDev, 
-		VkBuffer buffer, 
-		VkImage image, 
-		uint32_t width, 
-		uint32_t height, 
-		uint32_t layerCount = 1);
-	
-	void CopyImageToBuffer(VulkanDevice& vkDev, 
-		VkImage image, 
-		VkBuffer buffer, 
-		uint32_t width, 
-		uint32_t height, 
-		uint32_t layerCount = 1);
 
 	// Vertex buffer
 	size_t AllocateVertexBuffer(
