@@ -1,8 +1,7 @@
-//
-#version 460
+#version 460 core
 
 layout(location = 0) in vec3 worldPos;
-layout(location = 1) in vec2 tc;
+layout(location = 1) in vec2 texCoord;
 layout(location = 2) in vec3 normal;
 
 layout(location = 0) out vec4 out_FragColor;
@@ -24,7 +23,6 @@ layout(binding = 7) uniform sampler2D texNormal;
 
 layout(binding = 8) uniform samplerCube texEnvMap;
 layout(binding = 9) uniform samplerCube texEnvMapIrradiance;
-
 layout(binding = 10) uniform sampler2D texBRDF_LUT;
 
 // Based on: https://github.com/KhronosGroup/glTF-WebGL-PBR/blob/master/shaders/pbr-frag.glsl
@@ -45,8 +43,8 @@ struct PBRInfo
     float alphaRoughness;         // roughness mapped to a more linear change in the roughness (proposed by [2])
     vec3 diffuseColor;            // color contribution from diffuse lighting
     vec3 specularColor;           // color contribution from specular lighting
-    vec3 n;                             // normal at surface point
-    vec3 v;								// vector from surface point to camera
+    vec3 n;                       // normal at surface point
+    vec3 v;                       // vector from surface point to camera
 };
 
 const float M_PI = 3.141592653589793;
@@ -54,7 +52,6 @@ const float M_PI = 3.141592653589793;
 vec4 SRGBtoLINEAR(vec4 srgbIn)
 {
     vec3 linOut = pow(srgbIn.xyz, vec3(2.2));
-
     return vec4(linOut, srgbIn.a);
 }
 
@@ -250,23 +247,23 @@ vec3 perturbNormal(vec3 n, vec3 v, vec3 normalSample, vec2 uv)
 
 void main()
 {
-    //	out_FragColor = vec4( texture(texBRDF_LUT, tc).xyz, 1.0 );
+    //	out_FragColor = vec4( texture(texBRDF_LUT, texCoord).xyz, 1.0 );
     //	out_FragColor = vec4( (normal + vec3(1.0)) * 0.5, 1.0 );
 
-    vec4 Kao = texture(texAO, tc);
-    vec4 Ke = texture(texEmissive, tc);
-    vec4 Kd = texture(texAlbedo, tc);
-    vec2 MeR = texture(texMetalRoughness, tc).yz;
+    vec4 Kao = texture(texAO, texCoord);
+    vec4 Ke = texture(texEmissive, texCoord);
+    vec4 Kd = texture(texAlbedo, texCoord);
+    vec2 MeR = texture(texMetalRoughness, texCoord).yz;
 
-    vec3 normalSample = texture(texNormal, tc).xyz;
+    vec3 normalSample = texture(texNormal, texCoord).xyz;
 
     // world-space normal
     vec3 n = normalize(normal);
 
     // normal mapping
-    n = perturbNormal(n, normalize(ubo.cameraPos.xyz - worldPos), normalSample, tc);
+    n = perturbNormal(n, normalize(ubo.cameraPos.xyz - worldPos), normalSample, texCoord);
 
-    vec4 mrSample = texture(texMetalRoughness, tc);
+    vec4 mrSample = texture(texMetalRoughness, texCoord);
 
     PBRInfo pbrInputs;
     Ke.rgb = SRGBtoLINEAR(Ke).rgb;
@@ -287,7 +284,7 @@ void main()
     //	out_FragColor = texture( texEnvMap, reflection );
     //	out_FragColor = texture( texEnvMap, reflection * vec3(-1,-1,1) );
 
-    //	out_FragColor = vec4(tc, 0.0, 1.0);
+    //	out_FragColor = vec4(texCoord, 0.0, 1.0);
     //	out_FragColor = vec4((n + vec3(1.0))*0.5, 1.0);
     //	out_FragColor = Kao;
     //	out_FragColor = Ke;

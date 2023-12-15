@@ -1,8 +1,7 @@
-//
-#version 460
+#version 460 core
 
 layout(location = 0) out vec3 worldPos;
-layout(location = 1) out vec2 tc;
+layout(location = 1) out vec2 texCoord;
 layout(location = 2) out vec3 normal;
 
 layout(binding = 0) uniform UniformBuffer
@@ -30,7 +29,7 @@ void main()
 {
     VertexData vtx = in_Vertices.data[in_Indices.data[gl_VertexIndex]];
 
-    tc = vtx.tc.xy;
+    texCoord = vtx.tc.xy;
 
     mat3 normalMatrix = transpose(inverse(mat3(ubo.m)));
     normal = normalMatrix * vtx.n.xyz;
