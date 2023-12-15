@@ -3,10 +3,8 @@
 
 #include "RendererBase.h"
 #include "VulkanTexture.h"
-#include "Bitmap.h"
 
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
+#include "glm/glm.hpp"
 
 class RendererCube : public RendererBase
 {

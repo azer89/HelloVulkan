@@ -15,7 +15,7 @@ public:
 	virtual ~RendererBase();
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) = 0;
 
-	inline VulkanImage GetDepthTexture() const { return depthTexture_; }
+	VulkanImage GetDepthTexture() const { return depthTexture_; }
 
 protected:
 	VkDevice device_ = nullptr;
@@ -112,7 +112,6 @@ protected:
 		int32_t customHeight = -1,
 		uint32_t numPatchControlPoints = 0);
 
-	// UploadBufferData
 	void UploadBufferData(
 		VulkanDevice& vkDev, 
 		const VkDeviceMemory& bufferMemory, 

@@ -1,10 +1,9 @@
 #ifndef BITMAP
 #define BITMAP
 
-#include <string.h>
 #include <vector>
 
-#include <glm/glm.hpp>
+#include "glm/glm.hpp"
 
 enum eBitmapType
 {
@@ -23,18 +22,31 @@ class Bitmap
 {
 public:
 	Bitmap() = default;
-	Bitmap(int w, int h, int comp, eBitmapFormat fmt)
-		:w_(w), h_(h), comp_(comp), fmt_(fmt), data_(w* h* comp* GetBytesPerComponent(fmt))
+	Bitmap(int w, int h, int comp, eBitmapFormat fmt) :
+		w_(w),
+		h_(h),
+		comp_(comp),
+		fmt_(fmt),
+		data_(w * h * comp * GetBytesPerComponent(fmt))
 	{
 		InitGetSetFuncs();
 	}
-	Bitmap(int w, int h, int d, int comp, eBitmapFormat fmt)
-		:w_(w), h_(h), d_(d), comp_(comp), fmt_(fmt), data_(w* h* d* comp* GetBytesPerComponent(fmt))
+	Bitmap(int w, int h, int d, int comp, eBitmapFormat fmt) :
+		w_(w),
+		h_(h),
+		d_(d),
+		comp_(comp),
+		fmt_(fmt),
+		data_(w * h * d * comp * GetBytesPerComponent(fmt))
 	{
 		InitGetSetFuncs();
 	}
-	Bitmap(int w, int h, int comp, eBitmapFormat fmt, const void* ptr)
-		:w_(w), h_(h), comp_(comp), fmt_(fmt), data_(w* h* comp* GetBytesPerComponent(fmt))
+	Bitmap(int w, int h, int comp, eBitmapFormat fmt, const void* ptr) :
+		w_(w),
+		h_(h),
+		comp_(comp),
+		fmt_(fmt),
+		data_(w * h * comp * GetBytesPerComponent(fmt))
 	{
 		InitGetSetFuncs();
 		memcpy(data_.data(), ptr, data_.size());

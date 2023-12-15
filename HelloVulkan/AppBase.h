@@ -34,12 +34,12 @@ protected:
 	void InitGLFW();
 	void InitCamera();
 	void InitTiming();
+	
 	int GLFWWindowShouldClose();
-	void Terminate();
-
 	void PollEvents();
 	void ProcessTiming();
 	void ProcessInput();
+	void Terminate();
 
 	bool DrawFrame(const std::vector<RendererBase*>& renderers);
 

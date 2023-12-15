@@ -281,7 +281,7 @@ bool RendererBase::CreateColorAndDepthFramebuffers(
 	VkImageView depthImageView, 
 	std::vector<VkFramebuffer>& swapchainFramebuffers)
 {
-	unsigned swapchainImageSize = vkDev.GetSwapChainImageSize();
+	size_t swapchainImageSize = vkDev.GetSwapChainImageSize();
 
 	swapchainFramebuffers.resize(swapchainImageSize);
 

@@ -1,4 +1,5 @@
 #include "VulkanBuffer.h"
+#include "VulkanUtility.h"
 
 bool VulkanBuffer::CreateBuffer(
 	VkDevice device,

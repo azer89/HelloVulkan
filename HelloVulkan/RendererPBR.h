@@ -4,7 +4,6 @@
 #include "RendererBase.h"
 #include "VulkanTexture.h"
 #include "VulkanBuffer.h"
-#include "Bitmap.h"
 
 class RendererPBR : public RendererBase
 {

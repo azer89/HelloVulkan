@@ -5,7 +5,6 @@
 #include "volk.h"
 
 #include "VulkanDevice.h"
-#include "VulkanBuffer.h"
 
 class VulkanImage
 {

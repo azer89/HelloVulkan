@@ -7,7 +7,6 @@
 #include "volk.h"
 
 #include <vector>
-#include <functional>
 
 struct SwapchainSupportDetails
 {
