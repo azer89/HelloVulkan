@@ -1,5 +1,6 @@
 #include "VulkanDevice.h"
 #include "VulkanUtility.h"
+#include "AppSettings.h"
 
 void VulkanDevice::CreateCompute
 (
@@ -265,9 +266,12 @@ VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface, bool supportScreens
 VkPresentModeKHR VulkanDevice::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)
 {
 	for (const auto mode : availablePresentModes)
-		if (mode == VK_PRESENT_MODE_MAILBOX_KHR)
+	{
+		if (mode == AppSettings::PresentMode)
+		{
 			return mode;
-
+		}
+	}
 	// FIFO will always be supported
 	return VK_PRESENT_MODE_FIFO_KHR;
 }

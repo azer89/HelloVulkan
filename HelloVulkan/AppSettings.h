@@ -3,10 +3,18 @@
 
 #include <string>
 
+#define VK_NO_PROTOTYPES
+#include "volk.h"
+
 namespace AppSettings
 {
-	const int ScreenWidth = 1600;
-	const int ScreenHeight = 1200;
+	static int ScreenWidth = 1600;
+	static int ScreenHeight = 1200;
+
+	// VK_PRESENT_MODE_FIFO_KHR --> Lock to screen FPS
+	// VK_PRESENT_MODE_MAILBOX_KHR --> Triple buffering
+	static VkPresentModeKHR PresentMode = VK_PRESENT_MODE_FIFO_KHR;
+	
 	const std::string ScreenTitle = "Hello Vulkan";
 	const std::string ShaderFolder = "C://Users//azer//workspace//HelloVulkan//Shaders//";
 	const std::string ModelFolder = "C://Users//azer//workspace//HelloVulkan//Models//";

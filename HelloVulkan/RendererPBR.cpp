@@ -1,6 +1,5 @@
 #include "RendererPBR.h"
 #include "VulkanUtility.h"
-#include "Bitmap.h"
 #include "AppSettings.h"
 
 #include "gli/gli.hpp"
