@@ -126,28 +126,34 @@ RendererPBR::RendererPBR(
 		VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE
 	);
 
+	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo());
+
+	CreateUniformBuffers(vkDev, uniformBufferSize);
+
+	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthTexture_.imageView, swapchainFramebuffers_);
+
+	CreateDescriptorPool(
+		vkDev, 
+		1, // uniformBufferCount
+		2, // storageBufferCount
+		8, // samplerCount = textureCount + cubemapCount
+		&descriptorPool_);
+
+	CreateDescriptorSet(vkDev, uniformBufferSize);
+
+	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
+
 	std::string vertFile = AppSettings::ShaderFolder + "pbr_mesh.vert";
 	std::string fragFile = AppSettings::ShaderFolder + "pbr_mesh.frag";
-
-	if (!CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo()) ||
-		!CreateUniformBuffers(vkDev, uniformBufferSize) ||
-		!CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthTexture_.imageView, swapchainFramebuffers_) ||
-		!CreateDescriptorPool(vkDev, 1, 2, 8, &descriptorPool_) ||
-		!CreateDescriptorSet(vkDev, uniformBufferSize) ||
-		!CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_) ||
-		!CreateGraphicsPipeline(
-			vkDev, 
-			renderPass_, 
-			pipelineLayout_,
-			{ 
-				vertFile.c_str(),
-				fragFile.c_str()
-			},
-			&graphicsPipeline_))
-	{
-		printf("PBRModelRenderer: failed to create pipeline\n");
-		exit(EXIT_FAILURE);
-	}
+	CreateGraphicsPipeline(
+		vkDev,
+		renderPass_,
+		pipelineLayout_,
+		{
+			vertFile.c_str(),
+			fragFile.c_str()
+		},
+		&graphicsPipeline_);
 }
 
 RendererPBR::~RendererPBR()
