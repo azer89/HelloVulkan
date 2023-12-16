@@ -2,7 +2,11 @@
 
 A low-level implementation of physically-based lighting model to generate realistic rendering in real time.
 
-<img width="800" alt="Dragon" src="https://github.com/azer89/HelloVulkan/assets/790432/5ad0044f-a445-4587-90fc-ed7fca9d811d">
+
+
+https://github.com/azer89/HelloVulkan/assets/790432/10edb1a5-ff3f-4e15-8199-1b3aa1c92a62
+
+
 
 ### Build
 * Vulkan 1.3
