@@ -28,9 +28,9 @@ struct VertexData
 	static std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions()
 	{
 		std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
-		attributeDescriptions.push_back({ 0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(VertexData, pos) });
-		attributeDescriptions.push_back({ 1, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(VertexData, n) });
-		attributeDescriptions.push_back({ 2, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(VertexData, tc) });
+		attributeDescriptions.push_back({ 0, 0, VK_FORMAT_R32G32B32A32_SFLOAT, offsetof(VertexData, pos) });
+		attributeDescriptions.push_back({ 1, 0, VK_FORMAT_R32G32B32A32_SFLOAT, offsetof(VertexData, n) });
+		attributeDescriptions.push_back({ 2, 0, VK_FORMAT_R32G32B32A32_SFLOAT, offsetof(VertexData, tc) });
 		return attributeDescriptions;
 	}
 };
@@ -44,9 +44,6 @@ public:
 	VulkanBuffer vertexBuffer_;
 	VulkanBuffer indexBuffer_;
 
-	// SSBO
-	VulkanBuffer storageBuffer_;
-
 	std::vector<VulkanTexture> textures_;
 
 	// Textures
@@ -56,6 +53,10 @@ public:
 	void Create(VulkanDevice& vkDev, const char* filename);
 
 	void Destroy(VkDevice device);
+
+private:
+	// SSBO, currently not used
+	VulkanBuffer storageBuffer_;
 
 private:
 	void AllocateVertexBuffer(

@@ -1,8 +1,8 @@
 #version 460 core
 
-layout(location = 0) in vec3 positionIn;
-layout(location = 1) in vec3 normalIn;
-layout(location = 2) in vec2 uvIn;
+layout(location = 0) in vec4 positionIn;
+layout(location = 1) in vec4 normalIn;
+layout(location = 2) in vec4 uvIn;
 
 layout(location = 0) out vec3 worldPos;
 layout(location = 1) out vec2 texCoord;
@@ -14,30 +14,16 @@ layout(binding = 0) uniform UniformBuffer
     mat4 mv;
     mat4 m;
     vec4 cameraPos;
-}
-ubo;
-
-struct VertexData
-{
-    vec4 pos;
-    vec4 n;
-    vec4 tc;
-};
-
-layout(binding = 1) readonly buffer Vertices { VertexData data []; }
-in_Vertices;
-layout(binding = 2) readonly buffer Indices { uint data []; }
-in_Indices;
+} ubo;
 
 void main()
 {
-    VertexData vtx = in_Vertices.data[in_Indices.data[gl_VertexIndex]];
+    worldPos = (ubo.m * positionIn).xyz;
 
-    texCoord = vtx.tc.xy;
+    texCoord = uvIn.xy;
 
     mat3 normalMatrix = transpose(inverse(mat3(ubo.m)));
-    normal = normalMatrix * vtx.n.xyz;
-    worldPos = (ubo.m * vtx.pos).xyz;
+    normal = normalMatrix * normalIn.xyz;
 
-    gl_Position = ubo.mvp * vtx.pos;
+    gl_Position = ubo.mvp * positionIn;
 }

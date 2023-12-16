@@ -39,10 +39,11 @@ void Mesh::Create(
 		const aiVector3D t = mesh->mTextureCoords[0][i];
 		const aiVector3D n = mesh->mNormals[i];
 		vertices.push_back(
-			{
-				.pos = glm::vec4(v.x, v.y, v.z, 1.0f),
-				.n = glm::vec4(n.x, n.y, n.z, 0.0f),
-				.tc = glm::vec4(t.x, 1.0f - t.y, 0.0f, 0.0f) });
+		{
+			.pos = glm::vec4(v.x, v.y, v.z, 1.0f),
+			.n = glm::vec4(n.x, n.y, n.z, 0.0f),
+			.tc = glm::vec4(t.x, 1.0f - t.y, 0.0f, 0.0f) 
+		});
 	}
 
 	std::vector<unsigned int> indices;

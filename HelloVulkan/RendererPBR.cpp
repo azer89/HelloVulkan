@@ -87,11 +87,11 @@ RendererPBR::RendererPBR(
 
 	mesh_.Create(vkDev, modelFile);
 	// The numbers are the bindIndices
-	mesh_.AddTexture(vkDev, texAOFile, 3);
-	mesh_.AddTexture(vkDev, texEmissiveFile, 4);
-	mesh_.AddTexture(vkDev, texAlbedoFile, 5);
-	mesh_.AddTexture(vkDev, texMeRFile, 6);
-	mesh_.AddTexture(vkDev, texNormalFile, 7);
+	mesh_.AddTexture(vkDev, texAOFile, 1);
+	mesh_.AddTexture(vkDev, texEmissiveFile, 2);
+	mesh_.AddTexture(vkDev, texAlbedoFile, 3);
+	mesh_.AddTexture(vkDev, texMeRFile, 4);
+	mesh_.AddTexture(vkDev, texNormalFile, 5);
 
 	// cube maps
 	LoadCubeMap(vkDev, texEnvMapFile, envMap_);
@@ -200,8 +200,8 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, uint32_t uniformDataS
 
 	uint32_t bindingIndex = 0;
 	bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT));
-	bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT));
-	bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT));
+	//bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT));
+	//bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT));
 
 	// PBR textures
 	for (VulkanTexture& tex : mesh_.textures_)
@@ -273,15 +273,15 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, uint32_t uniformDataS
 		VkDescriptorSet ds = descriptorSets_[i];
 
 		const VkDescriptorBufferInfo bufferInfo1 = { uniformBuffers_[i].buffer_, 0, uniformDataSize };
-		const VkDescriptorBufferInfo bufferInfo2 = { mesh_.storageBuffer_.buffer_, 0, mesh_.vertexBufferSize_ };
-		const VkDescriptorBufferInfo bufferInfo3 = { mesh_.storageBuffer_.buffer_, mesh_.vertexBufferSize_, mesh_.indexBufferSize_ };
+		//const VkDescriptorBufferInfo bufferInfo2 = { mesh_.storageBuffer_.buffer_, 0, mesh_.vertexBufferSize_ };
+		//const VkDescriptorBufferInfo bufferInfo3 = { mesh_.storageBuffer_.buffer_, mesh_.vertexBufferSize_, mesh_.indexBufferSize_ };
 
 		uint32_t bindIndex = 0;
 
 		std::vector<VkWriteDescriptorSet> descriptorWrites;
 		descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo1, bindIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
-		descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo2, bindIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER));
-		descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo3, bindIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER));
+		//descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo2, bindIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER));
+		//descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo3, bindIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER));
 
 		std::vector<VkDescriptorImageInfo> imageInfos;
 		std::vector<uint32_t> bindIndices;
