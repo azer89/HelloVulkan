@@ -56,8 +56,6 @@ vec4 SRGBtoLINEAR(vec4 srgbIn)
 }
 
 // Calculation of the lighting contribution from an optional Image Based Light source.
-// Precomputed Environment Maps are required uniform inputs and are computed as outlined in [1].
-// See our README.md on Environment Maps [3] for additional discussion.
 vec3 getIBLContribution(PBRInfo pbrInputs, vec3 n, vec3 reflection)
 {
     float mipCount = float(textureQueryLevels(texEnvMap));
@@ -65,15 +63,10 @@ vec3 getIBLContribution(PBRInfo pbrInputs, vec3 n, vec3 reflection)
     // retrieve a scale and bias to F0. See [1], Figure 3
     vec2 brdfSamplePoint = clamp(vec2(pbrInputs.NdotV, 1.0 - pbrInputs.perceptualRoughness), vec2(0.0, 0.0), vec2(1.0, 1.0));
     vec3 brdf = textureLod(texBRDF_LUT, brdfSamplePoint, 0).rgb;
-    //#ifdef VULKAN
-    // convert cubemap coordinates into Vulkan coordinate space
-    //vec3 cm = vec3(-1.0, -1.0, 1.0);
-    //#else
-    vec3 cm = vec3(1.0, 1.0, 1.0);
-    //#endif
+
     // HDR envmaps are already linear
-    vec3 diffuseLight = texture(texEnvMapIrradiance, n.xyz * cm).rgb;
-    vec3 specularLight = textureLod(texEnvMap, reflection.xyz * cm, lod).rgb;
+    vec3 diffuseLight = texture(texEnvMapIrradiance, n.xyz).rgb;
+    vec3 specularLight = textureLod(texEnvMap, reflection.xyz, lod).rgb;
 
     vec3 diffuse = diffuseLight * pbrInputs.diffuseColor;
     vec3 specular = specularLight * (pbrInputs.specularColor * brdf.x + brdf.y);
