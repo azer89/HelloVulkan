@@ -153,7 +153,9 @@ RendererPBR::RendererPBR(
 			vertFile.c_str(),
 			fragFile.c_str()
 		},
-		&graphicsPipeline_);
+		&graphicsPipeline_,
+		true // hasVertexBuffer
+	);
 }
 
 RendererPBR::~RendererPBR()
