@@ -15,21 +15,19 @@ layout(binding = 0) uniform UniformBuffer
 }
 ubo;
 
-layout(binding = 1) uniform sampler2D texAO;
-layout(binding = 2) uniform sampler2D texEmissive;
-layout(binding = 3) uniform sampler2D texAlbedo;
+layout(binding = 1) uniform sampler2D texture_ao1; 
+layout(binding = 2) uniform sampler2D texture_emissive1; 
+layout(binding = 3) uniform sampler2D texture_diffuse1; 
 layout(binding = 4) uniform sampler2D texMetalRoughness;
-layout(binding = 5) uniform sampler2D texNormal;
+layout(binding = 5) uniform sampler2D texture_normal1; 
 
-layout(binding = 6) uniform samplerCube texEnvMap;
-layout(binding = 7) uniform samplerCube texEnvMapIrradiance;
-layout(binding = 8) uniform sampler2D texBRDF_LUT;
+layout(binding = 6) uniform samplerCube envMap; // Specular
+layout(binding = 7) uniform samplerCube irradianceMap; // Diffuse
+layout(binding = 8) uniform sampler2D brdfLUT; 
 
-// Based on: https://github.com/KhronosGroup/glTF-WebGL-PBR/blob/master/shaders/pbr-frag.glsl
+// Based on KhronosGroup's glTF-WebGL-PBR
 
 // Encapsulate the various inputs used by the various functions in the shading equation
-// We store values in this struct to simplify the integration of alternative implementations
-// of the shading terms, outlined in the Readme.MD Appendix.
 struct PBRInfo
 {
     float NdotL;                  // cos angle between normal and light direction
@@ -58,15 +56,15 @@ vec4 SRGBtoLINEAR(vec4 srgbIn)
 // Calculation of the lighting contribution from an optional Image Based Light source.
 vec3 getIBLContribution(PBRInfo pbrInputs, vec3 n, vec3 reflection)
 {
-    float mipCount = float(textureQueryLevels(texEnvMap));
+    float mipCount = float(textureQueryLevels(envMap));
     float lod = pbrInputs.perceptualRoughness * mipCount;
-    // retrieve a scale and bias to F0. See [1], Figure 3
+    // Retrieve a scale and bias to F0
     vec2 brdfSamplePoint = clamp(vec2(pbrInputs.NdotV, 1.0 - pbrInputs.perceptualRoughness), vec2(0.0, 0.0), vec2(1.0, 1.0));
-    vec3 brdf = textureLod(texBRDF_LUT, brdfSamplePoint, 0).rgb;
+    vec3 brdf = textureLod(brdfLUT, brdfSamplePoint, 0).rgb;
 
     // HDR envmaps are already linear
-    vec3 diffuseLight = texture(texEnvMapIrradiance, n.xyz).rgb;
-    vec3 specularLight = textureLod(texEnvMap, reflection.xyz, lod).rgb;
+    vec3 diffuseLight = texture(irradianceMap, n.xyz).rgb;
+    vec3 specularLight = textureLod(envMap, reflection.xyz, lod).rgb;
 
     vec3 diffuse = diffuseLight * pbrInputs.diffuseColor;
     vec3 specular = specularLight * (pbrInputs.specularColor * brdf.x + brdf.y);
@@ -239,12 +237,11 @@ vec3 perturbNormal(vec3 n, vec3 v, vec3 normalSample, vec2 uv)
 
 void main()
 {
-    vec4 Kao = texture(texAO, texCoord);
-    vec4 Ke = texture(texEmissive, texCoord);
-    vec4 Kd = texture(texAlbedo, texCoord);
-    vec2 MeR = texture(texMetalRoughness, texCoord).yz;
+    vec4 Kao = texture(texture_ao1, texCoord);
+    vec4 Ke = texture(texture_emissive1, texCoord);
+    vec4 Kd = texture(texture_diffuse1, texCoord);
 
-    vec3 normalSample = texture(texNormal, texCoord).xyz;
+    vec3 normalSample = texture(texture_normal1, texCoord).xyz;
 
     // World-space normal
     vec3 n = normalize(normal);
