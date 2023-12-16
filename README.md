@@ -1,6 +1,6 @@
-# Simple Vulkan Renderer
+# Vulkan PBR
 
-A project about learning Vulkan and PBR. 
+A low-level implementation of physically-based lighting model to generate realistic rendering in real time.
 
 <img width="800" alt="Dragon" src="https://github.com/azer89/HelloVulkan/assets/790432/5ad0044f-a445-4587-90fc-ed7fca9d811d">
 
