@@ -2,6 +2,7 @@
 #include "VulkanUtility.h"
 #include "VulkanShader.h"
 #include "VulkanBuffer.h"
+#include "Mesh.h"
 
 #include <array>
 
@@ -285,6 +286,7 @@ bool RendererBase::CreateGraphicsPipeline(
 	VkPipelineLayout pipelineLayout,
 	const std::vector<const char*>& shaderFiles,
 	VkPipeline* pipeline,
+	bool hasVertexBuffer,
 	VkPrimitiveTopology topology,
 	bool useDepth,
 	bool useBlending,
@@ -307,9 +309,24 @@ bool RendererBase::CreateGraphicsPipeline(
 		shaderStages[i] = shaderModules[i].GetShaderStageInfo(stage, "main");
 	}
 
-	const VkPipelineVertexInputStateCreateInfo vertexInputInfo = {
-		.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO
-	};
+	std::vector<VkVertexInputBindingDescription> bindingDescriptions = VertexData::GetBindingDescriptions();
+	std::vector<VkVertexInputAttributeDescription> attributeDescriptions = VertexData::GetAttributeDescriptions();
+
+	VkPipelineVertexInputStateCreateInfo vertexInputInfo;
+	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+	vertexInputInfo.pNext = nullptr;
+	vertexInputInfo.flags = 0;
+	vertexInputInfo.vertexBindingDescriptionCount = 0;
+	vertexInputInfo.vertexAttributeDescriptionCount = 0;
+	vertexInputInfo.pVertexAttributeDescriptions = nullptr;
+	vertexInputInfo.pVertexBindingDescriptions = nullptr;
+	if (hasVertexBuffer)
+	{
+		vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+		vertexInputInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(bindingDescriptions.size());
+		vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+		vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
+	}
 
 	const VkPipelineInputAssemblyStateCreateInfo inputAssembly = {
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,

@@ -15,15 +15,15 @@ layout(binding = 0) uniform UniformBuffer
 }
 ubo;
 
-layout(binding = 3) uniform sampler2D texAO;
-layout(binding = 4) uniform sampler2D texEmissive;
-layout(binding = 5) uniform sampler2D texAlbedo;
-layout(binding = 6) uniform sampler2D texMetalRoughness;
-layout(binding = 7) uniform sampler2D texNormal;
+layout(binding = 1) uniform sampler2D texAO;
+layout(binding = 2) uniform sampler2D texEmissive;
+layout(binding = 3) uniform sampler2D texAlbedo;
+layout(binding = 4) uniform sampler2D texMetalRoughness;
+layout(binding = 5) uniform sampler2D texNormal;
 
-layout(binding = 8) uniform samplerCube texEnvMap;
-layout(binding = 9) uniform samplerCube texEnvMapIrradiance;
-layout(binding = 10) uniform sampler2D texBRDF_LUT;
+layout(binding = 6) uniform samplerCube texEnvMap;
+layout(binding = 7) uniform samplerCube texEnvMapIrradiance;
+layout(binding = 8) uniform sampler2D texBRDF_LUT;
 
 // Based on: https://github.com/KhronosGroup/glTF-WebGL-PBR/blob/master/shaders/pbr-frag.glsl
 

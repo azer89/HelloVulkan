@@ -87,11 +87,11 @@ RendererPBR::RendererPBR(
 
 	mesh_.Create(vkDev, modelFile);
 	// The numbers are the bindIndices
-	mesh_.AddTexture(vkDev, texAOFile, 3);
-	mesh_.AddTexture(vkDev, texEmissiveFile, 4);
-	mesh_.AddTexture(vkDev, texAlbedoFile, 5);
-	mesh_.AddTexture(vkDev, texMeRFile, 6);
-	mesh_.AddTexture(vkDev, texNormalFile, 7);
+	mesh_.AddTexture(vkDev, texAOFile, 1);
+	mesh_.AddTexture(vkDev, texEmissiveFile, 2);
+	mesh_.AddTexture(vkDev, texAlbedoFile, 3);
+	mesh_.AddTexture(vkDev, texMeRFile, 4);
+	mesh_.AddTexture(vkDev, texNormalFile, 5);
 
 	// cube maps
 	LoadCubeMap(vkDev, texEnvMapFile, envMap_);
@@ -153,7 +153,9 @@ RendererPBR::RendererPBR(
 			vertFile.c_str(),
 			fragFile.c_str()
 		},
-		&graphicsPipeline_);
+		&graphicsPipeline_,
+		true // hasVertexBuffer
+	);
 }
 
 RendererPBR::~RendererPBR()
@@ -169,7 +171,17 @@ RendererPBR::~RendererPBR()
 void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
 {
 	BeginRenderPass(commandBuffer, currentImage);
-	vkCmdDraw(commandBuffer, static_cast<uint32_t>(mesh_.indexBufferSize_ / (sizeof(unsigned int))), 1, 0, 0);
+
+	// Vertex buffer
+	VkBuffer buffers[] = { mesh_.vertexBuffer_.buffer_ };
+	VkDeviceSize offsets[] = { 0 };
+	vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
+
+	// Index buffer
+	vkCmdBindIndexBuffer(commandBuffer, mesh_.indexBuffer_.buffer_, 0, VK_INDEX_TYPE_UINT32);
+
+	//vkCmdDraw(commandBuffer, static_cast<uint32_t>(mesh_.indexBufferSize_ / (sizeof(unsigned int))), 1, 0, 0);
+	vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh_.indexBufferSize_ / (sizeof(unsigned int))), 1, 0, 0, 0);
 	vkCmdEndRenderPass(commandBuffer);
 }
 
@@ -188,8 +200,8 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, uint32_t uniformDataS
 
 	uint32_t bindingIndex = 0;
 	bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT));
-	bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT));
-	bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT));
+	//bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT));
+	//bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT));
 
 	// PBR textures
 	for (VulkanTexture& tex : mesh_.textures_)
@@ -261,15 +273,15 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, uint32_t uniformDataS
 		VkDescriptorSet ds = descriptorSets_[i];
 
 		const VkDescriptorBufferInfo bufferInfo1 = { uniformBuffers_[i].buffer_, 0, uniformDataSize };
-		const VkDescriptorBufferInfo bufferInfo2 = { mesh_.storageBuffer_.buffer_, 0, mesh_.vertexBufferSize_ };
-		const VkDescriptorBufferInfo bufferInfo3 = { mesh_.storageBuffer_.buffer_, mesh_.vertexBufferSize_, mesh_.indexBufferSize_ };
+		//const VkDescriptorBufferInfo bufferInfo2 = { mesh_.storageBuffer_.buffer_, 0, mesh_.vertexBufferSize_ };
+		//const VkDescriptorBufferInfo bufferInfo3 = { mesh_.storageBuffer_.buffer_, mesh_.vertexBufferSize_, mesh_.indexBufferSize_ };
 
 		uint32_t bindIndex = 0;
 
 		std::vector<VkWriteDescriptorSet> descriptorWrites;
 		descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo1, bindIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
-		descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo2, bindIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER));
-		descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo3, bindIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER));
+		//descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo2, bindIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER));
+		//descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo3, bindIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER));
 
 		std::vector<VkDescriptorImageInfo> imageInfos;
 		std::vector<uint32_t> bindIndices;

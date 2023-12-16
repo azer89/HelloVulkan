@@ -78,6 +78,7 @@ protected:
 		VkPipelineLayout pipelineLayout,
 		const std::vector<const char*>& shaderFiles,
 		VkPipeline* pipeline,
+		bool hasVertexBuffer = false,
 		VkPrimitiveTopology topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST /* defaults to triangles*/,
 		bool useDepth = true,
 		bool useBlending = true,
