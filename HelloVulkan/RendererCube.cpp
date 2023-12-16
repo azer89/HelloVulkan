@@ -59,25 +59,26 @@ RendererCube::RendererCube(VulkanDevice& vkDev, VulkanImage inDepthTexture, cons
 	std::string vertexShader = AppSettings::ShaderFolder + "cube.vert";
 	std::string fragmentShader = AppSettings::ShaderFolder + "cube.frag";
 
-	// Pipeline initialization
-	if (!CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo()) ||
-		!CreateUniformBuffers(vkDev, sizeof(glm::mat4)) ||
-		!CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthTexture_.imageView, swapchainFramebuffers_) ||
-		!CreateDescriptorPool(vkDev, 1, 0, 1, &descriptorPool_) ||
-		!CreateDescriptorSet(vkDev) ||
-		!CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_) ||
-		!CreateGraphicsPipeline(vkDev, 
-			renderPass_, 
-			pipelineLayout_, 
-			{ 
-				vertexShader.c_str(),
-				fragmentShader.c_str(),
-			}, 
-			&graphicsPipeline_))
-	{
-		printf("CubeRenderer: failed to create pipeline\n");
-		exit(EXIT_FAILURE);
-	}
+	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo());
+
+	CreateUniformBuffers(vkDev, sizeof(glm::mat4));
+	
+	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthTexture_.imageView, swapchainFramebuffers_);
+	
+	CreateDescriptorPool(vkDev, 1, 0, 1, &descriptorPool_);
+	
+	CreateDescriptorSet(vkDev);
+	
+	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
+	
+	CreateGraphicsPipeline(vkDev,
+		renderPass_,
+		pipelineLayout_,
+		{
+			vertexShader.c_str(),
+			fragmentShader.c_str(),
+		},
+		&graphicsPipeline_);
 }
 
 RendererCube::~RendererCube()

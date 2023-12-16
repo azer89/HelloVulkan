@@ -4,7 +4,7 @@ layout(location = 0) in vec3 worldPos;
 layout(location = 1) in vec2 texCoord;
 layout(location = 2) in vec3 normal;
 
-layout(location = 0) out vec4 out_FragColor;
+layout(location = 0) out vec4 fragColor;
 
 layout(binding = 0) uniform UniformBuffer
 {
@@ -86,7 +86,6 @@ vec3 getIBLContribution(PBRInfo pbrInputs, vec3 n, vec3 reflection)
 vec3 diffuseBurley(PBRInfo pbrInputs)
 {
     float f90 = 2.0 * pbrInputs.LdotH * pbrInputs.LdotH * pbrInputs.alphaRoughness - 0.5;
-
     return (pbrInputs.diffuseColor / M_PI) * (1.0 + f90 * pow((1.0 - pbrInputs.NdotL), 5.0)) * (1.0 + f90 * pow((1.0 - pbrInputs.NdotV), 5.0));
 }
 
@@ -182,7 +181,7 @@ vec3 calculatePBRLightContribution(inout PBRInfo pbrInputs, vec3 lightDirection,
     vec3 n = pbrInputs.n;
     vec3 v = pbrInputs.v;
     vec3 l = normalize(lightDirection); // Vector from surface point to light
-    vec3 h = normalize(l + v);              // Half vector between both l and v
+    vec3 h = normalize(l + v);          // Half vector between both l and v
 
     float NdotV = pbrInputs.NdotV;
     float NdotL = clamp(dot(n, l), 0.001, 1.0);
@@ -210,28 +209,28 @@ vec3 calculatePBRLightContribution(inout PBRInfo pbrInputs, vec3 lightDirection,
 }
 
 // http://www.thetenthplanet.de/archives/1180
-// modified to fix handedness of the resulting cotangent frame
+// Modified to fix handedness of the resulting cotangent frame
 mat3 cotangentFrame(vec3 N, vec3 p, vec2 uv)
 {
-    // get edge vectors of the pixel triangle
+    // Get edge vectors of the pixel triangle
     vec3 dp1 = dFdx(p);
     vec3 dp2 = dFdy(p);
     vec2 duv1 = dFdx(uv);
     vec2 duv2 = dFdy(uv);
 
-    // solve the linear system
+    // Solve the linear system
     vec3 dp2perp = cross(dp2, N);
     vec3 dp1perp = cross(N, dp1);
     vec3 T = dp2perp * duv1.x + dp1perp * duv2.x;
     vec3 B = dp2perp * duv1.y + dp1perp * duv2.y;
 
-    // construct a scale-invariant frame
+    // Construct a scale-invariant frame
     float invmax = inversesqrt(max(dot(T, T), dot(B, B)));
 
-    // calculate handedness of the resulting cotangent frame
+    // Calculate handedness of the resulting cotangent frame
     float w = (dot(cross(N, T), B) < 0.0) ? -1.0 : 1.0;
 
-    // adjust tangent if needed
+    // Adjust tangent if needed
     T = T * w;
 
     return mat3(T * invmax, B * invmax, N);
@@ -247,9 +246,6 @@ vec3 perturbNormal(vec3 n, vec3 v, vec3 normalSample, vec2 uv)
 
 void main()
 {
-    //	out_FragColor = vec4( texture(texBRDF_LUT, texCoord).xyz, 1.0 );
-    //	out_FragColor = vec4( (normal + vec3(1.0)) * 0.5, 1.0 );
-
     vec4 Kao = texture(texAO, texCoord);
     vec4 Ke = texture(texEmissive, texCoord);
     vec4 Kd = texture(texAlbedo, texCoord);
@@ -257,38 +253,24 @@ void main()
 
     vec3 normalSample = texture(texNormal, texCoord).xyz;
 
-    // world-space normal
+    // World-space normal
     vec3 n = normalize(normal);
 
-    // normal mapping
+    // Normal mapping
     n = perturbNormal(n, normalize(ubo.cameraPos.xyz - worldPos), normalSample, texCoord);
 
     vec4 mrSample = texture(texMetalRoughness, texCoord);
 
     PBRInfo pbrInputs;
     Ke.rgb = SRGBtoLINEAR(Ke).rgb;
-    // image-based lighting
+    // Image-based lighting
     vec3 color = calculatePBRInputsMetallicRoughness(Kd, n, ubo.cameraPos.xyz, worldPos, mrSample, pbrInputs);
-    // one hardcoded light source
+    // One hardcoded light source
     color += calculatePBRLightContribution(pbrInputs, normalize(vec3(-1.0, -1.0, -1.0)), vec3(1.0));
-    // ambient occlusion
+    // Ambient occlusion
     color = color * (Kao.r < 0.01 ? 1.0 : Kao.r);
-    // emissive
+    // Emissive
     color = pow(Ke.rgb + color, vec3(1.0 / 2.2));
 
-    out_FragColor = vec4(color, 1.0);
-
-    // test cube map
-    //	vec3 v = normalize(ubo.cameraPos.xyz - worldPos);
-    //	vec3 reflection = -normalize(reflect(v, n));
-    //	out_FragColor = texture( texEnvMap, reflection );
-    //	out_FragColor = texture( texEnvMap, reflection * vec3(-1,-1,1) );
-
-    //	out_FragColor = vec4(texCoord, 0.0, 1.0);
-    //	out_FragColor = vec4((n + vec3(1.0))*0.5, 1.0);
-    //	out_FragColor = Kao;
-    //	out_FragColor = Ke;
-    //	out_FragColor = Kd;
-    //	out_FragColor = vec4(MeR, 0.0, 1.0);
-
+    fragColor = vec4(color, 1.0);
 }
