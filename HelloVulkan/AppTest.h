@@ -21,6 +21,8 @@ private:
 	std::unique_ptr<RendererClear> clearPtr;
 	std::unique_ptr<RendererFinish> finishPtr;
 	std::unique_ptr<RendererPBR> pbrPtr;
+
+	float modelRotation;
 };
 
 #endif
