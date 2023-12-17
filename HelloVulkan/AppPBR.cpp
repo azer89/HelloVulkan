@@ -1,4 +1,4 @@
-#include "AppTest.h"
+#include "AppPBR.h"
 #include "AppSettings.h"
 #include "VulkanImage.h"
 #include "VulkanUtility.h"
@@ -13,12 +13,12 @@ struct UBO
 	glm::vec4 cameraPos;
 } ubo;
 
-AppTest::AppTest() :
+AppPBR::AppPBR() :
 	modelRotation(0.f)
 {
 }
 
-int AppTest::MainLoop()
+int AppPBR::MainLoop()
 {
 	std::string cubemapTextureFile = AppSettings::TextureFolder + "the_sky_is_on_fire_4k.hdr";
 	std::string cubemapIrradianceFile = AppSettings::TextureFolder + "the_sky_is_on_fire_4k_irradiance.hdr";
@@ -78,7 +78,7 @@ int AppTest::MainLoop()
 	return 0;
 }
 
-void AppTest::ComposeFrame(uint32_t imageIndex, const std::vector<RendererBase*>& renderers)
+void AppPBR::ComposeFrame(uint32_t imageIndex, const std::vector<RendererBase*>& renderers)
 {
 	// Renderer
 	glm::mat4 model(1.f);

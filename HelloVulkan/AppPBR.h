@@ -1,5 +1,5 @@
-#ifndef APP_TEST
-#define APP_TEST
+#ifndef APP_PBR
+#define APP_PBR
 
 #include "AppBase.h"
 #include "RendererCube.h"
@@ -9,10 +9,10 @@
 
 #include <memory>
 
-class AppTest : AppBase
+class AppPBR : AppBase
 {
 public:
-	AppTest();
+	AppPBR();
 	int MainLoop() override;
 	void ComposeFrame(uint32_t imageIndex, const std::vector<RendererBase*>& renderers) override;
 

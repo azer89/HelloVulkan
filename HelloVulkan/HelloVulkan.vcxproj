@@ -136,7 +136,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AppBase.cpp" />
-    <ClCompile Include="AppTest.cpp" />
+    <ClCompile Include="AppPBR.cpp" />
     <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="main.cpp" />
@@ -158,7 +158,7 @@
   <ItemGroup>
     <ClInclude Include="AppBase.h" />
     <ClInclude Include="AppSettings.h" />
-    <ClInclude Include="AppTest.h" />
+    <ClInclude Include="AppPBR.h" />
     <ClInclude Include="Bitmap.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Mesh.h" />

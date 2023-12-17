@@ -1,8 +1,9 @@
-#include "AppTest.h"
+#include "AppPBR.h"
 
+// Entry point
 int main()
 {
-	AppTest app;
+	AppPBR app;
 	auto returnValue = app.MainLoop();
 	return returnValue;
 }

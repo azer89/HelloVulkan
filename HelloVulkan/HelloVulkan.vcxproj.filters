@@ -24,7 +24,7 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AppTest.cpp">
+    <ClCompile Include="AppPBR.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VulkanInstance.cpp">
@@ -83,7 +83,7 @@
     <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AppTest.h">
+    <ClInclude Include="AppPBR.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VulkanInstance.h">

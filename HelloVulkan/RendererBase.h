@@ -87,6 +87,7 @@ protected:
 		int32_t customHeight = -1,
 		uint32_t numPatchControlPoints = 0);
 
+	// Neeeded for UBO
 	void UploadBufferData(
 		VulkanDevice& vkDev, 
 		const VkDeviceMemory& bufferMemory, 

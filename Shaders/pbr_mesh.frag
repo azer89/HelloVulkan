@@ -44,24 +44,22 @@ layout(binding = 6) uniform samplerCube envMap; // Specular
 layout(binding = 7) uniform samplerCube irradianceMap; // Diffuse
 layout(binding = 8) uniform sampler2D brdfLUT; 
 
-// Based on KhronosGroup's glTF-WebGL-PBR
-
 // Encapsulate the various inputs used by the various functions in the shading equation
 struct PBRInfo
 {
-    float NdotL;                  // cos angle between normal and light direction
-    float NdotV;                  // cos angle between normal and view direction
-    float NdotH;                  // cos angle between normal and half vector
-    float LdotH;                  // cos angle between light direction and half vector
-    float VdotH;                  // cos angle between view direction and half vector
-    float perceptualRoughness;    // roughness value, as authored by the model creator (input to shader)
-    vec3 reflectance0;            // full reflectance color (normal incidence angle)
-    vec3 reflectance90;           // reflectance color at grazing angle
-    float alphaRoughness;         // roughness mapped to a more linear change in the roughness (proposed by [2])
-    vec3 diffuseColor;            // color contribution from diffuse lighting
-    vec3 specularColor;           // color contribution from specular lighting
-    vec3 n;                       // normal at surface point
-    vec3 v;                       // vector from surface point to camera
+    float NdotL;               // cos angle between normal and light direction
+    float NdotV;               // cos angle between normal and view direction
+    float NdotH;               // cos angle between normal and half vector
+    float LdotH;               // cos angle between light direction and half vector
+    float VdotH;               // cos angle between view direction and half vector
+    float perceptualRoughness; // roughness value, as authored by the model creator (input to shader)
+    vec3 reflectance0;         // full reflectance color (normal incidence angle)
+    vec3 reflectance90;        // reflectance color at grazing angle
+    float alphaRoughness;      // roughness mapped to a more linear change in the roughness (proposed by [2])
+    vec3 diffuseColor;         // color contribution from diffuse lighting
+    vec3 specularColor;        // color contribution from specular lighting
+    vec3 n;                    // normal at surface point
+    vec3 v;                    // vector from surface point to camera
 };
 
 const float M_PI = 3.141592653589793;
