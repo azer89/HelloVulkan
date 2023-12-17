@@ -1,6 +1,7 @@
 #include "RendererCube.h"
 #include "VulkanUtility.h"
 #include "AppSettings.h"
+#include "UBO.h"
 
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
@@ -61,7 +62,7 @@ RendererCube::RendererCube(VulkanDevice& vkDev, VulkanImage inDepthTexture, cons
 
 	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo());
 
-	CreateUniformBuffers(vkDev, sizeof(glm::mat4));
+	CreateUniformBuffers(vkDev, sizeof(PerFrameUBO));
 	
 	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthTexture_.imageView, swapchainFramebuffers_);
 	
@@ -95,10 +96,10 @@ void RendererCube::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t curre
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void RendererCube::UpdateUniformBuffer(VulkanDevice& vkDev, uint32_t currentImage, const glm::mat4& m)
+/*void RendererCube::UpdateUniformBuffer(VulkanDevice& vkDev, uint32_t currentImage, const glm::mat4& m)
 {
 	UploadBufferData(vkDev, uniformBuffers_[currentImage].bufferMemory_, 0, glm::value_ptr(m), sizeof(glm::mat4));
-}
+}*/
 
 bool RendererCube::CreateDescriptorSet(VulkanDevice& vkDev)
 {

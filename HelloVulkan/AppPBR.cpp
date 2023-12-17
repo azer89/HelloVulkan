@@ -1,17 +1,17 @@
 #include "AppPBR.h"
 #include "AppSettings.h"
-#include "VulkanImage.h"
 #include "VulkanUtility.h"
+//#include "VulkanImage.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 
-struct UBO
+/*struct UBO
 {
 	glm::mat4 mvp;
 	glm::mat4 mv;
 	glm::mat4 m;
 	glm::vec4 cameraPos;
-} ubo;
+} ubo;*/
 
 AppPBR::AppPBR() :
 	modelRotation(0.f)
@@ -39,7 +39,7 @@ int AppPBR::MainLoop()
 	clearPtr = std::make_unique<RendererClear>(vulkanDevice, depthTexture);
 	finishPtr = std::make_unique<RendererFinish>(vulkanDevice, depthTexture);
 	pbrPtr = std::make_unique<RendererPBR>(vulkanDevice,
-		(uint32_t)sizeof(UBO),
+		(uint32_t)sizeof(PerFrameUBO),
 		gltfFile.c_str(),
 		aoFile.c_str(),
 		emissiveFile.c_str(),
@@ -80,26 +80,43 @@ int AppPBR::MainLoop()
 
 void AppPBR::ComposeFrame(uint32_t imageIndex, const std::vector<RendererBase*>& renderers)
 {
+	// Skybox ubo
+	PerFrameUBO skyboxUBO
+	{
+		.cameraProjection = camera->GetProjectionMatrix(),
+		.cameraView = glm::mat4(glm::mat3(camera->GetViewMatrix())),
+		.model = glm::mat4(1.f),
+		.cameraPosition = glm::vec4(camera->Position, 1.f)
+	};
+
+	cubePtr->SetUBO(vulkanDevice, imageIndex, skyboxUBO);
+
 	// Renderer
-	glm::mat4 model(1.f);
-	glm::mat4 projection = camera->GetProjectionMatrix();
-	glm::mat4 view = camera->GetViewMatrix();
+	//glm::mat4 model(1.f);
+	//glm::mat4 projection = camera->GetProjectionMatrix();
+	//glm::mat4 view = camera->GetViewMatrix();
+	//glm::mat4 cubeView = glm::mat4(glm::mat3(view)); // Remove translation from the view matrix
+	//cubePtr->UpdateUniformBuffer(vulkanDevice, imageIndex, projection * cubeView * model);
 
-	glm::mat4 cubeView = glm::mat4(glm::mat3(view)); // Remove translation from the view matrix
-	cubePtr->UpdateUniformBuffer(vulkanDevice, imageIndex, projection * cubeView * model);
-
-	model = glm::rotate(model, modelRotation, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 model = glm::rotate(model, modelRotation, glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)); // DamagedHelmet
-	
 	modelRotation += deltaTime * 0.2f;
+	PerFrameUBO meshUBO
+	{
+		.cameraProjection = camera->GetProjectionMatrix(),
+		.cameraView = camera->GetViewMatrix(),
+		.model = model,
+		.cameraPosition = glm::vec4(camera->Position, 1.f)
+	};
+	pbrPtr->SetUBO(vulkanDevice, imageIndex, meshUBO);
 
-	ubo = UBO
+	/*ubo = UBO
 	{
 		.mvp = projection * view * model,
 		.mv = view * view,
 		.m = model,
-		.cameraPos = glm::vec4(camera->Position, 1.f) };
-	pbrPtr->UpdateUniformBuffer(vulkanDevice, imageIndex, &ubo, sizeof(ubo));
+		.cameraPos = glm::vec4(camera->Position, 1.f) };*/
+	//pbrPtr->UpdateUniformBuffer(vulkanDevice, imageIndex, &ubo, sizeof(ubo));
 
 	VkCommandBuffer commandBuffer = vulkanDevice.commandBuffers[imageIndex];
 

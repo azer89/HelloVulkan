@@ -455,15 +455,37 @@ bool RendererBase::CreateGraphicsPipeline(
 	return true;
 }
 
-void RendererBase::UploadBufferData(
-	VulkanDevice& vkDev,
+void RendererBase::UpdateUniformBuffer(
+	VkDevice device,
+	uint32_t currentImage,
+	const void* data,
+	const size_t dataSize)
+{
+	//UploadBufferData(device, uniformBuffers_[currentImage].bufferMemory_, 0, data, dataSize);
+
+	VkDeviceMemory bufferMemory = uniformBuffers_[currentImage].bufferMemory_;
+
+	void* mappedData = nullptr;
+	vkMapMemory(
+		device, 
+		bufferMemory,
+		0, 
+		dataSize, 
+		0, 
+		&mappedData);
+	memcpy(mappedData, data, dataSize);
+	vkUnmapMemory(device, bufferMemory);
+}
+
+/*void RendererBase::UploadBufferData(
+	VkDevice device,
 	const VkDeviceMemory& bufferMemory,
 	VkDeviceSize deviceOffset,
 	const void* data,
 	const size_t dataSize)
 {
 	void* mappedData = nullptr;
-	vkMapMemory(vkDev.GetDevice(), bufferMemory, deviceOffset, dataSize, 0, &mappedData);
+	vkMapMemory(device, bufferMemory, deviceOffset, dataSize, 0, &mappedData);
 	memcpy(mappedData, data, dataSize);
-	vkUnmapMemory(vkDev.GetDevice(), bufferMemory);
-}
+	vkUnmapMemory(device, bufferMemory);
+}*/

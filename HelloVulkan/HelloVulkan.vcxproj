@@ -168,6 +168,7 @@
     <ClInclude Include="RendererFinish.h" />
     <ClInclude Include="RendererPBR.h" />
     <ClInclude Include="RenderPassCreateInfo.h" />
+    <ClInclude Include="UBO.h" />
     <ClInclude Include="VulkanBuffer.h" />
     <ClInclude Include="VulkanShader.h" />
     <ClInclude Include="volk.h" />

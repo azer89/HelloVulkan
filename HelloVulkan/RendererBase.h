@@ -8,6 +8,7 @@
 #include "VulkanImage.h"
 #include "VulkanBuffer.h"
 #include "RenderPassCreateInfo.h"
+#include "UBO.h"
 
 class RendererBase
 {
@@ -17,6 +18,11 @@ public:
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) = 0;
 
 	VulkanImage GetDepthTexture() const { return depthTexture_; }
+
+	void SetUBO(const VulkanDevice& vkDev, uint32_t imageIndex, PerFrameUBO& ubo)
+	{
+		UpdateUniformBuffer(vkDev.GetDevice(), imageIndex, &ubo, sizeof(PerFrameUBO));
+	}
 
 protected:
 	VkDevice device_ = nullptr;
@@ -87,13 +93,20 @@ protected:
 		int32_t customHeight = -1,
 		uint32_t numPatchControlPoints = 0);
 
-	// Neeeded for UBO
-	void UploadBufferData(
-		VulkanDevice& vkDev, 
+	// UBO
+	void UpdateUniformBuffer(
+		VkDevice device,
+		uint32_t currentImage,
+		const void* data,
+		const size_t dataSize);
+
+	// UBO
+	/*void UploadBufferData(
+		VkDevice device,
 		const VkDeviceMemory& bufferMemory, 
 		VkDeviceSize deviceOffset, 
 		const void* data, 
-		const size_t dataSize);
+		const size_t dataSize);*/
 };
 
 #endif

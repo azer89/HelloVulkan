@@ -14,7 +14,7 @@ public:
 
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
-	void UpdateUniformBuffer(VulkanDevice& vkDev, uint32_t currentImage, const glm::mat4& m);
+	//void UpdateUniformBuffer(VulkanDevice& vkDev, uint32_t currentImage, const glm::mat4& m);
 
 private:
 	VulkanTexture texture;

@@ -25,7 +25,7 @@ public:
 
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
-	void UpdateUniformBuffer(VulkanDevice& vkDev, uint32_t currentImage, const void* data, const size_t dataSize);
+	//void UpdateUniformBuffer(VulkanDevice& vkDev, uint32_t currentImage, const void* data, const size_t dataSize);
 
 private:
 	bool CreateDescriptorSet(VulkanDevice& vkDev, uint32_t uniformDataSize);
