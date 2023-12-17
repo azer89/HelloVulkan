@@ -1,7 +1,6 @@
 #ifndef VULKAN_BUFFER
 #define VULKAN_BUFFER
 
-#define VK_NO_PROTOTYPES
 #include "volk.h"
 
 #include "VulkanDevice.h"

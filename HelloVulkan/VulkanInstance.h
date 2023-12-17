@@ -1,7 +1,6 @@
 #ifndef VULKAN_INSTANCE
 #define VULKAN_INSTANCE
 
-#define VK_NO_PROTOTYPES
 #include "volk.h"
 
 #include "GLFW/glfw3.h"

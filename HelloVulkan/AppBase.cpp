@@ -2,9 +2,7 @@
 #include "AppSettings.h"
 #include "VulkanUtility.h"
 
-#define VK_NO_PROTOTYPES
 #include "volk.h"
-
 #include "glslang_c_interface.h"
 
 #include <iostream>

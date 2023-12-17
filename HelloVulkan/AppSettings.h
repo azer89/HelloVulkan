@@ -3,7 +3,6 @@
 
 #include <string>
 
-#define VK_NO_PROTOTYPES
 #include "volk.h"
 
 namespace AppSettings

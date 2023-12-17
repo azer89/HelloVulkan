@@ -5,7 +5,6 @@
 #include "VulkanBuffer.h"
 #include "VulkanTexture.h"
 
-#define VK_NO_PROTOTYPES
 #include "volk.h"
 
 #include <vector>

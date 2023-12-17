@@ -1,7 +1,6 @@
 #ifndef RENDERER_BASE
 #define RENDERER_BASE
 
-#define VK_NO_PROTOTYPES
 #include "volk.h"
 
 #include "VulkanDevice.h"

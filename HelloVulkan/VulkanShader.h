@@ -1,7 +1,6 @@
 #ifndef SHADER_MODULE
 #define SHADER_MODULE
 
-#define VK_NO_PROTOTYPES
 #include "volk.h"
 
 #include "glslang_c_interface.h"

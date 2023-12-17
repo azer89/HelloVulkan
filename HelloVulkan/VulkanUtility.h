@@ -3,7 +3,6 @@
 
 #include <iostream>
 
-#define VK_NO_PROTOTYPES
 #include "volk.h"
 
 void CHECK(bool check, const char* fileName, int lineNumber);

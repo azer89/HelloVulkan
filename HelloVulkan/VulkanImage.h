@@ -1,7 +1,6 @@
 #ifndef VULKAN_IMAGE
 #define VULKAN_IMAGE
 
-#define VK_NO_PROTOTYPES
 #include "volk.h"
 
 #include "VulkanDevice.h"
