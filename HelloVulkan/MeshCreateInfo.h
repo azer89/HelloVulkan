@@ -7,6 +7,7 @@
 class MeshCreateInfo
 {
 public:
+	int texStartBindIndex;
 	std::string modelFile;
 	std::vector<std::string> textureFiles;
 };
