@@ -461,8 +461,6 @@ void RendererBase::UpdateUniformBuffer(
 	const void* data,
 	const size_t dataSize)
 {
-	//UploadBufferData(device, uniformBuffers_[currentImage].bufferMemory_, 0, data, dataSize);
-
 	VkDeviceMemory bufferMemory = uniformBuffers_[currentImage].bufferMemory_;
 
 	void* mappedData = nullptr;
@@ -473,19 +471,6 @@ void RendererBase::UpdateUniformBuffer(
 		dataSize, 
 		0, 
 		&mappedData);
-	memcpy(mappedData, data, dataSize);
-	vkUnmapMemory(device, bufferMemory);
-}
-
-void RendererBase::UploadBufferData(
-	VkDevice device,
-	const VkDeviceMemory& bufferMemory,
-	VkDeviceSize deviceOffset,
-	const void* data,
-	const size_t dataSize)
-{
-	void* mappedData = nullptr;
-	vkMapMemory(device, bufferMemory, deviceOffset, dataSize, 0, &mappedData);
 	memcpy(mappedData, data, dataSize);
 	vkUnmapMemory(device, bufferMemory);
 }

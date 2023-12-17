@@ -96,11 +96,6 @@ void RendererCube::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t curre
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-/*void RendererCube::UpdateUniformBuffer(VulkanDevice& vkDev, uint32_t currentImage, const glm::mat4& m)
-{
-	UploadBufferData(vkDev, uniformBuffers_[currentImage].bufferMemory_, 0, glm::value_ptr(m), sizeof(glm::mat4));
-}*/
-
 bool RendererCube::CreateDescriptorSet(VulkanDevice& vkDev)
 {
 	const std::array<VkDescriptorSetLayoutBinding, 2> bindings = {

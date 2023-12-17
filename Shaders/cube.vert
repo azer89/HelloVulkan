@@ -2,19 +2,13 @@
 
 layout(location = 0) out vec3 direction;
 
-/*layout(binding = 0) uniform CameraUBO
-{
-	mat4 mvp;
-}
-camUBO;*/
-layout(binding = 0) uniform UniformBuffer
+layout(binding = 0) uniform PerFrameUBO
 {
 	mat4 cameraProjection;
 	mat4 cameraView;
 	mat4 model;
 	vec4 cameraPosition;
-} ubo;
-
+} frameUBO;
 
 const vec3 pos[8] = vec3[8](
 	vec3(-1.0, -1.0, 1.0),
@@ -49,7 +43,7 @@ void main()
 	const float cubeSize = 20.0;
 	int idx = indices[gl_VertexIndex];
 	
-	mat4 mvp = ubo.cameraProjection * ubo.cameraView * ubo.model;
+	mat4 mvp = frameUBO.cameraProjection * frameUBO.cameraView * frameUBO.model;
 	vec4 position = vec4(cubeSize * pos[idx], 1.0);
 	gl_Position = mvp * position;
 	

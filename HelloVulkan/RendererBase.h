@@ -99,14 +99,6 @@ protected:
 		uint32_t currentImage,
 		const void* data,
 		const size_t dataSize);
-
-	// UBO
-	void UploadBufferData(
-		VkDevice device,
-		const VkDeviceMemory& bufferMemory, 
-		VkDeviceSize deviceOffset, 
-		const void* data, 
-		const size_t dataSize);
 };
 
 #endif

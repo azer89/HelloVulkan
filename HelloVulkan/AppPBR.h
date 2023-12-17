@@ -14,7 +14,7 @@ class AppPBR : AppBase
 public:
 	AppPBR();
 	int MainLoop() override;
-	void ComposeFrame(uint32_t imageIndex, const std::vector<RendererBase*>& renderers) override;
+	void UpdateUBO(uint32_t imageIndex) override;
 
 private:
 	std::unique_ptr<RendererCube> cubePtr;

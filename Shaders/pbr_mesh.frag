@@ -24,22 +24,14 @@ layout(location = 2) in vec3 normal;
 
 layout(location = 0) out vec4 fragColor;
 
-/*layout(binding = 0) uniform UniformBuffer
-{
-	mat4 mvp;
-	mat4 mv;
-	mat4 m;
-	vec4 cameraPos;
-}
-ubo;*/
-layout(binding = 0) uniform UniformBuffer
+layout(binding = 0) uniform PerFrameUBO
 {
 	mat4 cameraProjection;
 	mat4 cameraView;
 	mat4 model;
 	vec4 cameraPosition;
 }
-ubo;
+frameUBO;
 
 layout(binding = 1) uniform sampler2D texture_ao1;
 layout(binding = 2) uniform sampler2D texture_emissive1;
@@ -271,14 +263,14 @@ void main()
 	vec3 n = normalize(normal);
 
 	// Normal mapping
-	n = perturbNormal(n, normalize(ubo.cameraPosition.xyz - worldPos), normalSample, texCoord);
+	n = perturbNormal(n, normalize(frameUBO.cameraPosition.xyz - worldPos), normalSample, texCoord);
 
 	vec4 mrSample = texture(texMetalRoughness, texCoord);
 
 	PBRInfo pbrInputs;
 	Ke.rgb = SRGBtoLINEAR(Ke).rgb;
 	// Image-based lighting
-	vec3 color = calculatePBRInputsMetallicRoughness(Kd, n, ubo.cameraPosition.xyz, worldPos, mrSample, pbrInputs);
+	vec3 color = calculatePBRInputsMetallicRoughness(Kd, n, frameUBO.cameraPosition.xyz, worldPos, mrSample, pbrInputs);
 	// One hardcoded light source
 	color += calculatePBRLightContribution(pbrInputs, normalize(vec3(-1.0, -1.0, -1.0)), vec3(1.0));
 	// Ambient occlusion

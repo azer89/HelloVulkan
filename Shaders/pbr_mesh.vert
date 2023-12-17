@@ -8,32 +8,24 @@ layout(location = 0) out vec3 worldPos;
 layout(location = 1) out vec2 texCoord;
 layout(location = 2) out vec3 normal;
 
-/*layout(binding = 0) uniform UniformBuffer
-{
-	mat4 mvp;
-	mat4 mv;
-	mat4 m;
-	vec4 cameraPos;
-}
-ubo;*/
-layout(binding = 0) uniform UniformBuffer
+layout(binding = 0) uniform PerFrameUBO
 {
 	mat4 cameraProjection;
 	mat4 cameraView;
 	mat4 model;
 	vec4 cameraPosition;
 }
-ubo;
+frameUBO;
 
 void main()
 {
-	worldPos = (ubo.model * positionIn).xyz;
+	worldPos = (frameUBO.model * positionIn).xyz;
 
 	texCoord = uvIn.xy;
 
-	mat3 normalMatrix = transpose(inverse(mat3(ubo.model)));
+	mat3 normalMatrix = transpose(inverse(mat3(frameUBO.model)));
 	normal = normalMatrix * normalIn.xyz;
 
-	//mat4 mvp = ubo.cameraProjection * ubo.cameraView * ubo.model;
-	gl_Position =  ubo.cameraProjection * ubo.cameraView * ubo.model * positionIn;
+	mat4 mvp = frameUBO.cameraProjection * frameUBO.cameraView * frameUBO.model;
+	gl_Position =  mvp * positionIn;
 }
