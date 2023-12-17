@@ -45,6 +45,8 @@ public:
 
 	std::vector<VulkanTexture> textures_;
 
+	std::vector<VkDescriptorSet> descriptorSets_;
+
 	// Textures
 	void AddTexture(VulkanDevice& vkDev, const char* fileName, uint32_t bindIndex);
 
