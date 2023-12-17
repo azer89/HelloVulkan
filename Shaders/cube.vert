@@ -1,23 +1,25 @@
 ﻿# version 460 core
 
-layout(location = 0) out vec3 dir;
+layout(location = 0) out vec3 direction;
 
-layout(binding = 0) uniform CameraUBO
+layout(binding = 0) uniform PerFrameUBO
 {
-	mat4 mvp;
-}
-camUBO;
+	mat4 cameraProjection;
+	mat4 cameraView;
+	mat4 model;
+	vec4 cameraPosition;
+} frameUBO;
 
 const vec3 pos[8] = vec3[8](
 	vec3(-1.0, -1.0, 1.0),
-	vec3(1.0, -1.0, 1.0),
-	vec3(1.0, 1.0, 1.0),
-	vec3(-1.0, 1.0, 1.0),
+	vec3(1.0,  -1.0, 1.0),
+	vec3(1.0,   1.0, 1.0),
+	vec3(-1.0,  1.0, 1.0),
 
 	vec3(-1.0, -1.0, -1.0),
-	vec3(1.0, -1.0, -1.0),
-	vec3(1.0, 1.0, -1.0),
-	vec3(-1.0, 1.0, -1.0)
+	vec3(1.0,  -1.0, -1.0),
+	vec3(1.0,   1.0, -1.0),
+	vec3(-1.0,  1.0, -1.0)
 );
 
 const int indices[36] = int[36]
@@ -38,8 +40,12 @@ const int indices[36] = int[36]
 
 void main()
 {
-	float cubeSize = 20.0;
+	const float cubeSize = 20.0;
 	int idx = indices[gl_VertexIndex];
-	gl_Position = camUBO.mvp * vec4(cubeSize * pos[idx], 1.0);
-	dir = pos[idx].xyz;
+	
+	mat4 mvp = frameUBO.cameraProjection * frameUBO.cameraView * frameUBO.model;
+	vec4 position = vec4(cubeSize * pos[idx], 1.0);
+	gl_Position = mvp * position;
+	
+	direction = pos[idx].xyz;
 }

@@ -1,9 +1,10 @@
 #ifndef APP_BASE
 #define APP_BASE
 
-#include "Camera.h"
 #include "VulkanInstance.h"
+#include "VulkanUtility.h"
 #include "VulkanDevice.h"
+#include "Camera.h"
 #include "RendererBase.h"
 
 #include <memory>
@@ -16,7 +17,6 @@ class AppBase
 public:
 	AppBase();
 	virtual int MainLoop() = 0; 
-	virtual void ComposeFrame(uint32_t imageIndex, const std::vector<RendererBase*>& renderers) = 0;
 
 private:
 	GLFWwindow* glfwWindow;
@@ -42,6 +42,8 @@ protected:
 	void Terminate();
 
 	bool DrawFrame(const std::vector<RendererBase*>& renderers);
+	virtual void UpdateUBO(uint32_t imageIndex) = 0;
+	void UpdateCommandBuffer(const std::vector<RendererBase*>& renderers, uint32_t imageIndex);
 
 protected:
 	// Camera

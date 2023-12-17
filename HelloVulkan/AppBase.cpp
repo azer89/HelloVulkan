@@ -112,7 +112,8 @@ bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 
 	if (result != VK_SUCCESS) return false;
 
-	ComposeFrame(imageIndex, renderers);
+	UpdateUBO(imageIndex);
+	UpdateCommandBuffer(renderers, imageIndex);
 
 	const VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT }; // or even VERTEX_SHADER_STAGE
 
@@ -153,6 +154,28 @@ bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 	}
 
 	return true;
+}
+
+void AppBase::UpdateCommandBuffer(const std::vector<RendererBase*>& renderers, uint32_t imageIndex)
+{
+	VkCommandBuffer commandBuffer = vulkanDevice.commandBuffers[imageIndex];
+
+	const VkCommandBufferBeginInfo bi =
+	{
+		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+		.pNext = nullptr,
+		.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT,
+		.pInheritanceInfo = nullptr
+	};
+
+	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &bi));
+
+	for (auto& r : renderers)
+	{
+		r->FillCommandBuffer(commandBuffer, imageIndex);
+	}
+
+	VK_CHECK(vkEndCommandBuffer(commandBuffer));
 }
 
 void AppBase::InitIMGUI()

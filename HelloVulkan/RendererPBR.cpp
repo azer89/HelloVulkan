@@ -71,7 +71,6 @@ inline VkWriteDescriptorSet ImageWriteDescriptorSet(
 
 RendererPBR::RendererPBR(
 	VulkanDevice& vkDev,
-	uint32_t uniformBufferSize,
 	const char* modelFile,
 	const char* texAOFile,
 	const char* texEmissiveFile,
@@ -128,7 +127,7 @@ RendererPBR::RendererPBR(
 
 	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo());
 
-	CreateUniformBuffers(vkDev, uniformBufferSize);
+	CreateUniformBuffers(vkDev, sizeof(PerFrameUBO));
 
 	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthTexture_.imageView, swapchainFramebuffers_);
 
@@ -139,7 +138,7 @@ RendererPBR::RendererPBR(
 		8, // samplerCount = textureCount + cubemapCount
 		&descriptorPool_);
 
-	CreateDescriptorSet(vkDev, uniformBufferSize);
+	CreateDescriptorSet(vkDev);
 
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
 
@@ -185,16 +184,7 @@ void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t curren
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void RendererPBR::UpdateUniformBuffer(
-	VulkanDevice& vkDev, 
-	uint32_t currentImage, 
-	const void* data, 
-	const size_t dataSize)
-{
-	UploadBufferData(vkDev, uniformBuffers_[currentImage].bufferMemory_, 0, data, dataSize);
-}
-
-bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, uint32_t uniformDataSize)
+bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev)
 {
 	std::vector<VkDescriptorSetLayoutBinding> bindings;
 
@@ -272,7 +262,7 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, uint32_t uniformDataS
 	{
 		VkDescriptorSet ds = descriptorSets_[i];
 
-		const VkDescriptorBufferInfo bufferInfo1 = { uniformBuffers_[i].buffer_, 0, uniformDataSize };
+		const VkDescriptorBufferInfo bufferInfo1 = { uniformBuffers_[i].buffer_, 0, sizeof(PerFrameUBO)};
 		//const VkDescriptorBufferInfo bufferInfo2 = { mesh_.storageBuffer_.buffer_, 0, mesh_.vertexBufferSize_ };
 		//const VkDescriptorBufferInfo bufferInfo3 = { mesh_.storageBuffer_.buffer_, mesh_.vertexBufferSize_, mesh_.indexBufferSize_ };
 
