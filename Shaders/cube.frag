@@ -1,4 +1,4 @@
-#version 460 core
+# version 460 core
 
 layout(location = 0) in vec3 dir;
 
@@ -8,11 +8,11 @@ layout(binding = 1) uniform samplerCube texture1;
 
 void main()
 {
-    vec3 envColor = texture(texture1, dir).rgb;
+	vec3 envColor = texture(texture1, dir).rgb;
 
-    // HDR tonemap and gamma correct
-    envColor = envColor / (envColor + vec3(1.0));
-    envColor = pow(envColor, vec3(1.0 / 2.2));
+	// HDR tonemap and gamma correct
+	envColor = envColor / (envColor + vec3(1.0));
+	envColor = pow(envColor, vec3(1.0 / 2.2));
 
-    fragColor = vec4(envColor, 1.0);
+	fragColor = vec4(envColor, 1.0);
 };
