@@ -138,7 +138,7 @@ bool RendererCube::CreateDescriptorSet(VulkanDevice& vkDev)
 	{
 		VkDescriptorSet ds = descriptorSets_[i];
 
-		const VkDescriptorBufferInfo bufferInfo = { uniformBuffers_[i].buffer_, 0, sizeof(glm::mat4) };
+		const VkDescriptorBufferInfo bufferInfo = { uniformBuffers_[i].buffer_, 0, sizeof(PerFrameUBO) };
 		const VkDescriptorImageInfo  imageInfo = { texture.sampler, texture.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
 
 		const std::array<VkWriteDescriptorSet, 2> descriptorWrites = {

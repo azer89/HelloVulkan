@@ -7,7 +7,7 @@ layout(location = 0) out vec3 direction;
 	mat4 mvp;
 }
 camUBO;*/
-layout(binding = 0) uniform PerFrameUBO
+layout(binding = 0) uniform UniformBuffer
 {
 	mat4 cameraProjection;
 	mat4 cameraView;

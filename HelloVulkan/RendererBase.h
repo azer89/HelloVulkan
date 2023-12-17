@@ -19,7 +19,7 @@ public:
 
 	VulkanImage GetDepthTexture() const { return depthTexture_; }
 
-	void SetUBO(const VulkanDevice& vkDev, uint32_t imageIndex, PerFrameUBO& ubo)
+	void SetUBO(const VulkanDevice& vkDev, uint32_t imageIndex, PerFrameUBO ubo)
 	{
 		UpdateUniformBuffer(vkDev.GetDevice(), imageIndex, &ubo, sizeof(PerFrameUBO));
 	}
@@ -101,12 +101,12 @@ protected:
 		const size_t dataSize);
 
 	// UBO
-	/*void UploadBufferData(
+	void UploadBufferData(
 		VkDevice device,
 		const VkDeviceMemory& bufferMemory, 
 		VkDeviceSize deviceOffset, 
 		const void* data, 
-		const size_t dataSize);*/
+		const size_t dataSize);
 };
 
 #endif

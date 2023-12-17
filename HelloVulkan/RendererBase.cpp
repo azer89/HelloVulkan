@@ -477,7 +477,7 @@ void RendererBase::UpdateUniformBuffer(
 	vkUnmapMemory(device, bufferMemory);
 }
 
-/*void RendererBase::UploadBufferData(
+void RendererBase::UploadBufferData(
 	VkDevice device,
 	const VkDeviceMemory& bufferMemory,
 	VkDeviceSize deviceOffset,
@@ -488,4 +488,4 @@ void RendererBase::UpdateUniformBuffer(
 	vkMapMemory(device, bufferMemory, deviceOffset, dataSize, 0, &mappedData);
 	memcpy(mappedData, data, dataSize);
 	vkUnmapMemory(device, bufferMemory);
-}*/
+}

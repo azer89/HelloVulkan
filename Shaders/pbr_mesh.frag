@@ -32,7 +32,7 @@ layout(location = 0) out vec4 fragColor;
 	vec4 cameraPos;
 }
 ubo;*/
-layout(binding = 0) uniform PerFrameUBO
+layout(binding = 0) uniform UniformBuffer
 {
 	mat4 cameraProjection;
 	mat4 cameraView;

@@ -98,8 +98,12 @@ void AppPBR::ComposeFrame(uint32_t imageIndex, const std::vector<RendererBase*>&
 	//glm::mat4 cubeView = glm::mat4(glm::mat3(view)); // Remove translation from the view matrix
 	//cubePtr->UpdateUniformBuffer(vulkanDevice, imageIndex, projection * cubeView * model);
 
-	glm::mat4 model = glm::rotate(model, modelRotation, glm::vec3(0.0f, 1.0f, 0.0f));
-	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)); // DamagedHelmet
+	//glm::mat4 model = glm::rotate(model, modelRotation, glm::vec3(0.0f, 1.0f, 0.0f));
+	//model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)); // DamagedHelmet
+	//modelRotation += deltaTime * 0.2f;
+	glm::mat4 model(1.f);
+	model = glm::rotate(model, modelRotation, glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	modelRotation += deltaTime * 0.2f;
 	PerFrameUBO meshUBO
 	{

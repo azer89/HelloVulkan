@@ -16,7 +16,7 @@ layout(location = 2) out vec3 normal;
 	vec4 cameraPos;
 }
 ubo;*/
-layout(binding = 0) uniform PerFrameUBO
+layout(binding = 0) uniform UniformBuffer
 {
 	mat4 cameraProjection;
 	mat4 cameraView;
