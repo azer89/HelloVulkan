@@ -185,15 +185,6 @@ void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t curren
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-/*void RendererPBR::UpdateUniformBuffer(
-	VulkanDevice& vkDev, 
-	uint32_t currentImage, 
-	const void* data, 
-	const size_t dataSize)
-{
-	UploadBufferData(vkDev, uniformBuffers_[currentImage].bufferMemory_, 0, data, dataSize);
-}*/
-
 bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, uint32_t uniformDataSize)
 {
 	std::vector<VkDescriptorSetLayoutBinding> bindings;

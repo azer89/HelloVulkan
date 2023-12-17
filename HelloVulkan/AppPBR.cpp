@@ -1,17 +1,8 @@
 #include "AppPBR.h"
 #include "AppSettings.h"
 #include "VulkanUtility.h"
-//#include "VulkanImage.h"
 
 #include "glm/gtc/matrix_transform.hpp"
-
-/*struct UBO
-{
-	glm::mat4 mvp;
-	glm::mat4 mv;
-	glm::mat4 m;
-	glm::vec4 cameraPos;
-} ubo;*/
 
 AppPBR::AppPBR() :
 	modelRotation(0.f)
@@ -103,23 +94,4 @@ void AppPBR::UpdateUBO(uint32_t imageIndex)
 		.cameraPosition = glm::vec4(camera->Position, 1.f)
 	};
 	pbrPtr->SetUBO(vulkanDevice, imageIndex, meshUBO);
-
-	/*VkCommandBuffer commandBuffer = vulkanDevice.commandBuffers[imageIndex];
-
-	const VkCommandBufferBeginInfo bi =
-	{
-		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-		.pNext = nullptr,
-		.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT,
-		.pInheritanceInfo = nullptr
-	};
-
-	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &bi));
-
-	for (auto& r : renderers)
-	{
-		r->FillCommandBuffer(commandBuffer, imageIndex);
-	}
-
-	VK_CHECK(vkEndCommandBuffer(commandBuffer));*/
 }
