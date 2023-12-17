@@ -181,16 +181,17 @@ void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t curren
 		0,
 		nullptr);
 
-	// Vertex buffer
+	// Bind vertex buffer
 	VkBuffer buffers[] = { mesh_.vertexBuffer_.buffer_ };
 	VkDeviceSize offsets[] = { 0 };
 	vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
 
-	// Index buffer
+	// Bind index buffer
 	vkCmdBindIndexBuffer(commandBuffer, mesh_.indexBuffer_.buffer_, 0, VK_INDEX_TYPE_UINT32);
 
-	//vkCmdDraw(commandBuffer, static_cast<uint32_t>(mesh_.indexBufferSize_ / (sizeof(unsigned int))), 1, 0, 0);
+	// Draw
 	vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh_.indexBufferSize_ / (sizeof(unsigned int))), 1, 0, 0, 0);
+	
 	vkCmdEndRenderPass(commandBuffer);
 }
 
