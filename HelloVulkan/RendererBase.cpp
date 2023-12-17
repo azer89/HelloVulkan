@@ -51,7 +51,6 @@ void RendererBase::BeginRenderPass(VkCommandBuffer commandBuffer, size_t current
 
 	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
-	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout_, 0, 1, &descriptorSets_[currentImage], 0, nullptr);
 }
 
 bool RendererBase::CreateUniformBuffers(VulkanDevice& vkDev, size_t uniformDataSize)

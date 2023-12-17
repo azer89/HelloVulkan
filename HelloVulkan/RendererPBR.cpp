@@ -171,6 +171,16 @@ void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t curren
 {
 	BeginRenderPass(commandBuffer, currentImage);
 
+	vkCmdBindDescriptorSets(
+		commandBuffer,
+		VK_PIPELINE_BIND_POINT_GRAPHICS,
+		pipelineLayout_,
+		0,
+		1,
+		&descriptorSets_[currentImage],
+		0,
+		nullptr);
+
 	// Vertex buffer
 	VkBuffer buffers[] = { mesh_.vertexBuffer_.buffer_ };
 	VkDeviceSize offsets[] = { 0 };
