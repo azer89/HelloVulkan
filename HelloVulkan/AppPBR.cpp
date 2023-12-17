@@ -30,7 +30,6 @@ int AppPBR::MainLoop()
 	clearPtr = std::make_unique<RendererClear>(vulkanDevice, depthTexture);
 	finishPtr = std::make_unique<RendererFinish>(vulkanDevice, depthTexture);
 	pbrPtr = std::make_unique<RendererPBR>(vulkanDevice,
-		(uint32_t)sizeof(PerFrameUBO),
 		gltfFile.c_str(),
 		aoFile.c_str(),
 		emissiveFile.c_str(),
