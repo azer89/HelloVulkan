@@ -137,6 +137,9 @@
     <ClInclude Include="UBO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MeshCreateInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cube.frag">

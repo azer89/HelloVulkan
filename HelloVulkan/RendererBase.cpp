@@ -51,16 +51,18 @@ void RendererBase::BeginRenderPass(VkCommandBuffer commandBuffer, size_t current
 
 	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
-	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout_, 0, 1, &descriptorSets_[currentImage], 0, nullptr);
 }
 
-bool RendererBase::CreateUniformBuffers(VulkanDevice& vkDev, size_t uniformDataSize)
+bool RendererBase::CreateUniformBuffers(
+	VulkanDevice& vkDev,
+	std::vector<VulkanBuffer>& buffers,
+	size_t uniformDataSize)
 {
 	auto swapChainImageSize = vkDev.GetSwapChainImageSize();
-	uniformBuffers_.resize(swapChainImageSize);
+	buffers.resize(swapChainImageSize);
 	for (size_t i = 0; i < swapChainImageSize; i++)
 	{
-		bool res = uniformBuffers_[i].CreateBuffer(
+		bool res = buffers[i].CreateBuffer(
 			vkDev.GetDevice(),
 			vkDev.GetPhysicalDevice(),
 			uniformDataSize,
@@ -235,6 +237,7 @@ bool RendererBase::CreateDescriptorPool(
 	uint32_t uniformBufferCount,
 	uint32_t storageBufferCount,
 	uint32_t samplerCount,
+	uint32_t setCountPerSwapchain,
 	VkDescriptorPool* descriptorPool)
 {
 	const uint32_t imageCount = static_cast<uint32_t>(vkDev.GetSwapChainImageSize());
@@ -254,7 +257,7 @@ bool RendererBase::CreateDescriptorPool(
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.maxSets = static_cast<uint32_t>(imageCount),
+		.maxSets = static_cast<uint32_t>(imageCount * setCountPerSwapchain),
 		.poolSizeCount = static_cast<uint32_t>(poolSizes.size()),
 		.pPoolSizes = poolSizes.empty() ? nullptr : poolSizes.data()
 	};
@@ -457,11 +460,11 @@ bool RendererBase::CreateGraphicsPipeline(
 
 void RendererBase::UpdateUniformBuffer(
 	VkDevice device,
-	uint32_t currentImage,
+	VulkanBuffer& buffer,
 	const void* data,
 	const size_t dataSize)
 {
-	VkDeviceMemory bufferMemory = uniformBuffers_[currentImage].bufferMemory_;
+	VkDeviceMemory bufferMemory = buffer.bufferMemory_;
 
 	void* mappedData = nullptr;
 	vkMapMemory(
@@ -472,5 +475,6 @@ void RendererBase::UpdateUniformBuffer(
 		0, 
 		&mappedData);
 	memcpy(mappedData, data, dataSize);
+
 	vkUnmapMemory(device, bufferMemory);
 }

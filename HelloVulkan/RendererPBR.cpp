@@ -12,71 +12,14 @@
 #include <vector>
 #include <array>
 
-inline VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(
-	uint32_t binding, 
-	VkDescriptorType descriptorType, 
-	VkShaderStageFlags stageFlags, 
-	uint32_t descriptorCount = 1)
-{
-	return VkDescriptorSetLayoutBinding
-	{
-		.binding = binding,
-		.descriptorType = descriptorType,
-		.descriptorCount = descriptorCount,
-		.stageFlags = stageFlags,
-		.pImmutableSamplers = nullptr
-	};
-}
-
-inline VkWriteDescriptorSet BufferWriteDescriptorSet(
-	VkDescriptorSet ds, 
-	const VkDescriptorBufferInfo* bi, 
-	uint32_t bindIdx, 
-	VkDescriptorType dType)
-{
-	return VkWriteDescriptorSet
-	{ 
-		VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, 
-		nullptr,
-		ds, 
-		bindIdx, 
-		0, 
-		1, 
-		dType, 
-		nullptr, 
-		bi, 
-		nullptr
-	};
-}
-
-inline VkWriteDescriptorSet ImageWriteDescriptorSet(
-	VkDescriptorSet ds, 
-	const VkDescriptorImageInfo* ii, 
-	uint32_t bindIdx)
-{
-	return VkWriteDescriptorSet
-	{ 
-		VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, 
-		nullptr,
-		ds, 
-		bindIdx, 
-		0, 
-		1, 
-		VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-		ii, 
-		nullptr, 
-		nullptr
-	};
-}
+// Constants
+constexpr uint32_t PBR_TEXTURE_START_BIND_INDEX = 2;
+constexpr size_t PBR_MESH_TEXTURE_COUNT = 5;
+constexpr size_t PBR_ENV_TEXTURE_COUNT = 3;
 
 RendererPBR::RendererPBR(
 	VulkanDevice& vkDev,
-	const char* modelFile,
-	const char* texAOFile,
-	const char* texEmissiveFile,
-	const char* texAlbedoFile,
-	const char* texMeRFile,
-	const char* texNormalFile,
+	const std::vector<MeshCreateInfo>& meshInfos,
 	const char* texEnvMapFile,
 	const char* texIrrMapFile,
 	VulkanImage depthTexture) : 
@@ -84,13 +27,10 @@ RendererPBR::RendererPBR(
 {
 	depthTexture_ = depthTexture;
 
-	mesh_.Create(vkDev, modelFile);
-	// The numbers are the bindIndices
-	mesh_.AddTexture(vkDev, texAOFile, 1);
-	mesh_.AddTexture(vkDev, texEmissiveFile, 2);
-	mesh_.AddTexture(vkDev, texAlbedoFile, 3);
-	mesh_.AddTexture(vkDev, texMeRFile, 4);
-	mesh_.AddTexture(vkDev, texNormalFile, 5);
+	for (const MeshCreateInfo& info : meshInfos)
+	{
+		LoadMesh(vkDev, info);
+	}
 
 	// cube maps
 	LoadCubeMap(vkDev, texEnvMapFile, envMap_);
@@ -108,8 +48,7 @@ RendererPBR::RendererPBR(
 		extent.y, 
 		VK_FORMAT_R16G16_SFLOAT))
 	{
-		printf("ModelRenderer: failed to load BRDF LUT texture \n");
-		exit(EXIT_FAILURE);
+		std::cerr << "ModelRenderer: failed to load BRDF LUT texture \n";;
 	}
 
 	brdfLUT_.image.CreateImageView(
@@ -127,18 +66,26 @@ RendererPBR::RendererPBR(
 
 	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo());
 
-	CreateUniformBuffers(vkDev, sizeof(PerFrameUBO));
+	CreateUniformBuffers(vkDev, uniformBuffers_, sizeof(PerFrameUBO));
+	for (Mesh& mesh : meshes_)
+	{
+		CreateUniformBuffers(vkDev, mesh.modelBuffers_, sizeof(ModelUBO));
+	}
 
 	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthTexture_.imageView, swapchainFramebuffers_);
 
 	CreateDescriptorPool(
 		vkDev, 
-		1, // uniformBufferCount
-		2, // storageBufferCount
-		8, // samplerCount = textureCount + cubemapCount
+		2 * meshes_.size(),  // (PerFrameUBO + ModelUBO) * meshes_.size()
+		0,  // SSBO
+		(PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT) * meshes_.size(),
+		meshes_.size(), // decsriptor count per swapchain
 		&descriptorPool_);
-
-	CreateDescriptorSet(vkDev);
+	CreateDescriptorLayout(vkDev);
+	for (Mesh& mesh : meshes_)
+	{
+		CreateDescriptorSet(vkDev, mesh);
+	}
 
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
 
@@ -159,7 +106,10 @@ RendererPBR::RendererPBR(
 
 RendererPBR::~RendererPBR()
 {
-	mesh_.Destroy(device_);
+	for (Mesh& mesh : meshes_)
+	{
+		mesh.Destroy(device_);
+	}
 
 	envMap_.DestroyVulkanTexture(device_);
 	envMapIrradiance_.DestroyVulkanTexture(device_);
@@ -171,67 +121,135 @@ void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t curren
 {
 	BeginRenderPass(commandBuffer, currentImage);
 
-	// Vertex buffer
-	VkBuffer buffers[] = { mesh_.vertexBuffer_.buffer_ };
-	VkDeviceSize offsets[] = { 0 };
-	vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
+	for (Mesh& mesh : meshes_)
+	{
+		vkCmdBindDescriptorSets(
+			commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			pipelineLayout_,
+			0,
+			1,
+			&mesh.descriptorSets_[currentImage],
+			0,
+			nullptr);
 
-	// Index buffer
-	vkCmdBindIndexBuffer(commandBuffer, mesh_.indexBuffer_.buffer_, 0, VK_INDEX_TYPE_UINT32);
+		// Bind vertex buffer
+		VkBuffer buffers[] = { mesh.vertexBuffer_.buffer_ };
+		VkDeviceSize offsets[] = { 0 };
+		vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
 
-	//vkCmdDraw(commandBuffer, static_cast<uint32_t>(mesh_.indexBufferSize_ / (sizeof(unsigned int))), 1, 0, 0);
-	vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh_.indexBufferSize_ / (sizeof(unsigned int))), 1, 0, 0, 0);
+		// Bind index buffer
+		vkCmdBindIndexBuffer(commandBuffer, mesh.indexBuffer_.buffer_, 0, VK_INDEX_TYPE_UINT32);
+
+		// Draw
+		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBufferSize_ / (sizeof(unsigned int))), 1, 0, 0, 0);
+
+	}
+	
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev)
+inline VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(
+	uint32_t binding,
+	VkDescriptorType descriptorType,
+	VkShaderStageFlags stageFlags,
+	uint32_t descriptorCount = 1)
+{
+	return VkDescriptorSetLayoutBinding
+	{
+		.binding = binding,
+		.descriptorType = descriptorType,
+		.descriptorCount = descriptorCount,
+		.stageFlags = stageFlags,
+		.pImmutableSamplers = nullptr
+	};
+}
+
+inline VkWriteDescriptorSet BufferWriteDescriptorSet(
+	VkDescriptorSet ds,
+	const VkDescriptorBufferInfo* bi,
+	uint32_t bindIdx,
+	VkDescriptorType dType)
+{
+	return VkWriteDescriptorSet
+	{
+		VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+		nullptr,
+		ds,
+		bindIdx,
+		0,
+		1,
+		dType,
+		nullptr,
+		bi,
+		nullptr
+	};
+}
+
+inline VkWriteDescriptorSet ImageWriteDescriptorSet(
+	VkDescriptorSet ds,
+	const VkDescriptorImageInfo* ii,
+	uint32_t bindIdx)
+{
+	return VkWriteDescriptorSet
+	{
+		VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+		nullptr,
+		ds,
+		bindIdx,
+		0,
+		1,
+		VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+		ii,
+		nullptr,
+		nullptr
+	};
+}
+
+bool RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 {
 	std::vector<VkDescriptorSetLayoutBinding> bindings;
 
 	uint32_t bindingIndex = 0;
 	bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT));
-	//bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT));
-	//bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT));
+	bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT));
 
 	// PBR textures
-	for (VulkanTexture& tex : mesh_.textures_)
+	for (size_t i = 0; i < PBR_MESH_TEXTURE_COUNT; ++i)
 	{
 		bindings.emplace_back(
 			DescriptorSetLayoutBinding(
-				// Note that we don't use bindIndex
-				tex.bindIndex, 
-				VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 
+				bindingIndex++,
+				VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 				VK_SHADER_STAGE_FRAGMENT_BIT)
 		);
-		// Keep incrementing
-		bindingIndex++;
 	}
 
 	// env
 	bindings.emplace_back(
 		DescriptorSetLayoutBinding(
-			bindingIndex++, 
-			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 
-			VK_SHADER_STAGE_FRAGMENT_BIT)
-	);
-	
-	// env_IRR
-	bindings.emplace_back(
-		DescriptorSetLayoutBinding(
-			bindingIndex++, 
-			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 
-			VK_SHADER_STAGE_FRAGMENT_BIT)
-	);
-	
-	// brdfLUT
-	bindings.emplace_back(
-		DescriptorSetLayoutBinding(
-			bindingIndex++, 
-			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 
+			bindingIndex++,
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			VK_SHADER_STAGE_FRAGMENT_BIT)
 	);
 
-	const VkDescriptorSetLayoutCreateInfo layoutInfo = 
+	// env_IRR
+	bindings.emplace_back(
+		DescriptorSetLayoutBinding(
+			bindingIndex++,
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			VK_SHADER_STAGE_FRAGMENT_BIT)
+	);
+
+	// brdfLUT
+	bindings.emplace_back(
+		DescriptorSetLayoutBinding(
+			bindingIndex++,
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			VK_SHADER_STAGE_FRAGMENT_BIT)
+	);
+
+	const VkDescriptorSetLayoutCreateInfo layoutInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
 		.pNext = nullptr,
@@ -242,6 +260,11 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev)
 
 	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));
 
+	return true;
+}
+
+bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Mesh& mesh)
+{
 	size_t swapchainLength = vkDev.GetSwapChainImageSize();
 
 	std::vector<VkDescriptorSetLayout> layouts(swapchainLength, descriptorSetLayout_);
@@ -254,28 +277,26 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev)
 		.pSetLayouts = layouts.data()
 	};
 
-	descriptorSets_.resize(swapchainLength);
+	mesh.descriptorSets_.resize(swapchainLength);
 
-	VK_CHECK(vkAllocateDescriptorSets(vkDev.GetDevice(), &allocInfo, descriptorSets_.data()));
+	VK_CHECK(vkAllocateDescriptorSets(vkDev.GetDevice(), &allocInfo, mesh.descriptorSets_.data()));
 
 	for (size_t i = 0; i < swapchainLength; i++)
 	{
-		VkDescriptorSet ds = descriptorSets_[i];
+		VkDescriptorSet ds = mesh.descriptorSets_[i];
 
 		const VkDescriptorBufferInfo bufferInfo1 = { uniformBuffers_[i].buffer_, 0, sizeof(PerFrameUBO)};
-		//const VkDescriptorBufferInfo bufferInfo2 = { mesh_.storageBuffer_.buffer_, 0, mesh_.vertexBufferSize_ };
-		//const VkDescriptorBufferInfo bufferInfo3 = { mesh_.storageBuffer_.buffer_, mesh_.vertexBufferSize_, mesh_.indexBufferSize_ };
+		const VkDescriptorBufferInfo bufferInfo2 = { mesh.modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
 
 		uint32_t bindIndex = 0;
 
 		std::vector<VkWriteDescriptorSet> descriptorWrites;
 		descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo1, bindIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
-		//descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo2, bindIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER));
-		//descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo3, bindIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER));
-
+		descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo2, bindIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
+		
 		std::vector<VkDescriptorImageInfo> imageInfos;
 		std::vector<uint32_t> bindIndices;
-		for (VulkanTexture& tex : mesh_.textures_)
+		for (VulkanTexture& tex : mesh.textures_)
 		{
 			imageInfos.emplace_back<VkDescriptorImageInfo>
 			({
@@ -301,9 +322,9 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev)
 			bindIndex++;
 		}
 
-		const VkDescriptorImageInfo  imageInfoEnv = { envMap_.sampler, envMap_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
-		const VkDescriptorImageInfo  imageInfoEnvIrr = { envMapIrradiance_.sampler, envMapIrradiance_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
-		const VkDescriptorImageInfo  imageInfoBRDF = { brdfLUT_.sampler, brdfLUT_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+		const VkDescriptorImageInfo imageInfoEnv = { envMap_.sampler, envMap_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+		const VkDescriptorImageInfo imageInfoEnvIrr = { envMapIrradiance_.sampler, envMapIrradiance_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+		const VkDescriptorImageInfo imageInfoBRDF = { brdfLUT_.sampler, brdfLUT_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
 
 		descriptorWrites.emplace_back(
 			ImageWriteDescriptorSet(ds, &imageInfoEnv, bindIndex++)
@@ -341,4 +362,16 @@ void RendererPBR::LoadCubeMap(VulkanDevice& vkDev, const char* fileName, VulkanT
 		mipLevels);
 
 	cubemap.CreateTextureSampler(vkDev.GetDevice());
+}
+
+void RendererPBR::LoadMesh(VulkanDevice& vkDev, const MeshCreateInfo& info)
+{
+	Mesh mesh;
+	mesh.Create(vkDev, info.modelFile.c_str());
+	uint32_t bindIndex = PBR_TEXTURE_START_BIND_INDEX;
+	for (const std::string& texFile : info.textureFiles)
+	{
+		mesh.AddTexture(vkDev, texFile.c_str(), bindIndex++);
+	}
+	meshes_.push_back(mesh);
 }

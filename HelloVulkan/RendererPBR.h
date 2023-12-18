@@ -4,18 +4,14 @@
 #include "RendererBase.h"
 #include "VulkanTexture.h"
 #include "VulkanBuffer.h"
+#include "MeshCreateInfo.h"
 #include "Mesh.h"
 
 class RendererPBR : public RendererBase
 {
 public:
 	RendererPBR(VulkanDevice& vkDev,
-		const char* modelFile,
-		const char* texAOFile,
-		const char* texEmissiveFile,
-		const char* texAlbedoFile,
-		const char* texMeRFile,
-		const char* texNormalFile,
+		const std::vector<MeshCreateInfo>& meshInfos,
 		const char* texEnvMapFile,
 		const char* texIrrMapFile,
 		VulkanImage depthTexture);
@@ -24,15 +20,20 @@ public:
 
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
+public:
+	// TODO change this to private
+	std::vector<Mesh> meshes_;
+
 private:
-	bool CreateDescriptorSet(VulkanDevice& vkDev);
+	bool CreateDescriptorLayout(VulkanDevice& vkDev);
+	bool CreateDescriptorSet(VulkanDevice& vkDev, Mesh& mesh);
 
 	// Textures
 	void LoadCubeMap(VulkanDevice& vkDev, const char* fileName, VulkanTexture& cubemap);
 
-private:
-	Mesh mesh_;
+	void LoadMesh(VulkanDevice& vkDev, const MeshCreateInfo& info);
 
+private:
 	VulkanTexture envMap_;
 	VulkanTexture envMapIrradiance_;
 	VulkanTexture brdfLUT_;

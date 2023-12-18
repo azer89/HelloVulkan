@@ -18,9 +18,9 @@ public:
 
 	VulkanImage GetDepthTexture() const { return depthTexture_; }
 
-	void SetUBO(const VulkanDevice& vkDev, uint32_t imageIndex, PerFrameUBO ubo)
+	void SetPerFrameUBO(const VulkanDevice& vkDev, uint32_t imageIndex, PerFrameUBO ubo)
 	{
-		UpdateUniformBuffer(vkDev.GetDevice(), imageIndex, &ubo, sizeof(PerFrameUBO));
+		UpdateUniformBuffer(vkDev.GetDevice(), uniformBuffers_[imageIndex], &ubo, sizeof(PerFrameUBO));
 	}
 
 protected:
@@ -35,7 +35,6 @@ protected:
 	// Descriptor set (layout + pool + sets) -> uses uniform buffers, textures, framebuffers
 	VkDescriptorSetLayout descriptorSetLayout_ = nullptr;
 	VkDescriptorPool descriptorPool_ = nullptr;
-	std::vector<VkDescriptorSet> descriptorSets_;
 
 	// Framebuffers (one for each command buffer)
 	std::vector<VkFramebuffer> swapchainFramebuffers_;
@@ -45,13 +44,16 @@ protected:
 	VkPipelineLayout pipelineLayout_ = nullptr;
 	VkPipeline graphicsPipeline_ = nullptr;
 
-	// UBOs
+	// PerFrameUBO
 	std::vector<VulkanBuffer> uniformBuffers_;
 
 protected:
 	void BeginRenderPass(VkCommandBuffer commandBuffer, size_t currentImage);
 
-	bool CreateUniformBuffers(VulkanDevice& vkDev, size_t uniformDataSize);
+	bool CreateUniformBuffers(
+		VulkanDevice& vkDev, 
+		std::vector<VulkanBuffer>& buffers,
+		size_t uniformDataSize);
 
 	bool CreateColorAndDepthRenderPass(
 		VulkanDevice& device, 
@@ -71,6 +73,7 @@ protected:
 		uint32_t uniformBufferCount, 
 		uint32_t storageBufferCount, 
 		uint32_t samplerCount, 
+		uint32_t setCountPerSwapchain,
 		VkDescriptorPool* descriptorPool);
 
 	bool CreatePipelineLayout(VkDevice device, 
@@ -95,7 +98,7 @@ protected:
 	// UBO
 	void UpdateUniformBuffer(
 		VkDevice device,
-		uint32_t currentImage,
+		VulkanBuffer& buffer,
 		const void* data,
 		const size_t dataSize);
 };

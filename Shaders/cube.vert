@@ -6,7 +6,6 @@ layout(binding = 0) uniform PerFrameUBO
 {
 	mat4 cameraProjection;
 	mat4 cameraView;
-	mat4 model;
 	vec4 cameraPosition;
 } frameUBO;
 
@@ -43,7 +42,7 @@ void main()
 	const float cubeSize = 20.0;
 	int idx = indices[gl_VertexIndex];
 	
-	mat4 mvp = frameUBO.cameraProjection * frameUBO.cameraView * frameUBO.model;
+	mat4 mvp = frameUBO.cameraProjection * frameUBO.cameraView;
 	vec4 position = vec4(cubeSize * pos[idx], 1.0);
 	gl_Position = mvp * position;
 	

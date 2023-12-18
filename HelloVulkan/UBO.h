@@ -7,8 +7,12 @@ struct PerFrameUBO
 {
 	glm::mat4 cameraProjection;
 	glm::mat4 cameraView;
-	glm::mat4 model;
 	glm::vec4 cameraPosition;
+};
+
+struct ModelUBO
+{
+	glm::mat4 model;
 };
 
 #endif

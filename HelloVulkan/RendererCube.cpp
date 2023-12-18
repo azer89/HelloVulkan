@@ -62,13 +62,18 @@ RendererCube::RendererCube(VulkanDevice& vkDev, VulkanImage inDepthTexture, cons
 
 	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo());
 
-	CreateUniformBuffers(vkDev, sizeof(PerFrameUBO));
+	CreateUniformBuffers(vkDev, uniformBuffers_, sizeof(PerFrameUBO));
 	
 	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthTexture_.imageView, swapchainFramebuffers_);
 	
-	CreateDescriptorPool(vkDev, 1, 0, 1, &descriptorPool_);
-	
-	CreateDescriptorSet(vkDev);
+	CreateDescriptorPool(
+		vkDev, 
+		1, // uniform
+		0, // ssbo
+		1, // texture
+		1, // one set per swapchain
+		&descriptorPool_);
+	CreateDescriptorLayoutAndSet(vkDev);
 	
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
 	
@@ -91,12 +96,22 @@ void RendererCube::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t curre
 {
 	BeginRenderPass(commandBuffer, currentImage);
 
+	vkCmdBindDescriptorSets(
+		commandBuffer, 
+		VK_PIPELINE_BIND_POINT_GRAPHICS, 
+		pipelineLayout_, 
+		0, 
+		1, 
+		&descriptorSets_[currentImage], 
+		0, 
+		nullptr);
+
 	vkCmdDraw(commandBuffer, 36, 1, 0, 0);
 
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-bool RendererCube::CreateDescriptorSet(VulkanDevice& vkDev)
+bool RendererCube::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 {
 	const std::array<VkDescriptorSetLayoutBinding, 2> bindings = {
 		DescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT),

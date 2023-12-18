@@ -12,20 +12,25 @@ layout(binding = 0) uniform PerFrameUBO
 {
 	mat4 cameraProjection;
 	mat4 cameraView;
-	mat4 model;
 	vec4 cameraPosition;
 }
 frameUBO;
 
+layout(binding = 1) uniform ModelUBO
+{
+	mat4 model;
+}
+modelUBO;
+
 void main()
 {
-	worldPos = (frameUBO.model * positionIn).xyz;
+	worldPos = (modelUBO.model * positionIn).xyz;
 
 	texCoord = uvIn.xy;
 
-	mat3 normalMatrix = transpose(inverse(mat3(frameUBO.model)));
+	mat3 normalMatrix = transpose(inverse(mat3(modelUBO.model)));
 	normal = normalMatrix * normalIn.xyz;
 
-	mat4 mvp = frameUBO.cameraProjection * frameUBO.cameraView * frameUBO.model;
+	mat4 mvp = frameUBO.cameraProjection * frameUBO.cameraView * modelUBO.model;
 	gl_Position =  mvp * positionIn;
 }
