@@ -30,6 +30,7 @@ public:
 	}
 
 private:
+	bool CreateDescriptorLayout(VulkanDevice& vkDev);
 	bool CreateDescriptorSet(VulkanDevice& vkDev);
 
 	// Textures

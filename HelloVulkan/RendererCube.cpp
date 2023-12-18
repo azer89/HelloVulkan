@@ -72,8 +72,7 @@ RendererCube::RendererCube(VulkanDevice& vkDev, VulkanImage inDepthTexture, cons
 		0, // ssbo
 		1, // texture
 		&descriptorPool_);
-	
-	CreateDescriptorSet(vkDev);
+	CreateDescriptorLayoutAndSet(vkDev);
 	
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
 	
@@ -111,7 +110,7 @@ void RendererCube::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t curre
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-bool RendererCube::CreateDescriptorSet(VulkanDevice& vkDev)
+bool RendererCube::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 {
 	const std::array<VkDescriptorSetLayoutBinding, 2> bindings = {
 		DescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT),

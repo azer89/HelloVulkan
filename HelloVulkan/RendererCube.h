@@ -17,7 +17,7 @@ public:
 private:
 	VulkanTexture texture;
 
-	bool CreateDescriptorSet(VulkanDevice& vkDev);
+	bool CreateDescriptorLayoutAndSet(VulkanDevice& vkDev);
 };
 
 #endif

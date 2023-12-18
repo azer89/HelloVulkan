@@ -134,11 +134,11 @@ RendererPBR::RendererPBR(
 
 	CreateDescriptorPool(
 		vkDev, 
-		2, // PerFrameUBO + ModelUBO
-		0, // storageBufferCount
-		10, // textureCount + cubemapCount
+		2,  // PerFrameUBO + ModelUBO
+		0,  // storageBufferCount
+		10, // textureCount + cubemapCount + extra
 		&descriptorPool_);
-
+	CreateDescriptorLayout(vkDev);
 	CreateDescriptorSet(vkDev);
 
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
@@ -201,7 +201,7 @@ void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t curren
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev)
+bool RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 {
 	std::vector<VkDescriptorSetLayoutBinding> bindings;
 
@@ -217,8 +217,8 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev)
 		bindings.emplace_back(
 			DescriptorSetLayoutBinding(
 				// Note that we don't use bindIndex
-				tex.bindIndex, 
-				VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 
+				tex.bindIndex,
+				VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 				VK_SHADER_STAGE_FRAGMENT_BIT)
 		);
 		// Keep incrementing
@@ -228,28 +228,28 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev)
 	// env
 	bindings.emplace_back(
 		DescriptorSetLayoutBinding(
-			bindingIndex++, 
-			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 
-			VK_SHADER_STAGE_FRAGMENT_BIT)
-	);
-	
-	// env_IRR
-	bindings.emplace_back(
-		DescriptorSetLayoutBinding(
-			bindingIndex++, 
-			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 
-			VK_SHADER_STAGE_FRAGMENT_BIT)
-	);
-	
-	// brdfLUT
-	bindings.emplace_back(
-		DescriptorSetLayoutBinding(
-			bindingIndex++, 
-			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 
+			bindingIndex++,
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			VK_SHADER_STAGE_FRAGMENT_BIT)
 	);
 
-	const VkDescriptorSetLayoutCreateInfo layoutInfo = 
+	// env_IRR
+	bindings.emplace_back(
+		DescriptorSetLayoutBinding(
+			bindingIndex++,
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			VK_SHADER_STAGE_FRAGMENT_BIT)
+	);
+
+	// brdfLUT
+	bindings.emplace_back(
+		DescriptorSetLayoutBinding(
+			bindingIndex++,
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			VK_SHADER_STAGE_FRAGMENT_BIT)
+	);
+
+	const VkDescriptorSetLayoutCreateInfo layoutInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
 		.pNext = nullptr,
@@ -260,6 +260,11 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev)
 
 	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));
 
+	return true;
+}
+
+bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev)
+{
 	size_t swapchainLength = vkDev.GetSwapChainImageSize();
 
 	std::vector<VkDescriptorSetLayout> layouts(swapchainLength, descriptorSetLayout_);
