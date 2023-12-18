@@ -4,18 +4,20 @@
 #include "RendererBase.h"
 #include "VulkanTexture.h"
 #include "VulkanBuffer.h"
+#include "MeshCreateInfo.h"
 #include "Mesh.h"
 
 class RendererPBR : public RendererBase
 {
 public:
 	RendererPBR(VulkanDevice& vkDev,
-		const char* modelFile,
+		const std::vector<MeshCreateInfo>& meshInfos,
+		/*const char* modelFile,
 		const char* texAOFile,
 		const char* texEmissiveFile,
 		const char* texAlbedoFile,
 		const char* texMeRFile,
-		const char* texNormalFile,
+		const char* texNormalFile,*/
 		const char* texEnvMapFile,
 		const char* texIrrMapFile,
 		VulkanImage depthTexture);
@@ -26,7 +28,8 @@ public:
 
 public:
 	// TODO change this to private
-	Mesh mesh_;
+	//Mesh mesh_;
+	std::vector<Mesh> meshes_;
 
 private:
 	bool CreateDescriptorLayout(VulkanDevice& vkDev);
@@ -34,6 +37,8 @@ private:
 
 	// Textures
 	void LoadCubeMap(VulkanDevice& vkDev, const char* fileName, VulkanTexture& cubemap);
+
+	void LoadMesh(VulkanDevice& vkDev, const MeshCreateInfo& info);
 
 private:
 	VulkanTexture envMap_;

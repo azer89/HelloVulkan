@@ -12,6 +12,7 @@
 
 struct VertexData
 {
+	// TODO add color
 	glm::vec4 pos;
 	glm::vec4 n;
 	glm::vec4 tc;
