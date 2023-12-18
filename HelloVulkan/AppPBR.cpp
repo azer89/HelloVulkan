@@ -96,7 +96,7 @@ void AppPBR::UpdateUBO(uint32_t imageIndex)
 	glm::mat4 model(1.f);
 	model = glm::rotate(model, modelRotation, glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	modelRotation += deltaTime * 0.2f;
+	
 	
 	// 1
 	ModelUBO modelUBO1
@@ -106,10 +106,15 @@ void AppPBR::UpdateUBO(uint32_t imageIndex)
 	pbrPtr->meshes_[0].SetModelUBO(vulkanDevice, imageIndex, modelUBO1);
 
 	// 2
-	model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
+	model = glm::mat4(1.f);
+	model = glm::translate(model, glm::vec3(3.0f, 0.0f, 0.0f));
+	model = glm::rotate(model, -modelRotation, glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	ModelUBO modelUBO2
 	{
 		.model = model
 	};
 	pbrPtr->meshes_[1].SetModelUBO(vulkanDevice, imageIndex, modelUBO2);
+
+	modelRotation += deltaTime * 0.01f;
 }

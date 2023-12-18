@@ -12,12 +12,6 @@ class RendererPBR : public RendererBase
 public:
 	RendererPBR(VulkanDevice& vkDev,
 		const std::vector<MeshCreateInfo>& meshInfos,
-		/*const char* modelFile,
-		const char* texAOFile,
-		const char* texEmissiveFile,
-		const char* texAlbedoFile,
-		const char* texMeRFile,
-		const char* texNormalFile,*/
 		const char* texEnvMapFile,
 		const char* texIrrMapFile,
 		VulkanImage depthTexture);

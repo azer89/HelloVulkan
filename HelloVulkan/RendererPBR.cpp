@@ -85,16 +85,12 @@ RendererPBR::RendererPBR(
 		2 * meshes_.size(),  // (PerFrameUBO + ModelUBO) * meshes_.size()
 		0,  // SSBO
 		(PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT) * meshes_.size(),
-		meshes_.size(),
+		meshes_.size(), // decsriptor count per swapchain
 		&descriptorPool_);
 	CreateDescriptorLayout(vkDev);
-	/*for (Mesh& mesh : meshes_)
+	for (Mesh& mesh : meshes_)
 	{
 		CreateDescriptorSet(vkDev, mesh);
-	}*/
-	for (size_t i = 0; i < meshes_.size(); ++i)
-	{
-		CreateDescriptorSet(vkDev, meshes_[i]);
 	}
 
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
