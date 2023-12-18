@@ -71,7 +71,30 @@ bool VulkanTexture::CreateTextureSampler(
 		.unnormalizedCoordinates = VK_FALSE
 	};
 
-	return (vkCreateSampler(device, &samplerInfo, nullptr, &sampler) == VK_SUCCESS);
+	return (vkCreateSampler(device, &samplerInfo, nullptr, &sampler_) == VK_SUCCESS);
+}
+
+void VulkanTexture::CreateTexture(
+	uint32_t w,
+	uint32_t h,
+	uint32_t layers,
+	VkFormat format,
+	uint32_t levels,
+	VkImageUsageFlags additionalUsage)
+{
+	/*width = width;
+	texture.height = height;
+	texture.layers = layers;
+	texture.levels = (levels > 0) ? levels : Utility::numMipmapLevels(width, height);
+
+	VkImageUsageFlags usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | additionalUsage;
+	if (texture.levels > 1)
+	{
+		usage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT; // For mipmap generation
+	}
+
+	texture.image = createImage(width, height, layers, texture.levels, format, 1, usage);
+	texture.view = createTextureView(texture, format, VK_IMAGE_ASPECT_COLOR_BIT, 0, VK_REMAINING_MIP_LEVELS);*/
 }
 
 bool VulkanTexture::CreateTextureImage(
@@ -89,7 +112,7 @@ bool VulkanTexture::CreateTextureImage(
 		return false;
 	}
 
-	bool result = image.CreateTextureImageFromData(
+	bool result = image_.CreateTextureImageFromData(
 		vkDev,
 		pixels,
 		texWidth,
@@ -138,7 +161,7 @@ bool VulkanTexture::CreateCubeTextureImage(
 		*height = h;
 	}
 
-	return image.CreateTextureImageFromData(vkDev,
+	return image_.CreateTextureImageFromData(vkDev,
 		cube.data_.data(),
 		cube.w_,
 		cube.h_,
@@ -292,12 +315,12 @@ Bitmap VulkanTexture::ConvertVerticalCrossToCubeMapFaces(const Bitmap& b)
 void VulkanTexture::DestroyVulkanTexture(VkDevice device)
 {
 	DestroyVulkanImage(device);
-	vkDestroySampler(device, sampler, nullptr);
+	vkDestroySampler(device, sampler_, nullptr);
 }
 
 void VulkanTexture::DestroyVulkanImage(VkDevice device)
 {
-	vkDestroyImageView(device, image.imageView, nullptr);
-	vkDestroyImage(device, image.image, nullptr);
-	vkFreeMemory(device, image.imageMemory, nullptr);
+	vkDestroyImageView(device, image_.imageView, nullptr);
+	vkDestroyImage(device, image_.image, nullptr);
+	vkFreeMemory(device, image_.imageMemory, nullptr);
 }

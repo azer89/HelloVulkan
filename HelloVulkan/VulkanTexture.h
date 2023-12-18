@@ -8,18 +8,26 @@
 class VulkanTexture
 {
 public:
-	VulkanImage image;
-	VkSampler sampler;
+	VulkanImage image_;
+	VkSampler sampler_;
 
-	uint32_t width;
-	uint32_t height;
-	uint32_t depth;
-	uint32_t bindIndex;
-	VkFormat format;
+	uint32_t width_;
+	uint32_t height_;
+	uint32_t layers_;
+	uint32_t bindIndex_;
+	VkFormat format_;
 
 	// Offscreen buffers require VK_IMAGE_LAYOUT_GENERAL && static textures have VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	VkImageLayout desiredLayout;
+	VkImageLayout desiredLayout_;
 
+	void CreateTexture(
+		uint32_t width,
+		uint32_t height,
+		uint32_t layers,
+		VkFormat format,
+		uint32_t levels,
+		VkImageUsageFlags additionalUsage);
+	
 	bool CreateTextureImage(
 		VulkanDevice& vkDev,
 		const char* filename,

@@ -1,4 +1,5 @@
 #include "RendererPBR.h"
+#include "ComputePBR.h"
 #include "VulkanUtility.h"
 #include "AppSettings.h"
 
@@ -25,6 +26,10 @@ RendererPBR::RendererPBR(
 	VulkanImage depthTexture) : 
 	RendererBase(vkDev, VulkanImage())
 {
+	{
+		//ComputePBR compPBR(vkDev);
+	}
+
 	depthTexture_ = depthTexture;
 
 	for (const MeshCreateInfo& info : meshInfos)
@@ -41,7 +46,7 @@ RendererPBR::RendererPBR(
 	gli::texture gliTex = gli::load_ktx(brdfLUTFile.c_str());
 	glm::tvec3<GLsizei> extent(gliTex.extent(0));
 
-	if (!brdfLUT_.image.CreateTextureImageFromData(
+	if (!brdfLUT_.image_.CreateTextureImageFromData(
 		vkDev,
 		(uint8_t*)gliTex.data(0, 0, 0), 
 		extent.x, 
@@ -51,7 +56,7 @@ RendererPBR::RendererPBR(
 		std::cerr << "ModelRenderer: failed to load BRDF LUT texture \n";;
 	}
 
-	brdfLUT_.image.CreateImageView(
+	brdfLUT_.image_.CreateImageView(
 		vkDev.GetDevice(),
 		VK_FORMAT_R16G16_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT
@@ -300,11 +305,11 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Mesh& mesh)
 		{
 			imageInfos.emplace_back<VkDescriptorImageInfo>
 			({
-				tex.sampler,
-				tex.image.imageView,
+				tex.sampler_,
+				tex.image_.imageView,
 				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 			});
-			bindIndices.emplace_back(tex.bindIndex);
+			bindIndices.emplace_back(tex.bindIndex_);
 		}
 
 		for (size_t i = 0; i < imageInfos.size(); ++i)
@@ -322,9 +327,9 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Mesh& mesh)
 			bindIndex++;
 		}
 
-		const VkDescriptorImageInfo imageInfoEnv = { envMap_.sampler, envMap_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
-		const VkDescriptorImageInfo imageInfoEnvIrr = { envMapIrradiance_.sampler, envMapIrradiance_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
-		const VkDescriptorImageInfo imageInfoBRDF = { brdfLUT_.sampler, brdfLUT_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+		const VkDescriptorImageInfo imageInfoEnv = { envMap_.sampler_, envMap_.image_.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+		const VkDescriptorImageInfo imageInfoEnvIrr = { envMapIrradiance_.sampler_, envMapIrradiance_.image_.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+		const VkDescriptorImageInfo imageInfoBRDF = { brdfLUT_.sampler_, brdfLUT_.image_.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
 
 		descriptorWrites.emplace_back(
 			ImageWriteDescriptorSet(ds, &imageInfoEnv, bindIndex++)
@@ -353,7 +358,7 @@ void RendererPBR::LoadCubeMap(VulkanDevice& vkDev, const char* fileName, VulkanT
 	cubemap.CreateCubeTextureImage(vkDev, fileName);
 
 	uint32_t mipLevels = 1;
-	cubemap.image.CreateImageView(
+	cubemap.image_.CreateImageView(
 		vkDev.GetDevice(),
 		VK_FORMAT_R32G32B32A32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT,

@@ -29,7 +29,6 @@ public:
 private:
 	std::vector<unsigned int> SPIRV;
 	VkShaderModule shaderModule = nullptr;
-
 	
 private:
 	size_t CompileShaderFile(const char* file);
