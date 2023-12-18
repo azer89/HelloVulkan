@@ -54,20 +54,19 @@ void ComputePBR::Execute(
 		UpdateDescriptorSet(descriptorSet_, Binding_InputTexture, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, {inputTexture});
 		UpdateDescriptorSet(descriptorSet_, Binding_OutputTexture, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, { outputTexture });
 
-		VkCommandBuffer commandBuffer = vkDev.GetComputeCommandBuffer();
-		BeginImmediateCommandBuffer(vkDev);
+		VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
 		{
 			const auto preDispatchBarrier = VulkanImageBarrier(envTextureUnfiltered.image_, 0, VK_ACCESS_SHADER_WRITE_BIT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL).mipLevels(0, 1);
-			PipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, { preDispatchBarrier });
+			PipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, { preDispatchBarrier.barrier });
 
 			vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
 			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipelineLayout_, 0, 1, &descriptorSet_, 0, nullptr);
 			vkCmdDispatch(commandBuffer, envMapSize_ / 32, envMapSize_ / 32, 6);
 
 			const auto postDispatchBarrier = VulkanImageBarrier(envTextureUnfiltered.image_, VK_ACCESS_SHADER_WRITE_BIT, 0, VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL).mipLevels(0, 1);
-			PipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, { postDispatchBarrier });
+			PipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, { postDispatchBarrier.barrier });
 		}
-		ExecuteImmediateCommandBuffer(vkDev);
+		vkDev.EndSingleTimeCommands(commandBuffer);
 
 		GenerateMipmaps(vkDev, envTextureUnfiltered);
 		
@@ -215,33 +214,11 @@ void ComputePBR::UpdateDescriptorSet(
 	vkUpdateDescriptorSets(device_, 1, &writeDescriptorSet, 0, nullptr);
 }
 
-void ComputePBR::BeginImmediateCommandBuffer(VulkanDevice& vkDev)
-{
-	VkCommandBufferBeginInfo beginInfo = { VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO };
-	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-	VK_CHECK(vkBeginCommandBuffer(vkDev.GetComputeCommandBuffer(), &beginInfo))
-}
-
-void ComputePBR::ExecuteImmediateCommandBuffer(VulkanDevice& vkDev)
-{
-	VkCommandBuffer commandBuffer = vkDev.GetComputeCommandBuffer();
-
-	VK_CHECK(vkEndCommandBuffer(commandBuffer));
-
-	VkSubmitInfo submitInfo = { VK_STRUCTURE_TYPE_SUBMIT_INFO };
-	submitInfo.commandBufferCount = 1;
-	submitInfo.pCommandBuffers = &commandBuffer;
-	vkQueueSubmit(vkDev.GetComputeQueue(), 1, &submitInfo, VK_NULL_HANDLE);
-	vkQueueWaitIdle(vkDev.GetComputeQueue());
-
-	VK_CHECK(vkResetCommandBuffer(commandBuffer, VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT));
-}
-
 void ComputePBR::PipelineBarrier(
 	VkCommandBuffer commandBuffer,
 	VkPipelineStageFlags srcStageMask,
 	VkPipelineStageFlags dstStageMask,
-	const std::vector<VulkanImageBarrier>& barriers)
+	const std::vector<VkImageMemoryBarrier>& barriers)
 {
 	vkCmdPipelineBarrier(
 		commandBuffer,
@@ -253,20 +230,18 @@ void ComputePBR::PipelineBarrier(
 		0,
 		nullptr,
 		(uint32_t)barriers.size(),
-		reinterpret_cast<const VkImageMemoryBarrier*>(barriers.data()));
+		barriers.data());
 }
 
 void ComputePBR::GenerateMipmaps(VulkanDevice& vkDev, VulkanTexture& texture)
 {
 	assert(texture.mipmapLevels_ > 1);
 
-	VkCommandBuffer commandBuffer = vkDev.GetComputeCommandBuffer();
-	BeginImmediateCommandBuffer(vkDev);
+	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
 
 	// Iterate through mip chain and consecutively blit from previous level to next level with linear filtering.
 	for (uint32_t level = 1, prevLevelWidth = texture.width_, prevLevelHeight = texture.height_; level < texture.mipmapLevels_; ++level, prevLevelWidth /= 2, prevLevelHeight /= 2)
 	{
-
 		const auto preBlitBarrier = VulkanImageBarrier(
 			texture.image_,
 			0,
@@ -310,5 +285,5 @@ void ComputePBR::GenerateMipmaps(VulkanDevice& vkDev, VulkanTexture& texture)
 		PipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, { barrier });
 	}
 
-	ExecuteImmediateCommandBuffer(vkDev);
+	vkDev.EndSingleTimeCommands(commandBuffer);
 }

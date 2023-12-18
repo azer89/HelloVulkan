@@ -73,15 +73,11 @@ private:
 		VkDescriptorType descriptorType,
 		const std::vector<VkDescriptorImageInfo>& descriptors);
 
-	void BeginImmediateCommandBuffer(VulkanDevice& vkDev);
-
-	void ExecuteImmediateCommandBuffer(VulkanDevice& vkDev);
-
 	void PipelineBarrier(
 		VkCommandBuffer commandBuffer,
 		VkPipelineStageFlags srcStageMask,
 		VkPipelineStageFlags dstStageMask,
-		const std::vector<VulkanImageBarrier>& barriers);
+		const std::vector<VkImageMemoryBarrier>& barriers);
 
 	void GenerateMipmaps(VulkanDevice& vkDev, VulkanTexture& texture);
 
