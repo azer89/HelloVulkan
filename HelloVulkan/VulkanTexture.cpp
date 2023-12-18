@@ -17,6 +17,11 @@ T Clamp(T v, T a, T b)
 	return v;
 }
 
+inline int NumMipmap(int width, int height)
+{
+	return static_cast<int>(floor(log2(std::max(width, height)))) + 1;
+}
+
 glm::vec3 FaceCoordsToXYZ(int i, int j, int faceID, int faceSize)
 {
 	const float A = 2.0f * float(i) / faceSize;
@@ -75,26 +80,49 @@ bool VulkanTexture::CreateTextureSampler(
 }
 
 void VulkanTexture::CreateTexture(
-	uint32_t w,
-	uint32_t h,
+	VulkanDevice& vkDev,
+	uint32_t width,
+	uint32_t height,
 	uint32_t layers,
 	VkFormat format,
 	uint32_t levels,
 	VkImageUsageFlags additionalUsage)
 {
-	/*width = width;
-	texture.height = height;
-	texture.layers = layers;
-	texture.levels = (levels > 0) ? levels : Utility::numMipmapLevels(width, height);
+	width_ = width;
+	height_ = height;
+	layers_ = layers;
+	mipmapLevels_ = (levels > 0) ? levels : NumMipmap(width, height);
 
 	VkImageUsageFlags usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | additionalUsage;
-	if (texture.levels > 1)
+	if (mipmapLevels_ > 1)
 	{
 		usage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT; // For mipmap generation
 	}
 
-	texture.image = createImage(width, height, layers, texture.levels, format, 1, usage);
-	texture.view = createTextureView(texture, format, VK_IMAGE_ASPECT_COLOR_BIT, 0, VK_REMAINING_MIP_LEVELS);*/
+	//texture.image = createImage(width, height, layers, texture.levels, format, 1, usage);
+	//texture.view = createTextureView(texture, format, VK_IMAGE_ASPECT_COLOR_BIT, 0, VK_REMAINING_MIP_LEVELS);*/
+	image_.CreateImage(
+		vkDev.GetDevice(),
+		vkDev.GetPhysicalDevice(),
+		width_,
+		height_,
+		format,
+		VK_IMAGE_TILING_OPTIMAL,
+		usage,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		(layers_ == 6) ? VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT : 0,
+		mipmapLevels_);
+
+	image_.CreateImageView(
+		vkDev.GetDevice(),
+		format,
+		VK_IMAGE_ASPECT_COLOR_BIT,
+		(layers_ == 6) ? VK_IMAGE_VIEW_TYPE_CUBE : VK_IMAGE_VIEW_TYPE_2D,
+		layers_,
+		mipmapLevels_
+	);
+	
+	
 }
 
 bool VulkanTexture::CreateTextureImage(

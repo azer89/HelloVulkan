@@ -41,7 +41,6 @@ public:
 		uint32_t height,
 		uint32_t layerCount = 1);
 
-private:
 	bool CreateImage(
 		VkDevice device, 
 		VkPhysicalDevice physicalDevice, 
@@ -53,6 +52,8 @@ private:
 		VkMemoryPropertyFlags properties,  
 		VkImageCreateFlags flags = 0, 
 		uint32_t mipLevels = 1);
+
+private:
 	uint32_t FindMemoryType(VkPhysicalDevice device, uint32_t typeFilter, VkMemoryPropertyFlags properties);
 	VkFormat FindDepthFormat(VkPhysicalDevice device);
 	VkFormat FindSupportedFormat(VkPhysicalDevice device, const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);

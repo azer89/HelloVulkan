@@ -14,6 +14,7 @@ public:
 	uint32_t width_;
 	uint32_t height_;
 	uint32_t layers_;
+	uint32_t mipmapLevels_;
 	uint32_t bindIndex_;
 	VkFormat format_;
 
@@ -21,6 +22,7 @@ public:
 	VkImageLayout desiredLayout_;
 
 	void CreateTexture(
+		VulkanDevice& vkDev,
 		uint32_t width,
 		uint32_t height,
 		uint32_t layers,
