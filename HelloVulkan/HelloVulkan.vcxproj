@@ -143,7 +143,7 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="RendererBase.cpp" />
     <ClCompile Include="RendererClear.cpp" />
-    <ClCompile Include="RendererCube.cpp" />
+    <ClCompile Include="RendererSkybox.cpp" />
     <ClCompile Include="RendererFinish.cpp" />
     <ClCompile Include="RendererPBR.cpp" />
     <ClCompile Include="volk.c" />
@@ -165,7 +165,7 @@
     <ClInclude Include="MeshCreateInfo.h" />
     <ClInclude Include="RendererBase.h" />
     <ClInclude Include="RendererClear.h" />
-    <ClInclude Include="RendererCube.h" />
+    <ClInclude Include="RendererSkybox.h" />
     <ClInclude Include="RendererFinish.h" />
     <ClInclude Include="RendererPBR.h" />
     <ClInclude Include="RenderPassCreateInfo.h" />
