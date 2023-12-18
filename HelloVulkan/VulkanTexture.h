@@ -29,6 +29,10 @@ public:
 		VkFormat format,
 		uint32_t levels,
 		VkImageUsageFlags additionalUsage);
+
+	bool CreateHDRImage(
+		VulkanDevice& vkDev,
+		const char* filename);
 	
 	bool CreateTextureImage(
 		VulkanDevice& vkDev,

@@ -121,8 +121,25 @@ void VulkanTexture::CreateTexture(
 		layers_,
 		mipmapLevels_
 	);
-	
-	
+}
+
+bool VulkanTexture::CreateHDRImage(
+	VulkanDevice& vkDev,
+	const char* filename)
+{
+	int texWidth, texHeight, texChannels;
+	float* pixels = stbi_loadf(filename, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+
+	bool result = image_.CreateTextureImageFromData(
+		vkDev,
+		pixels,
+		texWidth,
+		texHeight,
+		VK_FORMAT_R32G32B32A32_SFLOAT);
+
+	stbi_image_free(pixels);
+
+	return result;
 }
 
 bool VulkanTexture::CreateTextureImage(

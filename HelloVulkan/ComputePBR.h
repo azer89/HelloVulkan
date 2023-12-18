@@ -4,9 +4,12 @@
 #include "VulkanDevice.h"
 #include "VulkanUtility.h"
 #include "VulkanTexture.h"
+#include "VulkanImageBarrier.h"
+#include "AppSettings.h"
 
 #include "volk.h"
 
+#include <iostream>
 #include <array>
 #include <vector>
 
@@ -23,19 +26,15 @@ public:
 		device_(vkDev.GetDevice()),
 		numMipmap(NumMipmap(envMapSize_, envMapSize_))
 	{
+		std::cout << "Init compute pipeline\n";
+
 		CreateSampler(vkDev);
 		CreateDescriptorPool();
 		CreateLayouts();
 
-		VulkanTexture envTextureUnfiltered;
-		envTextureUnfiltered.CreateTextureImage(vkDev, hdrEnvFile.c_str());
-		envTextureUnfiltered.image_.CreateImageView(
-			vkDev.GetDevice(),
-			VK_FORMAT_R16G16B16A16_SFLOAT,
-			VK_IMAGE_ASPECT_COLOR_BIT, // VkImageAspectFlags
-			VK_IMAGE_VIEW_TYPE_CUBE, // VkImageViewType
-			6,
-			numMipmap);
+		Execute(vkDev, hdrEnvFile.c_str());
+
+		std::cout << "End compute pipeline\n";
 	}
 
 	~ComputePBR()
@@ -47,6 +46,8 @@ public:
 	}
 
 private:
+	void Execute(VulkanDevice& vkDev, const char* hdrFile);
+
 	void CreateSampler(VulkanDevice& vkDev);
 
 	void CreateLayouts();
@@ -66,6 +67,24 @@ private:
 		VkPipelineLayout layout,
 		const VkSpecializationInfo* specializationInfo);
 
+	void UpdateDescriptorSet(
+		VkDescriptorSet dstSet,
+		uint32_t dstBinding,
+		VkDescriptorType descriptorType,
+		const std::vector<VkDescriptorImageInfo>& descriptors);
+
+	void BeginImmediateCommandBuffer(VulkanDevice& vkDev);
+
+	void ExecuteImmediateCommandBuffer(VulkanDevice& vkDev);
+
+	void PipelineBarrier(
+		VkCommandBuffer commandBuffer,
+		VkPipelineStageFlags srcStageMask,
+		VkPipelineStageFlags dstStageMask,
+		const std::vector<VulkanImageBarrier>& barriers);
+
+	void GenerateMipmaps(VulkanDevice& vkDev, VulkanTexture& texture);
+
 	static int NumMipmap(int width, int height)
 	{
 		return static_cast<int>(floor(log2(std::max(width, height)))) + 1;
@@ -81,7 +100,7 @@ private:
 
 	VkSampler sampler_;
 
-	VkDescriptorSet descriptorSets_;
+	VkDescriptorSet descriptorSet_;
 	VkDescriptorSetLayout descriptorSetLayout_ = nullptr;
 	VkDescriptorPool descriptorPool_ = nullptr;
 };

@@ -163,5 +163,8 @@
     <None Include="..\Shaders\pbr_mesh.vert">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\Shaders\equirect2cube.comp">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

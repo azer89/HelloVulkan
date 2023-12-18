@@ -27,7 +27,7 @@ RendererPBR::RendererPBR(
 	RendererBase(vkDev, VulkanImage())
 {
 	{
-		//ComputePBR compPBR(vkDev);
+		ComputePBR compPBR(vkDev, texEnvMapFile);
 	}
 
 	depthTexture_ = depthTexture;

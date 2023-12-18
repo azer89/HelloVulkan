@@ -185,6 +185,7 @@
   <ItemGroup>
     <None Include="..\Shaders\cube.frag" />
     <None Include="..\Shaders\cube.vert" />
+    <None Include="..\Shaders\equirect2cube.comp" />
     <None Include="..\Shaders\pbr_mesh.frag" />
     <None Include="..\Shaders\pbr_mesh.vert" />
   </ItemGroup>
