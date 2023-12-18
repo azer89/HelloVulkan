@@ -281,7 +281,7 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev)
 		VkDescriptorSet ds = descriptorSets_[i];
 
 		const VkDescriptorBufferInfo bufferInfo1 = { uniformBuffers_[i].buffer_, 0, sizeof(PerFrameUBO)};
-		const VkDescriptorBufferInfo bufferInfo2 = { modelBuffers_[i].buffer_, 0, sizeof(PerFrameUBO) };
+		const VkDescriptorBufferInfo bufferInfo2 = { modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
 		//const VkDescriptorBufferInfo bufferInfo2 = { mesh_.storageBuffer_.buffer_, 0, mesh_.vertexBufferSize_ };
 		//const VkDescriptorBufferInfo bufferInfo3 = { mesh_.storageBuffer_.buffer_, mesh_.vertexBufferSize_, mesh_.indexBufferSize_ };
 
