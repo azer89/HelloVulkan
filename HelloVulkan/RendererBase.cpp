@@ -257,7 +257,7 @@ bool RendererBase::CreateDescriptorPool(
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.maxSets = static_cast<uint32_t>(imageCount) * setCountPerSwapchain,
+		.maxSets = static_cast<uint32_t>(imageCount * setCountPerSwapchain),
 		.poolSizeCount = static_cast<uint32_t>(poolSizes.size()),
 		.pPoolSizes = poolSizes.empty() ? nullptr : poolSizes.data()
 	};

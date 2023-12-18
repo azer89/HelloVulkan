@@ -19,12 +19,6 @@ constexpr size_t PBR_ENV_TEXTURE_COUNT = 3;
 
 RendererPBR::RendererPBR(
 	VulkanDevice& vkDev,
-	/*const char* modelFile,
-	const char* texAOFile,
-	const char* texEmissiveFile,
-	const char* texAlbedoFile,
-	const char* texMeRFile,
-	const char* texNormalFile,*/
 	const std::vector<MeshCreateInfo>& meshInfos,
 	const char* texEnvMapFile,
 	const char* texIrrMapFile,
@@ -112,7 +106,6 @@ RendererPBR::RendererPBR(
 
 RendererPBR::~RendererPBR()
 {
-	//mesh_.Destroy(device_);
 	for (Mesh& mesh : meshes_)
 	{
 		mesh.Destroy(device_);
@@ -220,8 +213,6 @@ bool RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 	uint32_t bindingIndex = 0;
 	bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT));
 	bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT));
-	//bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT));
-	//bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT));
 
 	// PBR textures
 	for (size_t i = 0; i < PBR_MESH_TEXTURE_COUNT; ++i)

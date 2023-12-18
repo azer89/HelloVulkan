@@ -1,5 +1,7 @@
 #include "VulkanShader.h"
 
+#include <iostream>
+
 VkResult VulkanShader::Create(VkDevice device, const char* fileName)
 {
 	if (CompileShaderFile(fileName) < 1)
@@ -49,7 +51,7 @@ std::string VulkanShader::ReadShaderFile(const char* fileName)
 
 	if (!file)
 	{
-		printf("I/O error. Cannot open shader file '%s'\n", fileName);
+		std::cerr << "I/O error. Cannot open shader file" << fileName << '\n';
 		return std::string();
 	}
 
@@ -68,7 +70,9 @@ std::string VulkanShader::ReadShaderFile(const char* fileName)
 	if (bytesread > 3)
 	{
 		if (!memcmp(buffer, BOM, 3))
+		{
 			memset(buffer, ' ', 3);
+		}
 	}
 
 	std::string code(buffer);
@@ -151,7 +155,9 @@ size_t VulkanShader::CompileShader(glslang_stage_t stage, const char* shaderSour
 			glslang_program_SPIRV_get_messages(program);
 
 		if (spirv_messages)
+		{
 			fprintf(stderr, "%s", spirv_messages);
+		}
 	}
 
 	glslang_program_delete(program);

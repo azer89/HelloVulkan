@@ -22,7 +22,6 @@ public:
 
 public:
 	// TODO change this to private
-	//Mesh mesh_;
 	std::vector<Mesh> meshes_;
 
 private:
