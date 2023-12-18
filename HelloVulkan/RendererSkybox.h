@@ -6,11 +6,11 @@
 
 #include "glm/glm.hpp"
 
-class RendererCube : public RendererBase
+class RendererSkybox : public RendererBase
 {
 public:
-	RendererCube(VulkanDevice& vkDev, VulkanImage inDepthTexture, const char* textureFile);
-	virtual ~RendererCube();
+	RendererSkybox(VulkanDevice& vkDev, VulkanImage inDepthTexture, const char* textureFile);
+	virtual ~RendererSkybox();
 
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
