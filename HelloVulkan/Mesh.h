@@ -4,6 +4,7 @@
 #include "VulkanDevice.h"
 #include "VulkanBuffer.h"
 #include "VulkanTexture.h"
+#include "UBO.h"
 
 #include "volk.h"
 
@@ -47,6 +48,9 @@ public:
 
 	std::vector<VkDescriptorSet> descriptorSets_;
 
+	// ModelUBO
+	std::vector<VulkanBuffer> modelBuffers_;
+
 	// Textures
 	void AddTexture(VulkanDevice& vkDev, const char* fileName, uint32_t bindIndex);
 
@@ -54,6 +58,11 @@ public:
 	void Create(VulkanDevice& vkDev, const char* filename);
 
 	void Destroy(VkDevice device);
+
+	void SetModelUBO(const VulkanDevice& vkDev, uint32_t imageIndex, ModelUBO ubo)
+	{
+		UpdateUniformBuffer(vkDev.GetDevice(), modelBuffers_[imageIndex], &ubo, sizeof(ModelUBO));
+	}
 
 private:
 	// SSBO, currently not used
@@ -72,6 +81,12 @@ private:
 		VulkanDevice& vkDev,
 		const void* vertexData,
 		const void* indexData);
+
+	void UpdateUniformBuffer(
+		VkDevice device,
+		VulkanBuffer& buffer,
+		const void* data,
+		const size_t dataSize);
 };
 
 #endif

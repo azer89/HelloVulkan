@@ -24,24 +24,18 @@ public:
 
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
-	void SetModelUBO(const VulkanDevice& vkDev, uint32_t imageIndex, ModelUBO ubo)
-	{
-		UpdateUniformBuffer(vkDev.GetDevice(), modelBuffers_[imageIndex], &ubo, sizeof(ModelUBO));
-	}
+public:
+	// TODO change this to private
+	Mesh mesh_;
 
 private:
 	bool CreateDescriptorLayout(VulkanDevice& vkDev);
-	bool CreateDescriptorSet(VulkanDevice& vkDev);
+	bool CreateDescriptorSet(VulkanDevice& vkDev, Mesh& mesh);
 
 	// Textures
 	void LoadCubeMap(VulkanDevice& vkDev, const char* fileName, VulkanTexture& cubemap);
 
 private:
-	Mesh mesh_;
-	// ModelUBO
-	// TODO MOve this to mesh
-	std::vector<VulkanBuffer> modelBuffers_; 
-
 	VulkanTexture envMap_;
 	VulkanTexture envMapIrradiance_;
 	VulkanTexture brdfLUT_;

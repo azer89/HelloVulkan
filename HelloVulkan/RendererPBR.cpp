@@ -128,7 +128,7 @@ RendererPBR::RendererPBR(
 	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo());
 
 	CreateUniformBuffers(vkDev, uniformBuffers_, sizeof(PerFrameUBO));
-	CreateUniformBuffers(vkDev, modelBuffers_, sizeof(ModelUBO));
+	CreateUniformBuffers(vkDev, mesh_.modelBuffers_, sizeof(ModelUBO));
 
 	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthTexture_.imageView, swapchainFramebuffers_);
 
@@ -139,7 +139,7 @@ RendererPBR::RendererPBR(
 		10, // textureCount + cubemapCount + extra
 		&descriptorPool_);
 	CreateDescriptorLayout(vkDev);
-	CreateDescriptorSet(vkDev);
+	CreateDescriptorSet(vkDev, mesh_);
 
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
 
@@ -160,11 +160,6 @@ RendererPBR::RendererPBR(
 
 RendererPBR::~RendererPBR()
 {
-	for (auto buf : modelBuffers_)
-	{
-		buf.Destroy(device_);
-	}
-
 	mesh_.Destroy(device_);
 
 	envMap_.DestroyVulkanTexture(device_);
@@ -183,7 +178,7 @@ void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t curren
 		pipelineLayout_,
 		0,
 		1,
-		&descriptorSets_[currentImage],
+		&mesh_.descriptorSets_[currentImage],
 		0,
 		nullptr);
 
@@ -212,6 +207,7 @@ bool RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 	//bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT));
 
 	// PBR textures
+	// TODO Refactor this
 	for (VulkanTexture& tex : mesh_.textures_)
 	{
 		bindings.emplace_back(
@@ -263,7 +259,7 @@ bool RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 	return true;
 }
 
-bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev)
+bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Mesh& mesh)
 {
 	size_t swapchainLength = vkDev.GetSwapChainImageSize();
 
@@ -277,30 +273,26 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev)
 		.pSetLayouts = layouts.data()
 	};
 
-	descriptorSets_.resize(swapchainLength);
+	mesh.descriptorSets_.resize(swapchainLength);
 
-	VK_CHECK(vkAllocateDescriptorSets(vkDev.GetDevice(), &allocInfo, descriptorSets_.data()));
+	VK_CHECK(vkAllocateDescriptorSets(vkDev.GetDevice(), &allocInfo, mesh.descriptorSets_.data()));
 
 	for (size_t i = 0; i < swapchainLength; i++)
 	{
-		VkDescriptorSet ds = descriptorSets_[i];
+		VkDescriptorSet ds = mesh.descriptorSets_[i];
 
 		const VkDescriptorBufferInfo bufferInfo1 = { uniformBuffers_[i].buffer_, 0, sizeof(PerFrameUBO)};
-		const VkDescriptorBufferInfo bufferInfo2 = { modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
-		//const VkDescriptorBufferInfo bufferInfo2 = { mesh_.storageBuffer_.buffer_, 0, mesh_.vertexBufferSize_ };
-		//const VkDescriptorBufferInfo bufferInfo3 = { mesh_.storageBuffer_.buffer_, mesh_.vertexBufferSize_, mesh_.indexBufferSize_ };
+		const VkDescriptorBufferInfo bufferInfo2 = { mesh.modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
 
 		uint32_t bindIndex = 0;
 
 		std::vector<VkWriteDescriptorSet> descriptorWrites;
 		descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo1, bindIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
 		descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo2, bindIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
-		//descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo2, bindIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER));
-		//descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo3, bindIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER));
-
+		
 		std::vector<VkDescriptorImageInfo> imageInfos;
 		std::vector<uint32_t> bindIndices;
-		for (VulkanTexture& tex : mesh_.textures_)
+		for (VulkanTexture& tex : mesh.textures_)
 		{
 			imageInfos.emplace_back<VkDescriptorImageInfo>
 			({
