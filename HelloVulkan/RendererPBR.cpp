@@ -33,13 +33,6 @@ RendererPBR::RendererPBR(
 {
 	depthTexture_ = depthTexture;
 
-	/*mesh_.Create(vkDev, modelFile);
-	// The numbers are the bindIndices
-	mesh_.AddTexture(vkDev, texAOFile, 2);
-	mesh_.AddTexture(vkDev, texEmissiveFile, 3);
-	mesh_.AddTexture(vkDev, texAlbedoFile, 4);
-	mesh_.AddTexture(vkDev, texMeRFile, 5);
-	mesh_.AddTexture(vkDev, texNormalFile, 6);*/
 	for (const MeshCreateInfo& info : meshInfos)
 	{
 		LoadMesh(vkDev, info);
@@ -89,14 +82,19 @@ RendererPBR::RendererPBR(
 
 	CreateDescriptorPool(
 		vkDev, 
-		2 * meshes_.size() + 10,  // (PerFrameUBO + ModelUBO) * meshes_.size()
+		2 * meshes_.size(),  // (PerFrameUBO + ModelUBO) * meshes_.size()
 		0,  // SSBO
-		(PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT) * meshes_.size() + 10,
+		(PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT) * meshes_.size(),
+		meshes_.size(),
 		&descriptorPool_);
 	CreateDescriptorLayout(vkDev);
-	for (Mesh& mesh : meshes_)
+	/*for (Mesh& mesh : meshes_)
 	{
 		CreateDescriptorSet(vkDev, mesh);
+	}*/
+	for (size_t i = 0; i < meshes_.size(); ++i)
+	{
+		CreateDescriptorSet(vkDev, meshes_[i]);
 	}
 
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);

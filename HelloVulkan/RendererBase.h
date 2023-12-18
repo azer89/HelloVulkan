@@ -73,6 +73,7 @@ protected:
 		uint32_t uniformBufferCount, 
 		uint32_t storageBufferCount, 
 		uint32_t samplerCount, 
+		uint32_t setCountPerSwapchain,
 		VkDescriptorPool* descriptorPool);
 
 	bool CreatePipelineLayout(VkDevice device, 

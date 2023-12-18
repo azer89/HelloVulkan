@@ -71,6 +71,7 @@ RendererCube::RendererCube(VulkanDevice& vkDev, VulkanImage inDepthTexture, cons
 		1, // uniform
 		0, // ssbo
 		1, // texture
+		1, // one set per swapchain
 		&descriptorPool_);
 	CreateDescriptorLayoutAndSet(vkDev);
 	

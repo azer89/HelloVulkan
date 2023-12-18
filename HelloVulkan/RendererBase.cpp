@@ -237,6 +237,7 @@ bool RendererBase::CreateDescriptorPool(
 	uint32_t uniformBufferCount,
 	uint32_t storageBufferCount,
 	uint32_t samplerCount,
+	uint32_t setCountPerSwapchain,
 	VkDescriptorPool* descriptorPool)
 {
 	const uint32_t imageCount = static_cast<uint32_t>(vkDev.GetSwapChainImageSize());
@@ -256,7 +257,7 @@ bool RendererBase::CreateDescriptorPool(
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.maxSets = static_cast<uint32_t>(imageCount),
+		.maxSets = static_cast<uint32_t>(imageCount) * setCountPerSwapchain,
 		.poolSizeCount = static_cast<uint32_t>(poolSizes.size()),
 		.pPoolSizes = poolSizes.empty() ? nullptr : poolSizes.data()
 	};

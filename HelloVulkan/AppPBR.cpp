@@ -111,5 +111,5 @@ void AppPBR::UpdateUBO(uint32_t imageIndex)
 	{
 		.model = model
 	};
-	pbrPtr->meshes_[1].SetModelUBO(vulkanDevice, imageIndex, modelUBO1);
+	pbrPtr->meshes_[1].SetModelUBO(vulkanDevice, imageIndex, modelUBO2);
 }
