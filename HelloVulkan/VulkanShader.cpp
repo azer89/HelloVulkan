@@ -51,7 +51,7 @@ std::string VulkanShader::ReadShaderFile(const char* fileName)
 
 	if (!file)
 	{
-		std::cerr << "I/O error. Cannot open shader file" << fileName << '\n';
+		std::cerr << "I/O error. Cannot open shader file: " << fileName << '\n';
 		return std::string();
 	}
 
