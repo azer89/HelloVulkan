@@ -139,6 +139,7 @@
     <ClCompile Include="AppPBR.cpp" />
     <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="ComputePBR.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="RendererBase.cpp" />
@@ -161,6 +162,7 @@
     <ClInclude Include="AppPBR.h" />
     <ClInclude Include="Bitmap.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="ComputePBR.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshCreateInfo.h" />
     <ClInclude Include="RendererBase.h" />
@@ -171,6 +173,7 @@
     <ClInclude Include="RenderPassCreateInfo.h" />
     <ClInclude Include="UBO.h" />
     <ClInclude Include="VulkanBuffer.h" />
+    <ClInclude Include="VulkanImageBarrier.h" />
     <ClInclude Include="VulkanShader.h" />
     <ClInclude Include="volk.h" />
     <ClInclude Include="VulkanImage.h" />

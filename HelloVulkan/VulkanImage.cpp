@@ -255,6 +255,7 @@ void VulkanImage::TransitionImageLayoutCmd(VkCommandBuffer commandBuffer,
 	uint32_t layerCount,
 	uint32_t mipLevels)
 {
+	// TODO Change to VulkanImageBarrier
 	VkImageMemoryBarrier barrier = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
 		.pNext = nullptr,
