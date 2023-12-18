@@ -56,15 +56,17 @@ void ComputePBR::Execute(
 
 		VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
 		{
-			const auto preDispatchBarrier = VulkanImageBarrier(envTextureUnfiltered.image_, 0, VK_ACCESS_SHADER_WRITE_BIT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL).mipLevels(0, 1);
-			PipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, { preDispatchBarrier.barrier });
+			auto preDispatch = VulkanImageBarrier(envTextureUnfiltered.image_, 0, VK_ACCESS_SHADER_WRITE_BIT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL).mipLevels(0, 1);
+			VkImageMemoryBarrier preDispatchBarrier = preDispatch.barrier;
+			PipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, &preDispatchBarrier);
 
 			vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
 			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipelineLayout_, 0, 1, &descriptorSet_, 0, nullptr);
 			vkCmdDispatch(commandBuffer, envMapSize_ / 32, envMapSize_ / 32, 6);
 
-			const auto postDispatchBarrier = VulkanImageBarrier(envTextureUnfiltered.image_, VK_ACCESS_SHADER_WRITE_BIT, 0, VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL).mipLevels(0, 1);
-			PipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, { postDispatchBarrier.barrier });
+			auto postDispatch = VulkanImageBarrier(envTextureUnfiltered.image_, VK_ACCESS_SHADER_WRITE_BIT, 0, VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL).mipLevels(0, 1);
+			VkImageMemoryBarrier postDispatchBarrier = postDispatch.barrier;
+			PipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, &postDispatchBarrier);
 		}
 		vkDev.EndSingleTimeCommands(commandBuffer);
 
@@ -218,7 +220,7 @@ void ComputePBR::PipelineBarrier(
 	VkCommandBuffer commandBuffer,
 	VkPipelineStageFlags srcStageMask,
 	VkPipelineStageFlags dstStageMask,
-	const std::vector<VkImageMemoryBarrier>& barriers)
+	VkImageMemoryBarrier* barrier)
 {
 	vkCmdPipelineBarrier(
 		commandBuffer,
@@ -229,8 +231,8 @@ void ComputePBR::PipelineBarrier(
 		nullptr,
 		0,
 		nullptr,
-		(uint32_t)barriers.size(),
-		barriers.data());
+		1,
+		barrier);
 }
 
 void ComputePBR::GenerateMipmaps(VulkanDevice& vkDev, VulkanTexture& texture)
@@ -242,7 +244,7 @@ void ComputePBR::GenerateMipmaps(VulkanDevice& vkDev, VulkanTexture& texture)
 	// Iterate through mip chain and consecutively blit from previous level to next level with linear filtering.
 	for (uint32_t level = 1, prevLevelWidth = texture.width_, prevLevelHeight = texture.height_; level < texture.mipmapLevels_; ++level, prevLevelWidth /= 2, prevLevelHeight /= 2)
 	{
-		const auto preBlitBarrier = VulkanImageBarrier(
+		auto preBlitBarrier = VulkanImageBarrier(
 			texture.image_,
 			0,
 			VK_ACCESS_TRANSFER_WRITE_BIT,
@@ -251,7 +253,7 @@ void ComputePBR::GenerateMipmaps(VulkanDevice& vkDev, VulkanTexture& texture)
 		PipelineBarrier(
 			commandBuffer,
 			VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
-			{ preBlitBarrier });
+			&(preBlitBarrier.barrier));
 
 		VkImageBlit region = {};
 		region.srcSubresource = { VK_IMAGE_ASPECT_COLOR_BIT, level - 1, 0, texture.layers_ };
@@ -263,26 +265,26 @@ void ComputePBR::GenerateMipmaps(VulkanDevice& vkDev, VulkanTexture& texture)
 			texture.image_.image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 			1, &region, VK_FILTER_LINEAR);
 
-		const auto postBlitBarrier =
+		auto postBlitBarrier =
 			VulkanImageBarrier(
 				texture.image_,
 				VK_ACCESS_TRANSFER_WRITE_BIT,
 				VK_ACCESS_TRANSFER_READ_BIT,
 				VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 				VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL).mipLevels(level, 1);
-		PipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, { postBlitBarrier });
+		PipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, &(postBlitBarrier.barrier));
 	}
 
 	// Transition whole mip chain to shader read only layout.
 	{
-		const auto barrier =
+		auto barrier =
 			VulkanImageBarrier(
 				texture.image_,
 				VK_ACCESS_TRANSFER_WRITE_BIT,
 				0,
 				VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-		PipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, { barrier });
+		PipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, &(barrier.barrier));
 	}
 
 	vkDev.EndSingleTimeCommands(commandBuffer);

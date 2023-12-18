@@ -77,7 +77,7 @@ private:
 		VkCommandBuffer commandBuffer,
 		VkPipelineStageFlags srcStageMask,
 		VkPipelineStageFlags dstStageMask,
-		const std::vector<VkImageMemoryBarrier>& barriers);
+		VkImageMemoryBarrier* barrier);
 
 	void GenerateMipmaps(VulkanDevice& vkDev, VulkanTexture& texture);
 

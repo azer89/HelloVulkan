@@ -80,6 +80,7 @@ private:
 		VkImageLayout newLayout, 
 		uint32_t layerCount = 1, 
 		uint32_t mipLevels = 1);
+
 	bool HasStencilComponent(VkFormat format);
 
 	uint32_t BytesPerTexFormat(VkFormat fmt);
