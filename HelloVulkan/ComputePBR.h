@@ -22,13 +22,17 @@ protected:
 		device_(vkDev.GetDevice()),
 		numMipmap(NumMipmap(envMapSize_, envMapSize_))
 	{
+		CreateSampler(vkDev);
 		CreateDescriptorPool();
-
 		CreateLayouts();
 	}
 
 	virtual ~ComputePBR()
 	{
+		vkDestroyDescriptorSetLayout(device_, descriptorSetLayout_, nullptr);
+		vkDestroySampler(device_, sampler_, nullptr);
+		vkDestroyPipelineLayout(device_, pipelineLayout_, nullptr);
+		vkDestroyDescriptorPool(device_, descriptorPool_, nullptr);
 	}
 
 	void CreateSampler(VulkanDevice& vkDev);
