@@ -62,11 +62,16 @@ RendererCube::RendererCube(VulkanDevice& vkDev, VulkanImage inDepthTexture, cons
 
 	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo());
 
-	CreateUniformBuffers(vkDev, sizeof(PerFrameUBO));
+	CreateUniformBuffers(vkDev, uniformBuffers_, sizeof(PerFrameUBO));
 	
 	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthTexture_.imageView, swapchainFramebuffers_);
 	
-	CreateDescriptorPool(vkDev, 1, 0, 1, &descriptorPool_);
+	CreateDescriptorPool(
+		vkDev, 
+		1, // uniform
+		0, // ssbo
+		1, // texture
+		&descriptorPool_);
 	
 	CreateDescriptorSet(vkDev);
 	

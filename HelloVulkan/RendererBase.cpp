@@ -53,13 +53,16 @@ void RendererBase::BeginRenderPass(VkCommandBuffer commandBuffer, size_t current
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
 }
 
-bool RendererBase::CreateUniformBuffers(VulkanDevice& vkDev, size_t uniformDataSize)
+bool RendererBase::CreateUniformBuffers(
+	VulkanDevice& vkDev,
+	std::vector<VulkanBuffer>& buffers,
+	size_t uniformDataSize)
 {
 	auto swapChainImageSize = vkDev.GetSwapChainImageSize();
-	uniformBuffers_.resize(swapChainImageSize);
+	buffers.resize(swapChainImageSize);
 	for (size_t i = 0; i < swapChainImageSize; i++)
 	{
-		bool res = uniformBuffers_[i].CreateBuffer(
+		bool res = buffers[i].CreateBuffer(
 			vkDev.GetDevice(),
 			vkDev.GetPhysicalDevice(),
 			uniformDataSize,
@@ -456,11 +459,11 @@ bool RendererBase::CreateGraphicsPipeline(
 
 void RendererBase::UpdateUniformBuffer(
 	VkDevice device,
-	uint32_t currentImage,
+	VulkanBuffer& buffer,
 	const void* data,
 	const size_t dataSize)
 {
-	VkDeviceMemory bufferMemory = uniformBuffers_[currentImage].bufferMemory_;
+	VkDeviceMemory bufferMemory = buffer.bufferMemory_;
 
 	void* mappedData = nullptr;
 	vkMapMemory(
@@ -471,5 +474,6 @@ void RendererBase::UpdateUniformBuffer(
 		0, 
 		&mappedData);
 	memcpy(mappedData, data, dataSize);
+
 	vkUnmapMemory(device, bufferMemory);
 }

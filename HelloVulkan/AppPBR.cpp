@@ -75,12 +75,11 @@ void AppPBR::UpdateUBO(uint32_t imageIndex)
 	{
 		.cameraProjection = camera->GetProjectionMatrix(),
 		.cameraView = glm::mat4(glm::mat3(camera->GetViewMatrix())),
-		.model = glm::mat4(1.f),
 		.cameraPosition = glm::vec4(camera->Position, 1.f)
 	};
 
 	// Model
-	cubePtr->SetUBO(vulkanDevice, imageIndex, skyboxUBO);
+	cubePtr->SetPerFrameUBO(vulkanDevice, imageIndex, skyboxUBO);
 	glm::mat4 model(1.f);
 	model = glm::rotate(model, modelRotation, glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -89,8 +88,12 @@ void AppPBR::UpdateUBO(uint32_t imageIndex)
 	{
 		.cameraProjection = camera->GetProjectionMatrix(),
 		.cameraView = camera->GetViewMatrix(),
-		.model = model,
 		.cameraPosition = glm::vec4(camera->Position, 1.f)
 	};
-	pbrPtr->SetUBO(vulkanDevice, imageIndex, meshUBO);
+	ModelUBO modelUBO
+	{
+		.model = model
+	};
+	pbrPtr->SetPerFrameUBO(vulkanDevice, imageIndex, meshUBO);
+	pbrPtr->SetModelUBO(vulkanDevice, imageIndex, modelUBO);
 }

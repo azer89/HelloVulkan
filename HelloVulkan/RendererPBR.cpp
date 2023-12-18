@@ -86,11 +86,11 @@ RendererPBR::RendererPBR(
 
 	mesh_.Create(vkDev, modelFile);
 	// The numbers are the bindIndices
-	mesh_.AddTexture(vkDev, texAOFile, 1);
-	mesh_.AddTexture(vkDev, texEmissiveFile, 2);
-	mesh_.AddTexture(vkDev, texAlbedoFile, 3);
-	mesh_.AddTexture(vkDev, texMeRFile, 4);
-	mesh_.AddTexture(vkDev, texNormalFile, 5);
+	mesh_.AddTexture(vkDev, texAOFile, 2);
+	mesh_.AddTexture(vkDev, texEmissiveFile, 3);
+	mesh_.AddTexture(vkDev, texAlbedoFile, 4);
+	mesh_.AddTexture(vkDev, texMeRFile, 5);
+	mesh_.AddTexture(vkDev, texNormalFile, 6);
 
 	// cube maps
 	LoadCubeMap(vkDev, texEnvMapFile, envMap_);
@@ -127,15 +127,16 @@ RendererPBR::RendererPBR(
 
 	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo());
 
-	CreateUniformBuffers(vkDev, sizeof(PerFrameUBO));
+	CreateUniformBuffers(vkDev, uniformBuffers_, sizeof(PerFrameUBO));
+	CreateUniformBuffers(vkDev, modelBuffers_, sizeof(ModelUBO));
 
 	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthTexture_.imageView, swapchainFramebuffers_);
 
 	CreateDescriptorPool(
 		vkDev, 
-		1, // uniformBufferCount
-		2, // storageBufferCount
-		8, // samplerCount = textureCount + cubemapCount
+		2, // PerFrameUBO + ModelUBO
+		0, // storageBufferCount
+		10, // textureCount + cubemapCount
 		&descriptorPool_);
 
 	CreateDescriptorSet(vkDev);
@@ -159,6 +160,11 @@ RendererPBR::RendererPBR(
 
 RendererPBR::~RendererPBR()
 {
+	for (auto buf : modelBuffers_)
+	{
+		buf.Destroy(device_);
+	}
+
 	mesh_.Destroy(device_);
 
 	envMap_.DestroyVulkanTexture(device_);
@@ -200,6 +206,7 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev)
 	std::vector<VkDescriptorSetLayoutBinding> bindings;
 
 	uint32_t bindingIndex = 0;
+	bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT));
 	bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT));
 	//bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT));
 	//bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT));
@@ -274,6 +281,7 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev)
 		VkDescriptorSet ds = descriptorSets_[i];
 
 		const VkDescriptorBufferInfo bufferInfo1 = { uniformBuffers_[i].buffer_, 0, sizeof(PerFrameUBO)};
+		const VkDescriptorBufferInfo bufferInfo2 = { modelBuffers_[i].buffer_, 0, sizeof(PerFrameUBO) };
 		//const VkDescriptorBufferInfo bufferInfo2 = { mesh_.storageBuffer_.buffer_, 0, mesh_.vertexBufferSize_ };
 		//const VkDescriptorBufferInfo bufferInfo3 = { mesh_.storageBuffer_.buffer_, mesh_.vertexBufferSize_, mesh_.indexBufferSize_ };
 
@@ -281,6 +289,7 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev)
 
 		std::vector<VkWriteDescriptorSet> descriptorWrites;
 		descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo1, bindIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
+		descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo2, bindIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
 		//descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo2, bindIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER));
 		//descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo3, bindIndex++, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER));
 
@@ -312,9 +321,9 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev)
 			bindIndex++;
 		}
 
-		const VkDescriptorImageInfo  imageInfoEnv = { envMap_.sampler, envMap_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
-		const VkDescriptorImageInfo  imageInfoEnvIrr = { envMapIrradiance_.sampler, envMapIrradiance_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
-		const VkDescriptorImageInfo  imageInfoBRDF = { brdfLUT_.sampler, brdfLUT_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+		const VkDescriptorImageInfo imageInfoEnv = { envMap_.sampler, envMap_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+		const VkDescriptorImageInfo imageInfoEnvIrr = { envMapIrradiance_.sampler, envMapIrradiance_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+		const VkDescriptorImageInfo imageInfoBRDF = { brdfLUT_.sampler, brdfLUT_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
 
 		descriptorWrites.emplace_back(
 			ImageWriteDescriptorSet(ds, &imageInfoEnv, bindIndex++)

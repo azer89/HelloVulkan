@@ -28,20 +28,19 @@ layout(binding = 0) uniform PerFrameUBO
 {
 	mat4 cameraProjection;
 	mat4 cameraView;
-	mat4 model;
 	vec4 cameraPosition;
 }
 frameUBO;
 
-layout(binding = 1) uniform sampler2D texture_ao1;
-layout(binding = 2) uniform sampler2D texture_emissive1;
-layout(binding = 3) uniform sampler2D texture_diffuse1;
-layout(binding = 4) uniform sampler2D texMetalRoughness;
-layout(binding = 5) uniform sampler2D texture_normal1;
+layout(binding = 2) uniform sampler2D texture_ao1;
+layout(binding = 3) uniform sampler2D texture_emissive1;
+layout(binding = 4) uniform sampler2D texture_diffuse1;
+layout(binding = 5) uniform sampler2D texMetalRoughness;
+layout(binding = 6) uniform sampler2D texture_normal1;
 
-layout(binding = 6) uniform samplerCube envMap; // Specular
-layout(binding = 7) uniform samplerCube irradianceMap; // Diffuse
-layout(binding = 8) uniform sampler2D brdfLUT;
+layout(binding = 7) uniform samplerCube envMap; // Specular
+layout(binding = 8) uniform samplerCube irradianceMap; // Diffuse
+layout(binding = 9) uniform sampler2D brdfLUT;
 
 // Encapsulate the various inputs used by the various functions in the shading equation
 struct PBRInfo
