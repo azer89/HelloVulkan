@@ -99,8 +99,6 @@ void VulkanTexture::CreateTexture(
 		usage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT; // For mipmap generation
 	}
 
-	//texture.image = createImage(width, height, layers, texture.levels, format, 1, usage);
-	//texture.view = createTextureView(texture, format, VK_IMAGE_ASPECT_COLOR_BIT, 0, VK_REMAINING_MIP_LEVELS);*/
 	image_.CreateImage(
 		vkDev.GetDevice(),
 		vkDev.GetPhysicalDevice(),

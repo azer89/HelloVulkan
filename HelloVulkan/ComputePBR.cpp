@@ -46,8 +46,10 @@ void ComputePBR::Execute(
 			VK_FORMAT_R32G32B32A32_SFLOAT,
 			VK_IMAGE_ASPECT_COLOR_BIT);
 
-		const VkDescriptorImageInfo inputTexture = {VK_NULL_HANDLE, envTextureEquirect.image_.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
-		const VkDescriptorImageInfo outputTexture = { VK_NULL_HANDLE, envTextureUnfiltered.image_.imageView, VK_IMAGE_LAYOUT_GENERAL };
+		const VkDescriptorImageInfo inputTexture =
+			{VK_NULL_HANDLE, envTextureEquirect.image_.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
+		const VkDescriptorImageInfo outputTexture = 
+			{ VK_NULL_HANDLE, envTextureUnfiltered.image_.imageView, VK_IMAGE_LAYOUT_GENERAL };
 		
 		UpdateDescriptorSet(descriptorSet_, Binding_InputTexture, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, {inputTexture});
 		UpdateDescriptorSet(descriptorSet_, Binding_OutputTexture, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, { outputTexture });
@@ -55,32 +57,14 @@ void ComputePBR::Execute(
 		VkCommandBuffer commandBuffer = vkDev.GetComputeCommandBuffer();
 		BeginImmediateCommandBuffer(vkDev);
 		{
-			const auto preDispatchBarrier = 
-				VulkanImageBarrier(
-					envTextureUnfiltered.image_, 
-					0, 
-					VK_ACCESS_SHADER_WRITE_BIT, 
-					VK_IMAGE_LAYOUT_UNDEFINED, 
-					VK_IMAGE_LAYOUT_GENERAL).mipLevels(0, 1);
+			const auto preDispatchBarrier = VulkanImageBarrier(envTextureUnfiltered.image_, 0, VK_ACCESS_SHADER_WRITE_BIT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL).mipLevels(0, 1);
 			PipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, { preDispatchBarrier });
 
 			vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
-			vkCmdBindDescriptorSets(
-				commandBuffer, 
-				VK_PIPELINE_BIND_POINT_COMPUTE, 
-				pipelineLayout_, 
-				0, 
-				1, 
-				&descriptorSet_, 
-				0, 
-				nullptr);
+			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipelineLayout_, 0, 1, &descriptorSet_, 0, nullptr);
 			vkCmdDispatch(commandBuffer, envMapSize_ / 32, envMapSize_ / 32, 6);
 
-			const auto postDispatchBarrier = 
-				VulkanImageBarrier(envTextureUnfiltered.image_, 
-					VK_ACCESS_SHADER_WRITE_BIT, 
-					0, 
-					VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL).mipLevels(0, 1);
+			const auto postDispatchBarrier = VulkanImageBarrier(envTextureUnfiltered.image_, VK_ACCESS_SHADER_WRITE_BIT, 0, VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL).mipLevels(0, 1);
 			PipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, { postDispatchBarrier });
 		}
 		ExecuteImmediateCommandBuffer(vkDev);
