@@ -36,7 +36,7 @@ int AppPBR::MainLoop()
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
 		static_cast<uint32_t>(AppSettings::ScreenHeight));
 	
-	cubePtr = std::make_unique<RendererCube>(vulkanDevice, depthTexture, cubemapTextureFile.c_str());
+	skyboxPtr = std::make_unique<RendererSkybox>(vulkanDevice, depthTexture, cubemapTextureFile.c_str());
 	clearPtr = std::make_unique<RendererClear>(vulkanDevice, depthTexture);
 	finishPtr = std::make_unique<RendererFinish>(vulkanDevice, depthTexture);
 	pbrPtr = std::make_unique<RendererPBR>(
@@ -49,7 +49,7 @@ int AppPBR::MainLoop()
 	const std::vector<RendererBase*> renderers = 
 	{ 
 		clearPtr.get(),
-		cubePtr.get(),
+		skyboxPtr.get(),
 		pbrPtr.get(),
 		finishPtr.get()
 	};
@@ -67,7 +67,7 @@ int AppPBR::MainLoop()
 
 	clearPtr = nullptr;
 	finishPtr = nullptr;
-	cubePtr = nullptr;
+	skyboxPtr = nullptr;
 	pbrPtr = nullptr;
 	Terminate();
 
@@ -80,10 +80,10 @@ void AppPBR::UpdateUBO(uint32_t imageIndex)
 	PerFrameUBO skyboxUBO
 	{
 		.cameraProjection = camera->GetProjectionMatrix(),
-		.cameraView = glm::mat4(glm::mat3(camera->GetViewMatrix())),
+		.cameraView = glm::mat4(glm::mat3(camera->GetViewMatrix())), // Remove translation
 		.cameraPosition = glm::vec4(camera->Position, 1.f)
 	};
-	cubePtr->SetPerFrameUBO(vulkanDevice, imageIndex, skyboxUBO);
+	skyboxPtr->SetPerFrameUBO(vulkanDevice, imageIndex, skyboxUBO);
 	PerFrameUBO pbrUBO
 	{
 		.cameraProjection = camera->GetProjectionMatrix(),

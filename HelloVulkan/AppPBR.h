@@ -2,7 +2,7 @@
 #define APP_PBR
 
 #include "AppBase.h"
-#include "RendererCube.h"
+#include "RendererSkybox.h"
 #include "RendererClear.h"
 #include "RendererFinish.h"
 #include "RendererPBR.h"
@@ -17,7 +17,7 @@ public:
 	void UpdateUBO(uint32_t imageIndex) override;
 
 private:
-	std::unique_ptr<RendererCube> cubePtr;
+	std::unique_ptr<RendererSkybox> skyboxPtr;
 	std::unique_ptr<RendererClear> clearPtr;
 	std::unique_ptr<RendererFinish> finishPtr;
 	std::unique_ptr<RendererPBR> pbrPtr;

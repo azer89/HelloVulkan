@@ -1,4 +1,4 @@
-#include "RendererCube.h"
+#include "RendererSkybox.h"
 #include "VulkanUtility.h"
 #include "AppSettings.h"
 #include "UBO.h"
@@ -42,7 +42,7 @@ inline VkWriteDescriptorSet ImageWriteDescriptorSet(
 	};
 }
 
-RendererCube::RendererCube(VulkanDevice& vkDev, VulkanImage inDepthTexture, const char* textureFile) :
+RendererSkybox::RendererSkybox(VulkanDevice& vkDev, VulkanImage inDepthTexture, const char* textureFile) :
 	RendererBase(vkDev, inDepthTexture)
 {
 	// Resource loading
@@ -87,12 +87,12 @@ RendererCube::RendererCube(VulkanDevice& vkDev, VulkanImage inDepthTexture, cons
 		&graphicsPipeline_);
 }
 
-RendererCube::~RendererCube()
+RendererSkybox::~RendererSkybox()
 {
 	texture.DestroyVulkanTexture(device_);
 }
 
-void RendererCube::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
+void RendererSkybox::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
 {
 	BeginRenderPass(commandBuffer, currentImage);
 
@@ -111,7 +111,7 @@ void RendererCube::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t curre
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-bool RendererCube::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
+bool RendererSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 {
 	const std::array<VkDescriptorSetLayoutBinding, 2> bindings = {
 		DescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT),
