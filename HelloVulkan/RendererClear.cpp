@@ -5,11 +5,11 @@
 
 RendererClear::RendererClear(VulkanDevice& vkDev, VulkanImage depthTexture) : 
 	RendererBase(vkDev, depthTexture), 
-	shouldClearDepth(depthTexture.image_ != VK_NULL_HANDLE)
+	shouldClearDepth_(depthTexture.image_ != VK_NULL_HANDLE)
 {
 	if (!CreateColorAndDepthRenderPass(
 		vkDev, 
-		shouldClearDepth, 
+		shouldClearDepth_, 
 		&renderPass_, 
 		RenderPassCreateInfo{ .clearColor_ = true, .clearDepth_ = true, .flags_ = eRenderPassBit_First }))
 	{
@@ -37,7 +37,7 @@ void RendererClear::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t swap
 		.renderPass = renderPass_,
 		.framebuffer = swapchainFramebuffers_[swapFramebuffer],
 		.renderArea = screenRect,
-		.clearValueCount = static_cast<uint32_t>(shouldClearDepth ? 2 : 1),
+		.clearValueCount = static_cast<uint32_t>(shouldClearDepth_ ? 2 : 1),
 		.pClearValues = &clearValues[0]
 	};
 

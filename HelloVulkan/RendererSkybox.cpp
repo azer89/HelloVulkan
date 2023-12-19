@@ -46,16 +46,16 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev, VulkanImage inDepthTexture, 
 	RendererBase(vkDev, inDepthTexture)
 {
 	// Resource loading
-	texture.CreateCubeTextureImage(vkDev, textureFile);
+	texture_.CreateCubeTextureImage(vkDev, textureFile);
 
-	texture.image_.CreateImageView(
+	texture_.image_.CreateImageView(
 		vkDev.GetDevice(), 
 		VK_FORMAT_R32G32B32A32_SFLOAT, 
 		VK_IMAGE_ASPECT_COLOR_BIT, 
 		VK_IMAGE_VIEW_TYPE_CUBE, 
 		6);
 
-	texture.CreateTextureSampler(vkDev.GetDevice());
+	texture_.CreateTextureSampler(vkDev.GetDevice());
 
 	std::string vertexShader = AppSettings::ShaderFolder + "cube.vert";
 	std::string fragmentShader = AppSettings::ShaderFolder + "cube.frag";
@@ -89,7 +89,7 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev, VulkanImage inDepthTexture, 
 
 RendererSkybox::~RendererSkybox()
 {
-	texture.DestroyVulkanTexture(device_);
+	texture_.DestroyVulkanTexture(device_);
 }
 
 void RendererSkybox::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
@@ -149,7 +149,7 @@ bool RendererSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 		VkDescriptorSet ds = descriptorSets_[i];
 
 		const VkDescriptorBufferInfo bufferInfo = { uniformBuffers_[i].buffer_, 0, sizeof(PerFrameUBO) };
-		const VkDescriptorImageInfo  imageInfo = { texture.sampler_, texture.image_.imageView_, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
+		const VkDescriptorImageInfo  imageInfo = { texture_.sampler_, texture_.image_.imageView_, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
 
 		const std::array<VkWriteDescriptorSet, 2> descriptorWrites = {
 			BufferWriteDescriptorSet(ds, &bufferInfo,  0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER),

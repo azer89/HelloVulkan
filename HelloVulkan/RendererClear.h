@@ -11,7 +11,7 @@ public:
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:
-	bool shouldClearDepth;
+	bool shouldClearDepth_;
 };
 
 #endif

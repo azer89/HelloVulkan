@@ -15,7 +15,7 @@ public:
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:
-	VulkanTexture texture;
+	VulkanTexture texture_;
 
 	std::vector<VkDescriptorSet> descriptorSets_;
 
