@@ -20,6 +20,8 @@ public:
 
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
+	VulkanTexture* GetEnvironmentMap() { return &envMap_; }
+
 public:
 	// TODO change this to private
 	std::vector<Mesh> meshes_;

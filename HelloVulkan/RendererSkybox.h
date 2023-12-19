@@ -9,13 +9,13 @@
 class RendererSkybox : public RendererBase
 {
 public:
-	RendererSkybox(VulkanDevice& vkDev, VulkanImage inDepthTexture, const char* textureFile);
+	RendererSkybox(VulkanDevice& vkDev, VulkanTexture* skyboxTexture, VulkanImage inDepthTexture);
 	virtual ~RendererSkybox();
 
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:
-	VulkanTexture texture_;
+	VulkanTexture* skyboxTexture_;
 
 	std::vector<VkDescriptorSet> descriptorSets_;
 

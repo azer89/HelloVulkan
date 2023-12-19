@@ -36,7 +36,6 @@ int AppPBR::MainLoop()
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
 		static_cast<uint32_t>(AppSettings::ScreenHeight));
 	
-	skyboxPtr = std::make_unique<RendererSkybox>(vulkanDevice, depthTexture, cubemapTextureFile.c_str());
 	clearPtr = std::make_unique<RendererClear>(vulkanDevice, depthTexture);
 	finishPtr = std::make_unique<RendererFinish>(vulkanDevice, depthTexture);
 	pbrPtr = std::make_unique<RendererPBR>(
@@ -45,6 +44,7 @@ int AppPBR::MainLoop()
 		cubemapTextureFile.c_str(),
 		cubemapIrradianceFile.c_str(),
 		depthTexture);
+	skyboxPtr = std::make_unique<RendererSkybox>(vulkanDevice, pbrPtr->GetEnvironmentMap(), depthTexture);
 
 	const std::vector<RendererBase*> renderers = 
 	{ 
