@@ -46,6 +46,8 @@ RendererPBR::RendererPBR(
 		(uint8_t*)gliTex.data(0, 0, 0), 
 		extent.x, 
 		extent.y, 
+		1, // mipmapCount
+		1, // layerCount
 		VK_FORMAT_R16G16_SFLOAT))
 	{
 		std::cerr << "ModelRenderer: failed to load BRDF LUT texture \n";;

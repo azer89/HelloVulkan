@@ -2,6 +2,16 @@
 #include "VulkanBuffer.h"
 #include "VulkanUtility.h"
 
+int NumMipMap(int w, int h)
+{
+	int levels = 1;
+	while ((w | h) >> levels)
+	{
+		levels += 1;
+	}
+	return levels;
+}
+
 void VulkanImage::Destroy(VkDevice device)
 {
 	vkDestroyImageView(device, imageView_, nullptr);
@@ -17,6 +27,8 @@ bool VulkanImage::CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint
 		vkDev.GetPhysicalDevice(),
 		width, 
 		height, 
+		1, // mip
+		1, // layer
 		depthFormat, 
 		VK_IMAGE_TILING_OPTIMAL, 
 		VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 
@@ -42,11 +54,23 @@ bool VulkanImage::CreateTextureImageFromData(
 	void* imageData,
 	uint32_t texWidth,
 	uint32_t texHeight,
-	VkFormat texFormat,
+	uint32_t mipmapCount,
 	uint32_t layerCount,
+	VkFormat texFormat,
 	VkImageCreateFlags flags)
 {
-	CreateImage(vkDev.GetDevice(), vkDev.GetPhysicalDevice(), texWidth, texHeight, texFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, flags);
+	CreateImage(
+		vkDev.GetDevice(), 
+		vkDev.GetPhysicalDevice(), 
+		texWidth, 
+		texHeight, 
+		mipmapCount,
+		layerCount,
+		texFormat, 
+		VK_IMAGE_TILING_OPTIMAL, 
+		VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, 
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
+		flags);
 
 	return UpdateTextureImage(vkDev, texWidth, texHeight, texFormat, layerCount, imageData);
 }
@@ -84,22 +108,28 @@ bool VulkanImage::CreateImage(
 	VkPhysicalDevice physicalDevice,
 	uint32_t width,
 	uint32_t height,
+	uint32_t mipCount,
+	uint32_t layerCount,
 	VkFormat format,
 	VkImageTiling tiling,
 	VkImageUsageFlags usage,
 	VkMemoryPropertyFlags properties,
-	VkImageCreateFlags flags,
-	uint32_t mipLevels)
+	VkImageCreateFlags flags)
 {
+	width_ = width;
+	height_ = height;
+	mipCount_ = mipCount;
+	layerCount_ = layerCount;
+	
 	const VkImageCreateInfo imageInfo = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = flags,
 		.imageType = VK_IMAGE_TYPE_2D,
 		.format = format,
-		.extent = VkExtent3D {.width = width, .height = height, .depth = 1 },
-		.mipLevels = mipLevels,
-		.arrayLayers = (uint32_t)((flags == VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT) ? 6 : 1),
+		.extent = VkExtent3D {.width = width_, .height = height_, .depth = 1 },
+		.mipLevels = mipCount_,
+		.arrayLayers = layerCount_,
 		.samples = VK_SAMPLE_COUNT_1_BIT,
 		.tiling = tiling,
 		.usage = usage,
@@ -132,7 +162,7 @@ bool VulkanImage::CreateImageView(VkDevice device,
 	VkImageAspectFlags aspectFlags, 
 	VkImageViewType viewType, 
 	uint32_t layerCount, 
-	uint32_t mipLevels)
+	uint32_t mipCount)
 {
 	const VkImageViewCreateInfo viewInfo =
 	{
@@ -146,7 +176,7 @@ bool VulkanImage::CreateImageView(VkDevice device,
 		{
 			.aspectMask = aspectFlags,
 			.baseMipLevel = 0,
-			.levelCount = mipLevels,
+			.levelCount = mipCount,
 			.baseArrayLayer = 0,
 			.layerCount = layerCount
 		}

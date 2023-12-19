@@ -71,6 +71,8 @@ bool VulkanTexture::CreateTextureImage(
 		pixels,
 		texWidth,
 		texHeight,
+		NumMipMap(texWidth, texHeight),
+		1, // layerCount
 		VK_FORMAT_R8G8B8A8_UNORM);
 
 	stbi_image_free(pixels);
@@ -115,12 +117,15 @@ bool VulkanTexture::CreateCubeTextureImage(
 		*height = h;
 	}
 
-	return image_.CreateTextureImageFromData(vkDev,
+	return image_.CreateTextureImageFromData(
+		vkDev,
 		cube.data_.data(),
 		cube.w_,
 		cube.h_,
-		VK_FORMAT_R32G32B32A32_SFLOAT,
-		6, VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT);
+		NumMipMap(cube.w_, cube.h_),
+		6, // layerCount
+		VK_FORMAT_R32G32B32A32_SFLOAT, 
+		VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT);
 }
 
 Bitmap VulkanTexture::ConvertEquirectangularMapToVerticalCross(const Bitmap& b)
