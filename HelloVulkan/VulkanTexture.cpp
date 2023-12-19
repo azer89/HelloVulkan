@@ -19,7 +19,12 @@ T Clamp(T v, T a, T b)
 
 inline int NumMipmap(int width, int height)
 {
-	return static_cast<int>(floor(log2(std::max(width, height)))) + 1;
+	int levels = 1;
+	while ((width | height) >> levels)
+	{
+		++levels;
+	}
+	return levels;
 }
 
 glm::vec3 FaceCoordsToXYZ(int i, int j, int faceID, int faceSize)

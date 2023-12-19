@@ -92,7 +92,6 @@ private:
 	VkDevice device_ = nullptr;
 
 	VkPipelineLayout pipelineLayout_ = nullptr;
-	VkPipeline graphicsPipeline_ = nullptr;
 
 	VkSampler sampler_;
 
