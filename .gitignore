@@ -401,4 +401,4 @@ MigrationBackup/
 */imgui.ini
 
 # Module binaries
-External/bin/*
+External/VS_Projects/assimp/*
