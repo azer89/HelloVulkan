@@ -1,6 +1,6 @@
-[submodule "External/Source/STB"]
-	path = External/Source/STB
-	url = https://github.com/nothings/stb
-[submodule "External/Source/assimp"]
-	path = External/Source/assimp
-	url = https://github.com/assimp/assimp
+[submodule "External/stb"]
+	path = External/stb
+	url = https://github.com/nothings/stb.git
+[submodule "External/assimp"]
+	path = External/assimp
+	url = https://github.com/assimp/assimp.git
