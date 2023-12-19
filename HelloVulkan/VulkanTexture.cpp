@@ -66,7 +66,7 @@ bool VulkanTexture::CreateTextureImage(
 		return false;
 	}
 
-	bool result = image_.CreateTextureImageFromData(
+	bool result = image_.CreateImageFromData(
 		vkDev,
 		pixels,
 		texWidth,
@@ -117,7 +117,7 @@ bool VulkanTexture::CreateCubeTextureImage(
 		*height = h;
 	}
 
-	return image_.CreateTextureImageFromData(
+	return image_.CreateImageFromData(
 		vkDev,
 		cube.data_.data(),
 		cube.w_,

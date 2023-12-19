@@ -44,6 +44,16 @@ public:
 		VkMemoryPropertyFlags properties,
 		VkImageCreateFlags flags = 0);
 
+	bool CreateImageFromData(
+		VulkanDevice& vkDev,
+		void* imageData,
+		uint32_t texWidth,
+		uint32_t texHeight,
+		uint32_t mipmapCount,
+		uint32_t layerCount,
+		VkFormat texFormat,
+		VkImageCreateFlags flags = 0);
+
 	bool CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint32_t height);
 
 	void Destroy(VkDevice device);
@@ -54,17 +64,6 @@ public:
 		VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_2D,
 		uint32_t layerCount = 1,
 		uint32_t mipCount = 1);
-
-	// TODO Rename to CreateImageFromData
-	bool CreateTextureImageFromData(
-		VulkanDevice& vkDev,
-		void* imageData,
-		uint32_t texWidth,
-		uint32_t texHeight,
-		uint32_t mipmapCount,
-		uint32_t layerCount,
-		VkFormat texFormat,
-		VkImageCreateFlags flags = 0);
 
 	void CopyBufferToImage(
 		VulkanDevice& vkDev,

@@ -49,7 +49,7 @@ bool VulkanImage::CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint
 }
 
 // TODO Rename to CreateImageFromData
-bool VulkanImage::CreateTextureImageFromData(
+bool VulkanImage::CreateImageFromData(
 	VulkanDevice& vkDev,
 	void* imageData,
 	uint32_t texWidth,

@@ -41,7 +41,7 @@ RendererPBR::RendererPBR(
 	gli::texture gliTex = gli::load_ktx(brdfLUTFile.c_str());
 	glm::tvec3<GLsizei> extent(gliTex.extent(0));
 
-	if (!brdfLUT_.image_.CreateTextureImageFromData(
+	if (!brdfLUT_.image_.CreateImageFromData(
 		vkDev,
 		(uint8_t*)gliTex.data(0, 0, 0), 
 		extent.x, 
