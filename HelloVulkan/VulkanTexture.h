@@ -8,17 +8,18 @@
 class VulkanTexture
 {
 public:
-	VulkanImage image;
-	VkSampler sampler;
+	VulkanImage image_;
+	VkSampler sampler_;
 
-	uint32_t width;
-	uint32_t height;
-	uint32_t depth;
-	uint32_t bindIndex;
-	VkFormat format;
+	uint32_t bindIndex_;
 
+	//uint32_t width;
+	//uint32_t height;
+	//uint32_t depth;
+	
+	//VkFormat format;
 	// Offscreen buffers require VK_IMAGE_LAYOUT_GENERAL && static textures have VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	VkImageLayout desiredLayout;
+	//VkImageLayout desiredLayout;
 
 	bool CreateTextureImage(
 		VulkanDevice& vkDev,
@@ -44,8 +45,6 @@ private:
 	Bitmap ConvertEquirectangularMapToVerticalCross(const Bitmap& b);
 
 	Bitmap ConvertVerticalCrossToCubeMapFaces(const Bitmap& b);
-
-	void DestroyVulkanImage(VkDevice device);
 };
 
 #endif

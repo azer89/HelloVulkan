@@ -52,19 +52,19 @@ void VulkanInstance::Create()
 		.ppEnabledExtensionNames = exts.data()
 	};
 
-	VK_CHECK(vkCreateInstance(&createInfo, nullptr, &instance));
+	VK_CHECK(vkCreateInstance(&createInfo, nullptr, &instance_));
 
-	volkLoadInstance(instance);
+	volkLoadInstance(instance_);
 }
 
 void VulkanInstance::Destroy()
 {
-	vkDestroySurfaceKHR(instance, surface, nullptr);
+	vkDestroySurfaceKHR(instance_, surface_, nullptr);
 
-	vkDestroyDebugReportCallbackEXT(instance, reportCallback, nullptr);
-	vkDestroyDebugUtilsMessengerEXT(instance, messenger, nullptr);
+	vkDestroyDebugReportCallbackEXT(instance_, reportCallback_, nullptr);
+	vkDestroyDebugUtilsMessengerEXT(instance_, messenger_, nullptr);
 
-	vkDestroyInstance(instance, nullptr);
+	vkDestroyInstance(instance_, nullptr);
 }
 
 void VulkanInstance::SetupDebugCallbacks()
@@ -83,7 +83,7 @@ void VulkanInstance::SetupDebugCallbacks()
 			.pUserData = nullptr
 		};
 
-		VK_CHECK(vkCreateDebugUtilsMessengerEXT(instance, &ci, nullptr, &messenger));
+		VK_CHECK(vkCreateDebugUtilsMessengerEXT(instance_, &ci, nullptr, &messenger_));
 	}
 	{
 		const VkDebugReportCallbackCreateInfoEXT ci = {
@@ -98,11 +98,11 @@ void VulkanInstance::SetupDebugCallbacks()
 			.pUserData = nullptr
 		};
 
-		VK_CHECK(vkCreateDebugReportCallbackEXT(instance, &ci, nullptr, &reportCallback));
+		VK_CHECK(vkCreateDebugReportCallbackEXT(instance_, &ci, nullptr, &reportCallback_));
 	}
 }
 
 void VulkanInstance::CreateWindowSurface(GLFWwindow* glfwWindow)
 {
-	VK_CHECK(glfwCreateWindowSurface(instance, glfwWindow, nullptr, &surface));
+	VK_CHECK(glfwCreateWindowSurface(instance_, glfwWindow, nullptr, &surface_));
 }

@@ -17,32 +17,9 @@ T Clamp(T v, T a, T b)
 	return v;
 }
 
-glm::vec3 FaceCoordsToXYZ(int i, int j, int faceID, int faceSize)
-{
-	const float A = 2.0f * float(i) / faceSize;
-	const float B = 2.0f * float(j) / faceSize;
+glm::vec3 FaceCoordsToXYZ(int i, int j, int faceID, int faceSize);
 
-	if (faceID == 0) return glm::vec3(-1.0f, A - 1.0f, B - 1.0f);
-	if (faceID == 1) return glm::vec3(A - 1.0f, -1.0f, 1.0f - B);
-	if (faceID == 2) return glm::vec3(1.0f, A - 1.0f, 1.0f - B);
-	if (faceID == 3) return glm::vec3(1.0f - A, 1.0f, 1.0f - B);
-	if (faceID == 4) return glm::vec3(B - 1.0f, A - 1.0f, 1.0f);
-	if (faceID == 5) return glm::vec3(1.0f - B, A - 1.0f, -1.0f);
-
-	return glm::vec3();
-}
-
-void Float24to32(int w, int h, const float* img24, float* img32)
-{
-	const int numPixels = w * h;
-	for (int i = 0; i != numPixels; i++)
-	{
-		*img32++ = *img24++;
-		*img32++ = *img24++;
-		*img32++ = *img24++;
-		*img32++ = 1.0f;
-	}
-}
+void Float24to32(int w, int h, const float* img24, float* img32);
 
 bool VulkanTexture::CreateTextureSampler(
 	VkDevice device,
@@ -71,7 +48,7 @@ bool VulkanTexture::CreateTextureSampler(
 		.unnormalizedCoordinates = VK_FALSE
 	};
 
-	return (vkCreateSampler(device, &samplerInfo, nullptr, &sampler) == VK_SUCCESS);
+	return (vkCreateSampler(device, &samplerInfo, nullptr, &sampler_) == VK_SUCCESS);
 }
 
 bool VulkanTexture::CreateTextureImage(
@@ -89,7 +66,7 @@ bool VulkanTexture::CreateTextureImage(
 		return false;
 	}
 
-	bool result = image.CreateTextureImageFromData(
+	bool result = image_.CreateTextureImageFromData(
 		vkDev,
 		pixels,
 		texWidth,
@@ -138,7 +115,7 @@ bool VulkanTexture::CreateCubeTextureImage(
 		*height = h;
 	}
 
-	return image.CreateTextureImageFromData(vkDev,
+	return image_.CreateTextureImageFromData(vkDev,
 		cube.data_.data(),
 		cube.w_,
 		cube.h_,
@@ -291,13 +268,33 @@ Bitmap VulkanTexture::ConvertVerticalCrossToCubeMapFaces(const Bitmap& b)
 
 void VulkanTexture::DestroyVulkanTexture(VkDevice device)
 {
-	DestroyVulkanImage(device);
-	vkDestroySampler(device, sampler, nullptr);
+	image_.Destroy(device);
+	vkDestroySampler(device, sampler_, nullptr);
 }
 
-void VulkanTexture::DestroyVulkanImage(VkDevice device)
+glm::vec3 FaceCoordsToXYZ(int i, int j, int faceID, int faceSize)
 {
-	vkDestroyImageView(device, image.imageView, nullptr);
-	vkDestroyImage(device, image.image, nullptr);
-	vkFreeMemory(device, image.imageMemory, nullptr);
+	const float A = 2.0f * float(i) / faceSize;
+	const float B = 2.0f * float(j) / faceSize;
+
+	if (faceID == 0) return glm::vec3(-1.0f, A - 1.0f, B - 1.0f);
+	if (faceID == 1) return glm::vec3(A - 1.0f, -1.0f, 1.0f - B);
+	if (faceID == 2) return glm::vec3(1.0f, A - 1.0f, 1.0f - B);
+	if (faceID == 3) return glm::vec3(1.0f - A, 1.0f, 1.0f - B);
+	if (faceID == 4) return glm::vec3(B - 1.0f, A - 1.0f, 1.0f);
+	if (faceID == 5) return glm::vec3(1.0f - B, A - 1.0f, -1.0f);
+
+	return glm::vec3();
+}
+
+void Float24to32(int w, int h, const float* img24, float* img32)
+{
+	const int numPixels = w * h;
+	for (int i = 0; i != numPixels; i++)
+	{
+		*img32++ = *img24++;
+		*img32++ = *img24++;
+		*img32++ = *img24++;
+		*img32++ = 1.0f;
+	}
 }

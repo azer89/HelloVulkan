@@ -17,14 +17,14 @@ public:
 	void SetupDebugCallbacks();
 	void CreateWindowSurface(GLFWwindow* glfwWindow);
 
-	VkInstance GetInstance() { return instance; }
-	VkSurfaceKHR GetSurface() { return surface; }
+	VkInstance GetInstance() { return instance_; }
+	VkSurfaceKHR GetSurface() { return surface_; }
 
 private:
-	VkInstance instance;
-	VkSurfaceKHR surface;
-	VkDebugUtilsMessengerEXT messenger;
-	VkDebugReportCallbackEXT reportCallback;
+	VkInstance instance_;
+	VkSurfaceKHR surface_;
+	VkDebugUtilsMessengerEXT messenger_;
+	VkDebugReportCallbackEXT reportCallback_;
 };
 
 #endif

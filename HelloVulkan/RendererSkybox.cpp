@@ -48,7 +48,7 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev, VulkanImage inDepthTexture, 
 	// Resource loading
 	texture.CreateCubeTextureImage(vkDev, textureFile);
 
-	texture.image.CreateImageView(
+	texture.image_.CreateImageView(
 		vkDev.GetDevice(), 
 		VK_FORMAT_R32G32B32A32_SFLOAT, 
 		VK_IMAGE_ASPECT_COLOR_BIT, 
@@ -64,7 +64,7 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev, VulkanImage inDepthTexture, 
 
 	CreateUniformBuffers(vkDev, uniformBuffers_, sizeof(PerFrameUBO));
 	
-	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthTexture_.imageView, swapchainFramebuffers_);
+	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthTexture_.imageView_, swapchainFramebuffers_);
 	
 	CreateDescriptorPool(
 		vkDev, 
@@ -149,7 +149,7 @@ bool RendererSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 		VkDescriptorSet ds = descriptorSets_[i];
 
 		const VkDescriptorBufferInfo bufferInfo = { uniformBuffers_[i].buffer_, 0, sizeof(PerFrameUBO) };
-		const VkDescriptorImageInfo  imageInfo = { texture.sampler, texture.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
+		const VkDescriptorImageInfo  imageInfo = { texture.sampler_, texture.image_.imageView_, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
 
 		const std::array<VkWriteDescriptorSet, 2> descriptorWrites = {
 			BufferWriteDescriptorSet(ds, &bufferInfo,  0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER),

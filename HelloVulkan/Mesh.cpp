@@ -9,9 +9,9 @@
 void Mesh::AddTexture(VulkanDevice& vkDev, const char* fileName, uint32_t bindIndex)
 {
 	VulkanTexture texture;
-	texture.bindIndex = bindIndex;
+	texture.bindIndex_ = bindIndex;
 	texture.CreateTextureImage(vkDev, fileName);
-	texture.image.CreateImageView(
+	texture.image_.CreateImageView(
 		vkDev.GetDevice(),
 		VK_FORMAT_R8G8B8A8_UNORM,
 		VK_IMAGE_ASPECT_COLOR_BIT);

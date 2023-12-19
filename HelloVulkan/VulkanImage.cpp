@@ -4,9 +4,9 @@
 
 void VulkanImage::Destroy(VkDevice device)
 {
-	vkDestroyImageView(device, imageView, nullptr);
-	vkDestroyImage(device, image, nullptr);
-	vkFreeMemory(device, imageMemory, nullptr);
+	vkDestroyImageView(device, imageView_, nullptr);
+	vkDestroyImage(device, image_, nullptr);
+	vkFreeMemory(device, imageMemory_, nullptr);
 }
 
 bool VulkanImage::CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint32_t height)
@@ -74,7 +74,7 @@ void VulkanImage::CopyBufferToImage(
 		.imageExtent = VkExtent3D {.width = width, .height = height, .depth = 1 }
 	};
 
-	vkCmdCopyBufferToImage(commandBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+	vkCmdCopyBufferToImage(commandBuffer, buffer, image_, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
 	vkDev.EndSingleTimeCommands(commandBuffer);
 }
@@ -109,10 +109,10 @@ bool VulkanImage::CreateImage(
 		.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED
 	};
 
-	VK_CHECK(vkCreateImage(device, &imageInfo, nullptr, &image));
+	VK_CHECK(vkCreateImage(device, &imageInfo, nullptr, &image_));
 
 	VkMemoryRequirements memRequirements;
-	vkGetImageMemoryRequirements(device, image, &memRequirements);
+	vkGetImageMemoryRequirements(device, image_, &memRequirements);
 
 	const VkMemoryAllocateInfo allocInfo = {
 		.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
@@ -121,9 +121,9 @@ bool VulkanImage::CreateImage(
 		.memoryTypeIndex = FindMemoryType(physicalDevice, memRequirements.memoryTypeBits, properties)
 	};
 
-	VK_CHECK(vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory));
+	VK_CHECK(vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory_));
 
-	vkBindImageMemory(device, image, imageMemory, 0);
+	vkBindImageMemory(device, image_, imageMemory_, 0);
 	return true;
 }
 
@@ -139,7 +139,7 @@ bool VulkanImage::CreateImageView(VkDevice device,
 		.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.image = image,
+		.image = image_,
 		.viewType = viewType,
 		.format = format,
 		.subresourceRange =
@@ -152,7 +152,7 @@ bool VulkanImage::CreateImageView(VkDevice device,
 		}
 	};
 
-	return (vkCreateImageView(device, &viewInfo, nullptr, &imageView) == VK_SUCCESS);
+	return (vkCreateImageView(device, &viewInfo, nullptr, &imageView_) == VK_SUCCESS);
 }
 
 uint32_t VulkanImage::FindMemoryType(VkPhysicalDevice device, uint32_t typeFilter, VkMemoryPropertyFlags properties)
@@ -264,7 +264,7 @@ void VulkanImage::TransitionImageLayoutCmd(VkCommandBuffer commandBuffer,
 		.newLayout = newLayout,
 		.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
 		.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-		.image = image,
+		.image = image_,
 		.subresourceRange = VkImageSubresourceRange {
 			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
 			.baseMipLevel = 0,

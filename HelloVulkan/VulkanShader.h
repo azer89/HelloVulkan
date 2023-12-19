@@ -11,12 +11,11 @@
 
 VkShaderStageFlagBits GLSLangShaderStageToVulkan(glslang_stage_t sh);
 glslang_stage_t GLSLangShaderStageFromFileName(const char* fileName);
-inline int EndsWith(const char* s, const char* part);
 
 class VulkanShader
 {
 public:
-	VkShaderModule GetShaderModule() { return shaderModule; }
+	VkShaderModule GetShaderModule() { return shaderModule_; }
 
 	VkResult Create(VkDevice device, const char* fileName);
 
@@ -27,10 +26,9 @@ public:
 		const char* entryPoint);
 
 private:
-	std::vector<unsigned int> SPIRV;
-	VkShaderModule shaderModule = nullptr;
+	std::vector<unsigned int> spirv_;
+	VkShaderModule shaderModule_ = nullptr;
 
-	
 private:
 	size_t CompileShaderFile(const char* file);
 	std::string ReadShaderFile(const char* fileName);

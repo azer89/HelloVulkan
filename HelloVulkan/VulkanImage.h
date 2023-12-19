@@ -8,9 +8,9 @@
 class VulkanImage
 {
 public:
-	VkImage image = nullptr;
-	VkDeviceMemory imageMemory = nullptr;
-	VkImageView imageView = nullptr;
+	VkImage image_ = nullptr;
+	VkDeviceMemory imageMemory_ = nullptr;
+	VkImageView imageView_ = nullptr;
 
 public:
 	bool CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint32_t height);

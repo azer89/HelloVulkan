@@ -8,14 +8,14 @@ RendererFinish::RendererFinish(VulkanDevice& vkDev, VulkanImage depthTexture) :
 {
 	if (!CreateColorAndDepthRenderPass(
 		vkDev, 
-		(depthTexture.image != VK_NULL_HANDLE), 
+		(depthTexture.image_ != VK_NULL_HANDLE), 
 		&renderPass_, 
 		RenderPassCreateInfo{ .clearColor_ = false, .clearDepth_ = false, .flags_ = eRenderPassBit_Last }))
 	{
 		std::cerr << "VulkanFinish: failed to create render pass\n";
 	}
 
-	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthTexture.imageView, swapchainFramebuffers_);
+	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthTexture.imageView_, swapchainFramebuffers_);
 }
 
 void RendererFinish::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)

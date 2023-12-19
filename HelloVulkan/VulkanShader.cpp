@@ -2,6 +2,11 @@
 
 #include <iostream>
 
+inline int EndsWith(const char* s, const char* part)
+{
+	return (strstr(s, part) - s) == (strlen(s) - strlen(part));
+}
+
 VkResult VulkanShader::Create(VkDevice device, const char* fileName)
 {
 	if (CompileShaderFile(fileName) < 1)
@@ -10,16 +15,16 @@ VkResult VulkanShader::Create(VkDevice device, const char* fileName)
 	const VkShaderModuleCreateInfo createInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
-		.codeSize = SPIRV.size() * sizeof(unsigned int),
-		.pCode = SPIRV.data(),
+		.codeSize = spirv_.size() * sizeof(unsigned int),
+		.pCode = spirv_.data(),
 	};
 
-	return vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule);
+	return vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule_);
 }
 
 void VulkanShader::Destroy(VkDevice device)
 {
-	vkDestroyShaderModule(device, shaderModule, nullptr);
+	vkDestroyShaderModule(device, shaderModule_, nullptr);
 }
 
 VkPipelineShaderStageCreateInfo VulkanShader::GetShaderStageInfo(
@@ -31,7 +36,7 @@ VkPipelineShaderStageCreateInfo VulkanShader::GetShaderStageInfo(
 		.pNext = nullptr,
 		.flags = 0,
 		.stage = shaderStage,
-		.module = shaderModule,
+		.module = shaderModule_,
 		.pName = entryPoint,
 		.pSpecializationInfo = nullptr
 	};
@@ -147,8 +152,8 @@ size_t VulkanShader::CompileShader(glslang_stage_t stage, const char* shaderSour
 
 	glslang_program_SPIRV_generate(program, stage);
 
-	SPIRV.resize(glslang_program_SPIRV_get_size(program));
-	glslang_program_SPIRV_get(program, SPIRV.data());
+	spirv_.resize(glslang_program_SPIRV_get_size(program));
+	glslang_program_SPIRV_get(program, spirv_.data());
 
 	{
 		const char* spirv_messages =
@@ -163,7 +168,7 @@ size_t VulkanShader::CompileShader(glslang_stage_t stage, const char* shaderSour
 	glslang_program_delete(program);
 	glslang_shader_delete(shader);
 
-	return SPIRV.size();
+	return spirv_.size();
 }
 
 void VulkanShader::PrintShaderSource(const char* text)
@@ -234,7 +239,3 @@ glslang_stage_t GLSLangShaderStageFromFileName(const char* fileName)
 	return GLSLANG_STAGE_VERTEX;
 }
 
-inline int EndsWith(const char* s, const char* part)
-{
-	return (strstr(s, part) - s) == (strlen(s) - strlen(part));
-}
