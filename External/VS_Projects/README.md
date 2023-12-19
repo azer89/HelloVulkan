@@ -1,0 +1,1 @@
+Folder containing Visual Studio projects for building external libraries.
