@@ -6,7 +6,7 @@
 
 const uint32_t cubemapSideLength = 1024;
 const VkFormat cubeMapFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
-uint32_t layerCount = 6;
+const uint32_t layerCount = 6;
 
 RendererEquirect2Cubemap::RendererEquirect2Cubemap(VulkanDevice& vkDev, const std::string& hdrFile) :
 	RendererBase(vkDev, {})
@@ -49,7 +49,6 @@ RendererEquirect2Cubemap::~RendererEquirect2Cubemap()
 
 void RendererEquirect2Cubemap::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
 {
-
 }
 
 void RendererEquirect2Cubemap::InitializeCubemapTexture(VulkanDevice& vkDev)
@@ -98,7 +97,7 @@ void RendererEquirect2Cubemap::CreateRenderPass(VulkanDevice& vkDev)
 	std::vector<VkAttachmentDescription> m_attachments;
 	std::vector<VkAttachmentReference> m_attachmentRefs;
 
-	for (int face = 0; face < 6; ++face)
+	for (int face = 0; face < layerCount; ++face)
 	{
 		VkImageLayout finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
