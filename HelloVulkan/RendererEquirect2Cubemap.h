@@ -20,10 +20,8 @@ public:
 
 private:
 	VkDescriptorSet descriptorSet_;
-
 	VulkanTexture cubemapTexture_;
 	VulkanTexture hdrTexture_;
-
 	VkFramebuffer frameBuffer_;
 
 private:

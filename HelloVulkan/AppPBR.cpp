@@ -75,6 +75,7 @@ int AppPBR::MainLoop()
 
 	clearPtr = nullptr;
 	finishPtr = nullptr;
+	e2cPtr = nullptr;
 	skyboxPtr = nullptr;
 	pbrPtr = nullptr;
 	Terminate();

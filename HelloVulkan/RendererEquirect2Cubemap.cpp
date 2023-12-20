@@ -47,6 +47,7 @@ RendererEquirect2Cubemap::~RendererEquirect2Cubemap()
 {
 	hdrTexture_.DestroyVulkanTexture(device_);
 	cubemapTexture_.DestroyVulkanTexture(device_);
+	vkDestroyFramebuffer(device_, frameBuffer_, nullptr);
 }
 
 void RendererEquirect2Cubemap::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
@@ -441,4 +442,10 @@ void RendererEquirect2Cubemap::OfflineRender(VulkanDevice& vkDev)
 		cubemapTexture_.image_.layerCount_,
 		cubemapTexture_.image_.mipCount_
 	);
+
+	// Destroy image views
+	for (size_t i = 0; i < layerCount; i++)
+	{
+		vkDestroyImageView(vkDev.GetDevice(), inputCubeMapViews[i], nullptr);
+	}
 }
