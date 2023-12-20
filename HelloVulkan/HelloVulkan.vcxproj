@@ -111,7 +111,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;glfw3_mt.lib;glfw3dll.lib;assimp-vc143-mtd.lib;GenericCodeGend.lib;glslangd.lib;glslang-default-resource-limitsd.lib;MachineIndependentd.lib;SPIRVd.lib;SPIRV-Toolsd.lib;SPIRV-Tools-optd.lib;OGLCompilerd.lib;OSDependentd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\lib\Debug;C:\Users\azer\workspace\HelloVulkan\External\GLFW\lib-vc2022\;C:\VulkanSDK\1.3.268.0\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\External\VS_Projects\assimp\lib\Debug;..\External\GLFW\lib-vc2022\;$(VULKAN_SDK)\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -131,7 +131,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;glfw3_mt.lib;glfw3dll.lib;assimp-vc143-mt.lib;GenericCodeGen.lib;glslang.lib;glslang-default-resource-limits.lib;MachineIndependent.lib;SPIRV.lib;SPIRV-Tools.lib;SPIRV-Tools-opt.lib;OGLCompiler.lib;OSDependent.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\lib\Release;C:\Users\azer\workspace\HelloVulkan\External\GLFW\lib-vc2022\;C:\VulkanSDK\1.3.268.0\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\External\VS_Projects\assimp\lib\Release;..\External\GLFW\lib-vc2022\;$(VULKAN_SDK)\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
