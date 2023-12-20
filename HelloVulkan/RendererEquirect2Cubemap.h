@@ -9,7 +9,7 @@
 class RendererEquirect2Cubemap : public RendererBase
 {
 public:
-	RendererEquirect2Cubemap(VulkanDevice& vkDev, VulkanImage depthTexture);
+	RendererEquirect2Cubemap(VulkanDevice& vkDev);
 	~RendererEquirect2Cubemap();
 
 private:
