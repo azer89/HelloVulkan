@@ -430,4 +430,6 @@ void RendererEquirect2Cubemap::OfflineRender(VulkanDevice& vkDev)
 	vkCmdEndRenderPass(commandBuffer);
 
 	vkDev.EndSingleTimeCommands(commandBuffer);
+
+	cubemapTexture_.CreateTextureSampler(vkDev.GetDevice());
 }

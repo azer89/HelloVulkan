@@ -41,7 +41,7 @@ int AppPBR::MainLoop()
 	
 	// TODO Test
 	e2cPtr = std::make_unique<RendererEquirect2Cubemap>(vulkanDevice, cubemapTextureFile);
-	e2cPtr = nullptr;
+	//e2cPtr = nullptr;
 	
 	pbrPtr = std::make_unique<RendererPBR>(
 		vulkanDevice,
@@ -49,8 +49,9 @@ int AppPBR::MainLoop()
 		cubemapTextureFile.c_str(),
 		cubemapIrradianceFile.c_str(),
 		depthTexture);
-	skyboxPtr = std::make_unique<RendererSkybox>(vulkanDevice, pbrPtr->GetEnvironmentMap(), depthTexture);
 
+	//skyboxPtr = std::make_unique<RendererSkybox>(vulkanDevice, pbrPtr->GetEnvironmentMap(), depthTexture);
+	skyboxPtr = std::make_unique<RendererSkybox>(vulkanDevice, e2cPtr->GetCubemapTexture(), depthTexture);
 
 
 	const std::vector<RendererBase*> renderers = 

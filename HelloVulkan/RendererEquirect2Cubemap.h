@@ -16,6 +16,8 @@ public:
 
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
+	VulkanTexture* GetCubemapTexture() { return &cubemapTexture_; }
+
 private:
 	VkDescriptorSet descriptorSet_;
 
