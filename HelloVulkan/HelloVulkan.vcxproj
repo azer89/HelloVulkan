@@ -164,6 +164,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshCreateInfo.h" />
+    <ClInclude Include="PipelineCreateInfo.h" />
     <ClInclude Include="RendererBase.h" />
     <ClInclude Include="RendererClear.h" />
     <ClInclude Include="RendererEquirect2Cubemap.h" />
@@ -184,6 +185,8 @@
   <ItemGroup>
     <None Include="..\Shaders\cube.frag" />
     <None Include="..\Shaders\cube.vert" />
+    <None Include="..\Shaders\equirect_2_cubemap.frag" />
+    <None Include="..\Shaders\fullscreen_triangle.vert" />
     <None Include="..\Shaders\pbr_mesh.frag" />
     <None Include="..\Shaders\pbr_mesh.vert" />
   </ItemGroup>

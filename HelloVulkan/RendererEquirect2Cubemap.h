@@ -14,6 +14,8 @@ public:
 	RendererEquirect2Cubemap(VulkanDevice& vkDev, const std::string& hdrFile);
 	~RendererEquirect2Cubemap();
 
+	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
+
 private:
 	std::vector<VkDescriptorSet> descriptorSets_;
 
@@ -26,6 +28,8 @@ private:
 	void CreateRenderPass(VulkanDevice& vkDev);
 	bool CreateDescriptorLayout(VulkanDevice& vkDev);
 	bool CreateDescriptorSet(VulkanDevice& vkDev);
+
+
 };
 
 #endif

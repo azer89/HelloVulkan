@@ -1,5 +1,6 @@
 #include "RendererEquirect2Cubemap.h"
 #include "VulkanUtility.h"
+#include "AppSettings.h"
 
 const uint32_t cubemapSideLength = 1024;
 const VkFormat cubeMapFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
@@ -22,12 +23,31 @@ RendererEquirect2Cubemap::RendererEquirect2Cubemap(VulkanDevice& vkDev, const st
 	CreateDescriptorLayout(vkDev);
 	CreateDescriptorSet(vkDev);
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
+
+	std::string vertFile = AppSettings::ShaderFolder + "fullscreen_triangle.vert";
+	std::string fragFile = AppSettings::ShaderFolder + "equirect_2_cubemap.frag";
+	CreateGraphicsPipeline(
+		vkDev,
+		renderPass_,
+		pipelineLayout_,
+		{
+			vertFile.c_str(),
+			fragFile.c_str()
+		},
+		&graphicsPipeline_,
+		false // hasVertexBuffer
+	);
 }
 
 RendererEquirect2Cubemap::~RendererEquirect2Cubemap()
 {
 	hdrTexture_.DestroyVulkanTexture(device_);
 	cubemapTexture_.DestroyVulkanTexture(device_);
+}
+
+void RendererEquirect2Cubemap::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
+{
+
 }
 
 void RendererEquirect2Cubemap::InitializeCubemapTexture(VulkanDevice& vkDev)

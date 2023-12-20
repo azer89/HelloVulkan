@@ -3,6 +3,7 @@
 #include "VulkanShader.h"
 #include "VulkanBuffer.h"
 #include "Mesh.h"
+#include "PipelineCreateInfo.h"
 
 #include <array>
 
@@ -312,129 +313,48 @@ bool RendererBase::CreateGraphicsPipeline(
 		shaderStages[i] = shaderModules[i].GetShaderStageInfo(stage, "main");
 	}
 
+	// Pipeline create info
+	PipelineCreateInfo pInfo(vkDev);
+
 	std::vector<VkVertexInputBindingDescription> bindingDescriptions = VertexData::GetBindingDescriptions();
 	std::vector<VkVertexInputAttributeDescription> attributeDescriptions = VertexData::GetAttributeDescriptions();
 
-	VkPipelineVertexInputStateCreateInfo vertexInputInfo;
-	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-	vertexInputInfo.pNext = nullptr;
-	vertexInputInfo.flags = 0;
-	vertexInputInfo.vertexBindingDescriptionCount = 0;
-	vertexInputInfo.vertexAttributeDescriptionCount = 0;
-	vertexInputInfo.pVertexAttributeDescriptions = nullptr;
-	vertexInputInfo.pVertexBindingDescriptions = nullptr;
 	if (hasVertexBuffer)
 	{
-		vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
-		vertexInputInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(bindingDescriptions.size());
-		vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
-		vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
+		pInfo.vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+		pInfo.vertexInputInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(bindingDescriptions.size());
+		pInfo.vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+		pInfo.vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
 	}
+	
+	pInfo.inputAssembly.topology = topology;
 
-	const VkPipelineInputAssemblyStateCreateInfo inputAssembly = {
-		.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
-		/* The only difference from createGraphicsPipeline() */
-		.topology = topology,
-		.primitiveRestartEnable = VK_FALSE
-	};
+	pInfo.viewport.width = static_cast<float>(customWidth > 0 ? customWidth : vkDev.GetFrameBufferWidth());
+	pInfo.viewport.height = static_cast<float>(customHeight > 0 ? customHeight : vkDev.GetFrameBufferHeight());
 
-	const VkViewport viewport = {
-		.x = 0.0f,
-		.y = 0.0f,
-		.width = static_cast<float>(customWidth > 0 ? customWidth : vkDev.GetFrameBufferWidth()),
-		.height = static_cast<float>(customHeight > 0 ? customHeight : vkDev.GetFrameBufferHeight()),
-		.minDepth = 0.0f,
-		.maxDepth = 1.0f
-	};
+	pInfo.scissor.extent = { customWidth > 0 ? customWidth : vkDev.GetFrameBufferWidth(), customHeight > 0 ? customHeight : vkDev.GetFrameBufferHeight() };
 
-	const VkRect2D scissor = {
-		.offset = { 0, 0 },
-		.extent = { customWidth > 0 ? customWidth : vkDev.GetFrameBufferWidth(), customHeight > 0 ? customHeight : vkDev.GetFrameBufferHeight()}
-	};
+	pInfo.colorBlendAttachment.srcAlphaBlendFactor = 
+		useBlending ? VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA : VK_BLEND_FACTOR_ONE;
 
-	const VkPipelineViewportStateCreateInfo viewportState = {
-		.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
-		.viewportCount = 1,
-		.pViewports = &viewport,
-		.scissorCount = 1,
-		.pScissors = &scissor
-	};
+	pInfo.depthStencil.depthTestEnable = static_cast<VkBool32>(useDepth ? VK_TRUE : VK_FALSE);
+	pInfo.depthStencil.depthWriteEnable = static_cast<VkBool32>(useDepth ? VK_TRUE : VK_FALSE);
 
-	const VkPipelineRasterizationStateCreateInfo rasterizer = {
-		.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
-		.polygonMode = VK_POLYGON_MODE_FILL,
-		.cullMode = VK_CULL_MODE_NONE,
-		.frontFace = VK_FRONT_FACE_CLOCKWISE,
-		.lineWidth = 1.0f
-	};
-
-	const VkPipelineMultisampleStateCreateInfo multisampling = {
-		.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
-		.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT,
-		.sampleShadingEnable = VK_FALSE,
-		.minSampleShading = 1.0f
-	};
-
-	const VkPipelineColorBlendAttachmentState colorBlendAttachment = {
-		.blendEnable = VK_TRUE,
-		.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA,
-		.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
-		.colorBlendOp = VK_BLEND_OP_ADD,
-		.srcAlphaBlendFactor = useBlending ? VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA : VK_BLEND_FACTOR_ONE,
-		.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO,
-		.alphaBlendOp = VK_BLEND_OP_ADD,
-		.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT
-	};
-
-	const VkPipelineColorBlendStateCreateInfo colorBlending = {
-		.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
-		.logicOpEnable = VK_FALSE,
-		.logicOp = VK_LOGIC_OP_COPY,
-		.attachmentCount = 1,
-		.pAttachments = &colorBlendAttachment,
-		.blendConstants = { 0.0f, 0.0f, 0.0f, 0.0f }
-	};
-
-	const VkPipelineDepthStencilStateCreateInfo depthStencil = {
-		.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
-		.depthTestEnable = static_cast<VkBool32>(useDepth ? VK_TRUE : VK_FALSE),
-		.depthWriteEnable = static_cast<VkBool32>(useDepth ? VK_TRUE : VK_FALSE),
-		.depthCompareOp = VK_COMPARE_OP_LESS,
-		.depthBoundsTestEnable = VK_FALSE,
-		.minDepthBounds = 0.0f,
-		.maxDepthBounds = 1.0f
-	};
-
-	VkDynamicState dynamicStateElt = VK_DYNAMIC_STATE_SCISSOR;
-
-	const VkPipelineDynamicStateCreateInfo dynamicState = {
-		.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.dynamicStateCount = 1,
-		.pDynamicStates = &dynamicStateElt
-	};
-
-	const VkPipelineTessellationStateCreateInfo tessellationState = {
-		.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.patchControlPoints = numPatchControlPoints
-	};
+	pInfo.tessellationState.patchControlPoints = numPatchControlPoints;
 
 	const VkGraphicsPipelineCreateInfo pipelineInfo = {
 		.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
 		.stageCount = static_cast<uint32_t>(shaderStages.size()),
 		.pStages = shaderStages.data(),
-		.pVertexInputState = &vertexInputInfo,
-		.pInputAssemblyState = &inputAssembly,
-		.pTessellationState = (topology == VK_PRIMITIVE_TOPOLOGY_PATCH_LIST) ? &tessellationState : nullptr,
-		.pViewportState = &viewportState,
-		.pRasterizationState = &rasterizer,
-		.pMultisampleState = &multisampling,
-		.pDepthStencilState = useDepth ? &depthStencil : nullptr,
-		.pColorBlendState = &colorBlending,
-		.pDynamicState = dynamicScissorState ? &dynamicState : nullptr,
+		.pVertexInputState = &pInfo.vertexInputInfo,
+		.pInputAssemblyState = &pInfo.inputAssembly,
+		.pTessellationState = (topology == VK_PRIMITIVE_TOPOLOGY_PATCH_LIST) ? &pInfo.tessellationState : nullptr,
+		.pViewportState = &pInfo.viewportState,
+		.pRasterizationState = &pInfo.rasterizer,
+		.pMultisampleState = &pInfo.multisampling,
+		.pDepthStencilState = useDepth ? &pInfo.depthStencil : nullptr,
+		.pColorBlendState = &pInfo.colorBlending,
+		.pDynamicState = dynamicScissorState ? &pInfo.dynamicState : nullptr,
 		.layout = pipelineLayout,
 		.renderPass = renderPass,
 		.subpass = 0,
