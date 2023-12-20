@@ -17,10 +17,12 @@ public:
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:
-	std::vector<VkDescriptorSet> descriptorSets_;
+	VkDescriptorSet descriptorSet_;
 
 	VulkanTexture cubemapTexture_;
 	VulkanTexture hdrTexture_;
+
+	VkFramebuffer frameBuffer_;
 
 private:
 	void InitializeCubemapTexture(VulkanDevice& vkDev);
@@ -35,6 +37,12 @@ private:
 		VkPipelineLayout pipelineLayout,
 		const std::vector<const char*>& shaderFiles,
 		VkPipeline* pipeline);
+
+	void CreateFrameBuffer(VulkanDevice& vkDev, std::vector<VkImageView> inputCubeMapViews);
+
+	void OfflineRender(VulkanDevice& vkDev);
+
+	
 };
 
 #endif

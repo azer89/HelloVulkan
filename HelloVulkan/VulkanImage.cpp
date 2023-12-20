@@ -450,6 +450,40 @@ void VulkanImage::TransitionImageLayoutCmd(VkCommandBuffer commandBuffer,
 	);
 }
 
+void VulkanImage::CreateBarrier(
+	VkCommandBuffer _cmdBuffer,
+	VkImageLayout oldLayout,
+	VkImageLayout newLayout,
+	VkPipelineStageFlags _srcStage,
+	VkAccessFlags _srcAccess,
+	VkPipelineStageFlags _dstStage,
+	VkAccessFlags _dstAccess,
+	VkImageSubresourceRange _subresourceRange)
+{
+	VkImageMemoryBarrier barrier{};
+	barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	barrier.oldLayout = oldLayout;
+	barrier.newLayout = newLayout;
+	barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	barrier.image = image_;
+	barrier.subresourceRange = _subresourceRange;
+	barrier.srcAccessMask = _srcAccess;
+	barrier.dstAccessMask = _dstAccess;
+
+	vkCmdPipelineBarrier(
+		_cmdBuffer,
+		_srcStage, _dstStage,
+		0u,
+		0u, 
+		nullptr,
+		0u, 
+		nullptr,
+		1u, 
+		&barrier
+	);
+}
+
 bool VulkanImage::HasStencilComponent(VkFormat format)
 {
 	return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;

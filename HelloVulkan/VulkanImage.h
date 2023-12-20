@@ -74,6 +74,17 @@ public:
 		uint32_t height,
 		uint32_t layerCount = 1);
 
+	void CreateBarrier(
+		VkCommandBuffer _cmdBuffer, 
+		VkImageLayout oldLayout, 
+		VkImageLayout newLayout,
+		VkPipelineStageFlags _srcStage, 
+		VkAccessFlags _srcAccess,
+		VkPipelineStageFlags _dstStage, 
+		VkAccessFlags _dstAccess,
+		VkImageSubresourceRange _subresourceRange);
+
+
 private:
 	uint32_t FindMemoryType(VkPhysicalDevice device, uint32_t typeFilter, VkMemoryPropertyFlags properties);
 	VkFormat FindDepthFormat(VkPhysicalDevice device);
