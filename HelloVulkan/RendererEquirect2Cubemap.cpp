@@ -13,14 +13,15 @@ RendererEquirect2Cubemap::RendererEquirect2Cubemap(VulkanDevice& vkDev, const st
 
 	CreateDescriptorPool(
 		vkDev,
-		0,  // UBO
-		0,  // SSBO
-		2, // ???
-		1, // decsriptor count per swapchain
+		0, // UBO
+		0, // SSBO
+		1, // Sampler
+		1, // Decsriptor count per swapchain
 		&descriptorPool_);
 
-	//CreateDescriptorLayout(vkDev);
-
+	CreateDescriptorLayout(vkDev);
+	CreateDescriptorSet(vkDev);
+	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
 }
 
 RendererEquirect2Cubemap::~RendererEquirect2Cubemap()
@@ -72,9 +73,6 @@ void RendererEquirect2Cubemap::InitializeHDRTexture(VulkanDevice& vkDev, const s
 
 void RendererEquirect2Cubemap::CreateRenderPass(VulkanDevice& vkDev)
 {
-	uint32_t mipmapCount = NumMipMap(cubemapSideLength, cubemapSideLength);
-	uint32_t layerCount = 6;
-
 	std::vector<VkAttachmentDescription> m_attachments;
 	std::vector<VkAttachmentReference> m_attachmentRefs;
 
@@ -121,10 +119,80 @@ void RendererEquirect2Cubemap::CreateRenderPass(VulkanDevice& vkDev)
 
 bool RendererEquirect2Cubemap::CreateDescriptorLayout(VulkanDevice& vkDev)
 {
+	std::vector<VkDescriptorSetLayoutBinding> bindings;
 
+	uint32_t bindingIndex = 0;
+
+	// Input HDR
+	bindings.emplace_back(
+		DescriptorSetLayoutBinding(
+			bindingIndex++,
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			VK_SHADER_STAGE_FRAGMENT_BIT)
+	);
+
+	const VkDescriptorSetLayoutCreateInfo layoutInfo =
+	{
+		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0,
+		.bindingCount = static_cast<uint32_t>(bindings.size()),
+		.pBindings = bindings.data()
+	};
+
+	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));
+
+	return true;
 }
 
 bool RendererEquirect2Cubemap::CreateDescriptorSet(VulkanDevice& vkDev)
 {
+	size_t swapchainLength = vkDev.GetSwapChainImageSize();
 
+	std::vector<VkDescriptorSetLayout> layouts(swapchainLength, descriptorSetLayout_);
+
+	const VkDescriptorSetAllocateInfo allocInfo = {
+		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+		.pNext = nullptr,
+		.descriptorPool = descriptorPool_,
+		.descriptorSetCount = static_cast<uint32_t>(swapchainLength),
+		.pSetLayouts = layouts.data()
+	};
+
+	descriptorSets_.resize(swapchainLength);
+
+	VK_CHECK(vkAllocateDescriptorSets(vkDev.GetDevice(), &allocInfo, descriptorSets_.data()));
+
+	for (size_t i = 0; i < swapchainLength; i++)
+	{
+		VkDescriptorSet ds = descriptorSets_[i];
+
+		uint32_t bindIndex = 0;
+		std::vector<VkWriteDescriptorSet> descriptorWrites;
+
+		VkDescriptorImageInfo imageInfo =
+		{
+			hdrTexture_.sampler_,
+			hdrTexture_.image_.imageView_,
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+		};
+
+		descriptorWrites.emplace_back
+		(
+			ImageWriteDescriptorSet(
+				ds,
+				&imageInfo,
+				bindIndex++)
+		);
+
+		vkUpdateDescriptorSets
+		(
+			vkDev.GetDevice(),
+			static_cast<uint32_t>(descriptorWrites.size()),
+			descriptorWrites.data(),
+			0,
+			nullptr);
+	}
+
+	return true;
 }
