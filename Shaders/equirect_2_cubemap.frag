@@ -36,32 +36,46 @@ void writeFace(int face, vec3 colorIn)
 
 vec3 uvToXYZ(int face, vec2 uv)
 {
-	if (face == 0)
+	if (face == 0) // right
+	{
 		return vec3(1.f, uv.y, -uv.x);
-
-	else if (face == 1)
+	}
+	else if (face == 1) // left
+	{
 		return vec3(-1.f, uv.y, uv.x);
-
-	else if (face == 2)
+	}
+	else if (face == 2) // top
+	{
 		return vec3(+uv.x, -1.f, +uv.y);
-
-	else if (face == 3)
+	}
+	else if (face == 3) // bottom
+	{
 		return vec3(+uv.x, 1.f, -uv.y);
-
-	else if (face == 4)
+	}
+	else if (face == 4) // back
+	{
 		return vec3(+uv.x, uv.y, 1.f);
-
-	else
-	{//if(face == 5)
+	}
+	else // front
+	{
 		return vec3(-uv.x, +uv.y, -1.f);
 	}
 }
 
-vec2 dirToUV(vec3 dir)
+/*vec2 dirToUV(vec3 dir)
 {
 	return vec2(
 			0.5f + 0.5f * atan(dir.z, dir.x) / UX3D_MATH_PI,
 			1.f - acos(dir.y) / UX3D_MATH_PI);
+}*/
+
+const vec2 invAtan = vec2(0.1591, 0.3183);
+vec2 SampleSphericalMap(vec3 v)
+{
+	vec2 uv = vec2(atan(v.z, v.x), asin(v.y));
+	uv *= invAtan;
+	uv += 0.5;
+	return uv;
 }
 
 // entry point
@@ -73,7 +87,8 @@ void main()
 
 		vec3 direction = normalize(scan);
 
-		vec2 src = dirToUV(direction);
+		//vec2 src = dirToUV(direction);
+		vec2 src = SampleSphericalMap(direction);
 
 		writeFace(face, texture(uPanorama, src).rgb);
 	}
