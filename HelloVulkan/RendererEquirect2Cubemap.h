@@ -9,11 +9,17 @@
 class RendererEquirect2Cubemap : public RendererBase
 {
 public:
-	RendererEquirect2Cubemap(VulkanDevice& vkDev);
+	RendererEquirect2Cubemap(VulkanDevice& vkDev, VulkanImage depthTexture);
 	~RendererEquirect2Cubemap();
 
 private:
 	std::vector<VkDescriptorSet> descriptorSets_;
+
+	VulkanTexture cubemapTexture_;
+
+private:
+	void InitializeCubemapTexture(VulkanDevice& vkDev);
+	void CreateRenderPass(VulkanDevice& vkDev);
 };
 
 #endif

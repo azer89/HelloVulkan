@@ -18,6 +18,7 @@ public:
 	uint32_t height_;
 	uint32_t mipCount_;
 	uint32_t layerCount_;
+	VkFormat imageFormat_;
 
 	VulkanImage() :
 		image_(nullptr),
@@ -26,7 +27,8 @@ public:
 		width_(0),
 		height_(0),
 		mipCount_(0),
-		layerCount_(0)
+		layerCount_(0),
+		imageFormat_(VK_FORMAT_UNDEFINED)
 	{
 	}
 

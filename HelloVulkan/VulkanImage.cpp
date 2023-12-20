@@ -120,6 +120,7 @@ bool VulkanImage::CreateImage(
 	height_ = height;
 	mipCount_ = mipCount;
 	layerCount_ = layerCount;
+	imageFormat_ = format;
 	
 	const VkImageCreateInfo imageInfo = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
@@ -172,6 +173,13 @@ bool VulkanImage::CreateImageView(VkDevice device,
 		.image = image_,
 		.viewType = viewType,
 		.format = format,
+		.components = 
+		{ 
+			VK_COMPONENT_SWIZZLE_IDENTITY, 
+			VK_COMPONENT_SWIZZLE_IDENTITY,
+			VK_COMPONENT_SWIZZLE_IDENTITY,
+			VK_COMPONENT_SWIZZLE_IDENTITY 
+		},
 		.subresourceRange =
 		{
 			.aspectMask = aspectFlags,
