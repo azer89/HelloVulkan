@@ -40,8 +40,8 @@ int AppPBR::MainLoop()
 	finishPtr = std::make_unique<RendererFinish>(vulkanDevice, depthTexture);
 	
 	// TODO Test
-	//e2cPtr = std::make_unique<RendererEquirect2Cubemap>(vulkanDevice, cubemapTextureFile);
-	//e2cPtr = nullptr;
+	e2cPtr = std::make_unique<RendererEquirect2Cubemap>(vulkanDevice, cubemapTextureFile);
+	e2cPtr = nullptr;
 	
 	pbrPtr = std::make_unique<RendererPBR>(
 		vulkanDevice,

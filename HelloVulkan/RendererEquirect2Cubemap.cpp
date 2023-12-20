@@ -1,9 +1,12 @@
 #include "RendererEquirect2Cubemap.h"
 #include "VulkanUtility.h"
+#include "VulkanShader.h"
+#include "PipelineCreateInfo.h"
 #include "AppSettings.h"
 
 const uint32_t cubemapSideLength = 1024;
 const VkFormat cubeMapFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
+uint32_t layerCount = 6;
 
 RendererEquirect2Cubemap::RendererEquirect2Cubemap(VulkanDevice& vkDev, const std::string& hdrFile) :
 	RendererBase(vkDev, {})
@@ -26,7 +29,7 @@ RendererEquirect2Cubemap::RendererEquirect2Cubemap(VulkanDevice& vkDev, const st
 
 	std::string vertFile = AppSettings::ShaderFolder + "fullscreen_triangle.vert";
 	std::string fragFile = AppSettings::ShaderFolder + "equirect_2_cubemap.frag";
-	CreateGraphicsPipeline(
+	CreateCustomGraphicsPipeline(
 		vkDev,
 		renderPass_,
 		pipelineLayout_,
@@ -34,8 +37,7 @@ RendererEquirect2Cubemap::RendererEquirect2Cubemap(VulkanDevice& vkDev, const st
 			vertFile.c_str(),
 			fragFile.c_str()
 		},
-		&graphicsPipeline_,
-		false // hasVertexBuffer
+		&graphicsPipeline_
 	);
 }
 
@@ -53,7 +55,7 @@ void RendererEquirect2Cubemap::FillCommandBuffer(VkCommandBuffer commandBuffer, 
 void RendererEquirect2Cubemap::InitializeCubemapTexture(VulkanDevice& vkDev)
 {
 	uint32_t mipmapCount = NumMipMap(cubemapSideLength, cubemapSideLength);
-	uint32_t layerCount = 6;
+	
 
 	cubemapTexture_.image_.CreateImage(
 		vkDev.GetDevice(),
@@ -212,6 +214,132 @@ bool RendererEquirect2Cubemap::CreateDescriptorSet(VulkanDevice& vkDev)
 			descriptorWrites.data(),
 			0,
 			nullptr);
+	}
+
+	return true;
+}
+
+bool RendererEquirect2Cubemap::CreateCustomGraphicsPipeline(
+	VulkanDevice& vkDev,
+	VkRenderPass renderPass,
+	VkPipelineLayout pipelineLayout,
+	const std::vector<const char*>& shaderFiles,
+	VkPipeline* pipeline)
+{
+	std::vector<VulkanShader> shaderModules;
+	std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
+
+	shaderStages.resize(shaderFiles.size());
+	shaderModules.resize(shaderFiles.size());
+
+	for (size_t i = 0; i < shaderFiles.size(); i++)
+	{
+		const char* file = shaderFiles[i];
+		VK_CHECK(shaderModules[i].Create(vkDev.GetDevice(), file));
+		VkShaderStageFlagBits stage = GLSLangShaderStageToVulkan(GLSLangShaderStageFromFileName(file));
+		shaderStages[i] = shaderModules[i].GetShaderStageInfo(stage, "main");
+	}
+
+	// Pipeline create info
+	PipelineCreateInfo pInfo(vkDev);
+
+	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
+	colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+	colorBlendAttachment.blendEnable = VK_FALSE;
+	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments(layerCount, colorBlendAttachment);
+
+	pInfo.colorBlending.attachmentCount = layerCount;
+	pInfo.colorBlending.pAttachments = colorBlendAttachments.data();
+
+	// No depth test
+	pInfo.depthStencil.depthTestEnable = VK_FALSE;
+	pInfo.depthStencil.depthWriteEnable = VK_FALSE;
+
+	VkDynamicState dynamicStates[] =
+	{
+		VK_DYNAMIC_STATE_LINE_WIDTH,
+		VK_DYNAMIC_STATE_DEPTH_BIAS,
+		VK_DYNAMIC_STATE_BLEND_CONSTANTS,
+		VK_DYNAMIC_STATE_DEPTH_BOUNDS,
+		VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK,
+		VK_DYNAMIC_STATE_STENCIL_WRITE_MASK,
+		VK_DYNAMIC_STATE_STENCIL_REFERENCE
+	};
+
+	pInfo.dynamicState.dynamicStateCount = static_cast<uint32_t>(sizeof(dynamicStates) / sizeof(VkDynamicState));
+	pInfo.dynamicState.pDynamicStates = dynamicStates;
+
+	pInfo.rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+	pInfo.rasterizer.pNext = nullptr;
+	pInfo.rasterizer.cullMode = VK_CULL_MODE_NONE;
+	pInfo.rasterizer.depthBiasClamp = 0.f;
+	pInfo.rasterizer.depthBiasConstantFactor = 1.f;
+	pInfo.rasterizer.depthBiasEnable = VK_FALSE;
+	pInfo.rasterizer.depthBiasSlopeFactor = 1.f;
+	pInfo.rasterizer.depthClampEnable = VK_FALSE;
+	pInfo.rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+	pInfo.rasterizer.lineWidth = 1.f;
+	pInfo.rasterizer.rasterizerDiscardEnable = VK_FALSE; //true discards ALL fragments!!!
+	pInfo.rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
+
+	// disable multisampling
+	pInfo.multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+	pInfo.multisampling.pNext = nullptr;
+	pInfo.multisampling.alphaToCoverageEnable = VK_FALSE;
+	pInfo.multisampling.alphaToOneEnable = VK_FALSE;
+	pInfo.multisampling.flags = 0u;
+	pInfo.multisampling.minSampleShading = 0.f;
+	pInfo.multisampling.pSampleMask = nullptr;
+	pInfo.multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+	pInfo.multisampling.sampleShadingEnable = VK_FALSE;
+
+	pInfo.depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+	pInfo.depthStencil.depthTestEnable = VK_FALSE;
+	pInfo.depthStencil.depthWriteEnable = VK_FALSE;
+	pInfo.depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+	pInfo.depthStencil.depthBoundsTestEnable = VK_FALSE;
+	pInfo.depthStencil.minDepthBounds = 0.0f; // Optional
+	pInfo.depthStencil.maxDepthBounds = 1.0f; // Optional
+	pInfo.depthStencil.stencilTestEnable = VK_FALSE;
+	pInfo.depthStencil.front = {}; // Optional
+	pInfo.depthStencil.back = {}; // Optional
+
+	pInfo.tessellationState.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
+	pInfo.tessellationState.pNext = nullptr;
+	pInfo.tessellationState.flags = 0u;
+	pInfo.tessellationState.patchControlPoints = 0u;
+
+	const VkGraphicsPipelineCreateInfo pipelineInfo = {
+		.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
+		.stageCount = static_cast<uint32_t>(shaderStages.size()),
+		.pStages = shaderStages.data(),
+		.pVertexInputState = &pInfo.vertexInputInfo,
+		.pInputAssemblyState = &pInfo.inputAssembly,
+		.pTessellationState = &pInfo.tessellationState,
+		.pViewportState = &pInfo.viewportState,
+		.pRasterizationState = &pInfo.rasterizer,
+		.pMultisampleState = &pInfo.multisampling,
+		.pDepthStencilState = &pInfo.depthStencil,
+		.pColorBlendState = &pInfo.colorBlending,
+		.pDynamicState = &pInfo.dynamicState,
+		.layout = pipelineLayout,
+		.renderPass = renderPass,
+		.subpass = 0,
+		.basePipelineHandle = VK_NULL_HANDLE,
+		.basePipelineIndex = -1
+	};
+
+	VK_CHECK(vkCreateGraphicsPipelines(
+		vkDev.GetDevice(),
+		VK_NULL_HANDLE,
+		1,
+		&pipelineInfo,
+		nullptr,
+		pipeline));
+
+	for (auto s : shaderModules)
+	{
+		s.Destroy(vkDev.GetDevice());
 	}
 
 	return true;

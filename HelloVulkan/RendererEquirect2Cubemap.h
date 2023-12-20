@@ -29,7 +29,12 @@ private:
 	bool CreateDescriptorLayout(VulkanDevice& vkDev);
 	bool CreateDescriptorSet(VulkanDevice& vkDev);
 
-
+	bool CreateCustomGraphicsPipeline(
+		VulkanDevice& vkDev,
+		VkRenderPass renderPass,
+		VkPipelineLayout pipelineLayout,
+		const std::vector<const char*>& shaderFiles,
+		VkPipeline* pipeline);
 };
 
 #endif
