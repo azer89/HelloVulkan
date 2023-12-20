@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\stb;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\GLFW\include;C:\Users\azer\workspace\HelloVulkan\External\GLM;C:\Users\azer\workspace\HelloVulkan\External\GLI;C:\VulkanSDK\1.3.268.0\Include;C:\VulkanSDK\1.3.268.0\Include\glslang\Include;C:\VulkanSDK\1.3.268.0\Include\glslang\MachineIndependent;C:\VulkanSDK\1.3.268.0\Include\glslang\Public;C:\VulkanSDK\1.3.268.0\Include\glslang\SPIRV;C:\VulkanSDK\1.3.268.0\Include\spirv_cross;C:\VulkanSDK\1.3.268.0\Include\spirv-tools;C:\VulkanSDK\1.3.268.0\Include\spirv-headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\External\stb;..\External\assimp\include;..\External\VS_Projects\assimp\include;..\External\GLFW\include;..\External\GLM;..\External\GLI;$(VULKAN_SDK)\Include;$(VULKAN_SDK)\Include\glslang\Include;$(VULKAN_SDK)\Include\glslang\MachineIndependent;$(VULKAN_SDK)\Include\glslang\Public;$(VULKAN_SDK)\Include\glslang\SPIRV;$(VULKAN_SDK)\Include\spirv_cross;$(VULKAN_SDK)\Include\spirv-tools;$(VULKAN_SDK)\Include\spirv-headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -122,7 +122,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\stb;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\GLFW\include;C:\Users\azer\workspace\HelloVulkan\External\GLM;C:\Users\azer\workspace\HelloVulkan\External\GLI;C:\VulkanSDK\1.3.268.0\Include;C:\VulkanSDK\1.3.268.0\Include\glslang\Include;C:\VulkanSDK\1.3.268.0\Include\glslang\MachineIndependent;C:\VulkanSDK\1.3.268.0\Include\glslang\Public;C:\VulkanSDK\1.3.268.0\Include\glslang\SPIRV;C:\VulkanSDK\1.3.268.0\Include\spirv_cross;C:\VulkanSDK\1.3.268.0\Include\spirv-tools;C:\VulkanSDK\1.3.268.0\Include\spirv-headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\External\stb;..\External\assimp\include;..\External\VS_Projects\assimp\include;..\External\GLFW\include;..\External\GLM;..\External\GLI;$(VULKAN_SDK)\Include;$(VULKAN_SDK)\Include\glslang\Include;$(VULKAN_SDK)\Include\glslang\MachineIndependent;$(VULKAN_SDK)\Include\glslang\Public;$(VULKAN_SDK)\Include\glslang\SPIRV;$(VULKAN_SDK)\Include\spirv_cross;$(VULKAN_SDK)\Include\spirv-tools;$(VULKAN_SDK)\Include\spirv-headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
