@@ -84,6 +84,12 @@ public:
 		VkAccessFlags _dstAccess,
 		VkImageSubresourceRange _subresourceRange);
 
+	void TransitionImageLayout(VulkanDevice& vkDev,
+		VkFormat format,
+		VkImageLayout oldLayout,
+		VkImageLayout newLayout,
+		uint32_t layerCount = 1,
+		uint32_t mipLevels = 1);
 
 private:
 	uint32_t FindMemoryType(VkPhysicalDevice device, uint32_t typeFilter, VkMemoryPropertyFlags properties);
@@ -99,12 +105,7 @@ private:
 		const void* imageData,
 		VkImageLayout sourceImageLayout = VK_IMAGE_LAYOUT_UNDEFINED);
 
-	void TransitionImageLayout(VulkanDevice& vkDev, 
-		VkFormat format, 
-		VkImageLayout oldLayout, 
-		VkImageLayout newLayout, 
-		uint32_t layerCount = 1, 
-		uint32_t mipLevels = 1);
+	
 
 	void TransitionImageLayoutCmd(VkCommandBuffer commandBuffer, 
 		VkFormat format, 

@@ -432,4 +432,13 @@ void RendererEquirect2Cubemap::OfflineRender(VulkanDevice& vkDev)
 	vkDev.EndSingleTimeCommands(commandBuffer);
 
 	cubemapTexture_.CreateTextureSampler(vkDev.GetDevice());
+
+	cubemapTexture_.image_.TransitionImageLayout(
+		vkDev,
+		cubemapTexture_.image_.imageFormat_,
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		cubemapTexture_.image_.layerCount_,
+		cubemapTexture_.image_.mipCount_
+	);
 }
