@@ -4,15 +4,29 @@
 const uint32_t cubemapSideLength = 1024;
 const VkFormat cubeMapFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
 
-RendererEquirect2Cubemap::RendererEquirect2Cubemap(VulkanDevice& vkDev) :
+RendererEquirect2Cubemap::RendererEquirect2Cubemap(VulkanDevice& vkDev, const std::string& hdrFile) :
 	RendererBase(vkDev, {})
 {
+	InitializeHDRTexture(vkDev, hdrFile);
 	InitializeCubemapTexture(vkDev);
+	CreateRenderPass(vkDev);
+
+	CreateDescriptorPool(
+		vkDev,
+		0,  // UBO
+		0,  // SSBO
+		2, // ???
+		1, // decsriptor count per swapchain
+		&descriptorPool_);
+
+	//CreateDescriptorLayout(vkDev);
+
 }
 
 RendererEquirect2Cubemap::~RendererEquirect2Cubemap()
 {
-
+	hdrTexture_.DestroyVulkanTexture(device_);
+	cubemapTexture_.DestroyVulkanTexture(device_);
 }
 
 void RendererEquirect2Cubemap::InitializeCubemapTexture(VulkanDevice& vkDev)
@@ -41,6 +55,19 @@ void RendererEquirect2Cubemap::InitializeCubemapTexture(VulkanDevice& vkDev)
 		VK_IMAGE_VIEW_TYPE_CUBE,
 		layerCount,
 		mipmapCount);
+}
+
+void RendererEquirect2Cubemap::InitializeHDRTexture(VulkanDevice& vkDev, const std::string& hdrFile)
+{
+	hdrTexture_.CreateHDRImage(vkDev, hdrFile.c_str());
+	hdrTexture_.image_.CreateImageView(
+		vkDev.GetDevice(),
+		VK_FORMAT_R32G32B32A32_SFLOAT,
+		VK_IMAGE_ASPECT_COLOR_BIT);
+	hdrTexture_.CreateTextureSampler(
+		vkDev.GetDevice(),
+		0.f,
+		1.f);
 }
 
 void RendererEquirect2Cubemap::CreateRenderPass(VulkanDevice& vkDev)
@@ -90,4 +117,14 @@ void RendererEquirect2Cubemap::CreateRenderPass(VulkanDevice& vkDev)
 	m_info.attachmentCount = static_cast<uint32_t>(m_attachments.size());
 
 	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &m_info, nullptr, &renderPass_));
+}
+
+bool RendererEquirect2Cubemap::CreateDescriptorLayout(VulkanDevice& vkDev)
+{
+
+}
+
+bool RendererEquirect2Cubemap::CreateDescriptorSet(VulkanDevice& vkDev)
+{
+
 }

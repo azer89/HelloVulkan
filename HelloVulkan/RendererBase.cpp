@@ -478,3 +478,60 @@ void RendererBase::UpdateUniformBuffer(
 
 	vkUnmapMemory(device, bufferMemory);
 }
+
+VkDescriptorSetLayoutBinding RendererBase::DescriptorSetLayoutBinding(
+	uint32_t binding,
+	VkDescriptorType descriptorType,
+	VkShaderStageFlags stageFlags,
+	uint32_t descriptorCount)
+{
+	return VkDescriptorSetLayoutBinding
+	{
+		.binding = binding,
+		.descriptorType = descriptorType,
+		.descriptorCount = descriptorCount,
+		.stageFlags = stageFlags,
+		.pImmutableSamplers = nullptr
+	};
+}
+
+VkWriteDescriptorSet RendererBase::BufferWriteDescriptorSet(
+	VkDescriptorSet ds,
+	const VkDescriptorBufferInfo* bi,
+	uint32_t bindIdx,
+	VkDescriptorType dType)
+{
+	return VkWriteDescriptorSet
+	{
+		VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+		nullptr,
+		ds,
+		bindIdx,
+		0,
+		1,
+		dType,
+		nullptr,
+		bi,
+		nullptr
+	};
+}
+
+VkWriteDescriptorSet RendererBase::ImageWriteDescriptorSet(
+	VkDescriptorSet ds,
+	const VkDescriptorImageInfo* ii,
+	uint32_t bindIdx)
+{
+	return VkWriteDescriptorSet
+	{
+		VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+		nullptr,
+		ds,
+		bindIdx,
+		0,
+		1,
+		VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+		ii,
+		nullptr,
+		nullptr
+	};
+}

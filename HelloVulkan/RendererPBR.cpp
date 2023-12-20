@@ -61,6 +61,8 @@ RendererPBR::RendererPBR(
 
 	brdfLUT_.CreateTextureSampler(
 		vkDev.GetDevice(),
+		0.f,
+		0.f,
 		VK_FILTER_LINEAR,
 		VK_FILTER_LINEAR,
 		VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE
@@ -149,63 +151,6 @@ void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t curren
 	}
 	
 	vkCmdEndRenderPass(commandBuffer);
-}
-
-inline VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(
-	uint32_t binding,
-	VkDescriptorType descriptorType,
-	VkShaderStageFlags stageFlags,
-	uint32_t descriptorCount = 1)
-{
-	return VkDescriptorSetLayoutBinding
-	{
-		.binding = binding,
-		.descriptorType = descriptorType,
-		.descriptorCount = descriptorCount,
-		.stageFlags = stageFlags,
-		.pImmutableSamplers = nullptr
-	};
-}
-
-inline VkWriteDescriptorSet BufferWriteDescriptorSet(
-	VkDescriptorSet ds,
-	const VkDescriptorBufferInfo* bi,
-	uint32_t bindIdx,
-	VkDescriptorType dType)
-{
-	return VkWriteDescriptorSet
-	{
-		VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-		nullptr,
-		ds,
-		bindIdx,
-		0,
-		1,
-		dType,
-		nullptr,
-		bi,
-		nullptr
-	};
-}
-
-inline VkWriteDescriptorSet ImageWriteDescriptorSet(
-	VkDescriptorSet ds,
-	const VkDescriptorImageInfo* ii,
-	uint32_t bindIdx)
-{
-	return VkWriteDescriptorSet
-	{
-		VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-		nullptr,
-		ds,
-		bindIdx,
-		0,
-		1,
-		VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-		ii,
-		nullptr,
-		nullptr
-	};
 }
 
 bool RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)

@@ -23,6 +23,8 @@ void Float24to32(int w, int h, const float* img24, float* img32);
 
 bool VulkanTexture::CreateTextureSampler(
 	VkDevice device,
+	float minLod, // 0.f,
+	float maxLod, // 0.f,
 	VkFilter minFilter,
 	VkFilter maxFilter,
 	VkSamplerAddressMode addressMode)
@@ -42,8 +44,8 @@ bool VulkanTexture::CreateTextureSampler(
 		.maxAnisotropy = 1,
 		.compareEnable = VK_FALSE,
 		.compareOp = VK_COMPARE_OP_ALWAYS,
-		.minLod = 0.0f,
-		.maxLod = 0.0f,
+		.minLod = minLod,
+		.maxLod = maxLod,
 		.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
 		.unnormalizedCoordinates = VK_FALSE
 	};
@@ -82,6 +84,27 @@ bool VulkanTexture::CreateTextureImage(
 		*outTexWidth = (uint32_t)texWidth;
 		*outTexHeight = (uint32_t)texHeight;
 	}
+
+	return result;
+}
+
+bool VulkanTexture::CreateHDRImage(
+	VulkanDevice& vkDev,
+	const char* filename)
+{
+	int texWidth, texHeight, texChannels;
+	float* pixels = stbi_loadf(filename, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+
+	bool result = image_.CreateImageFromData(
+		vkDev,
+		pixels,
+		texWidth,
+		texHeight,
+		NumMipMap(texWidth, texHeight),
+		1, 
+		VK_FORMAT_R32G32B32A32_SFLOAT);
+
+	stbi_image_free(pixels);
 
 	return result;
 }
