@@ -37,6 +37,7 @@ struct PipelineCreateInfo
 		viewport({
 			.x = 0.0f,
 			.y = 0.0f,
+			// Note change these when doing offline rendering
 			.width = static_cast<float>(vkDev.GetFrameBufferWidth()),
 			.height = static_cast<float>(vkDev.GetFrameBufferHeight()),
 			.minDepth = 0.0f,
@@ -44,6 +45,7 @@ struct PipelineCreateInfo
 		}),
 		scissor({
 			.offset = { 0, 0 },
+			// Note change these when doing offline rendering
 			.extent = { vkDev.GetFrameBufferWidth(), vkDev.GetFrameBufferHeight()}
 		}),
 		viewportState({

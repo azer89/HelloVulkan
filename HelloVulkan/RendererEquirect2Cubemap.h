@@ -41,8 +41,6 @@ private:
 	void CreateFrameBuffer(VulkanDevice& vkDev, std::vector<VkImageView> inputCubeMapViews);
 
 	void OfflineRender(VulkanDevice& vkDev);
-
-	
 };
 
 #endif
