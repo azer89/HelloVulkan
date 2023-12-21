@@ -402,3 +402,6 @@ MigrationBackup/
 
 # Module binaries
 External/VS_Projects/assimp/*
+External/VS_Projects/volk/*
+
+CMakeCache.txt
