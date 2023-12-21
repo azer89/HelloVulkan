@@ -42,7 +42,8 @@ int AppPBR::MainLoop()
 	VulkanTexture cubemapTexture;
 	{
 		RendererEquirect2Cubemap e2c(vulkanDevice, cubemapTextureFile);
-		e2c.OfflineRender(vulkanDevice, &cubemapTexture);
+		e2c.OfflineRender(vulkanDevice, 
+			&cubemapTexture); // Output
 	}
 
 	// Renderers
@@ -64,6 +65,7 @@ int AppPBR::MainLoop()
 		finishPtr.get()
 	};
 
+	// Main loop
 	while (!GLFWWindowShouldClose())
 	{
 		PollEvents();
@@ -73,9 +75,9 @@ int AppPBR::MainLoop()
 		DrawFrame(renderers);
 	}
 
+	// Destroy resources
 	depthImage.Destroy(vulkanDevice.GetDevice());
 	cubemapTexture.Destroy(vulkanDevice.GetDevice());
-
 	clearPtr = nullptr;
 	finishPtr = nullptr;
 	skyboxPtr = nullptr;
