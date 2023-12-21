@@ -144,6 +144,7 @@
     <ClCompile Include="RendererBase.cpp" />
     <ClCompile Include="RendererClear.cpp" />
     <ClCompile Include="RendererEquirect2Cubemap.cpp" />
+    <ClCompile Include="RendererIrradiance.cpp" />
     <ClCompile Include="RendererSkybox.cpp" />
     <ClCompile Include="RendererFinish.cpp" />
     <ClCompile Include="RendererPBR.cpp" />
@@ -168,6 +169,7 @@
     <ClInclude Include="RendererBase.h" />
     <ClInclude Include="RendererClear.h" />
     <ClInclude Include="RendererEquirect2Cubemap.h" />
+    <ClInclude Include="RendererIrradiance.h" />
     <ClInclude Include="RendererSkybox.h" />
     <ClInclude Include="RendererFinish.h" />
     <ClInclude Include="RendererPBR.h" />

@@ -8,7 +8,7 @@
 
 #include <string>
 
-class RendererEquirect2Cubemap : public RendererBase
+class RendererEquirect2Cubemap  final : public RendererBase
 {
 public:
 	RendererEquirect2Cubemap(VulkanDevice& vkDev, const std::string& hdrFile);

@@ -6,7 +6,7 @@
 
 #include "glm/glm.hpp"
 
-class RendererSkybox : public RendererBase
+class RendererSkybox final : public RendererBase
 {
 public:
 	RendererSkybox(VulkanDevice& vkDev, VulkanTexture* skyboxTexture, VulkanImage* depthImage);

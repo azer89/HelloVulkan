@@ -3,7 +3,7 @@
 
 #include "RendererBase.h"
 
-class RendererFinish : public RendererBase
+class RendererFinish final : public RendererBase
 {
 public:
 	RendererFinish(VulkanDevice& vkDev, VulkanImage* depthImage);

@@ -7,7 +7,7 @@
 #include "MeshCreateInfo.h"
 #include "Mesh.h"
 
-class RendererPBR : public RendererBase
+class RendererPBR final : public RendererBase
 {
 public:
 	RendererPBR(VulkanDevice& vkDev,

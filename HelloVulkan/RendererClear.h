@@ -3,7 +3,7 @@
 
 #include "RendererBase.h"
 
-class RendererClear : public RendererBase
+class RendererClear final : public RendererBase
 {
 public:
 	RendererClear(VulkanDevice& vkDev, VulkanImage* depthImage);
