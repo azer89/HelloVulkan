@@ -1,13 +1,13 @@
-#ifndef RENDERER_IRRADIANCE
-#define RENDERER_IRRADIANCE
+#ifndef RENDERER_CUBE_FILTER
+#define RENDERER_CUBE_FILTER
 
 #include "RendererBase.h"
 #include "VulkanTexture.h"
 
-class RendererIrradiance final : public RendererBase
+class RendererCubeFilter final : public RendererBase
 {
-	RendererIrradiance(VulkanDevice& vkDev);
-	~RendererIrradiance();
+	RendererCubeFilter(VulkanDevice& vkDev);
+	~RendererCubeFilter();
 
 	void OfflineRender(VulkanDevice& vkDev, VulkanTexture* cubemapTexture, VulkanTexture* irradianceTexture);
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
@@ -16,8 +16,11 @@ private:
 	VkDescriptorSet descriptorSet_;
 	VkFramebuffer frameBuffer_;
 
+	void CreateRenderPass(VulkanDevice& vkDev);
 	void InitializeIrradianceTexture(VulkanDevice& vkDev, VulkanTexture* irradianceTexture);
-
+	void CreateCubemapViews(VulkanDevice& vkDev, 
+		VulkanTexture* cubemapTexture, 
+		std::vector<VkImageView>& cubemapViews);
 };
 
 #endif
