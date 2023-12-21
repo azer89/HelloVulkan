@@ -9,41 +9,8 @@
 #include <cmath>
 #include <array>
 
-inline VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(uint32_t binding, VkDescriptorType descriptorType, VkShaderStageFlags stageFlags, uint32_t descriptorCount = 1)
-{
-	return VkDescriptorSetLayoutBinding{
-		.binding = binding,
-		.descriptorType = descriptorType,
-		.descriptorCount = descriptorCount,
-		.stageFlags = stageFlags,
-		.pImmutableSamplers = nullptr
-	};
-}
-
-inline VkWriteDescriptorSet BufferWriteDescriptorSet(
-	VkDescriptorSet ds, 
-	const VkDescriptorBufferInfo* bi, 
-	uint32_t bindIdx, 
-	VkDescriptorType dType)
-{
-	return VkWriteDescriptorSet{ VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, nullptr,
-		ds, bindIdx, 0, 1, dType, nullptr, bi, nullptr
-	};
-}
-
-inline VkWriteDescriptorSet ImageWriteDescriptorSet(
-	VkDescriptorSet ds, 
-	const VkDescriptorImageInfo* ii, 
-	uint32_t bindIdx)
-{
-	return VkWriteDescriptorSet{ VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, nullptr,
-		ds, bindIdx, 0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-		ii, nullptr, nullptr
-	};
-}
-
-RendererSkybox::RendererSkybox(VulkanDevice& vkDev, VulkanTexture* skyboxTexture, VulkanImage inDepthTexture) :
-	RendererBase(vkDev, inDepthTexture),
+RendererSkybox::RendererSkybox(VulkanDevice& vkDev, VulkanTexture* skyboxTexture, VulkanImage* depthImage) :
+	RendererBase(vkDev, depthImage),
 	skyboxTexture_(skyboxTexture)
 {
 	std::string vertexShader = AppSettings::ShaderFolder + "cube.vert";
@@ -53,7 +20,7 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev, VulkanTexture* skyboxTexture
 
 	CreateUniformBuffers(vkDev, uniformBuffers_, sizeof(PerFrameUBO));
 	
-	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthTexture_.imageView_, swapchainFramebuffers_);
+	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthImage_->imageView_, swapchainFramebuffers_);
 	
 	CreateDescriptorPool(
 		vkDev, 
@@ -138,7 +105,7 @@ bool RendererSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 
 		const VkDescriptorBufferInfo bufferInfo = { uniformBuffers_[i].buffer_, 0, sizeof(PerFrameUBO) };
 		const VkDescriptorImageInfo  imageInfo = 
-		{ 
+		{
 			skyboxTexture_->sampler_,
 			skyboxTexture_->image_.imageView_,
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL

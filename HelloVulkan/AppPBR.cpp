@@ -27,24 +27,35 @@ int AppPBR::MainLoop()
 			AppSettings::ModelFolder + "DamagedHelmet//Default_normal.jpg",
 		}
 	};
+
+	// Creates two meshes for now
 	std::vector<MeshCreateInfo> meshInfos;
 	meshInfos.push_back(meshInfo);
 	meshInfos.push_back(meshInfo);
 
-	VulkanImage depthTexture;
-	depthTexture.CreateDepthResources(vulkanDevice, 
+	VulkanImage depthImage;
+	depthImage.CreateDepthResources(vulkanDevice, 
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
 		static_cast<uint32_t>(AppSettings::ScreenHeight));
 	
-	clearPtr = std::make_unique<RendererClear>(vulkanDevice, depthTexture);
-	finishPtr = std::make_unique<RendererFinish>(vulkanDevice, depthTexture);
+	// Create a cubemap from the input HDR
+	VulkanTexture cubemapTexture;
+	{
+		RendererEquirect2Cubemap e2c(vulkanDevice, cubemapTextureFile);
+		e2c.OfflineRender(vulkanDevice, 
+			&cubemapTexture); // Output
+	}
+
+	// Renderers
+	clearPtr = std::make_unique<RendererClear>(vulkanDevice, &depthImage);
+	finishPtr = std::make_unique<RendererFinish>(vulkanDevice, &depthImage);
 	pbrPtr = std::make_unique<RendererPBR>(
 		vulkanDevice,
+		&depthImage,
+		&cubemapTexture,
 		meshInfos,
-		cubemapTextureFile.c_str(),
-		cubemapIrradianceFile.c_str(),
-		depthTexture);
-	skyboxPtr = std::make_unique<RendererSkybox>(vulkanDevice, pbrPtr->GetEnvironmentMap(), depthTexture);
+		cubemapIrradianceFile.c_str());
+	skyboxPtr = std::make_unique<RendererSkybox>(vulkanDevice, &cubemapTexture, &depthImage);
 
 	const std::vector<RendererBase*> renderers = 
 	{ 
@@ -54,6 +65,7 @@ int AppPBR::MainLoop()
 		finishPtr.get()
 	};
 
+	// Main loop
 	while (!GLFWWindowShouldClose())
 	{
 		PollEvents();
@@ -63,12 +75,14 @@ int AppPBR::MainLoop()
 		DrawFrame(renderers);
 	}
 
-	depthTexture.Destroy(vulkanDevice.GetDevice());
-
+	// Destroy resources
+	depthImage.Destroy(vulkanDevice.GetDevice());
+	cubemapTexture.Destroy(vulkanDevice.GetDevice());
 	clearPtr = nullptr;
 	finishPtr = nullptr;
 	skyboxPtr = nullptr;
 	pbrPtr = nullptr;
+
 	Terminate();
 
 	return 0;
@@ -94,9 +108,7 @@ void AppPBR::UpdateUBO(uint32_t imageIndex)
 
 	// Model UBOs
 	glm::mat4 model(1.f);
-	model = glm::rotate(model, modelRotation, glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	
 	
 	// 1
 	ModelUBO modelUBO1
@@ -107,8 +119,7 @@ void AppPBR::UpdateUBO(uint32_t imageIndex)
 
 	// 2
 	model = glm::mat4(1.f);
-	model = glm::translate(model, glm::vec3(3.0f, 0.0f, 0.0f));
-	model = glm::rotate(model, -modelRotation, glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::translate(model, glm::vec3(3.0f, 0.0f, -3.0f));
 	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	ModelUBO modelUBO2
 	{

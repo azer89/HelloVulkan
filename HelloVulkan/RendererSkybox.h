@@ -6,10 +6,10 @@
 
 #include "glm/glm.hpp"
 
-class RendererSkybox : public RendererBase
+class RendererSkybox final : public RendererBase
 {
 public:
-	RendererSkybox(VulkanDevice& vkDev, VulkanTexture* skyboxTexture, VulkanImage inDepthTexture);
+	RendererSkybox(VulkanDevice& vkDev, VulkanTexture* skyboxTexture, VulkanImage* depthImage);
 	virtual ~RendererSkybox();
 
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;

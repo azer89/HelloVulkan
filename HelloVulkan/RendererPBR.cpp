@@ -19,21 +19,20 @@ constexpr size_t PBR_ENV_TEXTURE_COUNT = 3;
 
 RendererPBR::RendererPBR(
 	VulkanDevice& vkDev,
+	VulkanImage* depthImage,
+	VulkanTexture* cubemapTexture,
 	const std::vector<MeshCreateInfo>& meshInfos,
-	const char* texEnvMapFile,
-	const char* texIrrMapFile,
-	VulkanImage depthTexture) : 
-	RendererBase(vkDev, VulkanImage())
+	const char* texIrrMapFile) :
+	RendererBase(vkDev, depthImage),
+	cubemapTexture_(cubemapTexture)
 {
-	depthTexture_ = depthTexture;
 
 	for (const MeshCreateInfo& info : meshInfos)
 	{
 		LoadMesh(vkDev, info);
 	}
 
-	// cube maps
-	LoadCubeMap(vkDev, texEnvMapFile, envMap_);
+	// Irradiance
 	LoadCubeMap(vkDev, texIrrMapFile, envMapIrradiance_);
 
 	std::string brdfLUTFile = AppSettings::TextureFolder + "brdfLUT.ktx";
@@ -61,6 +60,8 @@ RendererPBR::RendererPBR(
 
 	brdfLUT_.CreateTextureSampler(
 		vkDev.GetDevice(),
+		0.f,
+		0.f,
 		VK_FILTER_LINEAR,
 		VK_FILTER_LINEAR,
 		VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE
@@ -74,7 +75,7 @@ RendererPBR::RendererPBR(
 		CreateUniformBuffers(vkDev, mesh.modelBuffers_, sizeof(ModelUBO));
 	}
 
-	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthTexture_.imageView_, swapchainFramebuffers_);
+	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthImage_->imageView_, swapchainFramebuffers_);
 
 	CreateDescriptorPool(
 		vkDev, 
@@ -113,10 +114,9 @@ RendererPBR::~RendererPBR()
 		mesh.Destroy(device_);
 	}
 
-	envMap_.DestroyVulkanTexture(device_);
-	envMapIrradiance_.DestroyVulkanTexture(device_);
+	envMapIrradiance_.Destroy(device_);
 
-	brdfLUT_.DestroyVulkanTexture(device_);
+	brdfLUT_.Destroy(device_);
 }
 
 void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
@@ -149,63 +149,6 @@ void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t curren
 	}
 	
 	vkCmdEndRenderPass(commandBuffer);
-}
-
-inline VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(
-	uint32_t binding,
-	VkDescriptorType descriptorType,
-	VkShaderStageFlags stageFlags,
-	uint32_t descriptorCount = 1)
-{
-	return VkDescriptorSetLayoutBinding
-	{
-		.binding = binding,
-		.descriptorType = descriptorType,
-		.descriptorCount = descriptorCount,
-		.stageFlags = stageFlags,
-		.pImmutableSamplers = nullptr
-	};
-}
-
-inline VkWriteDescriptorSet BufferWriteDescriptorSet(
-	VkDescriptorSet ds,
-	const VkDescriptorBufferInfo* bi,
-	uint32_t bindIdx,
-	VkDescriptorType dType)
-{
-	return VkWriteDescriptorSet
-	{
-		VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-		nullptr,
-		ds,
-		bindIdx,
-		0,
-		1,
-		dType,
-		nullptr,
-		bi,
-		nullptr
-	};
-}
-
-inline VkWriteDescriptorSet ImageWriteDescriptorSet(
-	VkDescriptorSet ds,
-	const VkDescriptorImageInfo* ii,
-	uint32_t bindIdx)
-{
-	return VkWriteDescriptorSet
-	{
-		VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-		nullptr,
-		ds,
-		bindIdx,
-		0,
-		1,
-		VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-		ii,
-		nullptr,
-		nullptr
-	};
 }
 
 bool RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
@@ -324,9 +267,12 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Mesh& mesh)
 			bindIndex++;
 		}
 
-		const VkDescriptorImageInfo imageInfoEnv = { envMap_.sampler_, envMap_.image_.imageView_, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
-		const VkDescriptorImageInfo imageInfoEnvIrr = { envMapIrradiance_.sampler_, envMapIrradiance_.image_.imageView_, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
-		const VkDescriptorImageInfo imageInfoBRDF = { brdfLUT_.sampler_, brdfLUT_.image_.imageView_, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+		const VkDescriptorImageInfo imageInfoEnv = 
+		{ cubemapTexture_->sampler_, cubemapTexture_->image_.imageView_, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+		const VkDescriptorImageInfo imageInfoEnvIrr = 
+		{ envMapIrradiance_.sampler_, envMapIrradiance_.image_.imageView_, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+		const VkDescriptorImageInfo imageInfoBRDF = 
+		{ brdfLUT_.sampler_, brdfLUT_.image_.imageView_, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
 
 		descriptorWrites.emplace_back(
 			ImageWriteDescriptorSet(ds, &imageInfoEnv, bindIndex++)

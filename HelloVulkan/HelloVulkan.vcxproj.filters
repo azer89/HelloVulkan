@@ -72,6 +72,12 @@
     <ClCompile Include="RendererSkybox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RendererEquirect2Cubemap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererIrradiance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppSettings.h">
@@ -140,6 +146,15 @@
     <ClInclude Include="RendererSkybox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RendererEquirect2Cubemap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PipelineCreateInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererIrradiance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cube.frag">
@@ -152,6 +167,12 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="..\Shaders\pbr_mesh.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Shaders\equirect_2_cubemap.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Shaders\fullscreen_triangle.vert">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

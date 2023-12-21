@@ -27,6 +27,10 @@ public:
 		uint32_t* outTexWidth = nullptr,
 		uint32_t* outTexHeight = nullptr);
 
+	bool CreateHDRImage(
+		VulkanDevice& vkDev,
+		const char* filename);
+
 	bool CreateCubeTextureImage(
 		VulkanDevice& vkDev,
 		const char* filename,
@@ -35,11 +39,13 @@ public:
 
 	bool CreateTextureSampler(
 		VkDevice device,
+		float minLod = 0.f,
+		float maxLod = 0.f,
 		VkFilter minFilter = VK_FILTER_LINEAR,
 		VkFilter maxFilter = VK_FILTER_LINEAR,
 		VkSamplerAddressMode addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
 
-	void DestroyVulkanTexture(VkDevice device);
+	void Destroy(VkDevice device);
 
 private:
 	Bitmap ConvertEquirectangularMapToVerticalCross(const Bitmap& b);

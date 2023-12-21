@@ -120,6 +120,7 @@ bool VulkanImage::CreateImage(
 	height_ = height;
 	mipCount_ = mipCount;
 	layerCount_ = layerCount;
+	imageFormat_ = format;
 	
 	const VkImageCreateInfo imageInfo = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
@@ -172,6 +173,13 @@ bool VulkanImage::CreateImageView(VkDevice device,
 		.image = image_,
 		.viewType = viewType,
 		.format = format,
+		.components = 
+		{ 
+			VK_COMPONENT_SWIZZLE_IDENTITY, 
+			VK_COMPONENT_SWIZZLE_IDENTITY,
+			VK_COMPONENT_SWIZZLE_IDENTITY,
+			VK_COMPONENT_SWIZZLE_IDENTITY 
+		},
 		.subresourceRange =
 		{
 			.aspectMask = aspectFlags,
@@ -439,6 +447,40 @@ void VulkanImage::TransitionImageLayoutCmd(VkCommandBuffer commandBuffer,
 		0, nullptr,
 		0, nullptr,
 		1, &barrier
+	);
+}
+
+void VulkanImage::CreateBarrier(
+	VkCommandBuffer _cmdBuffer,
+	VkImageLayout oldLayout,
+	VkImageLayout newLayout,
+	VkPipelineStageFlags _srcStage,
+	VkAccessFlags _srcAccess,
+	VkPipelineStageFlags _dstStage,
+	VkAccessFlags _dstAccess,
+	VkImageSubresourceRange _subresourceRange)
+{
+	VkImageMemoryBarrier barrier{};
+	barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	barrier.oldLayout = oldLayout;
+	barrier.newLayout = newLayout;
+	barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	barrier.image = image_;
+	barrier.subresourceRange = _subresourceRange;
+	barrier.srcAccessMask = _srcAccess;
+	barrier.dstAccessMask = _dstAccess;
+
+	vkCmdPipelineBarrier(
+		_cmdBuffer,
+		_srcStage, _dstStage,
+		0u,
+		0u, 
+		nullptr,
+		0u, 
+		nullptr,
+		1u, 
+		&barrier
 	);
 }
 

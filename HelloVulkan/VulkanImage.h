@@ -18,6 +18,7 @@ public:
 	uint32_t height_;
 	uint32_t mipCount_;
 	uint32_t layerCount_;
+	VkFormat imageFormat_;
 
 	VulkanImage() :
 		image_(nullptr),
@@ -26,7 +27,8 @@ public:
 		width_(0),
 		height_(0),
 		mipCount_(0),
-		layerCount_(0)
+		layerCount_(0),
+		imageFormat_(VK_FORMAT_UNDEFINED)
 	{
 	}
 
@@ -72,6 +74,23 @@ public:
 		uint32_t height,
 		uint32_t layerCount = 1);
 
+	void CreateBarrier(
+		VkCommandBuffer _cmdBuffer, 
+		VkImageLayout oldLayout, 
+		VkImageLayout newLayout,
+		VkPipelineStageFlags _srcStage, 
+		VkAccessFlags _srcAccess,
+		VkPipelineStageFlags _dstStage, 
+		VkAccessFlags _dstAccess,
+		VkImageSubresourceRange _subresourceRange);
+
+	void TransitionImageLayout(VulkanDevice& vkDev,
+		VkFormat format,
+		VkImageLayout oldLayout,
+		VkImageLayout newLayout,
+		uint32_t layerCount = 1,
+		uint32_t mipLevels = 1);
+
 private:
 	uint32_t FindMemoryType(VkPhysicalDevice device, uint32_t typeFilter, VkMemoryPropertyFlags properties);
 	VkFormat FindDepthFormat(VkPhysicalDevice device);
@@ -86,12 +105,7 @@ private:
 		const void* imageData,
 		VkImageLayout sourceImageLayout = VK_IMAGE_LAYOUT_UNDEFINED);
 
-	void TransitionImageLayout(VulkanDevice& vkDev, 
-		VkFormat format, 
-		VkImageLayout oldLayout, 
-		VkImageLayout newLayout, 
-		uint32_t layerCount = 1, 
-		uint32_t mipLevels = 1);
+	
 
 	void TransitionImageLayoutCmd(VkCommandBuffer commandBuffer, 
 		VkFormat format, 

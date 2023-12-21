@@ -78,7 +78,9 @@ vec3 getIBLContribution(PBRInfo pbrInputs, vec3 n, vec3 reflection)
 	vec3 brdf = textureLod(brdfLUT, brdfSamplePoint, 0).rgb;
 
 	// HDR envmaps are already linear
-	vec3 diffuseLight = texture(irradianceMap, n.xyz).rgb;
+	vec3 cm = vec3(-1.0, 1.0, -1.0); // TODO Get the correct cubemap direction
+	vec3 diffuseLight = texture(irradianceMap, n.xyz * cm).rgb;
+
 	vec3 specularLight = textureLod(envMap, reflection.xyz, lod).rgb;
 
 	vec3 diffuse = diffuseLight * pbrInputs.diffuseColor;
