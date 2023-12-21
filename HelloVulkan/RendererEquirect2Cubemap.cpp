@@ -354,13 +354,9 @@ void RendererEquirect2Cubemap::CreateFrameBuffer(VulkanDevice& vkDev, std::vecto
 	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &info, nullptr, &frameBuffer_));
 }
 
-void RendererEquirect2Cubemap::OfflineRender(VulkanDevice& vkDev, VulkanTexture* cubemapTexture)
+void RendererEquirect2Cubemap::CreateCubemapViews(VulkanDevice& vkDev, VulkanTexture* cubemapTexture, std::vector<VkImageView>& cubeMapViews)
 {
-	// Initialize output cubemap
-	InitializeCubemapTexture(vkDev, cubemapTexture);
-
-	// Create views from the output cubemap
-	std::vector<VkImageView> inputCubeMapViews(layerCount, VK_NULL_HANDLE);
+	cubeMapViews = std::vector<VkImageView>(layerCount, VK_NULL_HANDLE);
 	for (size_t i = 0; i < layerCount; i++)
 	{
 		const VkImageViewCreateInfo viewInfo =
@@ -388,8 +384,18 @@ void RendererEquirect2Cubemap::OfflineRender(VulkanDevice& vkDev, VulkanTexture*
 			}
 		};
 
-		VK_CHECK(vkCreateImageView(vkDev.GetDevice(), &viewInfo, nullptr, &inputCubeMapViews[i]));
+		VK_CHECK(vkCreateImageView(vkDev.GetDevice(), &viewInfo, nullptr, &cubeMapViews[i]));
 	}
+}
+
+void RendererEquirect2Cubemap::OfflineRender(VulkanDevice& vkDev, VulkanTexture* cubemapTexture)
+{
+	// Initialize output cubemap
+	InitializeCubemapTexture(vkDev, cubemapTexture);
+
+	// Create views from the output cubemap
+	std::vector<VkImageView> inputCubeMapViews;
+	CreateCubemapViews(vkDev, cubemapTexture, inputCubeMapViews);
 
 	CreateFrameBuffer(vkDev, inputCubeMapViews);
 

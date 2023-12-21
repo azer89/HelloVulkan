@@ -15,6 +15,9 @@ class RendererIrradiance final : public RendererBase
 private:
 	VkDescriptorSet descriptorSet_;
 	VkFramebuffer frameBuffer_;
+
+	void InitializeIrradianceTexture(VulkanDevice& vkDev, VulkanTexture* irradianceTexture);
+
 };
 
 #endif
