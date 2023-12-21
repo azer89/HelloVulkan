@@ -2,7 +2,7 @@
 
 A low-level implementation of physically-based lighting model to generate realistic rendering in real time.
 
-Features:
+### Features
 * Cubemap and mesh rendering.
 * Offline rendering to generate a cubemap from an equirectangular HDR image.
 
