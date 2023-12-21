@@ -202,7 +202,8 @@ bool RendererEquirect2Cubemap::CreateDescriptorSet(VulkanDevice& vkDev)
 		static_cast<uint32_t>(descriptorWrites.size()),
 		descriptorWrites.data(),
 		0,
-		nullptr);
+		nullptr
+	);
 
 	return true;
 }

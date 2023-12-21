@@ -6,7 +6,7 @@
 
 class RendererCubeFilter final : public RendererBase
 {
-	RendererCubeFilter(VulkanDevice& vkDev);
+	RendererCubeFilter(VulkanDevice& vkDev, VulkanTexture* cubemapTexture);
 	~RendererCubeFilter();
 
 	void OfflineRender(VulkanDevice& vkDev, VulkanTexture* cubemapTexture, VulkanTexture* irradianceTexture);
@@ -17,6 +17,9 @@ private:
 	VkFramebuffer frameBuffer_;
 
 	void CreateRenderPass(VulkanDevice& vkDev);
+	void CreateDescriptorLayout(VulkanDevice& vkDev);
+	void CreateDescriptorSet(VulkanDevice& vkDev, VulkanTexture* cubemapTexture);
+
 	void InitializeIrradianceTexture(VulkanDevice& vkDev, VulkanTexture* irradianceTexture);
 	void CreateCubemapViews(VulkanDevice& vkDev, 
 		VulkanTexture* cubemapTexture, 

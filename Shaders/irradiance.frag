@@ -3,7 +3,7 @@
 #define MATH_PI 3.1415926535897932384626433832795
 #define MATH_INV_PI (1.0 / MATH_PI)
 
-layout(set = 0, binding = 1) uniform samplerCube cubeMap;
+layout(set = 0, binding = 0) uniform samplerCube cubeMap;
 
 layout(location = 0) in vec2 texCoord;
 
