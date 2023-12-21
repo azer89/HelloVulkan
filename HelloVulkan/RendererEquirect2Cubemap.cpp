@@ -8,11 +8,14 @@ const uint32_t cubemapSideLength = 1024;
 const VkFormat cubeMapFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
 const uint32_t layerCount = 6;
 
-RendererEquirect2Cubemap::RendererEquirect2Cubemap(VulkanDevice& vkDev, const std::string& hdrFile) :
+RendererEquirect2Cubemap::RendererEquirect2Cubemap(
+	VulkanDevice& vkDev, 
+	const std::string& hdrFile,
+	VulkanTexture* cubemapTexture) :
 	RendererBase(vkDev, {})
 {
 	InitializeHDRTexture(vkDev, hdrFile);
-	InitializeCubemapTexture(vkDev);
+	InitializeCubemapTexture(vkDev, cubemapTexture);
 	CreateRenderPass(vkDev);
 
 	CreateDescriptorPool(
@@ -40,13 +43,12 @@ RendererEquirect2Cubemap::RendererEquirect2Cubemap(VulkanDevice& vkDev, const st
 		&graphicsPipeline_
 	);
 
-	OfflineRender(vkDev);
+	OfflineRender(vkDev, cubemapTexture);
 }
 
 RendererEquirect2Cubemap::~RendererEquirect2Cubemap()
 {
-	hdrTexture_.DestroyVulkanTexture(device_);
-	cubemapTexture_.DestroyVulkanTexture(device_);
+	hdrTexture_.Destroy(device_);
 	vkDestroyFramebuffer(device_, frameBuffer_, nullptr);
 }
 
@@ -54,11 +56,11 @@ void RendererEquirect2Cubemap::FillCommandBuffer(VkCommandBuffer commandBuffer, 
 {
 }
 
-void RendererEquirect2Cubemap::InitializeCubemapTexture(VulkanDevice& vkDev)
+void RendererEquirect2Cubemap::InitializeCubemapTexture(VulkanDevice& vkDev, VulkanTexture* cubemapTexture)
 {
 	uint32_t mipmapCount = NumMipMap(cubemapSideLength, cubemapSideLength);
 
-	cubemapTexture_.image_.CreateImage(
+	cubemapTexture->image_.CreateImage(
 		vkDev.GetDevice(),
 		vkDev.GetPhysicalDevice(),
 		cubemapSideLength,
@@ -72,7 +74,7 @@ void RendererEquirect2Cubemap::InitializeCubemapTexture(VulkanDevice& vkDev)
 		VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT
 	);
 
-	cubemapTexture_.image_.CreateImageView(
+	cubemapTexture->image_.CreateImageView(
 		vkDev.GetDevice(),
 		VK_FORMAT_R32G32B32A32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT,
@@ -274,7 +276,7 @@ bool RendererEquirect2Cubemap::CreateCustomGraphicsPipeline(
 	pInfo.rasterizer.depthClampEnable = VK_FALSE;
 	pInfo.rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 	pInfo.rasterizer.lineWidth = 1.f;
-	pInfo.rasterizer.rasterizerDiscardEnable = VK_FALSE; //true discards ALL fragments!!!
+	pInfo.rasterizer.rasterizerDiscardEnable = VK_FALSE; 
 	pInfo.rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
 
 	// disable multisampling
@@ -356,7 +358,7 @@ void RendererEquirect2Cubemap::CreateFrameBuffer(VulkanDevice& vkDev, std::vecto
 	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &info, nullptr, &frameBuffer_));
 }
 
-void RendererEquirect2Cubemap::OfflineRender(VulkanDevice& vkDev)
+void RendererEquirect2Cubemap::OfflineRender(VulkanDevice& vkDev, VulkanTexture* cubemapTexture)
 {
 	std::vector<VkImageView> inputCubeMapViews(layerCount, VK_NULL_HANDLE);
 	for (size_t i = 0; i < layerCount; i++)
@@ -366,9 +368,9 @@ void RendererEquirect2Cubemap::OfflineRender(VulkanDevice& vkDev)
 			.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0,
-			.image = cubemapTexture_.image_.image_,
+			.image = cubemapTexture->image_.image_,
 			.viewType = VK_IMAGE_VIEW_TYPE_2D,
-			.format = cubemapTexture_.image_.imageFormat_,
+			.format = cubemapTexture->image_.imageFormat_,
 			.components =
 			{
 				VK_COMPONENT_SWIZZLE_IDENTITY,
@@ -396,7 +398,7 @@ void RendererEquirect2Cubemap::OfflineRender(VulkanDevice& vkDev)
 	uint32_t mipmapCount = NumMipMap(cubemapSideLength, cubemapSideLength);
 	VkImageSubresourceRange  subresourceRangeBaseMiplevel = 
 	{ VK_IMAGE_ASPECT_COLOR_BIT, 0u, mipmapCount, 0u, 6u };
-	cubemapTexture_.image_.CreateBarrier(
+	cubemapTexture->image_.CreateBarrier(
 		commandBuffer,
 		VK_IMAGE_LAYOUT_UNDEFINED,
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
@@ -438,15 +440,15 @@ void RendererEquirect2Cubemap::OfflineRender(VulkanDevice& vkDev)
 
 	vkDev.EndSingleTimeCommands(commandBuffer);
 
-	cubemapTexture_.CreateTextureSampler(vkDev.GetDevice());
+	cubemapTexture->CreateTextureSampler(vkDev.GetDevice());
 
-	cubemapTexture_.image_.TransitionImageLayout(
+	cubemapTexture->image_.TransitionImageLayout(
 		vkDev,
-		cubemapTexture_.image_.imageFormat_,
+		cubemapTexture->image_.imageFormat_,
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-		cubemapTexture_.image_.layerCount_,
-		cubemapTexture_.image_.mipCount_
+		cubemapTexture->image_.layerCount_,
+		cubemapTexture->image_.mipCount_
 	);
 
 	// Destroy image views

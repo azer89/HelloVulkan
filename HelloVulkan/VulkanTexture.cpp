@@ -294,7 +294,7 @@ Bitmap VulkanTexture::ConvertVerticalCrossToCubeMapFaces(const Bitmap& b)
 	return cubemap;
 }
 
-void VulkanTexture::DestroyVulkanTexture(VkDevice device)
+void VulkanTexture::Destroy(VkDevice device)
 {
 	image_.Destroy(device);
 	vkDestroySampler(device, sampler_, nullptr);

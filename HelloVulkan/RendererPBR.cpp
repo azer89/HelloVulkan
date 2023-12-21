@@ -115,10 +115,10 @@ RendererPBR::~RendererPBR()
 		mesh.Destroy(device_);
 	}
 
-	envMap_.DestroyVulkanTexture(device_);
-	envMapIrradiance_.DestroyVulkanTexture(device_);
+	envMap_.Destroy(device_);
+	envMapIrradiance_.Destroy(device_);
 
-	brdfLUT_.DestroyVulkanTexture(device_);
+	brdfLUT_.Destroy(device_);
 }
 
 void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)

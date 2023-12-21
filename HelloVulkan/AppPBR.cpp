@@ -31,28 +31,27 @@ int AppPBR::MainLoop()
 	meshInfos.push_back(meshInfo);
 	meshInfos.push_back(meshInfo);
 
-	VulkanImage depthTexture;
-	depthTexture.CreateDepthResources(vulkanDevice, 
+	VulkanImage depthImage;
+	depthImage.CreateDepthResources(vulkanDevice, 
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
 		static_cast<uint32_t>(AppSettings::ScreenHeight));
 	
-	clearPtr = std::make_unique<RendererClear>(vulkanDevice, depthTexture);
-	finishPtr = std::make_unique<RendererFinish>(vulkanDevice, depthTexture);
-	
-	// TODO Test
-	e2cPtr = std::make_unique<RendererEquirect2Cubemap>(vulkanDevice, cubemapTextureFile);
-	//e2cPtr = nullptr;
+	VulkanTexture cubemapTexture;
+	{
+		RendererEquirect2Cubemap e2cPtr(vulkanDevice, cubemapTextureFile, &cubemapTexture);
+	}
+
+	clearPtr = std::make_unique<RendererClear>(vulkanDevice, depthImage);
+	finishPtr = std::make_unique<RendererFinish>(vulkanDevice, depthImage);
 	
 	pbrPtr = std::make_unique<RendererPBR>(
 		vulkanDevice,
 		meshInfos,
 		cubemapTextureFile.c_str(),
 		cubemapIrradianceFile.c_str(),
-		depthTexture);
+		depthImage);
 
-	//skyboxPtr = std::make_unique<RendererSkybox>(vulkanDevice, pbrPtr->GetEnvironmentMap(), depthTexture);
-	skyboxPtr = std::make_unique<RendererSkybox>(vulkanDevice, e2cPtr->GetCubemapTexture(), depthTexture);
-
+	skyboxPtr = std::make_unique<RendererSkybox>(vulkanDevice, &cubemapTexture, depthImage);
 
 	const std::vector<RendererBase*> renderers = 
 	{ 
@@ -71,13 +70,14 @@ int AppPBR::MainLoop()
 		DrawFrame(renderers);
 	}
 
-	depthTexture.Destroy(vulkanDevice.GetDevice());
+	depthImage.Destroy(vulkanDevice.GetDevice());
+	cubemapTexture.Destroy(vulkanDevice.GetDevice());
 
 	clearPtr = nullptr;
 	finishPtr = nullptr;
-	e2cPtr = nullptr;
 	skyboxPtr = nullptr;
 	pbrPtr = nullptr;
+
 	Terminate();
 
 	return 0;

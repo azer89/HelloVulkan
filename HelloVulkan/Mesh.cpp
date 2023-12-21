@@ -71,7 +71,7 @@ void Mesh::Destroy(VkDevice device)
 
 	for (VulkanTexture& tex : textures_)
 	{
-		tex.DestroyVulkanTexture(device);
+		tex.Destroy(device);
 	}
 
 	for (auto buf : modelBuffers_)

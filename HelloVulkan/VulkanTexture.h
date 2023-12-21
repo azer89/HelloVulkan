@@ -45,7 +45,7 @@ public:
 		VkFilter maxFilter = VK_FILTER_LINEAR,
 		VkSamplerAddressMode addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
 
-	void DestroyVulkanTexture(VkDevice device);
+	void Destroy(VkDevice device);
 
 private:
 	Bitmap ConvertEquirectangularMapToVerticalCross(const Bitmap& b);
