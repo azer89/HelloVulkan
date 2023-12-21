@@ -21,6 +21,13 @@ private:
 	void CreateCubemapViews(VulkanDevice& vkDev, 
 		VulkanTexture* cubemapTexture, 
 		std::vector<VkImageView>& cubemapViews);
+
+	bool CreateCustomGraphicsPipeline(
+		VulkanDevice& vkDev,
+		VkRenderPass renderPass,
+		VkPipelineLayout pipelineLayout,
+		const std::vector<const char*>& shaderFiles,
+		VkPipeline* pipeline);
 };
 
 #endif

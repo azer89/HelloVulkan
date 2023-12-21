@@ -78,7 +78,8 @@ protected:
 
 	bool CreatePipelineLayout(VkDevice device, 
 		VkDescriptorSetLayout dsLayout, 
-		VkPipelineLayout* pipelineLayout);
+		VkPipelineLayout* pipelineLayout,
+		const std::vector<VkPushConstantRange>& pushConstantRanges = {});
 
 	bool CreateGraphicsPipeline(
 		VulkanDevice& vkDev,

@@ -354,7 +354,10 @@ void RendererEquirect2Cubemap::CreateFrameBuffer(VulkanDevice& vkDev, std::vecto
 	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &info, nullptr, &frameBuffer_));
 }
 
-void RendererEquirect2Cubemap::CreateCubemapViews(VulkanDevice& vkDev, VulkanTexture* cubemapTexture, std::vector<VkImageView>& cubeMapViews)
+void RendererEquirect2Cubemap::CreateCubemapViews(
+	VulkanDevice& vkDev, 
+	VulkanTexture* cubemapTexture, 
+	std::vector<VkImageView>& cubeMapViews)
 {
 	cubeMapViews = std::vector<VkImageView>(layerCount, VK_NULL_HANDLE);
 	for (size_t i = 0; i < layerCount; i++)

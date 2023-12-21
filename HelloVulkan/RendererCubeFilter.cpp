@@ -127,6 +127,22 @@ void RendererCubeFilter::CreateCubemapViews(VulkanDevice& vkDev,
 	}
 }
 
+bool RendererCubeFilter::CreateCustomGraphicsPipeline(
+	VulkanDevice& vkDev,
+	VkRenderPass renderPass,
+	VkPipelineLayout pipelineLayout,
+	const std::vector<const char*>& shaderFiles,
+	VkPipeline* pipeline)
+{
+	// TODO move this to pipeline layout creation
+	// Push constants
+	std::vector<VkPushConstantRange> ranges(1u);
+	VkPushConstantRange& range = ranges.front();
+	range.offset = 0u;
+	range.size = sizeof(PushConstant);
+	range.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+}
+
 void RendererCubeFilter::OfflineRender(VulkanDevice& vkDev, VulkanTexture* cubemapTexture, VulkanTexture* irradianceTexture)
 {
 	InitializeIrradianceTexture(vkDev, irradianceTexture);
