@@ -175,5 +175,8 @@
     <None Include="..\Shaders\fullscreen_triangle.vert">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\Shaders\irradiance.frag">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

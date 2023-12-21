@@ -189,6 +189,7 @@
     <None Include="..\Shaders\cube.vert" />
     <None Include="..\Shaders\equirect_2_cubemap.frag" />
     <None Include="..\Shaders\fullscreen_triangle.vert" />
+    <None Include="..\Shaders\irradiance.frag" />
     <None Include="..\Shaders\pbr_mesh.frag" />
     <None Include="..\Shaders\pbr_mesh.vert" />
   </ItemGroup>
