@@ -19,21 +19,20 @@ constexpr size_t PBR_ENV_TEXTURE_COUNT = 3;
 
 RendererPBR::RendererPBR(
 	VulkanDevice& vkDev,
+	VulkanImage depthTexture,
+	VulkanTexture* cubemapTexture,
 	const std::vector<MeshCreateInfo>& meshInfos,
-	const char* texEnvMapFile,
-	const char* texIrrMapFile,
-	VulkanImage depthTexture) : 
-	RendererBase(vkDev, VulkanImage())
+	const char* texIrrMapFile) :
+	RendererBase(vkDev, depthTexture),
+	cubemapTexture_(cubemapTexture)
 {
-	depthTexture_ = depthTexture;
 
 	for (const MeshCreateInfo& info : meshInfos)
 	{
 		LoadMesh(vkDev, info);
 	}
 
-	// cube maps
-	LoadCubeMap(vkDev, texEnvMapFile, envMap_);
+	// Irradiance
 	LoadCubeMap(vkDev, texIrrMapFile, envMapIrradiance_);
 
 	std::string brdfLUTFile = AppSettings::TextureFolder + "brdfLUT.ktx";
@@ -115,7 +114,6 @@ RendererPBR::~RendererPBR()
 		mesh.Destroy(device_);
 	}
 
-	envMap_.Destroy(device_);
 	envMapIrradiance_.Destroy(device_);
 
 	brdfLUT_.Destroy(device_);
@@ -269,9 +267,12 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Mesh& mesh)
 			bindIndex++;
 		}
 
-		const VkDescriptorImageInfo imageInfoEnv = { envMap_.sampler_, envMap_.image_.imageView_, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
-		const VkDescriptorImageInfo imageInfoEnvIrr = { envMapIrradiance_.sampler_, envMapIrradiance_.image_.imageView_, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
-		const VkDescriptorImageInfo imageInfoBRDF = { brdfLUT_.sampler_, brdfLUT_.image_.imageView_, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+		const VkDescriptorImageInfo imageInfoEnv = 
+		{ cubemapTexture_->sampler_, cubemapTexture_->image_.imageView_, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+		const VkDescriptorImageInfo imageInfoEnvIrr = 
+		{ envMapIrradiance_.sampler_, envMapIrradiance_.image_.imageView_, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+		const VkDescriptorImageInfo imageInfoBRDF = 
+		{ brdfLUT_.sampler_, brdfLUT_.image_.imageView_, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
 
 		descriptorWrites.emplace_back(
 			ImageWriteDescriptorSet(ds, &imageInfoEnv, bindIndex++)

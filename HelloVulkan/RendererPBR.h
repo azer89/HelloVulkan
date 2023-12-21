@@ -11,16 +11,14 @@ class RendererPBR : public RendererBase
 {
 public:
 	RendererPBR(VulkanDevice& vkDev,
+		VulkanImage depthTexture,
+		VulkanTexture* cubemapTexture,
 		const std::vector<MeshCreateInfo>& meshInfos,
-		const char* texEnvMapFile,
-		const char* texIrrMapFile,
-		VulkanImage depthTexture);
+		const char* texIrrMapFile);
 
 	virtual ~RendererPBR();
 
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
-
-	VulkanTexture* GetEnvironmentMap() { return &envMap_; }
 
 public:
 	// TODO change this to private
@@ -36,9 +34,10 @@ private:
 	void LoadMesh(VulkanDevice& vkDev, const MeshCreateInfo& info);
 
 private:
-	VulkanTexture envMap_;
+	VulkanTexture* cubemapTexture_;
 	VulkanTexture envMapIrradiance_;
 	VulkanTexture brdfLUT_;
+	
 };
 
 #endif

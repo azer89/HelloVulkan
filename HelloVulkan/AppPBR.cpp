@@ -27,6 +27,8 @@ int AppPBR::MainLoop()
 			AppSettings::ModelFolder + "DamagedHelmet//Default_normal.jpg",
 		}
 	};
+
+	// Creates two meshes for now
 	std::vector<MeshCreateInfo> meshInfos;
 	meshInfos.push_back(meshInfo);
 	meshInfos.push_back(meshInfo);
@@ -36,7 +38,7 @@ int AppPBR::MainLoop()
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
 		static_cast<uint32_t>(AppSettings::ScreenHeight));
 	
-	// Create a cubemap from the input hdr
+	// Create a cubemap from the input HDR
 	VulkanTexture cubemapTexture;
 	{
 		RendererEquirect2Cubemap e2c(vulkanDevice, cubemapTextureFile);
@@ -48,10 +50,10 @@ int AppPBR::MainLoop()
 	
 	pbrPtr = std::make_unique<RendererPBR>(
 		vulkanDevice,
+		depthImage,
+		&cubemapTexture,
 		meshInfos,
-		cubemapTextureFile.c_str(),
-		cubemapIrradianceFile.c_str(),
-		depthImage);
+		cubemapIrradianceFile.c_str());
 
 	skyboxPtr = std::make_unique<RendererSkybox>(vulkanDevice, &cubemapTexture, depthImage);
 
@@ -105,7 +107,6 @@ void AppPBR::UpdateUBO(uint32_t imageIndex)
 
 	// Model UBOs
 	glm::mat4 model(1.f);
-	//model = glm::rotate(model, modelRotation, glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	
 	
@@ -119,8 +120,6 @@ void AppPBR::UpdateUBO(uint32_t imageIndex)
 	// 2
 	model = glm::mat4(1.f);
 	model = glm::translate(model, glm::vec3(3.0f, 0.0f, -3.0f));
-	//model = glm::translate(model, glm::vec3(3.0f, 0.0f, 0.0f));
-	//model = glm::rotate(model, -modelRotation, glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	ModelUBO modelUBO2
 	{
