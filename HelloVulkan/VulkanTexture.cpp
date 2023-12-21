@@ -1,4 +1,5 @@
 #include "VulkanTexture.h"
+#include "VulkanUtility.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
@@ -21,10 +22,11 @@ glm::vec3 FaceCoordsToXYZ(int i, int j, int faceID, int faceSize);
 
 void Float24to32(int w, int h, const float* img24, float* img32);
 
-bool VulkanTexture::CreateTextureSampler(
+void VulkanTexture::CreateTextureSampler(
 	VkDevice device,
-	float minLod, // 0.f,
-	float maxLod, // 0.f,
+	VkSampler& sampler,
+	float minLod,
+	float maxLod,
 	VkFilter minFilter,
 	VkFilter maxFilter,
 	VkSamplerAddressMode addressMode)
@@ -50,7 +52,25 @@ bool VulkanTexture::CreateTextureSampler(
 		.unnormalizedCoordinates = VK_FALSE
 	};
 
-	return (vkCreateSampler(device, &samplerInfo, nullptr, &sampler_) == VK_SUCCESS);
+	VK_CHECK(vkCreateSampler(device, &samplerInfo, nullptr, &sampler));
+}
+
+void VulkanTexture::CreateTextureSampler(
+	VkDevice device,
+	float minLod, // 0.f,
+	float maxLod, // 0.f,
+	VkFilter minFilter,
+	VkFilter maxFilter,
+	VkSamplerAddressMode addressMode)
+{
+	CreateTextureSampler(
+		device,
+		sampler_,
+		minLod, // 0.f,
+		maxLod, // 0.f,
+		minFilter,
+		maxFilter,
+		addressMode);
 }
 
 bool VulkanTexture::CreateTextureImage(

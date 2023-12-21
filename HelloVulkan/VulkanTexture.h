@@ -37,7 +37,16 @@ public:
 		uint32_t* width = nullptr,
 		uint32_t* height = nullptr);
 
-	bool CreateTextureSampler(
+	void CreateTextureSampler(
+		VkDevice device,
+		VkSampler& sampler,
+		float minLod = 0.f,
+		float maxLod = 0.f,
+		VkFilter minFilter = VK_FILTER_LINEAR,
+		VkFilter maxFilter = VK_FILTER_LINEAR,
+		VkSamplerAddressMode addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
+
+	void CreateTextureSampler(
 		VkDevice device,
 		float minLod = 0.f,
 		float maxLod = 0.f,
