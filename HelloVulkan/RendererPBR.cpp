@@ -19,11 +19,11 @@ constexpr size_t PBR_ENV_TEXTURE_COUNT = 3;
 
 RendererPBR::RendererPBR(
 	VulkanDevice& vkDev,
-	VulkanImage depthTexture,
+	VulkanImage* depthImage,
 	VulkanTexture* cubemapTexture,
 	const std::vector<MeshCreateInfo>& meshInfos,
 	const char* texIrrMapFile) :
-	RendererBase(vkDev, depthTexture),
+	RendererBase(vkDev, depthImage),
 	cubemapTexture_(cubemapTexture)
 {
 
@@ -75,7 +75,7 @@ RendererPBR::RendererPBR(
 		CreateUniformBuffers(vkDev, mesh.modelBuffers_, sizeof(ModelUBO));
 	}
 
-	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthTexture_.imageView_, swapchainFramebuffers_);
+	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthImage_->imageView_, swapchainFramebuffers_);
 
 	CreateDescriptorPool(
 		vkDev, 

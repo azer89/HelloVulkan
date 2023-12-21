@@ -45,17 +45,16 @@ int AppPBR::MainLoop()
 		e2c.OfflineRender(vulkanDevice, &cubemapTexture);
 	}
 
-	clearPtr = std::make_unique<RendererClear>(vulkanDevice, depthImage);
-	finishPtr = std::make_unique<RendererFinish>(vulkanDevice, depthImage);
-	
+	// Renderers
+	clearPtr = std::make_unique<RendererClear>(vulkanDevice, &depthImage);
+	finishPtr = std::make_unique<RendererFinish>(vulkanDevice, &depthImage);
 	pbrPtr = std::make_unique<RendererPBR>(
 		vulkanDevice,
-		depthImage,
+		&depthImage,
 		&cubemapTexture,
 		meshInfos,
 		cubemapIrradianceFile.c_str());
-
-	skyboxPtr = std::make_unique<RendererSkybox>(vulkanDevice, &cubemapTexture, depthImage);
+	skyboxPtr = std::make_unique<RendererSkybox>(vulkanDevice, &cubemapTexture, &depthImage);
 
 	const std::vector<RendererBase*> renderers = 
 	{ 
@@ -108,7 +107,6 @@ void AppPBR::UpdateUBO(uint32_t imageIndex)
 	// Model UBOs
 	glm::mat4 model(1.f);
 	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	
 	
 	// 1
 	ModelUBO modelUBO1

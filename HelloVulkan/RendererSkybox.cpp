@@ -42,8 +42,8 @@ inline VkWriteDescriptorSet ImageWriteDescriptorSet(
 	};
 }
 
-RendererSkybox::RendererSkybox(VulkanDevice& vkDev, VulkanTexture* skyboxTexture, VulkanImage inDepthTexture) :
-	RendererBase(vkDev, inDepthTexture),
+RendererSkybox::RendererSkybox(VulkanDevice& vkDev, VulkanTexture* skyboxTexture, VulkanImage* depthImage) :
+	RendererBase(vkDev, depthImage),
 	skyboxTexture_(skyboxTexture)
 {
 	std::string vertexShader = AppSettings::ShaderFolder + "cube.vert";
@@ -53,7 +53,7 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev, VulkanTexture* skyboxTexture
 
 	CreateUniformBuffers(vkDev, uniformBuffers_, sizeof(PerFrameUBO));
 	
-	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthTexture_.imageView_, swapchainFramebuffers_);
+	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthImage_->imageView_, swapchainFramebuffers_);
 	
 	CreateDescriptorPool(
 		vkDev, 

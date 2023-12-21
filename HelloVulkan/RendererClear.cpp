@@ -3,9 +3,9 @@
 
 #include <iostream>
 
-RendererClear::RendererClear(VulkanDevice& vkDev, VulkanImage depthTexture) : 
-	RendererBase(vkDev, depthTexture), 
-	shouldClearDepth_(depthTexture.image_ != VK_NULL_HANDLE)
+RendererClear::RendererClear(VulkanDevice& vkDev, VulkanImage* depthImage) : 
+	RendererBase(vkDev, depthImage), 
+	shouldClearDepth_(depthImage != nullptr)
 {
 	if (!CreateColorAndDepthRenderPass(
 		vkDev, 
@@ -16,7 +16,7 @@ RendererClear::RendererClear(VulkanDevice& vkDev, VulkanImage depthTexture) :
 		std::cerr << "VulkanClear: failed to create render pass\n";
 	}
 
-	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthTexture.imageView_, swapchainFramebuffers_);
+	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthImage_->imageView_, swapchainFramebuffers_);
 }
 
 void RendererClear::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t swapFramebuffer)

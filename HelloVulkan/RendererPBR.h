@@ -11,7 +11,7 @@ class RendererPBR : public RendererBase
 {
 public:
 	RendererPBR(VulkanDevice& vkDev,
-		VulkanImage depthTexture,
+		VulkanImage* depthImage,
 		VulkanTexture* cubemapTexture,
 		const std::vector<MeshCreateInfo>& meshInfos,
 		const char* texIrrMapFile);

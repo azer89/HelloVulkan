@@ -6,7 +6,7 @@
 class RendererClear : public RendererBase
 {
 public:
-	RendererClear(VulkanDevice& vkDev, VulkanImage depthTexture);
+	RendererClear(VulkanDevice& vkDev, VulkanImage* depthImage);
 
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 

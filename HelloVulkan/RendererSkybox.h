@@ -9,7 +9,7 @@
 class RendererSkybox : public RendererBase
 {
 public:
-	RendererSkybox(VulkanDevice& vkDev, VulkanTexture* skyboxTexture, VulkanImage inDepthTexture);
+	RendererSkybox(VulkanDevice& vkDev, VulkanTexture* skyboxTexture, VulkanImage* depthImage);
 	virtual ~RendererSkybox();
 
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;

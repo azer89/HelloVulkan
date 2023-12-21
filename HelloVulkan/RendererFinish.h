@@ -6,7 +6,7 @@
 class RendererFinish : public RendererBase
 {
 public:
-	RendererFinish(VulkanDevice& vkDev, VulkanImage depthTexture);
+	RendererFinish(VulkanDevice& vkDev, VulkanImage* depthImage);
 
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 };

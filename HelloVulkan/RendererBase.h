@@ -12,11 +12,11 @@
 class RendererBase
 {
 public:
-	explicit RendererBase(const VulkanDevice& vkDev, VulkanImage depthTexture);
+	explicit RendererBase(const VulkanDevice& vkDev, VulkanImage* depthImage);
 	virtual ~RendererBase();
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) = 0;
 
-	VulkanImage GetDepthTexture() const { return depthTexture_; }
+	//VulkanImage GetDepthTexture() const { return depthTexture_; }
 
 	void SetPerFrameUBO(const VulkanDevice& vkDev, uint32_t imageIndex, PerFrameUBO ubo)
 	{
@@ -30,7 +30,7 @@ protected:
 	uint32_t framebufferHeight_ = 0;
 
 	// Depth buffer
-	VulkanImage depthTexture_;
+	VulkanImage* depthImage_;
 
 	// Descriptor set (layout + pool + sets) -> uses uniform buffers, textures, framebuffers
 	VkDescriptorSetLayout descriptorSetLayout_ = nullptr;

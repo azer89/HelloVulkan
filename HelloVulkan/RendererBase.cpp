@@ -7,11 +7,11 @@
 
 #include <array>
 
-RendererBase::RendererBase(const VulkanDevice& vkDev, VulkanImage depthTexture) : 
+RendererBase::RendererBase(const VulkanDevice& vkDev, VulkanImage* depthImage) :
 	device_(vkDev.GetDevice()), 
 	framebufferWidth_(vkDev.GetFrameBufferWidth()), 
 	framebufferHeight_(vkDev.GetFrameBufferHeight()), 
-	depthTexture_(depthTexture)
+	depthImage_(depthImage)
 {
 }
 
