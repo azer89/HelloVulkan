@@ -10,12 +10,10 @@ const uint32_t layerCount = 6;
 
 RendererEquirect2Cubemap::RendererEquirect2Cubemap(
 	VulkanDevice& vkDev, 
-	const std::string& hdrFile,
-	VulkanTexture* cubemapTexture) :
+	const std::string& hdrFile) :
 	RendererBase(vkDev, {})
 {
 	InitializeHDRTexture(vkDev, hdrFile);
-	InitializeCubemapTexture(vkDev, cubemapTexture);
 	CreateRenderPass(vkDev);
 
 	CreateDescriptorPool(
@@ -42,8 +40,6 @@ RendererEquirect2Cubemap::RendererEquirect2Cubemap(
 		},
 		&graphicsPipeline_
 	);
-
-	OfflineRender(vkDev, cubemapTexture);
 }
 
 RendererEquirect2Cubemap::~RendererEquirect2Cubemap()
@@ -360,6 +356,10 @@ void RendererEquirect2Cubemap::CreateFrameBuffer(VulkanDevice& vkDev, std::vecto
 
 void RendererEquirect2Cubemap::OfflineRender(VulkanDevice& vkDev, VulkanTexture* cubemapTexture)
 {
+	// Initialize output cubemap
+	InitializeCubemapTexture(vkDev, cubemapTexture);
+
+	// Create views from the output cubemap
 	std::vector<VkImageView> inputCubeMapViews(layerCount, VK_NULL_HANDLE);
 	for (size_t i = 0; i < layerCount; i++)
 	{
@@ -440,8 +440,10 @@ void RendererEquirect2Cubemap::OfflineRender(VulkanDevice& vkDev, VulkanTexture*
 
 	vkDev.EndSingleTimeCommands(commandBuffer);
 
+	// Create a sampler for the output cubemap
 	cubemapTexture->CreateTextureSampler(vkDev.GetDevice());
 
+	// Transition to a new layout
 	cubemapTexture->image_.TransitionImageLayout(
 		vkDev,
 		cubemapTexture->image_.imageFormat_,

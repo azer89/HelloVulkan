@@ -36,9 +36,11 @@ int AppPBR::MainLoop()
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
 		static_cast<uint32_t>(AppSettings::ScreenHeight));
 	
+	// Create a cubemap from the input hdr
 	VulkanTexture cubemapTexture;
 	{
-		RendererEquirect2Cubemap e2cPtr(vulkanDevice, cubemapTextureFile, &cubemapTexture);
+		RendererEquirect2Cubemap e2c(vulkanDevice, cubemapTextureFile);
+		e2c.OfflineRender(vulkanDevice, &cubemapTexture);
 	}
 
 	clearPtr = std::make_unique<RendererClear>(vulkanDevice, depthImage);

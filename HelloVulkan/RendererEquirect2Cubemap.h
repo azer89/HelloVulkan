@@ -11,16 +11,14 @@
 class RendererEquirect2Cubemap : public RendererBase
 {
 public:
-	RendererEquirect2Cubemap(VulkanDevice& vkDev, const std::string& hdrFile, VulkanTexture* cubemapTexture);
+	RendererEquirect2Cubemap(VulkanDevice& vkDev, const std::string& hdrFile);
 	~RendererEquirect2Cubemap();
 
+	void OfflineRender(VulkanDevice& vkDev, VulkanTexture* cubemapTexture);
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
-
-	//VulkanTexture* GetCubemapTexture() { return &cubemapTexture_; }
 
 private:
 	VkDescriptorSet descriptorSet_;
-	//VulkanTexture cubemapTexture_;
 	VulkanTexture hdrTexture_;
 	VkFramebuffer frameBuffer_;
 
@@ -40,7 +38,7 @@ private:
 
 	void CreateFrameBuffer(VulkanDevice& vkDev, std::vector<VkImageView> inputCubeMapViews);
 
-	void OfflineRender(VulkanDevice& vkDev, VulkanTexture* cubemapTexture);
+	
 };
 
 #endif
