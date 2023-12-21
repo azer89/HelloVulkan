@@ -233,6 +233,11 @@ bool RendererEquirect2Cubemap::CreateCustomGraphicsPipeline(
 	// Pipeline create info
 	PipelineCreateInfo pInfo(vkDev);
 
+	pInfo.viewport.width = cubemapSideLength;
+	pInfo.viewport.height = cubemapSideLength;
+
+	pInfo.scissor.extent = { cubemapSideLength, cubemapSideLength };
+
 	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
 	colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 	colorBlendAttachment.blendEnable = VK_FALSE;
@@ -389,7 +394,8 @@ void RendererEquirect2Cubemap::OfflineRender(VulkanDevice& vkDev)
 	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
 
 	uint32_t mipmapCount = NumMipMap(cubemapSideLength, cubemapSideLength);
-	VkImageSubresourceRange  subresourceRangeBaseMiplevel = { VK_IMAGE_ASPECT_COLOR_BIT, 0u, mipmapCount, 0u, 6u };
+	VkImageSubresourceRange  subresourceRangeBaseMiplevel = 
+	{ VK_IMAGE_ASPECT_COLOR_BIT, 0u, mipmapCount, 0u, 6u };
 	cubemapTexture_.image_.CreateBarrier(
 		commandBuffer,
 		VK_IMAGE_LAYOUT_UNDEFINED,
