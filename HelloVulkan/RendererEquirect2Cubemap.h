@@ -8,7 +8,7 @@
 
 #include <string>
 
-class RendererEquirect2Cubemap  final : public RendererBase
+class RendererEquirect2Cubemap final : public RendererBase
 {
 public:
 	RendererEquirect2Cubemap(VulkanDevice& vkDev, const std::string& hdrFile);
@@ -37,8 +37,6 @@ private:
 		VkPipeline* pipeline);
 
 	void CreateFrameBuffer(VulkanDevice& vkDev, std::vector<VkImageView> inputCubeMapViews);
-
-	
 };
 
 #endif

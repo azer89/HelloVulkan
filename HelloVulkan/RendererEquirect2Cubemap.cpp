@@ -11,7 +11,7 @@ const uint32_t layerCount = 6;
 RendererEquirect2Cubemap::RendererEquirect2Cubemap(
 	VulkanDevice& vkDev, 
 	const std::string& hdrFile) :
-	RendererBase(vkDev, {})
+	RendererBase(vkDev, nullptr)
 {
 	InitializeHDRTexture(vkDev, hdrFile);
 	CreateRenderPass(vkDev);
