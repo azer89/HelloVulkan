@@ -269,9 +269,10 @@ bool RendererBase::CreateDescriptorPool(
 bool RendererBase::CreatePipelineLayout(
 	VkDevice device, 
 	VkDescriptorSetLayout dsLayout, 
-	VkPipelineLayout* pipelineLayout)
+	VkPipelineLayout* pipelineLayout,
+	const std::vector<VkPushConstantRange>& pushConstantRanges)
 {
-	const VkPipelineLayoutCreateInfo pipelineLayoutInfo = {
+	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
@@ -280,6 +281,12 @@ bool RendererBase::CreatePipelineLayout(
 		.pushConstantRangeCount = 0,
 		.pPushConstantRanges = nullptr
 	};
+
+	if (pushConstantRanges.size() > 0)
+	{
+		pipelineLayoutInfo.pPushConstantRanges = pushConstantRanges.data();
+		pipelineLayoutInfo.pushConstantRangeCount = static_cast<uint32_t>(pushConstantRanges.size());
+	}
 
 	return (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, pipelineLayout) == VK_SUCCESS);
 }
