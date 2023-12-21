@@ -94,13 +94,13 @@ void RendererEquirect2Cubemap::InitializeHDRTexture(VulkanDevice& vkDev, const s
 
 void RendererEquirect2Cubemap::CreateRenderPass(VulkanDevice& vkDev)
 {
+	VkImageLayout finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
 	std::vector<VkAttachmentDescription> m_attachments;
 	std::vector<VkAttachmentReference> m_attachmentRefs;
 
 	for (int face = 0; face < layerCount; ++face)
 	{
-		VkImageLayout finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
 		VkAttachmentDescription info{};
 		info.flags = 0u;
 		info.format = cubeMapFormat;

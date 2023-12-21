@@ -75,7 +75,7 @@
     <ClCompile Include="RendererEquirect2Cubemap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RendererIrradiance.cpp">
+    <ClCompile Include="RendererCubeFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -152,7 +152,10 @@
     <ClInclude Include="PipelineCreateInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RendererIrradiance.h">
+    <ClInclude Include="RendererCubeFilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CubePushConstant.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

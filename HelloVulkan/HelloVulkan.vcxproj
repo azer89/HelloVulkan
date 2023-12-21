@@ -144,7 +144,7 @@
     <ClCompile Include="RendererBase.cpp" />
     <ClCompile Include="RendererClear.cpp" />
     <ClCompile Include="RendererEquirect2Cubemap.cpp" />
-    <ClCompile Include="RendererIrradiance.cpp" />
+    <ClCompile Include="RendererCubeFilter.cpp" />
     <ClCompile Include="RendererSkybox.cpp" />
     <ClCompile Include="RendererFinish.cpp" />
     <ClCompile Include="RendererPBR.cpp" />
@@ -163,13 +163,14 @@
     <ClInclude Include="AppPBR.h" />
     <ClInclude Include="Bitmap.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CubePushConstant.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshCreateInfo.h" />
     <ClInclude Include="PipelineCreateInfo.h" />
     <ClInclude Include="RendererBase.h" />
     <ClInclude Include="RendererClear.h" />
     <ClInclude Include="RendererEquirect2Cubemap.h" />
-    <ClInclude Include="RendererIrradiance.h" />
+    <ClInclude Include="RendererCubeFilter.h" />
     <ClInclude Include="RendererSkybox.h" />
     <ClInclude Include="RendererFinish.h" />
     <ClInclude Include="RendererPBR.h" />
