@@ -69,10 +69,10 @@
     <ClCompile Include="RendererSkybox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RendererEquirect2Cubemap.cpp">
+    <ClCompile Include="RendererCubeFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RendererCubeFilter.cpp">
+    <ClCompile Include="RendererEquirect2Cube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -116,9 +116,6 @@
     <ClInclude Include="RendererFinish.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RenderPassCreateInfo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="VulkanShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -134,13 +131,7 @@
     <ClInclude Include="UBO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MeshCreateInfo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="RendererSkybox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RendererEquirect2Cubemap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PipelineCreateInfo.h">
@@ -152,11 +143,11 @@
     <ClInclude Include="CubePushConstant.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RendererEquirect2Cube.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Shaders\cube.frag">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="..\Shaders\cube.vert">
       <Filter>Resource Files</Filter>
     </None>
@@ -172,7 +163,10 @@
     <None Include="..\Shaders\fullscreen_triangle.vert">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\Shaders\filter.frag">
+    <None Include="..\Shaders\cube_filter.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Shaders\skybox.frag">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
