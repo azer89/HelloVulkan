@@ -10,13 +10,13 @@
 #include <array>
 
 RendererSkybox::RendererSkybox(VulkanDevice& vkDev, 
-	VulkanTexture* skyboxTexture, 
+	VulkanTexture* envMap,
 	VulkanImage* depthImage) :
 	RendererBase(vkDev, depthImage),
-	skyboxTexture_(skyboxTexture)
+	envMap_(envMap)
 {
 	std::string vertexShader = AppSettings::ShaderFolder + "cube.vert";
-	std::string fragmentShader = AppSettings::ShaderFolder + "cube.frag";
+	std::string fragmentShader = AppSettings::ShaderFolder + "skybox.frag";
 
 	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo());
 
@@ -108,8 +108,8 @@ bool RendererSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 		const VkDescriptorBufferInfo bufferInfo = { uniformBuffers_[i].buffer_, 0, sizeof(PerFrameUBO) };
 		const VkDescriptorImageInfo  imageInfo = 
 		{
-			skyboxTexture_->sampler_,
-			skyboxTexture_->image_.imageView_,
+			envMap_->sampler_,
+			envMap_->image_.imageView_,
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 		};
 

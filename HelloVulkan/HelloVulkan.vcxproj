@@ -184,7 +184,7 @@
     <ClInclude Include="VulkanUtility.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Shaders\cube.frag" />
+    <None Include="..\Shaders\skybox.frag" />
     <None Include="..\Shaders\cube.vert" />
     <None Include="..\Shaders\equirect_2_cubemap.frag" />
     <None Include="..\Shaders\fullscreen_triangle.vert" />

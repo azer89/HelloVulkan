@@ -52,11 +52,11 @@ void RendererEquirect2Cubemap::FillCommandBuffer(VkCommandBuffer commandBuffer, 
 {
 }
 
-void RendererEquirect2Cubemap::InitializeCubemapTexture(VulkanDevice& vkDev, VulkanTexture* cubemapTexture)
+void RendererEquirect2Cubemap::InitializeEnvironmentMap(VulkanDevice& vkDev, VulkanTexture* outputEnvMap)
 {
 	uint32_t mipmapCount = NumMipMap(cubemapSideLength, cubemapSideLength);
 
-	cubemapTexture->image_.CreateImage(
+	outputEnvMap->image_.CreateImage(
 		vkDev.GetDevice(),
 		vkDev.GetPhysicalDevice(),
 		cubemapSideLength,
@@ -70,7 +70,7 @@ void RendererEquirect2Cubemap::InitializeCubemapTexture(VulkanDevice& vkDev, Vul
 		VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT
 	);
 
-	cubemapTexture->image_.CreateImageView(
+	outputEnvMap->image_.CreateImageView(
 		vkDev.GetDevice(),
 		VK_FORMAT_R32G32B32A32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT,
@@ -395,14 +395,14 @@ void RendererEquirect2Cubemap::CreateCubemapViews(
 	}
 }
 
-void RendererEquirect2Cubemap::OfflineRender(VulkanDevice& vkDev, VulkanTexture* cubemapTexture)
+void RendererEquirect2Cubemap::OfflineRender(VulkanDevice& vkDev, VulkanTexture* outputEnvMap)
 {
 	// Initialize output cubemap
-	InitializeCubemapTexture(vkDev, cubemapTexture);
+	InitializeEnvironmentMap(vkDev, outputEnvMap);
 
 	// Create views from the output cubemap
 	std::vector<VkImageView> outputViews;
-	CreateCubemapViews(vkDev, cubemapTexture, outputViews);
+	CreateCubemapViews(vkDev, outputEnvMap, outputViews);
 
 	CreateFrameBuffer(vkDev, outputViews);
 
@@ -411,7 +411,7 @@ void RendererEquirect2Cubemap::OfflineRender(VulkanDevice& vkDev, VulkanTexture*
 	uint32_t mipmapCount = NumMipMap(cubemapSideLength, cubemapSideLength);
 	VkImageSubresourceRange  subresourceRangeBaseMiplevel = 
 	{ VK_IMAGE_ASPECT_COLOR_BIT, 0u, mipmapCount, 0u, 6u };
-	cubemapTexture->image_.CreateBarrier(
+	outputEnvMap->image_.CreateBarrier(
 		commandBuffer,
 		VK_IMAGE_LAYOUT_UNDEFINED,
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
@@ -454,7 +454,7 @@ void RendererEquirect2Cubemap::OfflineRender(VulkanDevice& vkDev, VulkanTexture*
 	vkDev.EndSingleTimeCommands(commandBuffer);
 
 	// Create a sampler for the output cubemap
-	cubemapTexture->CreateTextureSampler(vkDev.GetDevice());
+	outputEnvMap->CreateTextureSampler(vkDev.GetDevice());
 
 	// Transition to a new layout
 	/*cubemapTexture->image_.TransitionImageLayout(

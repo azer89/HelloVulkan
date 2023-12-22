@@ -4,11 +4,11 @@ layout(location = 0) in vec3 direction;
 
 layout(location = 0) out vec4 fragColor;
 
-layout(binding = 1) uniform samplerCube texture1;
+layout(binding = 1) uniform samplerCube envMap;
 
 void main()
 {
-	vec3 envColor = texture(texture1, direction).rgb;
+	vec3 envColor = texture(envMap, direction).rgb;
 
 	// HDR tonemap and gamma correct
 	envColor = envColor / (envColor + vec3(1.0));
