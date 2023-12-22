@@ -55,7 +55,7 @@ int AppPBR::MainLoop()
 	VulkanTexture envMap;
 	{
 		RendererEquirect2Cube e2c(vulkanDevice, cubemapTextureFile);
-		e2c.OfflineRender(vulkanDevice, 
+		e2c.OffscreenRender(vulkanDevice, 
 			&envMap); // Output
 	}
 
@@ -63,7 +63,7 @@ int AppPBR::MainLoop()
 	VulkanTexture irradianceMap;
 	{
 		RendererCubeFilter cFilter(vulkanDevice, &envMap);
-		cFilter.OfflineRender(vulkanDevice,
+		cFilter.OffscreenRender(vulkanDevice,
 			&envMap,
 			&irradianceMap);
 	}

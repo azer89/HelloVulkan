@@ -30,7 +30,7 @@ RendererEquirect2Cube::RendererEquirect2Cube(
 
 	std::string vertFile = AppSettings::ShaderFolder + "fullscreen_triangle.vert";
 	std::string fragFile = AppSettings::ShaderFolder + "equirect_2_cubemap.frag";
-	CreateCustomGraphicsPipeline(
+	CreateOffscreenGraphicsPipeline(
 		vkDev,
 		renderPass_,
 		pipelineLayout_,
@@ -44,7 +44,7 @@ RendererEquirect2Cube::RendererEquirect2Cube(
 
 RendererEquirect2Cube::~RendererEquirect2Cube()
 {
-	hdrTexture_.Destroy(device_);
+	inputHDRTexture_.Destroy(device_);
 	vkDestroyFramebuffer(device_, frameBuffer_, nullptr);
 }
 
@@ -81,12 +81,12 @@ void RendererEquirect2Cube::InitializeEnvironmentMap(VulkanDevice& vkDev, Vulkan
 
 void RendererEquirect2Cube::InitializeHDRTexture(VulkanDevice& vkDev, const std::string& hdrFile)
 {
-	hdrTexture_.CreateHDRImage(vkDev, hdrFile.c_str());
-	hdrTexture_.image_.CreateImageView(
+	inputHDRTexture_.CreateHDRImage(vkDev, hdrFile.c_str());
+	inputHDRTexture_.image_.CreateImageView(
 		vkDev.GetDevice(),
 		VK_FORMAT_R32G32B32A32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT);
-	hdrTexture_.CreateTextureSampler(
+	inputHDRTexture_.CreateTextureSampler(
 		vkDev.GetDevice(),
 		0.f,
 		1.f);
@@ -183,8 +183,8 @@ bool RendererEquirect2Cube::CreateDescriptorSet(VulkanDevice& vkDev)
 
 	VkDescriptorImageInfo imageInfo =
 	{
-		hdrTexture_.sampler_,
-		hdrTexture_.image_.imageView_,
+		inputHDRTexture_.sampler_,
+		inputHDRTexture_.image_.imageView_,
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	};
 
@@ -208,7 +208,7 @@ bool RendererEquirect2Cube::CreateDescriptorSet(VulkanDevice& vkDev)
 	return true;
 }
 
-bool RendererEquirect2Cube::CreateCustomGraphicsPipeline(
+bool RendererEquirect2Cube::CreateOffscreenGraphicsPipeline(
 	VulkanDevice& vkDev,
 	VkRenderPass renderPass,
 	VkPipelineLayout pipelineLayout,
@@ -358,6 +358,7 @@ void RendererEquirect2Cube::CreateFrameBuffer(
 	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &info, nullptr, &frameBuffer_));
 }
 
+// TODO Move this to VulkanTexture
 void RendererEquirect2Cube::CreateCubemapViews(
 	VulkanDevice& vkDev, 
 	VulkanTexture* cubemapTexture, 
@@ -395,7 +396,7 @@ void RendererEquirect2Cube::CreateCubemapViews(
 	}
 }
 
-void RendererEquirect2Cube::OfflineRender(VulkanDevice& vkDev, VulkanTexture* outputEnvMap)
+void RendererEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanTexture* outputEnvMap)
 {
 	// Initialize output cubemap
 	InitializeEnvironmentMap(vkDev, outputEnvMap);
@@ -456,15 +457,7 @@ void RendererEquirect2Cube::OfflineRender(VulkanDevice& vkDev, VulkanTexture* ou
 	// Create a sampler for the output cubemap
 	outputEnvMap->CreateTextureSampler(vkDev.GetDevice());
 
-	// Transition to a new layout
-	/*cubemapTexture->image_.TransitionImageLayout(
-		vkDev,
-		cubemapTexture->image_.imageFormat_,
-		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-		cubemapTexture->image_.layerCount_,
-		cubemapTexture->image_.mipCount_
-	);*/
+	// Note: the layout of outputEnvMap is currently VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 
 	// Destroy image views
 	for (size_t i = 0; i < layerCount; i++)

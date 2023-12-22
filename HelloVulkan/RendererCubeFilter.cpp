@@ -47,7 +47,7 @@ RendererCubeFilter::RendererCubeFilter(
 	// Graphics Pipeline
 	std::string vertFile = AppSettings::ShaderFolder + "fullscreen_triangle.vert";
 	std::string fragFile = AppSettings::ShaderFolder + "cube_filter.frag";
-	CreateCustomGraphicsPipeline(
+	CreateOffsreenGraphicsPipeline(
 		vkDev,
 		renderPass_,
 		pipelineLayout_,
@@ -206,6 +206,7 @@ void RendererCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanTexture*
 	);
 }
 
+// TODO Move this to VulkanTexture
 void RendererCubeFilter::CreateCubemapViews(VulkanDevice& vkDev,
 	VulkanTexture* cubemapTexture,
 	std::vector<VkImageView>& cubemapViews)
@@ -239,7 +240,7 @@ void RendererCubeFilter::CreateCubemapViews(VulkanDevice& vkDev,
 	}
 }
 
-bool RendererCubeFilter::CreateCustomGraphicsPipeline(
+bool RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 	VulkanDevice& vkDev,
 	VkRenderPass renderPass,
 	VkPipelineLayout pipelineLayout,
@@ -391,7 +392,7 @@ VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
 	return frameBuffer;
 }
 
-void RendererCubeFilter::OfflineRender(VulkanDevice& vkDev, 
+void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev, 
 	VulkanTexture* cubemapTexture, 
 	VulkanTexture* irradianceTexture)
 {

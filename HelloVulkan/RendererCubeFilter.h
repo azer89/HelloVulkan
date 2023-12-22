@@ -10,7 +10,7 @@ public:
 	RendererCubeFilter(VulkanDevice& vkDev, VulkanTexture* cubemapTexture);
 	~RendererCubeFilter();
 
-	void OfflineRender(VulkanDevice& vkDev, VulkanTexture* cubemapTexture, VulkanTexture* irradianceTexture);
+	void OffscreenRender(VulkanDevice& vkDev, VulkanTexture* cubemapTexture, VulkanTexture* irradianceTexture);
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:
@@ -27,7 +27,7 @@ private:
 		VulkanTexture* cubemapTexture, 
 		std::vector<VkImageView>& cubemapViews);
 
-	bool CreateCustomGraphicsPipeline(
+	bool CreateOffsreenGraphicsPipeline(
 		VulkanDevice& vkDev,
 		VkRenderPass renderPass,
 		VkPipelineLayout pipelineLayout,
