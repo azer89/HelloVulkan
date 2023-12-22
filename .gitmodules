@@ -10,3 +10,6 @@
 [submodule "External/gli"]
 	path = External/gli
 	url = https://github.com/g-truc/gli.git
+[submodule "External/volk"]
+	path = External/volk
+	url = https://github.com/zeux/volk.git
