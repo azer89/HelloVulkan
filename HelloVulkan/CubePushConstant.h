@@ -12,10 +12,10 @@ enum class Distribution : unsigned int
 struct PushConstant
 {
 	float roughness = 0.f;
+	float lodBias = 0.f;
 	uint32_t sampleCount = 1u;
 	uint32_t mipLevel = 1u;
 	uint32_t width = 1024u;
-	float lodBias = 0.f;
 	Distribution distribution = Distribution::Lambertian;
 };
 
