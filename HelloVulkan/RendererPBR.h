@@ -13,8 +13,9 @@ public:
 	RendererPBR(VulkanDevice& vkDev,
 		VulkanImage* depthImage,
 		VulkanTexture* cubemapTexture,
-		const std::vector<MeshCreateInfo>& meshInfos,
-		const char* texIrrMapFile);
+		VulkanTexture* irradianceTexture,
+		const std::vector<MeshCreateInfo>& meshInfos/*,
+		const char* texIrrMapFile*/);
 
 	virtual ~RendererPBR();
 
@@ -35,7 +36,8 @@ private:
 
 private:
 	VulkanTexture* cubemapTexture_;
-	VulkanTexture envMapIrradiance_;
+	//VulkanTexture envMapIrradiance_;
+	VulkanTexture* irradianceTexture_;
 	VulkanTexture brdfLUT_;
 	
 };

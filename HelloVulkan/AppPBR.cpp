@@ -16,7 +16,7 @@ AppPBR::AppPBR() :
 int AppPBR::MainLoop()
 {
 	std::string cubemapTextureFile = AppSettings::TextureFolder + "the_sky_is_on_fire_4k.hdr";
-	std::string cubemapIrradianceFile = AppSettings::TextureFolder + "the_sky_is_on_fire_4k_irradiance.hdr";
+	//std::string cubemapIrradianceFile = AppSettings::TextureFolder + "the_sky_is_on_fire_4k_irradiance.hdr";
 
 	MeshCreateInfo meshInfo
 	{
@@ -64,8 +64,8 @@ int AppPBR::MainLoop()
 		vulkanDevice,
 		&depthImage,
 		&cubemapTexture,
-		meshInfos,
-		cubemapIrradianceFile.c_str());
+		&irradianceTexture,
+		meshInfos);
 	skyboxPtr = std::make_unique<RendererSkybox>(vulkanDevice, &irradianceTexture, &depthImage);
 
 	const std::vector<RendererBase*> renderers = 

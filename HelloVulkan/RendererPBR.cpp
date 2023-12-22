@@ -21,10 +21,11 @@ RendererPBR::RendererPBR(
 	VulkanDevice& vkDev,
 	VulkanImage* depthImage,
 	VulkanTexture* cubemapTexture,
-	const std::vector<MeshCreateInfo>& meshInfos,
-	const char* texIrrMapFile) :
+	VulkanTexture* irradianceTexture,
+	const std::vector<MeshCreateInfo>& meshInfos) :
 	RendererBase(vkDev, depthImage),
-	cubemapTexture_(cubemapTexture)
+	cubemapTexture_(cubemapTexture),
+	irradianceTexture_(irradianceTexture)
 {
 
 	for (const MeshCreateInfo& info : meshInfos)
@@ -33,7 +34,7 @@ RendererPBR::RendererPBR(
 	}
 
 	// Irradiance
-	LoadCubeMap(vkDev, texIrrMapFile, envMapIrradiance_);
+	//LoadCubeMap(vkDev, texIrrMapFile, envMapIrradiance_);
 
 	std::string brdfLUTFile = AppSettings::TextureFolder + "brdfLUT.ktx";
 
@@ -114,7 +115,7 @@ RendererPBR::~RendererPBR()
 		mesh.Destroy(device_);
 	}
 
-	envMapIrradiance_.Destroy(device_);
+	//envMapIrradiance_.Destroy(device_);
 
 	brdfLUT_.Destroy(device_);
 }
@@ -270,7 +271,7 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Mesh& mesh)
 		const VkDescriptorImageInfo imageInfoEnv = 
 		{ cubemapTexture_->sampler_, cubemapTexture_->image_.imageView_, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
 		const VkDescriptorImageInfo imageInfoEnvIrr = 
-		{ envMapIrradiance_.sampler_, envMapIrradiance_.image_.imageView_, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+		{ irradianceTexture_->sampler_, irradianceTexture_->image_.imageView_, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
 		const VkDescriptorImageInfo imageInfoBRDF = 
 		{ brdfLUT_.sampler_, brdfLUT_.image_.imageView_, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
 
