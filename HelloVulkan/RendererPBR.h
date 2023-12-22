@@ -4,7 +4,6 @@
 #include "RendererBase.h"
 #include "VulkanTexture.h"
 #include "VulkanBuffer.h"
-#include "MeshCreateInfo.h"
 #include "Mesh.h"
 
 class RendererPBR final : public RendererBase

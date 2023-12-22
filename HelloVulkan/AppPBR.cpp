@@ -1,8 +1,6 @@
 #include "AppPBR.h"
 #include "AppSettings.h"
 #include "VulkanUtility.h"
-#include "MeshCreateInfo.h"
-
 #include "RendererEquirect2Cube.h"
 #include "RendererCubeFilter.h"
 

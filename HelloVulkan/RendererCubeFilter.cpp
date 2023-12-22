@@ -27,7 +27,7 @@ RendererCubeFilter::RendererCubeFilter(
 
 	cubemapTexture->CreateTextureSampler(
 		vkDev.GetDevice(), 
-		cubemapSampler_,
+		inputEnvMapSampler_,
 		0.f,
 		static_cast<float>(NumMipMap(inputSize, inputSize))
 		);
@@ -61,7 +61,7 @@ RendererCubeFilter::RendererCubeFilter(
 
 RendererCubeFilter::~RendererCubeFilter()
 {
-	vkDestroySampler(device_, cubemapSampler_, nullptr);
+	vkDestroySampler(device_, inputEnvMapSampler_, nullptr);
 	vkDestroyFramebuffer(device_, frameBuffer_, nullptr);
 }
 
@@ -183,7 +183,7 @@ void RendererCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanTexture*
 
 	const VkDescriptorImageInfo imageInfo =
 	{
-		cubemapSampler_, // Local sampler created in the constructor
+		inputEnvMapSampler_, // Local sampler created in the constructor
 		cubemapTexture->image_.imageView_,
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	};

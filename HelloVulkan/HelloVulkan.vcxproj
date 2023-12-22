@@ -164,7 +164,6 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CubePushConstant.h" />
     <ClInclude Include="Mesh.h" />
-    <ClInclude Include="MeshCreateInfo.h" />
     <ClInclude Include="PipelineCreateInfo.h" />
     <ClInclude Include="RendererBase.h" />
     <ClInclude Include="RendererClear.h" />
@@ -173,7 +172,6 @@
     <ClInclude Include="RendererSkybox.h" />
     <ClInclude Include="RendererFinish.h" />
     <ClInclude Include="RendererPBR.h" />
-    <ClInclude Include="RenderPassCreateInfo.h" />
     <ClInclude Include="UBO.h" />
     <ClInclude Include="VulkanBuffer.h" />
     <ClInclude Include="VulkanShader.h" />

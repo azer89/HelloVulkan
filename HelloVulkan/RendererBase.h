@@ -6,8 +6,14 @@
 #include "VulkanDevice.h"
 #include "VulkanImage.h"
 #include "VulkanBuffer.h"
-#include "RenderPassCreateInfo.h"
 #include "UBO.h"
+
+struct RenderPassCreateInfo final
+{
+	bool clearColor_ = false;
+	bool clearDepth_ = false;
+	uint8_t flags_ = 0;
+};
 
 class RendererBase
 {
@@ -15,8 +21,6 @@ public:
 	explicit RendererBase(const VulkanDevice& vkDev, VulkanImage* depthImage);
 	virtual ~RendererBase();
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) = 0;
-
-	//VulkanImage GetDepthTexture() const { return depthTexture_; }
 
 	void SetPerFrameUBO(const VulkanDevice& vkDev, uint32_t imageIndex, PerFrameUBO ubo)
 	{

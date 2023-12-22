@@ -9,6 +9,7 @@
 #include "volk.h"
 
 #include <vector>
+#include <string>
 
 struct VertexData
 {
@@ -34,6 +35,12 @@ struct VertexData
 		attributeDescriptions.push_back({ 2, 0, VK_FORMAT_R32G32B32A32_SFLOAT, offsetof(VertexData, tc) });
 		return attributeDescriptions;
 	}
+};
+
+struct MeshCreateInfo
+{
+	std::string modelFile;
+	std::vector<std::string> textureFiles;
 };
 
 class Mesh

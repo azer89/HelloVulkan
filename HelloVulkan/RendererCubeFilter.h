@@ -16,7 +16,7 @@ public:
 private:
 	VkDescriptorSet descriptorSet_;
 	VkFramebuffer frameBuffer_;
-	VkSampler cubemapSampler_; // A sampler for the input cubemapTexture
+	VkSampler inputEnvMapSampler_; // A sampler for the input cubemapTexture
 
 	void CreateRenderPass(VulkanDevice& vkDev);
 	void CreateDescriptorLayout(VulkanDevice& vkDev);
