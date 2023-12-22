@@ -26,7 +26,7 @@ RendererCubeFilter::RendererCubeFilter(
 
 	cubemapTexture->CreateTextureSampler(
 		vkDev.GetDevice(), 
-		cubemapSampler,
+		cubemapSampler_,
 		0.f,
 		static_cast<float>(NumMipMap(cubemapSideLength, cubemapSideLength))
 		);
@@ -39,8 +39,11 @@ RendererCubeFilter::RendererCubeFilter(
 	range.offset = 0u;
 	range.size = sizeof(PushConstant);
 	range.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+	// Pipeline layout
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_, ranges);
 
+	// Graphics Pipeline
 	std::string vertFile = AppSettings::ShaderFolder + "fullscreen_triangle.vert";
 	std::string fragFile = AppSettings::ShaderFolder + "filter.frag";
 	CreateCustomGraphicsPipeline(
@@ -57,7 +60,7 @@ RendererCubeFilter::RendererCubeFilter(
 
 RendererCubeFilter::~RendererCubeFilter()
 {
-	vkDestroySampler(device_, cubemapSampler, nullptr);
+	vkDestroySampler(device_, cubemapSampler_, nullptr);
 	vkDestroyFramebuffer(device_, frameBuffer_, nullptr);
 }
 
@@ -179,7 +182,7 @@ void RendererCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanTexture*
 
 	const VkDescriptorImageInfo imageInfo =
 	{
-		cubemapTexture->sampler_,
+		cubemapSampler_, // Local sampler created in the constructor
 		cubemapTexture->image_.imageView_,
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	};
@@ -367,6 +370,26 @@ bool RendererCubeFilter::CreateCustomGraphicsPipeline(
 	return true;
 }
 
+VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
+	VulkanDevice& vkDev,
+	std::vector<VkImageView> inputCubeMapViews)
+{
+	VkFramebufferCreateInfo info{};
+	info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+	info.pNext = nullptr;
+	info.renderPass = renderPass_;
+	info.attachmentCount = static_cast<uint32_t>(inputCubeMapViews.size());
+	info.pAttachments = inputCubeMapViews.data();
+	info.width = cubemapSideLength;
+	info.height = cubemapSideLength;
+	info.layers = 1u;
+	info.flags = 0u;
+
+	VkFramebuffer frameBuffer;
+	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &info, nullptr, &frameBuffer));
+	return frameBuffer;
+}
+
 void RendererCubeFilter::OfflineRender(VulkanDevice& vkDev, VulkanTexture* cubemapTexture, VulkanTexture* irradianceTexture)
 {
 	uint32_t numMipMap = NumMipMap(cubemapSideLength, cubemapSideLength);
@@ -399,9 +422,56 @@ void RendererCubeFilter::OfflineRender(VulkanDevice& vkDev, VulkanTexture* cubem
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
 
-	for (uint32_t i = outputMipmapCount - 1; i >= -1; --i)
+	for (int i = static_cast<int>(outputMipmapCount - 1u); i >= 0; --i)
 	{
-	}
+		VkFramebuffer frameBuffer = CreateFrameBuffer(vkDev, outputViews);
 
+		VkImageSubresourceRange  subresourceRange = 
+		{ VK_IMAGE_ASPECT_COLOR_BIT, static_cast<uint32_t>(i), 1u, 0u, 6u };
+
+		irradianceTexture->image_.CreateBarrier(commandBuffer,
+			VK_IMAGE_LAYOUT_UNDEFINED,
+			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+			VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+			VK_ACCESS_SHADER_READ_BIT,//src stage, access
+			VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+			VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, // dst stage, access
+			subresourceRange);
+
+		PushConstant values{};
+		values.roughness = 1.f; 
+		values.sampleCount = 1024;
+		values.mipLevel = static_cast<uint32_t>(i);
+		values.width = cubemapSideLength;
+		values.lodBias = 0;
+		values.distribution = Distribution::Lambertian;
+
+		vkCmdPushConstants(
+			commandBuffer,
+			pipelineLayout_, 
+			VK_SHADER_STAGE_FRAGMENT_BIT, 
+			0, 
+			sizeof(PushConstant), &values);
+
+		const std::vector<VkClearValue> clearValues(6u, { 0.0f, 0.0f, 1.0f, 1.0f });
+
+		VkRenderPassBeginInfo info{};
+		info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		info.pNext = nullptr;
+		info.renderPass = renderPass_;
+		info.framebuffer = frameBuffer;
+		info.renderArea = { 0u, 0u, cubemapSideLength, cubemapSideLength };
+		info.clearValueCount = static_cast<uint32_t>(clearValues.size());
+		info.pClearValues = clearValues.data();
+
+		vkCmdBeginRenderPass(commandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
+
+		vkCmdDraw(commandBuffer, 3, 1u, 0, 0);
+
+		vkCmdEndRenderPass(commandBuffer);
+
+		vkDestroyFramebuffer(vkDev.GetDevice(), frameBuffer, nullptr);
+	}
+	
 	vkDev.EndSingleTimeCommands(commandBuffer);
 }

@@ -340,14 +340,16 @@ bool RendererEquirect2Cubemap::CreateCustomGraphicsPipeline(
 	return true;
 }
 
-void RendererEquirect2Cubemap::CreateFrameBuffer(VulkanDevice& vkDev, std::vector<VkImageView> inputCubeMapViews)
+void RendererEquirect2Cubemap::CreateFrameBuffer(
+	VulkanDevice& vkDev, 
+	std::vector<VkImageView> outputViews)
 {
 	VkFramebufferCreateInfo info{};
 	info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 	info.pNext = nullptr;
 	info.renderPass = renderPass_;
-	info.attachmentCount = static_cast<uint32_t>(inputCubeMapViews.size());
-	info.pAttachments = inputCubeMapViews.data();
+	info.attachmentCount = static_cast<uint32_t>(outputViews.size());
+	info.pAttachments = outputViews.data();
 	info.width = cubemapSideLength;
 	info.height = cubemapSideLength;
 	info.layers = 1u;

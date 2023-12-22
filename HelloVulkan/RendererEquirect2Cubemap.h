@@ -41,7 +41,7 @@ private:
 		const std::vector<const char*>& shaderFiles,
 		VkPipeline* pipeline);
 
-	void CreateFrameBuffer(VulkanDevice& vkDev, std::vector<VkImageView> inputCubeMapViews);
+	void CreateFrameBuffer(VulkanDevice& vkDev, std::vector<VkImageView> outputViews);
 };
 
 #endif

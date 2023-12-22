@@ -48,8 +48,13 @@ int AppPBR::MainLoop()
 		e2c.OfflineRender(vulkanDevice, 
 			&cubemapTexture); // Output
 	}
+
+	VulkanTexture irradianceTexture;
 	{
 		RendererCubeFilter cFilter(vulkanDevice, &cubemapTexture);
+		cFilter.OfflineRender(vulkanDevice,
+			&cubemapTexture,
+			&irradianceTexture);
 	}
 
 	// Renderers
@@ -61,7 +66,7 @@ int AppPBR::MainLoop()
 		&cubemapTexture,
 		meshInfos,
 		cubemapIrradianceFile.c_str());
-	skyboxPtr = std::make_unique<RendererSkybox>(vulkanDevice, &cubemapTexture, &depthImage);
+	skyboxPtr = std::make_unique<RendererSkybox>(vulkanDevice, &irradianceTexture, &depthImage);
 
 	const std::vector<RendererBase*> renderers = 
 	{ 
