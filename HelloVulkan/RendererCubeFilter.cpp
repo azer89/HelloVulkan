@@ -46,7 +46,7 @@ RendererCubeFilter::RendererCubeFilter(
 
 	// Graphics Pipeline
 	std::string vertFile = AppSettings::ShaderFolder + "fullscreen_triangle.vert";
-	std::string fragFile = AppSettings::ShaderFolder + "filter.frag";
+	std::string fragFile = AppSettings::ShaderFolder + "cube_filter.frag";
 	CreateCustomGraphicsPipeline(
 		vkDev,
 		renderPass_,

@@ -19,7 +19,11 @@ AppBase::AppBase()
 
 void AppBase::InitVulkan()
 {
-	
+	VkResult res = volkInitialize();
+	if (res != VK_SUCCESS)
+	{
+		std::cerr << "Volk Cannot be initialized\n";
+	}
 
 	vulkanInstance.Create();
 	vulkanInstance.SetupDebugCallbacks();
