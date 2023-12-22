@@ -1,7 +1,7 @@
 #include "RendererEquirect2Cubemap.h"
+#include "PipelineCreateInfo.h"
 #include "VulkanUtility.h"
 #include "VulkanShader.h"
-#include "PipelineCreateInfo.h"
 #include "AppSettings.h"
 
 const uint32_t cubemapSideLength = 1024;
@@ -21,7 +21,7 @@ RendererEquirect2Cubemap::RendererEquirect2Cubemap(
 		0, // UBO
 		0, // SSBO
 		1, // Sampler
-		1, // Decsriptor count per swapchain
+		1, // Descriptor count per swapchain
 		&descriptorPool_);
 
 	CreateDescriptorLayout(vkDev);
@@ -238,7 +238,8 @@ bool RendererEquirect2Cubemap::CreateCustomGraphicsPipeline(
 	pInfo.scissor.extent = { cubemapSideLength, cubemapSideLength };
 
 	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
-	colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+	colorBlendAttachment.colorWriteMask =
+		VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 	colorBlendAttachment.blendEnable = VK_FALSE;
 	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments(layerCount, colorBlendAttachment);
 

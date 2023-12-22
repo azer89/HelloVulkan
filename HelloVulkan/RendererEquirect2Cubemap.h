@@ -25,7 +25,10 @@ private:
 private:
 	void InitializeCubemapTexture(VulkanDevice& vkDev, VulkanTexture* cubemapTexture);
 	void InitializeHDRTexture(VulkanDevice& vkDev, const std::string& hdrFile);
-	void CreateCubemapViews(VulkanDevice& vkDev, VulkanTexture* cubemapTexture, std::vector<VkImageView>& cubeMapViews);
+	void CreateCubemapViews(
+		VulkanDevice& vkDev,
+		VulkanTexture* cubemapTexture,
+		std::vector<VkImageView>& cubeMapViews);
 
 	void CreateRenderPass(VulkanDevice& vkDev);
 	bool CreateDescriptorLayout(VulkanDevice& vkDev);

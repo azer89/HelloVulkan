@@ -1,5 +1,7 @@
 #include "RendererCubeFilter.h"
+#include "PipelineCreateInfo.h"
 #include "VulkanUtility.h"
+#include "VulkanShader.h"
 #include "CubePushConstant.h"
 
 // Irradiance map has only one mipmap level
@@ -19,8 +21,17 @@ RendererCubeFilter::RendererCubeFilter(
 		0, // UBO
 		0, // SSBO
 		1, // Sampler
-		1, // Decsriptor count per swapchain
+		1, // Descriptor count per swapchain
 		&descriptorPool_);
+
+	cubemapTexture->CreateTextureSampler(
+		vkDev.GetDevice(), 
+		cubemapSampler,
+		0.f,
+		static_cast<float>(NumMipMap(cubemapSideLength, cubemapSideLength))
+		);
+	CreateDescriptorLayout(vkDev);
+	CreateDescriptorSet(vkDev, cubemapTexture);
 
 	// Push constants
 	std::vector<VkPushConstantRange> ranges(1u);
@@ -28,11 +39,12 @@ RendererCubeFilter::RendererCubeFilter(
 	range.offset = 0u;
 	range.size = sizeof(PushConstant);
 	range.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-	// TODO Create pipeline layout here
+	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_, ranges);
 }
 
 RendererCubeFilter::~RendererCubeFilter()
 {
+	vkDestroySampler(device_, cubemapSampler, nullptr);
 	vkDestroyFramebuffer(device_, frameBuffer_, nullptr);
 }
 
@@ -67,7 +79,7 @@ void RendererCubeFilter::InitializeIrradianceTexture(VulkanDevice& vkDev, Vulkan
 
 void RendererCubeFilter::CreateRenderPass(VulkanDevice& vkDev)
 {
-	VkImageLayout finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+	const VkImageLayout finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
 	std::vector<VkAttachmentDescription> m_attachments;
 	std::vector<VkAttachmentReference> m_attachmentRefs;
@@ -152,7 +164,7 @@ void RendererCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanTexture*
 	uint32_t bindIndex = 0;
 	std::vector<VkWriteDescriptorSet> descriptorWrites;
 
-	VkDescriptorImageInfo imageInfo =
+	const VkDescriptorImageInfo imageInfo =
 	{
 		cubemapTexture->sampler_,
 		cubemapTexture->image_.imageView_,
@@ -217,6 +229,129 @@ bool RendererCubeFilter::CreateCustomGraphicsPipeline(
 	const std::vector<const char*>& shaderFiles,
 	VkPipeline* pipeline)
 {
+	std::vector<VulkanShader> shaderModules;
+	std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
+
+	shaderStages.resize(shaderFiles.size());
+	shaderModules.resize(shaderFiles.size());
+
+	for (size_t i = 0; i < shaderFiles.size(); i++)
+	{
+		const char* file = shaderFiles[i];
+		VK_CHECK(shaderModules[i].Create(vkDev.GetDevice(), file));
+		VkShaderStageFlagBits stage = GLSLangShaderStageToVulkan(GLSLangShaderStageFromFileName(file));
+		shaderStages[i] = shaderModules[i].GetShaderStageInfo(stage, "main");
+	}
+
+	// Pipeline create info
+	PipelineCreateInfo pInfo(vkDev);
+
+	pInfo.viewport.width = cubemapSideLength;
+	pInfo.viewport.height = cubemapSideLength;
+
+	pInfo.scissor.extent = { cubemapSideLength, cubemapSideLength };
+
+	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
+	colorBlendAttachment.colorWriteMask =
+		VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+	colorBlendAttachment.blendEnable = VK_FALSE;
+	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments(layerCount, colorBlendAttachment);
+
+	pInfo.colorBlending.attachmentCount = layerCount;
+	pInfo.colorBlending.pAttachments = colorBlendAttachments.data();
+
+	// No depth test
+	pInfo.depthStencil.depthTestEnable = VK_FALSE;
+	pInfo.depthStencil.depthWriteEnable = VK_FALSE;
+
+	VkDynamicState dynamicStates[] =
+	{
+		VK_DYNAMIC_STATE_LINE_WIDTH,
+		VK_DYNAMIC_STATE_DEPTH_BIAS,
+		VK_DYNAMIC_STATE_BLEND_CONSTANTS,
+		VK_DYNAMIC_STATE_DEPTH_BOUNDS,
+		VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK,
+		VK_DYNAMIC_STATE_STENCIL_WRITE_MASK,
+		VK_DYNAMIC_STATE_STENCIL_REFERENCE
+	};
+
+	pInfo.dynamicState.dynamicStateCount = static_cast<uint32_t>(sizeof(dynamicStates) / sizeof(VkDynamicState));
+	pInfo.dynamicState.pDynamicStates = dynamicStates;
+
+	pInfo.rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+	pInfo.rasterizer.pNext = nullptr;
+	pInfo.rasterizer.cullMode = VK_CULL_MODE_NONE;
+	pInfo.rasterizer.depthBiasClamp = 0.f;
+	pInfo.rasterizer.depthBiasConstantFactor = 1.f;
+	pInfo.rasterizer.depthBiasEnable = VK_FALSE;
+	pInfo.rasterizer.depthBiasSlopeFactor = 1.f;
+	pInfo.rasterizer.depthClampEnable = VK_FALSE;
+	pInfo.rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+	pInfo.rasterizer.lineWidth = 1.f;
+	pInfo.rasterizer.rasterizerDiscardEnable = VK_FALSE; 
+	pInfo.rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
+
+	// disable multisampling
+	pInfo.multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+	pInfo.multisampling.pNext = nullptr;
+	pInfo.multisampling.alphaToCoverageEnable = VK_FALSE;
+	pInfo.multisampling.alphaToOneEnable = VK_FALSE;
+	pInfo.multisampling.flags = 0u;
+	pInfo.multisampling.minSampleShading = 0.f;
+	pInfo.multisampling.pSampleMask = nullptr;
+	pInfo.multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+	pInfo.multisampling.sampleShadingEnable = VK_FALSE;
+
+	pInfo.depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+	pInfo.depthStencil.depthTestEnable = VK_FALSE;
+	pInfo.depthStencil.depthWriteEnable = VK_FALSE;
+	pInfo.depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+	pInfo.depthStencil.depthBoundsTestEnable = VK_FALSE;
+	pInfo.depthStencil.minDepthBounds = 0.0f; // Optional
+	pInfo.depthStencil.maxDepthBounds = 1.0f; // Optional
+	pInfo.depthStencil.stencilTestEnable = VK_FALSE;
+	pInfo.depthStencil.front = {}; // Optional
+	pInfo.depthStencil.back = {}; // Optional
+
+	pInfo.tessellationState.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
+	pInfo.tessellationState.pNext = nullptr;
+	pInfo.tessellationState.flags = 0u;
+	pInfo.tessellationState.patchControlPoints = 0u;
+
+	const VkGraphicsPipelineCreateInfo pipelineInfo = {
+		.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
+		.stageCount = static_cast<uint32_t>(shaderStages.size()),
+		.pStages = shaderStages.data(),
+		.pVertexInputState = &pInfo.vertexInputInfo,
+		.pInputAssemblyState = &pInfo.inputAssembly,
+		.pTessellationState = &pInfo.tessellationState,
+		.pViewportState = &pInfo.viewportState,
+		.pRasterizationState = &pInfo.rasterizer,
+		.pMultisampleState = &pInfo.multisampling,
+		.pDepthStencilState = &pInfo.depthStencil,
+		.pColorBlendState = &pInfo.colorBlending,
+		.pDynamicState = &pInfo.dynamicState,
+		.layout = pipelineLayout,
+		.renderPass = renderPass,
+		.subpass = 0,
+		.basePipelineHandle = VK_NULL_HANDLE,
+		.basePipelineIndex = -1
+	};
+
+	VK_CHECK(vkCreateGraphicsPipelines(
+		vkDev.GetDevice(),
+		VK_NULL_HANDLE,
+		1,
+		&pipelineInfo,
+		nullptr,
+		pipeline));
+
+	for (auto s : shaderModules)
+	{
+		s.Destroy(vkDev.GetDevice());
+	}
+
+	return true;
 }
 
 void RendererCubeFilter::OfflineRender(VulkanDevice& vkDev, VulkanTexture* cubemapTexture, VulkanTexture* irradianceTexture)
