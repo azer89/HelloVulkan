@@ -14,7 +14,7 @@ layout(location = 5) out vec4 outFace5;
 #define MATH_PI 3.1415926535897932384626433832795
 #define MATH_INV_PI (1.0 / MATH_PI)
 
-// enum
+// Enum
 const uint cLambertian = 0;
 const uint cGGX = 1;
 
@@ -94,7 +94,6 @@ MicrofacetDistributionSample Lambertian(vec2 xi, float roughness)
 	lambertian.cosTheta = sqrt(1.0 - xi.y);
 	lambertian.sinTheta = sqrt(xi.y); // equivalent to `sqrt(1.0 - cosTheta*cosTheta)`;
 	lambertian.phi = 2.0 * MATH_PI * xi.x;
-
 	lambertian.pdf = lambertian.cosTheta / MATH_PI; // evaluation for solid angle, therefore drop the sinTheta
 
 	return lambertian;
