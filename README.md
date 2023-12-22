@@ -20,8 +20,8 @@ https://github.com/azer89/HelloVulkan/assets/790432/10edb1a5-ff3f-4e15-8199-1b3a
 ### Credit
 Technical Resources:
 * [learnopengl.com](https://learnopengl.com/)
-* [3D Graphics Rendering Cookbook](https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook)
 * [Khronos IBL Sampler](https://github.com/KhronosGroup/glTF-IBL-Sampler)
+* [3D Graphics Rendering Cookbook](https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook)
 
 Assets:
 * [Polyhaven](https://polyhaven.com/)
