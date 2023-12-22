@@ -160,13 +160,12 @@ vec3 FilterColor(vec3 N)
 
 		if (pcParams.distribution == cLambertian)
 		{
-			// sample lambertian at a lower resolution to avoid fireflies
-			vec3 lambertian = textureLod(uCubeMap, H, lod).rgb;
+			// Sample lambertian at a lower resolution to avoid fireflies
+			vec3 lambertian = textureLod(cubeMap, H, lod).rgb;
 			color += lambertian;
 		}
 		else if (pcParams.distribution == cGGX)
 		{
-			// Note: reflect takes incident vector.
 			vec3 V = N;
 			vec3 L = normalize(reflect(-V, H));
 			float NdotL = dot(N, L);
@@ -178,7 +177,7 @@ vec3 FilterColor(vec3 N)
 					// without this the roughness=0 lod is too high
 					lod = pcParams.lodBias;
 				}
-				vec3 sampleColor = textureLod(uCubeMap, L, lod).rgb;
+				vec3 sampleColor = textureLod(cubeMap, L, lod).rgb;
 				color += sampleColor * NdotL;
 				weight += NdotL;
 			}
@@ -265,6 +264,6 @@ void main()
 	{
 		vec3 scan = UVToXYZ(face, texCoordNew);
 		vec3 direction = normalize(scan);
-		writeFace(face, FilterColor(direction));
+		WriteFace(face, FilterColor(direction));
 	}
 }

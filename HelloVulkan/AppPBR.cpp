@@ -3,6 +3,9 @@
 #include "VulkanUtility.h"
 #include "MeshCreateInfo.h"
 
+#include "RendererEquirect2Cubemap.h"
+#include "RendererCubeFilter.h"
+
 #include "glm/gtc/matrix_transform.hpp"
 
 AppPBR::AppPBR() :
@@ -44,6 +47,9 @@ int AppPBR::MainLoop()
 		RendererEquirect2Cubemap e2c(vulkanDevice, cubemapTextureFile);
 		e2c.OfflineRender(vulkanDevice, 
 			&cubemapTexture); // Output
+	}
+	{
+		RendererCubeFilter cFilter(vulkanDevice, &cubemapTexture);
 	}
 
 	// Renderers

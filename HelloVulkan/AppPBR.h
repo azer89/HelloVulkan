@@ -6,7 +6,7 @@
 #include "RendererClear.h"
 #include "RendererFinish.h"
 #include "RendererPBR.h"
-#include "RendererEquirect2Cubemap.h"
+
 
 #include <memory>
 
@@ -22,7 +22,6 @@ private:
 	std::unique_ptr<RendererClear> clearPtr;
 	std::unique_ptr<RendererFinish> finishPtr;
 	std::unique_ptr<RendererPBR> pbrPtr;
-	//std::unique_ptr<RendererEquirect2Cubemap> e2cPtr;
 
 	float modelRotation;
 };

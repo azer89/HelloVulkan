@@ -6,6 +6,7 @@
 
 class RendererCubeFilter final : public RendererBase
 {
+public:
 	RendererCubeFilter(VulkanDevice& vkDev, VulkanTexture* cubemapTexture);
 	~RendererCubeFilter();
 

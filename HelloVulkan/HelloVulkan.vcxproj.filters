@@ -172,7 +172,7 @@
     <None Include="..\Shaders\fullscreen_triangle.vert">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\Shaders\irradiance.frag">
+    <None Include="..\Shaders\filter.frag">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

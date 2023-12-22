@@ -3,6 +3,7 @@
 #include "VulkanUtility.h"
 #include "VulkanShader.h"
 #include "CubePushConstant.h"
+#include "AppSettings.h"
 
 // Irradiance map has only one mipmap level
 const uint32_t mipmapCount = 1u;
@@ -40,6 +41,19 @@ RendererCubeFilter::RendererCubeFilter(
 	range.size = sizeof(PushConstant);
 	range.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_, ranges);
+
+	std::string vertFile = AppSettings::ShaderFolder + "fullscreen_triangle.vert";
+	std::string fragFile = AppSettings::ShaderFolder + "filter.frag";
+	CreateCustomGraphicsPipeline(
+		vkDev,
+		renderPass_,
+		pipelineLayout_,
+		{
+			vertFile.c_str(),
+			fragFile.c_str()
+		},
+		&graphicsPipeline_
+	);
 }
 
 RendererCubeFilter::~RendererCubeFilter()
@@ -358,4 +372,5 @@ void RendererCubeFilter::OfflineRender(VulkanDevice& vkDev, VulkanTexture* cubem
 {
 	InitializeIrradianceTexture(vkDev, irradianceTexture);
 
+	// TODO
 }
