@@ -6,7 +6,8 @@
 #include "AppSettings.h"
 
 const uint32_t outputMipmapCount = 1u; // TODO adjust for prefilter/specular cubemap
-const uint32_t cubemapSideLength = 1024;
+const uint32_t inputSize = 1024;
+const uint32_t outputSize = 128;
 const VkFormat cubeMapFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
 const uint32_t layerCount = 6;
 
@@ -28,7 +29,7 @@ RendererCubeFilter::RendererCubeFilter(
 		vkDev.GetDevice(), 
 		cubemapSampler_,
 		0.f,
-		static_cast<float>(NumMipMap(cubemapSideLength, cubemapSideLength))
+		static_cast<float>(NumMipMap(inputSize, inputSize))
 		);
 	CreateDescriptorLayout(vkDev);
 	CreateDescriptorSet(vkDev, cubemapTexture);
@@ -73,8 +74,8 @@ void RendererCubeFilter::InitializeIrradianceTexture(VulkanDevice& vkDev, Vulkan
 	irradianceTexture->image_.CreateImage(
 		vkDev.GetDevice(),
 		vkDev.GetPhysicalDevice(),
-		cubemapSideLength,
-		cubemapSideLength,
+		outputSize,
+		outputSize,
 		outputMipmapCount,
 		layerCount,
 		cubeMapFormat,
@@ -262,10 +263,10 @@ bool RendererCubeFilter::CreateCustomGraphicsPipeline(
 	// Pipeline create info
 	PipelineCreateInfo pInfo(vkDev);
 
-	pInfo.viewport.width = cubemapSideLength;
-	pInfo.viewport.height = cubemapSideLength;
+	pInfo.viewport.width = outputSize;
+	pInfo.viewport.height = outputSize;
 
-	pInfo.scissor.extent = { cubemapSideLength, cubemapSideLength };
+	pInfo.scissor.extent = { outputSize, outputSize };
 
 	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
 	colorBlendAttachment.colorWriteMask =
@@ -380,8 +381,8 @@ VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
 	info.renderPass = renderPass_;
 	info.attachmentCount = static_cast<uint32_t>(outputViews.size());
 	info.pAttachments = outputViews.data();
-	info.width = cubemapSideLength;
-	info.height = cubemapSideLength;
+	info.width = outputSize;
+	info.height = outputSize;
 	info.layers = 1u;
 	info.flags = 0u;
 
@@ -394,7 +395,7 @@ void RendererCubeFilter::OfflineRender(VulkanDevice& vkDev,
 	VulkanTexture* cubemapTexture, 
 	VulkanTexture* irradianceTexture)
 {
-	uint32_t numMipMap = NumMipMap(cubemapSideLength, cubemapSideLength);
+	uint32_t inputMipMapCount = NumMipMap(inputSize, inputSize);
 
 	InitializeIrradianceTexture(vkDev, irradianceTexture);
 
@@ -404,9 +405,9 @@ void RendererCubeFilter::OfflineRender(VulkanDevice& vkDev,
 
 	cubemapTexture->image_.GenerateMipmap(
 		vkDev,
-		numMipMap,
-		cubemapSideLength,
-		cubemapSideLength,
+		inputMipMapCount,
+		inputSize,
+		inputSize,
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	);
 	
@@ -447,7 +448,7 @@ void RendererCubeFilter::OfflineRender(VulkanDevice& vkDev,
 		values.roughness = 1.f; 
 		values.sampleCount = 1024;
 		values.mipLevel = static_cast<uint32_t>(i);
-		values.width = cubemapSideLength;
+		values.width = inputSize; // TODO Rename
 		values.lodBias = 0;
 		values.distribution = Distribution::Lambertian;
 
@@ -465,7 +466,7 @@ void RendererCubeFilter::OfflineRender(VulkanDevice& vkDev,
 		info.pNext = nullptr;
 		info.renderPass = renderPass_;
 		info.framebuffer = frameBuffer;
-		info.renderArea = { 0u, 0u, cubemapSideLength, cubemapSideLength };
+		info.renderArea = { 0u, 0u, outputSize, outputSize };
 		info.clearValueCount = static_cast<uint32_t>(clearValues.size());
 		info.pClearValues = clearValues.data();
 
