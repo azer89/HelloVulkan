@@ -5,8 +5,7 @@
 #include "CubePushConstant.h"
 #include "AppSettings.h"
 
-// Irradiance map has only one mipmap level
-const uint32_t mipmapCount = 1u;
+const uint32_t outputMipmapCount = 1u; // TODO adjust for prefilter/specular cubemap
 const uint32_t cubemapSideLength = 1024;
 const VkFormat cubeMapFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
 const uint32_t layerCount = 6;
@@ -73,7 +72,7 @@ void RendererCubeFilter::InitializeIrradianceTexture(VulkanDevice& vkDev, Vulkan
 		vkDev.GetPhysicalDevice(),
 		cubemapSideLength,
 		cubemapSideLength,
-		mipmapCount,
+		outputMipmapCount,
 		layerCount,
 		cubeMapFormat,
 		VK_IMAGE_TILING_OPTIMAL,
@@ -88,7 +87,7 @@ void RendererCubeFilter::InitializeIrradianceTexture(VulkanDevice& vkDev, Vulkan
 		VK_IMAGE_ASPECT_COLOR_BIT,
 		VK_IMAGE_VIEW_TYPE_CUBE,
 		layerCount,
-		mipmapCount);
+		outputMipmapCount);
 }
 
 void RendererCubeFilter::CreateRenderPass(VulkanDevice& vkDev)
@@ -305,7 +304,7 @@ bool RendererCubeFilter::CreateCustomGraphicsPipeline(
 	pInfo.rasterizer.rasterizerDiscardEnable = VK_FALSE; 
 	pInfo.rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
 
-	// disable multisampling
+	// Disable multisampling
 	pInfo.multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
 	pInfo.multisampling.pNext = nullptr;
 	pInfo.multisampling.alphaToCoverageEnable = VK_FALSE;
@@ -370,7 +369,39 @@ bool RendererCubeFilter::CreateCustomGraphicsPipeline(
 
 void RendererCubeFilter::OfflineRender(VulkanDevice& vkDev, VulkanTexture* cubemapTexture, VulkanTexture* irradianceTexture)
 {
+	uint32_t numMipMap = NumMipMap(cubemapSideLength, cubemapSideLength);
+
 	InitializeIrradianceTexture(vkDev, irradianceTexture);
 
-	// TODO
+	// Create views from the output cubemap
+	std::vector<VkImageView> outputViews;
+	CreateCubemapViews(vkDev, irradianceTexture, outputViews);
+
+	cubemapTexture->image_.GenerateMipmap(
+		vkDev,
+		numMipMap,
+		cubemapSideLength,
+		cubemapSideLength,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+	);
+	
+	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
+
+	vkCmdBindDescriptorSets(
+		commandBuffer,
+		VK_PIPELINE_BIND_POINT_GRAPHICS,
+		pipelineLayout_,
+		0,
+		1,
+		&descriptorSet_,
+		0,
+		nullptr);
+
+	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
+
+	for (uint32_t i = outputMipmapCount - 1; i >= -1; --i)
+	{
+	}
+
+	vkDev.EndSingleTimeCommands(commandBuffer);
 }

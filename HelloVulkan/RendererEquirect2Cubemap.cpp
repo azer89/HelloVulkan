@@ -399,10 +399,10 @@ void RendererEquirect2Cubemap::OfflineRender(VulkanDevice& vkDev, VulkanTexture*
 	InitializeCubemapTexture(vkDev, cubemapTexture);
 
 	// Create views from the output cubemap
-	std::vector<VkImageView> inputCubeMapViews;
-	CreateCubemapViews(vkDev, cubemapTexture, inputCubeMapViews);
+	std::vector<VkImageView> outputViews;
+	CreateCubemapViews(vkDev, cubemapTexture, outputViews);
 
-	CreateFrameBuffer(vkDev, inputCubeMapViews);
+	CreateFrameBuffer(vkDev, outputViews);
 
 	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
 
@@ -467,6 +467,6 @@ void RendererEquirect2Cubemap::OfflineRender(VulkanDevice& vkDev, VulkanTexture*
 	// Destroy image views
 	for (size_t i = 0; i < layerCount; i++)
 	{
-		vkDestroyImageView(vkDev.GetDevice(), inputCubeMapViews[i], nullptr);
+		vkDestroyImageView(vkDev.GetDevice(), outputViews[i], nullptr);
 	}
 }
