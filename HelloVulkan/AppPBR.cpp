@@ -16,7 +16,6 @@ AppPBR::AppPBR() :
 int AppPBR::MainLoop()
 {
 	std::string cubemapTextureFile = AppSettings::TextureFolder + "the_sky_is_on_fire_4k.hdr";
-	//std::string cubemapIrradianceFile = AppSettings::TextureFolder + "the_sky_is_on_fire_4k_irradiance.hdr";
 
 	MeshCreateInfo meshInfo
 	{
@@ -49,6 +48,7 @@ int AppPBR::MainLoop()
 			&cubemapTexture); // Output
 	}
 
+	// Irradiance / specular cubemap
 	VulkanTexture irradianceTexture;
 	{
 		RendererCubeFilter cFilter(vulkanDevice, &cubemapTexture);

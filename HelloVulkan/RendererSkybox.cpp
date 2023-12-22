@@ -9,7 +9,9 @@
 #include <cmath>
 #include <array>
 
-RendererSkybox::RendererSkybox(VulkanDevice& vkDev, VulkanTexture* skyboxTexture, VulkanImage* depthImage) :
+RendererSkybox::RendererSkybox(VulkanDevice& vkDev, 
+	VulkanTexture* skyboxTexture, 
+	VulkanImage* depthImage) :
 	RendererBase(vkDev, depthImage),
 	skyboxTexture_(skyboxTexture)
 {
