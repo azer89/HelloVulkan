@@ -536,6 +536,15 @@ void VulkanImage::GenerateMipmap(
 	}
 
 	vkDev.EndSingleTimeCommands(commandBuffer);
+
+	/*TransitionImageLayout(
+		vkDev,
+		imageFormat_,
+		VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		layerCount_,
+		mipCount_
+	);*/
 }
 
 void VulkanImage::CreateBarrier(

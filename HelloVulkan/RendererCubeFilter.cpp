@@ -372,14 +372,14 @@ bool RendererCubeFilter::CreateCustomGraphicsPipeline(
 
 VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
 	VulkanDevice& vkDev,
-	std::vector<VkImageView> inputCubeMapViews)
+	std::vector<VkImageView> outputViews)
 {
 	VkFramebufferCreateInfo info{};
 	info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 	info.pNext = nullptr;
 	info.renderPass = renderPass_;
-	info.attachmentCount = static_cast<uint32_t>(inputCubeMapViews.size());
-	info.pAttachments = inputCubeMapViews.data();
+	info.attachmentCount = static_cast<uint32_t>(outputViews.size());
+	info.pAttachments = outputViews.data();
 	info.width = cubemapSideLength;
 	info.height = cubemapSideLength;
 	info.layers = 1u;
@@ -390,7 +390,9 @@ VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
 	return frameBuffer;
 }
 
-void RendererCubeFilter::OfflineRender(VulkanDevice& vkDev, VulkanTexture* cubemapTexture, VulkanTexture* irradianceTexture)
+void RendererCubeFilter::OfflineRender(VulkanDevice& vkDev, 
+	VulkanTexture* cubemapTexture, 
+	VulkanTexture* irradianceTexture)
 {
 	uint32_t numMipMap = NumMipMap(cubemapSideLength, cubemapSideLength);
 
@@ -421,10 +423,13 @@ void RendererCubeFilter::OfflineRender(VulkanDevice& vkDev, VulkanTexture* cubem
 		nullptr);
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
+	
+	std::vector<VkFramebuffer> usedFrameBuffers;
 
 	for (int i = static_cast<int>(outputMipmapCount - 1u); i >= 0; --i)
 	{
 		VkFramebuffer frameBuffer = CreateFrameBuffer(vkDev, outputViews);
+		usedFrameBuffers.push_back(frameBuffer);
 
 		VkImageSubresourceRange  subresourceRange = 
 		{ VK_IMAGE_ASPECT_COLOR_BIT, static_cast<uint32_t>(i), 1u, 0u, 6u };
@@ -469,9 +474,19 @@ void RendererCubeFilter::OfflineRender(VulkanDevice& vkDev, VulkanTexture* cubem
 		vkCmdDraw(commandBuffer, 3, 1u, 0, 0);
 
 		vkCmdEndRenderPass(commandBuffer);
-
-		vkDestroyFramebuffer(vkDev.GetDevice(), frameBuffer, nullptr);
 	}
 	
 	vkDev.EndSingleTimeCommands(commandBuffer);
+
+	// Destroy frame buffers
+	for (VkFramebuffer& f : usedFrameBuffers)
+	{
+		vkDestroyFramebuffer(vkDev.GetDevice(), f, nullptr);
+	}
+
+	// Destroy image views
+	for (size_t i = 0; i < layerCount; i++)
+	{
+		vkDestroyImageView(vkDev.GetDevice(), outputViews[i], nullptr);
+	}
 }

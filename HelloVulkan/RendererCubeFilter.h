@@ -36,7 +36,7 @@ private:
 
 	VkFramebuffer CreateFrameBuffer(
 		VulkanDevice& vkDev,
-		std::vector<VkImageView> inputCubeMapViews);
+		std::vector<VkImageView> outputViews);
 };
 
 #endif
