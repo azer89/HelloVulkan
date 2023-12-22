@@ -99,8 +99,6 @@ public:
 		uint32_t layerCount = 1,
 		uint32_t mipLevels = 1);
 
-	
-
 private:
 	uint32_t FindMemoryType(VkPhysicalDevice device, uint32_t typeFilter, VkMemoryPropertyFlags properties);
 	VkFormat FindDepthFormat(VkPhysicalDevice device);
@@ -115,14 +113,13 @@ private:
 		const void* imageData,
 		VkImageLayout sourceImageLayout = VK_IMAGE_LAYOUT_UNDEFINED);
 
-	
-
 	void TransitionImageLayoutCmd(VkCommandBuffer commandBuffer, 
 		VkFormat format, 
 		VkImageLayout oldLayout, 
 		VkImageLayout newLayout, 
 		uint32_t layerCount = 1, 
 		uint32_t mipLevels = 1);
+
 	bool HasStencilComponent(VkFormat format);
 
 	uint32_t BytesPerTexFormat(VkFormat fmt);

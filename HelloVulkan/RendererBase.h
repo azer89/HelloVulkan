@@ -15,6 +15,14 @@ struct RenderPassCreateInfo final
 	uint8_t flags_ = 0;
 };
 
+enum eRenderPassBit : uint8_t
+{
+	eRenderPassBit_First = 0x01,
+	eRenderPassBit_Last = 0x02,
+	eRenderPassBit_Offscreen = 0x04,
+	eRenderPassBit_OffscreenInternal = 0x08,
+};
+
 class RendererBase
 {
 public:

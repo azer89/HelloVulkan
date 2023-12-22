@@ -3,7 +3,7 @@
 #include "VulkanUtility.h"
 
 #include "volk.h"
-#include "glslang_c_interface.h"
+#include "glslang_c_interface.h" // Init GLSLang
 
 #include <iostream>
 
