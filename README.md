@@ -4,7 +4,7 @@ An implementation of physically-based lighting model to generate realistic rende
 
 ### Features
 * Cubemap and mesh rendering.
-* Offline rendering to generate a cubemap from an equirectangular HDR image.
+* Offscreen rendering to generate a cubemap from an equirectangular HDR image.
 
 
 https://github.com/azer89/HelloVulkan/assets/790432/10edb1a5-ff3f-4e15-8199-1b3aa1c92a62
