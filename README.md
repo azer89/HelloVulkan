@@ -12,16 +12,16 @@ https://github.com/azer89/HelloVulkan/assets/790432/10edb1a5-ff3f-4e15-8199-1b3a
 
 
 ### Build
+* C++20
 * Vulkan 1.3
-* Visual Studio 2022 x64 and C++20
+* Visual Studio 2022
+* Dependencies are located in folder `External/` 
 
 ### Credit
 Technical Resources:
-* [3D Graphics Rendering Cookbook](https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook)
 * [learnopengl.com](https://learnopengl.com/)
-* Brendan Galea's [Vulkan tutorial](https://www.youtube.com/watch?v=Y9U9IE0gVHA&list=PL8327DO66nu9qYVKLDmdLW_84-yE4auCR)
-* [Understanding Vulkan objects](https://gpuopen.com/learn/understanding-vulkan-objects/)
-* [Vulkan Guide](https://vkguide.dev/)
+* [3D Graphics Rendering Cookbook](https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook)
+* Khronos's [IBL Sampler](https://github.com/KhronosGroup/glTF-IBL-Sampler)
 
 Assets:
 * [Polyhaven](https://polyhaven.com/)
