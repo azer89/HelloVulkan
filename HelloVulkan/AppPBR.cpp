@@ -15,7 +15,7 @@ int AppPBR::MainLoop()
 {
 	std::string cubemapTextureFile = AppSettings::TextureFolder + "the_sky_is_on_fire_4k.hdr";
 
-	MeshCreateInfo meshInfo
+	MeshCreateInfo meshInfo1
 	{
 		.modelFile = AppSettings::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf",
 		.textureFiles =
@@ -28,10 +28,23 @@ int AppPBR::MainLoop()
 		}
 	};
 
+	MeshCreateInfo meshInfo2
+	{
+		.modelFile = AppSettings::ModelFolder + "Dragon//Dragon.obj",
+		.textureFiles =
+		{
+			AppSettings::TextureFolder + "pbr//plastic//ao.png",
+			AppSettings::TextureFolder + "Black1x1.png",
+			AppSettings::TextureFolder + "pbr//plastic//albedo.png",
+			AppSettings::TextureFolder + "pbr//plastic//roughness.png",
+			AppSettings::TextureFolder + "pbr//plastic//normal.png",
+		}
+	};
+
 	// Creates two meshes for now
 	std::vector<MeshCreateInfo> meshInfos;
-	meshInfos.push_back(meshInfo);
-	meshInfos.push_back(meshInfo);
+	meshInfos.push_back(meshInfo1);
+	meshInfos.push_back(meshInfo2);
 
 	VulkanImage depthImage;
 	depthImage.CreateDepthResources(vulkanDevice, 
@@ -118,6 +131,7 @@ void AppPBR::UpdateUBO(uint32_t imageIndex)
 
 	// Model UBOs
 	glm::mat4 model(1.f);
+	model = glm::translate(model, glm::vec3(-1.0f, 0.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	
 	// 1
@@ -129,8 +143,7 @@ void AppPBR::UpdateUBO(uint32_t imageIndex)
 
 	// 2
 	model = glm::mat4(1.f);
-	model = glm::translate(model, glm::vec3(3.0f, 0.0f, -3.0f));
-	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	model = glm::translate(model, glm::vec3(2.0f, -1.0f, -2.0f));
 	ModelUBO modelUBO2
 	{
 		.model = model
