@@ -28,8 +28,8 @@ public:
 
 	VkDevice GetDevice() const { return device; }
 	VkPhysicalDevice GetPhysicalDevice() const { return physicalDevice; }
-	VkSwapchainKHR GetSwapChain() { return swapchain; }
-	VkSemaphore GetSemaphore() { return semaphore; }
+	VkSwapchainKHR GetSwapChain() const { return swapchain; }
+	VkSemaphore GetSemaphore() const { return semaphore; }
 	VkCommandPool GetCommandPool() const { return commandPool; }
 	VkQueue GetGraphicsQueue() const { return graphicsQueue; }
 	uint32_t GetFrameBufferWidth() const { return framebufferWidth; }

@@ -12,13 +12,12 @@ public:
 	VkSampler sampler_;
 
 	uint32_t bindIndex_;
-
-	//uint32_t width;
-	//uint32_t height;
-	//uint32_t depth;
 	
 	//VkFormat format;
-	// Offscreen buffers require VK_IMAGE_LAYOUT_GENERAL && static textures have VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+	
+	// TODO
+	// Offscreen buffers require VK_IMAGE_LAYOUT_GENERAL 
+	// Static textures have VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	//VkImageLayout desiredLayout;
 
 	bool CreateTextureImage(
@@ -37,7 +36,16 @@ public:
 		uint32_t* width = nullptr,
 		uint32_t* height = nullptr);
 
-	bool CreateTextureSampler(
+	void CreateTextureSampler(
+		VkDevice device,
+		VkSampler& sampler,
+		float minLod = 0.f,
+		float maxLod = 0.f,
+		VkFilter minFilter = VK_FILTER_LINEAR,
+		VkFilter maxFilter = VK_FILTER_LINEAR,
+		VkSamplerAddressMode addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
+
+	void CreateTextureSampler(
 		VkDevice device,
 		float minLod = 0.f,
 		float maxLod = 0.f,

@@ -7,16 +7,22 @@ RendererClear::RendererClear(VulkanDevice& vkDev, VulkanImage* depthImage) :
 	RendererBase(vkDev, depthImage), 
 	shouldClearDepth_(depthImage != nullptr)
 {
-	if (!CreateColorAndDepthRenderPass(
-		vkDev, 
-		shouldClearDepth_, 
-		&renderPass_, 
-		RenderPassCreateInfo{ .clearColor_ = true, .clearDepth_ = true, .flags_ = eRenderPassBit_First }))
-	{
-		std::cerr << "VulkanClear: failed to create render pass\n";
-	}
+	CreateColorAndDepthRenderPass(
+		vkDev,
+		shouldClearDepth_,
+		&renderPass_,
+		RenderPassCreateInfo
+		{ 
+			.clearColor_ = true, 
+			.clearDepth_ = true, 
+			.flags_ = eRenderPassBit_First 
+		});
 
-	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthImage_->imageView_, swapchainFramebuffers_);
+	CreateColorAndDepthFramebuffers(
+		vkDev, 
+		renderPass_, 
+		depthImage_->imageView_, 
+		swapchainFramebuffers_);
 }
 
 void RendererClear::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t swapFramebuffer)

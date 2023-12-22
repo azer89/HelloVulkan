@@ -20,20 +20,17 @@ constexpr size_t PBR_ENV_TEXTURE_COUNT = 3;
 RendererPBR::RendererPBR(
 	VulkanDevice& vkDev,
 	VulkanImage* depthImage,
-	VulkanTexture* cubemapTexture,
-	const std::vector<MeshCreateInfo>& meshInfos,
-	const char* texIrrMapFile) :
+	VulkanTexture* envMap,
+	VulkanTexture* irradianceMap,
+	const std::vector<MeshCreateInfo>& meshInfos) :
 	RendererBase(vkDev, depthImage),
-	cubemapTexture_(cubemapTexture)
+	envMap_(envMap),
+	irradianceMap_(irradianceMap)
 {
-
 	for (const MeshCreateInfo& info : meshInfos)
 	{
 		LoadMesh(vkDev, info);
 	}
-
-	// Irradiance
-	LoadCubeMap(vkDev, texIrrMapFile, envMapIrradiance_);
 
 	std::string brdfLUTFile = AppSettings::TextureFolder + "brdfLUT.ktx";
 
@@ -114,7 +111,7 @@ RendererPBR::~RendererPBR()
 		mesh.Destroy(device_);
 	}
 
-	envMapIrradiance_.Destroy(device_);
+	//envMapIrradiance_.Destroy(device_);
 
 	brdfLUT_.Destroy(device_);
 }
@@ -170,7 +167,7 @@ bool RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 		);
 	}
 
-	// env
+	// envMap
 	bindings.emplace_back(
 		DescriptorSetLayoutBinding(
 			bindingIndex++,
@@ -178,7 +175,7 @@ bool RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 			VK_SHADER_STAGE_FRAGMENT_BIT)
 	);
 
-	// env_IRR
+	// irradianceMap
 	bindings.emplace_back(
 		DescriptorSetLayoutBinding(
 			bindingIndex++,
@@ -236,8 +233,10 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Mesh& mesh)
 		uint32_t bindIndex = 0;
 
 		std::vector<VkWriteDescriptorSet> descriptorWrites;
-		descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo1, bindIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
-		descriptorWrites.emplace_back(BufferWriteDescriptorSet(ds, &bufferInfo2, bindIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
+		descriptorWrites.emplace_back(
+			BufferWriteDescriptorSet(ds, &bufferInfo1, bindIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
+		descriptorWrites.emplace_back(
+			BufferWriteDescriptorSet(ds, &bufferInfo2, bindIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
 		
 		std::vector<VkDescriptorImageInfo> imageInfos;
 		std::vector<uint32_t> bindIndices;
@@ -268,11 +267,23 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Mesh& mesh)
 		}
 
 		const VkDescriptorImageInfo imageInfoEnv = 
-		{ cubemapTexture_->sampler_, cubemapTexture_->image_.imageView_, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+		{ 
+			envMap_->sampler_, 
+			envMap_->image_.imageView_, 
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL 
+		};
 		const VkDescriptorImageInfo imageInfoEnvIrr = 
-		{ envMapIrradiance_.sampler_, envMapIrradiance_.image_.imageView_, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+		{ 
+			irradianceMap_->sampler_, 
+			irradianceMap_->image_.imageView_, 
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL 
+		};
 		const VkDescriptorImageInfo imageInfoBRDF = 
-		{ brdfLUT_.sampler_, brdfLUT_.image_.imageView_, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+		{ 
+			brdfLUT_.sampler_, 
+			brdfLUT_.image_.imageView_, 
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL 
+		};
 
 		descriptorWrites.emplace_back(
 			ImageWriteDescriptorSet(ds, &imageInfoEnv, bindIndex++)

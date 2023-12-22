@@ -143,8 +143,8 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="RendererBase.cpp" />
     <ClCompile Include="RendererClear.cpp" />
-    <ClCompile Include="RendererEquirect2Cubemap.cpp" />
-    <ClCompile Include="RendererIrradiance.cpp" />
+    <ClCompile Include="RendererEquirect2Cube.cpp" />
+    <ClCompile Include="RendererCubeFilter.cpp" />
     <ClCompile Include="RendererSkybox.cpp" />
     <ClCompile Include="RendererFinish.cpp" />
     <ClCompile Include="RendererPBR.cpp" />
@@ -162,17 +162,16 @@
     <ClInclude Include="AppPBR.h" />
     <ClInclude Include="Bitmap.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CubePushConstant.h" />
     <ClInclude Include="Mesh.h" />
-    <ClInclude Include="MeshCreateInfo.h" />
     <ClInclude Include="PipelineCreateInfo.h" />
     <ClInclude Include="RendererBase.h" />
     <ClInclude Include="RendererClear.h" />
-    <ClInclude Include="RendererEquirect2Cubemap.h" />
-    <ClInclude Include="RendererIrradiance.h" />
+    <ClInclude Include="RendererEquirect2Cube.h" />
+    <ClInclude Include="RendererCubeFilter.h" />
     <ClInclude Include="RendererSkybox.h" />
     <ClInclude Include="RendererFinish.h" />
     <ClInclude Include="RendererPBR.h" />
-    <ClInclude Include="RenderPassCreateInfo.h" />
     <ClInclude Include="UBO.h" />
     <ClInclude Include="VulkanBuffer.h" />
     <ClInclude Include="VulkanShader.h" />
@@ -183,10 +182,11 @@
     <ClInclude Include="VulkanUtility.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Shaders\cube.frag" />
+    <None Include="..\Shaders\skybox.frag" />
     <None Include="..\Shaders\cube.vert" />
     <None Include="..\Shaders\equirect_2_cubemap.frag" />
     <None Include="..\Shaders\fullscreen_triangle.vert" />
+    <None Include="..\Shaders\cube_filter.frag" />
     <None Include="..\Shaders\pbr_mesh.frag" />
     <None Include="..\Shaders\pbr_mesh.vert" />
   </ItemGroup>

@@ -7,6 +7,7 @@
 
 namespace AppSettings
 {
+	// TODO need to deal with screen resizing
 	static int ScreenWidth = 1600;
 	static int ScreenHeight = 1200;
 

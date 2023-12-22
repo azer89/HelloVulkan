@@ -3,7 +3,7 @@
 #include "VulkanUtility.h"
 
 #include "volk.h"
-#include "glslang_c_interface.h"
+#include "glslang_c_interface.h" // Init GLSLang
 
 #include <iostream>
 
@@ -19,7 +19,11 @@ AppBase::AppBase()
 
 void AppBase::InitVulkan()
 {
-	
+	VkResult res = volkInitialize();
+	if (res != VK_SUCCESS)
+	{
+		std::cerr << "Volk Cannot be initialized\n";
+	}
 
 	vulkanInstance.Create();
 	vulkanInstance.SetupDebugCallbacks();
