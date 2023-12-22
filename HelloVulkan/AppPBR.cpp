@@ -3,7 +3,7 @@
 #include "VulkanUtility.h"
 #include "MeshCreateInfo.h"
 
-#include "RendererEquirect2Cubemap.h"
+#include "RendererEquirect2Cube.h"
 #include "RendererCubeFilter.h"
 
 #include "glm/gtc/matrix_transform.hpp"
@@ -41,20 +41,20 @@ int AppPBR::MainLoop()
 		static_cast<uint32_t>(AppSettings::ScreenHeight));
 	
 	// Create a cubemap from the input HDR
-	VulkanTexture cubemapTexture;
+	VulkanTexture envMap;
 	{
-		RendererEquirect2Cubemap e2c(vulkanDevice, cubemapTextureFile);
+		RendererEquirect2Cube e2c(vulkanDevice, cubemapTextureFile);
 		e2c.OfflineRender(vulkanDevice, 
-			&cubemapTexture); // Output
+			&envMap); // Output
 	}
 
 	// Irradiance / specular cubemap
-	VulkanTexture irradianceTexture;
+	VulkanTexture irradianceMap;
 	{
-		RendererCubeFilter cFilter(vulkanDevice, &cubemapTexture);
+		RendererCubeFilter cFilter(vulkanDevice, &envMap);
 		cFilter.OfflineRender(vulkanDevice,
-			&cubemapTexture,
-			&irradianceTexture);
+			&envMap,
+			&irradianceMap);
 	}
 
 	// Renderers
@@ -63,10 +63,10 @@ int AppPBR::MainLoop()
 	pbrPtr = std::make_unique<RendererPBR>(
 		vulkanDevice,
 		&depthImage,
-		&cubemapTexture,
-		&irradianceTexture,
+		&envMap,
+		&irradianceMap,
 		meshInfos);
-	skyboxPtr = std::make_unique<RendererSkybox>(vulkanDevice, &cubemapTexture, &depthImage);
+	skyboxPtr = std::make_unique<RendererSkybox>(vulkanDevice, &envMap, &depthImage);
 
 	const std::vector<RendererBase*> renderers = 
 	{ 
@@ -88,8 +88,8 @@ int AppPBR::MainLoop()
 
 	// Destroy resources
 	depthImage.Destroy(vulkanDevice.GetDevice());
-	cubemapTexture.Destroy(vulkanDevice.GetDevice());
-	irradianceTexture.Destroy(vulkanDevice.GetDevice());
+	envMap.Destroy(vulkanDevice.GetDevice());
+	irradianceMap.Destroy(vulkanDevice.GetDevice());
 	clearPtr = nullptr;
 	finishPtr = nullptr;
 	skyboxPtr = nullptr;

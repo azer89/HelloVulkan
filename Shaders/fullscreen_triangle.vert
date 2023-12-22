@@ -1,5 +1,10 @@
 # version 460 core
 
+/*
+ Generates a triangle that covers the entire screen
+ https://www.saschawillems.de/blog/2016/08/13/vulkan-tutorial-on-rendering-a-fullscreen-quad-without-buffers/
+ */
+
 layout(location = 0) out vec2 texCoord;
 
 void main()

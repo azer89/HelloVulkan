@@ -1,5 +1,5 @@
-#ifndef RENDERER_EQUIRECT_2_CUBEMAP
-#define RENDERER_EQUIRECT_2_CUBEMAP
+#ifndef RENDERER_EQUIRECT_2_CUBE
+#define RENDERER_EQUIRECT_2_CUBE
 
 #include "RendererBase.h"
 #include "VulkanTexture.h"
@@ -8,11 +8,11 @@
 
 #include <string>
 
-class RendererEquirect2Cubemap final : public RendererBase
+class RendererEquirect2Cube final : public RendererBase
 {
 public:
-	RendererEquirect2Cubemap(VulkanDevice& vkDev, const std::string& hdrFile);
-	~RendererEquirect2Cubemap();
+	RendererEquirect2Cube(VulkanDevice& vkDev, const std::string& hdrFile);
+	~RendererEquirect2Cube();
 
 	void OfflineRender(VulkanDevice& vkDev, VulkanTexture* outputEnvMap);
 

@@ -1,4 +1,4 @@
-#include "RendererEquirect2Cubemap.h"
+#include "RendererEquirect2Cube.h"
 #include "PipelineCreateInfo.h"
 #include "VulkanUtility.h"
 #include "VulkanShader.h"
@@ -8,7 +8,7 @@ const uint32_t cubemapSideLength = 1024;
 const VkFormat cubeMapFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
 const uint32_t layerCount = 6;
 
-RendererEquirect2Cubemap::RendererEquirect2Cubemap(
+RendererEquirect2Cube::RendererEquirect2Cube(
 	VulkanDevice& vkDev, 
 	const std::string& hdrFile) :
 	RendererBase(vkDev, nullptr)
@@ -42,17 +42,17 @@ RendererEquirect2Cubemap::RendererEquirect2Cubemap(
 	);
 }
 
-RendererEquirect2Cubemap::~RendererEquirect2Cubemap()
+RendererEquirect2Cube::~RendererEquirect2Cube()
 {
 	hdrTexture_.Destroy(device_);
 	vkDestroyFramebuffer(device_, frameBuffer_, nullptr);
 }
 
-void RendererEquirect2Cubemap::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
+void RendererEquirect2Cube::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
 {
 }
 
-void RendererEquirect2Cubemap::InitializeEnvironmentMap(VulkanDevice& vkDev, VulkanTexture* outputEnvMap)
+void RendererEquirect2Cube::InitializeEnvironmentMap(VulkanDevice& vkDev, VulkanTexture* outputEnvMap)
 {
 	uint32_t mipmapCount = NumMipMap(cubemapSideLength, cubemapSideLength);
 
@@ -79,7 +79,7 @@ void RendererEquirect2Cubemap::InitializeEnvironmentMap(VulkanDevice& vkDev, Vul
 		mipmapCount);
 }
 
-void RendererEquirect2Cubemap::InitializeHDRTexture(VulkanDevice& vkDev, const std::string& hdrFile)
+void RendererEquirect2Cube::InitializeHDRTexture(VulkanDevice& vkDev, const std::string& hdrFile)
 {
 	hdrTexture_.CreateHDRImage(vkDev, hdrFile.c_str());
 	hdrTexture_.image_.CreateImageView(
@@ -92,7 +92,7 @@ void RendererEquirect2Cubemap::InitializeHDRTexture(VulkanDevice& vkDev, const s
 		1.f);
 }
 
-void RendererEquirect2Cubemap::CreateRenderPass(VulkanDevice& vkDev)
+void RendererEquirect2Cube::CreateRenderPass(VulkanDevice& vkDev)
 {
 	VkImageLayout finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
@@ -138,7 +138,7 @@ void RendererEquirect2Cubemap::CreateRenderPass(VulkanDevice& vkDev)
 	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &m_info, nullptr, &renderPass_));
 }
 
-bool RendererEquirect2Cubemap::CreateDescriptorLayout(VulkanDevice& vkDev)
+bool RendererEquirect2Cube::CreateDescriptorLayout(VulkanDevice& vkDev)
 {
 	std::vector<VkDescriptorSetLayoutBinding> bindings;
 
@@ -166,7 +166,7 @@ bool RendererEquirect2Cubemap::CreateDescriptorLayout(VulkanDevice& vkDev)
 	return true;
 }
 
-bool RendererEquirect2Cubemap::CreateDescriptorSet(VulkanDevice& vkDev)
+bool RendererEquirect2Cube::CreateDescriptorSet(VulkanDevice& vkDev)
 {
 	const VkDescriptorSetAllocateInfo allocInfo = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
@@ -208,7 +208,7 @@ bool RendererEquirect2Cubemap::CreateDescriptorSet(VulkanDevice& vkDev)
 	return true;
 }
 
-bool RendererEquirect2Cubemap::CreateCustomGraphicsPipeline(
+bool RendererEquirect2Cube::CreateCustomGraphicsPipeline(
 	VulkanDevice& vkDev,
 	VkRenderPass renderPass,
 	VkPipelineLayout pipelineLayout,
@@ -340,7 +340,7 @@ bool RendererEquirect2Cubemap::CreateCustomGraphicsPipeline(
 	return true;
 }
 
-void RendererEquirect2Cubemap::CreateFrameBuffer(
+void RendererEquirect2Cube::CreateFrameBuffer(
 	VulkanDevice& vkDev, 
 	std::vector<VkImageView> outputViews)
 {
@@ -358,7 +358,7 @@ void RendererEquirect2Cubemap::CreateFrameBuffer(
 	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &info, nullptr, &frameBuffer_));
 }
 
-void RendererEquirect2Cubemap::CreateCubemapViews(
+void RendererEquirect2Cube::CreateCubemapViews(
 	VulkanDevice& vkDev, 
 	VulkanTexture* cubemapTexture, 
 	std::vector<VkImageView>& cubeMapViews)
@@ -395,7 +395,7 @@ void RendererEquirect2Cubemap::CreateCubemapViews(
 	}
 }
 
-void RendererEquirect2Cubemap::OfflineRender(VulkanDevice& vkDev, VulkanTexture* outputEnvMap)
+void RendererEquirect2Cube::OfflineRender(VulkanDevice& vkDev, VulkanTexture* outputEnvMap)
 {
 	// Initialize output cubemap
 	InitializeEnvironmentMap(vkDev, outputEnvMap);
