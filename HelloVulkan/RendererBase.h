@@ -62,25 +62,25 @@ protected:
 protected:
 	void BeginRenderPass(VkCommandBuffer commandBuffer, size_t currentImage);
 
-	bool CreateUniformBuffers(
+	void CreateUniformBuffers(
 		VulkanDevice& vkDev, 
 		std::vector<VulkanBuffer>& buffers,
 		size_t uniformDataSize);
 
-	bool CreateColorAndDepthRenderPass(
+	void CreateColorAndDepthRenderPass(
 		VulkanDevice& device, 
 		bool useDepth, 
 		VkRenderPass* renderPass, 
 		const RenderPassCreateInfo& ci, 
 		VkFormat colorFormat = VK_FORMAT_B8G8R8A8_UNORM);
 
-	bool CreateColorAndDepthFramebuffers(
+	void CreateColorAndDepthFramebuffers(
 		VulkanDevice& vkDev, 
 		VkRenderPass renderPass, 
 		VkImageView depthImageView, 
 		std::vector<VkFramebuffer>& swapchainFramebuffers);
 
-	bool CreateDescriptorPool(
+	void CreateDescriptorPool(
 		VulkanDevice& vkDev, 
 		uint32_t uniformBufferCount, 
 		uint32_t storageBufferCount, 
@@ -88,12 +88,12 @@ protected:
 		uint32_t setCountPerSwapchain,
 		VkDescriptorPool* descriptorPool);
 
-	bool CreatePipelineLayout(VkDevice device, 
+	void CreatePipelineLayout(VkDevice device,
 		VkDescriptorSetLayout dsLayout, 
 		VkPipelineLayout* pipelineLayout,
 		const std::vector<VkPushConstantRange>& pushConstantRanges = {});
 
-	bool CreateGraphicsPipeline(
+	void CreateGraphicsPipeline(
 		VulkanDevice& vkDev,
 		VkRenderPass renderPass, 
 		VkPipelineLayout pipelineLayout,

@@ -54,7 +54,7 @@ void RendererBase::BeginRenderPass(VkCommandBuffer commandBuffer, size_t current
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
 }
 
-bool RendererBase::CreateUniformBuffers(
+void RendererBase::CreateUniformBuffers(
 	VulkanDevice& vkDev,
 	std::vector<VulkanBuffer>& buffers,
 	size_t uniformDataSize)
@@ -73,13 +73,11 @@ bool RendererBase::CreateUniformBuffers(
 		if (!res)
 		{
 			std::cerr << "Cannot create uniform buffer\n";
-			return false;
 		}
 	}
-	return true;
 }
 
-bool RendererBase::CreateColorAndDepthRenderPass(
+void RendererBase::CreateColorAndDepthRenderPass(
 	VulkanDevice& vkDev,
 	bool useDepth,
 	VkRenderPass* renderPass,
@@ -195,10 +193,10 @@ bool RendererBase::CreateColorAndDepthRenderPass(
 		.pDependencies = dependencies.data()
 	};
 
-	return (vkCreateRenderPass(vkDev.GetDevice(), &renderPassInfo, nullptr, renderPass) == VK_SUCCESS);
+	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &renderPassInfo, nullptr, renderPass));
 }
 
-bool RendererBase::CreateColorAndDepthFramebuffers(
+void RendererBase::CreateColorAndDepthFramebuffers(
 	VulkanDevice& vkDev,
 	VkRenderPass renderPass,
 	VkImageView depthImageView,
@@ -229,11 +227,9 @@ bool RendererBase::CreateColorAndDepthFramebuffers(
 
 		VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo, nullptr, &swapchainFramebuffers[i]));
 	}
-
-	return true;
 }
 
-bool RendererBase::CreateDescriptorPool(
+void RendererBase::CreateDescriptorPool(
 	VulkanDevice& vkDev,
 	uint32_t uniformBufferCount,
 	uint32_t storageBufferCount,
@@ -246,13 +242,25 @@ bool RendererBase::CreateDescriptorPool(
 	std::vector<VkDescriptorPoolSize> poolSizes;
 
 	if (uniformBufferCount)
-		poolSizes.push_back(VkDescriptorPoolSize{ .type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, .descriptorCount = imageCount * uniformBufferCount });
+		poolSizes.push_back(VkDescriptorPoolSize
+			{ 
+				.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 
+				.descriptorCount = imageCount * uniformBufferCount 
+			});
 
 	if (storageBufferCount)
-		poolSizes.push_back(VkDescriptorPoolSize{ .type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, .descriptorCount = imageCount * storageBufferCount });
+		poolSizes.push_back(VkDescriptorPoolSize
+			{
+				.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 
+				.descriptorCount = imageCount * storageBufferCount 
+			});
 
 	if (samplerCount)
-		poolSizes.push_back(VkDescriptorPoolSize{ .type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, .descriptorCount = imageCount * samplerCount });
+		poolSizes.push_back(VkDescriptorPoolSize
+			{
+				.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 
+				.descriptorCount = imageCount * samplerCount 
+			});
 
 	const VkDescriptorPoolCreateInfo poolInfo = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
@@ -263,10 +271,10 @@ bool RendererBase::CreateDescriptorPool(
 		.pPoolSizes = poolSizes.empty() ? nullptr : poolSizes.data()
 	};
 
-	return (vkCreateDescriptorPool(vkDev.GetDevice(), &poolInfo, nullptr, descriptorPool) == VK_SUCCESS);
+	VK_CHECK(vkCreateDescriptorPool(vkDev.GetDevice(), &poolInfo, nullptr, descriptorPool));
 }
 
-bool RendererBase::CreatePipelineLayout(
+void RendererBase::CreatePipelineLayout(
 	VkDevice device, 
 	VkDescriptorSetLayout dsLayout, 
 	VkPipelineLayout* pipelineLayout,
@@ -288,10 +296,10 @@ bool RendererBase::CreatePipelineLayout(
 		pipelineLayoutInfo.pushConstantRangeCount = static_cast<uint32_t>(pushConstantRanges.size());
 	}
 
-	return (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, pipelineLayout) == VK_SUCCESS);
+	VK_CHECK(vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, pipelineLayout));
 }
 
-bool RendererBase::CreateGraphicsPipeline(
+void RendererBase::CreateGraphicsPipeline(
 	VulkanDevice& vkDev,
 	VkRenderPass renderPass,
 	VkPipelineLayout pipelineLayout,
@@ -377,12 +385,10 @@ bool RendererBase::CreateGraphicsPipeline(
 		nullptr,
 		pipeline));
 
-	for (auto s : shaderModules)
+	for (VulkanShader& s : shaderModules)
 	{
 		s.Destroy(vkDev.GetDevice());
 	}
-
-	return true;
 }
 
 void RendererBase::UpdateUniformBuffer(
