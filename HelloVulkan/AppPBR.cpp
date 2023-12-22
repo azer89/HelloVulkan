@@ -66,7 +66,7 @@ int AppPBR::MainLoop()
 		&cubemapTexture,
 		&irradianceTexture,
 		meshInfos);
-	skyboxPtr = std::make_unique<RendererSkybox>(vulkanDevice, &irradianceTexture, &depthImage);
+	skyboxPtr = std::make_unique<RendererSkybox>(vulkanDevice, &cubemapTexture, &depthImage);
 
 	const std::vector<RendererBase*> renderers = 
 	{ 
