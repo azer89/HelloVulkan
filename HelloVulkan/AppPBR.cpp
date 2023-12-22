@@ -66,7 +66,7 @@ int AppPBR::MainLoop()
 		&cubemapTexture,
 		meshInfos,
 		cubemapIrradianceFile.c_str());
-	skyboxPtr = std::make_unique<RendererSkybox>(vulkanDevice, &cubemapTexture, &depthImage);
+	skyboxPtr = std::make_unique<RendererSkybox>(vulkanDevice, &irradianceTexture, &depthImage);
 
 	const std::vector<RendererBase*> renderers = 
 	{ 
@@ -89,6 +89,7 @@ int AppPBR::MainLoop()
 	// Destroy resources
 	depthImage.Destroy(vulkanDevice.GetDevice());
 	cubemapTexture.Destroy(vulkanDevice.GetDevice());
+	irradianceTexture.Destroy(vulkanDevice.GetDevice());
 	clearPtr = nullptr;
 	finishPtr = nullptr;
 	skyboxPtr = nullptr;

@@ -460,20 +460,21 @@ void VulkanImage::GenerateMipmap(
 {
 	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
 
-	{
-		VkImageSubresourceRange mipbaseRange{};
-		mipbaseRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		mipbaseRange.baseMipLevel = 0u;
-		mipbaseRange.levelCount = 1u; // The number of mipmap levels (starting from baseMipLevel) accessible to the view
-		mipbaseRange.layerCount = layerCount_;
+	VkImageSubresourceRange mipbaseRange{};
+	mipbaseRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	mipbaseRange.baseMipLevel = 0u;
+	mipbaseRange.levelCount = 1u; // The number of mipmap levels (starting from baseMipLevel) accessible to the view
+	mipbaseRange.layerCount = layerCount_;
 
+	{
 		CreateBarrier(
-			commandBuffer,
-			currentImageLayout,
-			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-			VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-			VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-			VK_PIPELINE_STAGE_TRANSFER_BIT, VK_ACCESS_TRANSFER_READ_BIT,
+			commandBuffer, // _cmdBuffer
+			currentImageLayout, // oldLayout
+			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, // newLayout
+			VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, // _srcStage
+			VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, // _srcAccess
+			VK_PIPELINE_STAGE_TRANSFER_BIT, // _dstStage
+			VK_ACCESS_TRANSFER_READ_BIT, // _dstAccess
 			mipbaseRange);
 	}
 
@@ -535,16 +536,24 @@ void VulkanImage::GenerateMipmap(
 			mipSubRange);
 	}
 
-	vkDev.EndSingleTimeCommands(commandBuffer);
+	{
+		VkImageSubresourceRange completeRange{};
+		completeRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		completeRange.baseMipLevel = 0;
+		completeRange.levelCount = maxMipLevels;
+		completeRange.layerCount = 6u;
 
-	/*TransitionImageLayout(
-		vkDev,
-		imageFormat_,
-		VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-		layerCount_,
-		mipCount_
-	);*/
+		CreateBarrier(commandBuffer,
+			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, 
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+			VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 
+			VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+			VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 
+			VK_ACCESS_SHADER_READ_BIT,
+			completeRange);
+	}
+
+	vkDev.EndSingleTimeCommands(commandBuffer);
 }
 
 void VulkanImage::CreateBarrier(

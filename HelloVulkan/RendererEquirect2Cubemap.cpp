@@ -457,14 +457,14 @@ void RendererEquirect2Cubemap::OfflineRender(VulkanDevice& vkDev, VulkanTexture*
 	cubemapTexture->CreateTextureSampler(vkDev.GetDevice());
 
 	// Transition to a new layout
-	cubemapTexture->image_.TransitionImageLayout(
+	/*cubemapTexture->image_.TransitionImageLayout(
 		vkDev,
 		cubemapTexture->image_.imageFormat_,
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 		cubemapTexture->image_.layerCount_,
 		cubemapTexture->image_.mipCount_
-	);
+	);*/
 
 	// Destroy image views
 	for (size_t i = 0; i < layerCount; i++)

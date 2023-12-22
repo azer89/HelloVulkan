@@ -61,6 +61,13 @@ public:
 
 	void Destroy(VkDevice device);
 
+	void GenerateMipmap(
+		VulkanDevice& vkDev,
+		uint32_t maxMipLevels,
+		uint32_t width,
+		uint32_t height,
+		VkImageLayout currentImageLayout);
+
 	bool CreateImageView(VkDevice device,
 		VkFormat format,
 		VkImageAspectFlags aspectFlags,
@@ -92,12 +99,7 @@ public:
 		uint32_t layerCount = 1,
 		uint32_t mipLevels = 1);
 
-	void GenerateMipmap(
-		VulkanDevice& vkDev,
-		uint32_t maxMipLevels,
-		uint32_t width,
-		uint32_t height,
-		VkImageLayout currentImageLayout);
+	
 
 private:
 	uint32_t FindMemoryType(VkPhysicalDevice device, uint32_t typeFilter, VkMemoryPropertyFlags properties);

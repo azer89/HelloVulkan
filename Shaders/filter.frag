@@ -164,7 +164,7 @@ vec3 FilterColor(vec3 N)
 			vec3 lambertian = textureLod(cubeMap, H, lod).rgb;
 			color += lambertian;
 		}
-		else if (pcParams.distribution == cGGX)
+		/*else if (pcParams.distribution == cGGX)
 		{
 			vec3 V = N;
 			vec3 L = normalize(reflect(-V, H));
@@ -181,17 +181,19 @@ vec3 FilterColor(vec3 N)
 				color += sampleColor * NdotL;
 				weight += NdotL;
 			}
-		}
+		}*/
 	}
 
-	if (weight != 0.0f)
+	/*if (weight > 0.0)
 	{
 		color /= weight;
 	}
 	else
 	{
 		color /= float(pcParams.sampleCount);
-	}
+	}*/
+
+	color /= float(pcParams.sampleCount);
 
 	return color.rgb;
 }

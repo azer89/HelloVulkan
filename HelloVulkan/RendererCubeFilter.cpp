@@ -407,7 +407,7 @@ void RendererCubeFilter::OfflineRender(VulkanDevice& vkDev,
 		numMipMap,
 		cubemapSideLength,
 		cubemapSideLength,
-		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	);
 	
 	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
@@ -489,4 +489,17 @@ void RendererCubeFilter::OfflineRender(VulkanDevice& vkDev,
 	{
 		vkDestroyImageView(vkDev.GetDevice(), outputViews[i], nullptr);
 	}
+
+	// Create a sampler for the output cubemap
+	irradianceTexture->CreateTextureSampler(vkDev.GetDevice());
+
+	// Transition to a new layout
+	irradianceTexture->image_.TransitionImageLayout(
+		vkDev,
+		irradianceTexture->image_.imageFormat_,
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		irradianceTexture->image_.layerCount_,
+		irradianceTexture->image_.mipCount_
+	);
 }
