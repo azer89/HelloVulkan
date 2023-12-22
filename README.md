@@ -10,6 +10,7 @@ An implementation of physically-based lighting model to generate realistic rende
 
 https://github.com/azer89/HelloVulkan/assets/790432/10edb1a5-ff3f-4e15-8199-1b3aa1c92a62
 
+<img width="850" alt="Dragon" src="https://github.com/azer89/HelloVulkan/assets/790432/0d1c1897-2006-448f-b391-c49d6ffaf8b1">
 
 
 ### Build
