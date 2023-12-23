@@ -28,15 +28,13 @@ RendererEquirect2Cube::RendererEquirect2Cube(
 	CreateDescriptorSet(vkDev);
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
 
-	std::string vertFile = AppSettings::ShaderFolder + "fullscreen_triangle.vert";
-	std::string fragFile = AppSettings::ShaderFolder + "equirect_2_cubemap.frag";
 	CreateOffscreenGraphicsPipeline(
 		vkDev,
 		renderPass_,
 		pipelineLayout_,
 		{
-			vertFile.c_str(),
-			fragFile.c_str()
+			AppSettings::ShaderFolder + "fullscreen_triangle.vert",
+			AppSettings::ShaderFolder + "equirect_2_cubemap.frag"
 		},
 		&graphicsPipeline_
 	);
@@ -212,7 +210,7 @@ bool RendererEquirect2Cube::CreateOffscreenGraphicsPipeline(
 	VulkanDevice& vkDev,
 	VkRenderPass renderPass,
 	VkPipelineLayout pipelineLayout,
-	const std::vector<const char*>& shaderFiles,
+	const std::vector<std::string>& shaderFiles,
 	VkPipeline* pipeline)
 {
 	std::vector<VulkanShader> shaderModules;
@@ -223,7 +221,7 @@ bool RendererEquirect2Cube::CreateOffscreenGraphicsPipeline(
 
 	for (size_t i = 0; i < shaderFiles.size(); i++)
 	{
-		const char* file = shaderFiles[i];
+		const char* file = shaderFiles[i].c_str();
 		VK_CHECK(shaderModules[i].Create(vkDev.GetDevice(), file));
 		VkShaderStageFlagBits stage = GLSLangShaderStageToVulkan(GLSLangShaderStageFromFileName(file));
 		shaderStages[i] = shaderModules[i].GetShaderStageInfo(stage, "main");

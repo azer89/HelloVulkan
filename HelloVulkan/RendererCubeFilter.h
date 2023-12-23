@@ -4,6 +4,8 @@
 #include "RendererBase.h"
 #include "VulkanTexture.h"
 
+#include <string>
+
 class RendererCubeFilter final : public RendererBase
 {
 public:
@@ -31,7 +33,7 @@ private:
 		VulkanDevice& vkDev,
 		VkRenderPass renderPass,
 		VkPipelineLayout pipelineLayout,
-		const std::vector<const char*>& shaderFiles,
+		const std::vector<std::string>& shaderFiles,
 		VkPipeline* pipeline);
 
 	VkFramebuffer CreateFrameBuffer(

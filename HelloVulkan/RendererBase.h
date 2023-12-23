@@ -8,6 +8,8 @@
 #include "VulkanBuffer.h"
 #include "UBO.h"
 
+#include <string>
+
 struct RenderPassCreateInfo final
 {
 	bool clearColor_ = false;
@@ -105,7 +107,7 @@ protected:
 		VulkanDevice& vkDev,
 		VkRenderPass renderPass, 
 		VkPipelineLayout pipelineLayout,
-		const std::vector<const char*>& shaderFiles,
+		const std::vector<std::string>& shaderFiles,
 		VkPipeline* pipeline,
 		bool hasVertexBuffer = false,
 		VkPrimitiveTopology topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST /* defaults to triangles*/,

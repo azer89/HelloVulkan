@@ -39,7 +39,7 @@ private:
 		VulkanDevice& vkDev,
 		VkRenderPass renderPass,
 		VkPipelineLayout pipelineLayout,
-		const std::vector<const char*>& shaderFiles,
+		const std::vector<std::string>& shaderFiles,
 		VkPipeline* pipeline);
 
 	void CreateFrameBuffer(VulkanDevice& vkDev, std::vector<VkImageView> outputViews);

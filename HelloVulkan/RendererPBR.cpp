@@ -89,15 +89,13 @@ RendererPBR::RendererPBR(
 
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
 
-	std::string vertFile = AppSettings::ShaderFolder + "pbr_mesh.vert";
-	std::string fragFile = AppSettings::ShaderFolder + "pbr_mesh.frag";
 	CreateGraphicsPipeline(
 		vkDev,
 		renderPass_,
 		pipelineLayout_,
 		{
-			vertFile.c_str(),
-			fragFile.c_str()
+			AppSettings::ShaderFolder + "pbr_mesh.vert",
+			AppSettings::ShaderFolder + "pbr_mesh.frag"
 		},
 		&graphicsPipeline_,
 		true // hasVertexBuffer

@@ -54,7 +54,9 @@ int AppPBR::MainLoop()
 	// Create a cubemap from the input HDR
 	VulkanTexture envMap;
 	{
-		RendererEquirect2Cube e2c(vulkanDevice, cubemapTextureFile);
+		RendererEquirect2Cube e2c(
+			vulkanDevice, 
+			cubemapTextureFile);
 		e2c.OffscreenRender(vulkanDevice, 
 			&envMap); // Output
 	}

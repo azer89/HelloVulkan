@@ -15,8 +15,7 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 	RendererBase(vkDev, depthImage),
 	envMap_(envMap)
 {
-	std::string vertexShader = AppSettings::ShaderFolder + "cube.vert";
-	std::string fragmentShader = AppSettings::ShaderFolder + "skybox.frag";
+	
 
 	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo());
 
@@ -34,13 +33,13 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 	CreateDescriptorLayoutAndSet(vkDev);
 	
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
-	
+
 	CreateGraphicsPipeline(vkDev,
 		renderPass_,
 		pipelineLayout_,
 		{
-			vertexShader.c_str(),
-			fragmentShader.c_str(),
+			AppSettings::ShaderFolder + "cube.vert",
+			AppSettings::ShaderFolder + "skybox.frag",
 		},
 		&graphicsPipeline_);
 }
