@@ -59,13 +59,11 @@ void AppPBR::Init()
 	{
 		RendererCubeFilter cFilter(vulkanDevice, &environmentCubemap_);
 		cFilter.OffscreenRender(vulkanDevice,
-			&environmentCubemap_,
 			&diffuseCubemap_,
 			Distribution::Lambertian);
-		/*cFilter.OffscreenRender(vulkanDevice,
-			&environmentCubemap_,
+		cFilter.OffscreenRender(vulkanDevice,
 			&specularCubemap_,
-			Distribution::GGX);*/
+			Distribution::GGX);
 	}
 
 	depthImage_.CreateDepthResources(vulkanDevice,

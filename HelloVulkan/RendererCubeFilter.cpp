@@ -16,7 +16,7 @@ const VkFormat cubeMapFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
 const uint32_t layerCount = 6;
 
 RendererCubeFilter::RendererCubeFilter(
-	VulkanDevice& vkDev, VulkanTexture* inputCubemapTexture) :
+	VulkanDevice& vkDev, VulkanTexture* inputCubemap) :
 	RendererBase(vkDev, nullptr)
 {
 	CreateRenderPass(vkDev);
@@ -29,14 +29,22 @@ RendererCubeFilter::RendererCubeFilter(
 		1, // Descriptor count per swapchain
 		&descriptorPool_);
 
-	inputCubemapTexture->CreateTextureSampler(
+	inputCubemap->image_.GenerateMipmap(
+		vkDev,
+		NumMipMap(inputCubemapSize, inputCubemapSize),
+		inputCubemapSize,
+		inputCubemapSize,
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+	);
+
+	inputCubemap->CreateTextureSampler(
 		vkDev.GetDevice(),
 		inputEnvMapSampler_,
 		0.f,
 		static_cast<float>(NumMipMap(inputCubemapSize, inputCubemapSize))
 	);
 	CreateDescriptorLayout(vkDev);
-	CreateDescriptorSet(vkDev, inputCubemapTexture);
+	CreateDescriptorSet(vkDev, inputCubemap);
 
 	// Push constants
 	std::vector<VkPushConstantRange> ranges(1u);
@@ -384,7 +392,9 @@ void RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 
 VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
 	VulkanDevice& vkDev,
-	std::vector<VkImageView> outputViews)
+	std::vector<VkImageView> outputViews,
+	uint32_t width,
+	uint32_t height)
 {
 	VkFramebufferCreateInfo info{};
 	info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
@@ -403,7 +413,6 @@ VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
 }
 
 void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
-	VulkanTexture* inputCubemap,
 	VulkanTexture* outputCubemap,
 	Distribution distribution)
 {
@@ -423,14 +432,6 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 	std::vector<std::vector<VkImageView>> outputViews;
 	CreateOutputCubemapViews(vkDev, outputCubemap, outputViews, outputMipMapCount);
 
-	inputCubemap->image_.GenerateMipmap(
-		vkDev,
-		inputMipMapCount,
-		inputCubemapSize,
-		inputCubemapSize,
-		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
-	);
-
 	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
 
 	vkCmdBindDescriptorSets(
@@ -449,7 +450,8 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 
 	for (int i = static_cast<int>(outputMipMapCount - 1u); i >= 0; --i)
 	{
-		VkFramebuffer frameBuffer = CreateFrameBuffer(vkDev, outputViews[i]);
+		uint32_t targetSize = outputSideLength >> i;
+		VkFramebuffer frameBuffer = CreateFrameBuffer(vkDev, outputViews[i], targetSize, targetSize);
 		usedFrameBuffers.push_back(frameBuffer);
 
 		VkImageSubresourceRange  subresourceRange =

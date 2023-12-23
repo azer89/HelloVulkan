@@ -14,7 +14,6 @@ public:
 	~RendererCubeFilter();
 
 	void OffscreenRender(VulkanDevice& vkDev, 
-		VulkanTexture* inputCubemap, 
 		VulkanTexture* outputCubemap,
 		Distribution disttribution);
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
@@ -46,7 +45,9 @@ private:
 
 	VkFramebuffer CreateFrameBuffer(
 		VulkanDevice& vkDev,
-		std::vector<VkImageView> outputViews);
+		std::vector<VkImageView> outputViews,
+		uint32_t width,
+		uint32_t height);
 };
 
 #endif
