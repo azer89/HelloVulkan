@@ -6,7 +6,9 @@
 #include "RendererClear.h"
 #include "RendererFinish.h"
 #include "RendererPBR.h"
+#include "VulkanTexture.h"
 
+#include <vector>
 #include <memory>
 
 class AppPBR : AppBase
@@ -16,13 +18,26 @@ public:
 	int MainLoop() override;
 	void UpdateUBO(uint32_t imageIndex) override;
 
-private:
-	std::unique_ptr<RendererSkybox> skyboxPtr;
-	std::unique_ptr<RendererClear> clearPtr;
-	std::unique_ptr<RendererFinish> finishPtr;
-	std::unique_ptr<RendererPBR> pbrPtr;
+	void Init();
+	void DestroyResources();
 
-	float modelRotation;
+private:
+	std::vector<RendererBase*> renderers_;
+
+	std::unique_ptr<RendererSkybox> skyboxPtr_;
+	std::unique_ptr<RendererClear> clearPtr_;
+	std::unique_ptr<RendererFinish> finishPtr_;
+	std::unique_ptr<RendererPBR> pbrPtr_;
+
+	// Cubemap generated from HDR
+	VulkanTexture environmentCubemap_;
+
+	// Diffuse / irradiance map
+	VulkanTexture diffuseCubemap_;
+
+	VulkanImage depthImage_;
+
+	float modelRotation_;
 };
 
 #endif
