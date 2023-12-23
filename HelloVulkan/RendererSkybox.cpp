@@ -15,12 +15,11 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 	RendererBase(vkDev, depthImage),
 	envMap_(envMap)
 {
-	std::string vertexShader = AppSettings::ShaderFolder + "cube.vert";
-	std::string fragmentShader = AppSettings::ShaderFolder + "skybox.frag";
+	
 
 	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo());
 
-	CreateUniformBuffers(vkDev, uniformBuffers_, sizeof(PerFrameUBO));
+	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
 	
 	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthImage_->imageView_, swapchainFramebuffers_);
 	
@@ -34,13 +33,13 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 	CreateDescriptorLayoutAndSet(vkDev);
 	
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
-	
+
 	CreateGraphicsPipeline(vkDev,
 		renderPass_,
 		pipelineLayout_,
 		{
-			vertexShader.c_str(),
-			fragmentShader.c_str(),
+			AppSettings::ShaderFolder + "cube.vert",
+			AppSettings::ShaderFolder + "skybox.frag",
 		},
 		&graphicsPipeline_);
 }
@@ -105,7 +104,7 @@ bool RendererSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 	{
 		VkDescriptorSet ds = descriptorSets_[i];
 
-		const VkDescriptorBufferInfo bufferInfo = { uniformBuffers_[i].buffer_, 0, sizeof(PerFrameUBO) };
+		const VkDescriptorBufferInfo bufferInfo = { perFrameUBOs_[i].buffer_, 0, sizeof(PerFrameUBO) };
 		const VkDescriptorImageInfo  imageInfo = 
 		{
 			envMap_->sampler_,

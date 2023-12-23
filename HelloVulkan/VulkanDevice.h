@@ -109,7 +109,7 @@ private:
 	uint32_t computeFamily;
 	VkQueue computeQueue;
 
-	// a list of all queues (for shared buffer allocation)
+	// A list of all queues (for shared buffer allocation)
 	std::vector<uint32_t> deviceQueueIndices;
 	std::vector<VkQueue> deviceQueues;
 

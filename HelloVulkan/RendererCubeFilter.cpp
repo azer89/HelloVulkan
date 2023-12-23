@@ -6,13 +6,13 @@
 #include "AppSettings.h"
 
 const uint32_t outputMipmapCount = 1u; // TODO adjust for prefilter/specular cubemap
-const uint32_t inputSize = 1024;
-const uint32_t outputSize = 128;
+const uint32_t inputCubemapSize = 1024;
+const uint32_t outputDiffuseSize = 128;
 const VkFormat cubeMapFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
 const uint32_t layerCount = 6;
 
 RendererCubeFilter::RendererCubeFilter(
-	VulkanDevice& vkDev, VulkanTexture* cubemapTexture) :
+	VulkanDevice& vkDev, VulkanTexture* inputCubemapTexture) :
 	RendererBase(vkDev, nullptr)
 {
 	CreateRenderPass(vkDev);
@@ -25,14 +25,14 @@ RendererCubeFilter::RendererCubeFilter(
 		1, // Descriptor count per swapchain
 		&descriptorPool_);
 
-	cubemapTexture->CreateTextureSampler(
+	inputCubemapTexture->CreateTextureSampler(
 		vkDev.GetDevice(),
 		inputEnvMapSampler_,
 		0.f,
-		static_cast<float>(NumMipMap(inputSize, inputSize))
+		static_cast<float>(NumMipMap(inputCubemapSize, inputCubemapSize))
 	);
 	CreateDescriptorLayout(vkDev);
-	CreateDescriptorSet(vkDev, cubemapTexture);
+	CreateDescriptorSet(vkDev, inputCubemapTexture);
 
 	// Push constants
 	std::vector<VkPushConstantRange> ranges(1u);
@@ -45,15 +45,13 @@ RendererCubeFilter::RendererCubeFilter(
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_, ranges);
 
 	// Graphics Pipeline
-	std::string vertFile = AppSettings::ShaderFolder + "fullscreen_triangle.vert";
-	std::string fragFile = AppSettings::ShaderFolder + "cube_filter.frag";
 	CreateOffsreenGraphicsPipeline(
 		vkDev,
 		renderPass_,
 		pipelineLayout_,
 		{
-			vertFile.c_str(),
-			fragFile.c_str()
+			AppSettings::ShaderFolder + "fullscreen_triangle.vert",
+			AppSettings::ShaderFolder + "cube_filter.frag"
 		},
 		&graphicsPipeline_
 	);
@@ -69,13 +67,13 @@ void RendererCubeFilter::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t
 {
 }
 
-void RendererCubeFilter::InitializeIrradianceTexture(VulkanDevice& vkDev, VulkanTexture* irradianceTexture)
+void RendererCubeFilter::InitializeDiffuseCubemap(VulkanDevice& vkDev, VulkanTexture* outputDiffuseCubemap)
 {
-	irradianceTexture->image_.CreateImage(
+	outputDiffuseCubemap->image_.CreateImage(
 		vkDev.GetDevice(),
 		vkDev.GetPhysicalDevice(),
-		outputSize,
-		outputSize,
+		outputDiffuseSize,
+		outputDiffuseSize,
 		outputMipmapCount,
 		layerCount,
 		cubeMapFormat,
@@ -85,7 +83,7 @@ void RendererCubeFilter::InitializeIrradianceTexture(VulkanDevice& vkDev, Vulkan
 		VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT
 	);
 
-	irradianceTexture->image_.CreateImageView(
+	outputDiffuseCubemap->image_.CreateImageView(
 		vkDev.GetDevice(),
 		VK_FORMAT_R32G32B32A32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT,
@@ -240,11 +238,11 @@ void RendererCubeFilter::CreateCubemapViews(VulkanDevice& vkDev,
 	}
 }
 
-bool RendererCubeFilter::CreateOffsreenGraphicsPipeline(
+void RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 	VulkanDevice& vkDev,
 	VkRenderPass renderPass,
 	VkPipelineLayout pipelineLayout,
-	const std::vector<const char*>& shaderFiles,
+	const std::vector<std::string>& shaderFiles,
 	VkPipeline* pipeline)
 {
 	std::vector<VulkanShader> shaderModules;
@@ -255,7 +253,7 @@ bool RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 
 	for (size_t i = 0; i < shaderFiles.size(); i++)
 	{
-		const char* file = shaderFiles[i];
+		const char* file = shaderFiles[i].c_str();
 		VK_CHECK(shaderModules[i].Create(vkDev.GetDevice(), file));
 		VkShaderStageFlagBits stage = GLSLangShaderStageToVulkan(GLSLangShaderStageFromFileName(file));
 		shaderStages[i] = shaderModules[i].GetShaderStageInfo(stage, "main");
@@ -264,10 +262,10 @@ bool RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 	// Pipeline create info
 	PipelineCreateInfo pInfo(vkDev);
 
-	pInfo.viewport.width = outputSize;
-	pInfo.viewport.height = outputSize;
+	pInfo.viewport.width = outputDiffuseSize;
+	pInfo.viewport.height = outputDiffuseSize;
 
-	pInfo.scissor.extent = { outputSize, outputSize };
+	pInfo.scissor.extent = { outputDiffuseSize, outputDiffuseSize };
 
 	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
 	colorBlendAttachment.colorWriteMask =
@@ -368,8 +366,6 @@ bool RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 	{
 		s.Destroy(vkDev.GetDevice());
 	}
-
-	return true;
 }
 
 VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
@@ -382,8 +378,8 @@ VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
 	info.renderPass = renderPass_;
 	info.attachmentCount = static_cast<uint32_t>(outputViews.size());
 	info.pAttachments = outputViews.data();
-	info.width = outputSize;
-	info.height = outputSize;
+	info.width = outputDiffuseSize;
+	info.height = outputDiffuseSize;
 	info.layers = 1u;
 	info.flags = 0u;
 
@@ -393,22 +389,22 @@ VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
 }
 
 void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
-	VulkanTexture* cubemapTexture,
-	VulkanTexture* irradianceTexture)
+	VulkanTexture* inputCubemap,
+	VulkanTexture* outputDiffuseCubemap)
 {
-	uint32_t inputMipMapCount = NumMipMap(inputSize, inputSize);
+	uint32_t inputMipMapCount = NumMipMap(inputCubemapSize, inputCubemapSize);
 
-	InitializeIrradianceTexture(vkDev, irradianceTexture);
+	InitializeDiffuseCubemap(vkDev, outputDiffuseCubemap);
 
 	// Create views from the output cubemap
 	std::vector<VkImageView> outputViews;
-	CreateCubemapViews(vkDev, irradianceTexture, outputViews);
+	CreateCubemapViews(vkDev, outputDiffuseCubemap, outputViews);
 
-	cubemapTexture->image_.GenerateMipmap(
+	inputCubemap->image_.GenerateMipmap(
 		vkDev,
 		inputMipMapCount,
-		inputSize,
-		inputSize,
+		inputCubemapSize,
+		inputCubemapSize,
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	);
 
@@ -436,7 +432,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		VkImageSubresourceRange  subresourceRange =
 		{ VK_IMAGE_ASPECT_COLOR_BIT, static_cast<uint32_t>(i), 1u, 0u, 6u };
 
-		irradianceTexture->image_.CreateBarrier(commandBuffer,
+		outputDiffuseCubemap->image_.CreateBarrier(commandBuffer,
 			VK_IMAGE_LAYOUT_UNDEFINED,
 			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 			VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
@@ -449,7 +445,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		values.roughness = 1.f;
 		values.sampleCount = 1024;
 		values.mipLevel = static_cast<uint32_t>(i);
-		values.width = inputSize; // TODO Rename
+		values.width = inputCubemapSize; // TODO Rename
 		values.lodBias = 0;
 		values.distribution = Distribution::Lambertian;
 
@@ -467,7 +463,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		info.pNext = nullptr;
 		info.renderPass = renderPass_;
 		info.framebuffer = frameBuffer;
-		info.renderArea = { 0u, 0u, outputSize, outputSize };
+		info.renderArea = { 0u, 0u, outputDiffuseSize, outputDiffuseSize };
 		info.clearValueCount = static_cast<uint32_t>(clearValues.size());
 		info.pClearValues = clearValues.data();
 
@@ -493,15 +489,15 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 	}
 
 	// Create a sampler for the output cubemap
-	irradianceTexture->CreateTextureSampler(vkDev.GetDevice());
+	outputDiffuseCubemap->CreateTextureSampler(vkDev.GetDevice());
 
 	// Transition to a new layout
-	irradianceTexture->image_.TransitionImageLayout(
+	outputDiffuseCubemap->image_.TransitionImageLayout(
 		vkDev,
-		irradianceTexture->image_.imageFormat_,
+		outputDiffuseCubemap->image_.imageFormat_,
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-		irradianceTexture->image_.layerCount_,
-		irradianceTexture->image_.mipCount_
+		outputDiffuseCubemap->image_.layerCount_,
+		outputDiffuseCubemap->image_.mipCount_
 	);
 }

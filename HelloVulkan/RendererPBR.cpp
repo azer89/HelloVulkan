@@ -21,22 +21,22 @@ RendererPBR::RendererPBR(
 	VulkanDevice& vkDev,
 	VulkanImage* depthImage,
 	VulkanTexture* envMap,
-	VulkanTexture* irradianceMap,
+	VulkanTexture* diffuseMap,
 	const std::vector<MeshCreateInfo>& meshInfos) :
 	RendererBase(vkDev, depthImage),
 	envMap_(envMap),
-	irradianceMap_(irradianceMap)
+	diffuseMap_(diffuseMap)
 {
 	for (const MeshCreateInfo& info : meshInfos)
 	{
 		LoadMesh(vkDev, info);
 	}
 
+	// Load BRDF Lookup table
+	// TODO Move this to a function
 	std::string brdfLUTFile = AppSettings::TextureFolder + "brdfLUT.ktx";
-
 	gli::texture gliTex = gli::load_ktx(brdfLUTFile.c_str());
 	glm::tvec3<GLsizei> extent(gliTex.extent(0));
-
 	if (!brdfLUT_.image_.CreateImageFromData(
 		vkDev,
 		(uint8_t*)gliTex.data(0, 0, 0), 
@@ -48,13 +48,11 @@ RendererPBR::RendererPBR(
 	{
 		std::cerr << "ModelRenderer: failed to load BRDF LUT texture \n";;
 	}
-
 	brdfLUT_.image_.CreateImageView(
 		vkDev.GetDevice(),
 		VK_FORMAT_R16G16_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT
 	);
-
 	brdfLUT_.CreateTextureSampler(
 		vkDev.GetDevice(),
 		0.f,
@@ -66,7 +64,7 @@ RendererPBR::RendererPBR(
 
 	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo());
 
-	CreateUniformBuffers(vkDev, uniformBuffers_, sizeof(PerFrameUBO));
+	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
 	for (Mesh& mesh : meshes_)
 	{
 		CreateUniformBuffers(vkDev, mesh.modelBuffers_, sizeof(ModelUBO));
@@ -89,15 +87,13 @@ RendererPBR::RendererPBR(
 
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
 
-	std::string vertFile = AppSettings::ShaderFolder + "pbr_mesh.vert";
-	std::string fragFile = AppSettings::ShaderFolder + "pbr_mesh.frag";
 	CreateGraphicsPipeline(
 		vkDev,
 		renderPass_,
 		pipelineLayout_,
 		{
-			vertFile.c_str(),
-			fragFile.c_str()
+			AppSettings::ShaderFolder + "pbr_mesh.vert",
+			AppSettings::ShaderFolder + "pbr_mesh.frag"
 		},
 		&graphicsPipeline_,
 		true // hasVertexBuffer
@@ -110,8 +106,6 @@ RendererPBR::~RendererPBR()
 	{
 		mesh.Destroy(device_);
 	}
-
-	//envMapIrradiance_.Destroy(device_);
 
 	brdfLUT_.Destroy(device_);
 }
@@ -142,7 +136,6 @@ void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t curren
 
 		// Draw
 		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBufferSize_ / (sizeof(unsigned int))), 1, 0, 0, 0);
-
 	}
 	
 	vkCmdEndRenderPass(commandBuffer);
@@ -175,7 +168,7 @@ bool RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 			VK_SHADER_STAGE_FRAGMENT_BIT)
 	);
 
-	// irradianceMap
+	// Diffuse map
 	bindings.emplace_back(
 		DescriptorSetLayoutBinding(
 			bindingIndex++,
@@ -227,7 +220,7 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Mesh& mesh)
 	{
 		VkDescriptorSet ds = mesh.descriptorSets_[i];
 
-		const VkDescriptorBufferInfo bufferInfo1 = { uniformBuffers_[i].buffer_, 0, sizeof(PerFrameUBO)};
+		const VkDescriptorBufferInfo bufferInfo1 = { perFrameUBOs_[i].buffer_, 0, sizeof(PerFrameUBO)};
 		const VkDescriptorBufferInfo bufferInfo2 = { mesh.modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
 
 		uint32_t bindIndex = 0;
@@ -274,8 +267,8 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Mesh& mesh)
 		};
 		const VkDescriptorImageInfo imageInfoEnvIrr = 
 		{ 
-			irradianceMap_->sampler_, 
-			irradianceMap_->image_.imageView_, 
+			diffuseMap_->sampler_, 
+			diffuseMap_->image_.imageView_, 
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL 
 		};
 		const VkDescriptorImageInfo imageInfoBRDF = 
@@ -307,7 +300,7 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Mesh& mesh)
 	return true;
 }
 
-void RendererPBR::LoadCubeMap(VulkanDevice& vkDev, const char* fileName, VulkanTexture& cubemap)
+void RendererPBR::CreateCubemapFromHDR(VulkanDevice& vkDev, const char* fileName, VulkanTexture& cubemap)
 {
 	cubemap.CreateCubeTextureImage(vkDev, fileName);
 

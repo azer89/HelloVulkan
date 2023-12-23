@@ -7,6 +7,7 @@
 
 #include <array>
 
+// Constructor
 RendererBase::RendererBase(const VulkanDevice& vkDev, VulkanImage* depthImage) :
 	device_(vkDev.GetDevice()), 
 	framebufferWidth_(vkDev.GetFrameBufferWidth()), 
@@ -15,9 +16,10 @@ RendererBase::RendererBase(const VulkanDevice& vkDev, VulkanImage* depthImage) :
 {
 }
 
+// Destructor
 RendererBase::~RendererBase()
 {
-	for (auto buf : uniformBuffers_)
+	for (auto buf : perFrameUBOs_)
 	{
 		buf.Destroy(device_);
 	}
@@ -303,7 +305,7 @@ void RendererBase::CreateGraphicsPipeline(
 	VulkanDevice& vkDev,
 	VkRenderPass renderPass,
 	VkPipelineLayout pipelineLayout,
-	const std::vector<const char*>& shaderFiles,
+	const std::vector<std::string>& shaderFiles,
 	VkPipeline* pipeline,
 	bool hasVertexBuffer,
 	VkPrimitiveTopology topology,
@@ -322,7 +324,7 @@ void RendererBase::CreateGraphicsPipeline(
 
 	for (size_t i = 0; i < shaderFiles.size(); i++)
 	{
-		const char* file = shaderFiles[i];
+		const char* file = shaderFiles[i].c_str();
 		VK_CHECK(shaderModules[i].Create(vkDev.GetDevice(), file));
 		VkShaderStageFlagBits stage = GLSLangShaderStageToVulkan(GLSLangShaderStageFromFileName(file));
 		shaderStages[i] = shaderModules[i].GetShaderStageInfo(stage, "main");
