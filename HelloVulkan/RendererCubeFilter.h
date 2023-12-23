@@ -9,10 +9,12 @@
 class RendererCubeFilter final : public RendererBase
 {
 public:
-	RendererCubeFilter(VulkanDevice& vkDev, VulkanTexture* cubemapTexture);
+	RendererCubeFilter(VulkanDevice& vkDev, VulkanTexture* inputCubemap);
 	~RendererCubeFilter();
 
-	void OffscreenRender(VulkanDevice& vkDev, VulkanTexture* cubemapTexture, VulkanTexture* irradianceTexture);
+	void OffscreenRender(VulkanDevice& vkDev, 
+		VulkanTexture* inputCubemap, 
+		VulkanTexture* outputDiffuseCubemap);
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:
@@ -24,12 +26,13 @@ private:
 	void CreateDescriptorLayout(VulkanDevice& vkDev);
 	void CreateDescriptorSet(VulkanDevice& vkDev, VulkanTexture* cubemapTexture);
 
-	void InitializeIrradianceTexture(VulkanDevice& vkDev, VulkanTexture* irradianceTexture);
+	void InitializeDiffuseCubemap(VulkanDevice& vkDev, 
+		VulkanTexture* outputDiffuseCubemap);
 	void CreateCubemapViews(VulkanDevice& vkDev, 
 		VulkanTexture* cubemapTexture, 
 		std::vector<VkImageView>& cubemapViews);
 
-	bool CreateOffsreenGraphicsPipeline(
+	void CreateOffsreenGraphicsPipeline(
 		VulkanDevice& vkDev,
 		VkRenderPass renderPass,
 		VkPipelineLayout pipelineLayout,

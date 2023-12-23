@@ -12,7 +12,7 @@ public:
 	RendererPBR(VulkanDevice& vkDev,
 		VulkanImage* depthImage,
 		VulkanTexture* envMap,
-		VulkanTexture* irradianceMap,
+		VulkanTexture* diffuseMap,
 		const std::vector<MeshCreateInfo>& meshInfos);
 
 	virtual ~RendererPBR();
@@ -27,14 +27,15 @@ private:
 	bool CreateDescriptorLayout(VulkanDevice& vkDev);
 	bool CreateDescriptorSet(VulkanDevice& vkDev, Mesh& mesh);
 
-	// Textures
-	void LoadCubeMap(VulkanDevice& vkDev, const char* fileName, VulkanTexture& cubemap);
+	// Manually load cubemap from HDR file, this function is not used anymore
+	void CreateCubemapFromHDR(VulkanDevice& vkDev, const char* fileName, VulkanTexture& cubemap);
 
+	// TODO Move this function to Mesh.h
 	void LoadMesh(VulkanDevice& vkDev, const MeshCreateInfo& info);
 
 private:
 	VulkanTexture* envMap_;
-	VulkanTexture* irradianceMap_;
+	VulkanTexture* diffuseMap_;
 	VulkanTexture brdfLUT_;
 };
 

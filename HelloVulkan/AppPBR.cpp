@@ -61,13 +61,13 @@ int AppPBR::MainLoop()
 			&envMap); // Output
 	}
 
-	// Irradiance / specular cubemap
-	VulkanTexture irradianceMap;
+	// Diffuse cubemap
+	VulkanTexture diffuseMap;
 	{
 		RendererCubeFilter cFilter(vulkanDevice, &envMap);
 		cFilter.OffscreenRender(vulkanDevice,
 			&envMap,
-			&irradianceMap);
+			&diffuseMap);
 	}
 
 	// Renderers
@@ -77,7 +77,7 @@ int AppPBR::MainLoop()
 		vulkanDevice,
 		&depthImage,
 		&envMap,
-		&irradianceMap,
+		&diffuseMap,
 		meshInfos);
 	skyboxPtr = std::make_unique<RendererSkybox>(vulkanDevice, &envMap, &depthImage);
 
@@ -102,7 +102,7 @@ int AppPBR::MainLoop()
 	// Destroy resources
 	depthImage.Destroy(vulkanDevice.GetDevice());
 	envMap.Destroy(vulkanDevice.GetDevice());
-	irradianceMap.Destroy(vulkanDevice.GetDevice());
+	diffuseMap.Destroy(vulkanDevice.GetDevice());
 	clearPtr = nullptr;
 	finishPtr = nullptr;
 	skyboxPtr = nullptr;

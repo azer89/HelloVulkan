@@ -14,7 +14,7 @@ public:
 	RendererEquirect2Cube(VulkanDevice& vkDev, const std::string& hdrFile);
 	~RendererEquirect2Cube();
 
-	void OffscreenRender(VulkanDevice& vkDev, VulkanTexture* outputEnvMap);
+	void OffscreenRender(VulkanDevice& vkDev, VulkanTexture* outputCubemap);
 
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
@@ -24,7 +24,7 @@ private:
 	VkFramebuffer frameBuffer_;
 
 private:
-	void InitializeEnvironmentMap(VulkanDevice& vkDev, VulkanTexture* outputEnvMap);
+	void InitializeCubemap(VulkanDevice& vkDev, VulkanTexture* outputCubemap);
 	void InitializeHDRTexture(VulkanDevice& vkDev, const std::string& hdrFile);
 	void CreateCubemapViews(
 		VulkanDevice& vkDev,
@@ -32,10 +32,10 @@ private:
 		std::vector<VkImageView>& cubeMapViews);
 
 	void CreateRenderPass(VulkanDevice& vkDev);
-	bool CreateDescriptorLayout(VulkanDevice& vkDev);
-	bool CreateDescriptorSet(VulkanDevice& vkDev);
+	void CreateDescriptorLayout(VulkanDevice& vkDev);
+	void CreateDescriptorSet(VulkanDevice& vkDev);
 
-	bool CreateOffscreenGraphicsPipeline(
+	void CreateOffscreenGraphicsPipeline(
 		VulkanDevice& vkDev,
 		VkRenderPass renderPass,
 		VkPipelineLayout pipelineLayout,

@@ -50,11 +50,11 @@ void RendererEquirect2Cube::FillCommandBuffer(VkCommandBuffer commandBuffer, siz
 {
 }
 
-void RendererEquirect2Cube::InitializeEnvironmentMap(VulkanDevice& vkDev, VulkanTexture* outputEnvMap)
+void RendererEquirect2Cube::InitializeCubemap(VulkanDevice& vkDev, VulkanTexture* outputCubemap)
 {
 	uint32_t mipmapCount = NumMipMap(cubemapSideLength, cubemapSideLength);
 
-	outputEnvMap->image_.CreateImage(
+	outputCubemap->image_.CreateImage(
 		vkDev.GetDevice(),
 		vkDev.GetPhysicalDevice(),
 		cubemapSideLength,
@@ -68,7 +68,7 @@ void RendererEquirect2Cube::InitializeEnvironmentMap(VulkanDevice& vkDev, Vulkan
 		VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT
 	);
 
-	outputEnvMap->image_.CreateImageView(
+	outputCubemap->image_.CreateImageView(
 		vkDev.GetDevice(),
 		VK_FORMAT_R32G32B32A32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT,
@@ -136,7 +136,7 @@ void RendererEquirect2Cube::CreateRenderPass(VulkanDevice& vkDev)
 	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &m_info, nullptr, &renderPass_));
 }
 
-bool RendererEquirect2Cube::CreateDescriptorLayout(VulkanDevice& vkDev)
+void RendererEquirect2Cube::CreateDescriptorLayout(VulkanDevice& vkDev)
 {
 	std::vector<VkDescriptorSetLayoutBinding> bindings;
 
@@ -160,11 +160,9 @@ bool RendererEquirect2Cube::CreateDescriptorLayout(VulkanDevice& vkDev)
 	};
 
 	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));
-
-	return true;
 }
 
-bool RendererEquirect2Cube::CreateDescriptorSet(VulkanDevice& vkDev)
+void RendererEquirect2Cube::CreateDescriptorSet(VulkanDevice& vkDev)
 {
 	const VkDescriptorSetAllocateInfo allocInfo = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
@@ -202,11 +200,9 @@ bool RendererEquirect2Cube::CreateDescriptorSet(VulkanDevice& vkDev)
 		0,
 		nullptr
 	);
-
-	return true;
 }
 
-bool RendererEquirect2Cube::CreateOffscreenGraphicsPipeline(
+void RendererEquirect2Cube::CreateOffscreenGraphicsPipeline(
 	VulkanDevice& vkDev,
 	VkRenderPass renderPass,
 	VkPipelineLayout pipelineLayout,
@@ -334,8 +330,6 @@ bool RendererEquirect2Cube::CreateOffscreenGraphicsPipeline(
 	{
 		s.Destroy(vkDev.GetDevice());
 	}
-
-	return true;
 }
 
 void RendererEquirect2Cube::CreateFrameBuffer(
@@ -397,7 +391,7 @@ void RendererEquirect2Cube::CreateCubemapViews(
 void RendererEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanTexture* outputEnvMap)
 {
 	// Initialize output cubemap
-	InitializeEnvironmentMap(vkDev, outputEnvMap);
+	InitializeCubemap(vkDev, outputEnvMap);
 
 	// Create views from the output cubemap
 	std::vector<VkImageView> outputViews;
