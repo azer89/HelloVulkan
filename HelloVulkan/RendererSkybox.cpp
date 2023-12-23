@@ -20,7 +20,7 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 
 	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo());
 
-	CreateUniformBuffers(vkDev, uniformBuffers_, sizeof(PerFrameUBO));
+	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
 	
 	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthImage_->imageView_, swapchainFramebuffers_);
 	
@@ -105,7 +105,7 @@ bool RendererSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 	{
 		VkDescriptorSet ds = descriptorSets_[i];
 
-		const VkDescriptorBufferInfo bufferInfo = { uniformBuffers_[i].buffer_, 0, sizeof(PerFrameUBO) };
+		const VkDescriptorBufferInfo bufferInfo = { perFrameUBOs_[i].buffer_, 0, sizeof(PerFrameUBO) };
 		const VkDescriptorImageInfo  imageInfo = 
 		{
 			envMap_->sampler_,

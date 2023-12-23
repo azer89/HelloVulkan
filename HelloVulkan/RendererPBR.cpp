@@ -66,7 +66,7 @@ RendererPBR::RendererPBR(
 
 	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo());
 
-	CreateUniformBuffers(vkDev, uniformBuffers_, sizeof(PerFrameUBO));
+	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
 	for (Mesh& mesh : meshes_)
 	{
 		CreateUniformBuffers(vkDev, mesh.modelBuffers_, sizeof(ModelUBO));
@@ -227,7 +227,7 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Mesh& mesh)
 	{
 		VkDescriptorSet ds = mesh.descriptorSets_[i];
 
-		const VkDescriptorBufferInfo bufferInfo1 = { uniformBuffers_[i].buffer_, 0, sizeof(PerFrameUBO)};
+		const VkDescriptorBufferInfo bufferInfo1 = { perFrameUBOs_[i].buffer_, 0, sizeof(PerFrameUBO)};
 		const VkDescriptorBufferInfo bufferInfo2 = { mesh.modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
 
 		uint32_t bindIndex = 0;

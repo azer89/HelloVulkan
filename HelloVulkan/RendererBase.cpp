@@ -7,6 +7,7 @@
 
 #include <array>
 
+// Constructor
 RendererBase::RendererBase(const VulkanDevice& vkDev, VulkanImage* depthImage) :
 	device_(vkDev.GetDevice()), 
 	framebufferWidth_(vkDev.GetFrameBufferWidth()), 
@@ -15,9 +16,10 @@ RendererBase::RendererBase(const VulkanDevice& vkDev, VulkanImage* depthImage) :
 {
 }
 
+// Destructor
 RendererBase::~RendererBase()
 {
-	for (auto buf : uniformBuffers_)
+	for (auto buf : perFrameUBOs_)
 	{
 		buf.Destroy(device_);
 	}

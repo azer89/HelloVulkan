@@ -7,7 +7,6 @@
 #include "RendererFinish.h"
 #include "RendererPBR.h"
 
-
 #include <memory>
 
 class AppPBR : AppBase

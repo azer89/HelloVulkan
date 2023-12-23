@@ -32,7 +32,7 @@ public:
 
 	void SetPerFrameUBO(const VulkanDevice& vkDev, uint32_t imageIndex, PerFrameUBO ubo)
 	{
-		UpdateUniformBuffer(vkDev.GetDevice(), uniformBuffers_[imageIndex], &ubo, sizeof(PerFrameUBO));
+		UpdateUniformBuffer(vkDev.GetDevice(), perFrameUBOs_[imageIndex], &ubo, sizeof(PerFrameUBO));
 	}
 
 protected:
@@ -57,15 +57,23 @@ protected:
 	VkPipeline graphicsPipeline_ = nullptr;
 
 	// PerFrameUBO
-	std::vector<VulkanBuffer> uniformBuffers_;
+	std::vector<VulkanBuffer> perFrameUBOs_;
 
 protected:
-	void BeginRenderPass(VkCommandBuffer commandBuffer, size_t currentImage);
-
+	// UBO
 	void CreateUniformBuffers(
-		VulkanDevice& vkDev, 
+		VulkanDevice& vkDev,
 		std::vector<VulkanBuffer>& buffers,
 		size_t uniformDataSize);
+
+	// UBO
+	void UpdateUniformBuffer(
+		VkDevice device,
+		VulkanBuffer& buffer,
+		const void* data,
+		const size_t dataSize);
+
+	void BeginRenderPass(VkCommandBuffer commandBuffer, size_t currentImage);
 
 	void CreateColorAndDepthRenderPass(
 		VulkanDevice& device, 
@@ -107,13 +115,6 @@ protected:
 		int32_t customWidth = -1,
 		int32_t customHeight = -1,
 		uint32_t numPatchControlPoints = 0);
-
-	// UBO
-	void UpdateUniformBuffer(
-		VkDevice device,
-		VulkanBuffer& buffer,
-		const void* data,
-		const size_t dataSize);
 
 	VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(
 		uint32_t binding,
