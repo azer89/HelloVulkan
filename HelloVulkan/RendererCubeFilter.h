@@ -3,6 +3,7 @@
 
 #include "RendererBase.h"
 #include "VulkanTexture.h"
+#include "CubePushConstant.h"
 
 #include <string>
 
@@ -14,7 +15,8 @@ public:
 
 	void OffscreenRender(VulkanDevice& vkDev, 
 		VulkanTexture* inputCubemap, 
-		VulkanTexture* outputDiffuseCubemap);
+		VulkanTexture* outputCubemap,
+		Distribution disttribution);
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:
@@ -26,11 +28,14 @@ private:
 	void CreateDescriptorLayout(VulkanDevice& vkDev);
 	void CreateDescriptorSet(VulkanDevice& vkDev, VulkanTexture* cubemapTexture);
 
-	void InitializeDiffuseCubemap(VulkanDevice& vkDev, 
-		VulkanTexture* outputDiffuseCubemap);
-	void CreateCubemapViews(VulkanDevice& vkDev, 
-		VulkanTexture* cubemapTexture, 
-		std::vector<VkImageView>& cubemapViews);
+	void InitializeOutputCubemap(VulkanDevice& vkDev, 
+		VulkanTexture* outputDiffuseCubemap,
+		uint32_t numMipmap,
+		uint32_t sideLength);
+	void CreateOutputCubemapViews(VulkanDevice& vkDev,
+		VulkanTexture* cubemapTexture,
+		std::vector<std::vector<VkImageView>>& cubemapViews,
+		uint32_t numMip);
 
 	void CreateOffsreenGraphicsPipeline(
 		VulkanDevice& vkDev,

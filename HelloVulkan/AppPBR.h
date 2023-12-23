@@ -35,6 +35,8 @@ private:
 	// Diffuse / irradiance map
 	VulkanTexture diffuseCubemap_;
 
+	VulkanTexture specularCubemap_;
+
 	VulkanImage depthImage_;
 
 	float modelRotation_;
