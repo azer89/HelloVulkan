@@ -1,9 +1,10 @@
 # version 460 core
 
 /*
- This shader is based on:
-	https://www.turais.de/how-to-load-hdri-as-a-cubemap-in-opengl/
- */
+This shader is based on:
+[1] https://www.turais.de/how-to-load-hdri-as-a-cubemap-in-opengl/
+[2] https://en.wikipedia.org/wiki/Cube_mapping#Memory_addressing
+*/
 
 #define MATH_PI 3.1415926535897932384626433832795
 #define MATH_INV_PI (1.0 / MATH_PI)

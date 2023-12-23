@@ -1,5 +1,10 @@
 # version 460 core
 
+/*
+This shader is based on:
+https://github.com/KhronosGroup/glTF-IBL-Sampler
+*/
+
 layout(set = 0, binding = 0) uniform samplerCube cubeMap;
 
 layout(location = 0) in vec2 texCoord;
@@ -36,6 +41,11 @@ struct MicrofacetDistributionSample
 	float sinTheta;
 	float phi;
 };
+
+float Saturate(float v)
+{
+	return clamp(v, 0.0f, 1.0f);
+}
 
 // Hammersley Points on the Hemisphere
 // CC BY 3.0 (Holger Dammertz)
@@ -99,6 +109,36 @@ MicrofacetDistributionSample Lambertian(vec2 xi, float roughness)
 	return lambertian;
 }
 
+float D_GGX(float NdotH, float roughness)
+{
+	float a = NdotH * roughness;
+	float k = roughness / (1.0 - NdotH * NdotH + a * a);
+	return k * k * (1.0 / MATH_PI);
+}
+
+MicrofacetDistributionSample GGX(vec2 xi, float roughness)
+{
+	MicrofacetDistributionSample ggx;
+
+	// Evaluate sampling equations
+	float alpha = roughness * roughness;
+	ggx.cosTheta = Saturate(sqrt((1.0 - xi.y) / (1.0 + (alpha * alpha - 1.0) * xi.y)));
+	ggx.sinTheta = sqrt(1.0 - ggx.cosTheta * ggx.cosTheta);
+	ggx.phi = 2.0 * MATH_PI * xi.x;
+
+	// Evaluate GGX pdf (for half vector)
+	ggx.pdf = D_GGX(ggx.cosTheta, alpha);
+
+	// Apply the Jacobian to obtain a pdf that is parameterized by l
+	// see https://bruop.github.io/ibl/
+	// Typically you'd have the following:
+	// float pdf = D_GGX(NoH, roughness) * NoH / (4.0 * VoH);
+	// but since V = N => VoH == NoH
+	ggx.pdf /= 4.0;
+
+	return ggx;
+}
+
 // Mipmap Filtered Samples
 float ComputeLod(float pdf)
 {
@@ -123,7 +163,9 @@ vec4 GetImportanceSample(int sampleIndex, vec3 N, float roughness)
 	}
 	else if (pcParams.distribution == cGGX)
 	{
-		// TODO
+		// Trowbridge-Reitz / GGX microfacet model (Walter et al)
+		// https://www.cs.cornell.edu/~srm/publications/EGSR07-btdf.html
+		importanceSample = GGX(xi, roughness);
 	}
 
 	// Transform the hemisphere sample to the normal coordinate frame
@@ -164,7 +206,7 @@ vec3 FilterColor(vec3 N)
 			vec3 lambertian = textureLod(cubeMap, H, lod).rgb;
 			color += lambertian;
 		}
-		/*else if (pcParams.distribution == cGGX)
+		else if (pcParams.distribution == cGGX)
 		{
 			vec3 V = N;
 			vec3 L = normalize(reflect(-V, H));
@@ -181,19 +223,17 @@ vec3 FilterColor(vec3 N)
 				color += sampleColor * NdotL;
 				weight += NdotL;
 			}
-		}*/
+		}
 	}
 
-	/*if (weight > 0.0)
+	if (weight > 0.0)
 	{
 		color /= weight;
 	}
 	else
 	{
 		color /= float(pcParams.sampleCount);
-	}*/
-
-	color /= float(pcParams.sampleCount);
+	}
 
 	return color.rgb;
 }
