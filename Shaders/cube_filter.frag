@@ -1,6 +1,9 @@
 # version 460 core
 
 /*
+
+Fragment shader to filter a cubemap into a diffuse cubemap or specular cubemap
+
 This shader is based on:
 https://github.com/KhronosGroup/glTF-IBL-Sampler
 */

@@ -1,5 +1,9 @@
 ﻿# version 460 core
 
+/*
+Vertex shader to generate a cube
+*/
+
 layout(location = 0) out vec3 direction;
 
 layout(binding = 0) uniform PerFrameUBO

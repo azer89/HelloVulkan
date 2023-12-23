@@ -26,11 +26,11 @@ RendererCubeFilter::RendererCubeFilter(
 		&descriptorPool_);
 
 	cubemapTexture->CreateTextureSampler(
-		vkDev.GetDevice(), 
+		vkDev.GetDevice(),
 		inputEnvMapSampler_,
 		0.f,
 		static_cast<float>(NumMipMap(inputSize, inputSize))
-		);
+	);
 	CreateDescriptorLayout(vkDev);
 	CreateDescriptorSet(vkDev, cubemapTexture);
 
@@ -306,7 +306,7 @@ bool RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 	pInfo.rasterizer.depthClampEnable = VK_FALSE;
 	pInfo.rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 	pInfo.rasterizer.lineWidth = 1.f;
-	pInfo.rasterizer.rasterizerDiscardEnable = VK_FALSE; 
+	pInfo.rasterizer.rasterizerDiscardEnable = VK_FALSE;
 	pInfo.rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
 
 	// Disable multisampling
@@ -392,8 +392,8 @@ VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
 	return frameBuffer;
 }
 
-void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev, 
-	VulkanTexture* cubemapTexture, 
+void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
+	VulkanTexture* cubemapTexture,
 	VulkanTexture* irradianceTexture)
 {
 	uint32_t inputMipMapCount = NumMipMap(inputSize, inputSize);
@@ -411,7 +411,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		inputSize,
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	);
-	
+
 	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
 
 	vkCmdBindDescriptorSets(
@@ -425,7 +425,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		nullptr);
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
-	
+
 	std::vector<VkFramebuffer> usedFrameBuffers;
 
 	for (int i = static_cast<int>(outputMipmapCount - 1u); i >= 0; --i)
@@ -433,7 +433,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		VkFramebuffer frameBuffer = CreateFrameBuffer(vkDev, outputViews);
 		usedFrameBuffers.push_back(frameBuffer);
 
-		VkImageSubresourceRange  subresourceRange = 
+		VkImageSubresourceRange  subresourceRange =
 		{ VK_IMAGE_ASPECT_COLOR_BIT, static_cast<uint32_t>(i), 1u, 0u, 6u };
 
 		irradianceTexture->image_.CreateBarrier(commandBuffer,
@@ -446,7 +446,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 			subresourceRange);
 
 		PushConstant values{};
-		values.roughness = 1.f; 
+		values.roughness = 1.f;
 		values.sampleCount = 1024;
 		values.mipLevel = static_cast<uint32_t>(i);
 		values.width = inputSize; // TODO Rename
@@ -455,9 +455,9 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 
 		vkCmdPushConstants(
 			commandBuffer,
-			pipelineLayout_, 
-			VK_SHADER_STAGE_FRAGMENT_BIT, 
-			0, 
+			pipelineLayout_,
+			VK_SHADER_STAGE_FRAGMENT_BIT,
+			0,
 			sizeof(PushConstant), &values);
 
 		const std::vector<VkClearValue> clearValues(6u, { 0.0f, 0.0f, 1.0f, 1.0f });
@@ -477,7 +477,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 
 		vkCmdEndRenderPass(commandBuffer);
 	}
-	
+
 	vkDev.EndSingleTimeCommands(commandBuffer);
 
 	// Destroy frame buffers

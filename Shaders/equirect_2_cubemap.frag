@@ -1,6 +1,8 @@
 # version 460 core
 
 /*
+Fragment shader to turn an equirectangular image to a cubemap 
+
 This shader is based on:
 [1] https://www.turais.de/how-to-load-hdri-as-a-cubemap-in-opengl/
 [2] https://en.wikipedia.org/wiki/Cube_mapping#Memory_addressing
