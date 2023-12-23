@@ -55,12 +55,14 @@ void AppPBR::Init()
 			&environmentCubemap_); // Output
 	}
 
-	// Diffuse cubemap
+	// Diffuse and specular cubemaps
 	{
 		RendererCubeFilter cFilter(vulkanDevice, &environmentCubemap_);
+		// Diffuse
 		cFilter.OffscreenRender(vulkanDevice,
 			&diffuseCubemap_,
 			Distribution::Lambertian);
+		// Specular
 		cFilter.OffscreenRender(vulkanDevice,
 			&specularCubemap_,
 			Distribution::GGX);
@@ -79,7 +81,7 @@ void AppPBR::Init()
 		&environmentCubemap_,
 		&diffuseCubemap_,
 		meshInfos);
-	skyboxPtr_ = std::make_unique<RendererSkybox>(vulkanDevice, &environmentCubemap_, &depthImage_);
+	skyboxPtr_ = std::make_unique<RendererSkybox>(vulkanDevice, &specularCubemap_, &depthImage_);
 
 	renderers_ =
 	{

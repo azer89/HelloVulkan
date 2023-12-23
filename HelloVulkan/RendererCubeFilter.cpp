@@ -227,11 +227,10 @@ void RendererCubeFilter::CreateOutputCubemapViews(VulkanDevice& vkDev,
 {
 	cubemapViews = 
 		std::vector<std::vector<VkImageView>>(numMip, std::vector<VkImageView>(layerCount, VK_NULL_HANDLE));
-	//cubemapViews = std::vector<VkImageView>(layerCount, VK_NULL_HANDLE);
-	for (size_t a = 0; a < numMip; ++a)
+	for (uint32_t a = 0; a < numMip; ++a)
 	{
 		cubemapViews[a] = {};
-		for (size_t b = 0; b < layerCount; ++b)
+		for (uint32_t b = 0; b < layerCount; ++b)
 		{
 			VkImageSubresourceRange subresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0u, 1u, 0u, 1u };
 			subresourceRange.baseMipLevel = a;
@@ -402,8 +401,8 @@ VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
 	info.renderPass = renderPass_;
 	info.attachmentCount = static_cast<uint32_t>(outputViews.size());
 	info.pAttachments = outputViews.data();
-	info.width = outputDiffuseSize;
-	info.height = outputDiffuseSize;
+	info.width = width;
+	info.height = height;
 	info.layers = 1u;
 	info.flags = 0u;
 
@@ -451,6 +450,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 	for (int i = static_cast<int>(outputMipMapCount - 1u); i >= 0; --i)
 	{
 		uint32_t targetSize = outputSideLength >> i;
+
 		VkFramebuffer frameBuffer = CreateFrameBuffer(vkDev, outputViews[i], targetSize, targetSize);
 		usedFrameBuffers.push_back(frameBuffer);
 
@@ -488,7 +488,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		info.pNext = nullptr;
 		info.renderPass = renderPass_;
 		info.framebuffer = frameBuffer;
-		info.renderArea = { 0u, 0u, outputDiffuseSize, outputDiffuseSize };
+		info.renderArea = { 0u, 0u, targetSize, targetSize };
 		info.clearValueCount = static_cast<uint32_t>(clearValues.size());
 		info.pClearValues = clearValues.data();
 
