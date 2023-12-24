@@ -74,7 +74,6 @@ RendererCubeFilter::RendererCubeFilter(
 RendererCubeFilter::~RendererCubeFilter()
 {
 	vkDestroySampler(device_, inputEnvMapSampler_, nullptr);
-	vkDestroyFramebuffer(device_, frameBuffer_, nullptr);
 }
 
 void RendererCubeFilter::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
