@@ -78,10 +78,10 @@ void AppPBR::Init()
 	pbrPtr_ = std::make_unique<RendererPBR>(
 		vulkanDevice,
 		&depthImage_,
-		&environmentCubemap_,
+		&specularCubemap_,
 		&diffuseCubemap_,
 		meshInfos);
-	skyboxPtr_ = std::make_unique<RendererSkybox>(vulkanDevice, &specularCubemap_, &depthImage_);
+	skyboxPtr_ = std::make_unique<RendererSkybox>(vulkanDevice, &environmentCubemap_, &depthImage_);
 
 	renderers_ =
 	{

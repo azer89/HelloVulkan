@@ -309,6 +309,7 @@ void main()
 	{
 		vec3 scan = UVToXYZ(face, texCoordNew);
 		vec3 direction = normalize(scan);
+		direction.y = -direction.y; // TODO Find another way that does not flip Y
 		WriteFace(face, FilterColor(direction));
 	}
 }
