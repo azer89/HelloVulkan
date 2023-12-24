@@ -114,8 +114,6 @@ protected:
 		bool useDepth = true,
 		bool useBlending = true,
 		bool dynamicScissorState = false,
-		int32_t customWidth = -1,
-		int32_t customHeight = -1,
 		uint32_t numPatchControlPoints = 0);
 
 	VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(

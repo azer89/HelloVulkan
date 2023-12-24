@@ -55,12 +55,17 @@ void AppPBR::Init()
 			&environmentCubemap_); // Output
 	}
 
-	// Diffuse cubemap
+	// Diffuse and specular cubemaps
 	{
 		RendererCubeFilter cFilter(vulkanDevice, &environmentCubemap_);
+		// Diffuse
 		cFilter.OffscreenRender(vulkanDevice,
-			&environmentCubemap_,
-			&diffuseCubemap_);
+			&diffuseCubemap_,
+			Distribution::Lambertian);
+		// Specular
+		cFilter.OffscreenRender(vulkanDevice,
+			&specularCubemap_,
+			Distribution::GGX);
 	}
 
 	depthImage_.CreateDepthResources(vulkanDevice,
@@ -73,7 +78,7 @@ void AppPBR::Init()
 	pbrPtr_ = std::make_unique<RendererPBR>(
 		vulkanDevice,
 		&depthImage_,
-		&environmentCubemap_,
+		&specularCubemap_,
 		&diffuseCubemap_,
 		meshInfos);
 	skyboxPtr_ = std::make_unique<RendererSkybox>(vulkanDevice, &environmentCubemap_, &depthImage_);
@@ -93,6 +98,7 @@ void AppPBR::DestroyResources()
 	depthImage_.Destroy(vulkanDevice.GetDevice());
 	environmentCubemap_.Destroy(vulkanDevice.GetDevice());
 	diffuseCubemap_.Destroy(vulkanDevice.GetDevice());
+	specularCubemap_.Destroy(vulkanDevice.GetDevice());
 	clearPtr_ = nullptr;
 	finishPtr_ = nullptr;
 	skyboxPtr_ = nullptr;

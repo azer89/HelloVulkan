@@ -12,12 +12,12 @@ layout(set = 0, binding = 0) uniform samplerCube cubeMap;
 
 layout(location = 0) in vec2 texCoord;
 
-layout(location = 0) out vec4 outFace0;
-layout(location = 1) out vec4 outFace1;
-layout(location = 2) out vec4 outFace2;
-layout(location = 3) out vec4 outFace3;
-layout(location = 4) out vec4 outFace4;
-layout(location = 5) out vec4 outFace5;
+layout(location = 0) out vec4 cubeFace0;
+layout(location = 1) out vec4 cubeFace1;
+layout(location = 2) out vec4 cubeFace2;
+layout(location = 3) out vec4 cubeFace3;
+layout(location = 4) out vec4 cubeFace4;
+layout(location = 5) out vec4 cubeFace5;
 
 #define MATH_PI 3.1415926535897932384626433832795
 #define MATH_INV_PI (1.0 / MATH_PI)
@@ -247,27 +247,27 @@ void WriteFace(int face, vec3 colorIn)
 
 	if (face == 0)
 	{
-		outFace0 = color;
+		cubeFace0 = color;
 	}
 	else if (face == 1)
 	{
-		outFace1 = color;
+		cubeFace1 = color;
 	}
 	else if (face == 2)
 	{
-		outFace2 = color;
+		cubeFace2 = color;
 	}
 	else if (face == 3)
 	{
-		outFace3 = color;
+		cubeFace3 = color;
 	}
 	else if (face == 4)
 	{
-		outFace4 = color;
+		cubeFace4 = color;
 	}
 	else
 	{
-		outFace5 = color;
+		cubeFace5 = color;
 	}
 }
 
@@ -309,6 +309,7 @@ void main()
 	{
 		vec3 scan = UVToXYZ(face, texCoordNew);
 		vec3 direction = normalize(scan);
+		direction.y = -direction.y; // TODO Find another way that does not flip Y
 		WriteFace(face, FilterColor(direction));
 	}
 }
