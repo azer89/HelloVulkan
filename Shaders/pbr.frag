@@ -19,10 +19,11 @@ layout(binding = 3) uniform sampler2D textureNormal;
 layout(binding = 4) uniform sampler2D textureMetalness;
 layout(binding = 5) uniform sampler2D textureRoughness;
 layout(binding = 6) uniform sampler2D textureAO;
+layout(binding = 7) uniform sampler2D textureEmissive;
 
-layout(binding = 7) uniform samplerCube specularMap;
-layout(binding = 8) uniform samplerCube diffuseMap;
-layout(binding = 9) uniform sampler2D brdfLUT;
+layout(binding = 8) uniform samplerCube specularMap;
+layout(binding = 9) uniform samplerCube diffuseMap;
+layout(binding = 10) uniform sampler2D brdfLUT;
 
 const int NUM_LIGHTS = 4;
 
@@ -51,13 +52,13 @@ void main()
 	vec3 emissive = texture(textureEmissive, texCoord).rgb;
 	float metallic = texture(textureMetalness, texCoord).b;
 	float roughness = texture(textureRoughness, texCoord).g;
-	float ao = texture(textureAO, texCoords).r;
+	float ao = texture(textureAO, texCoord).r;
 
 	vec3 tangentNormal = texture(textureNormal, texCoord).xyz * 2.0 - 1.0;
 
 	// Input lighting data
 	vec3 N = GetNormalFromMap(tangentNormal, worldPos, normal, texCoord);
-	vec3 V = normalize(frameUBO.cameraPosition - worldPos);
+	vec3 V = normalize(frameUBO.cameraPosition.xyz - worldPos);
 	vec3 R = reflect(-V, N);
 
 	// Calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
@@ -129,5 +130,5 @@ void main()
 	// Gamma correction
 	color = pow(color, vec3(1.0 / 2.2));
 
-	FragColor = vec4(color, 1.0);
+	fragColor = vec4(color, 1.0);
 }

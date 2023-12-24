@@ -166,5 +166,11 @@
     <None Include="..\Shaders\skybox.frag">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\Shaders\pbr.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Shaders\pbr_include.frag">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

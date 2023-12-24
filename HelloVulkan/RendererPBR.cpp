@@ -14,7 +14,7 @@
 
 // Constants
 constexpr uint32_t PBR_TEXTURE_START_BIND_INDEX = 2;
-constexpr size_t PBR_MESH_TEXTURE_COUNT = 5;
+constexpr size_t PBR_MESH_TEXTURE_COUNT = 6;
 constexpr size_t PBR_ENV_TEXTURE_COUNT = 3;
 
 RendererPBR::RendererPBR(
@@ -93,7 +93,7 @@ RendererPBR::RendererPBR(
 		pipelineLayout_,
 		{
 			AppSettings::ShaderFolder + "pbr_mesh.vert",
-			AppSettings::ShaderFolder + "pbr_mesh.frag"
+			AppSettings::ShaderFolder + "pbr.frag"
 		},
 		&graphicsPipeline_,
 		true // hasVertexBuffer
@@ -146,8 +146,16 @@ bool RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 	std::vector<VkDescriptorSetLayoutBinding> bindings;
 
 	uint32_t bindingIndex = 0;
-	bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT));
-	bindings.emplace_back(DescriptorSetLayoutBinding(bindingIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT));
+	bindings.emplace_back(
+		DescriptorSetLayoutBinding(
+			bindingIndex++, 
+			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 
+			VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT));
+	bindings.emplace_back(
+		DescriptorSetLayoutBinding(
+			bindingIndex++, 
+			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 
+			VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT));
 
 	// PBR textures
 	for (size_t i = 0; i < PBR_MESH_TEXTURE_COUNT; ++i)
