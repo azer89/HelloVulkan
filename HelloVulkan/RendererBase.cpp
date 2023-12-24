@@ -94,12 +94,20 @@ void RendererBase::CreateColorAndDepthRenderPass(
 		.flags = 0,
 		.format = colorFormat,
 		.samples = VK_SAMPLE_COUNT_1_BIT,
-		.loadOp = offscreenInt ? VK_ATTACHMENT_LOAD_OP_LOAD : (ci.clearColor_ ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD),
+		.loadOp = offscreenInt ? 
+			VK_ATTACHMENT_LOAD_OP_LOAD : 
+			(ci.clearColor_ ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD),
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-		.initialLayout = first ? VK_IMAGE_LAYOUT_UNDEFINED : (offscreenInt ? VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL),
-		.finalLayout = last ? VK_IMAGE_LAYOUT_PRESENT_SRC_KHR : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+		.initialLayout = first ? 
+			VK_IMAGE_LAYOUT_UNDEFINED : 
+			(offscreenInt ? 
+				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : 
+				VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL),
+		.finalLayout = last ? 
+			VK_IMAGE_LAYOUT_PRESENT_SRC_KHR : 
+			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	};
 
 	const VkAttachmentReference colorAttachmentRef = {
@@ -111,11 +119,19 @@ void RendererBase::CreateColorAndDepthRenderPass(
 		.flags = 0,
 		.format = useDepth ? vkDev.FindDepthFormat() : VK_FORMAT_D32_SFLOAT,
 		.samples = VK_SAMPLE_COUNT_1_BIT,
-		.loadOp = offscreenInt ? VK_ATTACHMENT_LOAD_OP_LOAD : (ci.clearDepth_ ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD),
+		.loadOp = offscreenInt ? 
+			VK_ATTACHMENT_LOAD_OP_LOAD : 
+			(ci.clearDepth_ ? 
+				VK_ATTACHMENT_LOAD_OP_CLEAR : 
+				VK_ATTACHMENT_LOAD_OP_LOAD),
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-		.initialLayout = ci.clearDepth_ ? VK_IMAGE_LAYOUT_UNDEFINED : (offscreenInt ? VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL),
+		.initialLayout = ci.clearDepth_ ? 
+			VK_IMAGE_LAYOUT_UNDEFINED : 
+			(offscreenInt ? 
+				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : 
+				VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL),
 		.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 	};
 
@@ -349,7 +365,11 @@ void RendererBase::CreateGraphicsPipeline(
 	pInfo.viewport.width = static_cast<float>(customWidth > 0 ? customWidth : vkDev.GetFrameBufferWidth());
 	pInfo.viewport.height = static_cast<float>(customHeight > 0 ? customHeight : vkDev.GetFrameBufferHeight());
 
-	pInfo.scissor.extent = { customWidth > 0 ? customWidth : vkDev.GetFrameBufferWidth(), customHeight > 0 ? customHeight : vkDev.GetFrameBufferHeight() };
+	pInfo.scissor.extent = 
+	{ 
+		customWidth > 0 ? customWidth : vkDev.GetFrameBufferWidth(), 
+		customHeight > 0 ? customHeight : vkDev.GetFrameBufferHeight() 
+	};
 
 	pInfo.colorBlendAttachment.srcAlphaBlendFactor = 
 		useBlending ? VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA : VK_BLEND_FACTOR_ONE;
