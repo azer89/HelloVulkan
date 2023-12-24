@@ -8,10 +8,9 @@ An implementation of physically-based lighting model to generate realistic rende
 * Offscreen rendering to generate both specular and diffuse maps.
 * Automatic runtime compilation from GLSL to SPIR-V for convenient development process.
 
+https://github.com/azer89/HelloVulkan/assets/790432/e0844ac4-eaaa-4f52-8155-06937183bec7
 
-https://github.com/azer89/HelloVulkan/assets/790432/10edb1a5-ff3f-4e15-8199-1b3aa1c92a62
-
-<img width="850" alt="Dragon" src="https://github.com/azer89/HelloVulkan/assets/790432/0d1c1897-2006-448f-b391-c49d6ffaf8b1">
+<img width="850" alt="Dragon" src="https://github.com/azer89/HelloVulkan/assets/790432/75930cb9-0855-4ae1-afe9-5a95aa8db93d">
 
 
 ### Build
