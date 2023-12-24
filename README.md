@@ -5,8 +5,8 @@ An implementation of physically-based lighting model to generate realistic rende
 ### Features
 * Skybox and mesh rendering.
 * Offscreen rendering to generate a cubemap from an equirectangular HDR image.
-* Offscreen rendering to generate specular and diffuse maps.
-* Automatic runtime compilation from GLSL to SPIR-V.
+* Offscreen rendering to generate both specular and diffuse maps.
+* Automatic runtime compilation from GLSL to SPIR-V for convenient development process.
 
 
 https://github.com/azer89/HelloVulkan/assets/790432/10edb1a5-ff3f-4e15-8199-1b3aa1c92a62
