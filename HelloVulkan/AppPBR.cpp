@@ -20,11 +20,12 @@ void AppPBR::Init()
 		.modelFile = AppSettings::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf",
 		.textureFiles =
 		{
-			AppSettings::ModelFolder + "DamagedHelmet//Default_AO.jpg",
-			AppSettings::ModelFolder + "DamagedHelmet//Default_emissive.jpg",
 			AppSettings::ModelFolder + "DamagedHelmet//Default_albedo.jpg",
-			AppSettings::ModelFolder + "DamagedHelmet//Default_metalRoughness.jpg",
 			AppSettings::ModelFolder + "DamagedHelmet//Default_normal.jpg",
+			AppSettings::ModelFolder + "DamagedHelmet//Default_metalRoughness.jpg",
+			AppSettings::ModelFolder + "DamagedHelmet//Default_metalRoughness.jpg",
+			AppSettings::ModelFolder + "DamagedHelmet//Default_AO.jpg",
+			AppSettings::ModelFolder + "DamagedHelmet//Default_emissive.jpg"
 		}
 	};
 
@@ -33,11 +34,12 @@ void AppPBR::Init()
 		.modelFile = AppSettings::ModelFolder + "Dragon//Dragon.obj",
 		.textureFiles =
 		{
-			AppSettings::TextureFolder + "pbr//plastic//ao.png",
-			AppSettings::TextureFolder + "Black1x1.png",
 			AppSettings::TextureFolder + "pbr//plastic//albedo.png",
-			AppSettings::TextureFolder + "pbr//plastic//roughness.png",
 			AppSettings::TextureFolder + "pbr//plastic//normal.png",
+			AppSettings::TextureFolder + "pbr//plastic//metallic.png",
+			AppSettings::TextureFolder + "pbr//plastic//roughness.png",
+			AppSettings::TextureFolder + "pbr//plastic//ao.png",
+			AppSettings::TextureFolder + "Black1x1.png"
 		}
 	};
 

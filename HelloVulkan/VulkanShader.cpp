@@ -1,4 +1,5 @@
 #include "VulkanShader.h"
+#include "AppSettings.h"
 
 #include <iostream>
 
@@ -92,7 +93,7 @@ std::string VulkanShader::ReadShaderFile(const char* fileName)
 			printf("Error while loading shader program: %s\n", code.c_str());
 			return std::string();
 		}
-		const std::string name = code.substr(p1 + 1, p2 - p1 - 1);
+		const std::string name = AppSettings::ShaderFolder + code.substr(p1 + 1, p2 - p1 - 1);
 		const std::string include = ReadShaderFile(name.c_str());
 		code.replace(pos, p2 - pos + 1, include.c_str());
 	}
