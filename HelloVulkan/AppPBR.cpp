@@ -55,17 +55,17 @@ void AppPBR::Init()
 			&environmentCubemap_); // Output
 	}
 
-	// Diffuse and specular cubemaps
+	// Cube filtering
 	{
 		RendererCubeFilter cFilter(vulkanDevice, &environmentCubemap_);
 		// Diffuse
 		cFilter.OffscreenRender(vulkanDevice,
 			&diffuseCubemap_,
-			Distribution::Lambertian);
+			DistributionCubeFilter::Lambertian);
 		// Specular
 		cFilter.OffscreenRender(vulkanDevice,
 			&specularCubemap_,
-			Distribution::GGX);
+			DistributionCubeFilter::GGX);
 	}
 
 	depthImage_.CreateDepthResources(vulkanDevice,

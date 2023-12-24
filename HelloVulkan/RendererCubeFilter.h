@@ -3,9 +3,24 @@
 
 #include "RendererBase.h"
 #include "VulkanTexture.h"
-#include "CubePushConstant.h"
 
 #include <string>
+
+enum class DistributionCubeFilter : unsigned int
+{
+	Lambertian = 0, // Diffuse
+	GGX = 1, // Specular
+};
+
+struct PushConstantCubeFilter
+{
+	float roughness = 0.f;
+	float lodBias = 0.f;
+	uint32_t sampleCount = 1u;
+	uint32_t mipLevel = 1u;
+	uint32_t width = 1024u;
+	DistributionCubeFilter distribution = DistributionCubeFilter::Lambertian;
+};
 
 class RendererCubeFilter final : public RendererBase
 {
@@ -15,7 +30,7 @@ public:
 
 	void OffscreenRender(VulkanDevice& vkDev, 
 		VulkanTexture* outputCubemap,
-		Distribution disttribution);
+		DistributionCubeFilter disttribution);
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:

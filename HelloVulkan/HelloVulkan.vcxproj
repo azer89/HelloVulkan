@@ -162,7 +162,6 @@
     <ClInclude Include="AppPBR.h" />
     <ClInclude Include="Bitmap.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="CubePushConstant.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="PipelineCreateInfo.h" />
     <ClInclude Include="RendererBase.h" />

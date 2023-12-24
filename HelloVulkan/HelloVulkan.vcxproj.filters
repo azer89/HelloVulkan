@@ -140,9 +140,6 @@
     <ClInclude Include="RendererCubeFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CubePushConstant.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="RendererEquirect2Cube.h">
       <Filter>Header Files</Filter>
     </ClInclude>

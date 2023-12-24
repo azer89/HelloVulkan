@@ -2,20 +2,18 @@
 #include "PipelineCreateInfo.h"
 #include "VulkanUtility.h"
 #include "VulkanShader.h"
-#include "CubePushConstant.h"
 #include "AppSettings.h"
 
-const unsigned int sampleCount = 1024;
-
-const uint32_t inputCubemapSize = 1024;
-
-const uint32_t outputDiffuseMipmapCount = 1u; 
-
-const uint32_t outputDiffuseSize = 128;
-const uint32_t outputSpecularSize = 512
-;
-const VkFormat cubeMapFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
-const uint32_t layerCount = 6;
+namespace FilterSettings
+{
+	const unsigned int sampleCount = 1024;
+	const uint32_t inputCubemapSize = 1024;
+	const uint32_t outputDiffuseMipmapCount = 1u;
+	const uint32_t outputDiffuseSize = 128;
+	const uint32_t outputSpecularSize = 512;
+	const VkFormat cubeMapFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
+	const uint32_t layerCount = 6;
+}
 
 RendererCubeFilter::RendererCubeFilter(
 	VulkanDevice& vkDev, VulkanTexture* inputCubemap) :
@@ -31,20 +29,23 @@ RendererCubeFilter::RendererCubeFilter(
 		1, // Descriptor count per swapchain
 		&descriptorPool_);
 
+	// Input cubemap
+	uint32_t inputNumMipmap = NumMipMap(FilterSettings::inputCubemapSize, FilterSettings::inputCubemapSize);
 	inputCubemap->image_.GenerateMipmap(
 		vkDev,
-		NumMipMap(inputCubemapSize, inputCubemapSize),
-		inputCubemapSize,
-		inputCubemapSize,
+		inputNumMipmap,
+		FilterSettings::inputCubemapSize,
+		FilterSettings::inputCubemapSize,
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	);
-
 	inputCubemap->CreateTextureSampler(
 		vkDev.GetDevice(),
 		inputEnvMapSampler_,
 		0.f,
-		static_cast<float>(NumMipMap(inputCubemapSize, inputCubemapSize))
+		static_cast<float>(inputNumMipmap)
 	);
+
+	// Descriptors
 	CreateDescriptorLayout(vkDev);
 	CreateDescriptorSet(vkDev, inputCubemap);
 
@@ -52,7 +53,7 @@ RendererCubeFilter::RendererCubeFilter(
 	std::vector<VkPushConstantRange> ranges(1u);
 	VkPushConstantRange& range = ranges.front();
 	range.offset = 0u;
-	range.size = sizeof(PushConstant);
+	range.size = sizeof(PushConstantCubeFilter);
 	range.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
 	// Pipeline layout
@@ -68,8 +69,8 @@ RendererCubeFilter::RendererCubeFilter(
 			AppSettings::ShaderFolder + "fullscreen_triangle.vert",
 			AppSettings::ShaderFolder + "cube_filter.frag"
 		},
-		outputDiffuseSize,
-		outputDiffuseSize,
+		FilterSettings::outputDiffuseSize,
+		FilterSettings::outputDiffuseSize,
 		&graphicsPipelines_[0]
 	);
 
@@ -83,8 +84,8 @@ RendererCubeFilter::RendererCubeFilter(
 			AppSettings::ShaderFolder + "fullscreen_triangle.vert",
 			AppSettings::ShaderFolder + "cube_filter.frag"
 		},
-		outputSpecularSize,
-		outputSpecularSize,
+		FilterSettings::outputSpecularSize,
+		FilterSettings::outputSpecularSize,
 		&graphicsPipelines_[1]
 	);
 }
@@ -115,8 +116,8 @@ void RendererCubeFilter::InitializeOutputCubemap(
 		sideLength,
 		sideLength,
 		numMipmap,
-		layerCount,
-		cubeMapFormat,
+		FilterSettings::layerCount,
+		FilterSettings::cubeMapFormat,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -128,7 +129,7 @@ void RendererCubeFilter::InitializeOutputCubemap(
 		VK_FORMAT_R32G32B32A32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT,
 		VK_IMAGE_VIEW_TYPE_CUBE,
-		layerCount,
+		FilterSettings::layerCount,
 		numMipmap);
 }
 
@@ -139,11 +140,11 @@ void RendererCubeFilter::CreateRenderPass(VulkanDevice& vkDev)
 	std::vector<VkAttachmentDescription> m_attachments;
 	std::vector<VkAttachmentReference> m_attachmentRefs;
 
-	for (int face = 0; face < layerCount; ++face)
+	for (int face = 0; face < FilterSettings::layerCount; ++face)
 	{
 		VkAttachmentDescription info{};
 		info.flags = 0u;
-		info.format = cubeMapFormat;
+		info.format = FilterSettings::cubeMapFormat;
 		info.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		info.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 		info.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -250,11 +251,11 @@ void RendererCubeFilter::CreateOutputCubemapViews(VulkanDevice& vkDev,
 	uint32_t numMip)
 {
 	cubemapViews = 
-		std::vector<std::vector<VkImageView>>(numMip, std::vector<VkImageView>(layerCount, VK_NULL_HANDLE));
+		std::vector<std::vector<VkImageView>>(numMip, std::vector<VkImageView>(FilterSettings::layerCount, VK_NULL_HANDLE));
 	for (uint32_t a = 0; a < numMip; ++a)
 	{
 		cubemapViews[a] = {};
-		for (uint32_t b = 0; b < layerCount; ++b)
+		for (uint32_t b = 0; b < FilterSettings::layerCount; ++b)
 		{
 			VkImageSubresourceRange subresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0u, 1u, 0u, 1u };
 			subresourceRange.baseMipLevel = a;
@@ -318,9 +319,9 @@ void RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 	colorBlendAttachment.colorWriteMask =
 		VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 	colorBlendAttachment.blendEnable = VK_FALSE;
-	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments(layerCount, colorBlendAttachment);
+	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments(FilterSettings::layerCount, colorBlendAttachment);
 
-	pInfo.colorBlending.attachmentCount = layerCount;
+	pInfo.colorBlending.attachmentCount = FilterSettings::layerCount;
 	pInfo.colorBlending.pAttachments = colorBlendAttachments.data();
 
 	// No depth test
@@ -373,8 +374,6 @@ void RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 	pInfo.depthStencil.minDepthBounds = 0.0f; // Optional
 	pInfo.depthStencil.maxDepthBounds = 1.0f; // Optional
 	pInfo.depthStencil.stencilTestEnable = VK_FALSE;
-	pInfo.depthStencil.front = {}; // Optional
-	pInfo.depthStencil.back = {}; // Optional
 
 	pInfo.tessellationState.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
 	pInfo.tessellationState.pNext = nullptr;
@@ -439,15 +438,15 @@ VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
 
 void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 	VulkanTexture* outputCubemap,
-	Distribution distribution)
+	DistributionCubeFilter distribution)
 {
-	uint32_t outputMipMapCount = distribution == Distribution::Lambertian ?
+	uint32_t outputMipMapCount = distribution == DistributionCubeFilter::Lambertian ?
 		1u :
-		NumMipMap(outputSpecularSize, outputSpecularSize);
+		NumMipMap(FilterSettings::outputSpecularSize, FilterSettings::outputSpecularSize);
 
-	uint32_t outputSideLength = distribution == Distribution::Lambertian ?
-		outputDiffuseSize :
-		outputSpecularSize;
+	uint32_t outputSideLength = distribution == DistributionCubeFilter::Lambertian ?
+		FilterSettings::outputDiffuseSize :
+		FilterSettings::outputSpecularSize;
 
 	InitializeOutputCubemap(vkDev, outputCubemap, outputMipMapCount, outputSideLength);
 
@@ -493,11 +492,11 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 			VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, // dst stage, access
 			subresourceRange);
 
-		PushConstant values{};
+		PushConstantCubeFilter values{};
 		values.roughness = static_cast<float>(i) / static_cast<float>(outputMipMapCount);;
-		values.sampleCount = sampleCount;
+		values.sampleCount = FilterSettings::sampleCount;
 		values.mipLevel = static_cast<uint32_t>(i);
-		values.width = inputCubemapSize; // TODO Rename
+		values.width = FilterSettings::inputCubemapSize;
 		values.lodBias = 0;
 		values.distribution = distribution;
 
@@ -506,7 +505,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 			pipelineLayout_,
 			VK_SHADER_STAGE_FRAGMENT_BIT,
 			0,
-			sizeof(PushConstant), &values);
+			sizeof(PushConstantCubeFilter), &values);
 
 		const std::vector<VkClearValue> clearValues(6u, { 0.0f, 0.0f, 1.0f, 1.0f });
 
