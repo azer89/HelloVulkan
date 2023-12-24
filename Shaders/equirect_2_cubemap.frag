@@ -98,6 +98,7 @@ void main()
 	{
 		vec3 position = UVToXYZ(face, texCoordTemp);
 		vec3 direction = normalize(position);
+		direction.y = -direction.y;
 		vec2 finalTexCoord = DirToUV(direction);
 		WriteFace(face, texture(envMap, finalTexCoord).rgb);
 	}

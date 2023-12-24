@@ -79,6 +79,8 @@ bool VulkanTexture::CreateTextureImage(
 	uint32_t* outTexWidth,
 	uint32_t* outTexHeight)
 {
+	stbi_set_flip_vertically_on_load(false);
+
 	int texWidth, texHeight, texChannels;
 	stbi_uc* pixels = stbi_load(filename, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 
@@ -112,6 +114,8 @@ bool VulkanTexture::CreateHDRImage(
 	VulkanDevice& vkDev,
 	const char* filename)
 {
+	stbi_set_flip_vertically_on_load(true);
+
 	int texWidth, texHeight, texChannels;
 	float* pixels = stbi_loadf(filename, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 
