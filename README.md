@@ -5,7 +5,7 @@ An implementation of physically-based lighting model to generate realistic rende
 ### Features
 * Skybox and mesh rendering.
 * Offscreen rendering to generate a cubemap from an equirectangular HDR image.
-* Offscreen rendering to generate the irradiance map (specular part).
+* Offscreen rendering to generate specular and diffuse maps.
 * Automatic runtime compilation from GLSL to SPIR-V.
 
 
