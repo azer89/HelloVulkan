@@ -105,9 +105,9 @@ MicrofacetDistributionSample Lambertian(vec2 xi, float roughness)
 	// Cosine weighted hemisphere sampling
 	// http://www.pbr-book.org/3ed-2018/Monte_Carlo_Integration/2D_Sampling_with_Multidimensional_Transformations.html#Cosine-WeightedHemisphereSampling
 	lambertian.cosTheta = sqrt(1.0 - xi.y);
-	lambertian.sinTheta = sqrt(xi.y); // equivalent to `sqrt(1.0 - cosTheta*cosTheta)`;
+	lambertian.sinTheta = sqrt(xi.y); // Equivalent to `sqrt(1.0 - cosTheta*cosTheta)`;
 	lambertian.phi = 2.0 * MATH_PI * xi.x;
-	lambertian.pdf = lambertian.cosTheta / MATH_PI; // evaluation for solid angle, therefore drop the sinTheta
+	lambertian.pdf = lambertian.cosTheta / MATH_PI; // Evaluation for solid angle, therefore drop the sinTheta
 
 	return lambertian;
 }
@@ -309,7 +309,7 @@ void main()
 	{
 		vec3 scan = UVToXYZ(face, texCoordNew);
 		vec3 direction = normalize(scan);
-		direction.y = -direction.y; // TODO Find another way that does not flip Y
+		direction.y = -direction.y; 
 		WriteFace(face, FilterColor(direction));
 	}
 }
