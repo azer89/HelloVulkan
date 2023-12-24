@@ -60,7 +60,7 @@ RendererCubeFilter::RendererCubeFilter(
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_, ranges);
 
 	// Diffuse pipeline
-	graphicsPipelines_.emplace_back(VK_NULL_HANDLE);
+	/*graphicsPipelines_.emplace_back(VK_NULL_HANDLE);
 	CreateOffsreenGraphicsPipeline(
 		vkDev,
 		renderPass_,
@@ -87,6 +87,18 @@ RendererCubeFilter::RendererCubeFilter(
 		FilterSettings::outputSpecularSize,
 		FilterSettings::outputSpecularSize,
 		&graphicsPipelines_[1]
+	);*/
+	CreateOffsreenGraphicsPipeline(
+		vkDev,
+		renderPass_,
+		pipelineLayout_,
+		{
+			AppSettings::ShaderFolder + "fullscreen_triangle.vert",
+			AppSettings::ShaderFolder + "cube_filter.frag"
+		},
+		FilterSettings::outputSpecularSize,
+		FilterSettings::outputSpecularSize,
+		&graphicsPipeline_
 	);
 }
 
@@ -94,10 +106,10 @@ RendererCubeFilter::~RendererCubeFilter()
 {
 	vkDestroySampler(device_, inputEnvMapSampler_, nullptr);
 
-	for (VkPipeline& pipeline : graphicsPipelines_)
+	/*for (VkPipeline& pipeline : graphicsPipelines_)
 	{
 		vkDestroyPipeline(device_, pipeline, nullptr);
-	}
+	}*/
 }
 
 void RendererCubeFilter::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
@@ -336,7 +348,9 @@ void RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 		VK_DYNAMIC_STATE_DEPTH_BOUNDS,
 		VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK,
 		VK_DYNAMIC_STATE_STENCIL_WRITE_MASK,
-		VK_DYNAMIC_STATE_STENCIL_REFERENCE
+		VK_DYNAMIC_STATE_STENCIL_REFERENCE,
+		VK_DYNAMIC_STATE_VIEWPORT,
+		VK_DYNAMIC_STATE_SCISSOR
 	};
 
 	pInfo.dynamicState.dynamicStateCount = static_cast<uint32_t>(sizeof(dynamicStates) / sizeof(VkDynamicState));
@@ -466,10 +480,36 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		0,
 		nullptr);
 
-	// Select pipeline
-	VkPipeline pipeline = graphicsPipelines_[static_cast<unsigned int>(distribution)];
+	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
 
-	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+	float outputSideLengthF = static_cast<float>(outputSideLength);
+	VkViewport viewport
+	{
+		.x = 0.0f,
+		.y = 0.0f,
+		// Note change these when doing offline rendering
+		.width = outputSideLengthF,
+		.height = outputSideLengthF,
+		.minDepth = 0.0f,
+		.maxDepth = 1.0f
+	};
+	vkCmdSetViewport(
+		commandBuffer,
+		0u,
+		1u,
+		&viewport);
+
+	VkRect2D scissor
+	{
+		.offset = { 0, 0 },
+		// Note change these when doing offline rendering
+		.extent = { outputSideLength, outputSideLength}
+	};
+	vkCmdSetScissor(
+		commandBuffer,
+		0u,
+		1u,
+		&scissor);
 
 	std::vector<VkFramebuffer> usedFrameBuffers;
 

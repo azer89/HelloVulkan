@@ -37,9 +37,6 @@ private:
 	VkDescriptorSet descriptorSet_;
 	VkSampler inputEnvMapSampler_; // A sampler for the input cubemapTexture
 
-	// Two pipelines for each of diffuse and specular maps
-	std::vector<VkPipeline> graphicsPipelines_;
-
 	void CreateRenderPass(VulkanDevice& vkDev);
 	void CreateDescriptorLayout(VulkanDevice& vkDev);
 	void CreateDescriptorSet(VulkanDevice& vkDev, VulkanTexture* cubemapTexture);
