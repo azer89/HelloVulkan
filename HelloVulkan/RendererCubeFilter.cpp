@@ -10,8 +10,9 @@ const unsigned int sampleCount = 1024;
 const uint32_t inputCubemapSize = 1024;
 
 const uint32_t outputDiffuseMipmapCount = 1u; 
-const uint32_t outputDiffuseSize = 128;
 
+// TODO These have to be the same because currently we only one graphics pipeline
+const uint32_t outputDiffuseSize = 512;
 const uint32_t outputSpecularSize = 512
 ;
 const VkFormat cubeMapFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
