@@ -26,7 +26,7 @@ layout(location = 5) out vec4 cubeFace5;
 const uint cLambertian = 0;
 const uint cGGX = 1;
 
-layout(push_constant) uniform FilterParameters
+layout(push_constant) uniform PushConstantCubeFilter
 {
 	float roughness;
 	float lodBias;

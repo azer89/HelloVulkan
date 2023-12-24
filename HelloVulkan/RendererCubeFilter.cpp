@@ -2,7 +2,6 @@
 #include "PipelineCreateInfo.h"
 #include "VulkanUtility.h"
 #include "VulkanShader.h"
-#include "CubePushConstant.h"
 #include "AppSettings.h"
 
 namespace FilterSettings
@@ -54,7 +53,7 @@ RendererCubeFilter::RendererCubeFilter(
 	std::vector<VkPushConstantRange> ranges(1u);
 	VkPushConstantRange& range = ranges.front();
 	range.offset = 0u;
-	range.size = sizeof(PushConstant);
+	range.size = sizeof(PushConstantCubeFilter);
 	range.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
 	// Pipeline layout
@@ -439,13 +438,13 @@ VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
 
 void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 	VulkanTexture* outputCubemap,
-	Distribution distribution)
+	DistributionCubeFilter distribution)
 {
-	uint32_t outputMipMapCount = distribution == Distribution::Lambertian ?
+	uint32_t outputMipMapCount = distribution == DistributionCubeFilter::Lambertian ?
 		1u :
 		NumMipMap(FilterSettings::outputSpecularSize, FilterSettings::outputSpecularSize);
 
-	uint32_t outputSideLength = distribution == Distribution::Lambertian ?
+	uint32_t outputSideLength = distribution == DistributionCubeFilter::Lambertian ?
 		FilterSettings::outputDiffuseSize :
 		FilterSettings::outputSpecularSize;
 
@@ -493,7 +492,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 			VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, // dst stage, access
 			subresourceRange);
 
-		PushConstant values{};
+		PushConstantCubeFilter values{};
 		values.roughness = static_cast<float>(i) / static_cast<float>(outputMipMapCount);;
 		values.sampleCount = FilterSettings::sampleCount;
 		values.mipLevel = static_cast<uint32_t>(i);
@@ -506,7 +505,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 			pipelineLayout_,
 			VK_SHADER_STAGE_FRAGMENT_BIT,
 			0,
-			sizeof(PushConstant), &values);
+			sizeof(PushConstantCubeFilter), &values);
 
 		const std::vector<VkClearValue> clearValues(6u, { 0.0f, 0.0f, 1.0f, 1.0f });
 
