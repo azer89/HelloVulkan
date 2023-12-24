@@ -139,6 +139,8 @@ bool VulkanTexture::CreateCubeTextureImage(
 	uint32_t* width,
 	uint32_t* height)
 {
+	stbi_set_flip_vertically_on_load(false);
+
 	int w, h, comp;
 	const float* img = stbi_loadf(filename, &w, &h, &comp, 3);
 	std::vector<float> img32(w * h * 4);
