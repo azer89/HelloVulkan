@@ -11,8 +11,7 @@ const uint32_t inputCubemapSize = 1024;
 
 const uint32_t outputDiffuseMipmapCount = 1u; 
 
-// TODO These have to be the same because currently we only one graphics pipeline
-const uint32_t outputDiffuseSize = 512;
+const uint32_t outputDiffuseSize = 128;
 const uint32_t outputSpecularSize = 512
 ;
 const VkFormat cubeMapFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
@@ -59,7 +58,8 @@ RendererCubeFilter::RendererCubeFilter(
 	// Pipeline layout
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_, ranges);
 
-	// Graphics Pipeline
+	// Diffuse pipeline
+	graphicsPipelines_.emplace_back(VK_NULL_HANDLE);
 	CreateOffsreenGraphicsPipeline(
 		vkDev,
 		renderPass_,
@@ -68,13 +68,35 @@ RendererCubeFilter::RendererCubeFilter(
 			AppSettings::ShaderFolder + "fullscreen_triangle.vert",
 			AppSettings::ShaderFolder + "cube_filter.frag"
 		},
-		&graphicsPipeline_
+		outputDiffuseSize,
+		outputDiffuseSize,
+		&graphicsPipelines_[0]
+	);
+
+	// Specular pipeline
+	graphicsPipelines_.emplace_back(VK_NULL_HANDLE);
+	CreateOffsreenGraphicsPipeline(
+		vkDev,
+		renderPass_,
+		pipelineLayout_,
+		{
+			AppSettings::ShaderFolder + "fullscreen_triangle.vert",
+			AppSettings::ShaderFolder + "cube_filter.frag"
+		},
+		outputSpecularSize,
+		outputSpecularSize,
+		&graphicsPipelines_[1]
 	);
 }
 
 RendererCubeFilter::~RendererCubeFilter()
 {
 	vkDestroySampler(device_, inputEnvMapSampler_, nullptr);
+
+	for (VkPipeline& pipeline : graphicsPipelines_)
+	{
+		vkDestroyPipeline(device_, pipeline, nullptr);
+	}
 }
 
 void RendererCubeFilter::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
@@ -266,6 +288,8 @@ void RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 	VkRenderPass renderPass,
 	VkPipelineLayout pipelineLayout,
 	const std::vector<std::string>& shaderFiles,
+	uint32_t viewportWidth,
+	uint32_t viewportHeight,
 	VkPipeline* pipeline)
 {
 	std::vector<VulkanShader> shaderModules;
@@ -285,10 +309,10 @@ void RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 	// Pipeline create info
 	PipelineCreateInfo pInfo(vkDev);
 
-	pInfo.viewport.width = outputDiffuseSize;
-	pInfo.viewport.height = outputDiffuseSize;
+	pInfo.viewport.width = viewportWidth;
+	pInfo.viewport.height = viewportHeight;
 
-	pInfo.scissor.extent = { outputDiffuseSize, outputDiffuseSize };
+	pInfo.scissor.extent = { viewportWidth, viewportHeight };
 
 	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
 	colorBlendAttachment.colorWriteMask =
@@ -443,7 +467,10 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		0,
 		nullptr);
 
-	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
+	// Select pipeline
+	VkPipeline pipeline = graphicsPipelines_[static_cast<unsigned int>(distribution)];
+
+	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
 	std::vector<VkFramebuffer> usedFrameBuffers;
 
