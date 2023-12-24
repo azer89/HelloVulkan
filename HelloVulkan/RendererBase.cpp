@@ -328,8 +328,6 @@ void RendererBase::CreateGraphicsPipeline(
 	bool useDepth,
 	bool useBlending,
 	bool dynamicScissorState,
-	int32_t customWidth,
-	int32_t customHeight,
 	uint32_t numPatchControlPoints)
 {
 	std::vector<VulkanShader> shaderModules;
@@ -361,15 +359,6 @@ void RendererBase::CreateGraphicsPipeline(
 	}
 	
 	pInfo.inputAssembly.topology = topology;
-
-	pInfo.viewport.width = static_cast<float>(customWidth > 0 ? customWidth : vkDev.GetFrameBufferWidth());
-	pInfo.viewport.height = static_cast<float>(customHeight > 0 ? customHeight : vkDev.GetFrameBufferHeight());
-
-	pInfo.scissor.extent = 
-	{ 
-		customWidth > 0 ? customWidth : vkDev.GetFrameBufferWidth(), 
-		customHeight > 0 ? customHeight : vkDev.GetFrameBufferHeight() 
-	};
 
 	pInfo.colorBlendAttachment.srcAlphaBlendFactor = 
 		useBlending ? VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA : VK_BLEND_FACTOR_ONE;
