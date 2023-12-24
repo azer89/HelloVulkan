@@ -5,6 +5,8 @@
 #include "CubePushConstant.h"
 #include "AppSettings.h"
 
+const unsigned int sampleCount = 1024;
+
 const uint32_t inputCubemapSize = 1024;
 
 const uint32_t outputDiffuseMipmapCount = 1u; 
@@ -415,10 +417,8 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 	VulkanTexture* outputCubemap,
 	Distribution distribution)
 {
-	uint32_t inputMipMapCount = NumMipMap(inputCubemapSize, inputCubemapSize);
-
 	uint32_t outputMipMapCount = distribution == Distribution::Lambertian ?
-		1 :
+		1u :
 		NumMipMap(outputSpecularSize, outputSpecularSize);
 
 	uint32_t outputSideLength = distribution == Distribution::Lambertian ?
@@ -468,7 +468,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 
 		PushConstant values{};
 		values.roughness = static_cast<float>(i) / static_cast<float>(outputMipMapCount);;
-		values.sampleCount = 1024;
+		values.sampleCount = sampleCount;
 		values.mipLevel = static_cast<uint32_t>(i);
 		values.width = inputCubemapSize; // TODO Rename
 		values.lodBias = 0;
