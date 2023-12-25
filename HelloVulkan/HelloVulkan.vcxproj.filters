@@ -78,7 +78,7 @@
     <ClCompile Include="Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CmputeBase.cpp">
+    <ClCompile Include="RendererBRDF.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -155,7 +155,7 @@
     <ClInclude Include="Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ComputeBase.h">
+    <ClInclude Include="RendererBRDF.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
