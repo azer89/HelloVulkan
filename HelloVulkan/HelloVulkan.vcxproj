@@ -141,6 +141,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="RendererBase.cpp" />
     <ClCompile Include="RendererClear.cpp" />
     <ClCompile Include="RendererEquirect2Cube.cpp" />
@@ -163,6 +164,7 @@
     <ClInclude Include="Bitmap.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="PipelineCreateInfo.h" />
     <ClInclude Include="RendererBase.h" />
     <ClInclude Include="RendererClear.h" />
@@ -171,6 +173,7 @@
     <ClInclude Include="RendererSkybox.h" />
     <ClInclude Include="RendererFinish.h" />
     <ClInclude Include="RendererPBR.h" />
+    <ClInclude Include="TextureMapper.h" />
     <ClInclude Include="UBO.h" />
     <ClInclude Include="VulkanBuffer.h" />
     <ClInclude Include="VulkanShader.h" />

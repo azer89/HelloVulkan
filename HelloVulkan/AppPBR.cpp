@@ -15,7 +15,7 @@ void AppPBR::Init()
 
 	std::string cubemapTextureFile = AppSettings::TextureFolder + "the_sky_is_on_fire_4k.hdr";
 
-	MeshCreateInfo meshInfo1
+	/*MeshCreateInfo meshInfo1
 	{
 		.modelFile = AppSettings::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf",
 		.textureFiles =
@@ -27,9 +27,9 @@ void AppPBR::Init()
 			AppSettings::ModelFolder + "DamagedHelmet//Default_AO.jpg",
 			AppSettings::ModelFolder + "DamagedHelmet//Default_emissive.jpg"
 		}
-	};
+	};*/
 
-	MeshCreateInfo meshInfo2
+	/*MeshCreateInfo meshInfo2
 	{
 		.modelFile = AppSettings::ModelFolder + "Dragon//Dragon.obj",
 		.textureFiles =
@@ -41,12 +41,14 @@ void AppPBR::Init()
 			AppSettings::TextureFolder + "pbr//plastic//ao.png",
 			AppSettings::TextureFolder + "Black1x1.png"
 		}
-	};
+	};*/
 
 	// Creates two meshes for now
-	std::vector<MeshCreateInfo> meshInfos;
-	meshInfos.push_back(meshInfo1);
-	meshInfos.push_back(meshInfo2);
+	//std::vector<MeshCreateInfo> meshInfos;
+	//meshInfos.push_back(meshInfo1);
+	//meshInfos.push_back(meshInfo2);
+	model_ = std::make_unique<Model>(vulkanDevice, AppSettings::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
+	std::vector<Model*> models = {model_.get()};
 
 	// Create a cubemap from the input HDR
 	{
@@ -81,8 +83,8 @@ void AppPBR::Init()
 		vulkanDevice,
 		&depthImage_,
 		&specularCubemap_,
-		&diffuseCubemap_,
-		meshInfos);
+		&diffuseCubemap_, 
+		models);
 	skyboxPtr_ = std::make_unique<RendererSkybox>(vulkanDevice, &environmentCubemap_, &depthImage_);
 
 	renderers_ =
@@ -127,18 +129,18 @@ void AppPBR::UpdateUBO(uint32_t imageIndex)
 
 	// Model UBOs
 	glm::mat4 model(1.f);
-	model = glm::translate(model, glm::vec3(-1.0f, 0.0f, 0.0f));
-	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	//model = glm::translate(model, glm::vec3(-1.0f, 0.0f, 0.0f));
+	//model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 	// 1
 	ModelUBO modelUBO1
 	{
 		.model = model
 	};
-	pbrPtr_->meshes_[0].SetModelUBO(vulkanDevice, imageIndex, modelUBO1);
+	pbrPtr_->models_[0]->SetModelUBO(vulkanDevice, imageIndex, modelUBO1);
 
 	// 2
-	model = glm::mat4(1.f);
+	/*model = glm::mat4(1.f);
 	model = glm::translate(model, glm::vec3(2.0f, -1.0f, -2.0f));
 	ModelUBO modelUBO2
 	{
@@ -147,6 +149,7 @@ void AppPBR::UpdateUBO(uint32_t imageIndex)
 	pbrPtr_->meshes_[1].SetModelUBO(vulkanDevice, imageIndex, modelUBO2);
 
 	modelRotation_ += deltaTime * 0.01f;
+	*/
 }
 
 int AppPBR::MainLoop()
