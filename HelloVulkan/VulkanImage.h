@@ -34,7 +34,7 @@ public:
 	{
 	}
 
-	bool CreateImage(
+	void CreateImage(
 		VkDevice device,
 		VkPhysicalDevice physicalDevice,
 		uint32_t width,
@@ -47,7 +47,7 @@ public:
 		VkMemoryPropertyFlags properties,
 		VkImageCreateFlags flags = 0);
 
-	bool CreateImageFromData(
+	void CreateImageFromData(
 		VulkanDevice& vkDev,
 		void* imageData,
 		uint32_t texWidth,
@@ -57,7 +57,7 @@ public:
 		VkFormat texFormat,
 		VkImageCreateFlags flags = 0);
 
-	bool CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint32_t height);
+	void CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint32_t height);
 
 	void Destroy(VkDevice device);
 
@@ -68,7 +68,7 @@ public:
 		uint32_t height,
 		VkImageLayout currentImageLayout);
 
-	bool CreateImageView(VkDevice device,
+	void CreateImageView(VkDevice device,
 		VkFormat format,
 		VkImageAspectFlags aspectFlags,
 		VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_2D,
@@ -104,7 +104,7 @@ private:
 	VkFormat FindDepthFormat(VkPhysicalDevice device);
 	VkFormat FindSupportedFormat(VkPhysicalDevice device, const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 
-	bool UpdateTextureImage(
+	void UpdateTextureImage(
 		VulkanDevice& vkDev,
 		uint32_t texWidth,
 		uint32_t texHeight,

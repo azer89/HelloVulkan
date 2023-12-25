@@ -33,17 +33,14 @@ RendererPBR::RendererPBR(
 	std::string brdfLUTFile = AppSettings::TextureFolder + "brdfLUT.ktx";
 	gli::texture gliTex = gli::load_ktx(brdfLUTFile.c_str());
 	glm::tvec3<GLsizei> extent(gliTex.extent(0));
-	if (!brdfLUT_.image_.CreateImageFromData(
+	brdfLUT_.image_.CreateImageFromData(
 		vkDev,
-		(uint8_t*)gliTex.data(0, 0, 0), 
-		extent.x, 
-		extent.y, 
+		(uint8_t*)gliTex.data(0, 0, 0),
+		extent.x,
+		extent.y,
 		1, // mipmapCount
 		1, // layerCount
-		VK_FORMAT_R16G16_SFLOAT))
-	{
-		std::cerr << "ModelRenderer: failed to load BRDF LUT texture \n";;
-	}
+		VK_FORMAT_R16G16_SFLOAT);
 	brdfLUT_.image_.CreateImageView(
 		vkDev.GetDevice(),
 		VK_FORMAT_R16G16_SFLOAT,

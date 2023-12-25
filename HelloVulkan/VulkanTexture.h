@@ -15,17 +15,17 @@ public:
 		VulkanDevice& vkDev,
 		const char* filename);
 
-	bool CreateTextureImage(
+	void CreateTextureImage(
 		VulkanDevice& vkDev,
 		const char* filename,
 		uint32_t* outTexWidth = nullptr,
 		uint32_t* outTexHeight = nullptr);
 
-	bool CreateHDRImage(
+	void CreateHDRImage(
 		VulkanDevice& vkDev,
 		const char* filename);
 
-	bool CreateCubeTextureImage(
+	void CreateCubeTextureImage(
 		VulkanDevice& vkDev,
 		const char* filename,
 		uint32_t* width = nullptr,

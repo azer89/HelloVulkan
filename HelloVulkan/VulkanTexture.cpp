@@ -85,7 +85,7 @@ void VulkanTexture::CreateTextureImageViewSampler(
 	CreateTextureSampler(vkDev.GetDevice());
 }
 
-bool VulkanTexture::CreateTextureImage(
+void VulkanTexture::CreateTextureImage(
 	VulkanDevice& vkDev,
 	const char* filename,
 	uint32_t* outTexWidth,
@@ -98,11 +98,10 @@ bool VulkanTexture::CreateTextureImage(
 
 	if (!pixels)
 	{
-		printf("Failed to load [%s] texture\n", filename); fflush(stdout);
-		return false;
+		std::cerr << "Failed to load " << filename << '\n';
 	}
 
-	bool result = image_.CreateImageFromData(
+	image_.CreateImageFromData(
 		vkDev,
 		pixels,
 		texWidth,
@@ -118,11 +117,9 @@ bool VulkanTexture::CreateTextureImage(
 		*outTexWidth = (uint32_t)texWidth;
 		*outTexHeight = (uint32_t)texHeight;
 	}
-
-	return result;
 }
 
-bool VulkanTexture::CreateHDRImage(
+void VulkanTexture::CreateHDRImage(
 	VulkanDevice& vkDev,
 	const char* filename)
 {
@@ -131,7 +128,7 @@ bool VulkanTexture::CreateHDRImage(
 	int texWidth, texHeight, texChannels;
 	float* pixels = stbi_loadf(filename, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 
-	bool result = image_.CreateImageFromData(
+	image_.CreateImageFromData(
 		vkDev,
 		pixels,
 		texWidth,
@@ -141,11 +138,9 @@ bool VulkanTexture::CreateHDRImage(
 		VK_FORMAT_R32G32B32A32_SFLOAT);
 
 	stbi_image_free(pixels);
-
-	return result;
 }
 
-bool VulkanTexture::CreateCubeTextureImage(
+void VulkanTexture::CreateCubeTextureImage(
 	VulkanDevice& vkDev,
 	const char* filename,
 	uint32_t* width,
@@ -161,8 +156,7 @@ bool VulkanTexture::CreateCubeTextureImage(
 
 	if (!img)
 	{
-		printf("Failed to load [%s] texture\n", filename); fflush(stdout);
-		return false;
+		std::cerr << "Failed to load " << filename << '\n';
 	}
 
 	stbi_image_free((void*)img);
@@ -178,7 +172,7 @@ bool VulkanTexture::CreateCubeTextureImage(
 		*height = h;
 	}
 
-	return image_.CreateImageFromData(
+	image_.CreateImageFromData(
 		vkDev,
 		cube.data_.data(),
 		cube.w_,

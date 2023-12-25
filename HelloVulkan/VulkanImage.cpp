@@ -19,37 +19,33 @@ void VulkanImage::Destroy(VkDevice device)
 	vkFreeMemory(device, imageMemory_, nullptr);
 }
 
-bool VulkanImage::CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint32_t height)
+void VulkanImage::CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint32_t height)
 {
 	VkFormat depthFormat = FindDepthFormat(vkDev.GetPhysicalDevice());
 
-	if (!CreateImage(vkDev.GetDevice(),
+	CreateImage(vkDev.GetDevice(),
 		vkDev.GetPhysicalDevice(),
-		width, 
-		height, 
+		width,
+		height,
 		1, // mip
 		1, // layer
-		depthFormat, 
-		VK_IMAGE_TILING_OPTIMAL, 
-		VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 
-		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT))
-		return false;
+		depthFormat,
+		VK_IMAGE_TILING_OPTIMAL,
+		VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-	if (!CreateImageView(vkDev.GetDevice(), 
-		depthFormat, 
-		VK_IMAGE_ASPECT_DEPTH_BIT))
-		return false;
+	CreateImageView(vkDev.GetDevice(),
+		depthFormat,
+		VK_IMAGE_ASPECT_DEPTH_BIT);
 
 	TransitionImageLayout(vkDev, 
 		depthFormat, 
 		VK_IMAGE_LAYOUT_UNDEFINED, 
 		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
-
-	return true;
 }
 
 // TODO Rename to CreateImageFromData
-bool VulkanImage::CreateImageFromData(
+void VulkanImage::CreateImageFromData(
 	VulkanDevice& vkDev,
 	void* imageData,
 	uint32_t texWidth,
@@ -72,7 +68,7 @@ bool VulkanImage::CreateImageFromData(
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
 		flags);
 
-	return UpdateTextureImage(vkDev, texWidth, texHeight, texFormat, layerCount, imageData);
+	UpdateTextureImage(vkDev, texWidth, texHeight, texFormat, layerCount, imageData);
 }
 
 void VulkanImage::CopyBufferToImage(
@@ -103,7 +99,7 @@ void VulkanImage::CopyBufferToImage(
 	vkDev.EndSingleTimeCommands(commandBuffer);
 }
 
-bool VulkanImage::CreateImage(
+void VulkanImage::CreateImage(
 	VkDevice device,
 	VkPhysicalDevice physicalDevice,
 	uint32_t width,
@@ -155,10 +151,9 @@ bool VulkanImage::CreateImage(
 	VK_CHECK(vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory_));
 
 	vkBindImageMemory(device, image_, imageMemory_, 0);
-	return true;
 }
 
-bool VulkanImage::CreateImageView(VkDevice device, 
+void VulkanImage::CreateImageView(VkDevice device, 
 	VkFormat format, 
 	VkImageAspectFlags aspectFlags, 
 	VkImageViewType viewType, 
@@ -190,7 +185,7 @@ bool VulkanImage::CreateImageView(VkDevice device,
 		}
 	};
 
-	return (vkCreateImageView(device, &viewInfo, nullptr, &imageView_) == VK_SUCCESS);
+	VK_CHECK(vkCreateImageView(device, &viewInfo, nullptr, &imageView_));
 }
 
 uint32_t VulkanImage::FindMemoryType(VkPhysicalDevice device, uint32_t typeFilter, VkMemoryPropertyFlags properties)
@@ -239,7 +234,7 @@ VkFormat VulkanImage::FindSupportedFormat(VkPhysicalDevice device, const std::ve
 	throw std::runtime_error("Failed to find supported format!\n");
 }
 
-bool VulkanImage::UpdateTextureImage(
+void VulkanImage::UpdateTextureImage(
 	VulkanDevice& vkDev,
 	uint32_t texWidth,
 	uint32_t texHeight,
@@ -268,8 +263,6 @@ bool VulkanImage::UpdateTextureImage(
 	TransitionImageLayout(vkDev, texFormat, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, layerCount);
 
 	stagingBuffer.Destroy(vkDev.GetDevice());
-
-	return true;
 }
 
 void VulkanImage::TransitionImageLayout(VulkanDevice& vkDev,
