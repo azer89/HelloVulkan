@@ -97,7 +97,7 @@ void Mesh::Create(
 
 void Mesh::Destroy(VkDevice device)
 {
-	storageBuffer_.Destroy(device);
+	//storageBuffer_.Destroy(device);
 	vertexBuffer_.Destroy(device);
 	indexBuffer_.Destroy(device);
 
