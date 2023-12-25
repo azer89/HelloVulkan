@@ -13,11 +13,11 @@ void AppPBR::Init()
 {
 	modelRotation_ = 0.f;
 
-	std::string cubemapTextureFile = AppSettings::TextureFolder + "neon_photostudio_4k.hdr";
+	std::string cubemapTextureFile = AppSettings::TextureFolder + "piazza_bologni_1k.hdr";
 
 	model_ = std::make_unique<Model>(
 		vulkanDevice, 
-		AppSettings::ModelFolder + "Tachikoma//scene.gltf");
+		AppSettings::ModelFolder + "Geisha//scene.gltf");
 	std::vector<Model*> models = {model_.get()};
 
 	// Create a cubemap from the input HDR
@@ -100,6 +100,8 @@ void AppPBR::UpdateUBO(uint32_t imageIndex)
 
 	// Model UBOs
 	glm::mat4 modelMatrix(1.f);
+	modelMatrix = glm::rotate(modelMatrix, modelRotation_, glm::vec3(0.f, 1.f, 0.f));
+	modelRotation_ += deltaTime * 0.1f;
 
 	// 1
 	ModelUBO modelUBO1
