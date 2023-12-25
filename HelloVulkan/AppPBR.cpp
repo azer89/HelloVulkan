@@ -99,14 +99,14 @@ void AppPBR::UpdateUBO(uint32_t imageIndex)
 	pbrPtr_->SetPerFrameUBO(vulkanDevice, imageIndex, pbrUBO);
 
 	// Model UBOs
-	glm::mat4 model(1.f);
+	glm::mat4 modelMatrix(1.f);
 
 	// 1
 	ModelUBO modelUBO1
 	{
-		.model = model
+		.model = modelMatrix
 	};
-	pbrPtr_->models_[0]->SetModelUBO(vulkanDevice, imageIndex, modelUBO1);
+	model_->SetModelUBO(vulkanDevice, imageIndex, modelUBO1);
 }
 
 int AppPBR::MainLoop()

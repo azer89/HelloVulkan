@@ -11,15 +11,6 @@ public:
 	VulkanImage image_;
 	VkSampler sampler_;
 
-	uint32_t bindIndex_;
-	
-	//VkFormat format;
-	
-	// TODO
-	// Offscreen buffers require VK_IMAGE_LAYOUT_GENERAL 
-	// Static textures have VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	//VkImageLayout desiredLayout;
-
 	void CreateTextureImageViewSampler(
 		VulkanDevice& vkDev,
 		const char* filename);
