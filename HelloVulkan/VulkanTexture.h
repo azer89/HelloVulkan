@@ -11,26 +11,21 @@ public:
 	VulkanImage image_;
 	VkSampler sampler_;
 
-	uint32_t bindIndex_;
-	
-	//VkFormat format;
-	
-	// TODO
-	// Offscreen buffers require VK_IMAGE_LAYOUT_GENERAL 
-	// Static textures have VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	//VkImageLayout desiredLayout;
+	void CreateTextureImageViewSampler(
+		VulkanDevice& vkDev,
+		const char* filename);
 
-	bool CreateTextureImage(
+	void CreateTextureImage(
 		VulkanDevice& vkDev,
 		const char* filename,
 		uint32_t* outTexWidth = nullptr,
 		uint32_t* outTexHeight = nullptr);
 
-	bool CreateHDRImage(
+	void CreateHDRImage(
 		VulkanDevice& vkDev,
 		const char* filename);
 
-	bool CreateCubeTextureImage(
+	void CreateCubeTextureImage(
 		VulkanDevice& vkDev,
 		const char* filename,
 		uint32_t* width = nullptr,

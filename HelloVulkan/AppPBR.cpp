@@ -13,40 +13,12 @@ void AppPBR::Init()
 {
 	modelRotation_ = 0.f;
 
-	std::string cubemapTextureFile = AppSettings::TextureFolder + "the_sky_is_on_fire_4k.hdr";
+	std::string cubemapTextureFile = AppSettings::TextureFolder + "neon_photostudio_4k.hdr";
 
-	MeshCreateInfo meshInfo1
-	{
-		.modelFile = AppSettings::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf",
-		.textureFiles =
-		{
-			AppSettings::ModelFolder + "DamagedHelmet//Default_albedo.jpg",
-			AppSettings::ModelFolder + "DamagedHelmet//Default_normal.jpg",
-			AppSettings::ModelFolder + "DamagedHelmet//Default_metalRoughness.jpg",
-			AppSettings::ModelFolder + "DamagedHelmet//Default_metalRoughness.jpg",
-			AppSettings::ModelFolder + "DamagedHelmet//Default_AO.jpg",
-			AppSettings::ModelFolder + "DamagedHelmet//Default_emissive.jpg"
-		}
-	};
-
-	MeshCreateInfo meshInfo2
-	{
-		.modelFile = AppSettings::ModelFolder + "Dragon//Dragon.obj",
-		.textureFiles =
-		{
-			AppSettings::TextureFolder + "pbr//plastic//albedo.png",
-			AppSettings::TextureFolder + "pbr//plastic//normal.png",
-			AppSettings::TextureFolder + "pbr//plastic//metallic.png",
-			AppSettings::TextureFolder + "pbr//plastic//roughness.png",
-			AppSettings::TextureFolder + "pbr//plastic//ao.png",
-			AppSettings::TextureFolder + "Black1x1.png"
-		}
-	};
-
-	// Creates two meshes for now
-	std::vector<MeshCreateInfo> meshInfos;
-	meshInfos.push_back(meshInfo1);
-	meshInfos.push_back(meshInfo2);
+	model_ = std::make_unique<Model>(
+		vulkanDevice, 
+		AppSettings::ModelFolder + "Tachikoma//scene.gltf");
+	std::vector<Model*> models = {model_.get()};
 
 	// Create a cubemap from the input HDR
 	{
@@ -81,8 +53,8 @@ void AppPBR::Init()
 		vulkanDevice,
 		&depthImage_,
 		&specularCubemap_,
-		&diffuseCubemap_,
-		meshInfos);
+		&diffuseCubemap_, 
+		models);
 	skyboxPtr_ = std::make_unique<RendererSkybox>(vulkanDevice, &environmentCubemap_, &depthImage_);
 
 	renderers_ =
@@ -101,10 +73,11 @@ void AppPBR::DestroyResources()
 	environmentCubemap_.Destroy(vulkanDevice.GetDevice());
 	diffuseCubemap_.Destroy(vulkanDevice.GetDevice());
 	specularCubemap_.Destroy(vulkanDevice.GetDevice());
-	clearPtr_ = nullptr;
-	finishPtr_ = nullptr;
-	skyboxPtr_ = nullptr;
-	pbrPtr_ = nullptr;
+	model_.reset();
+	clearPtr_.reset();
+	finishPtr_.reset();
+	skyboxPtr_.reset();
+	pbrPtr_.reset();
 }
 
 void AppPBR::UpdateUBO(uint32_t imageIndex)
@@ -126,27 +99,14 @@ void AppPBR::UpdateUBO(uint32_t imageIndex)
 	pbrPtr_->SetPerFrameUBO(vulkanDevice, imageIndex, pbrUBO);
 
 	// Model UBOs
-	glm::mat4 model(1.f);
-	model = glm::translate(model, glm::vec3(-1.0f, 0.0f, 0.0f));
-	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	glm::mat4 modelMatrix(1.f);
 
 	// 1
 	ModelUBO modelUBO1
 	{
-		.model = model
+		.model = modelMatrix
 	};
-	pbrPtr_->meshes_[0].SetModelUBO(vulkanDevice, imageIndex, modelUBO1);
-
-	// 2
-	model = glm::mat4(1.f);
-	model = glm::translate(model, glm::vec3(2.0f, -1.0f, -2.0f));
-	ModelUBO modelUBO2
-	{
-		.model = model
-	};
-	pbrPtr_->meshes_[1].SetModelUBO(vulkanDevice, imageIndex, modelUBO2);
-
-	modelRotation_ += deltaTime * 0.01f;
+	model_->SetModelUBO(vulkanDevice, imageIndex, modelUBO1);
 }
 
 int AppPBR::MainLoop()

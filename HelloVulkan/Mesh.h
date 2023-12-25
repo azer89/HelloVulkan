@@ -4,12 +4,14 @@
 #include "VulkanDevice.h"
 #include "VulkanBuffer.h"
 #include "VulkanTexture.h"
+#include "TextureMapper.h"
 #include "UBO.h"
 
 #include "volk.h"
 
 #include <vector>
 #include <string>
+#include <unordered_map>
 
 struct VertexData
 {
@@ -52,25 +54,39 @@ public:
 	VulkanBuffer vertexBuffer_;
 	VulkanBuffer indexBuffer_;
 
-	std::vector<VulkanTexture> textures_;
+	//std::vector<VulkanTexture> textures_;
+	std::vector<VertexData> vertices_;
+	std::vector<unsigned int> indices_;
+	std::unordered_map<TextureType, VulkanTexture*> textures_;
 
 	std::vector<VkDescriptorSet> descriptorSets_;
 
-	// ModelUBO
-	std::vector<VulkanBuffer> modelBuffers_;
+	// Constructors
+	Mesh(
+		VulkanDevice& vkDev,
+		std::vector<VertexData>&& _vertices,
+		std::vector<unsigned int>&& _indices,
+		std::unordered_map<TextureType, VulkanTexture*>&& _textures);
+	Mesh(
+		VulkanDevice& vkDev,
+		const std::vector<VertexData>& vertices,
+		const std::vector<unsigned int>& indices,
+		const std::unordered_map<TextureType, VulkanTexture*>& textures);
 
 	// Textures
-	void AddTexture(VulkanDevice& vkDev, const char* fileName, uint32_t bindIndex);
+	//void AddTexture(VulkanDevice& vkDev, const char* fileName, uint32_t bindIndex);
+
+	void Setup(VulkanDevice& vkDev);
 
 	// Assimp
 	void Create(VulkanDevice& vkDev, const char* filename);
 
 	void Destroy(VkDevice device);
 
-	void SetModelUBO(const VulkanDevice& vkDev, uint32_t imageIndex, ModelUBO ubo)
+	/*void SetModelUBO(const VulkanDevice& vkDev, uint32_t imageIndex, ModelUBO ubo)
 	{
 		UpdateUniformBuffer(vkDev.GetDevice(), modelBuffers_[imageIndex], &ubo, sizeof(ModelUBO));
-	}
+	}*/
 
 private:
 	// SSBO, currently not used

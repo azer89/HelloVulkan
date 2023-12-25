@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-void Mesh::AddTexture(VulkanDevice& vkDev, const char* fileName, uint32_t bindIndex)
+/*void Mesh::AddTexture(VulkanDevice& vkDev, const char* fileName, uint32_t bindIndex)
 {
 	VulkanTexture texture;
 	texture.bindIndex_ = bindIndex;
@@ -17,6 +17,38 @@ void Mesh::AddTexture(VulkanDevice& vkDev, const char* fileName, uint32_t bindIn
 		VK_IMAGE_ASPECT_COLOR_BIT);
 	texture.CreateTextureSampler(vkDev.GetDevice());
 	textures_.push_back(texture);
+}*/
+
+// Constructor
+Mesh::Mesh(VulkanDevice& vkDev,
+	std::vector<VertexData>&& _vertices,
+	std::vector<unsigned int>&& _indices,
+	std::unordered_map<TextureType, VulkanTexture*>&& _textures) :
+	vertices_(std::move(_vertices)),
+	indices_(std::move(_indices)),
+	textures_(std::move(_textures))
+{
+	Setup(vkDev);
+}
+
+// Constructor
+Mesh::Mesh(VulkanDevice& vkDev,
+	const std::vector<VertexData>& vertices,
+	const std::vector<unsigned int>& indices,
+	const std::unordered_map<TextureType, VulkanTexture*>& textures) :
+	vertices_(vertices),
+	indices_(indices),
+	textures_(textures)
+{
+	Setup(vkDev);
+}
+
+void Mesh::Setup(VulkanDevice& vkDev)
+{
+	vertexBufferSize_ = sizeof(VertexData) * vertices_.size();
+	indexBufferSize_ = sizeof(unsigned int) * indices_.size();
+	AllocateVertexBuffer(vkDev, vertices_.data());
+	AllocateIndexBuffer(vkDev, indices_.data());
 }
 
 void Mesh::Create(
@@ -64,20 +96,20 @@ void Mesh::Create(
 }
 
 void Mesh::Destroy(VkDevice device)
-{
-	storageBuffer_.Destroy(device);
+{	
 	vertexBuffer_.Destroy(device);
 	indexBuffer_.Destroy(device);
+	//storageBuffer_.Destroy(device);
 
-	for (VulkanTexture& tex : textures_)
+	/*for (VulkanTexture& tex : textures_)
 	{
 		tex.Destroy(device);
-	}
+	}*/
 
-	for (auto buf : modelBuffers_)
+	/*for (auto buf : modelBuffers_)
 	{
 		buf.Destroy(device);
-	}
+	}*/
 }
 
 void Mesh::AllocateVertexBuffer(

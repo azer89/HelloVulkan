@@ -22,32 +22,25 @@ RendererPBR::RendererPBR(
 	VulkanImage* depthImage,
 	VulkanTexture* envMap,
 	VulkanTexture* diffuseMap,
-	const std::vector<MeshCreateInfo>& meshInfos) :
+	std::vector<Model*> models) :
 	RendererBase(vkDev, depthImage),
 	envMap_(envMap),
-	diffuseMap_(diffuseMap)
+	diffuseMap_(diffuseMap),
+	models_(models)
 {
-	for (const MeshCreateInfo& info : meshInfos)
-	{
-		LoadMesh(vkDev, info);
-	}
-
 	// Load BRDF Lookup table
 	// TODO Move this to a function
 	std::string brdfLUTFile = AppSettings::TextureFolder + "brdfLUT.ktx";
 	gli::texture gliTex = gli::load_ktx(brdfLUTFile.c_str());
 	glm::tvec3<GLsizei> extent(gliTex.extent(0));
-	if (!brdfLUT_.image_.CreateImageFromData(
+	brdfLUT_.image_.CreateImageFromData(
 		vkDev,
-		(uint8_t*)gliTex.data(0, 0, 0), 
-		extent.x, 
-		extent.y, 
+		(uint8_t*)gliTex.data(0, 0, 0),
+		extent.x,
+		extent.y,
 		1, // mipmapCount
 		1, // layerCount
-		VK_FORMAT_R16G16_SFLOAT))
-	{
-		std::cerr << "ModelRenderer: failed to load BRDF LUT texture \n";;
-	}
+		VK_FORMAT_R16G16_SFLOAT);
 	brdfLUT_.image_.CreateImageView(
 		vkDev.GetDevice(),
 		VK_FORMAT_R16G16_SFLOAT,
@@ -64,25 +57,34 @@ RendererPBR::RendererPBR(
 
 	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo());
 
+	// Per frame UBO
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
-	for (Mesh& mesh : meshes_)
+	
+	// Model UBO
+	uint32_t numMeshes = 0u;
+	for (Model* model : models_)
 	{
-		CreateUniformBuffers(vkDev, mesh.modelBuffers_, sizeof(ModelUBO));
+		numMeshes += model->NumMeshes();
+		CreateUniformBuffers(vkDev, model->modelBuffers_, sizeof(ModelUBO));
 	}
 
 	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthImage_->imageView_, swapchainFramebuffers_);
 
 	CreateDescriptorPool(
 		vkDev, 
-		2 * meshes_.size(),  // (PerFrameUBO + ModelUBO) * meshes_.size()
+		2 * models_.size(),  // (PerFrameUBO + ModelUBO) * modelSize
 		0,  // SSBO
-		(PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT) * meshes_.size(),
-		meshes_.size(), // decsriptor count per swapchain
+		(PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT) * numMeshes,
+		numMeshes, // decsriptor count per swapchain
 		&descriptorPool_);
 	CreateDescriptorLayout(vkDev);
-	for (Mesh& mesh : meshes_)
+
+	for (Model* model : models_)
 	{
-		CreateDescriptorSet(vkDev, mesh);
+		for (Mesh& mesh : model->meshes_)
+		{
+			CreateDescriptorSet(vkDev, model, mesh);
+		}
 	}
 
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
@@ -102,11 +104,6 @@ RendererPBR::RendererPBR(
 
 RendererPBR::~RendererPBR()
 {
-	for (Mesh& mesh : meshes_)
-	{
-		mesh.Destroy(device_);
-	}
-
 	brdfLUT_.Destroy(device_);
 }
 
@@ -114,28 +111,31 @@ void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t curren
 {
 	BeginRenderPass(commandBuffer, currentImage);
 
-	for (Mesh& mesh : meshes_)
+	for (Model* model : models_)
 	{
-		vkCmdBindDescriptorSets(
-			commandBuffer,
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			pipelineLayout_,
-			0,
-			1,
-			&mesh.descriptorSets_[currentImage],
-			0,
-			nullptr);
+		for (Mesh& mesh : model->meshes_)
+		{
+			vkCmdBindDescriptorSets(
+				commandBuffer,
+				VK_PIPELINE_BIND_POINT_GRAPHICS,
+				pipelineLayout_,
+				0,
+				1,
+				&mesh.descriptorSets_[currentImage],
+				0,
+				nullptr);
 
-		// Bind vertex buffer
-		VkBuffer buffers[] = { mesh.vertexBuffer_.buffer_ };
-		VkDeviceSize offsets[] = { 0 };
-		vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
+			// Bind vertex buffer
+			VkBuffer buffers[] = { mesh.vertexBuffer_.buffer_ };
+			VkDeviceSize offsets[] = { 0 };
+			vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
 
-		// Bind index buffer
-		vkCmdBindIndexBuffer(commandBuffer, mesh.indexBuffer_.buffer_, 0, VK_INDEX_TYPE_UINT32);
+			// Bind index buffer
+			vkCmdBindIndexBuffer(commandBuffer, mesh.indexBuffer_.buffer_, 0, VK_INDEX_TYPE_UINT32);
 
-		// Draw
-		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBufferSize_ / (sizeof(unsigned int))), 1, 0, 0, 0);
+			// Draw
+			vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBufferSize_ / (sizeof(unsigned int))), 1, 0, 0, 0);
+		}
 	}
 	
 	vkCmdEndRenderPass(commandBuffer);
@@ -206,7 +206,7 @@ bool RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 	return true;
 }
 
-bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Mesh& mesh)
+bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh)
 {
 	size_t swapchainLength = vkDev.GetSwapChainImageSize();
 
@@ -229,7 +229,7 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Mesh& mesh)
 		VkDescriptorSet ds = mesh.descriptorSets_[i];
 
 		const VkDescriptorBufferInfo bufferInfo1 = { perFrameUBOs_[i].buffer_, 0, sizeof(PerFrameUBO)};
-		const VkDescriptorBufferInfo bufferInfo2 = { mesh.modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
+		const VkDescriptorBufferInfo bufferInfo2 = { parentModel->modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
 
 		uint32_t bindIndex = 0;
 
@@ -239,28 +239,30 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Mesh& mesh)
 		descriptorWrites.emplace_back(
 			BufferWriteDescriptorSet(ds, &bufferInfo2, bindIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
 		
-		std::vector<VkDescriptorImageInfo> imageInfos;
-		std::vector<uint32_t> bindIndices;
-		for (VulkanTexture& tex : mesh.textures_)
+		std::vector<VkDescriptorImageInfo> textureImageInfos;
+		std::vector<uint32_t> textureBindIndices;
+		for (const auto& elem : mesh.textures_)
 		{
-			imageInfos.emplace_back<VkDescriptorImageInfo>
-			({
-				tex.sampler_,
-				tex.image_.imageView_,
-				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-			});
-			bindIndices.emplace_back(tex.bindIndex_);
+			textureImageInfos.emplace_back<VkDescriptorImageInfo>
+				({
+					elem.second->sampler_,
+					elem.second->image_.imageView_,
+					VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+					});
+			// The enum index starts from 1
+			uint32_t meshBindIndex = PBR_TEXTURE_START_BIND_INDEX + static_cast<uint32_t>(elem.first) - 1;
+			textureBindIndices.emplace_back(meshBindIndex);
 		}
 
-		for (size_t i = 0; i < imageInfos.size(); ++i)
+		for (size_t i = 0; i < textureImageInfos.size(); ++i)
 		{
 			descriptorWrites.emplace_back
 			(
 				ImageWriteDescriptorSet(
 					ds, 
-					&imageInfos[i], 
+					&textureImageInfos[i],
 					// Note that we don't use bindIndex
-					bindIndices[i])
+					textureBindIndices[i])
 			);
 
 			// Keep incrementing
@@ -322,16 +324,4 @@ void RendererPBR::CreateCubemapFromHDR(VulkanDevice& vkDev, const char* fileName
 		mipLevels);
 
 	cubemap.CreateTextureSampler(vkDev.GetDevice());
-}
-
-void RendererPBR::LoadMesh(VulkanDevice& vkDev, const MeshCreateInfo& info)
-{
-	Mesh mesh;
-	mesh.Create(vkDev, info.modelFile.c_str());
-	uint32_t bindIndex = PBR_TEXTURE_START_BIND_INDEX;
-	for (const std::string& texFile : info.textureFiles)
-	{
-		mesh.AddTexture(vkDev, texFile.c_str(), bindIndex++);
-	}
-	meshes_.push_back(mesh);
 }

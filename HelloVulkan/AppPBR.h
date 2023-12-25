@@ -7,6 +7,7 @@
 #include "RendererFinish.h"
 #include "RendererPBR.h"
 #include "VulkanTexture.h"
+#include "Model.h"
 
 #include <vector>
 #include <memory>
@@ -40,6 +41,7 @@ private:
 	VulkanImage depthImage_;
 
 	float modelRotation_;
+	std::unique_ptr<Model> model_;
 };
 
 #endif
