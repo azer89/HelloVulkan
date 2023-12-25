@@ -14,7 +14,7 @@ layout(binding = 0) uniform PerFrameUBO
 }
 frameUBO;
 
-layout(binding = 2) uniform sampler2D textureDiffuse;
+layout(binding = 2) uniform sampler2D textureAlbedo;
 layout(binding = 3) uniform sampler2D textureNormal;
 layout(binding = 4) uniform sampler2D textureMetalness;
 layout(binding = 5) uniform sampler2D textureRoughness;
@@ -47,7 +47,7 @@ vec3 lightColors[NUM_LIGHTS] =
 
 void main()
 {
-	vec4 albedo4 = texture(textureDiffuse, texCoord).rgba;
+	vec4 albedo4 = texture(textureAlbedo, texCoord).rgba;
 
 	if (albedo4.a < 0.5)
 	{

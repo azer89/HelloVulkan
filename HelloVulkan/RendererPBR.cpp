@@ -22,18 +22,12 @@ RendererPBR::RendererPBR(
 	VulkanImage* depthImage,
 	VulkanTexture* envMap,
 	VulkanTexture* diffuseMap,
-	std::vector<Model*> models/*,
-	const std::vector<MeshCreateInfo>& meshInfos*/) :
+	std::vector<Model*> models) :
 	RendererBase(vkDev, depthImage),
 	envMap_(envMap),
 	diffuseMap_(diffuseMap),
 	models_(models)
 {
-	/*for (const MeshCreateInfo& info : meshInfos)
-	{
-		LoadMesh(vkDev, info);
-	}*/
-
 	// Load BRDF Lookup table
 	// TODO Move this to a function
 	std::string brdfLUTFile = AppSettings::TextureFolder + "brdfLUT.ktx";
@@ -88,10 +82,6 @@ RendererPBR::RendererPBR(
 		&descriptorPool_);
 	CreateDescriptorLayout(vkDev);
 
-	/*for (Mesh& mesh : meshes_)
-	{
-		CreateDescriptorSet(vkDev, mesh);
-	}*/
 	for (Model* model : models_)
 	{
 		for (Mesh& mesh : model->meshes_)
@@ -117,11 +107,6 @@ RendererPBR::RendererPBR(
 
 RendererPBR::~RendererPBR()
 {
-	/*for (Mesh& mesh : meshes_)
-	{
-		mesh.Destroy(device_);
-	}*/
-
 	brdfLUT_.Destroy(device_);
 }
 
@@ -259,16 +244,6 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 		
 		std::vector<VkDescriptorImageInfo> textureImageInfos;
 		std::vector<uint32_t> textureBindIndices;
-		/*for (VulkanTexture& tex : mesh.textures_)
-		{
-			imageInfos.emplace_back<VkDescriptorImageInfo>
-			({
-				tex.sampler_,
-				tex.image_.imageView_,
-				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-			});
-			bindIndices.emplace_back(tex.bindIndex_);
-		}*/
 		for (const auto& elem : mesh.textures_)
 		{
 			textureImageInfos.emplace_back<VkDescriptorImageInfo>
@@ -277,6 +252,7 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 					elem.second->image_.imageView_,
 					VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 					});
+			// The enum index starts from 1
 			uint32_t meshBindIndex = PBR_TEXTURE_START_BIND_INDEX + static_cast<uint32_t>(elem.first) - 1;
 			textureBindIndices.emplace_back(meshBindIndex);
 		}
@@ -352,15 +328,3 @@ void RendererPBR::CreateCubemapFromHDR(VulkanDevice& vkDev, const char* fileName
 
 	cubemap.CreateTextureSampler(vkDev.GetDevice());
 }
-
-/*void RendererPBR::LoadMesh(VulkanDevice& vkDev, const MeshCreateInfo& info)
-{
-	Mesh mesh;
-	mesh.Create(vkDev, info.modelFile.c_str());
-	uint32_t bindIndex = PBR_TEXTURE_START_BIND_INDEX;
-	for (const std::string& texFile : info.textureFiles)
-	{
-		mesh.AddTexture(vkDev, texFile.c_str(), bindIndex++);
-	}
-	meshes_.push_back(mesh);
-}*/

@@ -9,7 +9,7 @@
 enum class TextureType : uint32_t
 {
 	NONE = 0u,
-	DIFFUSE = 1u,
+	ALBEDO = 1u,
 	NORMAL = 2u,
 	METALNESS = 3u,
 	ROUGHNESS = 4u,
@@ -51,7 +51,7 @@ namespace TextureMapper
 	static std::unordered_map<aiTextureType, TextureType> assimpTextureToTextureType =
 	{
 		// Diffuse
-		{aiTextureType_DIFFUSE, TextureType::DIFFUSE},
+		{aiTextureType_DIFFUSE, TextureType::ALBEDO},
 
 		// Specular
 		{aiTextureType_SPECULAR, TextureType::METALNESS},

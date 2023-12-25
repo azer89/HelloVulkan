@@ -13,8 +13,7 @@ public:
 		VulkanImage* depthImage,
 		VulkanTexture* envMap,
 		VulkanTexture* diffuseMap,
-		std::vector<Model*> models/*,
-		const std::vector<MeshCreateInfo>& meshInfos*/);
+		std::vector<Model*> models);
 
 	virtual ~RendererPBR();
 
@@ -22,7 +21,6 @@ public:
 
 public:
 	// TODO change this to private
-	//std::vector<Mesh> meshes_;
 	std::vector<Model*> models_;
 
 private:
@@ -31,9 +29,6 @@ private:
 
 	// Manually load cubemap from HDR file, this function is not used anymore
 	void CreateCubemapFromHDR(VulkanDevice& vkDev, const char* fileName, VulkanTexture& cubemap);
-
-	// TODO Move this function to Mesh.h
-	//void LoadMesh(VulkanDevice& vkDev, const MeshCreateInfo& info);
 
 private:
 	VulkanTexture* envMap_;

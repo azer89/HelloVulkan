@@ -18,9 +18,11 @@ Model::Model(VulkanDevice& vkDev, const std::string& path) :
 	device_(vkDev),
 	blackTextureFilePath_(AppSettings::TextureFolder + "Black1x1.png")
 {
+	// In case a texture type cannot be found, replace it with a default texture
 	textureMap_[blackTextureFilePath_] = {};
 	textureMap_[blackTextureFilePath_].CreateTextureImageViewSampler(vkDev, blackTextureFilePath_.c_str());
 
+	// Load model here
 	LoadModel(vkDev, path);
 }
 
@@ -31,9 +33,9 @@ Model::~Model()
 		mesh.Destroy(device_.GetDevice());
 	}
 
-	for (auto buf : modelBuffers_)
+	for (auto buffer : modelBuffers_)
 	{
-		buf.Destroy(device_.GetDevice());
+		buffer.Destroy(device_.GetDevice());
 	}
 
 	// C++20 feature
@@ -53,7 +55,8 @@ void Model::AddTextureIfEmpty(TextureType tType, const std::string& filePath)
 	}
 }
 
-// Loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
+// Loads a model with supported ASSIMP extensions from file and 
+// stores the resulting meshes in the meshes vector.
 void Model::LoadModel(VulkanDevice& vkDev, std::string const& path)
 {
 	// Read file via ASSIMP
@@ -73,8 +76,14 @@ void Model::LoadModel(VulkanDevice& vkDev, std::string const& path)
 	ProcessNode(vkDev, scene->mRootNode, scene, glm::mat4(1.0));
 }
 
-// Processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
-void Model::ProcessNode(VulkanDevice& vkDev, aiNode* node, const aiScene* scene, const glm::mat4& parentTransform)
+// Processes a node in a recursive fashion. 
+// Processes each individual mesh located at the node and 
+// repeats this process on its children nodes (if any).
+void Model::ProcessNode(
+	VulkanDevice& vkDev, 
+	aiNode* node, 
+	const aiScene* scene, 
+	const glm::mat4& parentTransform)
 {
 	glm::mat4 nodeTransform = mat4_cast(node->mTransformation);
 	glm::mat4 totalTransform = parentTransform * nodeTransform;
@@ -95,7 +104,11 @@ void Model::ProcessNode(VulkanDevice& vkDev, aiNode* node, const aiScene* scene,
 	}
 }
 
-Mesh Model::ProcessMesh(VulkanDevice& vkDev, aiMesh* mesh, const aiScene* scene, const glm::mat4& transform)
+Mesh Model::ProcessMesh(
+	VulkanDevice& vkDev, 
+	aiMesh* mesh, 
+	const aiScene* scene, 
+	const glm::mat4& transform)
 {
 	// Data to fill
 	std::vector<VertexData> vertices;
@@ -168,9 +181,6 @@ Mesh Model::ProcessMesh(VulkanDevice& vkDev, aiMesh* mesh, const aiScene* scene,
 
 			if (!textureMap_.contains(key)) // Make sure never loaded before
 			{
-				//Texture texture(tType, str.C_Str());
-				//texture.CreateFromImageFile(this->directory + '/' + str.C_Str());
-				//textureMap[key] = texture;
 				VulkanTexture texture;
 				std::string fullFilePath = this->directory_ + '/' + str.C_Str();
 				texture.CreateTextureImageViewSampler(vkDev, fullFilePath.c_str());
@@ -185,9 +195,9 @@ Mesh Model::ProcessMesh(VulkanDevice& vkDev, aiMesh* mesh, const aiScene* scene,
 	}
 	// Replace missing PBR textures with black texture
 	// TODO Use a loop instead of multiple IFs
-	if (!textures.contains(TextureType::DIFFUSE))
+	if (!textures.contains(TextureType::ALBEDO))
 	{
-		textures[TextureType::DIFFUSE] = &textureMap_[blackTextureFilePath_];
+		textures[TextureType::ALBEDO] = &textureMap_[blackTextureFilePath_];
 	}
 	if (!textures.contains(TextureType::NORMAL))
 	{
