@@ -20,6 +20,10 @@ public:
 	// Static textures have VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	//VkImageLayout desiredLayout;
 
+	void CreateTextureImageViewSampler(
+		VulkanDevice& vkDev,
+		const char* filename);
+
 	bool CreateTextureImage(
 		VulkanDevice& vkDev,
 		const char* filename,

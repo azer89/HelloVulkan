@@ -103,10 +103,11 @@ void AppPBR::DestroyResources()
 	environmentCubemap_.Destroy(vulkanDevice.GetDevice());
 	diffuseCubemap_.Destroy(vulkanDevice.GetDevice());
 	specularCubemap_.Destroy(vulkanDevice.GetDevice());
-	clearPtr_ = nullptr;
-	finishPtr_ = nullptr;
-	skyboxPtr_ = nullptr;
-	pbrPtr_ = nullptr;
+	model_.reset();
+	clearPtr_.reset();
+	finishPtr_.reset();
+	skyboxPtr_.reset();
+	pbrPtr_.reset();
 }
 
 void AppPBR::UpdateUBO(uint32_t imageIndex)

@@ -257,8 +257,8 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 		descriptorWrites.emplace_back(
 			BufferWriteDescriptorSet(ds, &bufferInfo2, bindIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
 		
-		std::vector<VkDescriptorImageInfo> imageInfos;
-		std::vector<uint32_t> bindIndices;
+		std::vector<VkDescriptorImageInfo> textureImageInfos;
+		std::vector<uint32_t> textureBindIndices;
 		/*for (VulkanTexture& tex : mesh.textures_)
 		{
 			imageInfos.emplace_back<VkDescriptorImageInfo>
@@ -271,24 +271,25 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 		}*/
 		for (const auto& elem : mesh.textures_)
 		{
-			imageInfos.emplace_back<VkDescriptorImageInfo>
+			textureImageInfos.emplace_back<VkDescriptorImageInfo>
 				({
 					elem.second->sampler_,
 					elem.second->image_.imageView_,
 					VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 					});
-			bindIndices.emplace_back(static_cast<uint32_t>(elem.first));
+			uint32_t meshBindIndex = PBR_TEXTURE_START_BIND_INDEX + static_cast<uint32_t>(elem.first) - 1;
+			textureBindIndices.emplace_back(meshBindIndex);
 		}
 
-		for (size_t i = 0; i < imageInfos.size(); ++i)
+		for (size_t i = 0; i < textureImageInfos.size(); ++i)
 		{
 			descriptorWrites.emplace_back
 			(
 				ImageWriteDescriptorSet(
 					ds, 
-					&imageInfos[i], 
+					&textureImageInfos[i],
 					// Note that we don't use bindIndex
-					bindIndices[i])
+					textureBindIndices[i])
 			);
 
 			// Keep incrementing

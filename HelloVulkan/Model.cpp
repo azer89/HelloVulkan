@@ -19,7 +19,7 @@ Model::Model(VulkanDevice& vkDev, const std::string& path) :
 	blackTextureFilePath_(AppSettings::TextureFolder + "Black1x1.png")
 {
 	textureMap_[blackTextureFilePath_] = {};
-	textureMap_[blackTextureFilePath_].CreateTextureImage(vkDev, blackTextureFilePath_.c_str());
+	textureMap_[blackTextureFilePath_].CreateTextureImageViewSampler(vkDev, blackTextureFilePath_.c_str());
 
 	LoadModel(vkDev, path);
 }
@@ -173,7 +173,7 @@ Mesh Model::ProcessMesh(VulkanDevice& vkDev, aiMesh* mesh, const aiScene* scene,
 				//textureMap[key] = texture;
 				VulkanTexture texture;
 				std::string fullFilePath = this->directory_ + '/' + str.C_Str();
-				texture.CreateTextureImage(vkDev, fullFilePath.c_str());
+				texture.CreateTextureImageViewSampler(vkDev, fullFilePath.c_str());
 				textureMap_[key] = texture;
 			}
 

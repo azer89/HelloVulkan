@@ -73,6 +73,18 @@ void VulkanTexture::CreateTextureSampler(
 		addressMode);
 }
 
+void VulkanTexture::CreateTextureImageViewSampler(
+	VulkanDevice& vkDev,
+	const char* filename)
+{
+	CreateTextureImage(vkDev, filename);
+	image_.CreateImageView(
+		vkDev.GetDevice(),
+		VK_FORMAT_R8G8B8A8_UNORM,
+		VK_IMAGE_ASPECT_COLOR_BIT);
+	CreateTextureSampler(vkDev.GetDevice());
+}
+
 bool VulkanTexture::CreateTextureImage(
 	VulkanDevice& vkDev,
 	const char* filename,
