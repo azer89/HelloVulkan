@@ -543,7 +543,10 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 	}
 
 	// Create a sampler for the output cubemap
-	outputCubemap->CreateTextureSampler(vkDev.GetDevice());
+	outputCubemap->CreateTextureSampler(
+		vkDev.GetDevice(),
+		0.0f,
+		static_cast<float>(outputMipMapCount));
 
 	// Transition to a new layout
 	outputCubemap->image_.TransitionImageLayout(
