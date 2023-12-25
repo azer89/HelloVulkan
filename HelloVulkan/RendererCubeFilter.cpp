@@ -9,8 +9,8 @@ namespace FilterSettings
 	const unsigned int sampleCount = 1024;
 	const uint32_t inputCubemapSize = 1024;
 	const uint32_t outputDiffuseMipmapCount = 1u;
-	const uint32_t outputDiffuseSize = 128;
-	const uint32_t outputSpecularSize = 512;
+	const uint32_t outputDiffuseSize = 32;
+	const uint32_t outputSpecularSize = 128;
 	const VkFormat cubeMapFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
 	const uint32_t layerCount = 6;
 }

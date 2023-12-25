@@ -47,8 +47,15 @@ vec3 lightColors[NUM_LIGHTS] =
 
 void main()
 {
+	vec4 albedo4 = texture(textureDiffuse, texCoord).rgba;
+
+	if (albedo4.a < 0.5)
+	{
+		discard;
+	}
+
 	// Material properties
-	vec3 albedo = texture(textureDiffuse, texCoord).rgb;
+	vec3 albedo = pow(albedo4.rgb, vec3(2.2)); ;
 	vec3 emissive = texture(textureEmissive, texCoord).rgb;
 	float metallic = texture(textureMetalness, texCoord).b;
 	float roughness = texture(textureRoughness, texCoord).g;

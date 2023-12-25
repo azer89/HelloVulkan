@@ -13,7 +13,7 @@ void AppPBR::Init()
 {
 	modelRotation_ = 0.f;
 
-	std::string cubemapTextureFile = AppSettings::TextureFolder + "the_sky_is_on_fire_4k.hdr";
+	std::string cubemapTextureFile = AppSettings::TextureFolder + "neon_photostudio_4k.hdr";
 
 	/*MeshCreateInfo meshInfo1
 	{
@@ -47,7 +47,9 @@ void AppPBR::Init()
 	//std::vector<MeshCreateInfo> meshInfos;
 	//meshInfos.push_back(meshInfo1);
 	//meshInfos.push_back(meshInfo2);
-	model_ = std::make_unique<Model>(vulkanDevice, AppSettings::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
+	model_ = std::make_unique<Model>(
+		vulkanDevice, 
+		AppSettings::ModelFolder + "Tachikoma//scene.gltf");
 	std::vector<Model*> models = {model_.get()};
 
 	// Create a cubemap from the input HDR
