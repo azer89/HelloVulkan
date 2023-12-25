@@ -8,9 +8,11 @@ An implementation of physically-based lighting model to generate realistic rende
 * Offscreen rendering to generate both specular and diffuse maps.
 * Automatic runtime compilation from GLSL to SPIR-V for convenient development process.
 
-https://github.com/azer89/HelloVulkan/assets/790432/e0844ac4-eaaa-4f52-8155-06937183bec7
 
-<img width="850" alt="Dragon" src="https://github.com/azer89/HelloVulkan/assets/790432/75930cb9-0855-4ae1-afe9-5a95aa8db93d">
+https://github.com/azer89/HelloVulkan/assets/790432/ee0b9358-f818-4e9b-9651-8250eef37da2
+
+
+https://github.com/azer89/HelloVulkan/assets/790432/530a11a6-9f16-4c29-84e3-b9c64aa62b39
 
 
 ### Build
@@ -26,5 +28,6 @@ Technical Resources:
 * [3D Graphics Rendering Cookbook](https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook)
 
 Assets:
+* [Tachikoma](https://sketchfab.com/3d-models/tachikoma-7ec03deb78de4a1b908d2bc736ff0f15)
 * [Polyhaven](https://polyhaven.com/)
 * [glTF Assets](https://github.com/KhronosGroup/glTF-Sample-Assets)
