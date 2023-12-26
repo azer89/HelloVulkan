@@ -92,6 +92,7 @@ void VulkanBuffer::CreateSharedBuffer(
 			size,
 			usage,
 			properties);
+		return;
 	}
 	const VkBufferCreateInfo bufferInfo = {
 		.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,

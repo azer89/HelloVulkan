@@ -13,7 +13,7 @@ public:
 	RendererBRDF(
 		VulkanDevice& vkDev);
 
-	~RendererBRDF();
+	virtual ~RendererBRDF();
 
 	void CreateLUT(VulkanDevice& vkDev, VulkanTexture* outputLUT);
 
