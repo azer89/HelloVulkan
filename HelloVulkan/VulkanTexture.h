@@ -3,7 +3,6 @@
 
 #include "VulkanImage.h"
 #include "VulkanDevice.h"
-#include "Bitmap.h"
 
 class VulkanTexture
 {
@@ -49,11 +48,6 @@ public:
 		VkSamplerAddressMode addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
 
 	void Destroy(VkDevice device);
-
-private:
-	Bitmap ConvertEquirectangularMapToVerticalCross(const Bitmap& b);
-
-	Bitmap ConvertVerticalCrossToCubeMapFaces(const Bitmap& b);
 };
 
 #endif

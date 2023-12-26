@@ -28,14 +28,10 @@ private:
 	bool CreateDescriptorLayout(VulkanDevice& vkDev);
 	bool CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh);
 
-	// Manually load cubemap from HDR file, this function is not used anymore
-	void CreateCubemapFromHDR(VulkanDevice& vkDev, const char* fileName, VulkanTexture& cubemap);
-
 private:
 	VulkanTexture* envMap_;
 	VulkanTexture* diffuseMap_;
 	VulkanTexture* brdfLUT_;
-	//VulkanTexture brdfLUT_;
 };
 
 #endif

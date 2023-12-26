@@ -137,7 +137,6 @@
   <ItemGroup>
     <ClCompile Include="AppBase.cpp" />
     <ClCompile Include="AppPBR.cpp" />
-    <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="RendererBRDF.cpp" />
     <ClCompile Include="main.cpp" />
@@ -162,7 +161,6 @@
     <ClInclude Include="AppBase.h" />
     <ClInclude Include="AppSettings.h" />
     <ClInclude Include="AppPBR.h" />
-    <ClInclude Include="Bitmap.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="RendererBRDF.h" />
     <ClInclude Include="Mesh.h" />
@@ -194,7 +192,6 @@
     <None Include="..\Shaders\equirect_2_cubemap.frag" />
     <None Include="..\Shaders\fullscreen_triangle.vert" />
     <None Include="..\Shaders\cube_filter.frag" />
-    <None Include="..\Shaders\pbr_mesh.frag" />
     <None Include="..\Shaders\pbr_mesh.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
