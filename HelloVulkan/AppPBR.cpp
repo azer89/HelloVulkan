@@ -2,6 +2,7 @@
 #include "AppSettings.h"
 #include "RendererEquirect2Cube.h"
 #include "RendererCubeFilter.h"
+#include "RendererBRDF.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 
@@ -17,7 +18,7 @@ void AppPBR::Init()
 
 	model_ = std::make_unique<Model>(
 		vulkanDevice, 
-		AppSettings::ModelFolder + "Geisha//scene.gltf");
+		AppSettings::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
 	std::vector<Model*> models = {model_.get()};
 
 	// Create a cubemap from the input HDR
@@ -40,6 +41,11 @@ void AppPBR::Init()
 		cFilter.OffscreenRender(vulkanDevice,
 			&specularCubemap_,
 			DistributionCubeFilter::GGX);
+	}
+	
+	{
+		RendererBRDF brdfComp(vulkanDevice);
+		brdfComp.CreateLUT(vulkanDevice, &lutTexture_);
 	}
 
 	depthImage_.CreateDepthResources(vulkanDevice,
@@ -73,6 +79,7 @@ void AppPBR::DestroyResources()
 	environmentCubemap_.Destroy(vulkanDevice.GetDevice());
 	diffuseCubemap_.Destroy(vulkanDevice.GetDevice());
 	specularCubemap_.Destroy(vulkanDevice.GetDevice());
+	lutTexture_.Destroy(vulkanDevice.GetDevice());
 	model_.reset();
 	clearPtr_.reset();
 	finishPtr_.reset();
