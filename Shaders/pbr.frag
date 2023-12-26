@@ -46,7 +46,9 @@ vec3 lightColors[NUM_LIGHTS] =
 	vec3(10.0, 10.0, 10.0)
 };
 
+// Include files
 #include <pbr_include.frag>
+#include <hammersley.frag>
 
 void main()
 {

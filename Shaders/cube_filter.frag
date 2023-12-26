@@ -45,30 +45,11 @@ struct MicrofacetDistributionSample
 	float phi;
 };
 
+#include <hammersley.frag>
+
 float Saturate(float v)
 {
 	return clamp(v, 0.0f, 1.0f);
-}
-
-// Hammersley Points on the Hemisphere
-// CC BY 3.0 (Holger Dammertz)
-// http://holger.dammertz.org/stuff/notes_HammersleyOnHemisphere.html
-// with adapted interface
-float RadicalInverse_VdC(uint bits)
-{
-	bits = (bits << 16u) | (bits >> 16u);
-	bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
-	bits = ((bits & 0x33333333u) << 2u) | ((bits & 0xCCCCCCCCu) >> 2u);
-	bits = ((bits & 0x0F0F0F0Fu) << 4u) | ((bits & 0xF0F0F0F0u) >> 4u);
-	bits = ((bits & 0x00FF00FFu) << 8u) | ((bits & 0xFF00FF00u) >> 8u);
-	return float(bits) * 2.3283064365386963e-10; // / 0x100000000
-}
-
-// Hammersley2d describes a sequence of points in the 2d unit square [0,1)^2
-// that can be used for quasi Monte Carlo integration
-vec2 Hammersley2d(int i, int N)
-{
-	return vec2(float(i)/float(N), RadicalInverse_VdC(uint(i)));
 }
 
 // TBN generates a tangent bitangent normal coordinate frame from the normal
@@ -155,7 +136,7 @@ float ComputeLod(float pdf)
 vec4 GetImportanceSample(int sampleIndex, vec3 N, float roughness)
 {
 	// Generate a quasi monte carlo point in the unit square [0.1)^2
-	vec2 xi = Hammersley2d(sampleIndex, int(pcParams.sampleCount));
+	vec2 xi = Hammersley(sampleIndex, int(pcParams.sampleCount));
 
 	MicrofacetDistributionSample importanceSample;
 

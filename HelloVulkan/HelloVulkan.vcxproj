@@ -185,6 +185,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\brdf_lut.comp" />
+    <None Include="..\Shaders\hammersley.frag" />
     <None Include="..\Shaders\pbr.frag" />
     <None Include="..\Shaders\pbr_include.frag" />
     <None Include="..\Shaders\skybox.frag" />
