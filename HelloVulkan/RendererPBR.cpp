@@ -2,9 +2,6 @@
 #include "VulkanUtility.h"
 #include "AppSettings.h"
 
-#include "gli/gli.hpp"
-#include "gli/load_ktx.hpp"
-
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
 #include "assimp/cimport.h"
@@ -283,20 +280,4 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 	}
 
 	return true;
-}
-
-void RendererPBR::CreateCubemapFromHDR(VulkanDevice& vkDev, const char* fileName, VulkanTexture& cubemap)
-{
-	cubemap.CreateCubeTextureImage(vkDev, fileName);
-
-	uint32_t mipLevels = 1;
-	cubemap.image_.CreateImageView(
-		vkDev.GetDevice(),
-		VK_FORMAT_R32G32B32A32_SFLOAT,
-		VK_IMAGE_ASPECT_COLOR_BIT,
-		VK_IMAGE_VIEW_TYPE_CUBE,
-		6,
-		mipLevels);
-
-	cubemap.CreateTextureSampler(vkDev.GetDevice());
 }
