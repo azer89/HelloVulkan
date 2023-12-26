@@ -17,14 +17,25 @@ public:
 
 	~RendererBRDF();
 
+	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
+
 private:
 	VulkanBuffer inBuffer_;
 	VulkanBuffer outBuffer_;
 
 	VkDescriptorSet descriptorSet_;
 
+	VkPipeline pipeline_;
+
 private:
+	void CreateComputeDescriptorSetLayout(VkDevice device);
+	
 	void CreateComputeDescriptorSet(VkDevice device, VkDescriptorSetLayout descriptorSetLayout);
+
+	void CreateComputePipeline(
+		VkDevice device,
+		VkShaderModule computeShader);
+
 };
 
 #endif
