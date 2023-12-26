@@ -15,8 +15,6 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 	RendererBase(vkDev, depthImage),
 	envMap_(envMap)
 {
-	
-
 	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo());
 
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
@@ -26,9 +24,9 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 	CreateDescriptorPool(
 		vkDev, 
 		1, // uniform
-		0, // ssbo
-		1, // texture
-		1, // one set per swapchain
+		0, // SSBO
+		1, // Texture
+		1, // One set per swapchain
 		&descriptorPool_);
 	CreateDescriptorLayoutAndSet(vkDev);
 	
@@ -38,8 +36,8 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 		renderPass_,
 		pipelineLayout_,
 		{
-			AppSettings::ShaderFolder + "cube.vert",
-			AppSettings::ShaderFolder + "skybox.frag",
+			AppSettings::ShaderFolder + "Cube.vert",
+			AppSettings::ShaderFolder + "Cube.frag",
 		},
 		&graphicsPipeline_);
 }

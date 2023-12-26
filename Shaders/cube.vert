@@ -13,7 +13,8 @@ layout(binding = 0) uniform PerFrameUBO
 	vec4 cameraPosition;
 } frameUBO;
 
-const vec3 pos[8] = vec3[8](
+const vec3 pos[8] = vec3[8]
+(
 	vec3(-1.0, -1.0, 1.0),
 	vec3(1.0,  -1.0, 1.0),
 	vec3(1.0,   1.0, 1.0),

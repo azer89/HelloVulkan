@@ -154,34 +154,34 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Shaders\cube.vert">
+    <None Include="..\Shaders\Cube.vert">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\Shaders\pbr_mesh.vert">
+    <None Include="..\Shaders\Mesh.vert">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\Shaders\equirect_2_cubemap.frag">
+    <None Include="..\Shaders\Equirect2Cube.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\Shaders\fullscreen_triangle.vert">
+    <None Include="..\Shaders\FullscreenTriangle.vert">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\Shaders\cube_filter.frag">
+    <None Include="..\Shaders\CubemapFilter.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\Shaders\skybox.frag">
+    <None Include="..\Shaders\Cube.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\Shaders\pbr.frag">
+    <None Include="..\Shaders\Mesh.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\Shaders\pbr_include.frag">
+    <None Include="..\Shaders\PBRLibrary.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\Shaders\brdf_lut.comp">
+    <None Include="..\Shaders\BRDFLUT.comp">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\Shaders\hammersley.frag">
+    <None Include="..\Shaders\Hammersley.frag">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

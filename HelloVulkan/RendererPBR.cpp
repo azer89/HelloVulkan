@@ -66,8 +66,8 @@ RendererPBR::RendererPBR(
 		renderPass_,
 		pipelineLayout_,
 		{
-			AppSettings::ShaderFolder + "pbr_mesh.vert",
-			AppSettings::ShaderFolder + "pbr.frag"
+			AppSettings::ShaderFolder + "Mesh.vert",
+			AppSettings::ShaderFolder + "Mesh.frag"
 		},
 		&graphicsPipeline_,
 		true // hasVertexBuffer

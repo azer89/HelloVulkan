@@ -184,16 +184,16 @@
     <ClInclude Include="VulkanUtility.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Shaders\brdf_lut.comp" />
-    <None Include="..\Shaders\hammersley.frag" />
-    <None Include="..\Shaders\pbr.frag" />
-    <None Include="..\Shaders\pbr_include.frag" />
-    <None Include="..\Shaders\skybox.frag" />
-    <None Include="..\Shaders\cube.vert" />
-    <None Include="..\Shaders\equirect_2_cubemap.frag" />
-    <None Include="..\Shaders\fullscreen_triangle.vert" />
-    <None Include="..\Shaders\cube_filter.frag" />
-    <None Include="..\Shaders\pbr_mesh.vert" />
+    <None Include="..\Shaders\BRDFLUT.comp" />
+    <None Include="..\Shaders\Hammersley.frag" />
+    <None Include="..\Shaders\Mesh.frag" />
+    <None Include="..\Shaders\PBRLibrary.frag" />
+    <None Include="..\Shaders\Cube.frag" />
+    <None Include="..\Shaders\Cube.vert" />
+    <None Include="..\Shaders\Equirect2Cube.frag" />
+    <None Include="..\Shaders\FullscreenTriangle.vert" />
+    <None Include="..\Shaders\CubemapFilter.frag" />
+    <None Include="..\Shaders\Mesh.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

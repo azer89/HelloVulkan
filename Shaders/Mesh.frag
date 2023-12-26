@@ -47,8 +47,8 @@ vec3 lightColors[NUM_LIGHTS] =
 };
 
 // Include files
-#include <pbr_include.frag>
-#include <hammersley.frag>
+#include <PBRLibrary.frag>
+#include <Hammersley.frag>
 
 // Easy trick to get tangent-normals to world-space to keep PBR code simplified.
 vec3 GetNormalFromMap(vec3 tangentNormal, vec3 worldPos, vec3 normal, vec2 texCoord)

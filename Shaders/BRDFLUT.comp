@@ -14,8 +14,8 @@ const uint BRDF_W = 256;
 const uint BRDF_H = 256;
 const uint SAMPLE_COUNT = 1024u;
 
-#include <hammersley.frag>
-#include <pbr_include.frag>
+#include <Hammersley.frag>
+#include <PBRLibrary.frag>
 
 vec2 BRDF(float NoV, float roughness)
 {

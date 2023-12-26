@@ -19,7 +19,7 @@ RendererBRDF::RendererBRDF(
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-	std::string shaderFile = AppSettings::ShaderFolder + "brdf_lut.comp";
+	std::string shaderFile = AppSettings::ShaderFolder + "BRDFLUT.comp";
 	VulkanShader shader;
 	shader.Create(vkDev.GetDevice(), shaderFile.c_str());
 

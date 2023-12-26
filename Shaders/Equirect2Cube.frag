@@ -8,8 +8,7 @@ This shader is based on:
 [2] https://en.wikipedia.org/wiki/Cube_mapping#Memory_addressing
 */
 
-#define MATH_PI 3.1415926535897932384626433832795
-#define MATH_INV_PI (1.0 / MATH_PI)
+#define PI 3.1415926535897932384626433832795
 
 layout(set = 0, binding = 0) uniform sampler2D envMap;
 
@@ -85,8 +84,8 @@ vec2 DirToUV(vec3 dir)
 {
 	return vec2
 	(
-		0.5f + 0.5f * atan(dir.z, dir.x) / MATH_PI,
-		1.f - acos(dir.y) / MATH_PI
+		0.5f + 0.5f * atan(dir.z, dir.x) / PI,
+		1.f - acos(dir.y) / PI
 	);
 }
 
