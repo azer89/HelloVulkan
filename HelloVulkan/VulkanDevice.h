@@ -35,6 +35,10 @@ public:
 	uint32_t GetFrameBufferWidth() const { return framebufferWidth; }
 	uint32_t GetFrameBufferHeight() const { return framebufferHeight; }
 	size_t GetSwapChainImageSize() const { return swapchainImages.size(); }
+	size_t GetDeviceQueueIndicesSize() const { return deviceQueueIndices.size(); }
+	const uint32_t* GetDeviceQueueIndicesData() const { return deviceQueueIndices.data(); }
+	VkCommandBuffer GetComputeCommandBuffer() { return computeCommandBuffer; }
+	VkQueue GetComputeQueue() { return computeQueue; }
 
 	VkImageView GetSwapchainImageView(unsigned i)
 	{

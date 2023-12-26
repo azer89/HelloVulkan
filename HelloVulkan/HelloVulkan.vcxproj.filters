@@ -78,6 +78,9 @@
     <ClCompile Include="Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RendererBRDF.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppSettings.h">
@@ -152,6 +155,9 @@
     <ClInclude Include="Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RendererBRDF.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cube.vert">
@@ -179,6 +185,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="..\Shaders\pbr_include.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Shaders\brdf_lut.comp">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

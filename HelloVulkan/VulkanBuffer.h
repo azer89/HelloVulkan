@@ -36,6 +36,17 @@ public:
 		const void* data,
 		const size_t dataSize);
 
+	void DownloadBufferData(VulkanDevice& vkDev,
+		VkDeviceSize deviceOffset,
+		void* outData,
+		const size_t dataSize);
+
+	void CreateSharedBuffer(
+		VulkanDevice& vkDev,
+		VkDeviceSize size,
+		VkBufferUsageFlags usage,
+		VkMemoryPropertyFlags properties);
+
 private:
 	uint32_t FindMemoryType(
 		VkPhysicalDevice device,

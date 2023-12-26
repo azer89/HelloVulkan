@@ -13,6 +13,7 @@ public:
 		VulkanImage* depthImage,
 		VulkanTexture* envMap,
 		VulkanTexture* diffuseMap,
+		VulkanTexture* brdfLUT,
 		std::vector<Model*> models);
 
 	virtual ~RendererPBR();
@@ -33,7 +34,8 @@ private:
 private:
 	VulkanTexture* envMap_;
 	VulkanTexture* diffuseMap_;
-	VulkanTexture brdfLUT_;
+	VulkanTexture* brdfLUT_;
+	//VulkanTexture brdfLUT_;
 };
 
 #endif

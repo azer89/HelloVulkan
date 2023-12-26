@@ -139,6 +139,7 @@
     <ClCompile Include="AppPBR.cpp" />
     <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="RendererBRDF.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
@@ -163,6 +164,7 @@
     <ClInclude Include="AppPBR.h" />
     <ClInclude Include="Bitmap.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="RendererBRDF.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="PipelineCreateInfo.h" />
@@ -184,6 +186,7 @@
     <ClInclude Include="VulkanUtility.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Shaders\brdf_lut.comp" />
     <None Include="..\Shaders\pbr.frag" />
     <None Include="..\Shaders\pbr_include.frag" />
     <None Include="..\Shaders\skybox.frag" />

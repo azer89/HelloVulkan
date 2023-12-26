@@ -599,6 +599,8 @@ uint32_t VulkanImage::BytesPerTexFormat(VkFormat fmt)
 		return 2;
 	case VK_FORMAT_R16G16_SFLOAT:
 		return 4;
+	case VK_FORMAT_R32G32_SFLOAT:
+		return 2 * sizeof(float);
 	case VK_FORMAT_R16G16_SNORM:
 		return 4;
 	case VK_FORMAT_B8G8R8A8_UNORM:

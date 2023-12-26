@@ -33,9 +33,9 @@ private:
 	// Cubemap generated from HDR
 	VulkanTexture environmentCubemap_;
 
-	// Diffuse / irradiance map
+	// PBR stuff
 	VulkanTexture diffuseCubemap_;
-
+	VulkanTexture lutTexture_;
 	VulkanTexture specularCubemap_;
 
 	VulkanImage depthImage_;

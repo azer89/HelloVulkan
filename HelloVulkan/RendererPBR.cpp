@@ -22,39 +22,14 @@ RendererPBR::RendererPBR(
 	VulkanImage* depthImage,
 	VulkanTexture* envMap,
 	VulkanTexture* diffuseMap,
+	VulkanTexture* brdfLUT,
 	std::vector<Model*> models) :
 	RendererBase(vkDev, depthImage),
 	envMap_(envMap),
 	diffuseMap_(diffuseMap),
+	brdfLUT_(brdfLUT),
 	models_(models)
 {
-	// Load BRDF Lookup table
-	// TODO Move this to a function
-	std::string brdfLUTFile = AppSettings::TextureFolder + "brdfLUT.ktx";
-	gli::texture gliTex = gli::load_ktx(brdfLUTFile.c_str());
-	glm::tvec3<GLsizei> extent(gliTex.extent(0));
-	brdfLUT_.image_.CreateImageFromData(
-		vkDev,
-		(uint8_t*)gliTex.data(0, 0, 0),
-		extent.x,
-		extent.y,
-		1, // mipmapCount
-		1, // layerCount
-		VK_FORMAT_R16G16_SFLOAT);
-	brdfLUT_.image_.CreateImageView(
-		vkDev.GetDevice(),
-		VK_FORMAT_R16G16_SFLOAT,
-		VK_IMAGE_ASPECT_COLOR_BIT
-	);
-	brdfLUT_.CreateTextureSampler(
-		vkDev.GetDevice(),
-		0.f,
-		0.f,
-		VK_FILTER_LINEAR,
-		VK_FILTER_LINEAR,
-		VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE
-	);
-
 	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo());
 
 	// Per frame UBO
@@ -104,7 +79,7 @@ RendererPBR::RendererPBR(
 
 RendererPBR::~RendererPBR()
 {
-	brdfLUT_.Destroy(device_);
+	//brdfLUT_.Destroy(device_);
 }
 
 void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
@@ -283,8 +258,8 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 		};
 		const VkDescriptorImageInfo imageInfoBRDF = 
 		{ 
-			brdfLUT_.sampler_, 
-			brdfLUT_.image_.imageView_, 
+			brdfLUT_->sampler_, 
+			brdfLUT_->image_.imageView_, 
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL 
 		};
 

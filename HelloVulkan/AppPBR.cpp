@@ -2,6 +2,7 @@
 #include "AppSettings.h"
 #include "RendererEquirect2Cube.h"
 #include "RendererCubeFilter.h"
+#include "RendererBRDF.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 
@@ -13,11 +14,11 @@ void AppPBR::Init()
 {
 	modelRotation_ = 0.f;
 
-	std::string cubemapTextureFile = AppSettings::TextureFolder + "neon_photostudio_4k.hdr";
+	std::string cubemapTextureFile = AppSettings::TextureFolder + "piazza_bologni_1k.hdr";
 
 	model_ = std::make_unique<Model>(
 		vulkanDevice, 
-		AppSettings::ModelFolder + "Tachikoma//scene.gltf");
+		AppSettings::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
 	std::vector<Model*> models = {model_.get()};
 
 	// Create a cubemap from the input HDR
@@ -41,6 +42,11 @@ void AppPBR::Init()
 			&specularCubemap_,
 			DistributionCubeFilter::GGX);
 	}
+	
+	{
+		RendererBRDF brdfComp(vulkanDevice);
+		brdfComp.CreateLUT(vulkanDevice, &lutTexture_);
+	}
 
 	depthImage_.CreateDepthResources(vulkanDevice,
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
@@ -54,6 +60,7 @@ void AppPBR::Init()
 		&depthImage_,
 		&specularCubemap_,
 		&diffuseCubemap_, 
+		&lutTexture_,
 		models);
 	skyboxPtr_ = std::make_unique<RendererSkybox>(vulkanDevice, &environmentCubemap_, &depthImage_);
 
@@ -73,6 +80,7 @@ void AppPBR::DestroyResources()
 	environmentCubemap_.Destroy(vulkanDevice.GetDevice());
 	diffuseCubemap_.Destroy(vulkanDevice.GetDevice());
 	specularCubemap_.Destroy(vulkanDevice.GetDevice());
+	lutTexture_.Destroy(vulkanDevice.GetDevice());
 	model_.reset();
 	clearPtr_.reset();
 	finishPtr_.reset();
@@ -100,6 +108,8 @@ void AppPBR::UpdateUBO(uint32_t imageIndex)
 
 	// Model UBOs
 	glm::mat4 modelMatrix(1.f);
+	modelMatrix = glm::rotate(modelMatrix, modelRotation_, glm::vec3(0.f, 1.f, 0.f));
+	modelRotation_ += deltaTime * 0.1f;
 
 	// 1
 	ModelUBO modelUBO1
