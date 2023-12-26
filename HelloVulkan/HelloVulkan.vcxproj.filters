@@ -187,5 +187,8 @@
     <None Include="..\Shaders\pbr_include.frag">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\Shaders\brdf_lut.comp">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

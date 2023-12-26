@@ -38,7 +38,51 @@ RendererBRDF::~RendererBRDF()
 
 void RendererBRDF::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
 {
+}
 
+void RendererBRDF::Execute(VulkanDevice& vkDev, uint32_t xsize, uint32_t ysize, uint32_t zsize)
+{
+	VkCommandBuffer commandBuffer = vkDev.GetComputeCommandBuffer();
+
+	VkCommandBufferBeginInfo commandBufferBeginInfo = {
+		VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+		0, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, 0
+	};
+
+	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo));
+
+	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline_);
+
+	vkCmdBindDescriptorSets(
+		commandBuffer,
+		VK_PIPELINE_BIND_POINT_COMPUTE,
+		pipelineLayout_,
+		0,
+		1,
+		&descriptorSet_,
+		0,
+		0);
+
+	vkCmdDispatch(commandBuffer, xsize, ysize, zsize);
+
+	VkMemoryBarrier readoutBarrier = {
+		.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER,
+		.pNext = nullptr,
+		.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT,
+		.dstAccessMask = VK_ACCESS_HOST_READ_BIT
+	};
+
+	vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_HOST_BIT, 0, 1, &readoutBarrier, 0, nullptr, 0, nullptr);
+
+	VK_CHECK(vkEndCommandBuffer(commandBuffer));
+
+	VkSubmitInfo submitInfo = {
+		VK_STRUCTURE_TYPE_SUBMIT_INFO,
+		0, 0, 0, 0, 1, &commandBuffer, 0, 0
+	};
+
+	VK_CHECK(vkQueueSubmit(vkDev.GetComputeQueue(), 1, &submitInfo, 0));
+	VK_CHECK(vkQueueWaitIdle(vkDev.GetComputeQueue()));
 }
 
 void RendererBRDF::CreateComputeDescriptorSetLayout(VkDevice device)

@@ -17,6 +17,18 @@ public:
 
 	~RendererBRDF();
 
+	inline void Upload(VulkanDevice& vkDev, uint32_t offset, void* inData, uint32_t byteCount)
+	{
+		inBuffer_.UploadBufferData(vkDev, offset, inData, byteCount);
+	}
+
+	inline void Download(VulkanDevice& vkDev, uint32_t offset, void* outData, uint32_t byteCount)
+	{
+		outBuffer_.DownloadBufferData(vkDev, offset, outData, byteCount);
+	}
+
+	void Execute(VulkanDevice& vkDev, uint32_t xsize, uint32_t ysize, uint32_t zsize);
+
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:

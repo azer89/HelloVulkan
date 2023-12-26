@@ -65,6 +65,17 @@ void VulkanBuffer::UploadBufferData(
 	vkUnmapMemory(vkDev.GetDevice(), bufferMemory_);
 }
 
+void VulkanBuffer::DownloadBufferData(VulkanDevice& vkDev,
+	VkDeviceSize deviceOffset,
+	void* outData,
+	const size_t dataSize)
+{
+	void* mappedData = nullptr;
+	vkMapMemory(vkDev.GetDevice(), bufferMemory_, deviceOffset, dataSize, 0, &mappedData);
+	memcpy(outData, mappedData, dataSize);
+	vkUnmapMemory(vkDev.GetDevice(), bufferMemory_);
+}
+
 void VulkanBuffer::CreateSharedBuffer(
 	VulkanDevice& vkDev,
 	VkDeviceSize size,
