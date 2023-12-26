@@ -3,6 +3,7 @@
 
 #include "RendererBase.h"
 #include "VulkanDevice.h"
+#include "VulkanTexture.h"
 #include "VulkanBuffer.h"
 #include "VulkanUtility.h"
 
@@ -10,12 +11,11 @@ class RendererBRDF final : RendererBase
 {
 public:
 	RendererBRDF(
-		VulkanDevice& vkDev, 
-		const char* shaderName, 
-		uint32_t inputSize, 
-		uint32_t outputSize);
+		VulkanDevice& vkDev);
 
 	~RendererBRDF();
+
+	void CreateLUT(VulkanDevice& vkDev, VulkanTexture* outputLUT);
 
 	inline void Upload(VulkanDevice& vkDev, uint32_t offset, void* inData, uint32_t byteCount)
 	{
@@ -27,7 +27,7 @@ public:
 		outBuffer_.DownloadBufferData(vkDev, offset, outData, byteCount);
 	}
 
-	void Execute(VulkanDevice& vkDev, uint32_t xsize, uint32_t ysize, uint32_t zsize);
+	void Execute(VulkanDevice& vkDev);
 
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 

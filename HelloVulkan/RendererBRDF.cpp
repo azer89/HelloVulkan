@@ -1,24 +1,27 @@
 #include "RendererBRDF.h"
 #include "VulkanShader.h"
+#include "AppSettings.h"
 
+const int lutW = 256;
+const int lutH = 256;
+
+const uint32_t bufferSize = 4 * sizeof(float) * lutW * lutH;
 
 RendererBRDF::RendererBRDF(
-	VulkanDevice& vkDev,
-	const char* shaderName,
-	uint32_t inputSize,
-	uint32_t outputSize) :
+	VulkanDevice& vkDev) :
 	RendererBase(vkDev, {})
 {
-	inBuffer_.CreateSharedBuffer(vkDev, inputSize,
+	inBuffer_.CreateSharedBuffer(vkDev, sizeof(float),
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-	outBuffer_.CreateSharedBuffer(vkDev, outputSize,
+	outBuffer_.CreateSharedBuffer(vkDev, bufferSize,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
+	std::string shaderFile = AppSettings::ShaderFolder + "brdf_lut.comp";
 	VulkanShader shader;
-	shader.Create(vkDev.GetDevice(), shaderName);
+	shader.Create(vkDev.GetDevice(), shaderFile.c_str());
 
 	CreateComputeDescriptorSetLayout(vkDev.GetDevice());
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
@@ -40,7 +43,25 @@ void RendererBRDF::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t curre
 {
 }
 
-void RendererBRDF::Execute(VulkanDevice& vkDev, uint32_t xsize, uint32_t ysize, uint32_t zsize)
+void RendererBRDF::CreateLUT(VulkanDevice& vkDev, VulkanTexture* outputLUT)
+{
+	std::vector<float> lutData(bufferSize, 0);
+
+	Execute(vkDev);
+
+	Download(vkDev, 0, (uint8_t*)lutData.data(), bufferSize);
+
+	outputLUT->image_.CreateImageFromData(
+		vkDev,
+		&lutData[0],
+		lutW,
+		lutW,
+		1,
+		1,
+		VK_FORMAT_R32G32B32A32_SFLOAT);
+}
+
+void RendererBRDF::Execute(VulkanDevice& vkDev)
 {
 	VkCommandBuffer commandBuffer = vkDev.GetComputeCommandBuffer();
 
@@ -63,7 +84,10 @@ void RendererBRDF::Execute(VulkanDevice& vkDev, uint32_t xsize, uint32_t ysize, 
 		0,
 		0);
 
-	vkCmdDispatch(commandBuffer, xsize, ysize, zsize);
+	vkCmdDispatch(commandBuffer, 
+		static_cast<uint32_t>(lutW), 
+		static_cast<uint32_t>(lutH),
+		1u);
 
 	VkMemoryBarrier readoutBarrier = {
 		.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER,
@@ -78,7 +102,14 @@ void RendererBRDF::Execute(VulkanDevice& vkDev, uint32_t xsize, uint32_t ysize, 
 
 	VkSubmitInfo submitInfo = {
 		VK_STRUCTURE_TYPE_SUBMIT_INFO,
-		0, 0, 0, 0, 1, &commandBuffer, 0, 0
+		0, 
+		0, 
+		0, 
+		0, 
+		1, 
+		&commandBuffer, 
+		0, 
+		0
 	};
 
 	VK_CHECK(vkQueueSubmit(vkDev.GetComputeQueue(), 1, &submitInfo, 0));

@@ -107,6 +107,8 @@ void main()
 
 	uint offset = gl_GlobalInvocationID.y * BRDF_W + gl_GlobalInvocationID.x;
 
-	dst.data[offset * 2 + 0] = v.x;
-	dst.data[offset * 2 + 1] = v.y;
+	dst.data[offset * 4 + 0] = v.x;
+	dst.data[offset * 4 + 1] = v.y;
+	dst.data[offset * 4 + 2] = 0.0;
+	dst.data[offset * 4 + 3] = 0.0;
 }
