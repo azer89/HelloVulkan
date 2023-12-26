@@ -60,6 +60,7 @@ void AppPBR::Init()
 		&depthImage_,
 		&specularCubemap_,
 		&diffuseCubemap_, 
+		&lutTexture_,
 		models);
 	skyboxPtr_ = std::make_unique<RendererSkybox>(vulkanDevice, &environmentCubemap_, &depthImage_);
 

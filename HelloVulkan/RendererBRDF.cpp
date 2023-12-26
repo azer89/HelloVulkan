@@ -59,6 +59,11 @@ void RendererBRDF::CreateLUT(VulkanDevice& vkDev, VulkanTexture* outputLUT)
 		1,
 		1,
 		VK_FORMAT_R32G32B32A32_SFLOAT);
+	outputLUT->image_.CreateImageView(
+		vkDev.GetDevice(),
+		VK_FORMAT_R32G32B32A32_SFLOAT,
+		VK_IMAGE_ASPECT_COLOR_BIT);
+	outputLUT->CreateTextureSampler(vkDev.GetDevice());
 }
 
 void RendererBRDF::Execute(VulkanDevice& vkDev)
