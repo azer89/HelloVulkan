@@ -56,34 +56,34 @@ vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, float roughness)
 	return normalize(sampleVec);
 }
 
-float GeometrySchlickGGX(float NdotV, float roughness)
+float GeometrySchlickGGX(float NoV, float roughness)
 {
 	// Note that we use a different k for IBL
 	float a = roughness;
 	float k = (a * a) / 2.0;
 
-	float nom = NdotV;
-	float denom = NdotV * (1.0 - k) + k;
+	float nom = NoV;
+	float denom = NoV * (1.0 - k) + k;
 
 	return nom / denom;
 }
 
 float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 {
-	float NdotV = max(dot(N, V), 0.0);
-	float NdotL = max(dot(N, L), 0.0);
-	float ggx2 = GeometrySchlickGGX(NdotV, roughness);
-	float ggx1 = GeometrySchlickGGX(NdotL, roughness);
+	float NoV = max(dot(N, V), 0.0);
+	float NoL = max(dot(N, L), 0.0);
+	float ggx2 = GeometrySchlickGGX(NoV, roughness);
+	float ggx1 = GeometrySchlickGGX(NoL, roughness);
 
 	return ggx1 * ggx2;
 }
 
-vec2 BRDF(float NdotV, float roughness)
+vec2 BRDF(float NoV, float roughness)
 {
 	vec3 V;
-	V.x = sqrt(1.0 - NdotV*NdotV);
+	V.x = sqrt(1.0 - NoV * NoV);
 	V.y = 0.0;
-	V.z = NdotV;
+	V.z = NoV;
 
 	float A = 0.0;
 	float B = 0.0;
@@ -98,14 +98,14 @@ vec2 BRDF(float NdotV, float roughness)
 		vec3 H = ImportanceSampleGGX(Xi, N, roughness);
 		vec3 L = normalize(2.0 * dot(V, H) * H - V);
 
-		float NdotL = max(L.z, 0.0);
-		float NdotH = max(H.z, 0.0);
+		float NoL = max(L.z, 0.0);
+		float NoH = max(H.z, 0.0);
 		float VdotH = max(dot(V, H), 0.0);
 
-		if (NdotL > 0.0)
+		if (NoL > 0.0)
 		{
 			float G = GeometrySmith(N, V, L, roughness);
-			float G_Vis = (G * VdotH) / (NdotH * NdotV);
+			float G_Vis = (G * VdotH) / (NoH * NoV);
 			float Fc = pow(1.0 - VdotH, 5.0);
 
 			A += (1.0 - Fc) * G_Vis;

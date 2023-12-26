@@ -77,12 +77,12 @@ mat3 GenerateTBN(vec3 normal)
 {
 	vec3 bitangent = vec3(0.0, 1.0, 0.0);
 
-	float NdotUp = dot(normal, vec3(0.0, 1.0, 0.0));
+	float NoUp = dot(normal, vec3(0.0, 1.0, 0.0));
 	float epsilon = 0.0000001;
-	if (1.0 - abs(NdotUp) <= epsilon)
+	if (1.0 - abs(NoUp) <= epsilon)
 	{
 		// Sampling +Y or -Y, so we need a more robust bitangent.
-		if (NdotUp > 0.0)
+		if (NoUp > 0.0)
 		{
 			bitangent = vec3(0.0, 0.0, 1.0);
 		}
@@ -112,13 +112,14 @@ MicrofacetDistributionSample Lambertian(vec2 xi, float roughness)
 	return lambertian;
 }
 
-float D_GGX(float NdotH, float roughness)
+float D_GGX(float NoH, float roughness)
 {
-	float a = NdotH * roughness;
-	float k = roughness / (1.0 - NdotH * NdotH + a * a);
+	float a = NoH * roughness;
+	float k = roughness / (1.0 - NoH * NoH + a * a);
 	return k * k * (1.0 / MATH_PI);
 }
 
+// Trowbridge-Reitz GGX
 MicrofacetDistributionSample GGX(vec2 xi, float roughness)
 {
 	MicrofacetDistributionSample ggx;
@@ -166,7 +167,7 @@ vec4 GetImportanceSample(int sampleIndex, vec3 N, float roughness)
 	}
 	else if (pcParams.distribution == cGGX)
 	{
-		// Trowbridge-Reitz / GGX microfacet model (Walter et al)
+		// Trowbridge-Reitz GGX microfacet model (Walter et al)
 		// https://www.cs.cornell.edu/~srm/publications/EGSR07-btdf.html
 		importanceSample = GGX(xi, roughness);
 	}
@@ -213,9 +214,9 @@ vec3 FilterColor(vec3 N)
 		{
 			vec3 V = N;
 			vec3 L = normalize(reflect(-V, H));
-			float NdotL = dot(N, L);
+			float NoL = dot(N, L);
 
-			if (NdotL > 0.0)
+			if (NoL > 0.0)
 			{
 				if (pcParams.roughness == 0.0)
 				{
@@ -223,8 +224,8 @@ vec3 FilterColor(vec3 N)
 					lod = pcParams.lodBias;
 				}
 				vec3 sampleColor = textureLod(cubeMap, L, lod).rgb;
-				color += sampleColor * NdotL;
-				weight += NdotL;
+				color += sampleColor * NoL;
+				weight += NoL;
 			}
 		}
 	}

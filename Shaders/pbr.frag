@@ -27,6 +27,9 @@ layout(binding = 10) uniform sampler2D brdfLUT;
 
 const int NUM_LIGHTS = 4;
 
+// Specular max LOD
+const float MAX_REFLECTION_LOD = 4.0;
+
 // Hardcoded lights
 vec3 lightPositions[NUM_LIGHTS] = 
 { 
@@ -55,7 +58,7 @@ void main()
 	}
 
 	// Material properties
-	vec3 albedo = pow(albedo4.rgb, vec3(2.2)); ;
+	vec3 albedo = pow(albedo4.rgb, vec3(2.2)); 
 	vec3 emissive = texture(textureEmissive, texCoord).rgb;
 	float metallic = texture(textureMetalness, texCoord).b;
 	float roughness = texture(textureRoughness, texCoord).g;
@@ -104,11 +107,11 @@ void main()
 		// have no diffuse light).
 		kD *= 1.0 - metallic;
 
-		// Scale light by NdotL
-		float NdotL = max(dot(N, L), 0.0);
+		// Scale light by NoL
+		float NoL = max(dot(N, L), 0.0);
 
 		// Add to outgoing radiance Lo
-		Lo += (kD * albedo / PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+		Lo += (kD * albedo / PI + specular) * radiance * NoL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
 	}
 
 	// Ambient lighting (we now use IBL as the ambient term)
@@ -121,8 +124,8 @@ void main()
 	vec3 irradiance = texture(diffuseMap, N).rgb;
 	vec3 diffuse = irradiance * albedo;
 
-	// Sample both the pre-filter map and the BRDF lut and combine them together as per the Split-Sum approximation to get the IBL specular part.
-	const float MAX_REFLECTION_LOD = 4.0;
+	// Sample both the pre-filter map and the BRDF lut and combine them together as
+	// per the Split-Sum approximation to get the IBL specular part.
 	vec3 prefilteredColor = textureLod(specularMap, R, roughness * MAX_REFLECTION_LOD).rgb;
 	vec2 brdf = texture(brdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
 	vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);

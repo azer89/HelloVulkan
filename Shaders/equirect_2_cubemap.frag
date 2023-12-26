@@ -84,7 +84,7 @@ vec3 UVToXYZ(int face, vec2 uv)
 vec2 DirToUV(vec3 dir)
 {
 	return vec2
-		(
+	(
 		0.5f + 0.5f * atan(dir.z, dir.x) / MATH_PI,
 		1.f - acos(dir.y) / MATH_PI
 	);
