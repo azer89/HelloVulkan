@@ -2,10 +2,10 @@
 #include "VulkanShader.h"
 #include "AppSettings.h"
 
-const int lutW = 256;
-const int lutH = 256;
-
-const uint32_t bufferSize = 4 * sizeof(float) * lutW * lutH;
+// TODO Use push constants to send the image dimension
+constexpr int LUT_WIDTH = 256;
+constexpr int LUT_HEIGHT = 256;
+constexpr uint32_t BUFFER_SIZE = 2 * sizeof(float) * LUT_WIDTH * LUT_HEIGHT;
 
 RendererBRDF::RendererBRDF(
 	VulkanDevice& vkDev) :
@@ -15,7 +15,7 @@ RendererBRDF::RendererBRDF(
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-	outBuffer_.CreateSharedBuffer(vkDev, bufferSize,
+	outBuffer_.CreateSharedBuffer(vkDev, BUFFER_SIZE,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
@@ -35,7 +35,6 @@ RendererBRDF::~RendererBRDF()
 {
 	inBuffer_.Destroy(device_);
 	outBuffer_.Destroy(device_);
-
 	vkDestroyPipeline(device_, pipeline_, nullptr);
 }
 
@@ -45,25 +44,21 @@ void RendererBRDF::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t curre
 
 void RendererBRDF::CreateLUT(VulkanDevice& vkDev, VulkanTexture* outputLUT)
 {
-	std::vector<float> lutData(bufferSize, 0);
+	std::vector<float> lutData(BUFFER_SIZE, 0);
 
 	Execute(vkDev);
 
-	Download(vkDev, 0, lutData.data(), bufferSize);
+	outBuffer_.DownloadBufferData(vkDev, 0, lutData.data(), BUFFER_SIZE);
 
 	outputLUT->image_.CreateImageFromData(
 		vkDev,
 		&lutData[0],
-		lutW,
-		lutH,
+		LUT_WIDTH,
+		LUT_HEIGHT,
 		1,
 		1,
 		VK_FORMAT_R32G32_SFLOAT);
-	/*outputLUT->image_.CreateImageView(
-		vkDev.GetDevice(),
-		VK_FORMAT_R16G16_SFLOAT,
-		VK_IMAGE_ASPECT_COLOR_BIT);
-	outputLUT->CreateTextureSampler(vkDev.GetDevice());*/
+
 	outputLUT->image_.CreateImageView(
 		vkDev.GetDevice(),
 		VK_FORMAT_R32G32_SFLOAT,
@@ -98,8 +93,8 @@ void RendererBRDF::Execute(VulkanDevice& vkDev)
 		0);
 
 	vkCmdDispatch(commandBuffer, 
-		static_cast<uint32_t>(lutW), 
-		static_cast<uint32_t>(lutH),
+		static_cast<uint32_t>(LUT_WIDTH), 
+		static_cast<uint32_t>(LUT_HEIGHT),
 		1u);
 
 	VkMemoryBarrier readoutBarrier = {

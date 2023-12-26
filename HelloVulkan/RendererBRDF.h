@@ -10,22 +10,11 @@
 class RendererBRDF final : RendererBase
 {
 public:
-	RendererBRDF(
-		VulkanDevice& vkDev);
+	RendererBRDF(VulkanDevice& vkDev);
 
 	virtual ~RendererBRDF();
 
 	void CreateLUT(VulkanDevice& vkDev, VulkanTexture* outputLUT);
-
-	inline void Upload(VulkanDevice& vkDev, uint32_t offset, void* inData, uint32_t byteCount)
-	{
-		inBuffer_.UploadBufferData(vkDev, offset, inData, byteCount);
-	}
-
-	inline void Download(VulkanDevice& vkDev, uint32_t offset, void* outData, uint32_t byteCount)
-	{
-		outBuffer_.DownloadBufferData(vkDev, offset, outData, byteCount);
-	}
 
 	void Execute(VulkanDevice& vkDev);
 

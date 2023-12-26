@@ -30,33 +30,6 @@ RendererPBR::RendererPBR(
 	brdfLUT_(brdfLUT),
 	models_(models)
 {
-	// Load BRDF Lookup table
-	// TODO Move this to a function
-	/*std::string brdfLUTFile = AppSettings::TextureFolder + "brdfLUT.ktx";
-	gli::texture gliTex = gli::load_ktx(brdfLUTFile.c_str());
-	glm::tvec3<GLsizei> extent(gliTex.extent(0));
-	brdfLUT_.image_.CreateImageFromData(
-		vkDev,
-		(uint8_t*)gliTex.data(0, 0, 0),
-		extent.x,
-		extent.y,
-		1, // mipmapCount
-		1, // layerCount
-		VK_FORMAT_R16G16_SFLOAT);
-	brdfLUT_.image_.CreateImageView(
-		vkDev.GetDevice(),
-		VK_FORMAT_R16G16_SFLOAT,
-		VK_IMAGE_ASPECT_COLOR_BIT
-	);
-	brdfLUT_.CreateTextureSampler(
-		vkDev.GetDevice(),
-		0.f,
-		0.f,
-		VK_FILTER_LINEAR,
-		VK_FILTER_LINEAR,
-		VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE
-	);*/
-
 	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo());
 
 	// Per frame UBO
