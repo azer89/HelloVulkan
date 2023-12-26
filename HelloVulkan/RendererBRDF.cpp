@@ -49,21 +49,29 @@ void RendererBRDF::CreateLUT(VulkanDevice& vkDev, VulkanTexture* outputLUT)
 
 	Execute(vkDev);
 
-	Download(vkDev, 0, (uint8_t*)lutData.data(), bufferSize);
+	Download(vkDev, 0, lutData.data(), bufferSize);
 
 	outputLUT->image_.CreateImageFromData(
 		vkDev,
 		&lutData[0],
 		lutW,
-		lutW,
+		lutH,
 		1,
 		1,
-		VK_FORMAT_R32G32B32A32_SFLOAT);
+		VK_FORMAT_R32G32_SFLOAT);
+	/*outputLUT->image_.CreateImageView(
+		vkDev.GetDevice(),
+		VK_FORMAT_R16G16_SFLOAT,
+		VK_IMAGE_ASPECT_COLOR_BIT);
+	outputLUT->CreateTextureSampler(vkDev.GetDevice());*/
 	outputLUT->image_.CreateImageView(
 		vkDev.GetDevice(),
-		VK_FORMAT_R32G32B32A32_SFLOAT,
-		VK_IMAGE_ASPECT_COLOR_BIT);
-	outputLUT->CreateTextureSampler(vkDev.GetDevice());
+		VK_FORMAT_R32G32_SFLOAT,
+		VK_IMAGE_ASPECT_COLOR_BIT
+	);
+	outputLUT->CreateTextureSampler(
+		vkDev.GetDevice()
+	);
 }
 
 void RendererBRDF::Execute(VulkanDevice& vkDev)
@@ -101,7 +109,17 @@ void RendererBRDF::Execute(VulkanDevice& vkDev)
 		.dstAccessMask = VK_ACCESS_HOST_READ_BIT
 	};
 
-	vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_HOST_BIT, 0, 1, &readoutBarrier, 0, nullptr, 0, nullptr);
+	vkCmdPipelineBarrier(
+		commandBuffer, 
+		VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 
+		VK_PIPELINE_STAGE_HOST_BIT, 
+		0, 
+		1, 
+		&readoutBarrier, 
+		0, 
+		nullptr, 
+		0, 
+		nullptr);
 
 	VK_CHECK(vkEndCommandBuffer(commandBuffer));
 
