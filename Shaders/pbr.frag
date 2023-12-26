@@ -37,10 +37,10 @@ vec3 lightPositions[NUM_LIGHTS] =
 };
 vec3 lightColors[NUM_LIGHTS] = 
 {
-	vec3(15.7, 10.0, 10.0),
-	vec3(15.7, 10.0, 10.0),
-	vec3(15.7, 10.0, 10.0),
-	vec3(15.7, 10.0, 10.0)
+	vec3(10.0, 10.0, 10.0),
+	vec3(10.0, 10.0, 10.0),
+	vec3(10.0, 10.0, 10.0),
+	vec3(10.0, 10.0, 10.0)
 };
 
 #include <pbr_include.frag>
