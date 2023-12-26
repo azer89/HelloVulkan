@@ -1,4 +1,4 @@
-# version 460 core
+#version 460 core
 
 /*
 Generates a triangle that covers the entire screen

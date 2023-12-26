@@ -1,4 +1,4 @@
-# version 460 core
+#version 460 core
 
 /*
 Fragment shader for skybox
