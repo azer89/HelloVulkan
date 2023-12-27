@@ -33,8 +33,11 @@ https://github.com/azer89/HelloVulkan/assets/790432/582930b8-7f00-427c-91d4-5de8
 
 ### Credit
 Technical Resources:
-* [learnopengl.com](https://learnopengl.com/)
+* [learnopengl.com PBR](https://learnopengl.com/PBR/Theory)
+* [Google Filament](https://google.github.io/filament/Filament.html)
+* [Khronos glTF PBR](https://github.com/SaschaWillems/Vulkan-glTF-PBR)
 * [Khronos IBL Sampler](https://github.com/KhronosGroup/glTF-IBL-Sampler)
+* [Epic Games PBR Notes](https://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf)
 * [3D Graphics Rendering Cookbook](https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook)
 
 Assets:
