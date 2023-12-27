@@ -98,8 +98,8 @@ void main()
 	vec3 Lo = vec3(0.0);
 	for (int i = 0; i < NUM_LIGHTS; ++i)
 	{
-		vec3 L = normalize(lightPositions[i] - worldPos);
-		vec3 H = normalize(V + L);
+		vec3 L = normalize(lightPositions[i] - worldPos); // Incident light vector
+		vec3 H = normalize(V + L); // Halfway vector
 		float NoL = max(dot(N, L), 0.0);
 		float HoV = max(dot(H, V), 0.0);
 		float distance = length(lightPositions[i] - worldPos);
@@ -107,11 +107,11 @@ void main()
 		vec3 radiance = lightColors[i] * attenuation;
 
 		// Cook-Torrance BRDF
-		float NDF = DistributionGGX(N, H, roughness);
+		float D = DistributionGGX(N, H, roughness);
 		float G = GeometrySchlickGGX_Direct(NoL, NoV, roughness);
 		vec3 F = FresnelSchlick(HoV, F0);
 
-		vec3 numerator = NDF * G * F;
+		vec3 numerator = D * G * F;
 		float denominator = 4.0 * NoV * NoL + 0.0001; // + 0.0001 to prevent divide by zero
 		vec3 specular = numerator / denominator;
 
