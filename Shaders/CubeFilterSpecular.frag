@@ -55,7 +55,7 @@ vec3 Specular(vec3 N)
 			float HoV = max(dot(H, V), 0.0);
 
 			// Sample from the environment's mip level based on roughness/pdf
-			float D = DistributionGGX(N, H, pcParams.roughness);
+			float D = DistributionGGX(NoH, pcParams.roughness); // Trowbridge-Reitz GGX
 			float pdf = D * NoH / (4.0 * HoV) + 0.0001;
 			float saSample = 1.0 / (float(pcParams.sampleCount) * pdf + 0.0001);
 			float mipLevel = pcParams.roughness == 0.0 ? 0.0 : 0.5 * log2(saSample / saTexel);

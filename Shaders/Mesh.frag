@@ -100,6 +100,7 @@ void main()
 	{
 		vec3 L = normalize(lightPositions[i] - worldPos); // Incident light vector
 		vec3 H = normalize(V + L); // Halfway vector
+		float NoH = max(dot(N, H), 0.0);
 		float NoL = max(dot(N, L), 0.0);
 		float HoV = max(dot(H, V), 0.0);
 		float distance = length(lightPositions[i] - worldPos);
@@ -107,7 +108,7 @@ void main()
 		vec3 radiance = lightColors[i] * attenuation;
 
 		// Cook-Torrance BRDF
-		float D = DistributionGGX(N, H, roughness);
+		float D = DistributionGGX(NoH, roughness);
 		float G = GeometrySchlickGGX_Direct(NoL, NoV, roughness);
 		vec3 F = FresnelSchlick(HoV, F0);
 
