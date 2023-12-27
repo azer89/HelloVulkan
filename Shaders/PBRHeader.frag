@@ -9,11 +9,11 @@ float DistributionGGX(vec3 N, vec3 H, float roughness)
 	float NoH = max(dot(N, H), 0.0);
 	float NoH2 = NoH * NoH;
 
-	float nom = a2;
-	float denom = (NoH2 * (a2 - 1.0) + 1.0);
-	denom = PI * denom * denom;
+	float nominator = a2;
+	float denominator = (NoH2 * (a2 - 1.0) + 1.0);
+	denominator = PI * denominator * denominator;
 
-	return nom / denom;
+	return nominator / denominator;
 }
 
 // Geometry function
