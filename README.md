@@ -9,21 +9,15 @@ An implementation of physically-based lighting model to generate realistic rende
 * Compute shader to generate BRDF lookup table.
 * Automatic runtime compilation from GLSL to SPIR-V for convenient development process.
 
-
-
 https://github.com/azer89/HelloVulkan/assets/790432/9386c4a0-1c6d-4298-8a1a-7590b44f487b
-
-
 
 https://github.com/azer89/HelloVulkan/assets/790432/58010a6c-5a90-42e0-a37a-295fa03956e4
 
-
-
-
 https://github.com/azer89/HelloVulkan/assets/790432/582930b8-7f00-427c-91d4-5de8f01d7acf
 
+### PBR Workflow
 
-
+<img width="500" alt="PBR Wrkflow" src="https://github.com/azer89/HelloVulkan/assets/790432/97d9a5bd-d713-4ee7-8ce3-fd2fd71f262a">
 
 ### Build
 * C++20
