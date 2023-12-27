@@ -87,7 +87,7 @@ void main()
 	// Input lighting data
 	vec3 N = GetNormalFromMap(tangentNormal, worldPos, normal, texCoord);
 	vec3 V = normalize(frameUBO.cameraPosition.xyz - worldPos);
-	vec3 R = reflect(-V, N);
+	float NoV = max(dot(N, V), 0.0);
 
 	// Calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
 	// of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)  
@@ -98,42 +98,40 @@ void main()
 	vec3 Lo = vec3(0.0);
 	for (int i = 0; i < NUM_LIGHTS; ++i)
 	{
-		// Calculate per-light radiance
 		vec3 L = normalize(lightPositions[i] - worldPos);
 		vec3 H = normalize(V + L);
+		float NoL = max(dot(N, L), 0.0);
+		float HoV = max(dot(H, V), 0.0);
 		float distance = length(lightPositions[i] - worldPos);
 		float attenuation = 1.0 / (distance * distance);
 		vec3 radiance = lightColors[i] * attenuation;
 
 		// Cook-Torrance BRDF
 		float NDF = DistributionGGX(N, H, roughness);
-		float G = GeometrySmith(N, V, L, roughness);
-		vec3 F = FresnelSchlick(max(dot(H, V), 0.0), F0);
+		float G = GeometrySchlickGGX_Direct(NoL, NoV, roughness);
+		vec3 F = FresnelSchlick(HoV, F0);
 
 		vec3 numerator = NDF * G * F;
-		float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001; // + 0.0001 to prevent divide by zero
+		float denominator = 4.0 * NoV * NoL + 0.0001; // + 0.0001 to prevent divide by zero
 		vec3 specular = numerator / denominator;
 
 		// kS is equal to Fresnel
 		vec3 kS = F;
-		// for energy conservation, the diffuse and specular light can't
+		// For energy conservation, the diffuse and specular light can't
 		// be above 1.0 (unless the surface emits light); to preserve this
 		// relationship the diffuse component (kD) should equal 1.0 - kS.
 		vec3 kD = vec3(1.0) - kS;
-		// multiply kD by the inverse metalness such that only non-metals 
+		// Multiply kD by the inverse metalness such that only non-metals 
 		// have diffuse lighting, or a linear blend if partly metal (pure metals
 		// have no diffuse light).
 		kD *= 1.0 - metallic;
 
-		// Scale light by NoL
-		float NoL = max(dot(N, L), 0.0);
-
 		// Add to outgoing radiance Lo
-		Lo += (kD * albedo / PI + specular) * radiance * NoL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+		Lo += (kD * albedo / PI + specular) * radiance * NoL; // Note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
 	}
 
 	// Ambient lighting (we now use IBL as the ambient term)
-	vec3 F = FresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
+	vec3 F = FresnelSchlickRoughness(NoV, F0, roughness);
 
 	vec3 kS = F;
 	vec3 kD = 1.0 - kS;
@@ -144,8 +142,9 @@ void main()
 
 	// Sample both the pre-filter map and the BRDF lut and combine them together as
 	// per the Split-Sum approximation to get the IBL specular part.
+	vec3 R = reflect(-V, N);
 	vec3 prefilteredColor = textureLod(specularMap, R, roughness * MAX_REFLECTION_LOD).rgb;
-	vec2 brdf = texture(brdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
+	vec2 brdf = texture(brdfLUT, vec2(NoV, roughness)).rg;
 	vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
 
 	vec3 ambient = (kD * diffuse + specular) * ao;

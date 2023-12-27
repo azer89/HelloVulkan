@@ -16,27 +16,23 @@ float DistributionGGX(vec3 N, vec3 H, float roughness)
 	return nominator / denominator;
 }
 
-// Geometry function
-float GeometrySchlickGGX(float NoV, float roughness)
+float GeometrySchlickGGX_IBL(float dotNL, float dotNV, float roughness)
 {
-	float r = (roughness + 1.0);
-	float k = (r * r) / 8.0;
-
-	float nominator = NoV;
-	float denominator = NoV * (1.0 - k) + k;
-
-	return nominator / denominator;
+	// k_IBL is roughness remapping for IBL lighting
+	float k_IBL = (roughness * roughness) / 2.0;
+	float GL = dotNL / (dotNL * (1.0 - k_IBL) + k_IBL);
+	float GV = dotNV / (dotNV * (1.0 - k_IBL) + k_IBL);
+	return GL * GV;
 }
 
-// Geometry function
-float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
+float GeometrySchlickGGX_Direct(float dotNL, float dotNV, float roughness)
 {
-	float NoV = max(dot(N, V), 0.0);
-	float NoL = max(dot(N, L), 0.0);
-	float ggx2 = GeometrySchlickGGX(NoV, roughness);
-	float ggx1 = GeometrySchlickGGX(NoL, roughness);
-
-	return ggx1 * ggx2;
+	// k_direct is roughness remapping for direct lighting
+	float r = (roughness + 1.0);
+	float k_direct = (r * r) / 8.0;
+	float GL = dotNL / (dotNL * (1.0 - k_direct) + k_direct);
+	float GV = dotNV / (dotNV * (1.0 - k_direct) + k_direct);
+	return GL * GV;
 }
 
 // The ratio of surface reflection at different surface angles

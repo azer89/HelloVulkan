@@ -20,15 +20,6 @@ const uint SAMPLE_COUNT = 1024u;
 #include <PBRHeader.frag>
 #include <Hammersley.frag>
 
-// Geometric Shadowing function
-float GeometrySchlickSmithGGX(float dotNL, float dotNV, float roughness)
-{
-	float k = (roughness * roughness) / 2.0;
-	float GL = dotNL / (dotNL * (1.0 - k) + k);
-	float GV = dotNV / (dotNV * (1.0 - k) + k);
-	return GL * GV;
-}
-
 vec2 BRDF(float NoV, float roughness)
 {
 	// Normal always points along z-axis
@@ -49,8 +40,7 @@ vec2 BRDF(float NoV, float roughness)
 
 		if (dotNL > 0.0)
 		{
-			// Unlike learnopengl.com, we use a different GGX
-			float G = GeometrySchlickSmithGGX(dotNL, dotNV, roughness);
+			float G = GeometrySchlickGGX_IBL(dotNL, dotNV, roughness);
 			float G_Vis = (G * dotVH) / (dotNH * dotNV);
 			float Fc = pow(1.0 - dotVH, 5.0);
 			LUT += vec2(
