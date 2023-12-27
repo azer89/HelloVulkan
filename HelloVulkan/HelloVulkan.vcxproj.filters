@@ -175,7 +175,7 @@
     <None Include="..\Shaders\Mesh.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\Shaders\PBRLibrary.frag">
+    <None Include="..\Shaders\PBRHeader.frag">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="..\Shaders\BRDFLUT.comp">

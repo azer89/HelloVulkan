@@ -47,7 +47,7 @@ vec3 lightColors[NUM_LIGHTS] =
 };
 
 // Include files
-#include <PBRLibrary.frag>
+#include <PBRHeader.frag>
 #include <Hammersley.frag>
 
 // Easy trick to get tangent-normals to world-space to keep PBR code simplified.

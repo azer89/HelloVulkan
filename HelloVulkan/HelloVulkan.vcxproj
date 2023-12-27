@@ -187,7 +187,7 @@
     <None Include="..\Shaders\BRDFLUT.comp" />
     <None Include="..\Shaders\Hammersley.frag" />
     <None Include="..\Shaders\Mesh.frag" />
-    <None Include="..\Shaders\PBRLibrary.frag" />
+    <None Include="..\Shaders\PBRHeader.frag" />
     <None Include="..\Shaders\Cube.frag" />
     <None Include="..\Shaders\Cube.vert" />
     <None Include="..\Shaders\Equirect2Cube.frag" />
