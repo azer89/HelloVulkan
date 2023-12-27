@@ -15,11 +15,7 @@ enum class DistributionCubeFilter : unsigned int
 struct PushConstantCubeFilter
 {
 	float roughness = 0.f;
-	float lodBias = 0.f;
 	uint32_t sampleCount = 1u;
-	uint32_t mipLevel = 1u;
-	uint32_t width = 1024u;
-	DistributionCubeFilter distribution = DistributionCubeFilter::Lambertian;
 };
 
 class RendererCubeFilter final : public RendererBase

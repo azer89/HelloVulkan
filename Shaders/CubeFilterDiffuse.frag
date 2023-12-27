@@ -19,15 +19,11 @@ layout(location = 5) out vec4 cubeFace5;
 
 #define PI 3.1415926535897932384626433832795
 
-// TODO Clean this up
+// These push constants are only used for specular map
 layout(push_constant) uniform PushConstantCubeFilter
 {
 	float roughness;
-	float lodBias;
 	uint sampleCount;
-	uint currentMipLevel;
-	uint width;
-	uint distribution; // Enum
 }
 pcParams;
 
@@ -121,8 +117,6 @@ vec3 UVToXYZ(int face, vec2 uv)
 // Entry point
 void main()
 {
-	//vec2 texCoordNew = texCoord * float(1 << (pcParams.currentMipLevel));
-	//texCoordNew = texCoordNew * 2.0 - 1.0;
 	vec2 texCoordNew = texCoord * 2.0 - 1.0;
 
 	for (int face = 0; face < 6; ++face)
