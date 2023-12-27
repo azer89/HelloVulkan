@@ -67,7 +67,7 @@ RendererCubeFilter::RendererCubeFilter(
 		pipelineLayout_,
 		{
 			AppSettings::ShaderFolder + "FullscreenTriangle.vert",
-			AppSettings::ShaderFolder + "CubemapFilter.frag"
+			AppSettings::ShaderFolder + "CubeFilterDiffuse.frag"
 		},
 		FilterSettings::outputDiffuseSize,
 		FilterSettings::outputDiffuseSize,
@@ -82,7 +82,7 @@ RendererCubeFilter::RendererCubeFilter(
 		pipelineLayout_,
 		{
 			AppSettings::ShaderFolder + "FullscreenTriangle.vert",
-			AppSettings::ShaderFolder + "CubemapFilter.frag"
+			AppSettings::ShaderFolder + "CubeFilterSpecular.frag"
 		},
 		FilterSettings::outputSpecularSize,
 		FilterSettings::outputSpecularSize,
@@ -493,12 +493,8 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 			subresourceRange);
 
 		PushConstantCubeFilter values{};
-		values.roughness = static_cast<float>(i) / static_cast<float>(outputMipMapCount);;
+		values.roughness = static_cast<float>(i) / static_cast<float>(outputMipMapCount);
 		values.sampleCount = FilterSettings::sampleCount;
-		values.mipLevel = static_cast<uint32_t>(i);
-		values.width = FilterSettings::inputCubemapSize;
-		values.lodBias = 0;
-		values.distribution = distribution;
 
 		vkCmdPushConstants(
 			commandBuffer,
