@@ -184,5 +184,11 @@
     <None Include="..\Shaders\Hammersley.frag">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\Shaders\CubeFilterDiffuse.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Shaders\CubeFilterSpecular.frag">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

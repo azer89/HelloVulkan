@@ -61,37 +61,37 @@ void AppBase::InitGLFW()
 	glfwSetWindowUserPointer(glfwWindow, this);
 	{
 		auto func = [](GLFWwindow* window, int width, int height)
-			{
-				static_cast<AppBase*>(glfwGetWindowUserPointer(window))->FrameBufferSizeCallback(window, width, height);
-			};
+		{
+			static_cast<AppBase*>(glfwGetWindowUserPointer(window))->FrameBufferSizeCallback(window, width, height);
+		};
 		glfwSetFramebufferSizeCallback(glfwWindow, func);
 	}
 	{
 		auto func = [](GLFWwindow* window, double xpos, double ypos)
-			{
-				static_cast<AppBase*>(glfwGetWindowUserPointer(window))->MouseCallback(window, xpos, ypos);
-			};
+		{
+			static_cast<AppBase*>(glfwGetWindowUserPointer(window))->MouseCallback(window, xpos, ypos);
+		};
 		glfwSetCursorPosCallback(glfwWindow, func);
 	}
 	{
 		auto func = [](GLFWwindow* window, int button, int action, int mods)
-			{
-				static_cast<AppBase*>(glfwGetWindowUserPointer(window))->MouseButtonCallback(window, button, action, mods);
-			};
+		{
+			static_cast<AppBase*>(glfwGetWindowUserPointer(window))->MouseButtonCallback(window, button, action, mods);
+		};
 		glfwSetMouseButtonCallback(glfwWindow, func);
 	}
 	{
 		auto func = [](GLFWwindow* window, double xoffset, double yoffset)
-			{
-				static_cast<AppBase*>(glfwGetWindowUserPointer(window))->ScrollCallback(window, xoffset, yoffset);
-			};
+		{
+			static_cast<AppBase*>(glfwGetWindowUserPointer(window))->ScrollCallback(window, xoffset, yoffset);
+		};
 		glfwSetScrollCallback(glfwWindow, func);
 	}
 	{
 		auto func = [](GLFWwindow* window, int key, int scancode, int action, int mods)
-			{
-				static_cast<AppBase*>(glfwGetWindowUserPointer(window))->KeyCallback(window, key, scancode, action, mods);
-			};
+		{
+			static_cast<AppBase*>(glfwGetWindowUserPointer(window))->KeyCallback(window, key, scancode, action, mods);
+		};
 		glfwSetKeyCallback(glfwWindow, func);
 	}
 }

@@ -185,6 +185,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\BRDFLUT.comp" />
+    <None Include="..\Shaders\CubeFilterDiffuse.frag" />
+    <None Include="..\Shaders\CubeFilterSpecular.frag" />
     <None Include="..\Shaders\Hammersley.frag" />
     <None Include="..\Shaders\Mesh.frag" />
     <None Include="..\Shaders\PBRHeader.frag" />

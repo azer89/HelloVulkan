@@ -67,7 +67,7 @@ RendererCubeFilter::RendererCubeFilter(
 		pipelineLayout_,
 		{
 			AppSettings::ShaderFolder + "FullscreenTriangle.vert",
-			AppSettings::ShaderFolder + "CubemapFilter.frag"
+			AppSettings::ShaderFolder + "CubeFilterDiffuse.frag"
 		},
 		FilterSettings::outputDiffuseSize,
 		FilterSettings::outputDiffuseSize,
@@ -82,7 +82,7 @@ RendererCubeFilter::RendererCubeFilter(
 		pipelineLayout_,
 		{
 			AppSettings::ShaderFolder + "FullscreenTriangle.vert",
-			AppSettings::ShaderFolder + "CubemapFilter.frag"
+			AppSettings::ShaderFolder + "CubeFilterSpecular.frag"
 		},
 		FilterSettings::outputSpecularSize,
 		FilterSettings::outputSpecularSize,
