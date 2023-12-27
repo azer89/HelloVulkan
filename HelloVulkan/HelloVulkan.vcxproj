@@ -194,7 +194,6 @@
     <None Include="..\Shaders\Cube.vert" />
     <None Include="..\Shaders\Equirect2Cube.frag" />
     <None Include="..\Shaders\FullscreenTriangle.vert" />
-    <None Include="..\Shaders\CubemapFilter.frag" />
     <None Include="..\Shaders\Mesh.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
