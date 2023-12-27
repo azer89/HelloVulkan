@@ -17,7 +17,7 @@ https://github.com/azer89/HelloVulkan/assets/790432/582930b8-7f00-427c-91d4-5de8
 
 ### PBR Workflow
 
-<img width="500" alt="PBR Wrkflow" src="https://github.com/azer89/HelloVulkan/assets/790432/e810f1b0-a18a-4c7e-94e3-84de4205b8e7">
+<img width="500" alt="PBR Wrkflow" src="https://github.com/azer89/HelloVulkan/assets/790432/686699df-6c29-4efb-8102-858955afed55">
 
 ### Build
 * C++20
