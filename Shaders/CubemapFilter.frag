@@ -1,7 +1,6 @@
-# version 460 core
+#version 460 core
 
 /*
-
 Fragment shader to filter a cubemap into a diffuse cubemap or specular cubemap
 
 This shader is based on:
@@ -45,7 +44,7 @@ struct MicrofacetDistributionSample
 	float phi;
 };
 
-#include <hammersley.frag>
+#include <Hammersley.frag>
 
 float Saturate(float v)
 {

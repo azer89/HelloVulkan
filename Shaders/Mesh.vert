@@ -1,8 +1,8 @@
-# version 460 core
+#version 460 core
 
-layout(location = 0) in vec4 positionIn;
-layout(location = 1) in vec4 normalIn;
-layout(location = 2) in vec4 uvIn;
+layout(location = 0) in vec4 inPosition;
+layout(location = 1) in vec4 inNormal;
+layout(location = 2) in vec4 inUV;
 
 layout(location = 0) out vec3 worldPos;
 layout(location = 1) out vec2 texCoord;
@@ -24,13 +24,13 @@ modelUBO;
 
 void main()
 {
-	worldPos = (modelUBO.model * positionIn).xyz;
+	worldPos = (modelUBO.model * inPosition).xyz;
 
-	texCoord = uvIn.xy;
+	texCoord = inUV.xy;
 
 	mat3 normalMatrix = transpose(inverse(mat3(modelUBO.model)));
-	normal = normalMatrix * normalIn.xyz;
+	normal = normalMatrix * inNormal.xyz;
 
 	mat4 mvp = frameUBO.cameraProjection * frameUBO.cameraView * modelUBO.model;
-	gl_Position =  mvp * positionIn;
+	gl_Position =  mvp * inPosition;
 }

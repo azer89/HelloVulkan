@@ -66,8 +66,8 @@ RendererCubeFilter::RendererCubeFilter(
 		renderPass_,
 		pipelineLayout_,
 		{
-			AppSettings::ShaderFolder + "fullscreen_triangle.vert",
-			AppSettings::ShaderFolder + "cube_filter.frag"
+			AppSettings::ShaderFolder + "FullscreenTriangle.vert",
+			AppSettings::ShaderFolder + "CubemapFilter.frag"
 		},
 		FilterSettings::outputDiffuseSize,
 		FilterSettings::outputDiffuseSize,
@@ -81,8 +81,8 @@ RendererCubeFilter::RendererCubeFilter(
 		renderPass_,
 		pipelineLayout_,
 		{
-			AppSettings::ShaderFolder + "fullscreen_triangle.vert",
-			AppSettings::ShaderFolder + "cube_filter.frag"
+			AppSettings::ShaderFolder + "FullscreenTriangle.vert",
+			AppSettings::ShaderFolder + "CubemapFilter.frag"
 		},
 		FilterSettings::outputSpecularSize,
 		FilterSettings::outputSpecularSize,
