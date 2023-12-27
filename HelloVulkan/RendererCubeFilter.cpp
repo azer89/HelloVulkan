@@ -493,7 +493,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 			subresourceRange);
 
 		PushConstantCubeFilter values{};
-		values.roughness = static_cast<float>(i) / static_cast<float>(outputMipMapCount);;
+		values.roughness = static_cast<float>(i) / static_cast<float>(outputMipMapCount);
 		values.sampleCount = FilterSettings::sampleCount;
 
 		vkCmdPushConstants(

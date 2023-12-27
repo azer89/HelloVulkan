@@ -12,6 +12,7 @@ layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 layout (set = 0, binding = 0) buffer SRC { float data[]; } src;
 layout (set = 0, binding = 1) buffer DST { float data[]; } dst;
 
+// TODO Use push constants instead of hardcoded const
 const uint BRDF_W = 256;
 const uint BRDF_H = 256;
 const uint SAMPLE_COUNT = 1024u;
