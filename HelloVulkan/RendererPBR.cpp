@@ -224,7 +224,7 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 		{
 			textureImageInfos.emplace_back<VkDescriptorImageInfo>
 				({
-					elem.second->sampler_,
+					elem.second->defaultImageSampler_,
 					elem.second->imageView_,
 					VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 					});
@@ -250,19 +250,19 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 
 		const VkDescriptorImageInfo imageInfoEnv = 
 		{ 
-			envMap_->sampler_, 
+			envMap_->defaultImageSampler_,
 			envMap_->imageView_, 
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL 
 		};
 		const VkDescriptorImageInfo imageInfoEnvIrr = 
 		{ 
-			diffuseMap_->sampler_, 
+			diffuseMap_->defaultImageSampler_,
 			diffuseMap_->imageView_, 
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL 
 		};
 		const VkDescriptorImageInfo imageInfoBRDF = 
 		{ 
-			brdfLUT_->sampler_, 
+			brdfLUT_->defaultImageSampler_,
 			brdfLUT_->imageView_, 
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL 
 		};

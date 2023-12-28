@@ -84,7 +84,7 @@ void RendererEquirect2Cube::InitializeHDRTexture(VulkanDevice& vkDev, const std:
 		vkDev.GetDevice(),
 		VK_FORMAT_R32G32B32A32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT);
-	inputHDRTexture_.CreateTextureSampler(
+	inputHDRTexture_.CreateDefaultSampler(
 		vkDev.GetDevice(),
 		0.f,
 		1.f);
@@ -179,7 +179,7 @@ void RendererEquirect2Cube::CreateDescriptorSet(VulkanDevice& vkDev)
 
 	VkDescriptorImageInfo imageInfo =
 	{
-		inputHDRTexture_.sampler_,
+		inputHDRTexture_.defaultImageSampler_,
 		inputHDRTexture_.imageView_,
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	};
@@ -457,7 +457,7 @@ void RendererEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanImage* ou
 	vkDev.EndSingleTimeCommands(commandBuffer);
 
 	// Create a sampler for the output cubemap
-	outputEnvMap->CreateTextureSampler(vkDev.GetDevice());
+	outputEnvMap->CreateDefaultSampler(vkDev.GetDevice());
 
 	// Destroy image views
 	for (size_t i = 0; i < layerCount; i++)

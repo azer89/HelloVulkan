@@ -23,9 +23,10 @@ void VulkanImage::Destroy(VkDevice device)
 	vkDestroyImageView(device, imageView_, nullptr);
 	vkDestroyImage(device, image_, nullptr);
 	vkFreeMemory(device, imageMemory_, nullptr);
+	vkDestroySampler(device, defaultImageSampler_, nullptr);
 }
 
-void VulkanImage::CreateTextureImageAndImageView(
+void VulkanImage::CreateTextureImageViewSampler(
 	VulkanDevice& vkDev,
 	const char* filename)
 {
@@ -34,6 +35,7 @@ void VulkanImage::CreateTextureImageAndImageView(
 		vkDev.GetDevice(),
 		VK_FORMAT_R8G8B8A8_UNORM,
 		VK_IMAGE_ASPECT_COLOR_BIT);
+	CreateDefaultSampler(vkDev.GetDevice());
 }
 
 void VulkanImage::CreateTextureImage(
@@ -251,7 +253,26 @@ void VulkanImage::CreateImageView(VkDevice device,
 	VK_CHECK(vkCreateImageView(device, &viewInfo, nullptr, &imageView_));
 }
 
-void VulkanImage::CreateTextureSampler(
+void VulkanImage::CreateDefaultSampler(
+	VkDevice device,
+	float minLod,
+	float maxLod,
+	VkFilter minFilter,
+	VkFilter maxFilter,
+	VkSamplerAddressMode addressMode)
+{
+	CreateSampler(
+		device,
+		defaultImageSampler_,
+		minLod,
+		maxLod,
+		minFilter,
+		maxFilter,
+		addressMode
+	);
+}
+
+void VulkanImage::CreateSampler(
 	VkDevice device,
 	VkSampler& sampler,
 	float minLod,

@@ -38,7 +38,7 @@ RendererCubeFilter::RendererCubeFilter(
 		FilterSettings::inputCubemapSize,
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	);
-	inputCubemap->CreateTextureSampler(
+	inputCubemap->CreateSampler(
 		vkDev.GetDevice(),
 		inputEnvMapSampler_,
 		0.f,
@@ -554,7 +554,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 	}
 
 	// Create a sampler for the output cubemap
-	outputCubemap->CreateTextureSampler(
+	outputCubemap->CreateDefaultSampler(
 		vkDev.GetDevice(),
 		0.0f,
 		static_cast<float>(outputMipMapCount));

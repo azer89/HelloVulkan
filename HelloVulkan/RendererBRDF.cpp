@@ -65,7 +65,7 @@ void RendererBRDF::CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT)
 		VK_IMAGE_ASPECT_COLOR_BIT
 	);
 
-	outputLUT->CreateTextureSampler(
+	outputLUT->CreateDefaultSampler(
 		vkDev.GetDevice()
 	);
 }

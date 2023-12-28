@@ -120,7 +120,7 @@ bool RendererSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 			{ perFrameUBOs_[i].buffer_, 0, sizeof(PerFrameUBO) };
 		const VkDescriptorImageInfo  imageInfo = 
 		{
-			envMap_->sampler_,
+			envMap_->defaultImageSampler_,
 			envMap_->imageView_,
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 		};

@@ -14,6 +14,9 @@ public:
 	VkDeviceMemory imageMemory_;
 	VkImageView imageView_;
 
+	// A reusable sampler which can be accessed by multiple Renderers
+	VkSampler defaultImageSampler_;
+
 	uint32_t width_;
 	uint32_t height_;
 	uint32_t mipCount_;
@@ -26,6 +29,7 @@ public:
 		image_(nullptr),
 		imageMemory_(nullptr),
 		imageView_(nullptr),
+		defaultImageSampler_(nullptr),
 		width_(0),
 		height_(0),
 		mipCount_(0),
@@ -38,7 +42,7 @@ public:
 		VulkanDevice& vkDev,
 		const char* filename);
 
-	void CreateTextureImageAndImageView(
+	void CreateTextureImageViewSampler(
 		VulkanDevice& vkDev,
 		const char* filename);
 
@@ -46,7 +50,15 @@ public:
 		VulkanDevice& vkDev,
 		const char* filename);
 
-	void CreateTextureSampler(
+	void CreateDefaultSampler(
+		VkDevice device,
+		float minLod = 0.f,
+		float maxLod = 0.f,
+		VkFilter minFilter = VK_FILTER_LINEAR,
+		VkFilter maxFilter = VK_FILTER_LINEAR,
+		VkSamplerAddressMode addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
+
+	void CreateSampler(
 		VkDevice device,
 		VkSampler& sampler,
 		float minLod = 0.f,
