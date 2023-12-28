@@ -16,7 +16,7 @@ namespace FilterSettings
 }
 
 RendererCubeFilter::RendererCubeFilter(
-	VulkanDevice& vkDev, VulkanTexture* inputCubemap) :
+	VulkanDevice& vkDev, VulkanImage* inputCubemap) :
 	RendererBase(vkDev, nullptr)
 {
 	CreateRenderPass(vkDev);
@@ -31,7 +31,7 @@ RendererCubeFilter::RendererCubeFilter(
 
 	// Input cubemap
 	uint32_t inputNumMipmap = NumMipMap(FilterSettings::inputCubemapSize, FilterSettings::inputCubemapSize);
-	inputCubemap->image_.GenerateMipmap(
+	inputCubemap->GenerateMipmap(
 		vkDev,
 		inputNumMipmap,
 		FilterSettings::inputCubemapSize,
@@ -106,11 +106,11 @@ void RendererCubeFilter::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t
 
 void RendererCubeFilter::InitializeOutputCubemap(
 	VulkanDevice& vkDev, 
-	VulkanTexture* outputDiffuseCubemap,
+	VulkanImage* outputDiffuseCubemap,
 	uint32_t numMipmap,
 	uint32_t sideLength)
 {
-	outputDiffuseCubemap->image_.CreateImage(
+	outputDiffuseCubemap->CreateImage(
 		vkDev.GetDevice(),
 		vkDev.GetPhysicalDevice(),
 		sideLength,
@@ -124,7 +124,7 @@ void RendererCubeFilter::InitializeOutputCubemap(
 		VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT
 	);
 
-	outputDiffuseCubemap->image_.CreateImageView(
+	outputDiffuseCubemap->CreateImageView(
 		vkDev.GetDevice(),
 		VK_FORMAT_R32G32B32A32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT,
@@ -205,7 +205,7 @@ void RendererCubeFilter::CreateDescriptorLayout(VulkanDevice& vkDev)
 	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));
 }
 
-void RendererCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanTexture* cubemapTexture)
+void RendererCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanImage* cubemapTexture)
 {
 	const VkDescriptorSetAllocateInfo allocInfo = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
@@ -223,7 +223,7 @@ void RendererCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanTexture*
 	const VkDescriptorImageInfo imageInfo =
 	{
 		inputEnvMapSampler_, // Local sampler created in the constructor
-		cubemapTexture->image_.imageView_,
+		cubemapTexture->imageView_,
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	};
 
@@ -246,7 +246,7 @@ void RendererCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanTexture*
 }
 
 void RendererCubeFilter::CreateOutputCubemapViews(VulkanDevice& vkDev,
-	VulkanTexture* cubemapTexture,
+	VulkanImage* cubemapTexture,
 	std::vector<std::vector<VkImageView>>& cubemapViews,
 	uint32_t numMip)
 {
@@ -266,9 +266,9 @@ void RendererCubeFilter::CreateOutputCubemapViews(VulkanDevice& vkDev,
 				.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 				.pNext = nullptr,
 				.flags = 0,
-				.image = cubemapTexture->image_.image_,
+				.image = cubemapTexture->image_,
 				.viewType = VK_IMAGE_VIEW_TYPE_2D,
-				.format = cubemapTexture->image_.imageFormat_,
+				.format = cubemapTexture->imageFormat_,
 				.components =
 				{
 					VK_COMPONENT_SWIZZLE_IDENTITY,
@@ -441,7 +441,7 @@ VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
 }
 
 void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
-	VulkanTexture* outputCubemap,
+	VulkanImage* outputCubemap,
 	CubeFilterType distribution)
 {
 	uint32_t outputMipMapCount = distribution == CubeFilterType::Diffuse ?
@@ -487,7 +487,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		VkImageSubresourceRange  subresourceRange =
 		{ VK_IMAGE_ASPECT_COLOR_BIT, static_cast<uint32_t>(i), 1u, 0u, 6u };
 
-		outputCubemap->image_.CreateBarrier(commandBuffer,
+		outputCubemap->CreateBarrier(commandBuffer,
 			VK_IMAGE_LAYOUT_UNDEFINED, // oldLayout
 			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, // newLayout
 			VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, // srcStage
@@ -528,7 +528,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 	}
 
 	// // Convention is to change the layout to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	outputCubemap->image_.CreateBarrier(commandBuffer,
+	outputCubemap->CreateBarrier(commandBuffer,
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, // oldLayout
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, // newLayout
 		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, // srcStage

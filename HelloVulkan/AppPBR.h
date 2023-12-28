@@ -6,7 +6,7 @@
 #include "RendererClear.h"
 #include "RendererFinish.h"
 #include "RendererPBR.h"
-#include "VulkanTexture.h"
+#include "VulkanImage.h"
 #include "Model.h"
 
 #include <vector>
@@ -31,12 +31,12 @@ private:
 	std::unique_ptr<RendererPBR> pbrPtr_;
 
 	// Cubemap generated from HDR
-	VulkanTexture environmentCubemap_;
+	VulkanImage environmentCubemap_;
 
 	// PBR stuff
-	VulkanTexture diffuseCubemap_;
-	VulkanTexture lutTexture_;
-	VulkanTexture specularCubemap_;
+	VulkanImage diffuseCubemap_;
+	VulkanImage lutTexture_;
+	VulkanImage specularCubemap_;
 
 	VulkanImage depthImage_;
 

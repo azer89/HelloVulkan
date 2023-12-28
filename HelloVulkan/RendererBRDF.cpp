@@ -42,7 +42,7 @@ void RendererBRDF::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t curre
 {
 }
 
-void RendererBRDF::CreateLUT(VulkanDevice& vkDev, VulkanTexture* outputLUT)
+void RendererBRDF::CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT)
 {
 	std::vector<float> lutData(BUFFER_SIZE, 0);
 
@@ -50,7 +50,7 @@ void RendererBRDF::CreateLUT(VulkanDevice& vkDev, VulkanTexture* outputLUT)
 
 	outBuffer_.DownloadBufferData(vkDev, 0, lutData.data(), BUFFER_SIZE);
 
-	outputLUT->image_.CreateImageFromData(
+	outputLUT->CreateImageFromData(
 		vkDev,
 		&lutData[0],
 		LUT_WIDTH,
@@ -59,11 +59,12 @@ void RendererBRDF::CreateLUT(VulkanDevice& vkDev, VulkanTexture* outputLUT)
 		1,
 		VK_FORMAT_R32G32_SFLOAT);
 
-	outputLUT->image_.CreateImageView(
+	outputLUT->CreateImageView(
 		vkDev.GetDevice(),
 		VK_FORMAT_R32G32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT
 	);
+
 	outputLUT->CreateTextureSampler(
 		vkDev.GetDevice()
 	);

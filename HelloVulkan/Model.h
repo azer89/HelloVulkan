@@ -5,7 +5,7 @@
 
 #include "TextureMapper.h"
 #include "VulkanDevice.h"
-#include "VulkanTexture.h"
+#include "VulkanImage.h"
 
 #include <string>
 #include <vector>
@@ -18,7 +18,7 @@ class Model
 {
 private:
 	// Model data 
-	std::unordered_map<std::string, VulkanTexture> textureMap_; // key is the filename
+	std::unordered_map<std::string, VulkanImage> textureMap_; // key is the filename
 	std::string directory_;
 
 	std::string blackTextureFilePath_;

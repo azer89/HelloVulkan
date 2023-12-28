@@ -17,9 +17,9 @@ constexpr size_t PBR_ENV_TEXTURE_COUNT = 3;
 RendererPBR::RendererPBR(
 	VulkanDevice& vkDev,
 	VulkanImage* depthImage,
-	VulkanTexture* envMap,
-	VulkanTexture* diffuseMap,
-	VulkanTexture* brdfLUT,
+	VulkanImage* envMap,
+	VulkanImage* diffuseMap,
+	VulkanImage* brdfLUT,
 	std::vector<Model*> models) :
 	RendererBase(vkDev, depthImage),
 	envMap_(envMap),
@@ -225,7 +225,7 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 			textureImageInfos.emplace_back<VkDescriptorImageInfo>
 				({
 					elem.second->sampler_,
-					elem.second->image_.imageView_,
+					elem.second->imageView_,
 					VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 					});
 			// The enum index starts from 1
@@ -251,19 +251,19 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 		const VkDescriptorImageInfo imageInfoEnv = 
 		{ 
 			envMap_->sampler_, 
-			envMap_->image_.imageView_, 
+			envMap_->imageView_, 
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL 
 		};
 		const VkDescriptorImageInfo imageInfoEnvIrr = 
 		{ 
 			diffuseMap_->sampler_, 
-			diffuseMap_->image_.imageView_, 
+			diffuseMap_->imageView_, 
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL 
 		};
 		const VkDescriptorImageInfo imageInfoBRDF = 
 		{ 
 			brdfLUT_->sampler_, 
-			brdfLUT_->image_.imageView_, 
+			brdfLUT_->imageView_, 
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL 
 		};
 

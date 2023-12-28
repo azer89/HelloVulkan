@@ -2,6 +2,12 @@
 #include "VulkanBuffer.h"
 #include "VulkanUtility.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_RESIZE_IMPLEMENTATION
+
+#include "stb_image.h"
+#include "stb_image_resize2.h"
+
 int NumMipMap(int w, int h)
 {
 	int levels = 1;
@@ -17,6 +23,64 @@ void VulkanImage::Destroy(VkDevice device)
 	vkDestroyImageView(device, imageView_, nullptr);
 	vkDestroyImage(device, image_, nullptr);
 	vkFreeMemory(device, imageMemory_, nullptr);
+}
+
+void VulkanImage::CreateTextureImageAndImageView(
+	VulkanDevice& vkDev,
+	const char* filename)
+{
+	CreateTextureImage(vkDev, filename);
+	CreateImageView(
+		vkDev.GetDevice(),
+		VK_FORMAT_R8G8B8A8_UNORM,
+		VK_IMAGE_ASPECT_COLOR_BIT);
+}
+
+void VulkanImage::CreateTextureImage(
+	VulkanDevice& vkDev,
+	const char* filename)
+{
+	stbi_set_flip_vertically_on_load(false);
+
+	int texWidth, texHeight, texChannels;
+	stbi_uc* pixels = stbi_load(filename, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+
+	if (!pixels)
+	{
+		std::cerr << "Failed to load " << filename << '\n';
+	}
+
+	CreateImageFromData(
+		vkDev,
+		pixels,
+		texWidth,
+		texHeight,
+		NumMipMap(texWidth, texHeight),
+		1, // layerCount
+		VK_FORMAT_R8G8B8A8_UNORM);
+
+	stbi_image_free(pixels);
+}
+
+void VulkanImage::CreateHDRImage(
+	VulkanDevice& vkDev,
+	const char* filename)
+{
+	stbi_set_flip_vertically_on_load(true);
+
+	int texWidth, texHeight, texChannels;
+	float* pixels = stbi_loadf(filename, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+
+	CreateImageFromData(
+		vkDev,
+		pixels,
+		texWidth,
+		texHeight,
+		NumMipMap(texWidth, texHeight),
+		1,
+		VK_FORMAT_R32G32B32A32_SFLOAT);
+
+	stbi_image_free(pixels);
 }
 
 void VulkanImage::CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint32_t height)
@@ -185,6 +249,39 @@ void VulkanImage::CreateImageView(VkDevice device,
 	};
 
 	VK_CHECK(vkCreateImageView(device, &viewInfo, nullptr, &imageView_));
+}
+
+void VulkanImage::CreateTextureSampler(
+	VkDevice device,
+	VkSampler& sampler,
+	float minLod,
+	float maxLod,
+	VkFilter minFilter,
+	VkFilter maxFilter,
+	VkSamplerAddressMode addressMode)
+{
+	const VkSamplerCreateInfo samplerInfo = {
+		.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0,
+		.magFilter = VK_FILTER_LINEAR,
+		.minFilter = VK_FILTER_LINEAR,
+		.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
+		.addressModeU = addressMode, // VK_SAMPLER_ADDRESS_MODE_REPEAT,
+		.addressModeV = addressMode, // VK_SAMPLER_ADDRESS_MODE_REPEAT,
+		.addressModeW = addressMode, // VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE VK_SAMPLER_ADDRESS_MODE_REPEAT,
+		.mipLodBias = 0.0f,
+		.anisotropyEnable = VK_FALSE,
+		.maxAnisotropy = 1,
+		.compareEnable = VK_FALSE,
+		.compareOp = VK_COMPARE_OP_ALWAYS,
+		.minLod = minLod,
+		.maxLod = maxLod,
+		.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
+		.unnormalizedCoordinates = VK_FALSE
+	};
+
+	VK_CHECK(vkCreateSampler(device, &samplerInfo, nullptr, &sampler));
 }
 
 uint32_t VulkanImage::FindMemoryType(VkPhysicalDevice device, uint32_t typeFilter, VkMemoryPropertyFlags properties)

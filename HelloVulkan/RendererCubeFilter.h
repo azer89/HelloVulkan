@@ -2,7 +2,7 @@
 #define RENDERER_CUBE_FILTER
 
 #include "RendererBase.h"
-#include "VulkanTexture.h"
+#include "VulkanImage.h"
 
 #include <string>
 
@@ -21,11 +21,11 @@ struct PushConstantCubeFilter
 class RendererCubeFilter final : public RendererBase
 {
 public:
-	RendererCubeFilter(VulkanDevice& vkDev, VulkanTexture* inputCubemap);
+	RendererCubeFilter(VulkanDevice& vkDev, VulkanImage* inputCubemap);
 	~RendererCubeFilter();
 
 	void OffscreenRender(VulkanDevice& vkDev, 
-		VulkanTexture* outputCubemap,
+		VulkanImage* outputCubemap,
 		CubeFilterType disttribution);
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
@@ -38,14 +38,14 @@ private:
 
 	void CreateRenderPass(VulkanDevice& vkDev);
 	void CreateDescriptorLayout(VulkanDevice& vkDev);
-	void CreateDescriptorSet(VulkanDevice& vkDev, VulkanTexture* cubemapTexture);
+	void CreateDescriptorSet(VulkanDevice& vkDev, VulkanImage* cubemapTexture);
 
 	void InitializeOutputCubemap(VulkanDevice& vkDev, 
-		VulkanTexture* outputDiffuseCubemap,
+		VulkanImage* outputDiffuseCubemap,
 		uint32_t numMipmap,
 		uint32_t sideLength);
 	void CreateOutputCubemapViews(VulkanDevice& vkDev,
-		VulkanTexture* cubemapTexture,
+		VulkanImage* cubemapTexture,
 		std::vector<std::vector<VkImageView>>& cubemapViews,
 		uint32_t numMip);
 

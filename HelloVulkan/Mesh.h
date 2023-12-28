@@ -3,7 +3,7 @@
 
 #include "VulkanDevice.h"
 #include "VulkanBuffer.h"
-#include "VulkanTexture.h"
+#include "VulkanImage.h"
 #include "TextureMapper.h"
 #include "UBO.h"
 
@@ -75,7 +75,7 @@ public:
 	//std::vector<VulkanTexture> textures_;
 	std::vector<VertexData> vertices_;
 	std::vector<unsigned int> indices_;
-	std::unordered_map<TextureType, VulkanTexture*> textures_;
+	std::unordered_map<TextureType, VulkanImage*> textures_;
 
 	std::vector<VkDescriptorSet> descriptorSets_;
 
@@ -84,12 +84,12 @@ public:
 		VulkanDevice& vkDev,
 		std::vector<VertexData>&& _vertices,
 		std::vector<unsigned int>&& _indices,
-		std::unordered_map<TextureType, VulkanTexture*>&& _textures);
+		std::unordered_map<TextureType, VulkanImage*>&& _textures);
 	Mesh(
 		VulkanDevice& vkDev,
 		const std::vector<VertexData>& vertices,
 		const std::vector<unsigned int>& indices,
-		const std::unordered_map<TextureType, VulkanTexture*>& textures);
+		const std::unordered_map<TextureType, VulkanImage*>& textures);
 
 	// Textures
 	//void AddTexture(VulkanDevice& vkDev, const char* fileName, uint32_t bindIndex);

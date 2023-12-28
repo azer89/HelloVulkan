@@ -34,6 +34,27 @@ public:
 	{
 	}
 
+	void CreateTextureImage(
+		VulkanDevice& vkDev,
+		const char* filename);
+
+	void CreateTextureImageAndImageView(
+		VulkanDevice& vkDev,
+		const char* filename);
+
+	void CreateHDRImage(
+		VulkanDevice& vkDev,
+		const char* filename);
+
+	void CreateTextureSampler(
+		VkDevice device,
+		VkSampler& sampler,
+		float minLod = 0.f,
+		float maxLod = 0.f,
+		VkFilter minFilter = VK_FILTER_LINEAR,
+		VkFilter maxFilter = VK_FILTER_LINEAR,
+		VkSamplerAddressMode addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
+
 	void CreateImage(
 		VkDevice device,
 		VkPhysicalDevice physicalDevice,

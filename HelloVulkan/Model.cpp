@@ -20,10 +20,10 @@ Model::Model(VulkanDevice& vkDev, const std::string& path) :
 {
 	// In case a texture type cannot be found, replace it with a default texture
 	textureMap_[blackTextureFilePath_] = {};
-	textureMap_[blackTextureFilePath_].CreateTextureImageViewSampler(
+	textureMap_[blackTextureFilePath_].CreateTextureImageAndImageView(
 		vkDev, 
 		blackTextureFilePath_.c_str());
-
+	// TODO Create Sampler
 	// Load model here
 	LoadModel(vkDev, path);
 }
@@ -41,7 +41,7 @@ Model::~Model()
 	}
 
 	// C++20 feature
-	for (VulkanTexture& tex : std::views::values(textureMap_))
+	for (VulkanImage& tex : std::views::values(textureMap_))
 	{
 		tex.Destroy(device_.GetDevice());
 	}
@@ -120,7 +120,7 @@ Mesh Model::ProcessMesh(
 	// Data to fill
 	std::vector<VertexData> vertices;
 	std::vector<unsigned int> indices;
-	std::unordered_map<TextureType, VulkanTexture*> textures;
+	std::unordered_map<TextureType, VulkanImage*> textures;
 
 	// Walk through each of the mesh's vertices
 	for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
@@ -188,10 +188,12 @@ Mesh Model::ProcessMesh(
 
 			if (!textureMap_.contains(key)) // Make sure never loaded before
 			{
-				VulkanTexture texture;
+				VulkanImage texture;
 				std::string fullFilePath = this->directory_ + '/' + str.C_Str();
-				texture.CreateTextureImageViewSampler(vkDev, fullFilePath.c_str());
+				texture.CreateTextureImageAndImageView(vkDev, fullFilePath.c_str());
 				textureMap_[key] = texture;
+
+				// TODO Create Sampler
 			}
 
 			if (!textures.contains(tType)) // Only support one image per texture type

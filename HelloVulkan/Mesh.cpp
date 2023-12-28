@@ -23,7 +23,7 @@
 Mesh::Mesh(VulkanDevice& vkDev,
 	std::vector<VertexData>&& _vertices,
 	std::vector<unsigned int>&& _indices,
-	std::unordered_map<TextureType, VulkanTexture*>&& _textures) :
+	std::unordered_map<TextureType, VulkanImage*>&& _textures) :
 	vertices_(std::move(_vertices)),
 	indices_(std::move(_indices)),
 	textures_(std::move(_textures))
@@ -35,7 +35,7 @@ Mesh::Mesh(VulkanDevice& vkDev,
 Mesh::Mesh(VulkanDevice& vkDev,
 	const std::vector<VertexData>& vertices,
 	const std::vector<unsigned int>& indices,
-	const std::unordered_map<TextureType, VulkanTexture*>& textures) :
+	const std::unordered_map<TextureType, VulkanImage*>& textures) :
 	vertices_(vertices),
 	indices_(indices),
 	textures_(textures)

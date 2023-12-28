@@ -154,7 +154,6 @@
     <ClCompile Include="VulkanInstance.cpp" />
     <ClCompile Include="VulkanDevice.cpp" />
     <ClCompile Include="VulkanShader.cpp" />
-    <ClCompile Include="VulkanTexture.cpp" />
     <ClCompile Include="VulkanUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -180,7 +179,6 @@
     <ClInclude Include="VulkanImage.h" />
     <ClInclude Include="VulkanInstance.h" />
     <ClInclude Include="VulkanDevice.h" />
-    <ClInclude Include="VulkanTexture.h" />
     <ClInclude Include="VulkanUtility.h" />
   </ItemGroup>
   <ItemGroup>
