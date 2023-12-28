@@ -50,7 +50,7 @@ vec3 lightColors[NUM_LIGHTS] =
 #include <PBRHeader.frag>
 #include <Hammersley.frag>
 
-// Easy trick to get tangent-normals to world-space to keep PBR code simplified.
+// Tangent-normals to world-space
 vec3 GetNormalFromMap(vec3 tangentNormal, vec3 worldPos, vec3 normal, vec2 texCoord)
 {
 	vec3 Q1 = dFdx(worldPos);
@@ -80,6 +80,7 @@ void main()
 	vec3 emissive = texture(textureEmissive, texCoord).rgb;
 	float metallic = texture(textureMetalness, texCoord).b;
 	float roughness = texture(textureRoughness, texCoord).g;
+	float alpha = AlphaDirectLighting(roughness);
 	float ao = texture(textureAO, texCoord).r;
 
 	vec3 tangentNormal = texture(textureNormal, texCoord).xyz * 2.0 - 1.0;
@@ -106,10 +107,10 @@ void main()
 		float distance = length(lightPositions[i] - worldPos);
 		float attenuation = 1.0 / (distance * distance);
 		vec3 radiance = lightColors[i] * attenuation;
-
+		
 		// Cook-Torrance BRDF
 		float D = DistributionGGX(NoH, roughness);
-		float G = GeometrySchlickGGX_Direct(NoL, NoV, roughness);
+		float G = GeometrySchlickGGX(NoL, NoV, alpha);
 		vec3 F = FresnelSchlick(HoV, F0);
 
 		vec3 numerator = D * G * F;
@@ -127,8 +128,10 @@ void main()
 		// have no diffuse light).
 		kD *= 1.0 - metallic;
 
+		vec3 diffuse = Diffuse(kD * albedo);
+
 		// Add to outgoing radiance Lo
-		Lo += (kD * albedo / PI + specular) * radiance * NoL; // Note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+		Lo += (diffuse + specular) * radiance * NoL; // Note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
 	}
 
 	// Ambient lighting (we now use IBL as the ambient term)

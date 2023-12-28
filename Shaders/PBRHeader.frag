@@ -9,40 +9,49 @@ Notations
 
 #define PI 3.1415926535897932384626433832795
 
-// Normal distribution function - Trowbridge-Reitz GGX
+// Specular D
+// Trowbridge-Reitz GGX that models the distribution of microfacet normal.
 float DistributionGGX(float NoH, float roughness)
 {
-	float a = roughness * roughness; // Reparameterization
-	float a2 = a * a;
+	float alpha = roughness * roughness; // Disney remapping
+	float alpha2 = alpha * alpha;
 	float NoH2 = NoH * NoH;
 
-	float nominator = a2;
-	float denominator = (NoH2 * (a2 - 1.0) + 1.0);
+	float nominator = alpha2;
+	float denominator = (NoH2 * (alpha2 - 1.0) + 1.0);
 	denominator = PI * denominator * denominator;
 
 	return nominator / denominator;
 }
 
-float GeometrySchlickGGX_IBL(float NoL, float NoV, float roughness)
+// Roughness remapping for IBL lighting
+float AlphaIBL(float roughness)
 {
-	// k_IBL is roughness remapping for IBL lighting
-	float k_IBL = (roughness * roughness) / 2.0;
-	float GL = NoL / (NoL * (1.0 - k_IBL) + k_IBL);
-	float GV = NoV / (NoV * (1.0 - k_IBL) + k_IBL);
-	return GL * GV;
+	float alpha = (roughness * roughness) / 2.0;
+	return alpha;
 }
 
-float GeometrySchlickGGX_Direct(float NoL, float NoV, float roughness)
+// Roughness remapping for direct lighting (See Brian Karis's PBR Note)
+float AlphaDirectLighting(float roughness)
 {
-	// k_direct is roughness remapping for direct lighting (See Brian Karis's PBR Note)
 	float r = (roughness + 1.0);
-	float k_direct = (r * r) / 8.0;
-	float GL = NoL / (NoL * (1.0 - k_direct) + k_direct);
-	float GV = NoV / (NoV * (1.0 - k_direct) + k_direct);
+	float alpha = (r * r) / 8.0;
+	return alpha;
+}
+
+// (Specular G)
+// Geometry function that describes the self-shadowing property of the microfacets.
+// When a surface is relatively rough, the surface's microfacets can overshadow other
+// microfacets reducing the light the surface reflects.
+float GeometrySchlickGGX(float NoL, float NoV, float alpha)
+{
+	float GL = NoL / (NoL * (1.0 - alpha) + alpha);
+	float GV = NoV / (NoV * (1.0 - alpha) + alpha);
 	return GL * GV;
 }
 
-// The ratio of surface reflection at different surface angles
+// (Specular F)
+// The Fresnel equation describes the ratio of surface reflection at different surface angles.
 vec3 FresnelSchlick(float cosTheta, vec3 F0)
 {
 	return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
@@ -74,4 +83,10 @@ vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, float roughness)
 
 	vec3 sampleVec = tangent * H.x + bitangent * H.y + N * H.z;
 	return normalize(sampleVec);
+}
+
+// Basic Lambertian diffuse
+vec3 Diffuse(vec3 albedo)
+{
+	return albedo / PI;
 }
