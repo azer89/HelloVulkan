@@ -278,7 +278,8 @@ void VulkanImage::TransitionImageLayout(VulkanDevice& vkDev,
 	vkDev.EndSingleTimeCommands(commandBuffer);
 }
 
-void VulkanImage::TransitionImageLayoutCmd(VkCommandBuffer commandBuffer,
+void VulkanImage::TransitionImageLayoutCmd(
+	VkCommandBuffer commandBuffer,
 	VkFormat format,
 	VkImageLayout oldLayout,
 	VkImageLayout newLayout,
@@ -335,15 +336,15 @@ void VulkanImage::TransitionImageLayoutCmd(VkCommandBuffer commandBuffer,
 		sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 		destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
 	}
-	else
-		if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_GENERAL)
-		{
-			barrier.srcAccessMask = 0;
-			barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+	else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_GENERAL)
+	{
+		barrier.srcAccessMask = 0;
+		barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
-			sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-			destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-		}
+		sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+		destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+	}
+	
 	if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
 	{
 		barrier.srcAccessMask = 0;
@@ -434,11 +435,15 @@ void VulkanImage::TransitionImageLayoutCmd(VkCommandBuffer commandBuffer,
 
 	vkCmdPipelineBarrier(
 		commandBuffer,
-		sourceStage, destinationStage,
+		sourceStage, 
+		destinationStage,
 		0,
-		0, nullptr,
-		0, nullptr,
-		1, &barrier
+		0, 
+		nullptr,
+		0, 
+		nullptr,
+		1, 
+		&barrier
 	);
 }
 
@@ -531,23 +536,59 @@ void VulkanImage::GenerateMipmap(
 	}
 
 	{
-		VkImageSubresourceRange completeRange{};
-		completeRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		completeRange.baseMipLevel = 0;
-		completeRange.levelCount = maxMipLevels;
-		completeRange.layerCount = 6u;
-
+		// Convention is to change the layout to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 		CreateBarrier(commandBuffer,
 			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, // oldLayout
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, // newLayout
 			VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, // srcStage
 			VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, // srcAccess
 			VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, // dstStage
-			VK_ACCESS_SHADER_READ_BIT, // dstAccess
-			completeRange);
+			VK_ACCESS_SHADER_READ_BIT // dstAccess
+		);
 	}
 
 	vkDev.EndSingleTimeCommands(commandBuffer);
+}
+
+void VulkanImage::CreateBarrier(
+	VkCommandBuffer cmdBuffer,
+	VkImageLayout oldLayout,
+	VkImageLayout newLayout,
+	VkPipelineStageFlags srcStage,
+	VkAccessFlags srcAccess,
+	VkPipelineStageFlags dstStage,
+	VkAccessFlags dstAccess)
+{
+	VkImageMemoryBarrier barrier{};
+	barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	barrier.oldLayout = oldLayout;
+	barrier.newLayout = newLayout;
+	barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	barrier.image = image_;
+	barrier.subresourceRange = 
+	{
+		.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+		.baseMipLevel = 0u,
+		.levelCount = mipCount_,
+		.baseArrayLayer = 0u,
+		.layerCount = layerCount_
+	};
+	barrier.srcAccessMask = srcAccess;
+	barrier.dstAccessMask = dstAccess;
+
+	vkCmdPipelineBarrier(
+		cmdBuffer,
+		srcStage,
+		dstStage,
+		0u,
+		0u,
+		nullptr,
+		0u,
+		nullptr,
+		1u,
+		&barrier
+	);
 }
 
 void VulkanImage::CreateBarrier(

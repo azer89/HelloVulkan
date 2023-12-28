@@ -404,18 +404,14 @@ void RendererEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanTexture* 
 
 	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
 
-	uint32_t mipmapCount = NumMipMap(cubemapSideLength, cubemapSideLength);
-	VkImageSubresourceRange  subresourceRangeBaseMiplevel = 
-	{ VK_IMAGE_ASPECT_COLOR_BIT, 0u, mipmapCount, 0u, 6u };
 	outputEnvMap->image_.CreateBarrier(
 		commandBuffer,
-		VK_IMAGE_LAYOUT_UNDEFINED,
-		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-		VK_ACCESS_SHADER_READ_BIT,// src stage, access
-		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-		VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, //dst stage, access
-		subresourceRangeBaseMiplevel
+		VK_IMAGE_LAYOUT_UNDEFINED, // oldLayout
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, // newLayout
+		VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, // srcStage
+		VK_ACCESS_SHADER_READ_BIT, // srcAccess
+		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, // dstStage
+		VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT // dstAccess
 	);
 
 	vkCmdBindDescriptorSets(
@@ -447,12 +443,21 @@ void RendererEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanTexture* 
 
 	vkCmdEndRenderPass(commandBuffer);
 
+	// Convention is to change the layout to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+	outputEnvMap->image_.CreateBarrier(
+		commandBuffer,
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, // oldLayout
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, // newLayout
+		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, // srcStage
+		VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, // srcAccess
+		VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, // dstStage
+		VK_ACCESS_SHADER_READ_BIT // dstAccess
+	);
+
 	vkDev.EndSingleTimeCommands(commandBuffer);
 
 	// Create a sampler for the output cubemap
 	outputEnvMap->CreateTextureSampler(vkDev.GetDevice());
-
-	// Note: the layout of outputEnvMap is currently VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 
 	// Destroy image views
 	for (size_t i = 0; i < layerCount; i++)

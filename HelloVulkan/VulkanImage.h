@@ -82,6 +82,16 @@ public:
 		uint32_t height,
 		uint32_t layerCount = 1);
 
+	// TODO Develop CreateBarrier() and TransitionImageLayout() that are much simpler
+	void CreateBarrier(
+		VkCommandBuffer cmdBuffer,
+		VkImageLayout oldLayout,
+		VkImageLayout newLayout,
+		VkPipelineStageFlags srcStage,
+		VkAccessFlags srcAccess,
+		VkPipelineStageFlags dstStage,
+		VkAccessFlags dstAccess);
+
 	void CreateBarrier(
 		VkCommandBuffer cmdBuffer, 
 		VkImageLayout oldLayout, 
@@ -93,6 +103,13 @@ public:
 		VkImageSubresourceRange subresourceRange);
 
 	void TransitionImageLayout(VulkanDevice& vkDev,
+		VkFormat format,
+		VkImageLayout oldLayout,
+		VkImageLayout newLayout,
+		uint32_t layerCount = 1,
+		uint32_t mipLevels = 1);
+
+	void TransitionImageLayoutCmd(VkCommandBuffer commandBuffer,
 		VkFormat format,
 		VkImageLayout oldLayout,
 		VkImageLayout newLayout,
@@ -112,13 +129,6 @@ private:
 		uint32_t layerCount,
 		const void* imageData,
 		VkImageLayout sourceImageLayout = VK_IMAGE_LAYOUT_UNDEFINED);
-
-	void TransitionImageLayoutCmd(VkCommandBuffer commandBuffer, 
-		VkFormat format, 
-		VkImageLayout oldLayout, 
-		VkImageLayout newLayout, 
-		uint32_t layerCount = 1, 
-		uint32_t mipLevels = 1);
 
 	bool HasStencilComponent(VkFormat format);
 
