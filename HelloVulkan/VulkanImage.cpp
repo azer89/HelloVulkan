@@ -460,13 +460,13 @@ void VulkanImage::GenerateMipmap(
 
 	{
 		CreateBarrier(
-			commandBuffer, // _cmdBuffer
+			commandBuffer, // cmdBuffer
 			currentImageLayout, // oldLayout
 			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, // newLayout
-			VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, // _srcStage
-			VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, // _srcAccess
-			VK_PIPELINE_STAGE_TRANSFER_BIT, // _dstStage
-			VK_ACCESS_TRANSFER_READ_BIT, // _dstAccess
+			VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, // srcStage
+			VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, // srcAccess
+			VK_PIPELINE_STAGE_TRANSFER_BIT, // dstStage
+			VK_ACCESS_TRANSFER_READ_BIT, // dstAccess
 			mipbaseRange);
 	}
 
@@ -497,14 +497,15 @@ void VulkanImage::GenerateMipmap(
 		mipSubRange.layerCount = 6u;
 
 		//  Transiton current mip level to transfer dest
-		CreateBarrier(commandBuffer,
-			currentImageLayout,
-			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-			VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-			VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-			VK_PIPELINE_STAGE_TRANSFER_BIT,
-			VK_ACCESS_TRANSFER_WRITE_BIT,
-			mipSubRange);
+		CreateBarrier(
+			commandBuffer,
+			currentImageLayout, // oldLayout
+			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, // newLayout
+			VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, // srcStage
+			VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, // srcAccess
+			VK_PIPELINE_STAGE_TRANSFER_BIT, // dstStage
+			VK_ACCESS_TRANSFER_WRITE_BIT, // dstAccess
+			mipSubRange); // subresourceRange
 
 		vkCmdBlitImage(
 			commandBuffer,
@@ -518,13 +519,14 @@ void VulkanImage::GenerateMipmap(
 
 
 		// Transition back
-		CreateBarrier(commandBuffer,
-			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, // TODO maybe change to currentImageLayout?
-			VK_PIPELINE_STAGE_TRANSFER_BIT,
-			VK_ACCESS_TRANSFER_WRITE_BIT,
-			VK_PIPELINE_STAGE_TRANSFER_BIT,
-			VK_ACCESS_TRANSFER_READ_BIT,
+		CreateBarrier(
+			commandBuffer,
+			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, // oldLayout
+			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, // newLayout
+			VK_PIPELINE_STAGE_TRANSFER_BIT, // srcStage
+			VK_ACCESS_TRANSFER_WRITE_BIT, // srcAccess
+			VK_PIPELINE_STAGE_TRANSFER_BIT, // dstStage
+			VK_ACCESS_TRANSFER_READ_BIT, // dstAccess
 			mipSubRange);
 	}
 
@@ -536,12 +538,12 @@ void VulkanImage::GenerateMipmap(
 		completeRange.layerCount = 6u;
 
 		CreateBarrier(commandBuffer,
-			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, 
-			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-			VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 
-			VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-			VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 
-			VK_ACCESS_SHADER_READ_BIT,
+			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, // oldLayout
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, // newLayout
+			VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, // srcStage
+			VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, // srcAccess
+			VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, // dstStage
+			VK_ACCESS_SHADER_READ_BIT, // dstAccess
 			completeRange);
 	}
 
@@ -549,14 +551,14 @@ void VulkanImage::GenerateMipmap(
 }
 
 void VulkanImage::CreateBarrier(
-	VkCommandBuffer _cmdBuffer,
+	VkCommandBuffer cmdBuffer,
 	VkImageLayout oldLayout,
 	VkImageLayout newLayout,
-	VkPipelineStageFlags _srcStage,
-	VkAccessFlags _srcAccess,
-	VkPipelineStageFlags _dstStage,
-	VkAccessFlags _dstAccess,
-	VkImageSubresourceRange _subresourceRange)
+	VkPipelineStageFlags srcStage,
+	VkAccessFlags srcAccess,
+	VkPipelineStageFlags dstStage,
+	VkAccessFlags dstAccess,
+	VkImageSubresourceRange subresourceRange)
 {
 	VkImageMemoryBarrier barrier{};
 	barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -565,13 +567,14 @@ void VulkanImage::CreateBarrier(
 	barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	barrier.image = image_;
-	barrier.subresourceRange = _subresourceRange;
-	barrier.srcAccessMask = _srcAccess;
-	barrier.dstAccessMask = _dstAccess;
+	barrier.subresourceRange = subresourceRange;
+	barrier.srcAccessMask = srcAccess;
+	barrier.dstAccessMask = dstAccess;
 
 	vkCmdPipelineBarrier(
-		_cmdBuffer,
-		_srcStage, _dstStage,
+		cmdBuffer,
+		srcStage, 
+		dstStage,
 		0u,
 		0u, 
 		nullptr,

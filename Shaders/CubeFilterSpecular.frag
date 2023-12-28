@@ -27,6 +27,7 @@ layout(push_constant) uniform PushConstantCubeFilter
 }
 pcParams;
 
+// http://www.codinglabs.net/article_physically_based_rendering.aspx
 vec3 Specular(vec3 N)
 {
 	// Make the simplifying assumption that V equals R equals the normal 

@@ -83,14 +83,14 @@ public:
 		uint32_t layerCount = 1);
 
 	void CreateBarrier(
-		VkCommandBuffer _cmdBuffer, 
+		VkCommandBuffer cmdBuffer, 
 		VkImageLayout oldLayout, 
 		VkImageLayout newLayout,
-		VkPipelineStageFlags _srcStage, 
-		VkAccessFlags _srcAccess,
-		VkPipelineStageFlags _dstStage, 
-		VkAccessFlags _dstAccess,
-		VkImageSubresourceRange _subresourceRange);
+		VkPipelineStageFlags srcStage, 
+		VkAccessFlags srcAccess,
+		VkPipelineStageFlags dstStage, 
+		VkAccessFlags dstAccess,
+		VkImageSubresourceRange subresourceRange);
 
 	void TransitionImageLayout(VulkanDevice& vkDev,
 		VkFormat format,

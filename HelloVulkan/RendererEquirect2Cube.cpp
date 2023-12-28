@@ -244,7 +244,7 @@ void RendererEquirect2Cube::CreateOffscreenGraphicsPipeline(
 	pInfo.depthStencil.depthTestEnable = VK_FALSE;
 	pInfo.depthStencil.depthWriteEnable = VK_FALSE;
 
-	VkDynamicState dynamicStates[] =
+	/*VkDynamicState dynamicStates[] =
 	{
 		VK_DYNAMIC_STATE_LINE_WIDTH,
 		VK_DYNAMIC_STATE_DEPTH_BIAS,
@@ -257,6 +257,9 @@ void RendererEquirect2Cube::CreateOffscreenGraphicsPipeline(
 
 	pInfo.dynamicState.dynamicStateCount = static_cast<uint32_t>(sizeof(dynamicStates) / sizeof(VkDynamicState));
 	pInfo.dynamicState.pDynamicStates = dynamicStates;
+	*/
+	pInfo.dynamicState.dynamicStateCount = 0;
+	pInfo.dynamicState.pDynamicStates = nullptr;
 
 	pInfo.rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 	pInfo.rasterizer.pNext = nullptr;

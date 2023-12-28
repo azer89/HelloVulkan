@@ -331,7 +331,7 @@ void RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 	pInfo.depthStencil.depthTestEnable = VK_FALSE;
 	pInfo.depthStencil.depthWriteEnable = VK_FALSE;
 
-	VkDynamicState dynamicStates[] =
+	/*VkDynamicState dynamicStates[] =
 	{
 		VK_DYNAMIC_STATE_LINE_WIDTH,
 		VK_DYNAMIC_STATE_DEPTH_BIAS,
@@ -344,7 +344,7 @@ void RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 
 	pInfo.dynamicState.dynamicStateCount = 
 		static_cast<uint32_t>(sizeof(dynamicStates) / sizeof(VkDynamicState));
-	pInfo.dynamicState.pDynamicStates = dynamicStates;
+	pInfo.dynamicState.pDynamicStates = dynamicStates;*/
 
 	pInfo.rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 	pInfo.rasterizer.pNext = nullptr;

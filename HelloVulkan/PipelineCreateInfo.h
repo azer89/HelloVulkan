@@ -3,6 +3,7 @@
 
 #include "VulkanDevice.h"
 
+// Default pipeline create info
 struct PipelineCreateInfo
 {
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo;
@@ -15,7 +16,6 @@ struct PipelineCreateInfo
 	VkPipelineColorBlendAttachmentState colorBlendAttachment;
 	VkPipelineColorBlendStateCreateInfo colorBlending;
 	VkPipelineDepthStencilStateCreateInfo depthStencil;
-	VkDynamicState dynamicStateElt;
 	VkPipelineDynamicStateCreateInfo dynamicState;
 	VkPipelineTessellationStateCreateInfo tessellationState;
 
@@ -95,13 +95,12 @@ struct PipelineCreateInfo
 			.minDepthBounds = 0.0f,
 			.maxDepthBounds = 1.0f
 		}),
-		dynamicStateElt(VK_DYNAMIC_STATE_SCISSOR),
 		dynamicState({
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0,
-			.dynamicStateCount = 1,
-			.pDynamicStates = &dynamicStateElt
+			.dynamicStateCount = 0,
+			.pDynamicStates = nullptr
 		}),
 		tessellationState({
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO,
