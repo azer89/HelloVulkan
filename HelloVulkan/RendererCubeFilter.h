@@ -6,10 +6,10 @@
 
 #include <string>
 
-enum class DistributionCubeFilter : unsigned int
+enum class CubeFilterType : unsigned int
 {
-	Lambertian = 0, // Diffuse
-	GGX = 1, // Specular
+	Diffuse = 0,
+	Specular = 1, 
 };
 
 struct PushConstantCubeFilter
@@ -26,7 +26,7 @@ public:
 
 	void OffscreenRender(VulkanDevice& vkDev, 
 		VulkanTexture* outputCubemap,
-		DistributionCubeFilter disttribution);
+		CubeFilterType disttribution);
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:

@@ -438,13 +438,13 @@ VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
 
 void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 	VulkanTexture* outputCubemap,
-	DistributionCubeFilter distribution)
+	CubeFilterType distribution)
 {
-	uint32_t outputMipMapCount = distribution == DistributionCubeFilter::Lambertian ?
+	uint32_t outputMipMapCount = distribution == CubeFilterType::Diffuse ?
 		1u :
 		NumMipMap(FilterSettings::outputSpecularSize, FilterSettings::outputSpecularSize);
 
-	uint32_t outputSideLength = distribution == DistributionCubeFilter::Lambertian ?
+	uint32_t outputSideLength = distribution == CubeFilterType::Diffuse ?
 		FilterSettings::outputDiffuseSize :
 		FilterSettings::outputSpecularSize;
 
@@ -493,7 +493,9 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 			subresourceRange);
 
 		PushConstantCubeFilter values{};
-		values.roughness = static_cast<float>(i) / static_cast<float>(outputMipMapCount);
+		values.roughness = distribution == CubeFilterType::Diffuse ?
+			0.f :
+			static_cast<float>(i) / static_cast<float>(outputMipMapCount - 1);
 		values.sampleCount = FilterSettings::sampleCount;
 
 		vkCmdPushConstants(
