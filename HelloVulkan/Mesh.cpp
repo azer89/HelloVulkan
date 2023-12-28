@@ -6,19 +6,6 @@
 
 #include <iostream>
 
-/*void Mesh::AddTexture(VulkanDevice& vkDev, const char* fileName, uint32_t bindIndex)
-{
-	VulkanTexture texture;
-	texture.bindIndex_ = bindIndex;
-	texture.CreateTextureImage(vkDev, fileName);
-	texture.image_.CreateImageView(
-		vkDev.GetDevice(),
-		VK_FORMAT_R8G8B8A8_UNORM,
-		VK_IMAGE_ASPECT_COLOR_BIT);
-	texture.CreateTextureSampler(vkDev.GetDevice());
-	textures_.push_back(texture);
-}*/
-
 // Constructor
 Mesh::Mesh(VulkanDevice& vkDev,
 	std::vector<VertexData>&& _vertices,
@@ -100,11 +87,6 @@ void Mesh::Destroy(VkDevice device)
 	vertexBuffer_.Destroy(device);
 	indexBuffer_.Destroy(device);
 	//storageBuffer_.Destroy(device);
-
-	/*for (VulkanTexture& tex : textures_)
-	{
-		tex.Destroy(device);
-	}*/
 
 	/*for (auto buf : modelBuffers_)
 	{

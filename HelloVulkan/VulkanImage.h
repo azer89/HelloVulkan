@@ -42,7 +42,7 @@ public:
 		VulkanDevice& vkDev,
 		const char* filename);
 
-	void CreateTextureImageViewSampler(
+	void CreateImageAndAllObjects(
 		VulkanDevice& vkDev,
 		const char* filename);
 
@@ -154,7 +154,7 @@ private:
 	VkFormat FindDepthFormat(VkPhysicalDevice device);
 	VkFormat FindSupportedFormat(VkPhysicalDevice device, const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 
-	void UpdateTextureImage(
+	void UpdateImage(
 		VulkanDevice& vkDev,
 		uint32_t texWidth,
 		uint32_t texHeight,
