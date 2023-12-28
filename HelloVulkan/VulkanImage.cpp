@@ -44,7 +44,6 @@ void VulkanImage::CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint
 		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 }
 
-// TODO Rename to CreateImageFromData
 void VulkanImage::CreateImageFromData(
 	VulkanDevice& vkDev,
 	void* imageData,

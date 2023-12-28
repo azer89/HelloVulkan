@@ -24,12 +24,6 @@ public:
 		VulkanDevice& vkDev,
 		const char* filename);
 
-	void CreateCubeTextureImage(
-		VulkanDevice& vkDev,
-		const char* filename,
-		uint32_t* width = nullptr,
-		uint32_t* height = nullptr);
-
 	void CreateTextureSampler(
 		VkDevice device,
 		VkSampler& sampler,

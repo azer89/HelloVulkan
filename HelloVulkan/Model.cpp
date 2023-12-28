@@ -20,7 +20,9 @@ Model::Model(VulkanDevice& vkDev, const std::string& path) :
 {
 	// In case a texture type cannot be found, replace it with a default texture
 	textureMap_[blackTextureFilePath_] = {};
-	textureMap_[blackTextureFilePath_].CreateTextureImageViewSampler(vkDev, blackTextureFilePath_.c_str());
+	textureMap_[blackTextureFilePath_].CreateTextureImageViewSampler(
+		vkDev, 
+		blackTextureFilePath_.c_str());
 
 	// Load model here
 	LoadModel(vkDev, path);
@@ -61,7 +63,12 @@ void Model::LoadModel(VulkanDevice& vkDev, std::string const& path)
 {
 	// Read file via ASSIMP
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	const aiScene* scene = importer.ReadFile(
+		path, 
+		aiProcess_Triangulate | 
+		aiProcess_GenSmoothNormals | 
+		aiProcess_FlipUVs | 
+		aiProcess_CalcTangentSpace);
 	// Check for errors
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
 	{

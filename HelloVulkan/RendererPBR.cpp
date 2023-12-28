@@ -76,7 +76,6 @@ RendererPBR::RendererPBR(
 
 RendererPBR::~RendererPBR()
 {
-	//brdfLUT_.Destroy(device_);
 }
 
 void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
@@ -207,9 +206,17 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 
 		std::vector<VkWriteDescriptorSet> descriptorWrites;
 		descriptorWrites.emplace_back(
-			BufferWriteDescriptorSet(ds, &bufferInfo1, bindIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
+			BufferWriteDescriptorSet(
+				ds, 
+				&bufferInfo1, 
+				bindIndex++, 
+				VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
 		descriptorWrites.emplace_back(
-			BufferWriteDescriptorSet(ds, &bufferInfo2, bindIndex++, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
+			BufferWriteDescriptorSet(
+				ds, 
+				&bufferInfo2, 
+				bindIndex++, 
+				VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
 		
 		std::vector<VkDescriptorImageInfo> textureImageInfos;
 		std::vector<uint32_t> textureBindIndices;

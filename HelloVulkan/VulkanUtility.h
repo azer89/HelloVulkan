@@ -2,7 +2,7 @@
 #define VULKAN_UTILITY
 
 /*
-Taken from
+Adapted from
 	3D Graphics Rendering Cookbook
 	by Sergey Kosarevsky & Viktor Latypov
 	https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook
@@ -53,9 +53,11 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugReportCallback
 	// https://github.com/zeux/niagara/blob/master/src/device.cpp   [ignoring performance warnings]
 	// This silences warnings like "For optimal performance image layout should be VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL instead of GENERAL."
 	if (flags & VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT)
+	{
 		return VK_FALSE;
+	}
 
-	printf("Debug callback (%s): %s\n\n", pLayerPrefix, pMessage);
+	std::cerr << "Debug callback (" << pLayerPrefix << "): " << pMessage << "\n\n";
 	return VK_FALSE;
 }
 

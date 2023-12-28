@@ -9,8 +9,7 @@
 #include <vector>
 #include <string>
 
-VkShaderStageFlagBits GLSLangShaderStageToVulkan(glslang_stage_t sh);
-glslang_stage_t GLSLangShaderStageFromFileName(const char* fileName);
+VkShaderStageFlagBits GetShaderStageFlagBits(const char* file);
 
 class VulkanShader
 {

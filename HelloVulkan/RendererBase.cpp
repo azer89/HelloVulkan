@@ -340,22 +340,28 @@ void RendererBase::CreateGraphicsPipeline(
 	{
 		const char* file = shaderFiles[i].c_str();
 		VK_CHECK(shaderModules[i].Create(vkDev.GetDevice(), file));
-		VkShaderStageFlagBits stage = GLSLangShaderStageToVulkan(GLSLangShaderStageFromFileName(file));
+		VkShaderStageFlagBits stage = GetShaderStageFlagBits(file);
 		shaderStages[i] = shaderModules[i].GetShaderStageInfo(stage, "main");
 	}
 
 	// Pipeline create info
 	PipelineCreateInfo pInfo(vkDev);
 
-	std::vector<VkVertexInputBindingDescription> bindingDescriptions = VertexData::GetBindingDescriptions();
-	std::vector<VkVertexInputAttributeDescription> attributeDescriptions = VertexData::GetAttributeDescriptions();
+	std::vector<VkVertexInputBindingDescription> bindingDescriptions = 
+		VertexData::GetBindingDescriptions();
+	std::vector<VkVertexInputAttributeDescription> attributeDescriptions = 
+		VertexData::GetAttributeDescriptions();
 
 	if (hasVertexBuffer)
 	{
-		pInfo.vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
-		pInfo.vertexInputInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(bindingDescriptions.size());
-		pInfo.vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
-		pInfo.vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
+		pInfo.vertexInputInfo.vertexAttributeDescriptionCount = 
+			static_cast<uint32_t>(attributeDescriptions.size());
+		pInfo.vertexInputInfo.vertexBindingDescriptionCount = 
+			static_cast<uint32_t>(bindingDescriptions.size());
+		pInfo.vertexInputInfo.pVertexAttributeDescriptions = 
+			attributeDescriptions.data();
+		pInfo.vertexInputInfo.pVertexBindingDescriptions = 
+			bindingDescriptions.data();
 	}
 	
 	pInfo.inputAssembly.topology = topology;

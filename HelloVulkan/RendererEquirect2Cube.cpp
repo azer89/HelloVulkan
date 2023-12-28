@@ -219,7 +219,7 @@ void RendererEquirect2Cube::CreateOffscreenGraphicsPipeline(
 	{
 		const char* file = shaderFiles[i].c_str();
 		VK_CHECK(shaderModules[i].Create(vkDev.GetDevice(), file));
-		VkShaderStageFlagBits stage = GLSLangShaderStageToVulkan(GLSLangShaderStageFromFileName(file));
+		VkShaderStageFlagBits stage = GetShaderStageFlagBits(file);
 		shaderStages[i] = shaderModules[i].GetShaderStageInfo(stage, "main");
 	}
 

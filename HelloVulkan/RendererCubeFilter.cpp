@@ -303,7 +303,7 @@ void RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 	{
 		const char* file = shaderFiles[i].c_str();
 		VK_CHECK(shaderModules[i].Create(vkDev.GetDevice(), file));
-		VkShaderStageFlagBits stage = GLSLangShaderStageToVulkan(GLSLangShaderStageFromFileName(file));
+		VkShaderStageFlagBits stage = GetShaderStageFlagBits(file);
 		shaderStages[i] = shaderModules[i].GetShaderStageInfo(stage, "main");
 	}
 
@@ -317,7 +317,10 @@ void RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 
 	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
 	colorBlendAttachment.colorWriteMask =
-		VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+		VK_COLOR_COMPONENT_R_BIT | 
+		VK_COLOR_COMPONENT_G_BIT | 
+		VK_COLOR_COMPONENT_B_BIT | 
+		VK_COLOR_COMPONENT_A_BIT;
 	colorBlendAttachment.blendEnable = VK_FALSE;
 	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments(FilterSettings::layerCount, colorBlendAttachment);
 
@@ -339,7 +342,8 @@ void RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 		VK_DYNAMIC_STATE_STENCIL_REFERENCE
 	};
 
-	pInfo.dynamicState.dynamicStateCount = static_cast<uint32_t>(sizeof(dynamicStates) / sizeof(VkDynamicState));
+	pInfo.dynamicState.dynamicStateCount = 
+		static_cast<uint32_t>(sizeof(dynamicStates) / sizeof(VkDynamicState));
 	pInfo.dynamicState.pDynamicStates = dynamicStates;
 
 	pInfo.rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;

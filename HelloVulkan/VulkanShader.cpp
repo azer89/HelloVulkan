@@ -3,6 +3,10 @@
 
 #include <iostream>
 
+VkShaderStageFlagBits GetShaderStageFlagBits(const char* file);
+VkShaderStageFlagBits GLSLangShaderStageToVulkan(glslang_stage_t sh);
+glslang_stage_t GLSLangShaderStageFromFileName(const char* fileName);
+
 inline int EndsWith(const char* s, const char* part)
 {
 	return (strstr(s, part) - s) == (strlen(s) - strlen(part));
@@ -196,6 +200,11 @@ void VulkanShader::PrintShaderSource(const char* text)
 	printf("\n");
 }
 
+VkShaderStageFlagBits GetShaderStageFlagBits(const char* file)
+{
+	return GLSLangShaderStageToVulkan(GLSLangShaderStageFromFileName(file));
+}
+
 VkShaderStageFlagBits GLSLangShaderStageToVulkan(glslang_stage_t sh)
 {
 	switch (sh)
@@ -220,23 +229,29 @@ VkShaderStageFlagBits GLSLangShaderStageToVulkan(glslang_stage_t sh)
 glslang_stage_t GLSLangShaderStageFromFileName(const char* fileName)
 {
 	if (EndsWith(fileName, ".vert"))
+	{
 		return GLSLANG_STAGE_VERTEX;
-
+	}
 	if (EndsWith(fileName, ".frag"))
+	{
 		return GLSLANG_STAGE_FRAGMENT;
-
+	}
 	if (EndsWith(fileName, ".geom"))
+	{
 		return GLSLANG_STAGE_GEOMETRY;
-
+	}
 	if (EndsWith(fileName, ".comp"))
+	{
 		return GLSLANG_STAGE_COMPUTE;
-
+	}
 	if (EndsWith(fileName, ".tesc"))
+	{
 		return GLSLANG_STAGE_TESSCONTROL;
-
+	}
 	if (EndsWith(fileName, ".tese"))
+	{
 		return GLSLANG_STAGE_TESSEVALUATION;
-
+	}
 	return GLSLANG_STAGE_VERTEX;
 }
 

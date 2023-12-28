@@ -19,7 +19,11 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
 	
-	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthImage_->imageView_, swapchainFramebuffers_);
+	CreateColorAndDepthFramebuffers(
+		vkDev, 
+		renderPass_, 
+		depthImage_->imageView_, 
+		swapchainFramebuffers_);
 	
 	CreateDescriptorPool(
 		vkDev, 
@@ -68,8 +72,14 @@ void RendererSkybox::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t cur
 bool RendererSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 {
 	const std::array<VkDescriptorSetLayoutBinding, 2> bindings = {
-		DescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT),
-		DescriptorSetLayoutBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+		DescriptorSetLayoutBinding(
+			0, 
+			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 
+			VK_SHADER_STAGE_VERTEX_BIT),
+		DescriptorSetLayoutBinding(
+			1, 
+			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 
+			VK_SHADER_STAGE_FRAGMENT_BIT)
 	};
 
 	const VkDescriptorSetLayoutCreateInfo layoutInfo = {
@@ -80,7 +90,11 @@ bool RendererSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 		.pBindings = bindings.data()
 	};
 
-	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));
+	VK_CHECK(vkCreateDescriptorSetLayout(
+		vkDev.GetDevice(), 
+		&layoutInfo, 
+		nullptr, 
+		&descriptorSetLayout_));
 
 	auto swapChainImageSize = vkDev.GetSwapChainImageSize();
 
@@ -102,7 +116,8 @@ bool RendererSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 	{
 		VkDescriptorSet ds = descriptorSets_[i];
 
-		const VkDescriptorBufferInfo bufferInfo = { perFrameUBOs_[i].buffer_, 0, sizeof(PerFrameUBO) };
+		const VkDescriptorBufferInfo bufferInfo = 
+			{ perFrameUBOs_[i].buffer_, 0, sizeof(PerFrameUBO) };
 		const VkDescriptorImageInfo  imageInfo = 
 		{
 			envMap_->sampler_,
@@ -115,7 +130,12 @@ bool RendererSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 			ImageWriteDescriptorSet(ds, &imageInfo,   1)
 		};
 
-		vkUpdateDescriptorSets(vkDev.GetDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+		vkUpdateDescriptorSets(
+			vkDev.GetDevice(), 
+			static_cast<uint32_t>(descriptorWrites.size()), 
+			descriptorWrites.data(), 
+			0, 
+			nullptr);
 	}
 
 	return true;
