@@ -36,37 +36,38 @@ vec3 Specular(vec3 N)
 	vec2 texelSize = 1.0 / textureSize(cubeMap, 0);
 	float saTexel = 4.0 * PI / (6.0 * texelSize.x * texelSize.x);
 
-	vec3 prefilteredColor = vec3(0.0);
+	vec3 specularColor = vec3(0.0);
 	float totalWeight = 0.0;
 
 	for (uint i = 0u; i < pcParams.sampleCount; ++i)
 	{
-		// Generates a sample vector that's biased towards the preferred alignment direction (importance sampling).
+		// Generates a sample vector that's biased towards
+		// the preferred alignment direction (importance sampling).
 		vec2 Xi = Hammersley(i, pcParams.sampleCount);
 		vec3 H = ImportanceSampleGGX(Xi, N, pcParams.roughness);
 		vec3 L = normalize(2.0 * dot(V, H) * H - V);
 
-		float NdotL = max(dot(N, L), 0.0);
-		if (NdotL > 0.0)
+		float NoL = max(dot(N, L), 0.0);
+
+		if (NoL > 0.0)
 		{
+			float NoH = max(dot(N, H), 0.0);
+			float HoV = max(dot(H, V), 0.0);
+
 			// Sample from the environment's mip level based on roughness/pdf
-			float D = DistributionGGX(N, H, pcParams.roughness);
-			float NdotH = max(dot(N, H), 0.0);
-			float HdotV = max(dot(H, V), 0.0);
-			float pdf = D * NdotH / (4.0 * HdotV) + 0.0001;
-
+			float D = DistributionGGX(NoH, pcParams.roughness); // Trowbridge-Reitz GGX
+			float pdf = D * NoH / (4.0 * HoV) + 0.0001;
 			float saSample = 1.0 / (float(pcParams.sampleCount) * pdf + 0.0001);
-
 			float mipLevel = pcParams.roughness == 0.0 ? 0.0 : 0.5 * log2(saSample / saTexel);
 
-			prefilteredColor += textureLod(cubeMap, L, mipLevel).rgb * NdotL;
-			totalWeight += NdotL;
+			specularColor += textureLod(cubeMap, L, mipLevel).rgb * NoL;
+			totalWeight += NoL;
 		}
 	}
 
-	prefilteredColor = prefilteredColor / totalWeight;
+	specularColor = specularColor / totalWeight;
 
-	return prefilteredColor;
+	return specularColor;
 }
 
 void WriteFace(int face, vec3 colorIn)

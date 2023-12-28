@@ -80,12 +80,13 @@ vec3 UVToXYZ(int face, vec2 uv)
 	}
 }
 
+// Convert Cartesian direction vector to spherical coordinates.
 vec2 DirToUV(vec3 dir)
 {
 	return vec2
 	(
-		0.5f + 0.5f * atan(dir.z, dir.x) / PI,
-		1.f - acos(dir.y) / PI
+		0.5f + 0.5f * atan(dir.z, dir.x) / PI, // phi
+		1.f - acos(dir.y) / PI // theta
 	);
 }
 

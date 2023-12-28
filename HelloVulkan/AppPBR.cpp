@@ -36,11 +36,11 @@ void AppPBR::Init()
 		// Diffuse
 		cFilter.OffscreenRender(vulkanDevice,
 			&diffuseCubemap_,
-			DistributionCubeFilter::Lambertian);
+			CubeFilterType::Diffuse);
 		// Specular
 		cFilter.OffscreenRender(vulkanDevice,
 			&specularCubemap_,
-			DistributionCubeFilter::GGX);
+			CubeFilterType::Specular);
 	}
 	
 	{

@@ -1,12 +1,19 @@
 
+/*
+Notations
+	V	View unit vector
+	L	Incident light unit vector
+	N	Surface normal unit vector
+	H	Half unit vector between L and V
+*/
+
 #define PI 3.1415926535897932384626433832795
 
 // Normal distribution function - Trowbridge-Reitz GGX
-float DistributionGGX(vec3 N, vec3 H, float roughness)
+float DistributionGGX(float NoH, float roughness)
 {
-	float a = roughness * roughness;
+	float a = roughness * roughness; // Reparameterization
 	float a2 = a * a;
-	float NoH = max(dot(N, H), 0.0);
 	float NoH2 = NoH * NoH;
 
 	float nominator = a2;
@@ -16,22 +23,22 @@ float DistributionGGX(vec3 N, vec3 H, float roughness)
 	return nominator / denominator;
 }
 
-float GeometrySchlickGGX_IBL(float dotNL, float dotNV, float roughness)
+float GeometrySchlickGGX_IBL(float NoL, float NoV, float roughness)
 {
 	// k_IBL is roughness remapping for IBL lighting
 	float k_IBL = (roughness * roughness) / 2.0;
-	float GL = dotNL / (dotNL * (1.0 - k_IBL) + k_IBL);
-	float GV = dotNV / (dotNV * (1.0 - k_IBL) + k_IBL);
+	float GL = NoL / (NoL * (1.0 - k_IBL) + k_IBL);
+	float GV = NoV / (NoV * (1.0 - k_IBL) + k_IBL);
 	return GL * GV;
 }
 
-float GeometrySchlickGGX_Direct(float dotNL, float dotNV, float roughness)
+float GeometrySchlickGGX_Direct(float NoL, float NoV, float roughness)
 {
-	// k_direct is roughness remapping for direct lighting
+	// k_direct is roughness remapping for direct lighting (See Brian Karis's PBR Note)
 	float r = (roughness + 1.0);
 	float k_direct = (r * r) / 8.0;
-	float GL = dotNL / (dotNL * (1.0 - k_direct) + k_direct);
-	float GV = dotNV / (dotNV * (1.0 - k_direct) + k_direct);
+	float GL = NoL / (NoL * (1.0 - k_direct) + k_direct);
+	float GV = NoV / (NoV * (1.0 - k_direct) + k_direct);
 	return GL * GV;
 }
 
