@@ -536,20 +536,15 @@ void VulkanImage::GenerateMipmap(
 	}
 
 	{
-		VkImageSubresourceRange completeRange{};
-		completeRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		completeRange.baseMipLevel = 0;
-		completeRange.levelCount = maxMipLevels;
-		completeRange.layerCount = 6u;
-
+		// Convention is to change the layout to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 		CreateBarrier(commandBuffer,
 			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, // oldLayout
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, // newLayout
 			VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, // srcStage
 			VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, // srcAccess
 			VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, // dstStage
-			VK_ACCESS_SHADER_READ_BIT, // dstAccess
-			completeRange);
+			VK_ACCESS_SHADER_READ_BIT // dstAccess
+		);
 	}
 
 	vkDev.EndSingleTimeCommands(commandBuffer);

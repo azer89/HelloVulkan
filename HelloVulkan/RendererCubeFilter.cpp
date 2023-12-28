@@ -36,7 +36,7 @@ RendererCubeFilter::RendererCubeFilter(
 		inputNumMipmap,
 		FilterSettings::inputCubemapSize,
 		FilterSettings::inputCubemapSize,
-		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	);
 	inputCubemap->CreateTextureSampler(
 		vkDev.GetDevice(),
@@ -527,6 +527,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		vkCmdEndRenderPass(commandBuffer);
 	}
 
+	// // Convention is to change the layout to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	outputCubemap->image_.CreateBarrier(commandBuffer,
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, // oldLayout
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, // newLayout
@@ -557,14 +558,4 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		vkDev.GetDevice(),
 		0.0f,
 		static_cast<float>(outputMipMapCount));
-
-	// Transition to a new layout
-	/*outputCubemap->image_.TransitionImageLayout(
-		vkDev,
-		outputCubemap->image_.imageFormat_,
-		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-		outputCubemap->image_.layerCount_,
-		outputCubemap->image_.mipCount_
-	);*/
 }
