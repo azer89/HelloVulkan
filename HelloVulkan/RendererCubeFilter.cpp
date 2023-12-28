@@ -527,6 +527,14 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		vkCmdEndRenderPass(commandBuffer);
 	}
 
+	outputCubemap->image_.CreateBarrier(commandBuffer,
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, // oldLayout
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, // newLayout
+		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, // srcStage
+		VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, // srcAccess
+		VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, // dstStage
+		VK_ACCESS_SHADER_READ_BIT); // dstAccess
+
 	vkDev.EndSingleTimeCommands(commandBuffer);
 
 	// Destroy frame buffers
@@ -551,12 +559,12 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		static_cast<float>(outputMipMapCount));
 
 	// Transition to a new layout
-	outputCubemap->image_.TransitionImageLayout(
+	/*outputCubemap->image_.TransitionImageLayout(
 		vkDev,
 		outputCubemap->image_.imageFormat_,
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 		outputCubemap->image_.layerCount_,
 		outputCubemap->image_.mipCount_
-	);
+	);*/
 }

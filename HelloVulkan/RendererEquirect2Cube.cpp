@@ -404,9 +404,6 @@ void RendererEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanTexture* 
 
 	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
 
-	uint32_t mipmapCount = NumMipMap(cubemapSideLength, cubemapSideLength);
-	VkImageSubresourceRange  subresourceRangeBaseMiplevel = 
-	{ VK_IMAGE_ASPECT_COLOR_BIT, 0u, mipmapCount, 0u, 6u };
 	outputEnvMap->image_.CreateBarrier(
 		commandBuffer,
 		VK_IMAGE_LAYOUT_UNDEFINED, // oldLayout
@@ -414,8 +411,7 @@ void RendererEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanTexture* 
 		VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, // srcStage
 		VK_ACCESS_SHADER_READ_BIT, // srcAccess
 		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, // dstStage
-		VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, // dstAccess
-		subresourceRangeBaseMiplevel
+		VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT // dstAccess
 	);
 
 	vkCmdBindDescriptorSets(

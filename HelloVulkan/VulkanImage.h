@@ -83,6 +83,15 @@ public:
 		uint32_t layerCount = 1);
 
 	void CreateBarrier(
+		VkCommandBuffer cmdBuffer,
+		VkImageLayout oldLayout,
+		VkImageLayout newLayout,
+		VkPipelineStageFlags srcStage,
+		VkAccessFlags srcAccess,
+		VkPipelineStageFlags dstStage,
+		VkAccessFlags dstAccess);
+
+	void CreateBarrier(
 		VkCommandBuffer cmdBuffer, 
 		VkImageLayout oldLayout, 
 		VkImageLayout newLayout,
