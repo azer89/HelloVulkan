@@ -1,4 +1,4 @@
-# Vulkan PBR 🌋
+# 🌋Vulkan PBR+IBL
 
 An implementation of Physically Based Rendering (PBR), a technique that seeks to realistically simulate the interaction of light with materials. The scene illumination is done by using Image-Based Lighting (IBL), which uses high dynamic range (HDR) images of real-world environments to capture nuanced lighting conditions and enhance the realism of 3D object rendering.
 
