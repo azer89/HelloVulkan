@@ -38,7 +38,7 @@ public:
 	{
 	}
 
-	void CreateTextureImage(
+	void CreateFromFile(
 		VulkanDevice& vkDev,
 		const char* filename);
 

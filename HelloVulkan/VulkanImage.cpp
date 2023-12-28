@@ -30,7 +30,7 @@ void VulkanImage::CreateImageAndAllObjects(
 	VulkanDevice& vkDev,
 	const char* filename)
 {
-	CreateTextureImage(vkDev, filename);
+	CreateFromFile(vkDev, filename);
 	CreateImageView(
 		vkDev.GetDevice(),
 		VK_FORMAT_R8G8B8A8_UNORM,
@@ -38,7 +38,7 @@ void VulkanImage::CreateImageAndAllObjects(
 	CreateDefaultSampler(vkDev.GetDevice());
 }
 
-void VulkanImage::CreateTextureImage(
+void VulkanImage::CreateFromFile(
 	VulkanDevice& vkDev,
 	const char* filename)
 {
