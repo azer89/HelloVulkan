@@ -33,11 +33,6 @@ glm::mat4 Camera::GetViewMatrix()
 	return viewMatrix_;
 }
 
-glm::mat4 Camera::GetInverseViewMatrix()
-{
-	return inverseViewMatrix_;
-}
-
 glm::vec3 Camera::Position()
 {
 	return position_;
@@ -106,6 +101,9 @@ void Camera::ProcessMouseScroll(float yoffset)
 	{
 		zoom_ = 45.0f;
 	}
+
+	// Update orthogonal axes and matrices
+	UpdateInternal();
 }
 
 void Camera::UpdateInternal()
@@ -158,19 +156,4 @@ void Camera::UpdateInternal()
 	viewMatrix_[3][0] = -glm::dot(u, position_);
 	viewMatrix_[3][1] = -glm::dot(v, position_);
 	viewMatrix_[3][2] = -glm::dot(w, position_);
-
-	// Inverse view matrix
-	inverseViewMatrix_ = glm::mat4{ 1.f };
-	inverseViewMatrix_[0][0] = u.x;
-	inverseViewMatrix_[0][1] = u.y;
-	inverseViewMatrix_[0][2] = u.z;
-	inverseViewMatrix_[1][0] = v.x;
-	inverseViewMatrix_[1][1] = v.y;
-	inverseViewMatrix_[1][2] = v.z;
-	inverseViewMatrix_[2][0] = w.x;
-	inverseViewMatrix_[2][1] = w.y;
-	inverseViewMatrix_[2][2] = w.z;
-	inverseViewMatrix_[3][0] = position_.x;
-	inverseViewMatrix_[3][1] = position_.y;
-	inverseViewMatrix_[3][2] = position_.z;
 }

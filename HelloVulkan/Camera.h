@@ -42,7 +42,6 @@ public:
 private:
 	glm::mat4 projectionMatrix_;
 	glm::mat4 viewMatrix_;
-	glm::mat4 inverseViewMatrix_;
 
 	glm::vec3 position_;
 	glm::vec3 worldUp_;
