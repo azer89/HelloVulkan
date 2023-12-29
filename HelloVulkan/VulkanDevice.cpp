@@ -124,6 +124,7 @@ VkResult VulkanDevice::CreatePhysicalDevice(VkInstance instance)
 		if (IsDeviceSuitable(d))
 		{
 			physicalDevice = d;
+			msaaSamples = GetMaxUsableSampleCount(d);
 			return VK_SUCCESS;
 		}
 	}
@@ -375,6 +376,41 @@ bool VulkanDevice::IsDeviceSuitable(VkPhysicalDevice d)
 	const bool isGPU = isDiscreteGPU || isIntegratedGPU;
 
 	return isGPU && deviceFeatures.geometryShader;
+}
+
+VkSampleCountFlagBits VulkanDevice::GetMaxUsableSampleCount(VkPhysicalDevice d)
+{
+	VkPhysicalDeviceProperties physicalDeviceProperties;
+	vkGetPhysicalDeviceProperties(d, &physicalDeviceProperties);
+
+	VkSampleCountFlags counts = physicalDeviceProperties.limits.framebufferColorSampleCounts &
+		physicalDeviceProperties.limits.framebufferDepthSampleCounts;
+	if (counts & VK_SAMPLE_COUNT_64_BIT) 
+	{ 
+		return VK_SAMPLE_COUNT_64_BIT; 
+	}
+	if (counts & VK_SAMPLE_COUNT_32_BIT) 
+	{ 
+		return VK_SAMPLE_COUNT_32_BIT; 
+	}
+	if (counts & VK_SAMPLE_COUNT_16_BIT) 
+	{ 
+		return VK_SAMPLE_COUNT_16_BIT; 
+	}
+	if (counts & VK_SAMPLE_COUNT_8_BIT) 
+	{ 
+		return VK_SAMPLE_COUNT_8_BIT; 
+	}
+	if (counts & VK_SAMPLE_COUNT_4_BIT) 
+	{ 
+		return VK_SAMPLE_COUNT_4_BIT; 
+	}
+	if (counts & VK_SAMPLE_COUNT_2_BIT) 
+	{ 
+		return VK_SAMPLE_COUNT_2_BIT; 
+	}
+
+	return VK_SAMPLE_COUNT_1_BIT;
 }
 
 VkFormat VulkanDevice::FindDepthFormat()

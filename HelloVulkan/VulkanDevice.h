@@ -39,6 +39,7 @@ public:
 	const uint32_t* GetDeviceQueueIndicesData() const { return deviceQueueIndices.data(); }
 	VkCommandBuffer GetComputeCommandBuffer() { return computeCommandBuffer; }
 	VkQueue GetComputeQueue() { return computeQueue; }
+	VkSampleCountFlagBits GetMSAASamples() { return msaaSamples; }
 
 	VkImageView GetSwapchainImageView(unsigned i)
 	{
@@ -67,6 +68,7 @@ private:
 		VkPhysicalDeviceFeatures deviceFeatures, 
 		uint32_t graphicsFamily);
 	bool IsDeviceSuitable(VkPhysicalDevice d);
+	VkSampleCountFlagBits GetMaxUsableSampleCount(VkPhysicalDevice d);
 
 	// Swap chain
 	VkResult CreateSwapchain(VkSurfaceKHR surface, bool supportScreenshots = false);
@@ -94,6 +96,8 @@ public:
 private:
 	uint32_t framebufferWidth;
 	uint32_t framebufferHeight;
+
+	VkSampleCountFlagBits msaaSamples;
 
 	VkDevice device;
 	VkPhysicalDevice physicalDevice;
