@@ -12,8 +12,6 @@
 
 struct RenderPassCreateInfo final
 {
-	bool clearColor_ = false;
-	bool clearDepth_ = false;
 	bool renderFirst_ = false;
 	bool renderLast_ = false;
 };

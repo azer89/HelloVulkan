@@ -11,8 +11,6 @@ RendererClear::RendererClear(VulkanDevice& vkDev, VulkanImage* depthImage) :
 		&renderPass_,
 		RenderPassCreateInfo
 		{ 
-			.clearColor_ = true, 
-			.clearDepth_ = true, 
 			.renderFirst_ = true,
 			.renderLast_ = false, 
 		});

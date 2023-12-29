@@ -9,9 +9,7 @@ RendererFinish::RendererFinish(VulkanDevice& vkDev, VulkanImage* depthImage) :
 		(depthImage != nullptr),
 		&renderPass_,
 		RenderPassCreateInfo
-		{ 
-			.clearColor_ = false, 
-			.clearDepth_ = false, 
+		{
 			.renderFirst_ = false,
 			.renderLast_ = true,
 		});
