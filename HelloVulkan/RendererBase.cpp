@@ -81,7 +81,7 @@ void RendererBase::CreateUniformBuffers(
 	}
 }
 
-void CreateMultisampledRenderPass(
+void RendererBase::CreateMultisampledRenderPass(
 	VulkanDevice& vkDev,
 	VkRenderPass* renderPass)
 {
@@ -281,6 +281,43 @@ void RendererBase::CreateColorAndDepthRenderPass(
 
 	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &renderPassInfo, nullptr, renderPass));
 }
+
+void RendererBase::CreateMultisampledFramebuffers(
+	VulkanDevice& vkDev,
+	VkRenderPass renderPass,
+	VkImageView depthImageView,
+	VkImageView multisampledView,
+	std::vector<VkFramebuffer>& swapchainFramebuffers)
+{
+	size_t swapchainImageSize = vkDev.GetSwapChainImageSize();
+
+	swapchainFramebuffers.resize(swapchainImageSize);
+
+	for (size_t i = 0; i < swapchainImageSize; i++)
+	{
+		std::array<VkImageView, 3> attachments = 
+		{
+			multisampledView,
+			vkDev.GetSwapchainImageView(i),
+			depthImageView
+		};
+
+		const VkFramebufferCreateInfo framebufferInfo = {
+			.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+			.pNext = nullptr,
+			.flags = 0,
+			.renderPass = renderPass,
+			.attachmentCount = static_cast<uint32_t>((depthImageView == VK_NULL_HANDLE) ? 1 : 2),
+			.pAttachments = attachments.data(),
+			.width = vkDev.GetFrameBufferWidth(),
+			.height = vkDev.GetFrameBufferHeight(),
+			.layers = 1
+		};
+
+		VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo, nullptr, &swapchainFramebuffers[i]));
+	}
+}
+
 
 void RendererBase::CreateColorAndDepthFramebuffers(
 	VulkanDevice& vkDev,

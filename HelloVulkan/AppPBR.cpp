@@ -62,6 +62,7 @@ void AppPBR::Init()
 	pbrPtr_ = std::make_unique<RendererPBR>(
 		vulkanDevice,
 		&depthImage_,
+		&multisampledImage_,
 		&specularCubemap_,
 		&diffuseCubemap_, 
 		&brdfLut_,

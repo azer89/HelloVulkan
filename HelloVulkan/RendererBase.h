@@ -87,6 +87,13 @@ protected:
 		VkRenderPass* renderPass, 
 		const RenderPassCreateInfo& ci);
 
+	void CreateMultisampledFramebuffers(
+		VulkanDevice& vkDev,
+		VkRenderPass renderPass,
+		VkImageView depthImageView,
+		VkImageView multisampledView,
+		std::vector<VkFramebuffer>& swapchainFramebuffers);
+
 	void CreateColorAndDepthFramebuffers(
 		VulkanDevice& vkDev, 
 		VkRenderPass renderPass, 

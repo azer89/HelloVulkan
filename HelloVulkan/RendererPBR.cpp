@@ -16,17 +16,20 @@ constexpr size_t PBR_ENV_TEXTURE_COUNT = 3;
 RendererPBR::RendererPBR(
 	VulkanDevice& vkDev,
 	VulkanImage* depthImage,
+	VulkanImage* multisampledImage,
 	VulkanImage* envMap,
 	VulkanImage* diffuseMap,
 	VulkanImage* brdfLUT,
 	std::vector<Model*> models) :
 	RendererBase(vkDev, depthImage),
+	multisampledImage_(multisampledImage),
 	envMap_(envMap),
 	diffuseMap_(diffuseMap),
 	brdfLUT_(brdfLUT),
 	models_(models)
 {
-	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo());
+	//CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo());
+	CreateMultisampledRenderPass(vkDev, &renderPass_);
 
 	// Per frame UBO
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
@@ -39,7 +42,12 @@ RendererPBR::RendererPBR(
 		CreateUniformBuffers(vkDev, model->modelBuffers_, sizeof(ModelUBO));
 	}
 
-	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthImage_->imageView_, swapchainFramebuffers_);
+	//CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthImage_->imageView_, swapchainFramebuffers_);
+	CreateMultisampledFramebuffers(vkDev,
+		renderPass_,
+		depthImage_->imageView_,
+		multisampledImage_->imageView_,
+		swapchainFramebuffers_);
 
 	CreateDescriptorPool(
 		vkDev, 

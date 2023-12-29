@@ -10,6 +10,7 @@ class RendererPBR final : public RendererBase
 public:
 	RendererPBR(VulkanDevice& vkDev,
 		VulkanImage* depthImage,
+		VulkanImage* multisampledImage,
 		VulkanImage* envMap,
 		VulkanImage* diffuseMap,
 		VulkanImage* brdfLUT,
@@ -30,6 +31,8 @@ private:
 	VulkanImage* envMap_;
 	VulkanImage* diffuseMap_;
 	VulkanImage* brdfLUT_;
+
+	VulkanImage* multisampledImage_;
 };
 
 #endif
