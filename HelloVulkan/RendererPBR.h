@@ -3,7 +3,6 @@
 
 #include "RendererBase.h"
 #include "VulkanImage.h"
-#include "VulkanBuffer.h"
 #include "Model.h"
 
 class RendererPBR final : public RendererBase

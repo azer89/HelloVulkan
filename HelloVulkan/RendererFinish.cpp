@@ -1,8 +1,6 @@
 #include "RendererFinish.h"
 #include "VulkanUtility.h"
 
-#include <iostream>
-
 RendererFinish::RendererFinish(VulkanDevice& vkDev, VulkanImage* depthImage) : 
 	RendererBase(vkDev, depthImage)
 {

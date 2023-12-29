@@ -4,7 +4,6 @@
 
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
-#include "assimp/cimport.h"
 
 #include <vector>
 #include <array>
@@ -218,11 +217,11 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 				bindIndex++, 
 				VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
 		
-		std::vector<VkDescriptorImageInfo> textureImageInfos;
-		std::vector<uint32_t> textureBindIndices;
+		std::vector<VkDescriptorImageInfo> imageInfoArray;
+		std::vector<uint32_t> bindIndexArray;
 		for (const auto& elem : mesh.textures_)
 		{
-			textureImageInfos.emplace_back<VkDescriptorImageInfo>
+			imageInfoArray.emplace_back<VkDescriptorImageInfo>
 				({
 					elem.second->defaultImageSampler_,
 					elem.second->imageView_,
@@ -230,18 +229,18 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 					});
 			// The enum index starts from 1
 			uint32_t meshBindIndex = PBR_TEXTURE_START_BIND_INDEX + static_cast<uint32_t>(elem.first) - 1;
-			textureBindIndices.emplace_back(meshBindIndex);
+			bindIndexArray.emplace_back(meshBindIndex);
 		}
 
-		for (size_t i = 0; i < textureImageInfos.size(); ++i)
+		for (size_t i = 0; i < imageInfoArray.size(); ++i)
 		{
 			descriptorWrites.emplace_back
 			(
 				ImageWriteDescriptorSet(
 					ds, 
-					&textureImageInfos[i],
+					&imageInfoArray[i],
 					// Note that we don't use bindIndex
-					textureBindIndices[i])
+					bindIndexArray[i])
 			);
 
 			// Keep incrementing

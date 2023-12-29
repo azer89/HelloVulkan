@@ -1,8 +1,6 @@
 #include "RendererClear.h"
 #include "VulkanUtility.h"
 
-#include <iostream>
-
 RendererClear::RendererClear(VulkanDevice& vkDev, VulkanImage* depthImage) : 
 	RendererBase(vkDev, depthImage), 
 	shouldClearDepth_(depthImage != nullptr)

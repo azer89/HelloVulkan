@@ -4,8 +4,6 @@
 #include "RendererBase.h"
 #include "VulkanImage.h"
 
-#include "glm/glm.hpp"
-
 class RendererSkybox final : public RendererBase
 {
 public:

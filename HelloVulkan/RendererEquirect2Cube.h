@@ -4,8 +4,6 @@
 #include "RendererBase.h"
 #include "VulkanImage.h"
 
-#include "glm/glm.hpp"
-
 #include <string>
 
 class RendererEquirect2Cube final : public RendererBase
@@ -20,16 +18,16 @@ public:
 
 private:
 	VkDescriptorSet descriptorSet_;
-	VulkanImage inputHDRTexture_;
+	VulkanImage inputHDRImage_;
 	VkFramebuffer frameBuffer_;
 
 private:
-	void InitializeCubemap(VulkanDevice& vkDev, VulkanImage* outputCubemap);
-	void InitializeHDRTexture(VulkanDevice& vkDev, const std::string& hdrFile);
+	void InitializeHDRImage(VulkanDevice& vkDev, const std::string& hdrFile);
+	void InitializeCubemap(VulkanDevice& vkDev, VulkanImage* cubemap);
 	void CreateCubemapViews(
 		VulkanDevice& vkDev,
-		VulkanImage* cubemapTexture,
-		std::vector<VkImageView>& cubeMapViews);
+		VulkanImage* cubemap,
+		std::vector<VkImageView>& cubemapViews);
 
 	void CreateRenderPass(VulkanDevice& vkDev);
 	void CreateDescriptorLayout(VulkanDevice& vkDev);
