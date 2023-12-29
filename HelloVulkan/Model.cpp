@@ -20,7 +20,7 @@ Model::Model(VulkanDevice& vkDev, const std::string& path) :
 {
 	// In case a texture type cannot be found, replace it with a default texture
 	textureMap_[blackTextureFilePath_] = {};
-	textureMap_[blackTextureFilePath_].CreateImageAndAllObjects(
+	textureMap_[blackTextureFilePath_].CreateAndInitAllObjects(
 		vkDev, 
 		blackTextureFilePath_.c_str());
 	// TODO Create Sampler
@@ -190,7 +190,7 @@ Mesh Model::ProcessMesh(
 			{
 				VulkanImage texture;
 				std::string fullFilePath = this->directory_ + '/' + str.C_Str();
-				texture.CreateImageAndAllObjects(vkDev, fullFilePath.c_str());
+				texture.CreateAndInitAllObjects(vkDev, fullFilePath.c_str());
 				textureMap_[key] = texture;
 
 				// TODO Create Sampler

@@ -14,18 +14,18 @@ void AppPBR::Init()
 {
 	modelRotation_ = 0.f;
 
-	std::string cubemapTextureFile = AppSettings::TextureFolder + "piazza_bologni_1k.hdr";
+	std::string hdrFile = AppSettings::TextureFolder + "piazza_bologni_1k.hdr";
 
 	model_ = std::make_unique<Model>(
 		vulkanDevice, 
-		AppSettings::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
+		AppSettings::ModelFolder + "Tachikoma//scene.gltf");
 	std::vector<Model*> models = {model_.get()};
 
 	// Create a cubemap from the input HDR
 	{
 		RendererEquirect2Cube e2c(
 			vulkanDevice,
-			cubemapTextureFile);
+			hdrFile);
 		e2c.OffscreenRender(vulkanDevice,
 			&environmentCubemap_); // Output
 	}
@@ -45,7 +45,7 @@ void AppPBR::Init()
 	
 	{
 		RendererBRDF brdfComp(vulkanDevice);
-		brdfComp.CreateLUT(vulkanDevice, &lutTexture_);
+		brdfComp.CreateLUT(vulkanDevice, &brdfLut_);
 	}
 
 	depthImage_.CreateDepthResources(vulkanDevice,
@@ -60,7 +60,7 @@ void AppPBR::Init()
 		&depthImage_,
 		&specularCubemap_,
 		&diffuseCubemap_, 
-		&lutTexture_,
+		&brdfLut_,
 		models);
 	skyboxPtr_ = std::make_unique<RendererSkybox>(vulkanDevice, &environmentCubemap_, &depthImage_);
 
@@ -80,7 +80,7 @@ void AppPBR::DestroyResources()
 	environmentCubemap_.Destroy(vulkanDevice.GetDevice());
 	diffuseCubemap_.Destroy(vulkanDevice.GetDevice());
 	specularCubemap_.Destroy(vulkanDevice.GetDevice());
-	lutTexture_.Destroy(vulkanDevice.GetDevice());
+	brdfLut_.Destroy(vulkanDevice.GetDevice());
 	model_.reset();
 	clearPtr_.reset();
 	finishPtr_.reset();

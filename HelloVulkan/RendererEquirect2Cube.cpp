@@ -79,7 +79,7 @@ void RendererEquirect2Cube::InitializeCubemap(VulkanDevice& vkDev, VulkanImage* 
 
 void RendererEquirect2Cube::InitializeHDRTexture(VulkanDevice& vkDev, const std::string& hdrFile)
 {
-	inputHDRTexture_.CreateHDRImage(vkDev, hdrFile.c_str());
+	inputHDRTexture_.CreateFromHDR(vkDev, hdrFile.c_str());
 	inputHDRTexture_.CreateImageView(
 		vkDev.GetDevice(),
 		VK_FORMAT_R32G32B32A32_SFLOAT,

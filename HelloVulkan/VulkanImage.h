@@ -42,25 +42,25 @@ public:
 		VulkanDevice& vkDev,
 		const char* filename);
 
-	void CreateImageAndAllObjects(
+	void CreateAndInitAllObjects(
 		VulkanDevice& vkDev,
 		const char* filename);
 
-	void CreateHDRImage(
+	void CreateFromHDR(
 		VulkanDevice& vkDev,
 		const char* filename);
 
-	void CreateDefaultSampler(
+	void CreateSampler(
 		VkDevice device,
+		VkSampler& sampler,
 		float minLod = 0.f,
 		float maxLod = 0.f,
 		VkFilter minFilter = VK_FILTER_LINEAR,
 		VkFilter maxFilter = VK_FILTER_LINEAR,
 		VkSamplerAddressMode addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
 
-	void CreateSampler(
+	void CreateDefaultSampler(
 		VkDevice device,
-		VkSampler& sampler,
 		float minLod = 0.f,
 		float maxLod = 0.f,
 		VkFilter minFilter = VK_FILTER_LINEAR,
@@ -115,7 +115,7 @@ public:
 		uint32_t height,
 		uint32_t layerCount = 1);
 
-	// TODO Develop CreateBarrier() and TransitionImageLayout() that are much simpler
+	// TODO Refactor CreateBarrier() and TransitionImageLayout() to be much simpler
 	void CreateBarrier(
 		VkCommandBuffer cmdBuffer,
 		VkImageLayout oldLayout,
@@ -142,7 +142,7 @@ public:
 		uint32_t layerCount = 1,
 		uint32_t mipLevels = 1);
 
-	void TransitionImageLayoutCmd(VkCommandBuffer commandBuffer,
+	void TransitionImageLayoutCommand(VkCommandBuffer commandBuffer,
 		VkFormat format,
 		VkImageLayout oldLayout,
 		VkImageLayout newLayout,
@@ -150,9 +150,16 @@ public:
 		uint32_t mipLevels = 1);
 
 private:
-	uint32_t FindMemoryType(VkPhysicalDevice device, uint32_t typeFilter, VkMemoryPropertyFlags properties);
+	uint32_t FindMemoryType(
+		VkPhysicalDevice device, 
+		uint32_t typeFilter, 
+		VkMemoryPropertyFlags properties);
 	VkFormat FindDepthFormat(VkPhysicalDevice device);
-	VkFormat FindSupportedFormat(VkPhysicalDevice device, const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+	VkFormat FindSupportedFormat(
+		VkPhysicalDevice device, 
+		const std::vector<VkFormat>& candidates, 
+		VkImageTiling tiling, 
+		VkFormatFeatureFlags features);
 
 	void UpdateImage(
 		VulkanDevice& vkDev,

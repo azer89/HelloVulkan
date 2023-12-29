@@ -35,7 +35,7 @@ private:
 
 	// PBR stuff
 	VulkanImage diffuseCubemap_;
-	VulkanImage lutTexture_;
+	VulkanImage brdfLut_;
 	VulkanImage specularCubemap_;
 
 	VulkanImage depthImage_;

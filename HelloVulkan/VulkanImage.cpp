@@ -26,7 +26,7 @@ void VulkanImage::Destroy(VkDevice device)
 	vkDestroySampler(device, defaultImageSampler_, nullptr);
 }
 
-void VulkanImage::CreateImageAndAllObjects(
+void VulkanImage::CreateAndInitAllObjects(
 	VulkanDevice& vkDev,
 	const char* filename)
 {
@@ -64,7 +64,7 @@ void VulkanImage::CreateFromFile(
 	stbi_image_free(pixels);
 }
 
-void VulkanImage::CreateHDRImage(
+void VulkanImage::CreateFromHDR(
 	VulkanDevice& vkDev,
 	const char* filename)
 {
@@ -391,12 +391,12 @@ void VulkanImage::TransitionImageLayout(VulkanDevice& vkDev,
 {
 	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
 
-	TransitionImageLayoutCmd(commandBuffer, format, oldLayout, newLayout, layerCount, mipLevels);
+	TransitionImageLayoutCommand(commandBuffer, format, oldLayout, newLayout, layerCount, mipLevels);
 
 	vkDev.EndSingleTimeCommands(commandBuffer);
 }
 
-void VulkanImage::TransitionImageLayoutCmd(
+void VulkanImage::TransitionImageLayoutCommand(
 	VkCommandBuffer commandBuffer,
 	VkFormat format,
 	VkImageLayout oldLayout,
