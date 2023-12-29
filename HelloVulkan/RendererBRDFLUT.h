@@ -11,8 +11,7 @@ class RendererBRDFLUT final : RendererBase
 {
 public:
 	RendererBRDFLUT(VulkanDevice& vkDev);
-
-	virtual ~RendererBRDFLUT();
+	~RendererBRDFLUT();
 
 	void CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT);
 

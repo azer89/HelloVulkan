@@ -331,21 +331,6 @@ void RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 	pInfo.depthStencil.depthTestEnable = VK_FALSE;
 	pInfo.depthStencil.depthWriteEnable = VK_FALSE;
 
-	/*VkDynamicState dynamicStates[] =
-	{
-		VK_DYNAMIC_STATE_LINE_WIDTH,
-		VK_DYNAMIC_STATE_DEPTH_BIAS,
-		VK_DYNAMIC_STATE_BLEND_CONSTANTS,
-		VK_DYNAMIC_STATE_DEPTH_BOUNDS,
-		VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK,
-		VK_DYNAMIC_STATE_STENCIL_WRITE_MASK,
-		VK_DYNAMIC_STATE_STENCIL_REFERENCE
-	};
-
-	pInfo.dynamicState.dynamicStateCount = 
-		static_cast<uint32_t>(sizeof(dynamicStates) / sizeof(VkDynamicState));
-	pInfo.dynamicState.pDynamicStates = dynamicStates;*/
-
 	pInfo.rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 	pInfo.rasterizer.pNext = nullptr;
 	pInfo.rasterizer.cullMode = VK_CULL_MODE_NONE;
@@ -375,8 +360,8 @@ void RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 	pInfo.depthStencil.depthWriteEnable = VK_FALSE;
 	pInfo.depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
 	pInfo.depthStencil.depthBoundsTestEnable = VK_FALSE;
-	pInfo.depthStencil.minDepthBounds = 0.0f; // Optional
-	pInfo.depthStencil.maxDepthBounds = 1.0f; // Optional
+	pInfo.depthStencil.minDepthBounds = 0.0f; 
+	pInfo.depthStencil.maxDepthBounds = 1.0f; 
 	pInfo.depthStencil.stencilTestEnable = VK_FALSE;
 
 	pInfo.tessellationState.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
@@ -442,13 +427,13 @@ VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
 
 void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 	VulkanImage* outputCubemap,
-	CubeFilterType distribution)
+	CubeFilterType filterType)
 {
-	uint32_t outputMipMapCount = distribution == CubeFilterType::Diffuse ?
+	uint32_t outputMipMapCount = filterType == CubeFilterType::Diffuse ?
 		1u :
 		NumMipMap(FilterSettings::outputSpecularSize, FilterSettings::outputSpecularSize);
 
-	uint32_t outputSideLength = distribution == CubeFilterType::Diffuse ?
+	uint32_t outputSideLength = filterType == CubeFilterType::Diffuse ?
 		FilterSettings::outputDiffuseSize :
 		FilterSettings::outputSpecularSize;
 
@@ -471,7 +456,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		nullptr);
 
 	// Select pipeline
-	VkPipeline pipeline = graphicsPipelines_[static_cast<unsigned int>(distribution)];
+	VkPipeline pipeline = graphicsPipelines_[static_cast<unsigned int>(filterType)];
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
@@ -497,7 +482,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 			subresourceRange);
 
 		PushConstantCubeFilter values{};
-		values.roughness = distribution == CubeFilterType::Diffuse ?
+		values.roughness = filterType == CubeFilterType::Diffuse ?
 			0.f :
 			static_cast<float>(i) / static_cast<float>(outputMipMapCount - 1);
 		values.sampleCount = FilterSettings::sampleCount;
@@ -527,7 +512,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		vkCmdEndRenderPass(commandBuffer);
 	}
 
-	// // Convention is to change the layout to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+	// Convention is to change the layout to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	outputCubemap->CreateBarrier(commandBuffer,
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, // oldLayout
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, // newLayout

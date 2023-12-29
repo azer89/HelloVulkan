@@ -26,7 +26,8 @@ public:
 
 	void OffscreenRender(VulkanDevice& vkDev, 
 		VulkanImage* outputCubemap,
-		CubeFilterType disttribution);
+		CubeFilterType filterType);
+
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:

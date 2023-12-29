@@ -244,20 +244,6 @@ void RendererEquirect2Cube::CreateOffscreenGraphicsPipeline(
 	pInfo.depthStencil.depthTestEnable = VK_FALSE;
 	pInfo.depthStencil.depthWriteEnable = VK_FALSE;
 
-	/*VkDynamicState dynamicStates[] =
-	{
-		VK_DYNAMIC_STATE_LINE_WIDTH,
-		VK_DYNAMIC_STATE_DEPTH_BIAS,
-		VK_DYNAMIC_STATE_BLEND_CONSTANTS,
-		VK_DYNAMIC_STATE_DEPTH_BOUNDS,
-		VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK,
-		VK_DYNAMIC_STATE_STENCIL_WRITE_MASK,
-		VK_DYNAMIC_STATE_STENCIL_REFERENCE
-	};
-
-	pInfo.dynamicState.dynamicStateCount = static_cast<uint32_t>(sizeof(dynamicStates) / sizeof(VkDynamicState));
-	pInfo.dynamicState.pDynamicStates = dynamicStates;
-	*/
 	pInfo.dynamicState.dynamicStateCount = 0;
 	pInfo.dynamicState.pDynamicStates = nullptr;
 

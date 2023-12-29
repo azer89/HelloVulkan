@@ -14,8 +14,7 @@ public:
 		VulkanImage* diffuseMap,
 		VulkanImage* brdfLUT,
 		std::vector<Model*> models);
-
-	virtual ~RendererPBR();
+	 ~RendererPBR();
 
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
