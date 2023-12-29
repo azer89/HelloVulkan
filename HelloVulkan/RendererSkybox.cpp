@@ -15,7 +15,7 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 	RendererBase(vkDev, depthImage),
 	envMap_(envMap)
 {
-	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo());
+	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_);
 
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
 	

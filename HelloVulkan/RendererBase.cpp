@@ -83,29 +83,21 @@ void RendererBase::CreateColorAndDepthRenderPass(
 	VulkanDevice& vkDev,
 	bool useDepth,
 	VkRenderPass* renderPass,
-	const RenderPassCreateInfo& ci,
+	RenderPassType rtType,
 	VkFormat colorFormat)
 {
-	const bool offscreenInt = ci.flags_ & eRenderPassBit_OffscreenInternal;
-	const bool first = ci.flags_ & eRenderPassBit_First;
-	const bool last = ci.flags_ & eRenderPassBit_Last;
-
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,
 		.format = colorFormat,
 		.samples = VK_SAMPLE_COUNT_1_BIT,
-		.loadOp = offscreenInt ? 
-			VK_ATTACHMENT_LOAD_OP_LOAD : 
-			(ci.clearColor_ ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD),
+		.loadOp = rtType == RenderPassType::Clear ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-		.initialLayout = first ? 
-			VK_IMAGE_LAYOUT_UNDEFINED : 
-			(offscreenInt ? 
-				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : 
-				VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL),
-		.finalLayout = last ? 
+		.initialLayout = rtType == RenderPassType::Clear ?
+			VK_IMAGE_LAYOUT_UNDEFINED :  
+			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		.finalLayout = rtType == RenderPassType::Finish ?
 			VK_IMAGE_LAYOUT_PRESENT_SRC_KHR : 
 			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	};
@@ -119,19 +111,15 @@ void RendererBase::CreateColorAndDepthRenderPass(
 		.flags = 0,
 		.format = useDepth ? vkDev.FindDepthFormat() : VK_FORMAT_D32_SFLOAT,
 		.samples = VK_SAMPLE_COUNT_1_BIT,
-		.loadOp = offscreenInt ? 
-			VK_ATTACHMENT_LOAD_OP_LOAD : 
-			(ci.clearDepth_ ? 
+		.loadOp = rtType == RenderPassType::Clear ?
 				VK_ATTACHMENT_LOAD_OP_CLEAR : 
-				VK_ATTACHMENT_LOAD_OP_LOAD),
+				VK_ATTACHMENT_LOAD_OP_LOAD,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-		.initialLayout = ci.clearDepth_ ? 
-			VK_IMAGE_LAYOUT_UNDEFINED : 
-			(offscreenInt ? 
-				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : 
-				VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL),
+		.initialLayout = rtType == RenderPassType::Clear ?
+			VK_IMAGE_LAYOUT_UNDEFINED :  
+			VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 		.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 	};
 
@@ -140,49 +128,16 @@ void RendererBase::CreateColorAndDepthRenderPass(
 		.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 	};
 
-	if (ci.flags_ & eRenderPassBit_Offscreen)
-		colorAttachment.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-
-	std::vector<VkSubpassDependency> dependencies = {
-		/* VkSubpassDependency */ {
-			.srcSubpass = VK_SUBPASS_EXTERNAL,
-			.dstSubpass = 0,
-			.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-			.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-			.srcAccessMask = 0,
-			.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-			.dependencyFlags = 0
-		}
-	};
-
-	if (ci.flags_ & eRenderPassBit_Offscreen)
+	VkSubpassDependency dependency =
 	{
-		colorAttachment.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		depthAttachment.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-
-		// Use subpass dependencies for layout transitions
-		dependencies.resize(2);
-
-		dependencies[0] = {
-			.srcSubpass = VK_SUBPASS_EXTERNAL,
-			.dstSubpass = 0,
-			.srcStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-			.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-			.srcAccessMask = VK_ACCESS_SHADER_READ_BIT,
-			.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-			.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT
-		};
-
-		dependencies[1] = {
-			.srcSubpass = 0,
-			.dstSubpass = VK_SUBPASS_EXTERNAL,
-			.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-			.dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-			.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-			.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
-			.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT
-		};
-	}
+		.srcSubpass = VK_SUBPASS_EXTERNAL,
+		.dstSubpass = 0,
+		.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+		.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+		.srcAccessMask = 0,
+		.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+		.dependencyFlags = 0
+	};
 
 	const VkSubpassDescription subpass = {
 		.flags = 0,
@@ -207,8 +162,8 @@ void RendererBase::CreateColorAndDepthRenderPass(
 		.pAttachments = attachments.data(),
 		.subpassCount = 1,
 		.pSubpasses = &subpass,
-		.dependencyCount = static_cast<uint32_t>(dependencies.size()),
-		.pDependencies = dependencies.data()
+		.dependencyCount = 1u,
+		.pDependencies = &dependency
 	};
 
 	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &renderPassInfo, nullptr, renderPass));

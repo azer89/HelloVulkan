@@ -7,13 +7,8 @@ RendererFinish::RendererFinish(VulkanDevice& vkDev, VulkanImage* depthImage) :
 	CreateColorAndDepthRenderPass(
 		vkDev,
 		(depthImage != nullptr),
-		&renderPass_,
-		RenderPassCreateInfo
-		{ 
-			.clearColor_ = false, 
-			.clearDepth_ = false, 
-			.flags_ = eRenderPassBit_Last 
-		});
+		&renderPass_, 
+		RenderPassType::Finish);
 
 	CreateColorAndDepthFramebuffers(
 		vkDev, 
