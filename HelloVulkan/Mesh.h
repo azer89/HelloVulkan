@@ -57,12 +57,6 @@ struct VertexData
 	}
 };
 
-struct MeshCreateInfo
-{
-	std::string modelFile;
-	std::vector<std::string> textureFiles;
-};
-
 class Mesh
 {
 public:
@@ -72,7 +66,6 @@ public:
 	VulkanBuffer vertexBuffer_;
 	VulkanBuffer indexBuffer_;
 
-	//std::vector<VulkanTexture> textures_;
 	std::vector<VertexData> vertices_;
 	std::vector<unsigned int> indices_;
 	std::unordered_map<TextureType, VulkanImage*> textures_;
