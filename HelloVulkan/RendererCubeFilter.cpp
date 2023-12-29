@@ -40,7 +40,7 @@ RendererCubeFilter::RendererCubeFilter(
 	);
 	inputCubemap->CreateSampler(
 		vkDev.GetDevice(),
-		inputEnvMapSampler_,
+		inputCubemapSampler_,
 		0.f,
 		static_cast<float>(inputNumMipmap)
 	);
@@ -92,7 +92,7 @@ RendererCubeFilter::RendererCubeFilter(
 
 RendererCubeFilter::~RendererCubeFilter()
 {
-	vkDestroySampler(device_, inputEnvMapSampler_, nullptr);
+	vkDestroySampler(device_, inputCubemapSampler_, nullptr);
 
 	for (VkPipeline& pipeline : graphicsPipelines_)
 	{
@@ -205,7 +205,7 @@ void RendererCubeFilter::CreateDescriptorLayout(VulkanDevice& vkDev)
 	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));
 }
 
-void RendererCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanImage* cubemapTexture)
+void RendererCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanImage* inputCubemap)
 {
 	const VkDescriptorSetAllocateInfo allocInfo = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
@@ -222,8 +222,8 @@ void RendererCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanImage* c
 
 	const VkDescriptorImageInfo imageInfo =
 	{
-		inputEnvMapSampler_, // Local sampler created in the constructor
-		cubemapTexture->imageView_,
+		inputCubemapSampler_, // Local sampler created in the constructor
+		inputCubemap->imageView_,
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	};
 
@@ -246,15 +246,15 @@ void RendererCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanImage* c
 }
 
 void RendererCubeFilter::CreateOutputCubemapViews(VulkanDevice& vkDev,
-	VulkanImage* cubemapTexture,
-	std::vector<std::vector<VkImageView>>& cubemapViews,
+	VulkanImage* outputCubemap,
+	std::vector<std::vector<VkImageView>>& outputCubemapViews,
 	uint32_t numMip)
 {
-	cubemapViews = 
+	outputCubemapViews = 
 		std::vector<std::vector<VkImageView>>(numMip, std::vector<VkImageView>(FilterSettings::layerCount, VK_NULL_HANDLE));
 	for (uint32_t a = 0; a < numMip; ++a)
 	{
-		cubemapViews[a] = {};
+		outputCubemapViews[a] = {};
 		for (uint32_t b = 0; b < FilterSettings::layerCount; ++b)
 		{
 			VkImageSubresourceRange subresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0u, 1u, 0u, 1u };
@@ -266,9 +266,9 @@ void RendererCubeFilter::CreateOutputCubemapViews(VulkanDevice& vkDev,
 				.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 				.pNext = nullptr,
 				.flags = 0,
-				.image = cubemapTexture->image_,
+				.image = outputCubemap->image_,
 				.viewType = VK_IMAGE_VIEW_TYPE_2D,
-				.format = cubemapTexture->imageFormat_,
+				.format = outputCubemap->imageFormat_,
 				.components =
 				{
 					VK_COMPONENT_SWIZZLE_IDENTITY,
@@ -278,8 +278,8 @@ void RendererCubeFilter::CreateOutputCubemapViews(VulkanDevice& vkDev,
 				},
 				.subresourceRange = subresourceRange
 			};
-			cubemapViews[a].emplace_back();
-			VK_CHECK(vkCreateImageView(vkDev.GetDevice(), &viewInfo, nullptr, &cubemapViews[a][b]));
+			outputCubemapViews[a].emplace_back();
+			VK_CHECK(vkCreateImageView(vkDev.GetDevice(), &viewInfo, nullptr, &outputCubemapViews[a][b]));
 		}
 	}
 }

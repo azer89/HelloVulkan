@@ -31,22 +31,22 @@ public:
 
 private:
 	VkDescriptorSet descriptorSet_;
-	VkSampler inputEnvMapSampler_; // A sampler for the input cubemapTexture
+	VkSampler inputCubemapSampler_; // A sampler for the input cubemap
 
 	// Two pipelines for each of diffuse and specular maps
 	std::vector<VkPipeline> graphicsPipelines_;
 
 	void CreateRenderPass(VulkanDevice& vkDev);
 	void CreateDescriptorLayout(VulkanDevice& vkDev);
-	void CreateDescriptorSet(VulkanDevice& vkDev, VulkanImage* cubemapTexture);
+	void CreateDescriptorSet(VulkanDevice& vkDev, VulkanImage* inputCubemap);
 
 	void InitializeOutputCubemap(VulkanDevice& vkDev, 
 		VulkanImage* outputDiffuseCubemap,
 		uint32_t numMipmap,
 		uint32_t sideLength);
 	void CreateOutputCubemapViews(VulkanDevice& vkDev,
-		VulkanImage* cubemapTexture,
-		std::vector<std::vector<VkImageView>>& cubemapViews,
+		VulkanImage* outputCubemap,
+		std::vector<std::vector<VkImageView>>& outputCubemapViews,
 		uint32_t numMip);
 
 	void CreateOffsreenGraphicsPipeline(
