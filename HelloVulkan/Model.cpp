@@ -131,7 +131,7 @@ Mesh Model::ProcessMesh(
 		vector.y = mesh->mVertices[i].y;
 		vector.z = mesh->mVertices[i].z;
 		vector.w = 1;
-		vertex.pos = transform * vector;
+		vertex.position_ = transform * vector;
 		// Normals
 		if (mesh->HasNormals())
 		{
@@ -139,7 +139,7 @@ Mesh Model::ProcessMesh(
 			vector.y = mesh->mNormals[i].y;
 			vector.z = mesh->mNormals[i].z;
 			vector.w = 0;
-			vertex.n = transform * vector;
+			vertex.normal_ = transform * vector;
 		}
 		// Texture coordinates
 		if (mesh->mTextureCoords[0]) // Does the mesh contain texture coordinates?
@@ -151,11 +151,11 @@ Mesh Model::ProcessMesh(
 			vec.y = mesh->mTextureCoords[0][i].y;
 			vec.z = 0;
 			vec.w = 0;
-			vertex.tc = vec;
+			vertex.textureCoordinate_ = vec;
 		}
 		else
 		{
-			vertex.tc = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+			vertex.textureCoordinate_ = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 		}
 
 		vertices.push_back(vertex);

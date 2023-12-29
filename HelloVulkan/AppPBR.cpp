@@ -95,14 +95,14 @@ void AppPBR::UpdateUBO(uint32_t imageIndex)
 	{
 		.cameraProjection = camera->GetProjectionMatrix(),
 		.cameraView = glm::mat4(glm::mat3(camera->GetViewMatrix())), // Remove translation
-		.cameraPosition = glm::vec4(camera->Position, 1.f)
+		.cameraPosition = glm::vec4(camera->Position(), 1.f)
 	};
 	skyboxPtr_->SetPerFrameUBO(vulkanDevice, imageIndex, skyboxUBO);
 	PerFrameUBO pbrUBO
 	{
 		.cameraProjection = camera->GetProjectionMatrix(),
 		.cameraView = camera->GetViewMatrix(),
-		.cameraPosition = glm::vec4(camera->Position, 1.f)
+		.cameraPosition = glm::vec4(camera->Position(), 1.f)
 	};
 	pbrPtr_->SetPerFrameUBO(vulkanDevice, imageIndex, pbrUBO);
 
