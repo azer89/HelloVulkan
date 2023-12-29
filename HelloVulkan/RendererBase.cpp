@@ -85,16 +85,11 @@ void RendererBase::CreateColorAndDepthRenderPass(
 	VulkanDevice& vkDev,
 	bool useDepth,
 	VkRenderPass* renderPass,
-	const RenderPassCreateInfo& ci,
-	VkFormat colorFormat)
+	const RenderPassCreateInfo& ci)
 {
-	//const bool offscreenInt = ci.flags_ & eRenderPassBit_OffscreenInternal;
-	//const bool first = ci.flags_ & eRenderPassBit_First;
-	//const bool last = ci.flags_ & eRenderPassBit_Last;
-
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,
-		.format = colorFormat,
+		.format = vkDev.GetSwapchainColorFormat(),
 		.samples = VK_SAMPLE_COUNT_1_BIT,
 		.loadOp = ci.clearColor_ ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
@@ -130,32 +125,31 @@ void RendererBase::CreateColorAndDepthRenderPass(
 	};
 
 	const VkAttachmentReference depthAttachmentRef = {
-		.attachment = 1,
+		.attachment = 1u,
 		.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 	};
 
-	std::vector<VkSubpassDependency> dependencies = {
-		/* VkSubpassDependency */ {
-			.srcSubpass = VK_SUBPASS_EXTERNAL,
-			.dstSubpass = 0,
-			.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-			.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-			.srcAccessMask = 0,
-			.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-			.dependencyFlags = 0
-		}
+	VkSubpassDependency dependency =
+	{
+		.srcSubpass = VK_SUBPASS_EXTERNAL,
+		.dstSubpass = 0,
+		.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+		.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+		.srcAccessMask = 0,
+		.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+		.dependencyFlags = 0
 	};
 
 	const VkSubpassDescription subpass = {
 		.flags = 0,
 		.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
-		.inputAttachmentCount = 0,
+		.inputAttachmentCount = 0u,
 		.pInputAttachments = nullptr,
-		.colorAttachmentCount = 1,
+		.colorAttachmentCount = 1u,
 		.pColorAttachments = &colorAttachmentRef,
 		.pResolveAttachments = nullptr,
 		.pDepthStencilAttachment = useDepth ? &depthAttachmentRef : nullptr,
-		.preserveAttachmentCount = 0,
+		.preserveAttachmentCount = 0u,
 		.pPreserveAttachments = nullptr
 	};
 
@@ -165,12 +159,12 @@ void RendererBase::CreateColorAndDepthRenderPass(
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.attachmentCount = static_cast<uint32_t>(useDepth ? 2 : 1),
+		.attachmentCount = useDepth ? 2u : 1u,
 		.pAttachments = attachments.data(),
-		.subpassCount = 1,
+		.subpassCount = 1u,
 		.pSubpasses = &subpass,
-		.dependencyCount = static_cast<uint32_t>(dependencies.size()),
-		.pDependencies = dependencies.data()
+		.dependencyCount = 1u,
+		.pDependencies = &dependency
 	};
 
 	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &renderPassInfo, nullptr, renderPass));

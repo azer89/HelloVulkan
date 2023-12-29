@@ -77,12 +77,15 @@ protected:
 
 	void BeginRenderPass(VkCommandBuffer commandBuffer, size_t currentImage);
 
+	void CreateMultisampledRenderPass(
+		VulkanDevice& device,
+		VkRenderPass* renderPass);
+
 	void CreateColorAndDepthRenderPass(
 		VulkanDevice& device, 
 		bool useDepth, 
 		VkRenderPass* renderPass, 
-		const RenderPassCreateInfo& ci, 
-		VkFormat colorFormat = VK_FORMAT_B8G8R8A8_UNORM);
+		const RenderPassCreateInfo& ci);
 
 	void CreateColorAndDepthFramebuffers(
 		VulkanDevice& vkDev, 
