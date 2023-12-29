@@ -10,10 +10,11 @@
 
 #include <string>
 
-struct RenderPassCreateInfo final
+enum class RenderPassType
 {
-	bool renderFirst_ = false;
-	bool renderLast_ = false;
+	None,
+	First,
+	Last,
 };
 
 class RendererBase
@@ -72,7 +73,7 @@ protected:
 		VulkanDevice& device, 
 		bool useDepth, 
 		VkRenderPass* renderPass, 
-		const RenderPassCreateInfo& ci, 
+		RenderPassType renderPassType = RenderPassType::None,
 		VkFormat colorFormat = VK_FORMAT_B8G8R8A8_UNORM);
 
 	void CreateColorAndDepthFramebuffers(

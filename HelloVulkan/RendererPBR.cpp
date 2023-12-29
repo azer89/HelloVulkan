@@ -26,7 +26,7 @@ RendererPBR::RendererPBR(
 	brdfLUT_(brdfLUT),
 	models_(models)
 {
-	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo());
+	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_);
 
 	// Per frame UBO
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));

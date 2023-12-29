@@ -83,21 +83,21 @@ void RendererBase::CreateColorAndDepthRenderPass(
 	VulkanDevice& vkDev,
 	bool useDepth,
 	VkRenderPass* renderPass,
-	const RenderPassCreateInfo& ci,
+	RenderPassType renderPassType,
 	VkFormat colorFormat)
 {
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,
 		.format = colorFormat,
 		.samples = VK_SAMPLE_COUNT_1_BIT,
-		.loadOp = ci.renderFirst_ ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD,
+		.loadOp = renderPassType == RenderPassType::First ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-		.initialLayout = ci.renderFirst_ ? 
+		.initialLayout = renderPassType == RenderPassType::First ?
 			VK_IMAGE_LAYOUT_UNDEFINED :  
 			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		.finalLayout = ci.renderLast_ ? 
+		.finalLayout = renderPassType == RenderPassType::Last ?
 			VK_IMAGE_LAYOUT_PRESENT_SRC_KHR : 
 			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	};
@@ -111,13 +111,13 @@ void RendererBase::CreateColorAndDepthRenderPass(
 		.flags = 0,
 		.format = useDepth ? vkDev.FindDepthFormat() : VK_FORMAT_D32_SFLOAT,
 		.samples = VK_SAMPLE_COUNT_1_BIT,
-		.loadOp = ci.renderFirst_ ? 
+		.loadOp = renderPassType == RenderPassType::First ?
 				VK_ATTACHMENT_LOAD_OP_CLEAR : 
 				VK_ATTACHMENT_LOAD_OP_LOAD,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-		.initialLayout = ci.renderFirst_ ? 
+		.initialLayout = renderPassType == RenderPassType::First ?
 			VK_IMAGE_LAYOUT_UNDEFINED :  
 				VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 		.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
