@@ -202,7 +202,7 @@ void RendererBase::CreateColorAndDepthRenderPass(
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,
 		.format = vkDev.GetSwapchainColorFormat(),
-		.samples = VK_SAMPLE_COUNT_1_BIT,
+		.samples = vkDev.GetMSAASamples(),
 		.loadOp = ci.clearColor_ ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
@@ -223,7 +223,7 @@ void RendererBase::CreateColorAndDepthRenderPass(
 	VkAttachmentDescription depthAttachment = {
 		.flags = 0,
 		.format = useDepth ? vkDev.FindDepthFormat() : VK_FORMAT_D32_SFLOAT,
-		.samples = VK_SAMPLE_COUNT_1_BIT,
+		.samples = vkDev.GetMSAASamples(),
 		.loadOp = ci.clearDepth_ ? 
 				VK_ATTACHMENT_LOAD_OP_CLEAR : 
 				VK_ATTACHMENT_LOAD_OP_LOAD,
@@ -307,7 +307,7 @@ void RendererBase::CreateMultisampledFramebuffers(
 			.pNext = nullptr,
 			.flags = 0,
 			.renderPass = renderPass,
-			.attachmentCount = static_cast<uint32_t>((depthImageView == VK_NULL_HANDLE) ? 1 : 2),
+			.attachmentCount = static_cast<uint32_t>(attachments.size()),
 			.pAttachments = attachments.data(),
 			.width = vkDev.GetFrameBufferWidth(),
 			.height = vkDev.GetFrameBufferHeight(),
@@ -470,6 +470,8 @@ void RendererBase::CreateGraphicsPipeline(
 	}
 	
 	pInfo.inputAssembly.topology = topology;
+
+	pInfo.multisampling.rasterizationSamples = vkDev.GetMSAASamples();
 
 	pInfo.colorBlendAttachment.srcAlphaBlendFactor = 
 		useBlending ? VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA : VK_BLEND_FACTOR_ONE;

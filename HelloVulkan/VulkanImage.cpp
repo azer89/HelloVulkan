@@ -98,7 +98,9 @@ void VulkanImage::CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint
 		depthFormat,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		0u,
+		vkDev.GetMSAASamples());
 
 	CreateImageView(vkDev.GetDevice(),
 		depthFormat,
@@ -125,7 +127,9 @@ void VulkanImage::CreateMultisampledResources(VulkanDevice& vkDev, uint32_t widt
 		format,
 		VK_IMAGE_TILING_OPTIMAL,
 		usage,
-		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		0u,
+		vkDev.GetMSAASamples());
 
 	CreateImageView(vkDev.GetDevice(),
 		format,
