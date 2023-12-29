@@ -80,7 +80,8 @@ public:
 		VkImageTiling tiling,
 		VkImageUsageFlags usage,
 		VkMemoryPropertyFlags properties,
-		VkImageCreateFlags flags = 0);
+		VkImageCreateFlags flags = 0,
+		VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
 
 	void CreateImageFromData(
 		VulkanDevice& vkDev,
@@ -93,6 +94,8 @@ public:
 		VkImageCreateFlags flags = 0);
 
 	void CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint32_t height);
+
+	void CreateMSAAResources(VulkanDevice& vkDev, uint32_t width, uint32_t height);
 
 	void GenerateMipmap(
 		VulkanDevice& vkDev,

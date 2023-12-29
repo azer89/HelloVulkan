@@ -110,6 +110,11 @@ void VulkanImage::CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint
 		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 }
 
+void VulkanImage::CreateMSAAResources(VulkanDevice& vkDev, uint32_t width, uint32_t height)
+{
+
+}
+
 void VulkanImage::CreateImageFromData(
 	VulkanDevice& vkDev,
 	void* imageData,
@@ -175,7 +180,8 @@ void VulkanImage::CreateImage(
 	VkImageTiling tiling,
 	VkImageUsageFlags usage,
 	VkMemoryPropertyFlags properties,
-	VkImageCreateFlags flags)
+	VkImageCreateFlags flags,
+	VkSampleCountFlagBits sampleCount)
 {
 	width_ = width;
 	height_ = height;
@@ -192,7 +198,7 @@ void VulkanImage::CreateImage(
 		.extent = VkExtent3D {.width = width_, .height = height_, .depth = 1 },
 		.mipLevels = mipCount_,
 		.arrayLayers = layerCount_,
-		.samples = VK_SAMPLE_COUNT_1_BIT,
+		.samples = sampleCount, // for multisampling
 		.tiling = tiling,
 		.usage = usage,
 		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
