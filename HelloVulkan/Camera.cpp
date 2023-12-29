@@ -19,6 +19,7 @@ Camera::Camera(
 	mouseSensitivity_(CameraSettings::Sensitivity),
 	zoom_(CameraSettings::Zoom)
 {
+	// Update orthogonal axes and matrices
 	UpdateInternal();
 }
 
@@ -61,10 +62,12 @@ void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime)
 	{
 		position_ += right_ * velocity;
 	}
+	// Update orthogonal axes and matrices
 	UpdateInternal();
 }
 
-// Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
+// Processes input received from a mouse input system. 
+// Expects the offset value in both the x and y direction.
 void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch)
 {
 	xoffset *= mouseSensitivity_;
@@ -86,7 +89,7 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPi
 		}
 	}
 
-	// Update Front, Right and Up Vectors using the updated Euler angles
+	// Update orthogonal axes and matrices
 	UpdateInternal();
 }
 
@@ -105,7 +108,6 @@ void Camera::ProcessMouseScroll(float yoffset)
 	}
 }
 
-// Calculates the front vector from the Camera's (updated) Euler Angles
 void Camera::UpdateInternal()
 {
 	// Calculate the new Front vector
@@ -120,7 +122,9 @@ void Camera::UpdateInternal()
 	up_ = glm::normalize(glm::cross(right_, front_));
 
 	// Projection matrix
-	float aspect = static_cast<float>(AppSettings::ScreenWidth) / static_cast<float>(AppSettings::ScreenHeight);
+	float aspect = 
+		static_cast<float>(AppSettings::ScreenWidth) / 
+		static_cast<float>(AppSettings::ScreenHeight);
 	assert(glm::abs(aspect - std::numeric_limits<float>::epsilon()) > 0.0f);
 
 	float fovy = glm::radians(zoom_);
@@ -128,6 +132,8 @@ void Camera::UpdateInternal()
 	float near = 0.1f;
 	const float tanHalfFovy = tan(fovy / 2.f);
 
+	// We manually calculate the projection matrix because
+	// Y axis is flipped in Vulkan
 	projectionMatrix_ = glm::mat4();
 	projectionMatrix_ = glm::mat4{ 0.0f };
 	projectionMatrix_[0][0] = 1.f / (aspect * tanHalfFovy);
