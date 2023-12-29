@@ -132,8 +132,6 @@ void Camera::UpdateInternal()
 	float near = 0.1f;
 	const float tanHalfFovy = tan(fovy / 2.f);
 
-	// We manually calculate the projection matrix because
-	// Y axis is flipped in Vulkan
 	projectionMatrix_ = glm::mat4();
 	projectionMatrix_ = glm::mat4{ 0.0f };
 	projectionMatrix_[0][0] = 1.f / (aspect * tanHalfFovy);
@@ -143,9 +141,9 @@ void Camera::UpdateInternal()
 	projectionMatrix_[3][2] = -(far * near) / (far - near);
 
 	// View matrix
-	const glm::vec3 w{ glm::normalize(front_) };
-	const glm::vec3 u{ glm::normalize(glm::cross(w, up_)) };
-	const glm::vec3 v{ glm::cross(w, u) };
+	const glm::vec3 w = front_;
+	const glm::vec3 u = right_;
+	const glm::vec3 v{ glm::cross(w, u) }; // Flip Y axis
 
 	viewMatrix_ = glm::mat4{ 1.f };
 	viewMatrix_[0][0] = u.x;
