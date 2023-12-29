@@ -2,7 +2,7 @@
 #include "AppSettings.h"
 #include "RendererEquirect2Cube.h"
 #include "RendererCubeFilter.h"
-#include "RendererBRDF.h"
+#include "RendererBRDFLUT.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 
@@ -32,20 +32,20 @@ void AppPBR::Init()
 
 	// Cube filtering
 	{
-		RendererCubeFilter cFilter(vulkanDevice, &environmentCubemap_);
+		RendererCubeFilter cubeFilter(vulkanDevice, &environmentCubemap_);
 		// Diffuse
-		cFilter.OffscreenRender(vulkanDevice,
+		cubeFilter.OffscreenRender(vulkanDevice,
 			&diffuseCubemap_,
 			CubeFilterType::Diffuse);
 		// Specular
-		cFilter.OffscreenRender(vulkanDevice,
+		cubeFilter.OffscreenRender(vulkanDevice,
 			&specularCubemap_,
 			CubeFilterType::Specular);
 	}
 	
 	{
-		RendererBRDF brdfComp(vulkanDevice);
-		brdfComp.CreateLUT(vulkanDevice, &brdfLut_);
+		RendererBRDFLUT brdfLUTCompute(vulkanDevice);
+		brdfLUTCompute.CreateLUT(vulkanDevice, &brdfLut_);
 	}
 
 	depthImage_.CreateDepthResources(vulkanDevice,

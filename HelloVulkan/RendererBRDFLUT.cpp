@@ -1,4 +1,4 @@
-#include "RendererBRDF.h"
+#include "RendererBRDFLUT.h"
 #include "VulkanShader.h"
 #include "AppSettings.h"
 
@@ -7,7 +7,7 @@ constexpr int LUT_WIDTH = 256;
 constexpr int LUT_HEIGHT = 256;
 constexpr uint32_t BUFFER_SIZE = 2 * sizeof(float) * LUT_WIDTH * LUT_HEIGHT;
 
-RendererBRDF::RendererBRDF(
+RendererBRDFLUT::RendererBRDFLUT(
 	VulkanDevice& vkDev) :
 	RendererBase(vkDev, {})
 {
@@ -31,18 +31,18 @@ RendererBRDF::RendererBRDF(
 	shader.Destroy(vkDev.GetDevice());
 }
 
-RendererBRDF::~RendererBRDF()
+RendererBRDFLUT::~RendererBRDFLUT()
 {
 	inBuffer_.Destroy(device_);
 	outBuffer_.Destroy(device_);
 	vkDestroyPipeline(device_, pipeline_, nullptr);
 }
 
-void RendererBRDF::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
+void RendererBRDFLUT::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
 {
 }
 
-void RendererBRDF::CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT)
+void RendererBRDFLUT::CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT)
 {
 	std::vector<float> lutData(BUFFER_SIZE, 0);
 
@@ -70,7 +70,7 @@ void RendererBRDF::CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT)
 	);
 }
 
-void RendererBRDF::Execute(VulkanDevice& vkDev)
+void RendererBRDFLUT::Execute(VulkanDevice& vkDev)
 {
 	VkCommandBuffer commandBuffer = vkDev.GetComputeCommandBuffer();
 
@@ -135,7 +135,7 @@ void RendererBRDF::Execute(VulkanDevice& vkDev)
 	VK_CHECK(vkQueueWaitIdle(vkDev.GetComputeQueue()));
 }
 
-void RendererBRDF::CreateComputeDescriptorSetLayout(VkDevice device)
+void RendererBRDFLUT::CreateComputeDescriptorSetLayout(VkDevice device)
 {
 	VkDescriptorSetLayoutBinding descriptorSetLayoutBindings[2] =
 	{
@@ -159,7 +159,7 @@ void RendererBRDF::CreateComputeDescriptorSetLayout(VkDevice device)
 		&descriptorSetLayout_));
 }
 
-void RendererBRDF::CreateComputeDescriptorSet(VkDevice device, VkDescriptorSetLayout descriptorSetLayout)
+void RendererBRDFLUT::CreateComputeDescriptorSet(VkDevice device, VkDescriptorSetLayout descriptorSetLayout)
 {
 	// Descriptor pool
 	VkDescriptorPoolSize descriptorPoolSize = { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 2 };
@@ -211,7 +211,7 @@ void RendererBRDF::CreateComputeDescriptorSet(VkDevice device, VkDescriptorSetLa
 	vkUpdateDescriptorSets(device, 2, writeDescriptorSet, 0, 0);
 }
 
-void RendererBRDF::CreateComputePipeline(
+void RendererBRDFLUT::CreateComputePipeline(
 	VkDevice device,
 	VkShaderModule computeShader)
 {

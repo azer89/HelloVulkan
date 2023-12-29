@@ -7,12 +7,12 @@
 #include "VulkanBuffer.h"
 #include "VulkanUtility.h"
 
-class RendererBRDF final : RendererBase
+class RendererBRDFLUT final : RendererBase
 {
 public:
-	RendererBRDF(VulkanDevice& vkDev);
+	RendererBRDFLUT(VulkanDevice& vkDev);
 
-	virtual ~RendererBRDF();
+	virtual ~RendererBRDFLUT();
 
 	void CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT);
 
