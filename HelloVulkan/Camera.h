@@ -26,7 +26,7 @@ class Camera
 public:
 	Camera(
 		glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f),
-		glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
+		glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f),
 		float yaw = CameraSettings::Yaw,
 		float pitch = CameraSettings::Pitch);
 
@@ -45,10 +45,12 @@ private:
 	glm::mat4 inverseViewMatrix_;
 
 	glm::vec3 position_;
+	glm::vec3 worldUp_;
+
+	// Orthogonal axes
 	glm::vec3 front_;
 	glm::vec3 up_;
 	glm::vec3 right_;
-	glm::vec3 worldUp_;
 
 	// Euler Angles
 	float yaw_;

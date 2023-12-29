@@ -7,18 +7,18 @@
 
 Camera::Camera(
 	glm::vec3 position, 
-	glm::vec3 up, 
+	glm::vec3 worldUp, 
 	float yaw, 
 	float pitch) :
+	position_(position),
+	worldUp_(worldUp),
+	yaw_(yaw),
+	pitch_(pitch),
 	front_(glm::vec3(0.0f, 0.0f, -1.0f)),
 	movementSpeed_(CameraSettings::Speed),
 	mouseSensitivity_(CameraSettings::Sensitivity),
 	zoom_(CameraSettings::Zoom)
 {
-	position_ = position;
-	worldUp_ = up;
-	yaw_ = yaw;
-	pitch_ = pitch;
 	UpdateInternal();
 }
 
@@ -115,8 +115,8 @@ void Camera::UpdateInternal()
 	front.z = sin(glm::radians(yaw_)) * cos(glm::radians(pitch_));
 	front_ = glm::normalize(front);
 
-	// Also re-calculate the Right and Up vector
-	right_ = glm::normalize(glm::cross(front_, worldUp_));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+	// Calculate three orthogonal axes
+	right_ = glm::normalize(glm::cross(front_, worldUp_));
 	up_ = glm::normalize(glm::cross(right_, front_));
 
 	// Projection matrix
