@@ -38,6 +38,8 @@ public:
 	{
 	}
 
+	void Destroy(VkDevice device);
+
 	void CreateFromFile(
 		VulkanDevice& vkDev,
 		const char* filename);
@@ -91,8 +93,6 @@ public:
 		VkImageCreateFlags flags = 0);
 
 	void CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint32_t height);
-
-	void Destroy(VkDevice device);
 
 	void GenerateMipmap(
 		VulkanDevice& vkDev,
