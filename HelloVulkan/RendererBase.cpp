@@ -112,7 +112,7 @@ void RendererBase::CreateMultisampledRenderPass(
 	VkAttachmentDescription depthAttachment = {
 		.flags = 0,
 		.format = vkDev.FindDepthFormat(),
-		.samples = VK_SAMPLE_COUNT_1_BIT,
+		.samples = vkDev.GetMSAASamples(),
 		.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
