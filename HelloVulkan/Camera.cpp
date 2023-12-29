@@ -22,27 +22,6 @@ Camera::Camera(
 	UpdateInternal();
 }
 
-Camera::Camera(
-	float posX, 
-	float posY, 
-	float posZ, 
-	float upX, 
-	float upY, 
-	float upZ, 
-	float yaw, 
-	float pitch) :
-	front_(glm::vec3(0.0f, 0.0f, -1.0f)),
-	movementSpeed_(CameraSettings::Speed),
-	mouseSensitivity_(CameraSettings::Sensitivity),
-	zoom_(CameraSettings::Zoom)
-{
-	position_ = glm::vec3(posX, posY, posZ);
-	worldUp_ = glm::vec3(upX, upY, upZ);
-	yaw_ = yaw;
-	pitch_ = pitch;
-	UpdateInternal();
-}
-
 glm::mat4 Camera::GetProjectionMatrix()
 {
 	return projectionMatrix_;
