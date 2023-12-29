@@ -4,7 +4,6 @@
 #include "volk.h"
 
 #include "glslang_c_interface.h"
-#include "resource_limits_c.h"
 
 #include <vector>
 #include <string>

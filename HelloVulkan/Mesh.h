@@ -3,7 +3,7 @@
 
 #include "VulkanDevice.h"
 #include "VulkanBuffer.h"
-#include "VulkanTexture.h"
+#include "VulkanImage.h"
 #include "TextureMapper.h"
 #include "UBO.h"
 
@@ -16,9 +16,9 @@
 struct VertexData
 {
 	// TODO add color
-	glm::vec4 pos;
-	glm::vec4 n;
-	glm::vec4 tc;
+	glm::vec4 position_;
+	glm::vec4 normal_;
+	glm::vec4 textureCoordinate_;
 
 	static std::vector<VkVertexInputBindingDescription> GetBindingDescriptions()
 	{
@@ -37,30 +37,24 @@ struct VertexData
 			0, 
 			0, 
 			VK_FORMAT_R32G32B32A32_SFLOAT, 
-			offsetof(VertexData, pos) 
+			offsetof(VertexData, position_) 
 		});
 		attributeDescriptions.push_back(
 		{ 
 			1, 
 			0, 
 			VK_FORMAT_R32G32B32A32_SFLOAT, 
-			offsetof(VertexData, n) 
+			offsetof(VertexData, normal_) 
 		});
 		attributeDescriptions.push_back(
 		{ 
 			2, 
 			0, 
 			VK_FORMAT_R32G32B32A32_SFLOAT, 
-			offsetof(VertexData, tc) 
+			offsetof(VertexData, textureCoordinate_)
 		});
 		return attributeDescriptions;
 	}
-};
-
-struct MeshCreateInfo
-{
-	std::string modelFile;
-	std::vector<std::string> textureFiles;
 };
 
 class Mesh
@@ -72,10 +66,9 @@ public:
 	VulkanBuffer vertexBuffer_;
 	VulkanBuffer indexBuffer_;
 
-	//std::vector<VulkanTexture> textures_;
 	std::vector<VertexData> vertices_;
 	std::vector<unsigned int> indices_;
-	std::unordered_map<TextureType, VulkanTexture*> textures_;
+	std::unordered_map<TextureType, VulkanImage*> textures_;
 
 	std::vector<VkDescriptorSet> descriptorSets_;
 
@@ -84,12 +77,12 @@ public:
 		VulkanDevice& vkDev,
 		std::vector<VertexData>&& _vertices,
 		std::vector<unsigned int>&& _indices,
-		std::unordered_map<TextureType, VulkanTexture*>&& _textures);
+		std::unordered_map<TextureType, VulkanImage*>&& _textures);
 	Mesh(
 		VulkanDevice& vkDev,
 		const std::vector<VertexData>& vertices,
 		const std::vector<unsigned int>& indices,
-		const std::unordered_map<TextureType, VulkanTexture*>& textures);
+		const std::unordered_map<TextureType, VulkanImage*>& textures);
 
 	// Textures
 	//void AddTexture(VulkanDevice& vkDev, const char* fileName, uint32_t bindIndex);

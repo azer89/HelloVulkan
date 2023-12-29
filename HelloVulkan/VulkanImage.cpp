@@ -2,6 +2,12 @@
 #include "VulkanBuffer.h"
 #include "VulkanUtility.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_RESIZE_IMPLEMENTATION
+
+#include "stb_image.h"
+#include "stb_image_resize2.h"
+
 int NumMipMap(int w, int h)
 {
 	int levels = 1;
@@ -17,6 +23,66 @@ void VulkanImage::Destroy(VkDevice device)
 	vkDestroyImageView(device, imageView_, nullptr);
 	vkDestroyImage(device, image_, nullptr);
 	vkFreeMemory(device, imageMemory_, nullptr);
+	vkDestroySampler(device, defaultImageSampler_, nullptr);
+}
+
+void VulkanImage::CreateAndInitAllObjects(
+	VulkanDevice& vkDev,
+	const char* filename)
+{
+	CreateFromFile(vkDev, filename);
+	CreateImageView(
+		vkDev.GetDevice(),
+		VK_FORMAT_R8G8B8A8_UNORM,
+		VK_IMAGE_ASPECT_COLOR_BIT);
+	CreateDefaultSampler(vkDev.GetDevice());
+}
+
+void VulkanImage::CreateFromFile(
+	VulkanDevice& vkDev,
+	const char* filename)
+{
+	stbi_set_flip_vertically_on_load(false);
+
+	int texWidth, texHeight, texChannels;
+	stbi_uc* pixels = stbi_load(filename, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+
+	if (!pixels)
+	{
+		std::cerr << "Failed to load " << filename << '\n';
+	}
+
+	CreateImageFromData(
+		vkDev,
+		pixels,
+		texWidth,
+		texHeight,
+		NumMipMap(texWidth, texHeight),
+		1, // layerCount
+		VK_FORMAT_R8G8B8A8_UNORM);
+
+	stbi_image_free(pixels);
+}
+
+void VulkanImage::CreateFromHDR(
+	VulkanDevice& vkDev,
+	const char* filename)
+{
+	stbi_set_flip_vertically_on_load(true);
+
+	int texWidth, texHeight, texChannels;
+	float* pixels = stbi_loadf(filename, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+
+	CreateImageFromData(
+		vkDev,
+		pixels,
+		texWidth,
+		texHeight,
+		NumMipMap(texWidth, texHeight),
+		1,
+		VK_FORMAT_R32G32B32A32_SFLOAT);
+
+	stbi_image_free(pixels);
 }
 
 void VulkanImage::CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint32_t height)
@@ -67,7 +133,7 @@ void VulkanImage::CreateImageFromData(
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
 		flags);
 
-	UpdateTextureImage(vkDev, texWidth, texHeight, texFormat, layerCount, imageData);
+	UpdateImage(vkDev, texWidth, texHeight, texFormat, layerCount, imageData);
 }
 
 void VulkanImage::CopyBufferToImage(
@@ -187,6 +253,58 @@ void VulkanImage::CreateImageView(VkDevice device,
 	VK_CHECK(vkCreateImageView(device, &viewInfo, nullptr, &imageView_));
 }
 
+void VulkanImage::CreateDefaultSampler(
+	VkDevice device,
+	float minLod,
+	float maxLod,
+	VkFilter minFilter,
+	VkFilter maxFilter,
+	VkSamplerAddressMode addressMode)
+{
+	CreateSampler(
+		device,
+		defaultImageSampler_,
+		minLod,
+		maxLod,
+		minFilter,
+		maxFilter,
+		addressMode
+	);
+}
+
+void VulkanImage::CreateSampler(
+	VkDevice device,
+	VkSampler& sampler,
+	float minLod,
+	float maxLod,
+	VkFilter minFilter,
+	VkFilter maxFilter,
+	VkSamplerAddressMode addressMode)
+{
+	const VkSamplerCreateInfo samplerInfo = {
+		.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0,
+		.magFilter = VK_FILTER_LINEAR,
+		.minFilter = VK_FILTER_LINEAR,
+		.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
+		.addressModeU = addressMode, // VK_SAMPLER_ADDRESS_MODE_REPEAT,
+		.addressModeV = addressMode, // VK_SAMPLER_ADDRESS_MODE_REPEAT,
+		.addressModeW = addressMode, // VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE VK_SAMPLER_ADDRESS_MODE_REPEAT,
+		.mipLodBias = 0.0f,
+		.anisotropyEnable = VK_FALSE,
+		.maxAnisotropy = 1,
+		.compareEnable = VK_FALSE,
+		.compareOp = VK_COMPARE_OP_ALWAYS,
+		.minLod = minLod,
+		.maxLod = maxLod,
+		.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
+		.unnormalizedCoordinates = VK_FALSE
+	};
+
+	VK_CHECK(vkCreateSampler(device, &samplerInfo, nullptr, &sampler));
+}
+
 uint32_t VulkanImage::FindMemoryType(VkPhysicalDevice device, uint32_t typeFilter, VkMemoryPropertyFlags properties)
 {
 	VkPhysicalDeviceMemoryProperties memProperties;
@@ -233,7 +351,7 @@ VkFormat VulkanImage::FindSupportedFormat(VkPhysicalDevice device, const std::ve
 	throw std::runtime_error("Failed to find supported format!\n");
 }
 
-void VulkanImage::UpdateTextureImage(
+void VulkanImage::UpdateImage(
 	VulkanDevice& vkDev,
 	uint32_t texWidth,
 	uint32_t texHeight,
@@ -273,12 +391,12 @@ void VulkanImage::TransitionImageLayout(VulkanDevice& vkDev,
 {
 	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
 
-	TransitionImageLayoutCmd(commandBuffer, format, oldLayout, newLayout, layerCount, mipLevels);
+	TransitionImageLayoutCommand(commandBuffer, format, oldLayout, newLayout, layerCount, mipLevels);
 
 	vkDev.EndSingleTimeCommands(commandBuffer);
 }
 
-void VulkanImage::TransitionImageLayoutCmd(
+void VulkanImage::TransitionImageLayoutCommand(
 	VkCommandBuffer commandBuffer,
 	VkFormat format,
 	VkImageLayout oldLayout,
@@ -328,7 +446,8 @@ void VulkanImage::TransitionImageLayoutCmd(
 		barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 	}
 
-	if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+	if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && 
+		newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
 	{
 		barrier.srcAccessMask = 0;
 		barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
@@ -336,7 +455,8 @@ void VulkanImage::TransitionImageLayoutCmd(
 		sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 		destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
 	}
-	else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_GENERAL)
+	else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && 
+		newLayout == VK_IMAGE_LAYOUT_GENERAL)
 	{
 		barrier.srcAccessMask = 0;
 		barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
@@ -345,7 +465,8 @@ void VulkanImage::TransitionImageLayoutCmd(
 		destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
 	}
 	
-	if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+	if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && 
+		newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
 	{
 		barrier.srcAccessMask = 0;
 		barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
@@ -354,7 +475,8 @@ void VulkanImage::TransitionImageLayoutCmd(
 		destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
 	}
 	/* Convert back from read-only to updateable */
-	else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+	else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL && 
+		newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
 	{
 		barrier.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
 		barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
@@ -363,7 +485,8 @@ void VulkanImage::TransitionImageLayoutCmd(
 		destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
 	}
 	/* Convert from updateable texture to shader read-only */
-	else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+	else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && 
+		newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
 	{
 		barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
 		barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
@@ -372,17 +495,20 @@ void VulkanImage::TransitionImageLayoutCmd(
 		destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
 	}
 	/* Convert depth texture from undefined state to depth-stencil buffer */
-	else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
+	else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && 
+		newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
 	{
 		barrier.srcAccessMask = 0;
-		barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+		barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | 
+			VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 
 		sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 		destinationStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
 	}
 
 	/* Wait for render pass to complete */
-	else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+	else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL && 
+		newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
 	{
 		barrier.srcAccessMask = 0; // VK_ACCESS_SHADER_READ_BIT;
 		barrier.dstAccessMask = 0;
@@ -396,7 +522,8 @@ void VulkanImage::TransitionImageLayoutCmd(
 	}
 
 	/* Convert back from read-only to color attachment */
-	else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
+	else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL && 
+		newLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
 	{
 		barrier.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
 		barrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
@@ -405,7 +532,8 @@ void VulkanImage::TransitionImageLayoutCmd(
 		destinationStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 	}
 	/* Convert from updateable texture to shader read-only */
-	else if (oldLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+	else if (oldLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL && 
+		newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
 	{
 		barrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 		barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
@@ -415,7 +543,8 @@ void VulkanImage::TransitionImageLayoutCmd(
 	}
 
 	/* Convert back from read-only to depth attachment */
-	else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
+	else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL && 
+		newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
 	{
 		barrier.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
 		barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
@@ -424,7 +553,8 @@ void VulkanImage::TransitionImageLayoutCmd(
 		destinationStage = VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
 	}
 	/* Convert from updateable depth texture to shader read-only */
-	else if (oldLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+	else if (oldLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL && 
+		newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
 	{
 		barrier.srcAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 		barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;

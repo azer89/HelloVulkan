@@ -14,6 +14,9 @@ public:
 	VkDeviceMemory imageMemory_;
 	VkImageView imageView_;
 
+	// A reusable sampler which can be accessed by multiple Renderers
+	VkSampler defaultImageSampler_;
+
 	uint32_t width_;
 	uint32_t height_;
 	uint32_t mipCount_;
@@ -26,6 +29,7 @@ public:
 		image_(nullptr),
 		imageMemory_(nullptr),
 		imageView_(nullptr),
+		defaultImageSampler_(nullptr),
 		width_(0),
 		height_(0),
 		mipCount_(0),
@@ -33,6 +37,37 @@ public:
 		imageFormat_(VK_FORMAT_UNDEFINED)
 	{
 	}
+
+	void Destroy(VkDevice device);
+
+	void CreateFromFile(
+		VulkanDevice& vkDev,
+		const char* filename);
+
+	void CreateAndInitAllObjects(
+		VulkanDevice& vkDev,
+		const char* filename);
+
+	void CreateFromHDR(
+		VulkanDevice& vkDev,
+		const char* filename);
+
+	void CreateSampler(
+		VkDevice device,
+		VkSampler& sampler,
+		float minLod = 0.f,
+		float maxLod = 0.f,
+		VkFilter minFilter = VK_FILTER_LINEAR,
+		VkFilter maxFilter = VK_FILTER_LINEAR,
+		VkSamplerAddressMode addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
+
+	void CreateDefaultSampler(
+		VkDevice device,
+		float minLod = 0.f,
+		float maxLod = 0.f,
+		VkFilter minFilter = VK_FILTER_LINEAR,
+		VkFilter maxFilter = VK_FILTER_LINEAR,
+		VkSamplerAddressMode addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
 
 	void CreateImage(
 		VkDevice device,
@@ -59,8 +94,6 @@ public:
 
 	void CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint32_t height);
 
-	void Destroy(VkDevice device);
-
 	void GenerateMipmap(
 		VulkanDevice& vkDev,
 		uint32_t maxMipLevels,
@@ -82,7 +115,7 @@ public:
 		uint32_t height,
 		uint32_t layerCount = 1);
 
-	// TODO Develop CreateBarrier() and TransitionImageLayout() that are much simpler
+	// TODO Refactor CreateBarrier() and TransitionImageLayout() to be much simpler
 	void CreateBarrier(
 		VkCommandBuffer cmdBuffer,
 		VkImageLayout oldLayout,
@@ -109,7 +142,7 @@ public:
 		uint32_t layerCount = 1,
 		uint32_t mipLevels = 1);
 
-	void TransitionImageLayoutCmd(VkCommandBuffer commandBuffer,
+	void TransitionImageLayoutCommand(VkCommandBuffer commandBuffer,
 		VkFormat format,
 		VkImageLayout oldLayout,
 		VkImageLayout newLayout,
@@ -117,11 +150,18 @@ public:
 		uint32_t mipLevels = 1);
 
 private:
-	uint32_t FindMemoryType(VkPhysicalDevice device, uint32_t typeFilter, VkMemoryPropertyFlags properties);
+	uint32_t FindMemoryType(
+		VkPhysicalDevice device, 
+		uint32_t typeFilter, 
+		VkMemoryPropertyFlags properties);
 	VkFormat FindDepthFormat(VkPhysicalDevice device);
-	VkFormat FindSupportedFormat(VkPhysicalDevice device, const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+	VkFormat FindSupportedFormat(
+		VkPhysicalDevice device, 
+		const std::vector<VkFormat>& candidates, 
+		VkImageTiling tiling, 
+		VkFormatFeatureFlags features);
 
-	void UpdateTextureImage(
+	void UpdateImage(
 		VulkanDevice& vkDev,
 		uint32_t texWidth,
 		uint32_t texHeight,

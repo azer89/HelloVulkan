@@ -4,7 +4,6 @@
 #include "assimp//material.h"
 
 #include <unordered_map>
-#include <string>
 
 enum class TextureType : uint32_t
 {

@@ -2,22 +2,20 @@
 #define RENDERER_CUBE
 
 #include "RendererBase.h"
-#include "VulkanTexture.h"
-
-#include "glm/glm.hpp"
+#include "VulkanImage.h"
 
 class RendererSkybox final : public RendererBase
 {
 public:
 	RendererSkybox(VulkanDevice& vkDev, 
-		VulkanTexture* envMap, 
+		VulkanImage* envMap,
 		VulkanImage* depthImage);
 	virtual ~RendererSkybox();
 
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:
-	VulkanTexture* envMap_;
+	VulkanImage* envMap_;
 
 	std::vector<VkDescriptorSet> descriptorSets_;
 

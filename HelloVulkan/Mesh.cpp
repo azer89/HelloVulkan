@@ -6,24 +6,11 @@
 
 #include <iostream>
 
-/*void Mesh::AddTexture(VulkanDevice& vkDev, const char* fileName, uint32_t bindIndex)
-{
-	VulkanTexture texture;
-	texture.bindIndex_ = bindIndex;
-	texture.CreateTextureImage(vkDev, fileName);
-	texture.image_.CreateImageView(
-		vkDev.GetDevice(),
-		VK_FORMAT_R8G8B8A8_UNORM,
-		VK_IMAGE_ASPECT_COLOR_BIT);
-	texture.CreateTextureSampler(vkDev.GetDevice());
-	textures_.push_back(texture);
-}*/
-
 // Constructor
 Mesh::Mesh(VulkanDevice& vkDev,
 	std::vector<VertexData>&& _vertices,
 	std::vector<unsigned int>&& _indices,
-	std::unordered_map<TextureType, VulkanTexture*>&& _textures) :
+	std::unordered_map<TextureType, VulkanImage*>&& _textures) :
 	vertices_(std::move(_vertices)),
 	indices_(std::move(_indices)),
 	textures_(std::move(_textures))
@@ -35,7 +22,7 @@ Mesh::Mesh(VulkanDevice& vkDev,
 Mesh::Mesh(VulkanDevice& vkDev,
 	const std::vector<VertexData>& vertices,
 	const std::vector<unsigned int>& indices,
-	const std::unordered_map<TextureType, VulkanTexture*>& textures) :
+	const std::unordered_map<TextureType, VulkanImage*>& textures) :
 	vertices_(vertices),
 	indices_(indices),
 	textures_(textures)
@@ -72,9 +59,9 @@ void Mesh::Create(
 		const aiVector3D n = mesh->mNormals[i];
 		vertices.push_back(
 		{
-			.pos = glm::vec4(v.x, v.y, v.z, 1.0f),
-			.n = glm::vec4(n.x, n.y, n.z, 0.0f),
-			.tc = glm::vec4(t.x, 1.0f - t.y, 0.0f, 0.0f) 
+			.position_ = glm::vec4(v.x, v.y, v.z, 1.0f),
+			.normal_ = glm::vec4(n.x, n.y, n.z, 0.0f),
+			.textureCoordinate_ = glm::vec4(t.x, 1.0f - t.y, 0.0f, 0.0f) 
 		});
 	}
 
@@ -100,11 +87,6 @@ void Mesh::Destroy(VkDevice device)
 	vertexBuffer_.Destroy(device);
 	indexBuffer_.Destroy(device);
 	//storageBuffer_.Destroy(device);
-
-	/*for (VulkanTexture& tex : textures_)
-	{
-		tex.Destroy(device);
-	}*/
 
 	/*for (auto buf : modelBuffers_)
 	{

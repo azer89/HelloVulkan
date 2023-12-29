@@ -3,7 +3,6 @@
 
 #include "assimp/postprocess.h"
 #include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
 #include <iostream>
@@ -20,10 +19,10 @@ Model::Model(VulkanDevice& vkDev, const std::string& path) :
 {
 	// In case a texture type cannot be found, replace it with a default texture
 	textureMap_[blackTextureFilePath_] = {};
-	textureMap_[blackTextureFilePath_].CreateTextureImageViewSampler(
+	textureMap_[blackTextureFilePath_].CreateAndInitAllObjects(
 		vkDev, 
 		blackTextureFilePath_.c_str());
-
+	// TODO Create Sampler
 	// Load model here
 	LoadModel(vkDev, path);
 }
@@ -41,7 +40,7 @@ Model::~Model()
 	}
 
 	// C++20 feature
-	for (VulkanTexture& tex : std::views::values(textureMap_))
+	for (VulkanImage& tex : std::views::values(textureMap_))
 	{
 		tex.Destroy(device_.GetDevice());
 	}
@@ -120,7 +119,7 @@ Mesh Model::ProcessMesh(
 	// Data to fill
 	std::vector<VertexData> vertices;
 	std::vector<unsigned int> indices;
-	std::unordered_map<TextureType, VulkanTexture*> textures;
+	std::unordered_map<TextureType, VulkanImage*> textures;
 
 	// Walk through each of the mesh's vertices
 	for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
@@ -132,7 +131,7 @@ Mesh Model::ProcessMesh(
 		vector.y = mesh->mVertices[i].y;
 		vector.z = mesh->mVertices[i].z;
 		vector.w = 1;
-		vertex.pos = transform * vector;
+		vertex.position_ = transform * vector;
 		// Normals
 		if (mesh->HasNormals())
 		{
@@ -140,23 +139,23 @@ Mesh Model::ProcessMesh(
 			vector.y = mesh->mNormals[i].y;
 			vector.z = mesh->mNormals[i].z;
 			vector.w = 0;
-			vertex.n = transform * vector;
+			vertex.normal_ = transform * vector;
 		}
 		// Texture coordinates
-		if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
+		if (mesh->mTextureCoords[0]) // Does the mesh contain texture coordinates?
 		{
 			glm::vec4 vec;
-			// a vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't 
+			// A vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't 
 			// use models where a vertex can have multiple texture coordinates so we always take the first set (0).
 			vec.x = mesh->mTextureCoords[0][i].x;
 			vec.y = mesh->mTextureCoords[0][i].y;
 			vec.z = 0;
 			vec.w = 0;
-			vertex.tc = vec;
+			vertex.textureCoordinate_ = vec;
 		}
 		else
 		{
-			vertex.tc = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+			vertex.textureCoordinate_ = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 		}
 
 		vertices.push_back(vertex);
@@ -188,10 +187,12 @@ Mesh Model::ProcessMesh(
 
 			if (!textureMap_.contains(key)) // Make sure never loaded before
 			{
-				VulkanTexture texture;
+				VulkanImage texture;
 				std::string fullFilePath = this->directory_ + '/' + str.C_Str();
-				texture.CreateTextureImageViewSampler(vkDev, fullFilePath.c_str());
+				texture.CreateAndInitAllObjects(vkDev, fullFilePath.c_str());
 				textureMap_[key] = texture;
+
+				// TODO Create Sampler
 			}
 
 			if (!textures.contains(tType)) // Only support one image per texture type

@@ -2,9 +2,7 @@
 #define RENDERER_EQUIRECT_2_CUBE
 
 #include "RendererBase.h"
-#include "VulkanTexture.h"
-
-#include "glm/glm.hpp"
+#include "VulkanImage.h"
 
 #include <string>
 
@@ -14,22 +12,22 @@ public:
 	RendererEquirect2Cube(VulkanDevice& vkDev, const std::string& hdrFile);
 	~RendererEquirect2Cube();
 
-	void OffscreenRender(VulkanDevice& vkDev, VulkanTexture* outputCubemap);
+	void OffscreenRender(VulkanDevice& vkDev, VulkanImage* outputCubemap);
 
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:
 	VkDescriptorSet descriptorSet_;
-	VulkanTexture inputHDRTexture_;
+	VulkanImage inputHDRImage_;
 	VkFramebuffer frameBuffer_;
 
 private:
-	void InitializeCubemap(VulkanDevice& vkDev, VulkanTexture* outputCubemap);
-	void InitializeHDRTexture(VulkanDevice& vkDev, const std::string& hdrFile);
+	void InitializeHDRImage(VulkanDevice& vkDev, const std::string& hdrFile);
+	void InitializeCubemap(VulkanDevice& vkDev, VulkanImage* cubemap);
 	void CreateCubemapViews(
 		VulkanDevice& vkDev,
-		VulkanTexture* cubemapTexture,
-		std::vector<VkImageView>& cubeMapViews);
+		VulkanImage* cubemap,
+		std::vector<VkImageView>& cubemapViews);
 
 	void CreateRenderPass(VulkanDevice& vkDev);
 	void CreateDescriptorLayout(VulkanDevice& vkDev);

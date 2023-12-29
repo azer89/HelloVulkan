@@ -3,18 +3,17 @@
 
 #include "RendererBase.h"
 #include "VulkanDevice.h"
-#include "VulkanTexture.h"
+#include "VulkanImage.h"
 #include "VulkanBuffer.h"
 #include "VulkanUtility.h"
 
-class RendererBRDF final : RendererBase
+class RendererBRDFLUT final : RendererBase
 {
 public:
-	RendererBRDF(VulkanDevice& vkDev);
+	RendererBRDFLUT(VulkanDevice& vkDev);
+	~RendererBRDFLUT();
 
-	virtual ~RendererBRDF();
-
-	void CreateLUT(VulkanDevice& vkDev, VulkanTexture* outputLUT);
+	void CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT);
 
 	void Execute(VulkanDevice& vkDev);
 
@@ -36,7 +35,6 @@ private:
 	void CreateComputePipeline(
 		VkDevice device,
 		VkShaderModule computeShader);
-
 };
 
 #endif

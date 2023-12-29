@@ -16,7 +16,7 @@ namespace FilterSettings
 }
 
 RendererCubeFilter::RendererCubeFilter(
-	VulkanDevice& vkDev, VulkanTexture* inputCubemap) :
+	VulkanDevice& vkDev, VulkanImage* inputCubemap) :
 	RendererBase(vkDev, nullptr)
 {
 	CreateRenderPass(vkDev);
@@ -31,16 +31,16 @@ RendererCubeFilter::RendererCubeFilter(
 
 	// Input cubemap
 	uint32_t inputNumMipmap = NumMipMap(FilterSettings::inputCubemapSize, FilterSettings::inputCubemapSize);
-	inputCubemap->image_.GenerateMipmap(
+	inputCubemap->GenerateMipmap(
 		vkDev,
 		inputNumMipmap,
 		FilterSettings::inputCubemapSize,
 		FilterSettings::inputCubemapSize,
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	);
-	inputCubemap->CreateTextureSampler(
+	inputCubemap->CreateSampler(
 		vkDev.GetDevice(),
-		inputEnvMapSampler_,
+		inputCubemapSampler_,
 		0.f,
 		static_cast<float>(inputNumMipmap)
 	);
@@ -92,7 +92,7 @@ RendererCubeFilter::RendererCubeFilter(
 
 RendererCubeFilter::~RendererCubeFilter()
 {
-	vkDestroySampler(device_, inputEnvMapSampler_, nullptr);
+	vkDestroySampler(device_, inputCubemapSampler_, nullptr);
 
 	for (VkPipeline& pipeline : graphicsPipelines_)
 	{
@@ -106,11 +106,11 @@ void RendererCubeFilter::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t
 
 void RendererCubeFilter::InitializeOutputCubemap(
 	VulkanDevice& vkDev, 
-	VulkanTexture* outputDiffuseCubemap,
+	VulkanImage* outputDiffuseCubemap,
 	uint32_t numMipmap,
 	uint32_t sideLength)
 {
-	outputDiffuseCubemap->image_.CreateImage(
+	outputDiffuseCubemap->CreateImage(
 		vkDev.GetDevice(),
 		vkDev.GetPhysicalDevice(),
 		sideLength,
@@ -124,7 +124,7 @@ void RendererCubeFilter::InitializeOutputCubemap(
 		VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT
 	);
 
-	outputDiffuseCubemap->image_.CreateImageView(
+	outputDiffuseCubemap->CreateImageView(
 		vkDev.GetDevice(),
 		VK_FORMAT_R32G32B32A32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT,
@@ -205,7 +205,7 @@ void RendererCubeFilter::CreateDescriptorLayout(VulkanDevice& vkDev)
 	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));
 }
 
-void RendererCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanTexture* cubemapTexture)
+void RendererCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanImage* inputCubemap)
 {
 	const VkDescriptorSetAllocateInfo allocInfo = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
@@ -222,8 +222,8 @@ void RendererCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanTexture*
 
 	const VkDescriptorImageInfo imageInfo =
 	{
-		inputEnvMapSampler_, // Local sampler created in the constructor
-		cubemapTexture->image_.imageView_,
+		inputCubemapSampler_, // Local sampler created in the constructor
+		inputCubemap->imageView_,
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	};
 
@@ -246,15 +246,15 @@ void RendererCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanTexture*
 }
 
 void RendererCubeFilter::CreateOutputCubemapViews(VulkanDevice& vkDev,
-	VulkanTexture* cubemapTexture,
-	std::vector<std::vector<VkImageView>>& cubemapViews,
+	VulkanImage* outputCubemap,
+	std::vector<std::vector<VkImageView>>& outputCubemapViews,
 	uint32_t numMip)
 {
-	cubemapViews = 
+	outputCubemapViews = 
 		std::vector<std::vector<VkImageView>>(numMip, std::vector<VkImageView>(FilterSettings::layerCount, VK_NULL_HANDLE));
 	for (uint32_t a = 0; a < numMip; ++a)
 	{
-		cubemapViews[a] = {};
+		outputCubemapViews[a] = {};
 		for (uint32_t b = 0; b < FilterSettings::layerCount; ++b)
 		{
 			VkImageSubresourceRange subresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0u, 1u, 0u, 1u };
@@ -266,9 +266,9 @@ void RendererCubeFilter::CreateOutputCubemapViews(VulkanDevice& vkDev,
 				.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 				.pNext = nullptr,
 				.flags = 0,
-				.image = cubemapTexture->image_.image_,
+				.image = outputCubemap->image_,
 				.viewType = VK_IMAGE_VIEW_TYPE_2D,
-				.format = cubemapTexture->image_.imageFormat_,
+				.format = outputCubemap->imageFormat_,
 				.components =
 				{
 					VK_COMPONENT_SWIZZLE_IDENTITY,
@@ -278,8 +278,8 @@ void RendererCubeFilter::CreateOutputCubemapViews(VulkanDevice& vkDev,
 				},
 				.subresourceRange = subresourceRange
 			};
-			cubemapViews[a].emplace_back();
-			VK_CHECK(vkCreateImageView(vkDev.GetDevice(), &viewInfo, nullptr, &cubemapViews[a][b]));
+			outputCubemapViews[a].emplace_back();
+			VK_CHECK(vkCreateImageView(vkDev.GetDevice(), &viewInfo, nullptr, &outputCubemapViews[a][b]));
 		}
 	}
 }
@@ -331,21 +331,6 @@ void RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 	pInfo.depthStencil.depthTestEnable = VK_FALSE;
 	pInfo.depthStencil.depthWriteEnable = VK_FALSE;
 
-	/*VkDynamicState dynamicStates[] =
-	{
-		VK_DYNAMIC_STATE_LINE_WIDTH,
-		VK_DYNAMIC_STATE_DEPTH_BIAS,
-		VK_DYNAMIC_STATE_BLEND_CONSTANTS,
-		VK_DYNAMIC_STATE_DEPTH_BOUNDS,
-		VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK,
-		VK_DYNAMIC_STATE_STENCIL_WRITE_MASK,
-		VK_DYNAMIC_STATE_STENCIL_REFERENCE
-	};
-
-	pInfo.dynamicState.dynamicStateCount = 
-		static_cast<uint32_t>(sizeof(dynamicStates) / sizeof(VkDynamicState));
-	pInfo.dynamicState.pDynamicStates = dynamicStates;*/
-
 	pInfo.rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 	pInfo.rasterizer.pNext = nullptr;
 	pInfo.rasterizer.cullMode = VK_CULL_MODE_NONE;
@@ -375,8 +360,8 @@ void RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 	pInfo.depthStencil.depthWriteEnable = VK_FALSE;
 	pInfo.depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
 	pInfo.depthStencil.depthBoundsTestEnable = VK_FALSE;
-	pInfo.depthStencil.minDepthBounds = 0.0f; // Optional
-	pInfo.depthStencil.maxDepthBounds = 1.0f; // Optional
+	pInfo.depthStencil.minDepthBounds = 0.0f; 
+	pInfo.depthStencil.maxDepthBounds = 1.0f; 
 	pInfo.depthStencil.stencilTestEnable = VK_FALSE;
 
 	pInfo.tessellationState.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
@@ -441,14 +426,14 @@ VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
 }
 
 void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
-	VulkanTexture* outputCubemap,
-	CubeFilterType distribution)
+	VulkanImage* outputCubemap,
+	CubeFilterType filterType)
 {
-	uint32_t outputMipMapCount = distribution == CubeFilterType::Diffuse ?
+	uint32_t outputMipMapCount = filterType == CubeFilterType::Diffuse ?
 		1u :
 		NumMipMap(FilterSettings::outputSpecularSize, FilterSettings::outputSpecularSize);
 
-	uint32_t outputSideLength = distribution == CubeFilterType::Diffuse ?
+	uint32_t outputSideLength = filterType == CubeFilterType::Diffuse ?
 		FilterSettings::outputDiffuseSize :
 		FilterSettings::outputSpecularSize;
 
@@ -471,7 +456,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		nullptr);
 
 	// Select pipeline
-	VkPipeline pipeline = graphicsPipelines_[static_cast<unsigned int>(distribution)];
+	VkPipeline pipeline = graphicsPipelines_[static_cast<unsigned int>(filterType)];
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
@@ -487,7 +472,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		VkImageSubresourceRange  subresourceRange =
 		{ VK_IMAGE_ASPECT_COLOR_BIT, static_cast<uint32_t>(i), 1u, 0u, 6u };
 
-		outputCubemap->image_.CreateBarrier(commandBuffer,
+		outputCubemap->CreateBarrier(commandBuffer,
 			VK_IMAGE_LAYOUT_UNDEFINED, // oldLayout
 			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, // newLayout
 			VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, // srcStage
@@ -497,7 +482,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 			subresourceRange);
 
 		PushConstantCubeFilter values{};
-		values.roughness = distribution == CubeFilterType::Diffuse ?
+		values.roughness = filterType == CubeFilterType::Diffuse ?
 			0.f :
 			static_cast<float>(i) / static_cast<float>(outputMipMapCount - 1);
 		values.sampleCount = FilterSettings::sampleCount;
@@ -527,8 +512,8 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		vkCmdEndRenderPass(commandBuffer);
 	}
 
-	// // Convention is to change the layout to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	outputCubemap->image_.CreateBarrier(commandBuffer,
+	// Convention is to change the layout to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+	outputCubemap->CreateBarrier(commandBuffer,
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, // oldLayout
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, // newLayout
 		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, // srcStage
@@ -554,7 +539,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 	}
 
 	// Create a sampler for the output cubemap
-	outputCubemap->CreateTextureSampler(
+	outputCubemap->CreateDefaultSampler(
 		vkDev.GetDevice(),
 		0.0f,
 		static_cast<float>(outputMipMapCount));

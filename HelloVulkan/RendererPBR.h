@@ -2,8 +2,7 @@
 #define RENDERER_PBR
 
 #include "RendererBase.h"
-#include "VulkanTexture.h"
-#include "VulkanBuffer.h"
+#include "VulkanImage.h"
 #include "Model.h"
 
 class RendererPBR final : public RendererBase
@@ -11,12 +10,11 @@ class RendererPBR final : public RendererBase
 public:
 	RendererPBR(VulkanDevice& vkDev,
 		VulkanImage* depthImage,
-		VulkanTexture* envMap,
-		VulkanTexture* diffuseMap,
-		VulkanTexture* brdfLUT,
+		VulkanImage* envMap,
+		VulkanImage* diffuseMap,
+		VulkanImage* brdfLUT,
 		std::vector<Model*> models);
-
-	virtual ~RendererPBR();
+	 ~RendererPBR();
 
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
@@ -29,9 +27,9 @@ private:
 	bool CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh);
 
 private:
-	VulkanTexture* envMap_;
-	VulkanTexture* diffuseMap_;
-	VulkanTexture* brdfLUT_;
+	VulkanImage* envMap_;
+	VulkanImage* diffuseMap_;
+	VulkanImage* brdfLUT_;
 };
 
 #endif

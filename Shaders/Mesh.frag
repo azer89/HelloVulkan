@@ -40,10 +40,10 @@ vec3 lightPositions[NUM_LIGHTS] =
 };
 vec3 lightColors[NUM_LIGHTS] = 
 {
-	vec3(10.0, 10.0, 10.0),
-	vec3(10.0, 10.0, 10.0),
-	vec3(10.0, 10.0, 10.0),
-	vec3(10.0, 10.0, 10.0)
+	vec3(1.0, 1.0, 1.0),
+	vec3(1.0, 1.0, 1.0),
+	vec3(1.0, 1.0, 1.0),
+	vec3(1.0, 1.0, 1.0)
 };
 
 // Include files

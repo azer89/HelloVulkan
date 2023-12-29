@@ -138,7 +138,7 @@
     <ClCompile Include="AppBase.cpp" />
     <ClCompile Include="AppPBR.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="RendererBRDF.cpp" />
+    <ClCompile Include="RendererBRDFLUT.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
@@ -154,7 +154,6 @@
     <ClCompile Include="VulkanInstance.cpp" />
     <ClCompile Include="VulkanDevice.cpp" />
     <ClCompile Include="VulkanShader.cpp" />
-    <ClCompile Include="VulkanTexture.cpp" />
     <ClCompile Include="VulkanUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -162,7 +161,7 @@
     <ClInclude Include="AppSettings.h" />
     <ClInclude Include="AppPBR.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="RendererBRDF.h" />
+    <ClInclude Include="RendererBRDFLUT.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="PipelineCreateInfo.h" />
@@ -180,7 +179,6 @@
     <ClInclude Include="VulkanImage.h" />
     <ClInclude Include="VulkanInstance.h" />
     <ClInclude Include="VulkanDevice.h" />
-    <ClInclude Include="VulkanTexture.h" />
     <ClInclude Include="VulkanUtility.h" />
   </ItemGroup>
   <ItemGroup>

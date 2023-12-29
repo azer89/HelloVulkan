@@ -2,7 +2,7 @@
 #define RENDERER_CUBE_FILTER
 
 #include "RendererBase.h"
-#include "VulkanTexture.h"
+#include "VulkanImage.h"
 
 #include <string>
 
@@ -21,32 +21,33 @@ struct PushConstantCubeFilter
 class RendererCubeFilter final : public RendererBase
 {
 public:
-	RendererCubeFilter(VulkanDevice& vkDev, VulkanTexture* inputCubemap);
+	RendererCubeFilter(VulkanDevice& vkDev, VulkanImage* inputCubemap);
 	~RendererCubeFilter();
 
 	void OffscreenRender(VulkanDevice& vkDev, 
-		VulkanTexture* outputCubemap,
-		CubeFilterType disttribution);
+		VulkanImage* outputCubemap,
+		CubeFilterType filterType);
+
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:
 	VkDescriptorSet descriptorSet_;
-	VkSampler inputEnvMapSampler_; // A sampler for the input cubemapTexture
+	VkSampler inputCubemapSampler_; // A sampler for the input cubemap
 
 	// Two pipelines for each of diffuse and specular maps
 	std::vector<VkPipeline> graphicsPipelines_;
 
 	void CreateRenderPass(VulkanDevice& vkDev);
 	void CreateDescriptorLayout(VulkanDevice& vkDev);
-	void CreateDescriptorSet(VulkanDevice& vkDev, VulkanTexture* cubemapTexture);
+	void CreateDescriptorSet(VulkanDevice& vkDev, VulkanImage* inputCubemap);
 
 	void InitializeOutputCubemap(VulkanDevice& vkDev, 
-		VulkanTexture* outputDiffuseCubemap,
+		VulkanImage* outputDiffuseCubemap,
 		uint32_t numMipmap,
 		uint32_t sideLength);
 	void CreateOutputCubemapViews(VulkanDevice& vkDev,
-		VulkanTexture* cubemapTexture,
-		std::vector<std::vector<VkImageView>>& cubemapViews,
+		VulkanImage* outputCubemap,
+		std::vector<std::vector<VkImageView>>& outputCubemapViews,
 		uint32_t numMip);
 
 	void CreateOffsreenGraphicsPipeline(

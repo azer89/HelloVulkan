@@ -4,7 +4,6 @@
 
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
-#include "assimp/cimport.h"
 
 #include <vector>
 #include <array>
@@ -17,9 +16,9 @@ constexpr size_t PBR_ENV_TEXTURE_COUNT = 3;
 RendererPBR::RendererPBR(
 	VulkanDevice& vkDev,
 	VulkanImage* depthImage,
-	VulkanTexture* envMap,
-	VulkanTexture* diffuseMap,
-	VulkanTexture* brdfLUT,
+	VulkanImage* envMap,
+	VulkanImage* diffuseMap,
+	VulkanImage* brdfLUT,
 	std::vector<Model*> models) :
 	RendererBase(vkDev, depthImage),
 	envMap_(envMap),
@@ -218,30 +217,30 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 				bindIndex++, 
 				VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
 		
-		std::vector<VkDescriptorImageInfo> textureImageInfos;
-		std::vector<uint32_t> textureBindIndices;
+		std::vector<VkDescriptorImageInfo> imageInfoArray;
+		std::vector<uint32_t> bindIndexArray;
 		for (const auto& elem : mesh.textures_)
 		{
-			textureImageInfos.emplace_back<VkDescriptorImageInfo>
+			imageInfoArray.emplace_back<VkDescriptorImageInfo>
 				({
-					elem.second->sampler_,
-					elem.second->image_.imageView_,
+					elem.second->defaultImageSampler_,
+					elem.second->imageView_,
 					VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 					});
 			// The enum index starts from 1
 			uint32_t meshBindIndex = PBR_TEXTURE_START_BIND_INDEX + static_cast<uint32_t>(elem.first) - 1;
-			textureBindIndices.emplace_back(meshBindIndex);
+			bindIndexArray.emplace_back(meshBindIndex);
 		}
 
-		for (size_t i = 0; i < textureImageInfos.size(); ++i)
+		for (size_t i = 0; i < imageInfoArray.size(); ++i)
 		{
 			descriptorWrites.emplace_back
 			(
 				ImageWriteDescriptorSet(
 					ds, 
-					&textureImageInfos[i],
+					&imageInfoArray[i],
 					// Note that we don't use bindIndex
-					textureBindIndices[i])
+					bindIndexArray[i])
 			);
 
 			// Keep incrementing
@@ -250,20 +249,20 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 
 		const VkDescriptorImageInfo imageInfoEnv = 
 		{ 
-			envMap_->sampler_, 
-			envMap_->image_.imageView_, 
+			envMap_->defaultImageSampler_,
+			envMap_->imageView_, 
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL 
 		};
 		const VkDescriptorImageInfo imageInfoEnvIrr = 
 		{ 
-			diffuseMap_->sampler_, 
-			diffuseMap_->image_.imageView_, 
+			diffuseMap_->defaultImageSampler_,
+			diffuseMap_->imageView_, 
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL 
 		};
 		const VkDescriptorImageInfo imageInfoBRDF = 
 		{ 
-			brdfLUT_->sampler_, 
-			brdfLUT_->image_.imageView_, 
+			brdfLUT_->defaultImageSampler_,
+			brdfLUT_->imageView_, 
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL 
 		};
 
