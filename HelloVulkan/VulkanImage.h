@@ -95,7 +95,7 @@ public:
 
 	void CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint32_t height);
 
-	void CreateMSAAResources(VulkanDevice& vkDev, uint32_t width, uint32_t height);
+	void CreateMultisampledResources(VulkanDevice& vkDev, uint32_t width, uint32_t height);
 
 	void GenerateMipmap(
 		VulkanDevice& vkDev,

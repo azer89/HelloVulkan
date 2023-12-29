@@ -110,9 +110,31 @@ void VulkanImage::CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint
 		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 }
 
-void VulkanImage::CreateMSAAResources(VulkanDevice& vkDev, uint32_t width, uint32_t height)
+void VulkanImage::CreateMultisampledResources(VulkanDevice& vkDev, uint32_t width, uint32_t height)
 {
+	VkFormat format = vkDev.GetSwapchainColorFormat();
+	VkImageUsageFlags usage = VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | 
+		VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
+	CreateImage(vkDev.GetDevice(),
+		vkDev.GetPhysicalDevice(),
+		width,
+		height,
+		1, // mip
+		1, // layer
+		format,
+		VK_IMAGE_TILING_OPTIMAL,
+		usage,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+	CreateImageView(vkDev.GetDevice(),
+		format,
+		VK_IMAGE_ASPECT_COLOR_BIT);
+
+	/*TransitionImageLayout(vkDev,
+		format,
+		VK_IMAGE_LAYOUT_UNDEFINED,
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);*/
 }
 
 void VulkanImage::CreateImageFromData(

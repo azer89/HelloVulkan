@@ -40,6 +40,7 @@ public:
 	VkCommandBuffer GetComputeCommandBuffer() { return computeCommandBuffer; }
 	VkQueue GetComputeQueue() { return computeQueue; }
 	VkSampleCountFlagBits GetMSAASamples() { return msaaSamples; }
+	VkFormat GetSwapchainColorFormat() { return swapchainColorFormat; }
 
 	VkImageView GetSwapchainImageView(unsigned i)
 	{
@@ -91,6 +92,7 @@ public:
 	VkSwapchainKHR swapchain;
 	VkSemaphore semaphore;
 	VkSemaphore renderSemaphore;
+	VkFormat swapchainColorFormat;
 	std::vector<VkCommandBuffer> commandBuffers;
 
 private:

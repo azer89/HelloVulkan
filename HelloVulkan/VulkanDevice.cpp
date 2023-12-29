@@ -261,6 +261,8 @@ VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface, bool supportScreens
 		.oldSwapchain = VK_NULL_HANDLE
 	};
 
+	swapchainColorFormat = surfaceFormat.format;
+
 	return vkCreateSwapchainKHR(device, &ci, nullptr, &swapchain);
 }
 

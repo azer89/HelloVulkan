@@ -39,6 +39,7 @@ private:
 	VulkanImage specularCubemap_;
 
 	VulkanImage depthImage_;
+	VulkanImage multisampledImage_;
 
 	float modelRotation_;
 	std::unique_ptr<Model> model_;

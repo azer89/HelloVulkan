@@ -8,7 +8,9 @@
 #include <array>
 
 // Constructor
-RendererBase::RendererBase(const VulkanDevice& vkDev, VulkanImage* depthImage) :
+RendererBase::RendererBase(
+	const VulkanDevice& vkDev, 
+	VulkanImage* depthImage) :
 	device_(vkDev.GetDevice()), 
 	framebufferWidth_(vkDev.GetFrameBufferWidth()), 
 	framebufferHeight_(vkDev.GetFrameBufferHeight()), 
