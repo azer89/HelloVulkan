@@ -64,9 +64,14 @@ struct PipelineCreateInfo
 		}),
 		multisampling({
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
+			.pNext = nullptr,
+			.flags = 0u,
 			.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT,
 			.sampleShadingEnable = VK_FALSE,
-			.minSampleShading = 1.0f
+			.minSampleShading = 0.f,
+			.pSampleMask = nullptr,
+			.alphaToCoverageEnable = VK_FALSE,
+			.alphaToOneEnable = VK_FALSE
 		}),
 		colorBlendAttachment({
 			.blendEnable = VK_TRUE,

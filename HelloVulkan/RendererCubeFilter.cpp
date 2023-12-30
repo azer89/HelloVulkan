@@ -348,17 +348,6 @@ void RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 	pInfo.rasterizer.rasterizerDiscardEnable = VK_FALSE;
 	pInfo.rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
 
-	// Disable multisampling
-	pInfo.multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-	pInfo.multisampling.pNext = nullptr;
-	pInfo.multisampling.alphaToCoverageEnable = VK_FALSE;
-	pInfo.multisampling.alphaToOneEnable = VK_FALSE;
-	pInfo.multisampling.flags = 0u;
-	pInfo.multisampling.minSampleShading = 0.f;
-	pInfo.multisampling.pSampleMask = nullptr;
-	pInfo.multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
-	pInfo.multisampling.sampleShadingEnable = VK_FALSE;
-
 	pInfo.depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
 	pInfo.depthStencil.depthTestEnable = VK_FALSE;
 	pInfo.depthStencil.depthWriteEnable = VK_FALSE;
