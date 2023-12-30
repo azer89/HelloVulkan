@@ -444,13 +444,14 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		VkImageSubresourceRange  subresourceRange =
 		{ VK_IMAGE_ASPECT_COLOR_BIT, static_cast<uint32_t>(i), 1u, 0u, 6u };
 
-		outputCubemap->CreateBarrier(commandBuffer,
-			VK_IMAGE_LAYOUT_UNDEFINED, // oldLayout
-			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, // newLayout
-			VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, // srcStage
-			VK_ACCESS_SHADER_READ_BIT, // srcAccess
-			VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, // dstStage
-			VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, // dstAccess
+		outputCubemap->CreateBarrier({
+			.commandBuffer = commandBuffer,
+			.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+			.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+			.srcStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+			.srcAccess = VK_ACCESS_SHADER_READ_BIT,
+			.dstStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+			.dstAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT },
 			subresourceRange);
 
 		PushConstantCubeFilter values{};
@@ -487,13 +488,14 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 	}
 
 	// Convention is to change the layout to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	outputCubemap->CreateBarrier(commandBuffer,
-		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, // oldLayout
-		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, // newLayout
-		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, // srcStage
-		VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, // srcAccess
-		VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, // dstStage
-		VK_ACCESS_SHADER_READ_BIT); // dstAccess
+	outputCubemap->CreateBarrier({ 
+		.commandBuffer = commandBuffer,
+		.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		.srcStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+		.srcAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+		.dstStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+		.dstAccess = VK_ACCESS_SHADER_READ_BIT });
 
 	vkDev.EndSingleTimeCommands(commandBuffer);
 

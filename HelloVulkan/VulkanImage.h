@@ -7,6 +7,17 @@
 
 int NumMipMap(int w, int h);
 
+struct ImageBarrierCreateInfo
+{
+	VkCommandBuffer commandBuffer;
+	VkImageLayout oldLayout;
+	VkImageLayout newLayout;
+	VkPipelineStageFlags srcStage;
+	VkAccessFlags srcAccess;
+	VkPipelineStageFlags dstStage;
+	VkAccessFlags dstAccess;
+};
+
 class VulkanImage
 {
 public:
@@ -115,25 +126,9 @@ public:
 		uint32_t height,
 		uint32_t layerCount = 1);
 
-	// TODO Refactor CreateBarrier() and TransitionImageLayout() to be much simpler
-	void CreateBarrier(
-		VkCommandBuffer cmdBuffer,
-		VkImageLayout oldLayout,
-		VkImageLayout newLayout,
-		VkPipelineStageFlags srcStage,
-		VkAccessFlags srcAccess,
-		VkPipelineStageFlags dstStage,
-		VkAccessFlags dstAccess);
+	void CreateBarrier(ImageBarrierCreateInfo info);
 
-	void CreateBarrier(
-		VkCommandBuffer cmdBuffer, 
-		VkImageLayout oldLayout, 
-		VkImageLayout newLayout,
-		VkPipelineStageFlags srcStage, 
-		VkAccessFlags srcAccess,
-		VkPipelineStageFlags dstStage, 
-		VkAccessFlags dstAccess,
-		VkImageSubresourceRange subresourceRange);
+	void CreateBarrier(ImageBarrierCreateInfo info, VkImageSubresourceRange subresourceRange);
 
 	void TransitionImageLayout(VulkanDevice& vkDev,
 		VkFormat format,
