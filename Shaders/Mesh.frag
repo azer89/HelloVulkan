@@ -25,12 +25,11 @@ layout(binding = 8) uniform samplerCube specularMap;
 layout(binding = 9) uniform samplerCube diffuseMap;
 layout(binding = 10) uniform sampler2D brdfLUT;
 
-const int NUM_LIGHTS = 4;
-
 // Specular max LOD
 const float MAX_REFLECTION_LOD = 4.0;
 
-// Hardcoded lights
+// TODO Use SSBO and push constant
+const int NUM_LIGHTS = 4;
 vec3 lightPositions[NUM_LIGHTS] = 
 { 
 	vec3(-1.5, 0.7,  1.5),
@@ -152,13 +151,10 @@ void main()
 	vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
 
 	vec3 ambient = (kD * diffuse + specular) * ao;
-
 	vec3 color = ambient + emissive + Lo;
 
-	// HDR tonemapping
+	// HDR tonemapping and gamma correction
 	color = color / (color + vec3(1.0));
-
-	// Gamma correction
 	color = pow(color, vec3(1.0 / 2.2));
 
 	fragColor = vec4(color, 1.0);

@@ -3,7 +3,9 @@
 /*
 Fragment shader to filter a cubemap into a specular (prefilter) cubemap
 
-This shader is based on https://learnopengl.com/
+This shader is based on 
+[1] https://learnopengl.com/
+[2] http://www.codinglabs.net/article_physically_based_rendering.aspx
 */
 
 layout(set = 0, binding = 0) uniform samplerCube cubeMap;
@@ -27,7 +29,6 @@ layout(push_constant) uniform PushConstantCubeFilter
 }
 pcParams;
 
-// http://www.codinglabs.net/article_physically_based_rendering.aspx
 vec3 Specular(vec3 N)
 {
 	// Make the simplifying assumption that V equals R equals the normal 

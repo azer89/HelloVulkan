@@ -39,7 +39,7 @@ float AlphaDirectLighting(float roughness)
 	return alpha;
 }
 
-// (Specular G)
+// Specular G
 // Geometry function that describes the self-shadowing property of the microfacets.
 // When a surface is relatively rough, the surface's microfacets can overshadow other
 // microfacets reducing the light the surface reflects.
@@ -50,7 +50,7 @@ float GeometrySchlickGGX(float NoL, float NoV, float alpha)
 	return GL * GV;
 }
 
-// (Specular F)
+// Specular F
 // The Fresnel equation describes the ratio of surface reflection at different surface angles.
 vec3 FresnelSchlick(float cosTheta, vec3 F0)
 {
@@ -64,7 +64,7 @@ vec3 FresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 
 vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, float roughness)
 {
-	float a = roughness * roughness;
+	float a = roughness * roughness; // Roughness remapping
 
 	float phi = 2.0 * PI * Xi.x;
 	float cosTheta = sqrt((1.0 - Xi.y) / (1.0 + (a * a - 1.0) * Xi.y));

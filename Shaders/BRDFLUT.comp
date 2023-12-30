@@ -47,7 +47,7 @@ vec2 BRDF(float NoV, float roughness)
 			float Fc = pow(1.0 - dotVH, 5.0);
 			LUT += vec2(
 				(1.0 - Fc) * G_Vis, // NoV
-				Fc * G_Vis); // roughness
+				Fc * G_Vis); // Roughness
 		}
 	}
 	return LUT / float(SAMPLE_COUNT);
