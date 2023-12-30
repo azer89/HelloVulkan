@@ -8,7 +8,7 @@ An implementation of Physically Based Rendering (PBR), a technique that seeks to
 * Offscreen rendering to generate a cubemap from an equirectangular HDR image.
 * Offscreen rendering to generate both specular and diffuse maps.
 * Compute shader to generate BRDF lookup table.
-* Automatic runtime compilation from GLSL to SPIR-V for convenient development process.
+* Automatic runtime compilation from GLSL to SPIR-V for convenient development phase.
 
 https://github.com/azer89/HelloVulkan/assets/790432/9386c4a0-1c6d-4298-8a1a-7590b44f487b
 
