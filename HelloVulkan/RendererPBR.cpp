@@ -37,7 +37,7 @@ RendererPBR::RendererPBR(
 		CreateUniformBuffers(vkDev, model->modelBuffers_, sizeof(ModelUBO));
 	}
 
-	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_);
+	CreateOnscreenRenderPass(vkDev, true, &renderPass_);
 
 	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthImage_->imageView_, swapchainFramebuffers_);
 

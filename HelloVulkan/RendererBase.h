@@ -76,7 +76,7 @@ protected:
 		VkRenderPass* renderPass,
 		RenderPassType rtType);
 
-	void CreateColorAndDepthRenderPass(
+	void CreateOnscreenRenderPass(
 		VulkanDevice& device, 
 		bool useDepth, 
 		VkRenderPass* renderPass, 

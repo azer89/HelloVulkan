@@ -114,7 +114,7 @@ void RendererBase::CreateOffscreenRenderPass(
 		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
 		.initialLayout = 
 			rtType == RenderPassType::First ?
-			VK_IMAGE_LAYOUT_UNDEFINED :
+			VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL :
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 		.finalLayout = 
 			rtType == RenderPassType::Last ?
@@ -178,7 +178,7 @@ void RendererBase::CreateOffscreenRenderPass(
 	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &renderPassInfo, nullptr, renderPass));
 }
 
-void RendererBase::CreateColorAndDepthRenderPass(
+void RendererBase::CreateOnscreenRenderPass(
 	VulkanDevice& vkDev,
 	bool useDepth,
 	VkRenderPass* renderPass,

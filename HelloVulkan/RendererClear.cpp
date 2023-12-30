@@ -5,7 +5,7 @@ RendererClear::RendererClear(VulkanDevice& vkDev, VulkanImage* depthImage) :
 	RendererBase(vkDev, depthImage), 
 	shouldClearDepth_(depthImage != nullptr)
 {
-	CreateColorAndDepthRenderPass(
+	CreateOnscreenRenderPass(
 		vkDev,
 		shouldClearDepth_,
 		&renderPass_,
