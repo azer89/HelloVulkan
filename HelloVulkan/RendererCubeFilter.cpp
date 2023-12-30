@@ -335,32 +335,7 @@ void RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 	pInfo.depthStencil.depthTestEnable = VK_FALSE;
 	pInfo.depthStencil.depthWriteEnable = VK_FALSE;
 
-	pInfo.rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-	pInfo.rasterizer.pNext = nullptr;
-	pInfo.rasterizer.cullMode = VK_CULL_MODE_NONE;
-	pInfo.rasterizer.depthBiasClamp = 0.f;
-	pInfo.rasterizer.depthBiasConstantFactor = 1.f;
-	pInfo.rasterizer.depthBiasEnable = VK_FALSE;
-	pInfo.rasterizer.depthBiasSlopeFactor = 1.f;
-	pInfo.rasterizer.depthClampEnable = VK_FALSE;
 	pInfo.rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-	pInfo.rasterizer.lineWidth = 1.f;
-	pInfo.rasterizer.rasterizerDiscardEnable = VK_FALSE;
-	pInfo.rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
-
-	pInfo.depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-	pInfo.depthStencil.depthTestEnable = VK_FALSE;
-	pInfo.depthStencil.depthWriteEnable = VK_FALSE;
-	pInfo.depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
-	pInfo.depthStencil.depthBoundsTestEnable = VK_FALSE;
-	pInfo.depthStencil.minDepthBounds = 0.0f; 
-	pInfo.depthStencil.maxDepthBounds = 1.0f; 
-	pInfo.depthStencil.stencilTestEnable = VK_FALSE;
-
-	pInfo.tessellationState.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
-	pInfo.tessellationState.pNext = nullptr;
-	pInfo.tessellationState.flags = 0u;
-	pInfo.tessellationState.patchControlPoints = 0u;
 
 	const VkGraphicsPipelineCreateInfo pipelineInfo = {
 		.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,

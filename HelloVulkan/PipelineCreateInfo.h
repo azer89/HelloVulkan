@@ -57,10 +57,17 @@ struct PipelineCreateInfo
 		}),
 		rasterizer({
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
+			.pNext = nullptr,
+			.depthClampEnable = VK_FALSE,
+			.rasterizerDiscardEnable = VK_FALSE,
 			.polygonMode = VK_POLYGON_MODE_FILL,
 			.cullMode = VK_CULL_MODE_NONE,
 			.frontFace = VK_FRONT_FACE_CLOCKWISE,
-			.lineWidth = 1.0f
+			.depthBiasEnable = VK_FALSE,
+			.depthBiasConstantFactor = 1.f,
+			.depthBiasClamp = 0.f,
+			.depthBiasSlopeFactor = 1.f,
+			.lineWidth = 1.f
 		}),
 		multisampling({
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
@@ -93,10 +100,11 @@ struct PipelineCreateInfo
 		}),
 		depthStencil({
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
-			.depthTestEnable = static_cast<VkBool32>(VK_TRUE),
-			.depthWriteEnable = static_cast<VkBool32>(VK_TRUE),
+			.depthTestEnable = VK_TRUE,
+			.depthWriteEnable = VK_TRUE,
 			.depthCompareOp = VK_COMPARE_OP_LESS,
 			.depthBoundsTestEnable = VK_FALSE,
+			.stencilTestEnable = VK_FALSE,
 			.minDepthBounds = 0.0f,
 			.maxDepthBounds = 1.0f
 		}),
