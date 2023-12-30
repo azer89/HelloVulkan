@@ -142,20 +142,24 @@ void RendererCubeFilter::CreateRenderPass(VulkanDevice& vkDev)
 
 	for (int face = 0; face < FilterSettings::layerCount; ++face)
 	{
-		VkAttachmentDescription info{};
-		info.flags = 0u;
-		info.format = FilterSettings::cubeMapFormat;
-		info.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		info.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-		info.samples = VK_SAMPLE_COUNT_1_BIT;
-		info.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		info.finalLayout = finalLayout;
-		info.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		info.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		VkAttachmentDescription info =
+		{
+			.flags = 0u,
+			.format = FilterSettings::cubeMapFormat,
+			.samples = VK_SAMPLE_COUNT_1_BIT,
+			.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+			.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+			.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+			.finalLayout = finalLayout,
+		};
 
-		VkAttachmentReference ref{};
-		ref.attachment = static_cast<uint32_t>(face);
-		ref.layout = finalLayout;
+		VkAttachmentReference ref =
+		{
+			.attachment = static_cast<uint32_t>(face),
+			.layout = finalLayout
+		};
 
 		m_attachments.push_back(info);
 		m_attachmentRefs.push_back(ref);
