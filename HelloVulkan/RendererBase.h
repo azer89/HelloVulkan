@@ -13,8 +13,8 @@
 enum class RenderPassType
 {
 	Generic,
-	Clear,
-	Finish,
+	First,
+	Last,
 };
 
 class RendererBase
@@ -70,6 +70,11 @@ protected:
 		const size_t dataSize);
 
 	void BeginRenderPass(VkCommandBuffer commandBuffer, size_t currentImage);
+
+	void CreateOffscreenRenderPass(
+		VulkanDevice& device,
+		VkRenderPass* renderPass,
+		RenderPassType rtType);
 
 	void CreateColorAndDepthRenderPass(
 		VulkanDevice& device, 
