@@ -26,6 +26,10 @@ public:
 
 	void Destroy();
 
+	VkCommandBuffer BeginSingleTimeCommands();
+	void EndSingleTimeCommands(VkCommandBuffer commandBuffer);
+
+	// Getter functions below
 	VkDevice GetDevice() const { return device_; }
 	VkPhysicalDevice GetPhysicalDevice() const { return physicalDevice_; }
 	VkSwapchainKHR GetSwapChain() const { return swapchain_; }
@@ -43,16 +47,30 @@ public:
 	VkImageView GetSwapchainImageView(unsigned i) { return swapchainImageViews_[i]; }
 	VkFormat GetSwaphchainImageFormat() { return swapchainImageFormat_; }
 
+	VkSwapchainKHR* GetSwapchainPtr() { return &swapchain_; }
+	VkSemaphore* GetSemaphorePtr() { return &semaphore_; }
+	VkSemaphore* GetRenderSemaphorePtr() { return &renderSemaphore_; }
+	VkCommandBuffer* GetCommandBufferPtr(unsigned int index)
+	{
+		if (index >= commandBuffers_.size())
+		{
+			return nullptr;
+		}
+
+		return &commandBuffers_[index];
+	}
+
+	VkCommandBuffer GetCommandBuffer(unsigned int index)
+	{
+		if (index >= commandBuffers_.size())
+		{
+			return nullptr;
+		}
+
+		return commandBuffers_[index];
+	}
+
 	VkFormat FindDepthFormat();
-
-	VkFormat FindSupportedFormat(
-		const std::vector<VkFormat>& candidates,
-		VkImageTiling tiling,
-		VkFormatFeatureFlags features);
-
-	VkCommandBuffer BeginSingleTimeCommands();
-
-	void EndSingleTimeCommands(VkCommandBuffer commandBuffer);
 
 private:
 	VkResult CreatePhysicalDevice(VkInstance instance);
@@ -83,13 +101,18 @@ private:
 	// Sync
 	VkResult CreateSemaphore(VkSemaphore* outSemaphore);
 
-public:
-	VkSwapchainKHR swapchain_;
+	VkFormat FindSupportedFormat(
+		const std::vector<VkFormat>& candidates,
+		VkImageTiling tiling,
+		VkFormatFeatureFlags features);
+
+private:
 	VkSemaphore semaphore_;
 	VkSemaphore renderSemaphore_;
 	std::vector<VkCommandBuffer> commandBuffers_;
 
-private:
+	VkSwapchainKHR swapchain_;
+
 	// A queue of rendered images waiting to be presented to the screen
 	std::vector<VkImage> swapchainImages_;
 	std::vector<VkImageView> swapchainImageViews_;

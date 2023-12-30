@@ -120,12 +120,12 @@ bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
 		.pNext = nullptr,
 		.waitSemaphoreCount = 1,
-		.pWaitSemaphores = &vulkanDevice.semaphore_,
+		.pWaitSemaphores = vulkanDevice.GetSemaphorePtr(),
 		.pWaitDstStageMask = waitStages,
 		.commandBufferCount = 1,
-		.pCommandBuffers = &vulkanDevice.commandBuffers_[imageIndex],
+		.pCommandBuffers = vulkanDevice.GetCommandBufferPtr(imageIndex),
 		.signalSemaphoreCount = 1,
-		.pSignalSemaphores = &vulkanDevice.renderSemaphore_
+		.pSignalSemaphores = vulkanDevice.GetRenderSemaphorePtr()
 	};
 
 	{
@@ -137,9 +137,9 @@ bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 		.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
 		.pNext = nullptr,
 		.waitSemaphoreCount = 1,
-		.pWaitSemaphores = &vulkanDevice.renderSemaphore_,
+		.pWaitSemaphores = vulkanDevice.GetRenderSemaphorePtr(),
 		.swapchainCount = 1,
-		.pSwapchains = &vulkanDevice.swapchain_,
+		.pSwapchains = vulkanDevice.GetSwapchainPtr(),
 		.pImageIndices = &imageIndex
 	};
 
@@ -156,7 +156,7 @@ bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 
 void AppBase::UpdateCommandBuffer(const std::vector<RendererBase*>& renderers, uint32_t imageIndex)
 {
-	VkCommandBuffer commandBuffer = vulkanDevice.commandBuffers_[imageIndex];
+	VkCommandBuffer commandBuffer = vulkanDevice.GetCommandBuffer(imageIndex);
 
 	const VkCommandBufferBeginInfo bi =
 	{
