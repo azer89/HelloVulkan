@@ -636,10 +636,10 @@ void VulkanImage::GenerateMipmap(
 			.commandBuffer = commandBuffer,
 			.oldLayout = currentImageLayout,
 			.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-			.srcStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-			.srcAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-			.dstStage = VK_PIPELINE_STAGE_TRANSFER_BIT,
-			.dstAccess = VK_ACCESS_TRANSFER_WRITE_BIT },
+			.sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+			.sourceAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+			.destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT,
+			.destinationAccess = VK_ACCESS_TRANSFER_WRITE_BIT },
 			mipSubRange);
 
 		vkCmdBlitImage(
@@ -658,10 +658,10 @@ void VulkanImage::GenerateMipmap(
 			.commandBuffer = commandBuffer,
 			.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 			.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-			.srcStage = VK_PIPELINE_STAGE_TRANSFER_BIT,
-			.srcAccess = VK_ACCESS_TRANSFER_WRITE_BIT,
-			.dstStage = VK_PIPELINE_STAGE_TRANSFER_BIT,
-			.dstAccess = VK_ACCESS_TRANSFER_READ_BIT },
+			.sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT,
+			.sourceAccess = VK_ACCESS_TRANSFER_WRITE_BIT,
+			.destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT,
+			.destinationAccess = VK_ACCESS_TRANSFER_READ_BIT },
 			mipSubRange);
 	}
 
@@ -671,10 +671,10 @@ void VulkanImage::GenerateMipmap(
 			.commandBuffer = commandBuffer,
 			.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 			.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-			.srcStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-			.srcAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-			.dstStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-			.dstAccess = VK_ACCESS_SHADER_READ_BIT 
+			.sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+			.sourceAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+			.destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+			.destinationAccess = VK_ACCESS_SHADER_READ_BIT 
 		});
 	}
 
@@ -699,8 +699,8 @@ void VulkanImage::CreateBarrier(ImageBarrierCreateInfo info, VkImageSubresourceR
 	VkImageMemoryBarrier barrier =
 	{
 		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-		.srcAccessMask = info.srcAccess,
-		.dstAccessMask = info.dstAccess,
+		.srcAccessMask = info.sourceAccess,
+		.dstAccessMask = info.destinationAccess,
 		.oldLayout = info.oldLayout,
 		.newLayout = info.newLayout,
 		.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
@@ -711,8 +711,8 @@ void VulkanImage::CreateBarrier(ImageBarrierCreateInfo info, VkImageSubresourceR
 
 	vkCmdPipelineBarrier(
 		info.commandBuffer, // commandBuffer
-		info.srcStage, // srcStageMask
-		info.dstStage, // dstStageMask
+		info.sourceStage, // srcStageMask
+		info.destinationStage, // dstStageMask
 		0u, // dependencyFlags
 		0u, // memoryBarrierCount
 		nullptr, // pMemoryBarriers

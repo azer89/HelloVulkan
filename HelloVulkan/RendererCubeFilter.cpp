@@ -448,10 +448,10 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 			.commandBuffer = commandBuffer,
 			.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
 			.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-			.srcStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-			.srcAccess = VK_ACCESS_SHADER_READ_BIT,
-			.dstStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-			.dstAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT },
+			.sourceStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+			.sourceAccess = VK_ACCESS_SHADER_READ_BIT,
+			.destinationStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+			.destinationAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT },
 			subresourceRange);
 
 		PushConstantCubeFilter values{};
@@ -492,10 +492,10 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		.commandBuffer = commandBuffer,
 		.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 		.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-		.srcStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-		.srcAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-		.dstStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-		.dstAccess = VK_ACCESS_SHADER_READ_BIT });
+		.sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+		.sourceAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+		.destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+		.destinationAccess = VK_ACCESS_SHADER_READ_BIT });
 
 	vkDev.EndSingleTimeCommands(commandBuffer);
 
