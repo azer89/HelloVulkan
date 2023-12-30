@@ -19,12 +19,14 @@ AppBase::AppBase()
 
 void AppBase::InitVulkan()
 {
+	// Initialize Volk
 	VkResult res = volkInitialize();
 	if (res != VK_SUCCESS)
 	{
 		std::cerr << "Volk Cannot be initialized\n";
 	}
 
+	// Initialize Vulkan instance
 	vulkanInstance.Create();
 	vulkanInstance.SetupDebugCallbacks();
 	vulkanInstance.CreateWindowSurface(glfwWindow);
@@ -108,12 +110,16 @@ bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 		&imageIndex);
 	VK_CHECK(vkResetCommandPool(vulkanDevice.GetDevice(), vulkanDevice.GetCommandPool(), 0));
 
-	if (result != VK_SUCCESS) return false;
+	if (result != VK_SUCCESS)
+	{
+		return false;
+	}
 
 	UpdateUBO(imageIndex);
 	UpdateCommandBuffer(renderers, imageIndex);
 
-	const VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT }; // or even VERTEX_SHADER_STAGE
+	const VkPipelineStageFlags waitStages[] = 
+		{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 
 	const VkSubmitInfo si =
 	{

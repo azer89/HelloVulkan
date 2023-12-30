@@ -289,7 +289,7 @@ VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface, bool supportScreens
 
 VkPresentModeKHR VulkanDevice::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)
 {
-	for (const auto mode : availablePresentModes)
+	for (const VkPresentModeKHR& mode : availablePresentModes)
 	{
 		if (mode == AppSettings::PresentMode)
 		{
@@ -368,7 +368,11 @@ SwapchainSupportDetails VulkanDevice::QuerySwapchainSupport(VkSurfaceKHR surface
 	if (formatCount)
 	{
 		details.formats.resize(formatCount);
-		vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice_, surface, &formatCount, details.formats.data());
+		vkGetPhysicalDeviceSurfaceFormatsKHR(
+			physicalDevice_, 
+			surface, 
+			&formatCount, 
+			details.formats.data());
 	}
 
 	uint32_t presentModeCount;
@@ -401,8 +405,10 @@ bool VulkanDevice::IsDeviceSuitable(VkPhysicalDevice d)
 	VkPhysicalDeviceFeatures deviceFeatures;
 	vkGetPhysicalDeviceFeatures(d, &deviceFeatures);
 
-	const bool isDiscreteGPU = deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
-	const bool isIntegratedGPU = deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU;
+	const bool isDiscreteGPU = 
+		deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
+	const bool isIntegratedGPU = 
+		deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU;
 	const bool isGPU = isDiscreteGPU || isIntegratedGPU;
 
 	return isGPU && deviceFeatures.geometryShader;

@@ -97,22 +97,26 @@ void RendererEquirect2Cube::CreateRenderPass(VulkanDevice& vkDev)
 	std::vector<VkAttachmentDescription> m_attachments;
 	std::vector<VkAttachmentReference> m_attachmentRefs;
 
-	for (int face = 0; face < layerCount; ++face)
+	for (uint32_t face = 0; face < layerCount; ++face)
 	{
-		VkAttachmentDescription info{};
-		info.flags = 0u;
-		info.format = cubeMapFormat;
-		info.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		info.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-		info.samples = VK_SAMPLE_COUNT_1_BIT;
-		info.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		info.finalLayout = finalLayout;
-		info.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		info.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		VkAttachmentDescription info =
+		{
+			.flags = 0u,
+			.format = cubeMapFormat,
+			.samples = VK_SAMPLE_COUNT_1_BIT,
+			.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+			.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+			.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+			.finalLayout = finalLayout
+		};
 
-		VkAttachmentReference ref{};
-		ref.attachment = static_cast<uint32_t>(face);
-		ref.layout = finalLayout;
+		VkAttachmentReference ref =
+		{
+			.attachment = static_cast<uint32_t>(face),
+			.layout = finalLayout,
+		};
 
 		m_attachments.push_back(info);
 		m_attachmentRefs.push_back(ref);
@@ -276,11 +280,11 @@ void RendererEquirect2Cube::CreateOffscreenGraphicsPipeline(
 	pInfo.depthStencil.depthWriteEnable = VK_FALSE;
 	pInfo.depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
 	pInfo.depthStencil.depthBoundsTestEnable = VK_FALSE;
-	pInfo.depthStencil.minDepthBounds = 0.0f; // Optional
-	pInfo.depthStencil.maxDepthBounds = 1.0f; // Optional
+	pInfo.depthStencil.minDepthBounds = 0.0f; 
+	pInfo.depthStencil.maxDepthBounds = 1.0f;
 	pInfo.depthStencil.stencilTestEnable = VK_FALSE;
-	pInfo.depthStencil.front = {}; // Optional
-	pInfo.depthStencil.back = {}; // Optional
+	pInfo.depthStencil.front = {}; 
+	pInfo.depthStencil.back = {};
 
 	pInfo.tessellationState.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
 	pInfo.tessellationState.pNext = nullptr;
@@ -325,16 +329,18 @@ void RendererEquirect2Cube::CreateFrameBuffer(
 	VulkanDevice& vkDev, 
 	std::vector<VkImageView> outputViews)
 {
-	VkFramebufferCreateInfo info{};
-	info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-	info.pNext = nullptr;
-	info.renderPass = renderPass_;
-	info.attachmentCount = static_cast<uint32_t>(outputViews.size());
-	info.pAttachments = outputViews.data();
-	info.width = cubemapSideLength;
-	info.height = cubemapSideLength;
-	info.layers = 1u;
-	info.flags = 0u;
+	VkFramebufferCreateInfo info =
+	{
+		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0u,
+		.renderPass = renderPass_,
+		.attachmentCount = static_cast<uint32_t>(outputViews.size()),
+		.pAttachments = outputViews.data(),
+		.width = cubemapSideLength,
+		.height = cubemapSideLength,
+		.layers = 1u,
+	};
 
 	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &info, nullptr, &frameBuffer_));
 }
