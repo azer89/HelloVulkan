@@ -362,15 +362,15 @@ void RendererEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanImage* ou
 
 	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
 
-	outputEnvMap->CreateBarrier(
-		commandBuffer,
-		VK_IMAGE_LAYOUT_UNDEFINED, // oldLayout
-		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, // newLayout
-		VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, // srcStage
-		VK_ACCESS_SHADER_READ_BIT, // srcAccess
-		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, // dstStage
-		VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT // dstAccess
-	);
+	outputEnvMap->CreateBarrier({
+		.commandBuffer = commandBuffer,
+		.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED, 
+		.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		.sourceStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+		.sourceAccess = VK_ACCESS_SHADER_READ_BIT,
+		.destinationStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+		.destinationAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT
+	});
 
 	vkCmdBindDescriptorSets(
 		commandBuffer,
@@ -402,15 +402,15 @@ void RendererEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanImage* ou
 	vkCmdEndRenderPass(commandBuffer);
 
 	// Convention is to change the layout to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	outputEnvMap->CreateBarrier(
-		commandBuffer,
-		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, // oldLayout
-		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, // newLayout
-		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, // srcStage
-		VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, // srcAccess
-		VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, // dstStage
-		VK_ACCESS_SHADER_READ_BIT // dstAccess
-	);
+	outputEnvMap->CreateBarrier({
+		.commandBuffer = commandBuffer,
+		.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 
+		.sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+		.sourceAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+		.destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+		.destinationAccess = VK_ACCESS_SHADER_READ_BIT
+	});
 
 	vkDev.EndSingleTimeCommands(commandBuffer);
 
