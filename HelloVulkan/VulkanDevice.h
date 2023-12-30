@@ -26,23 +26,23 @@ public:
 
 	void Destroy();
 
-	VkDevice GetDevice() const { return device; }
-	VkPhysicalDevice GetPhysicalDevice() const { return physicalDevice; }
-	VkSwapchainKHR GetSwapChain() const { return swapchain; }
-	VkSemaphore GetSemaphore() const { return semaphore; }
-	VkCommandPool GetCommandPool() const { return commandPool; }
-	VkQueue GetGraphicsQueue() const { return graphicsQueue; }
-	uint32_t GetFrameBufferWidth() const { return framebufferWidth; }
-	uint32_t GetFrameBufferHeight() const { return framebufferHeight; }
-	size_t GetSwapChainImageSize() const { return swapchainImages.size(); }
-	size_t GetDeviceQueueIndicesSize() const { return deviceQueueIndices.size(); }
-	const uint32_t* GetDeviceQueueIndicesData() const { return deviceQueueIndices.data(); }
-	VkCommandBuffer GetComputeCommandBuffer() { return computeCommandBuffer; }
-	VkQueue GetComputeQueue() { return computeQueue; }
+	VkDevice GetDevice() const { return device_; }
+	VkPhysicalDevice GetPhysicalDevice() const { return physicalDevice_; }
+	VkSwapchainKHR GetSwapChain() const { return swapchain_; }
+	VkSemaphore GetSemaphore() const { return semaphore_; }
+	VkCommandPool GetCommandPool() const { return commandPool_; }
+	VkQueue GetGraphicsQueue() const { return graphicsQueue_; }
+	uint32_t GetFrameBufferWidth() const { return framebufferWidth_; }
+	uint32_t GetFrameBufferHeight() const { return framebufferHeight_; }
+	size_t GetSwapChainImageSize() const { return swapchainImages_.size(); }
+	size_t GetDeviceQueueIndicesSize() const { return deviceQueueIndices_.size(); }
+	const uint32_t* GetDeviceQueueIndicesData() const { return deviceQueueIndices_.data(); }
+	VkCommandBuffer GetComputeCommandBuffer() { return computeCommandBuffer_; }
+	VkQueue GetComputeQueue() { return computeQueue_; }
 
 	VkImageView GetSwapchainImageView(unsigned i)
 	{
-		return swapchainImageViews[i];
+		return swapchainImageViews_[i];
 	}
 
 	VkFormat FindDepthFormat();
@@ -71,7 +71,7 @@ private:
 	// Swap chain
 	VkResult CreateSwapchain(VkSurfaceKHR surface, bool supportScreenshots = false);
 	size_t CreateSwapchainImages();
-	bool CreateImageView(
+	bool CreateSwapChainImageView(
 		unsigned imageIndex,
 		VkFormat format, 
 		VkImageAspectFlags aspectFlags,
@@ -86,39 +86,41 @@ private:
 	VkResult CreateSemaphore(VkSemaphore* outSemaphore);
 
 public:
-	VkSwapchainKHR swapchain;
-	VkSemaphore semaphore;
-	VkSemaphore renderSemaphore;
-	std::vector<VkCommandBuffer> commandBuffers;
+	VkSwapchainKHR swapchain_;
+	VkSemaphore semaphore_;
+	VkSemaphore renderSemaphore_;
+	std::vector<VkCommandBuffer> commandBuffers_;
 
 private:
-	uint32_t framebufferWidth;
-	uint32_t framebufferHeight;
+	// A queue of rendered images waiting to be presented to the screen
+	std::vector<VkImage> swapchainImages_;
+	std::vector<VkImageView> swapchainImageViews_;
+	VkFormat swapchainImageFormat_;
 
-	VkDevice device;
-	VkPhysicalDevice physicalDevice;
-	VkQueue graphicsQueue;
+	uint32_t framebufferWidth_;
+	uint32_t framebufferHeight_;
 
-	uint32_t graphicsFamily;
+	VkDevice device_;
+	VkPhysicalDevice physicalDevice_;
+	VkQueue graphicsQueue_;
 
-	std::vector<VkImage> swapchainImages;
-	std::vector<VkImageView> swapchainImageViews;
+	uint32_t graphicsFamily_;
 
-	VkCommandPool commandPool;
+	VkCommandPool commandPool_;
 
 	// Were we initialized with compute capabilities
-	bool useCompute = false;
+	bool useCompute_ = false;
 
 	// [may coincide with graphicsFamily]
-	uint32_t computeFamily;
-	VkQueue computeQueue;
+	uint32_t computeFamily_;
+	VkQueue computeQueue_;
 
 	// A list of all queues (for shared buffer allocation)
-	std::vector<uint32_t> deviceQueueIndices;
-	std::vector<VkQueue> deviceQueues;
+	std::vector<uint32_t> deviceQueueIndices_;
+	std::vector<VkQueue> deviceQueues_;
 
-	VkCommandBuffer computeCommandBuffer;
-	VkCommandPool computeCommandPool;
+	VkCommandBuffer computeCommandBuffer_;
+	VkCommandPool computeCommandPool_;
 };
 
 #endif

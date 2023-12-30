@@ -1,5 +1,6 @@
 #include "VulkanInstance.h"
 #include "VulkanUtility.h"
+#include "AppSettings.h"
 
 #include <vector>
 
@@ -14,11 +15,12 @@ VulkanInstance::~VulkanInstance()
 void VulkanInstance::Create()
 {
 	// https://vulkan.lunarg.com/doc/view/1.1.108.0/windows/validation_layers.html
-	const std::vector<const char*> ValidationLayers =
+	const std::vector<const char*> vLayers =
 	{
 		"VK_LAYER_KHRONOS_validation"
 	};
 
+	// Thic projects only works on Windows
 	const std::vector<const char*> exts =
 	{
 		"VK_KHR_surface",
@@ -33,7 +35,7 @@ void VulkanInstance::Create()
 	{
 		.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
 		.pNext = nullptr,
-		.pApplicationName = "Vulkan",
+		.pApplicationName = AppSettings::ScreenTitle.c_str(),
 		.applicationVersion = VK_MAKE_VERSION(1, 0, 0),
 		.pEngineName = "No Engine",
 		.engineVersion = VK_MAKE_VERSION(1, 0, 0),
@@ -46,14 +48,15 @@ void VulkanInstance::Create()
 		.pNext = nullptr,
 		.flags = 0,
 		.pApplicationInfo = &appinfo,
-		.enabledLayerCount = static_cast<uint32_t>(ValidationLayers.size()),
-		.ppEnabledLayerNames = ValidationLayers.data(),
+		.enabledLayerCount = static_cast<uint32_t>(vLayers.size()),
+		.ppEnabledLayerNames = vLayers.data(),
 		.enabledExtensionCount = static_cast<uint32_t>(exts.size()),
 		.ppEnabledExtensionNames = exts.data()
 	};
 
 	VK_CHECK(vkCreateInstance(&createInfo, nullptr, &instance_));
 
+	// We use Volk to obtain a Vulkan instance
 	volkLoadInstance(instance_);
 }
 

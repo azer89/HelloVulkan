@@ -22,6 +22,8 @@ class RendererBase
 public:
 	explicit RendererBase(const VulkanDevice& vkDev, VulkanImage* depthImage);
 	virtual ~RendererBase();
+
+	// Insert Vulkan commands into the command buffer.
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) = 0;
 
 	void SetPerFrameUBO(const VulkanDevice& vkDev, uint32_t imageIndex, PerFrameUBO ubo)
