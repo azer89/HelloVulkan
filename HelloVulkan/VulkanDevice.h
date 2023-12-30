@@ -40,10 +40,8 @@ public:
 	VkCommandBuffer GetComputeCommandBuffer() { return computeCommandBuffer_; }
 	VkQueue GetComputeQueue() { return computeQueue_; }
 
-	VkImageView GetSwapchainImageView(unsigned i)
-	{
-		return swapchainImageViews_[i];
-	}
+	VkImageView GetSwapchainImageView(unsigned i) { return swapchainImageViews_[i]; }
+	VkFormat GetSwaphchainImageFormat() { return swapchainImageFormat_; }
 
 	VkFormat FindDepthFormat();
 

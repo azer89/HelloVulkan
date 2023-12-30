@@ -83,12 +83,11 @@ void RendererBase::CreateColorAndDepthRenderPass(
 	VulkanDevice& vkDev,
 	bool useDepth,
 	VkRenderPass* renderPass,
-	RenderPassType rtType,
-	VkFormat colorFormat)
+	RenderPassType rtType)
 {
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,
-		.format = colorFormat,
+		.format = vkDev.GetSwaphchainImageFormat(),
 		.samples = VK_SAMPLE_COUNT_1_BIT,
 		.loadOp = rtType == RenderPassType::Clear ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,

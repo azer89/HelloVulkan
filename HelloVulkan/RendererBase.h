@@ -75,8 +75,7 @@ protected:
 		VulkanDevice& device, 
 		bool useDepth, 
 		VkRenderPass* renderPass, 
-		RenderPassType renderPassType = RenderPassType::Generic,
-		VkFormat colorFormat = VK_FORMAT_B8G8R8A8_UNORM);
+		RenderPassType renderPassType = RenderPassType::Generic);
 
 	void CreateColorAndDepthFramebuffers(
 		VulkanDevice& vkDev, 
