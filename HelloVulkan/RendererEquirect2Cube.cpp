@@ -4,9 +4,12 @@
 #include "VulkanShader.h"
 #include "AppSettings.h"
 
-const uint32_t cubemapSideLength = 1024;
-const VkFormat cubeMapFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
-const uint32_t layerCount = 6;
+namespace CubeSettings
+{
+	const uint32_t sideLength = 1024;
+	const VkFormat format = VK_FORMAT_R32G32B32A32_SFLOAT;
+	const uint32_t layerCount = 6;
+}
 
 RendererEquirect2Cube::RendererEquirect2Cube(
 	VulkanDevice& vkDev, 
@@ -52,16 +55,16 @@ void RendererEquirect2Cube::FillCommandBuffer(VkCommandBuffer commandBuffer, siz
 
 void RendererEquirect2Cube::InitializeCubemap(VulkanDevice& vkDev, VulkanImage* cubemap)
 {
-	uint32_t mipmapCount = NumMipMap(cubemapSideLength, cubemapSideLength);
+	uint32_t mipmapCount = NumMipMap(CubeSettings::sideLength, CubeSettings::sideLength);
 
 	cubemap->CreateImage(
 		vkDev.GetDevice(),
 		vkDev.GetPhysicalDevice(),
-		cubemapSideLength,
-		cubemapSideLength,
+		CubeSettings::sideLength,
+		CubeSettings::sideLength,
 		mipmapCount,
-		layerCount,
-		cubeMapFormat,
+		CubeSettings::layerCount,
+		CubeSettings::format,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -73,7 +76,7 @@ void RendererEquirect2Cube::InitializeCubemap(VulkanDevice& vkDev, VulkanImage* 
 		VK_FORMAT_R32G32B32A32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT,
 		VK_IMAGE_VIEW_TYPE_CUBE,
-		layerCount,
+		CubeSettings::layerCount,
 		mipmapCount);
 }
 
@@ -97,43 +100,51 @@ void RendererEquirect2Cube::CreateRenderPass(VulkanDevice& vkDev)
 	std::vector<VkAttachmentDescription> m_attachments;
 	std::vector<VkAttachmentReference> m_attachmentRefs;
 
-	for (int face = 0; face < layerCount; ++face)
+	for (uint32_t face = 0; face < CubeSettings::layerCount; ++face)
 	{
-		VkAttachmentDescription info{};
-		info.flags = 0u;
-		info.format = cubeMapFormat;
-		info.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		info.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-		info.samples = VK_SAMPLE_COUNT_1_BIT;
-		info.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		info.finalLayout = finalLayout;
-		info.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		info.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		VkAttachmentDescription info =
+		{
+			.flags = 0u,
+			.format = CubeSettings::format,
+			.samples = VK_SAMPLE_COUNT_1_BIT,
+			.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+			.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+			.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+			.finalLayout = finalLayout
+		};
 
-		VkAttachmentReference ref{};
-		ref.attachment = static_cast<uint32_t>(face);
-		ref.layout = finalLayout;
+		VkAttachmentReference ref =
+		{
+			.attachment = static_cast<uint32_t>(face),
+			.layout = finalLayout,
+		};
 
 		m_attachments.push_back(info);
 		m_attachmentRefs.push_back(ref);
 	}
 
-	VkSubpassDescription m_subpass{};
-	m_subpass.flags = 0u;
-	m_subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-	m_subpass.colorAttachmentCount = static_cast<uint32_t>(m_attachmentRefs.size());
-	m_subpass.pColorAttachments = m_attachmentRefs.data();
+	VkSubpassDescription subpassDesc =
+	{
+		.flags = 0u,
+		.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+		.colorAttachmentCount = static_cast<uint32_t>(m_attachmentRefs.size()),
+		.pColorAttachments = m_attachmentRefs.data()
+	};
 
-	VkRenderPassCreateInfo m_info{};
-	m_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-	m_info.pNext = nullptr;
-	m_info.flags = 0u;
-	m_info.pSubpasses = &m_subpass;
-	m_info.subpassCount = 1u;
-	m_info.pAttachments = m_attachments.data();
-	m_info.attachmentCount = static_cast<uint32_t>(m_attachments.size());
+	VkRenderPassCreateInfo createInfo =
+	{
+		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0u,
+		.attachmentCount = static_cast<uint32_t>(m_attachments.size()),
+		.pAttachments = m_attachments.data(),
+		.subpassCount = 1u,
+		.pSubpasses = &subpassDesc
+	};
 
-	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &m_info, nullptr, &renderPass_));
+	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &createInfo, nullptr, &renderPass_));
 }
 
 void RendererEquirect2Cube::CreateDescriptorLayout(VulkanDevice& vkDev)
@@ -226,66 +237,25 @@ void RendererEquirect2Cube::CreateOffscreenGraphicsPipeline(
 	// Pipeline create info
 	PipelineCreateInfo pInfo(vkDev);
 
-	pInfo.viewport.width = cubemapSideLength;
-	pInfo.viewport.height = cubemapSideLength;
+	pInfo.viewport.width = CubeSettings::sideLength;
+	pInfo.viewport.height = CubeSettings::sideLength;
 
-	pInfo.scissor.extent = { cubemapSideLength, cubemapSideLength };
+	pInfo.scissor.extent = { CubeSettings::sideLength, CubeSettings::sideLength };
 
 	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
 	colorBlendAttachment.colorWriteMask =
 		VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 	colorBlendAttachment.blendEnable = VK_FALSE;
-	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments(layerCount, colorBlendAttachment);
+	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments(CubeSettings::layerCount, colorBlendAttachment);
 
-	pInfo.colorBlending.attachmentCount = layerCount;
+	pInfo.colorBlending.attachmentCount = CubeSettings::layerCount;
 	pInfo.colorBlending.pAttachments = colorBlendAttachments.data();
 
 	// No depth test
 	pInfo.depthStencil.depthTestEnable = VK_FALSE;
 	pInfo.depthStencil.depthWriteEnable = VK_FALSE;
-
-	pInfo.dynamicState.dynamicStateCount = 0;
-	pInfo.dynamicState.pDynamicStates = nullptr;
-
-	pInfo.rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-	pInfo.rasterizer.pNext = nullptr;
-	pInfo.rasterizer.cullMode = VK_CULL_MODE_NONE;
-	pInfo.rasterizer.depthBiasClamp = 0.f;
-	pInfo.rasterizer.depthBiasConstantFactor = 1.f;
-	pInfo.rasterizer.depthBiasEnable = VK_FALSE;
-	pInfo.rasterizer.depthBiasSlopeFactor = 1.f;
-	pInfo.rasterizer.depthClampEnable = VK_FALSE;
+	
 	pInfo.rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-	pInfo.rasterizer.lineWidth = 1.f;
-	pInfo.rasterizer.rasterizerDiscardEnable = VK_FALSE; 
-	pInfo.rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
-
-	// disable multisampling
-	pInfo.multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-	pInfo.multisampling.pNext = nullptr;
-	pInfo.multisampling.alphaToCoverageEnable = VK_FALSE;
-	pInfo.multisampling.alphaToOneEnable = VK_FALSE;
-	pInfo.multisampling.flags = 0u;
-	pInfo.multisampling.minSampleShading = 0.f;
-	pInfo.multisampling.pSampleMask = nullptr;
-	pInfo.multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
-	pInfo.multisampling.sampleShadingEnable = VK_FALSE;
-
-	pInfo.depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-	pInfo.depthStencil.depthTestEnable = VK_FALSE;
-	pInfo.depthStencil.depthWriteEnable = VK_FALSE;
-	pInfo.depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
-	pInfo.depthStencil.depthBoundsTestEnable = VK_FALSE;
-	pInfo.depthStencil.minDepthBounds = 0.0f; // Optional
-	pInfo.depthStencil.maxDepthBounds = 1.0f; // Optional
-	pInfo.depthStencil.stencilTestEnable = VK_FALSE;
-	pInfo.depthStencil.front = {}; // Optional
-	pInfo.depthStencil.back = {}; // Optional
-
-	pInfo.tessellationState.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
-	pInfo.tessellationState.pNext = nullptr;
-	pInfo.tessellationState.flags = 0u;
-	pInfo.tessellationState.patchControlPoints = 0u;
 
 	const VkGraphicsPipelineCreateInfo pipelineInfo = {
 		.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
@@ -325,16 +295,18 @@ void RendererEquirect2Cube::CreateFrameBuffer(
 	VulkanDevice& vkDev, 
 	std::vector<VkImageView> outputViews)
 {
-	VkFramebufferCreateInfo info{};
-	info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-	info.pNext = nullptr;
-	info.renderPass = renderPass_;
-	info.attachmentCount = static_cast<uint32_t>(outputViews.size());
-	info.pAttachments = outputViews.data();
-	info.width = cubemapSideLength;
-	info.height = cubemapSideLength;
-	info.layers = 1u;
-	info.flags = 0u;
+	VkFramebufferCreateInfo info =
+	{
+		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0u,
+		.renderPass = renderPass_,
+		.attachmentCount = static_cast<uint32_t>(outputViews.size()),
+		.pAttachments = outputViews.data(),
+		.width = CubeSettings::sideLength,
+		.height = CubeSettings::sideLength,
+		.layers = 1u,
+	};
 
 	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &info, nullptr, &frameBuffer_));
 }
@@ -345,8 +317,8 @@ void RendererEquirect2Cube::CreateCubemapViews(
 	VulkanImage* cubemap,
 	std::vector<VkImageView>& cubemapViews)
 {
-	cubemapViews = std::vector<VkImageView>(layerCount, VK_NULL_HANDLE);
-	for (size_t i = 0; i < layerCount; i++)
+	cubemapViews = std::vector<VkImageView>(CubeSettings::layerCount, VK_NULL_HANDLE);
+	for (size_t i = 0; i < CubeSettings::layerCount; i++)
 	{
 		const VkImageViewCreateInfo viewInfo =
 		{
@@ -419,7 +391,7 @@ void RendererEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanImage* ou
 	info.pNext = nullptr;
 	info.renderPass = renderPass_;
 	info.framebuffer = frameBuffer_;
-	info.renderArea = { 0u, 0u, cubemapSideLength, cubemapSideLength };
+	info.renderArea = { 0u, 0u, CubeSettings::sideLength, CubeSettings::sideLength };
 	info.clearValueCount = static_cast<uint32_t>(clearValues.size());
 	info.pClearValues = clearValues.data();
 
@@ -446,7 +418,7 @@ void RendererEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanImage* ou
 	outputEnvMap->CreateDefaultSampler(vkDev.GetDevice());
 
 	// Destroy image views
-	for (size_t i = 0; i < layerCount; i++)
+	for (size_t i = 0; i < CubeSettings::layerCount; i++)
 	{
 		vkDestroyImageView(vkDev.GetDevice(), outputViews[i], nullptr);
 	}

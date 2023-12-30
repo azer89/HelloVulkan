@@ -10,58 +10,66 @@ void VulkanDevice::CreateCompute
 	VkPhysicalDeviceFeatures deviceFeatures
 )
 {
-	framebufferWidth = width;
-	framebufferHeight = height;
+	framebufferWidth_ = width;
+	framebufferHeight_ = height;
 
 	VK_CHECK(CreatePhysicalDevice(instance.GetInstance()));
-	graphicsFamily = FindQueueFamilies(VK_QUEUE_GRAPHICS_BIT);
-	computeFamily = FindQueueFamilies(VK_QUEUE_COMPUTE_BIT);
-	VK_CHECK(CreateDeviceWithCompute(deviceFeatures, graphicsFamily, computeFamily));
+	graphicsFamily_ = FindQueueFamilies(VK_QUEUE_GRAPHICS_BIT);
+	computeFamily_ = FindQueueFamilies(VK_QUEUE_COMPUTE_BIT);
+	VK_CHECK(CreateDeviceWithCompute(deviceFeatures, graphicsFamily_, computeFamily_));
 
-	deviceQueueIndices.push_back(graphicsFamily);
-	if (graphicsFamily != computeFamily)
-		deviceQueueIndices.push_back(computeFamily);
+	deviceQueueIndices_.push_back(graphicsFamily_);
+	if (graphicsFamily_ != computeFamily_)
+	{
+		deviceQueueIndices_.push_back(computeFamily_);
+	}
 
-	vkGetDeviceQueue(device, graphicsFamily, 0, &graphicsQueue);
-	if (graphicsQueue == nullptr)
+	vkGetDeviceQueue(device_, graphicsFamily_, 0, &graphicsQueue_);
+	if (graphicsQueue_ == nullptr)
+	{
 		std::cerr << "Cannot get graphics queue\n";
+	}
 
-	vkGetDeviceQueue(device, computeFamily, 0, &computeQueue);
-	if (computeQueue == nullptr)
+	vkGetDeviceQueue(device_, computeFamily_, 0, &computeQueue_);
+	if (computeQueue_ == nullptr)
+	{
 		std::cerr << "Cannot get compute queue\n";
+	}
 
 	VkBool32 presentSupported = 0;
-	vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, graphicsFamily, instance.GetSurface(), &presentSupported);
+	vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice_, graphicsFamily_, instance.GetSurface(), &presentSupported);
 	if (!presentSupported)
+	{
 		std::cerr << "Cannot get surface support KHR\n";
+	}
 
 	// TODO Create a swapchain class
 	VK_CHECK(CreateSwapchain(instance.GetSurface()));
 	const size_t imageCount = CreateSwapchainImages();
-	commandBuffers.resize(imageCount);
+	commandBuffers_.resize(imageCount);
 
-	VK_CHECK(CreateSemaphore(&semaphore));
-	VK_CHECK(CreateSemaphore(&renderSemaphore));
+	VK_CHECK(CreateSemaphore(&semaphore_));
+	VK_CHECK(CreateSemaphore(&renderSemaphore_));
 
 	const VkCommandPoolCreateInfo cpi =
 	{
 		.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
 		.flags = 0,
-		.queueFamilyIndex = graphicsFamily
+		.queueFamilyIndex = graphicsFamily_
 	};
 
-	VK_CHECK(vkCreateCommandPool(device, &cpi, nullptr, &commandPool));
+	VK_CHECK(vkCreateCommandPool(device_, &cpi, nullptr, &commandPool_));
 
 	const VkCommandBufferAllocateInfo ai =
 	{
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
 		.pNext = nullptr,
-		.commandPool = commandPool,
+		.commandPool = commandPool_,
 		.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-		.commandBufferCount = static_cast<uint32_t>(swapchainImages.size()),
+		.commandBufferCount = static_cast<uint32_t>(swapchainImages_.size()),
 	};
 
-	VK_CHECK(vkAllocateCommandBuffers(device, &ai, &commandBuffers[0]));
+	VK_CHECK(vkAllocateCommandBuffers(device_, &ai, &commandBuffers_[0]));
 
 	{
 		// Create compute command pool
@@ -70,43 +78,45 @@ void VulkanDevice::CreateCompute
 			.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, // Allow command from this pool buffers to be reset
-			.queueFamilyIndex = computeFamily
+			.queueFamilyIndex = computeFamily_
 		};
-		VK_CHECK(vkCreateCommandPool(device, &cpi1, nullptr, &computeCommandPool));
+		VK_CHECK(vkCreateCommandPool(device_, &cpi1, nullptr, &computeCommandPool_));
 
 		const VkCommandBufferAllocateInfo ai1 =
 		{
 			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
 			.pNext = nullptr,
-			.commandPool = computeCommandPool,
+			.commandPool = computeCommandPool_,
 			.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
 			.commandBufferCount = 1,
 		};
 
-		VK_CHECK(vkAllocateCommandBuffers(device, &ai1, &computeCommandBuffer));
+		VK_CHECK(vkAllocateCommandBuffers(device_, &ai1, &computeCommandBuffer_));
 	}
 
-	useCompute = true;
+	useCompute_ = true;
 }
 
 void VulkanDevice::Destroy()
 {
-	for (size_t i = 0; i < swapchainImages.size(); i++)
-		vkDestroyImageView(device, swapchainImageViews[i], nullptr);
-
-	vkDestroySwapchainKHR(device, swapchain, nullptr);
-
-	vkDestroyCommandPool(device, commandPool, nullptr);
-
-	vkDestroySemaphore(device, semaphore, nullptr);
-	vkDestroySemaphore(device, renderSemaphore, nullptr);
-
-	if (useCompute)
+	for (size_t i = 0; i < swapchainImages_.size(); i++)
 	{
-		vkDestroyCommandPool(device, computeCommandPool, nullptr);
+		vkDestroyImageView(device_, swapchainImageViews_[i], nullptr);
 	}
 
-	vkDestroyDevice(device, nullptr);
+	vkDestroySwapchainKHR(device_, swapchain_, nullptr);
+
+	vkDestroyCommandPool(device_, commandPool_, nullptr);
+
+	vkDestroySemaphore(device_, semaphore_, nullptr);
+	vkDestroySemaphore(device_, renderSemaphore_, nullptr);
+
+	if (useCompute_)
+	{
+		vkDestroyCommandPool(device_, computeCommandPool_, nullptr);
+	}
+
+	vkDestroyDevice(device_, nullptr);
 }
 
 VkResult VulkanDevice::CreatePhysicalDevice(VkInstance instance)
@@ -114,7 +124,11 @@ VkResult VulkanDevice::CreatePhysicalDevice(VkInstance instance)
 	uint32_t deviceCount = 0;
 	VK_CHECK_RET(vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr));
 
-	if (!deviceCount) return VK_ERROR_INITIALIZATION_FAILED;
+	if (!deviceCount)
+	{
+		std::cerr << "Device count is zero\n";
+		return VK_ERROR_INITIALIZATION_FAILED;
+	}
 
 	std::vector<VkPhysicalDevice> devices(deviceCount);
 	VK_CHECK_RET(vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data()));
@@ -123,7 +137,7 @@ VkResult VulkanDevice::CreatePhysicalDevice(VkInstance instance)
 	{
 		if (IsDeviceSuitable(d))
 		{
-			physicalDevice = d;
+			physicalDevice_ = d;
 			return VK_SUCCESS;
 		}
 	}
@@ -134,19 +148,26 @@ VkResult VulkanDevice::CreatePhysicalDevice(VkInstance instance)
 uint32_t VulkanDevice::FindQueueFamilies(VkQueueFlags desiredFlags)
 {
 	uint32_t familyCount = 0;
-	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &familyCount, nullptr);
+	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice_, &familyCount, nullptr);
 
 	std::vector<VkQueueFamilyProperties> families(familyCount);
-	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &familyCount, families.data());
+	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice_, &familyCount, families.data());
 
 	for (uint32_t i = 0; i != families.size(); i++)
+	{
 		if (families[i].queueCount > 0 && families[i].queueFlags & desiredFlags)
+		{
 			return i;
+		}
+	}
 
 	return 0;
 }
 
-VkResult VulkanDevice::CreateDeviceWithCompute(VkPhysicalDeviceFeatures deviceFeatures, uint32_t graphicsFamily, uint32_t computeFamily)
+VkResult VulkanDevice::CreateDeviceWithCompute(
+	VkPhysicalDeviceFeatures deviceFeatures, 
+	uint32_t graphicsFamily, 
+	uint32_t computeFamily)
 {
 	const std::vector<const char*> extensions =
 	{
@@ -154,7 +175,9 @@ VkResult VulkanDevice::CreateDeviceWithCompute(VkPhysicalDeviceFeatures deviceFe
 	};
 
 	if (graphicsFamily == computeFamily)
+	{
 		return CreateDevice(deviceFeatures, graphicsFamily);
+	}
 
 	const float queuePriorities[2] = { 0.f, 0.f };
 	const VkDeviceQueueCreateInfo qciGfx =
@@ -193,7 +216,7 @@ VkResult VulkanDevice::CreateDeviceWithCompute(VkPhysicalDeviceFeatures deviceFe
 		.pEnabledFeatures = &deviceFeatures
 	};
 
-	return vkCreateDevice(physicalDevice, &ci, nullptr, &device);
+	return vkCreateDevice(physicalDevice_, &ci, nullptr, &device_);
 }
 
 VkResult VulkanDevice::CreateDevice(VkPhysicalDeviceFeatures deviceFeatures, uint32_t graphicsFamily)
@@ -230,13 +253,14 @@ VkResult VulkanDevice::CreateDevice(VkPhysicalDeviceFeatures deviceFeatures, uin
 		.pEnabledFeatures = &deviceFeatures
 	};
 
-	return vkCreateDevice(physicalDevice, &ci, nullptr, &device);
+	return vkCreateDevice(physicalDevice_, &ci, nullptr, &device_);
 }
 
 VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface, bool supportScreenshots)
 {
 	auto swapchainSupport = QuerySwapchainSupport(surface);
-	VkSurfaceFormatKHR surfaceFormat = { VK_FORMAT_B8G8R8A8_UNORM, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
+	swapchainImageFormat_ = VK_FORMAT_B8G8R8A8_UNORM;
+	VkSurfaceFormatKHR surfaceFormat = { swapchainImageFormat_, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
 	auto presentMode = ChooseSwapPresentMode(swapchainSupport.presentModes);
 
 	const VkSwapchainCreateInfoKHR ci =
@@ -247,12 +271,12 @@ VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface, bool supportScreens
 		.minImageCount = ChooseSwapImageCount(swapchainSupport.capabilities),
 		.imageFormat = surfaceFormat.format,
 		.imageColorSpace = surfaceFormat.colorSpace,
-		.imageExtent = {.width = framebufferWidth, .height = framebufferHeight },
+		.imageExtent = {.width = framebufferWidth_, .height = framebufferHeight_ },
 		.imageArrayLayers = 1,
 		.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | (supportScreenshots ? VK_IMAGE_USAGE_TRANSFER_SRC_BIT : 0u),
 		.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE,
 		.queueFamilyIndexCount = 1,
-		.pQueueFamilyIndices = &graphicsFamily,
+		.pQueueFamilyIndices = &graphicsFamily_,
 		.preTransform = swapchainSupport.capabilities.currentTransform,
 		.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
 		.presentMode = presentMode,
@@ -260,12 +284,12 @@ VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface, bool supportScreens
 		.oldSwapchain = VK_NULL_HANDLE
 	};
 
-	return vkCreateSwapchainKHR(device, &ci, nullptr, &swapchain);
+	return vkCreateSwapchainKHR(device_, &ci, nullptr, &swapchain_);
 }
 
 VkPresentModeKHR VulkanDevice::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)
 {
-	for (const auto mode : availablePresentModes)
+	for (const VkPresentModeKHR& mode : availablePresentModes)
 	{
 		if (mode == AppSettings::PresentMode)
 		{
@@ -279,9 +303,7 @@ VkPresentModeKHR VulkanDevice::ChooseSwapPresentMode(const std::vector<VkPresent
 uint32_t VulkanDevice::ChooseSwapImageCount(const VkSurfaceCapabilitiesKHR& capabilities)
 {
 	const uint32_t imageCount = capabilities.minImageCount + 1;
-
 	const bool imageCountExceeded = capabilities.maxImageCount > 0 && imageCount > capabilities.maxImageCount;
-
 	return imageCountExceeded ? capabilities.maxImageCount : imageCount;
 }
 
@@ -289,28 +311,37 @@ uint32_t VulkanDevice::ChooseSwapImageCount(const VkSurfaceCapabilitiesKHR& capa
 size_t VulkanDevice::CreateSwapchainImages()
 {
 	uint32_t imageCount = 0;
-	VK_CHECK(vkGetSwapchainImagesKHR(device, swapchain, &imageCount, nullptr));
+	VK_CHECK(vkGetSwapchainImagesKHR(device_, swapchain_, &imageCount, nullptr));
 
-	swapchainImages.resize(imageCount);
-	swapchainImageViews.resize(imageCount);
+	swapchainImages_.resize(imageCount);
+	swapchainImageViews_.resize(imageCount);
 
-	VK_CHECK(vkGetSwapchainImagesKHR(device, swapchain, &imageCount, swapchainImages.data()));
+	VK_CHECK(vkGetSwapchainImagesKHR(device_, swapchain_, &imageCount, swapchainImages_.data()));
 
 	for (unsigned i = 0; i < imageCount; i++)
-		if (!CreateImageView(i, VK_FORMAT_B8G8R8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT))
+	{
+		if (!CreateSwapChainImageView(i, swapchainImageFormat_, VK_IMAGE_ASPECT_COLOR_BIT))
+		{
 			exit(0);
-
+		}
+	}
 	return static_cast<size_t>(imageCount);
 }
 
-bool VulkanDevice::CreateImageView(unsigned imageIndex, VkFormat format, VkImageAspectFlags aspectFlags, VkImageViewType viewType, uint32_t layerCount, uint32_t mipLevels)
+bool VulkanDevice::CreateSwapChainImageView(
+	unsigned imageIndex,
+	VkFormat format,
+	VkImageAspectFlags aspectFlags,
+	VkImageViewType viewType,
+	uint32_t layerCount,
+	uint32_t mipLevels)
 {
 	const VkImageViewCreateInfo viewInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.image = swapchainImages[imageIndex],
+		.image = swapchainImages_[imageIndex],
 		.viewType = viewType,
 		.format = format,
 		.subresourceRange =
@@ -323,30 +354,34 @@ bool VulkanDevice::CreateImageView(unsigned imageIndex, VkFormat format, VkImage
 		}
 	};
 
-	return (vkCreateImageView(device, &viewInfo, nullptr, &swapchainImageViews[imageIndex]) == VK_SUCCESS);
+	return (vkCreateImageView(device_, &viewInfo, nullptr, &swapchainImageViews_[imageIndex]) == VK_SUCCESS);
 }
 
 SwapchainSupportDetails VulkanDevice::QuerySwapchainSupport(VkSurfaceKHR surface)
 {
 	SwapchainSupportDetails details;
-	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &details.capabilities);
+	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice_, surface, &details.capabilities);
 
 	uint32_t formatCount;
-	vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &formatCount, nullptr);
+	vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice_, surface, &formatCount, nullptr);
 
 	if (formatCount)
 	{
 		details.formats.resize(formatCount);
-		vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &formatCount, details.formats.data());
+		vkGetPhysicalDeviceSurfaceFormatsKHR(
+			physicalDevice_, 
+			surface, 
+			&formatCount, 
+			details.formats.data());
 	}
 
 	uint32_t presentModeCount;
-	vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, nullptr);
+	vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice_, surface, &presentModeCount, nullptr);
 
 	if (presentModeCount)
 	{
 		details.presentModes.resize(presentModeCount);
-		vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, details.presentModes.data());
+		vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice_, surface, &presentModeCount, details.presentModes.data());
 	}
 
 	return details;
@@ -359,7 +394,7 @@ VkResult VulkanDevice::CreateSemaphore(VkSemaphore* outSemaphore)
 		.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
 	};
 
-	return vkCreateSemaphore(device, &ci, nullptr, outSemaphore);
+	return vkCreateSemaphore(device_, &ci, nullptr, outSemaphore);
 }
 
 bool VulkanDevice::IsDeviceSuitable(VkPhysicalDevice d)
@@ -370,8 +405,10 @@ bool VulkanDevice::IsDeviceSuitable(VkPhysicalDevice d)
 	VkPhysicalDeviceFeatures deviceFeatures;
 	vkGetPhysicalDeviceFeatures(d, &deviceFeatures);
 
-	const bool isDiscreteGPU = deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
-	const bool isIntegratedGPU = deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU;
+	const bool isDiscreteGPU = 
+		deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
+	const bool isIntegratedGPU = 
+		deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU;
 	const bool isGPU = isDiscreteGPU || isIntegratedGPU;
 
 	return isGPU && deviceFeatures.geometryShader;
@@ -394,7 +431,7 @@ VkFormat VulkanDevice::FindSupportedFormat(
 	for (VkFormat format : candidates)
 	{
 		VkFormatProperties props;
-		vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &props);
+		vkGetPhysicalDeviceFormatProperties(physicalDevice_, format, &props);
 
 		if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features)
 		{
@@ -406,7 +443,7 @@ VkFormat VulkanDevice::FindSupportedFormat(
 		}
 	}
 
-	printf("failed to find supported format!\n");
+	std::cerr << "Failed to find supported format\n";
 	exit(0);
 }
 
@@ -417,12 +454,12 @@ VkCommandBuffer VulkanDevice::BeginSingleTimeCommands()
 	const VkCommandBufferAllocateInfo allocInfo = {
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
 		.pNext = nullptr,
-		.commandPool = commandPool,
+		.commandPool = commandPool_,
 		.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
 		.commandBufferCount = 1
 	};
 
-	vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer);
+	vkAllocateCommandBuffers(device_, &allocInfo, &commandBuffer);
 
 	const VkCommandBufferBeginInfo beginInfo = {
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -452,8 +489,8 @@ void VulkanDevice::EndSingleTimeCommands(VkCommandBuffer commandBuffer)
 		.pSignalSemaphores = nullptr
 	};
 
-	vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
-	vkQueueWaitIdle(graphicsQueue);
+	vkQueueSubmit(graphicsQueue_, 1, &submitInfo, VK_NULL_HANDLE);
+	vkQueueWaitIdle(graphicsQueue_);
 
-	vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
+	vkFreeCommandBuffers(device_, commandPool_, 1, &commandBuffer);
 }

@@ -11,7 +11,7 @@ namespace FilterSettings
 	const uint32_t outputDiffuseMipmapCount = 1u;
 	const uint32_t outputDiffuseSize = 32;
 	const uint32_t outputSpecularSize = 128;
-	const VkFormat cubeMapFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
+	const VkFormat format = VK_FORMAT_R32G32B32A32_SFLOAT;
 	const uint32_t layerCount = 6;
 }
 
@@ -117,7 +117,7 @@ void RendererCubeFilter::InitializeOutputCubemap(
 		sideLength,
 		numMipmap,
 		FilterSettings::layerCount,
-		FilterSettings::cubeMapFormat,
+		FilterSettings::format,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -142,41 +142,49 @@ void RendererCubeFilter::CreateRenderPass(VulkanDevice& vkDev)
 
 	for (int face = 0; face < FilterSettings::layerCount; ++face)
 	{
-		VkAttachmentDescription info{};
-		info.flags = 0u;
-		info.format = FilterSettings::cubeMapFormat;
-		info.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		info.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-		info.samples = VK_SAMPLE_COUNT_1_BIT;
-		info.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		info.finalLayout = finalLayout;
-		info.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		info.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		VkAttachmentDescription info =
+		{
+			.flags = 0u,
+			.format = FilterSettings::format,
+			.samples = VK_SAMPLE_COUNT_1_BIT,
+			.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+			.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+			.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+			.finalLayout = finalLayout,
+		};
 
-		VkAttachmentReference ref{};
-		ref.attachment = static_cast<uint32_t>(face);
-		ref.layout = finalLayout;
+		VkAttachmentReference ref =
+		{
+			.attachment = static_cast<uint32_t>(face),
+			.layout = finalLayout
+		};
 
 		m_attachments.push_back(info);
 		m_attachmentRefs.push_back(ref);
 	}
 
-	VkSubpassDescription m_subpass{};
-	m_subpass.flags = 0u;
-	m_subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-	m_subpass.colorAttachmentCount = static_cast<uint32_t>(m_attachmentRefs.size());
-	m_subpass.pColorAttachments = m_attachmentRefs.data();
+	VkSubpassDescription subpassDesc =
+	{
+		.flags = 0u,
+		.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+		.colorAttachmentCount = static_cast<uint32_t>(m_attachmentRefs.size()),
+		.pColorAttachments = m_attachmentRefs.data(),
+	};
 
-	VkRenderPassCreateInfo m_info{};
-	m_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-	m_info.pNext = nullptr;
-	m_info.flags = 0u;
-	m_info.pSubpasses = &m_subpass;
-	m_info.subpassCount = 1u;
-	m_info.pAttachments = m_attachments.data();
-	m_info.attachmentCount = static_cast<uint32_t>(m_attachments.size());
+	VkRenderPassCreateInfo createInfo =
+	{
+		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0u,
+		.attachmentCount = static_cast<uint32_t>(m_attachments.size()),
+		.pAttachments = m_attachments.data(),
+		.subpassCount = 1u,
+		.pSubpasses = &subpassDesc,
+	};
 
-	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &m_info, nullptr, &renderPass_));
+	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &createInfo, nullptr, &renderPass_));
 }
 
 void RendererCubeFilter::CreateDescriptorLayout(VulkanDevice& vkDev)
@@ -331,43 +339,7 @@ void RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 	pInfo.depthStencil.depthTestEnable = VK_FALSE;
 	pInfo.depthStencil.depthWriteEnable = VK_FALSE;
 
-	pInfo.rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-	pInfo.rasterizer.pNext = nullptr;
-	pInfo.rasterizer.cullMode = VK_CULL_MODE_NONE;
-	pInfo.rasterizer.depthBiasClamp = 0.f;
-	pInfo.rasterizer.depthBiasConstantFactor = 1.f;
-	pInfo.rasterizer.depthBiasEnable = VK_FALSE;
-	pInfo.rasterizer.depthBiasSlopeFactor = 1.f;
-	pInfo.rasterizer.depthClampEnable = VK_FALSE;
 	pInfo.rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-	pInfo.rasterizer.lineWidth = 1.f;
-	pInfo.rasterizer.rasterizerDiscardEnable = VK_FALSE;
-	pInfo.rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
-
-	// Disable multisampling
-	pInfo.multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-	pInfo.multisampling.pNext = nullptr;
-	pInfo.multisampling.alphaToCoverageEnable = VK_FALSE;
-	pInfo.multisampling.alphaToOneEnable = VK_FALSE;
-	pInfo.multisampling.flags = 0u;
-	pInfo.multisampling.minSampleShading = 0.f;
-	pInfo.multisampling.pSampleMask = nullptr;
-	pInfo.multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
-	pInfo.multisampling.sampleShadingEnable = VK_FALSE;
-
-	pInfo.depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-	pInfo.depthStencil.depthTestEnable = VK_FALSE;
-	pInfo.depthStencil.depthWriteEnable = VK_FALSE;
-	pInfo.depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
-	pInfo.depthStencil.depthBoundsTestEnable = VK_FALSE;
-	pInfo.depthStencil.minDepthBounds = 0.0f; 
-	pInfo.depthStencil.maxDepthBounds = 1.0f; 
-	pInfo.depthStencil.stencilTestEnable = VK_FALSE;
-
-	pInfo.tessellationState.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
-	pInfo.tessellationState.pNext = nullptr;
-	pInfo.tessellationState.flags = 0u;
-	pInfo.tessellationState.patchControlPoints = 0u;
 
 	const VkGraphicsPipelineCreateInfo pipelineInfo = {
 		.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
@@ -482,7 +454,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 			subresourceRange);
 
 		PushConstantCubeFilter values{};
-		values.roughness = filterType == CubeFilterType::Diffuse ?
+		values.roughness = filterType == CubeFilterType::Diffuse || outputMipMapCount == 1 ?
 			0.f :
 			static_cast<float>(i) / static_cast<float>(outputMipMapCount - 1);
 		values.sampleCount = FilterSettings::sampleCount;
@@ -496,14 +468,16 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 
 		const std::vector<VkClearValue> clearValues(6u, { 0.0f, 0.0f, 1.0f, 1.0f });
 
-		VkRenderPassBeginInfo info{};
-		info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		info.pNext = nullptr;
-		info.renderPass = renderPass_;
-		info.framebuffer = frameBuffer;
-		info.renderArea = { 0u, 0u, targetSize, targetSize };
-		info.clearValueCount = static_cast<uint32_t>(clearValues.size());
-		info.pClearValues = clearValues.data();
+		VkRenderPassBeginInfo info =
+		{
+			.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+			.pNext = nullptr,
+			.renderPass = renderPass_,
+			.framebuffer = frameBuffer,
+			.renderArea = { 0u, 0u, targetSize, targetSize },
+			.clearValueCount = static_cast<uint32_t>(clearValues.size()),
+			.pClearValues = clearValues.data(),
+		};
 
 		vkCmdBeginRenderPass(commandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
 

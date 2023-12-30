@@ -83,12 +83,11 @@ void RendererBase::CreateColorAndDepthRenderPass(
 	VulkanDevice& vkDev,
 	bool useDepth,
 	VkRenderPass* renderPass,
-	RenderPassType rtType,
-	VkFormat colorFormat)
+	RenderPassType rtType)
 {
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,
-		.format = colorFormat,
+		.format = vkDev.GetSwaphchainImageFormat(),
 		.samples = VK_SAMPLE_COUNT_1_BIT,
 		.loadOp = rtType == RenderPassType::Clear ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
@@ -406,18 +405,18 @@ VkWriteDescriptorSet RendererBase::BufferWriteDescriptorSet(
 	uint32_t bindIdx,
 	VkDescriptorType dType)
 {
-	return VkWriteDescriptorSet
+	return 
 	{
-		VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-		nullptr,
-		ds,
-		bindIdx,
-		0,
-		1,
-		dType,
-		nullptr,
-		bi,
-		nullptr
+		.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+		.pNext = nullptr,
+		.dstSet = ds,
+		.dstBinding = bindIdx,
+		.dstArrayElement = 0,
+		.descriptorCount = 1,
+		.descriptorType = dType,
+		.pImageInfo = nullptr,
+		.pBufferInfo = bi,
+		.pTexelBufferView = nullptr
 	};
 }
 
@@ -426,17 +425,17 @@ VkWriteDescriptorSet RendererBase::ImageWriteDescriptorSet(
 	const VkDescriptorImageInfo* ii,
 	uint32_t bindIdx)
 {
-	return VkWriteDescriptorSet
+	return 
 	{
-		VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-		nullptr,
-		ds,
-		bindIdx,
-		0,
-		1,
-		VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-		ii,
-		nullptr,
-		nullptr
+		.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+		.pNext = nullptr,
+		.dstSet = ds,
+		.dstBinding = bindIdx,
+		.dstArrayElement = 0,
+		.descriptorCount = 1,
+		.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+		.pImageInfo = ii,
+		.pBufferInfo = nullptr,
+		.pTexelBufferView = nullptr
 	};
 }

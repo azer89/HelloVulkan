@@ -34,24 +34,24 @@ struct VertexData
 		std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
 		attributeDescriptions.push_back(
 		{ 
-			0, 
-			0, 
-			VK_FORMAT_R32G32B32A32_SFLOAT, 
-			offsetof(VertexData, position_) 
+			.location = 0, 
+			.binding = 0, 
+			.format = VK_FORMAT_R32G32B32A32_SFLOAT, 
+			.offset = offsetof(VertexData, position_) 
 		});
 		attributeDescriptions.push_back(
 		{ 
-			1, 
-			0, 
-			VK_FORMAT_R32G32B32A32_SFLOAT, 
-			offsetof(VertexData, normal_) 
+			.location = 1,
+			.binding = 0,
+			.format = VK_FORMAT_R32G32B32A32_SFLOAT,
+			.offset = offsetof(VertexData, normal_)
 		});
 		attributeDescriptions.push_back(
 		{ 
-			2, 
-			0, 
-			VK_FORMAT_R32G32B32A32_SFLOAT, 
-			offsetof(VertexData, textureCoordinate_)
+			.location = 2,
+			.binding = 0,
+			.format = VK_FORMAT_R32G32B32A32_SFLOAT,
+			.offset = offsetof(VertexData, textureCoordinate_)
 		});
 		return attributeDescriptions;
 	}
@@ -93,11 +93,6 @@ public:
 	void Create(VulkanDevice& vkDev, const char* filename);
 
 	void Destroy(VkDevice device);
-
-	/*void SetModelUBO(const VulkanDevice& vkDev, uint32_t imageIndex, ModelUBO ubo)
-	{
-		UpdateUniformBuffer(vkDev.GetDevice(), modelBuffers_[imageIndex], &ubo, sizeof(ModelUBO));
-	}*/
 
 private:
 	// SSBO, currently not used

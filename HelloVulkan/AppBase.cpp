@@ -19,12 +19,14 @@ AppBase::AppBase()
 
 void AppBase::InitVulkan()
 {
+	// Initialize Volk
 	VkResult res = volkInitialize();
 	if (res != VK_SUCCESS)
 	{
 		std::cerr << "Volk Cannot be initialized\n";
 	}
 
+	// Initialize Vulkan instance
 	vulkanInstance.Create();
 	vulkanInstance.SetupDebugCallbacks();
 	vulkanInstance.CreateWindowSurface(glfwWindow);
@@ -108,24 +110,28 @@ bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 		&imageIndex);
 	VK_CHECK(vkResetCommandPool(vulkanDevice.GetDevice(), vulkanDevice.GetCommandPool(), 0));
 
-	if (result != VK_SUCCESS) return false;
+	if (result != VK_SUCCESS)
+	{
+		return false;
+	}
 
 	UpdateUBO(imageIndex);
 	UpdateCommandBuffer(renderers, imageIndex);
 
-	const VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT }; // or even VERTEX_SHADER_STAGE
+	const VkPipelineStageFlags waitStages[] = 
+		{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 
 	const VkSubmitInfo si =
 	{
 		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
 		.pNext = nullptr,
 		.waitSemaphoreCount = 1,
-		.pWaitSemaphores = &vulkanDevice.semaphore,
+		.pWaitSemaphores = vulkanDevice.GetSemaphorePtr(),
 		.pWaitDstStageMask = waitStages,
 		.commandBufferCount = 1,
-		.pCommandBuffers = &vulkanDevice.commandBuffers[imageIndex],
+		.pCommandBuffers = vulkanDevice.GetCommandBufferPtr(imageIndex),
 		.signalSemaphoreCount = 1,
-		.pSignalSemaphores = &vulkanDevice.renderSemaphore
+		.pSignalSemaphores = vulkanDevice.GetRenderSemaphorePtr()
 	};
 
 	{
@@ -137,9 +143,9 @@ bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 		.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
 		.pNext = nullptr,
 		.waitSemaphoreCount = 1,
-		.pWaitSemaphores = &vulkanDevice.renderSemaphore,
+		.pWaitSemaphores = vulkanDevice.GetRenderSemaphorePtr(),
 		.swapchainCount = 1,
-		.pSwapchains = &vulkanDevice.swapchain,
+		.pSwapchains = vulkanDevice.GetSwapchainPtr(),
 		.pImageIndices = &imageIndex
 	};
 
@@ -156,7 +162,7 @@ bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 
 void AppBase::UpdateCommandBuffer(const std::vector<RendererBase*>& renderers, uint32_t imageIndex)
 {
-	VkCommandBuffer commandBuffer = vulkanDevice.commandBuffers[imageIndex];
+	VkCommandBuffer commandBuffer = vulkanDevice.GetCommandBuffer(imageIndex);
 
 	const VkCommandBufferBeginInfo bi =
 	{

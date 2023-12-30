@@ -22,6 +22,8 @@ class RendererBase
 public:
 	explicit RendererBase(const VulkanDevice& vkDev, VulkanImage* depthImage);
 	virtual ~RendererBase();
+
+	// Insert Vulkan commands into the command buffer.
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) = 0;
 
 	void SetPerFrameUBO(const VulkanDevice& vkDev, uint32_t imageIndex, PerFrameUBO ubo)
@@ -73,8 +75,7 @@ protected:
 		VulkanDevice& device, 
 		bool useDepth, 
 		VkRenderPass* renderPass, 
-		RenderPassType renderPassType = RenderPassType::Generic,
-		VkFormat colorFormat = VK_FORMAT_B8G8R8A8_UNORM);
+		RenderPassType renderPassType = RenderPassType::Generic);
 
 	void CreateColorAndDepthFramebuffers(
 		VulkanDevice& vkDev, 
