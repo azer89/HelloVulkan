@@ -82,7 +82,14 @@ protected:
 		VkRenderPass* renderPass, 
 		RenderPassType renderPassType = RenderPassType::Generic);
 
-	void CreateColorAndDepthFramebuffers(
+	void CreateOffscreenFrameBuffer(
+		VulkanDevice& vkDev,
+		VkRenderPass renderPass,
+		VkImageView outputImageView,
+		VkImageView depthImageView,
+		VkFramebuffer& framebuffers);
+
+	void CreateOnscreenFramebuffers(
 		VulkanDevice& vkDev, 
 		VkRenderPass renderPass, 
 		VkImageView depthImageView, 

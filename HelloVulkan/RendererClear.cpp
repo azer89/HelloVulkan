@@ -11,7 +11,7 @@ RendererClear::RendererClear(VulkanDevice& vkDev, VulkanImage* depthImage) :
 		&renderPass_,
 		RenderPassType::First);
 
-	CreateColorAndDepthFramebuffers(
+	CreateOnscreenFramebuffers(
 		vkDev, 
 		renderPass_, 
 		depthImage_->imageView_, 

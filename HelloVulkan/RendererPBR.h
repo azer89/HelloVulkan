@@ -23,8 +23,8 @@ public:
 	std::vector<Model*> models_;
 
 private:
-	bool CreateDescriptorLayout(VulkanDevice& vkDev);
-	bool CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh);
+	void CreateDescriptorLayout(VulkanDevice& vkDev);
+	void CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh);
 
 private:
 	VulkanImage* envMap_;

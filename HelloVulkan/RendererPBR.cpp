@@ -39,7 +39,7 @@ RendererPBR::RendererPBR(
 
 	CreateOnscreenRenderPass(vkDev, true, &renderPass_);
 
-	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthImage_->imageView_, swapchainFramebuffers_);
+	CreateOnscreenFramebuffers(vkDev, renderPass_, depthImage_->imageView_, swapchainFramebuffers_);
 
 	CreateDescriptorPool(
 		vkDev, 
@@ -111,7 +111,7 @@ void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t curren
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-bool RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
+void RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 {
 	std::vector<VkDescriptorSetLayoutBinding> bindings;
 
@@ -172,11 +172,9 @@ bool RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 	};
 
 	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));
-
-	return true;
 }
 
-bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh)
+void RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh)
 {
 	size_t swapchainLength = vkDev.GetSwapChainImageSize();
 
@@ -284,6 +282,4 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 			0, 
 			nullptr);
 	}
-
-	return true;
 }

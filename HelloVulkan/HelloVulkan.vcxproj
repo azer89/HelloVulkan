@@ -149,6 +149,7 @@
     <ClCompile Include="RendererSkybox.cpp" />
     <ClCompile Include="RendererFinish.cpp" />
     <ClCompile Include="RendererPBR.cpp" />
+    <ClCompile Include="RendererTonemap.cpp" />
     <ClCompile Include="VulkanBuffer.cpp" />
     <ClCompile Include="VulkanImage.cpp" />
     <ClCompile Include="VulkanInstance.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="RendererSkybox.h" />
     <ClInclude Include="RendererFinish.h" />
     <ClInclude Include="RendererPBR.h" />
+    <ClInclude Include="RendererTonemap.h" />
     <ClInclude Include="TextureMapper.h" />
     <ClInclude Include="UBO.h" />
     <ClInclude Include="VulkanBuffer.h" />

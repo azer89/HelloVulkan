@@ -19,7 +19,7 @@ private:
 
 	std::vector<VkDescriptorSet> descriptorSets_;
 
-	bool CreateDescriptorLayoutAndSet(VulkanDevice& vkDev);
+	void CreateDescriptorLayoutAndSet(VulkanDevice& vkDev);
 };
 
 #endif

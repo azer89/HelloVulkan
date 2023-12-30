@@ -19,7 +19,7 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
 	
-	CreateColorAndDepthFramebuffers(
+	CreateOnscreenFramebuffers(
 		vkDev, 
 		renderPass_, 
 		depthImage_->imageView_, 
@@ -69,7 +69,7 @@ void RendererSkybox::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t cur
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-bool RendererSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
+void RendererSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 {
 	const std::array<VkDescriptorSetLayoutBinding, 2> bindings = {
 		DescriptorSetLayoutBinding(
@@ -137,6 +137,4 @@ bool RendererSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 			0, 
 			nullptr);
 	}
-
-	return true;
 }
