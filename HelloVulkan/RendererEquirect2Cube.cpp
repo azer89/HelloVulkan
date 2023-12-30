@@ -4,9 +4,12 @@
 #include "VulkanShader.h"
 #include "AppSettings.h"
 
-const uint32_t cubemapSideLength = 1024;
-const VkFormat cubeMapFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
-const uint32_t layerCount = 6;
+namespace CubeSettings
+{
+	const uint32_t sideLength = 1024;
+	const VkFormat format = VK_FORMAT_R32G32B32A32_SFLOAT;
+	const uint32_t layerCount = 6;
+}
 
 RendererEquirect2Cube::RendererEquirect2Cube(
 	VulkanDevice& vkDev, 
@@ -52,16 +55,16 @@ void RendererEquirect2Cube::FillCommandBuffer(VkCommandBuffer commandBuffer, siz
 
 void RendererEquirect2Cube::InitializeCubemap(VulkanDevice& vkDev, VulkanImage* cubemap)
 {
-	uint32_t mipmapCount = NumMipMap(cubemapSideLength, cubemapSideLength);
+	uint32_t mipmapCount = NumMipMap(CubeSettings::sideLength, CubeSettings::sideLength);
 
 	cubemap->CreateImage(
 		vkDev.GetDevice(),
 		vkDev.GetPhysicalDevice(),
-		cubemapSideLength,
-		cubemapSideLength,
+		CubeSettings::sideLength,
+		CubeSettings::sideLength,
 		mipmapCount,
-		layerCount,
-		cubeMapFormat,
+		CubeSettings::layerCount,
+		CubeSettings::format,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -73,7 +76,7 @@ void RendererEquirect2Cube::InitializeCubemap(VulkanDevice& vkDev, VulkanImage* 
 		VK_FORMAT_R32G32B32A32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT,
 		VK_IMAGE_VIEW_TYPE_CUBE,
-		layerCount,
+		CubeSettings::layerCount,
 		mipmapCount);
 }
 
@@ -97,12 +100,12 @@ void RendererEquirect2Cube::CreateRenderPass(VulkanDevice& vkDev)
 	std::vector<VkAttachmentDescription> m_attachments;
 	std::vector<VkAttachmentReference> m_attachmentRefs;
 
-	for (uint32_t face = 0; face < layerCount; ++face)
+	for (uint32_t face = 0; face < CubeSettings::layerCount; ++face)
 	{
 		VkAttachmentDescription info =
 		{
 			.flags = 0u,
-			.format = cubeMapFormat,
+			.format = CubeSettings::format,
 			.samples = VK_SAMPLE_COUNT_1_BIT,
 			.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
@@ -234,18 +237,18 @@ void RendererEquirect2Cube::CreateOffscreenGraphicsPipeline(
 	// Pipeline create info
 	PipelineCreateInfo pInfo(vkDev);
 
-	pInfo.viewport.width = cubemapSideLength;
-	pInfo.viewport.height = cubemapSideLength;
+	pInfo.viewport.width = CubeSettings::sideLength;
+	pInfo.viewport.height = CubeSettings::sideLength;
 
-	pInfo.scissor.extent = { cubemapSideLength, cubemapSideLength };
+	pInfo.scissor.extent = { CubeSettings::sideLength, CubeSettings::sideLength };
 
 	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
 	colorBlendAttachment.colorWriteMask =
 		VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 	colorBlendAttachment.blendEnable = VK_FALSE;
-	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments(layerCount, colorBlendAttachment);
+	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments(CubeSettings::layerCount, colorBlendAttachment);
 
-	pInfo.colorBlending.attachmentCount = layerCount;
+	pInfo.colorBlending.attachmentCount = CubeSettings::layerCount;
 	pInfo.colorBlending.pAttachments = colorBlendAttachments.data();
 
 	// No depth test
@@ -300,8 +303,8 @@ void RendererEquirect2Cube::CreateFrameBuffer(
 		.renderPass = renderPass_,
 		.attachmentCount = static_cast<uint32_t>(outputViews.size()),
 		.pAttachments = outputViews.data(),
-		.width = cubemapSideLength,
-		.height = cubemapSideLength,
+		.width = CubeSettings::sideLength,
+		.height = CubeSettings::sideLength,
 		.layers = 1u,
 	};
 
@@ -314,8 +317,8 @@ void RendererEquirect2Cube::CreateCubemapViews(
 	VulkanImage* cubemap,
 	std::vector<VkImageView>& cubemapViews)
 {
-	cubemapViews = std::vector<VkImageView>(layerCount, VK_NULL_HANDLE);
-	for (size_t i = 0; i < layerCount; i++)
+	cubemapViews = std::vector<VkImageView>(CubeSettings::layerCount, VK_NULL_HANDLE);
+	for (size_t i = 0; i < CubeSettings::layerCount; i++)
 	{
 		const VkImageViewCreateInfo viewInfo =
 		{
@@ -388,7 +391,7 @@ void RendererEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanImage* ou
 	info.pNext = nullptr;
 	info.renderPass = renderPass_;
 	info.framebuffer = frameBuffer_;
-	info.renderArea = { 0u, 0u, cubemapSideLength, cubemapSideLength };
+	info.renderArea = { 0u, 0u, CubeSettings::sideLength, CubeSettings::sideLength };
 	info.clearValueCount = static_cast<uint32_t>(clearValues.size());
 	info.pClearValues = clearValues.data();
 
@@ -415,7 +418,7 @@ void RendererEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanImage* ou
 	outputEnvMap->CreateDefaultSampler(vkDev.GetDevice());
 
 	// Destroy image views
-	for (size_t i = 0; i < layerCount; i++)
+	for (size_t i = 0; i < CubeSettings::layerCount; i++)
 	{
 		vkDestroyImageView(vkDev.GetDevice(), outputViews[i], nullptr);
 	}

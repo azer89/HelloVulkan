@@ -11,7 +11,7 @@ namespace FilterSettings
 	const uint32_t outputDiffuseMipmapCount = 1u;
 	const uint32_t outputDiffuseSize = 32;
 	const uint32_t outputSpecularSize = 128;
-	const VkFormat cubeMapFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
+	const VkFormat format = VK_FORMAT_R32G32B32A32_SFLOAT;
 	const uint32_t layerCount = 6;
 }
 
@@ -117,7 +117,7 @@ void RendererCubeFilter::InitializeOutputCubemap(
 		sideLength,
 		numMipmap,
 		FilterSettings::layerCount,
-		FilterSettings::cubeMapFormat,
+		FilterSettings::format,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -145,7 +145,7 @@ void RendererCubeFilter::CreateRenderPass(VulkanDevice& vkDev)
 		VkAttachmentDescription info =
 		{
 			.flags = 0u,
-			.format = FilterSettings::cubeMapFormat,
+			.format = FilterSettings::format,
 			.samples = VK_SAMPLE_COUNT_1_BIT,
 			.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
