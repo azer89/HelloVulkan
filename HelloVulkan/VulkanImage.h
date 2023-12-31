@@ -103,6 +103,8 @@ public:
 		VkFormat texFormat,
 		VkImageCreateFlags flags = 0);
 
+	void CreateColorResources(VulkanDevice& vkDev, uint32_t width, uint32_t height);
+
 	void CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint32_t height);
 
 	void GenerateMipmap(

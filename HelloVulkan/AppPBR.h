@@ -6,6 +6,7 @@
 #include "RendererClear.h"
 #include "RendererFinish.h"
 #include "RendererPBR.h"
+#include "RendererTonemap.h"
 #include "VulkanImage.h"
 #include "Model.h"
 
@@ -25,19 +26,21 @@ public:
 private:
 	std::vector<RendererBase*> renderers_;
 
-	std::unique_ptr<RendererSkybox> skyboxPtr_;
 	std::unique_ptr<RendererClear> clearPtr_;
-	std::unique_ptr<RendererFinish> finishPtr_;
+	std::unique_ptr<RendererSkybox> skyboxPtr_;
 	std::unique_ptr<RendererPBR> pbrPtr_;
-
+	std::unique_ptr<RendererTonemap> tonemapPtr_;
+	std::unique_ptr<RendererFinish> finishPtr_;
+	
 	// Cubemap generated from HDR
 	VulkanImage environmentCubemap_;
 
 	// PBR stuff
 	VulkanImage diffuseCubemap_;
-	VulkanImage brdfLut_;
 	VulkanImage specularCubemap_;
+	VulkanImage brdfLut_;
 
+	VulkanImage colorImage_;
 	VulkanImage depthImage_;
 
 	float modelRotation_;

@@ -75,6 +75,9 @@
     <ClCompile Include="RendererBRDFLUT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RendererTonemap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppSettings.h">
@@ -146,6 +149,9 @@
     <ClInclude Include="RendererBRDFLUT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RendererTonemap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\Cube.vert">
@@ -179,6 +185,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="..\Shaders\CubeFilterSpecular.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Shaders\Tonemap.frag">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

@@ -51,24 +51,45 @@ void AppPBR::Init()
 	depthImage_.CreateDepthResources(vulkanDevice,
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
 		static_cast<uint32_t>(AppSettings::ScreenHeight));
+	colorImage_.CreateColorResources(vulkanDevice,
+		static_cast<uint32_t>(AppSettings::ScreenWidth),
+		static_cast<uint32_t>(AppSettings::ScreenHeight));
 
 	// Renderers
-	clearPtr_ = std::make_unique<RendererClear>(vulkanDevice, &depthImage_);
-	finishPtr_ = std::make_unique<RendererFinish>(vulkanDevice, &depthImage_);
+	clearPtr_ = std::make_unique<RendererClear>(
+		vulkanDevice, 
+		&depthImage_);
+	skyboxPtr_ = std::make_unique<RendererSkybox>(
+		vulkanDevice,
+		&environmentCubemap_,
+		&depthImage_,
+		&colorImage_,
+		RenderPassBit::OffScreen_First);
 	pbrPtr_ = std::make_unique<RendererPBR>(
 		vulkanDevice,
 		&depthImage_,
 		&specularCubemap_,
 		&diffuseCubemap_, 
 		&brdfLut_,
-		models);
-	skyboxPtr_ = std::make_unique<RendererSkybox>(vulkanDevice, &environmentCubemap_, &depthImage_);
+		models,
+		&colorImage_,
+		RenderPassBit::OffScreen_Last);
+	tonemapPtr_ = std::make_unique<RendererTonemap>(
+		vulkanDevice,
+		&colorImage_,
+		&depthImage_
+	);
+	finishPtr_ = std::make_unique<RendererFinish>(
+		vulkanDevice, 
+		&depthImage_);
 
 	renderers_ =
 	{
+		// Must be in order
 		clearPtr_.get(),
 		skyboxPtr_.get(),
 		pbrPtr_.get(),
+		tonemapPtr_.get(),
 		finishPtr_.get()
 	};
 }
@@ -77,6 +98,7 @@ void AppPBR::DestroyResources()
 {
 	// Destroy resources
 	depthImage_.Destroy(vulkanDevice.GetDevice());
+	colorImage_.Destroy(vulkanDevice.GetDevice());
 	environmentCubemap_.Destroy(vulkanDevice.GetDevice());
 	diffuseCubemap_.Destroy(vulkanDevice.GetDevice());
 	specularCubemap_.Destroy(vulkanDevice.GetDevice());
@@ -86,6 +108,7 @@ void AppPBR::DestroyResources()
 	finishPtr_.reset();
 	skyboxPtr_.reset();
 	pbrPtr_.reset();
+	tonemapPtr_.reset();
 }
 
 void AppPBR::UpdateUBO(uint32_t imageIndex)

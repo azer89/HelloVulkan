@@ -8,11 +8,17 @@
 #include <array>
 
 // Constructor
-RendererBase::RendererBase(const VulkanDevice& vkDev, VulkanImage* depthImage) :
+RendererBase::RendererBase(
+	const VulkanDevice& vkDev, 
+	VulkanImage* depthImage,
+	VulkanImage* offscreenColorImage,
+	uint8_t renderPassBit) :
 	device_(vkDev.GetDevice()), 
 	framebufferWidth_(vkDev.GetFrameBufferWidth()), 
 	framebufferHeight_(vkDev.GetFrameBufferHeight()), 
-	depthImage_(depthImage)
+	depthImage_(depthImage),
+	offscreenColorImage_(offscreenColorImage),
+	renderPassBit_(renderPassBit)
 {
 }
 
@@ -39,6 +45,18 @@ RendererBase::~RendererBase()
 
 void RendererBase::BeginRenderPass(VkCommandBuffer commandBuffer, size_t currentImage)
 {
+	BeginRenderPass(commandBuffer, swapchainFramebuffers_[currentImage]);
+}
+
+void RendererBase::BeginRenderPass(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer)
+{
+	// TODO Refactor this
+	bool offscreenFirst = renderPassBit_ & RenderPassBit::OffScreen_First;
+	const VkClearValue clearValues[1] =
+	{
+		VkClearValue {.color = { 1.0f, 1.0f, 1.0f, 1.0f } },
+	};
+
 	const VkRect2D screenRect = {
 		.offset = { 0, 0 },
 		.extent = {.width = framebufferWidth_, .height = framebufferHeight_ }
@@ -48,8 +66,10 @@ void RendererBase::BeginRenderPass(VkCommandBuffer commandBuffer, size_t current
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
 		.pNext = nullptr,
 		.renderPass = renderPass_,
-		.framebuffer = swapchainFramebuffers_[currentImage],
-		.renderArea = screenRect
+		.framebuffer = framebuffer,
+		.renderArea = screenRect,
+		.clearValueCount = offscreenFirst ? 1u : 0u,
+		.pClearValues = offscreenFirst ? &clearValues[0] : nullptr,
 	};
 
 	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
@@ -79,24 +99,128 @@ void RendererBase::CreateUniformBuffers(
 	}
 }
 
-void RendererBase::CreateColorAndDepthRenderPass(
+void RendererBase::CreateOffscreenRenderPass(
 	VulkanDevice& vkDev,
-	bool useDepth,
 	VkRenderPass* renderPass,
-	RenderPassType rtType)
+	uint8_t flag)
 {
+	bool first = flag & RenderPassBit::OffScreen_First;
+	bool last = flag & RenderPassBit::OffScreen_Last;
+
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,
 		.format = vkDev.GetSwaphchainImageFormat(),
 		.samples = VK_SAMPLE_COUNT_1_BIT,
-		.loadOp = rtType == RenderPassType::Clear ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD,
+		.loadOp = 
+			first ?
+			VK_ATTACHMENT_LOAD_OP_CLEAR :
+			VK_ATTACHMENT_LOAD_OP_LOAD,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-		.initialLayout = rtType == RenderPassType::Clear ?
+		.initialLayout = 
+			first ? 
+			VK_IMAGE_LAYOUT_UNDEFINED : 
+			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		.finalLayout = 
+			last ? 
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL:
+			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+	};
+
+	const VkAttachmentReference colorAttachmentRef = {
+		.attachment = 0,
+		.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+	};
+
+	VkAttachmentDescription depthAttachment = {
+		.flags = 0,
+		.format = vkDev.FindDepthFormat(),
+		.samples = VK_SAMPLE_COUNT_1_BIT,
+		.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD,
+		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+		.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+		.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+	};
+
+	const VkAttachmentReference depthAttachmentRef = {
+		.attachment = 1,
+		.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+	};
+
+	std::vector<VkSubpassDependency> dependencies = {
+		{
+			.srcSubpass = VK_SUBPASS_EXTERNAL,
+			.dstSubpass = 0,
+			.srcStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+			.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+			.srcAccessMask = VK_ACCESS_SHADER_READ_BIT,
+			.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+			.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT
+		},
+		{
+			.srcSubpass = 0,
+			.dstSubpass = VK_SUBPASS_EXTERNAL,
+			.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+			.dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+			.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+			.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
+			.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT
+		}
+	};
+
+	const VkSubpassDescription subpass = {
+		.flags = 0,
+		.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+		.inputAttachmentCount = 0,
+		.pInputAttachments = nullptr,
+		.colorAttachmentCount = 1,
+		.pColorAttachments = &colorAttachmentRef,
+		.pResolveAttachments = nullptr,
+		.pDepthStencilAttachment = &depthAttachmentRef,
+		.preserveAttachmentCount = 0,
+		.pPreserveAttachments = nullptr
+	};
+
+	std::array<VkAttachmentDescription, 2> attachments = { colorAttachment, depthAttachment };
+
+	const VkRenderPassCreateInfo renderPassInfo = {
+		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0,
+		.attachmentCount = static_cast<uint32_t>(attachments.size()),
+		.pAttachments = attachments.data(),
+		.subpassCount = 1,
+		.pSubpasses = &subpass,
+		.dependencyCount = static_cast<uint32_t>(dependencies.size()),
+		.pDependencies = dependencies.data()
+	};
+
+	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &renderPassInfo, nullptr, renderPass));
+}
+
+void RendererBase::CreateOnscreenRenderPass(
+	VulkanDevice& vkDev,
+	VkRenderPass* renderPass,
+	uint8_t flag)
+{
+	bool first = flag & RenderPassBit::OnScreen_First;
+	bool last = flag & RenderPassBit::OnScreen_Last;
+
+	VkAttachmentDescription colorAttachment = {
+		.flags = 0,
+		.format = vkDev.GetSwaphchainImageFormat(),
+		.samples = VK_SAMPLE_COUNT_1_BIT,
+		.loadOp = first ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD,
+		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+		.initialLayout = first ?
 			VK_IMAGE_LAYOUT_UNDEFINED :  
 			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		.finalLayout = rtType == RenderPassType::Finish ?
+		.finalLayout = last?
 			VK_IMAGE_LAYOUT_PRESENT_SRC_KHR : 
 			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	};
@@ -108,16 +232,16 @@ void RendererBase::CreateColorAndDepthRenderPass(
 
 	VkAttachmentDescription depthAttachment = {
 		.flags = 0,
-		.format = useDepth ? vkDev.FindDepthFormat() : VK_FORMAT_D32_SFLOAT,
+		.format = vkDev.FindDepthFormat(),
 		.samples = VK_SAMPLE_COUNT_1_BIT,
-		.loadOp = rtType == RenderPassType::Clear ?
+		.loadOp = first ?
 				VK_ATTACHMENT_LOAD_OP_CLEAR : 
 				VK_ATTACHMENT_LOAD_OP_LOAD,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-		.initialLayout = rtType == RenderPassType::Clear ?
-			VK_IMAGE_LAYOUT_UNDEFINED :  
+		.initialLayout = first ?
+			VK_IMAGE_LAYOUT_UNDEFINED :
 			VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 		.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 	};
@@ -146,7 +270,7 @@ void RendererBase::CreateColorAndDepthRenderPass(
 		.colorAttachmentCount = 1,
 		.pColorAttachments = &colorAttachmentRef,
 		.pResolveAttachments = nullptr,
-		.pDepthStencilAttachment = useDepth ? &depthAttachmentRef : nullptr,
+		.pDepthStencilAttachment = &depthAttachmentRef,
 		.preserveAttachmentCount = 0,
 		.pPreserveAttachments = nullptr
 	};
@@ -157,7 +281,7 @@ void RendererBase::CreateColorAndDepthRenderPass(
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.attachmentCount = static_cast<uint32_t>(useDepth ? 2 : 1),
+		.attachmentCount = static_cast<uint32_t>(attachments.size()),
 		.pAttachments = attachments.data(),
 		.subpassCount = 1,
 		.pSubpasses = &subpass,
@@ -168,7 +292,31 @@ void RendererBase::CreateColorAndDepthRenderPass(
 	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &renderPassInfo, nullptr, renderPass));
 }
 
-void RendererBase::CreateColorAndDepthFramebuffers(
+void RendererBase::CreateOffscreenFrameBuffer(
+	VulkanDevice& vkDev,
+	VkRenderPass renderPass,
+	VkImageView colorImageView,
+	VkImageView depthImageView,
+	VkFramebuffer& framebuffer)
+{
+	std::array<VkImageView, 2> attachments = { colorImageView, depthImageView };
+
+	const VkFramebufferCreateInfo framebufferInfo = {
+		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0,
+		.renderPass = renderPass,
+		.attachmentCount = static_cast<uint32_t>(attachments.size()),
+		.pAttachments = attachments.data(),
+		.width = vkDev.GetFrameBufferWidth(),
+		.height = vkDev.GetFrameBufferHeight(),
+		.layers = 1
+	};
+
+	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo, nullptr, &framebuffer));
+}
+
+void RendererBase::CreateOnscreenFramebuffers(
 	VulkanDevice& vkDev,
 	VkRenderPass renderPass,
 	VkImageView depthImageView,

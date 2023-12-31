@@ -4,13 +4,12 @@
 RendererFinish::RendererFinish(VulkanDevice& vkDev, VulkanImage* depthImage) : 
 	RendererBase(vkDev, depthImage)
 {
-	CreateColorAndDepthRenderPass(
+	CreateOnscreenRenderPass(
 		vkDev,
-		(depthImage != nullptr),
 		&renderPass_, 
-		RenderPassType::Finish);
+		RenderPassBit::OnScreen_Last);
 
-	CreateColorAndDepthFramebuffers(
+	CreateOnscreenFramebuffers(
 		vkDev, 
 		renderPass_, 
 		depthImage_->imageView_, 

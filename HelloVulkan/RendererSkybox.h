@@ -9,7 +9,9 @@ class RendererSkybox final : public RendererBase
 public:
 	RendererSkybox(VulkanDevice& vkDev, 
 		VulkanImage* envMap,
-		VulkanImage* depthImage);
+		VulkanImage* depthImage,
+		VulkanImage* offscreenColorImage = nullptr,
+		uint8_t renderBit = 0u);
 	virtual ~RendererSkybox();
 
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
@@ -17,9 +19,10 @@ public:
 private:
 	VulkanImage* envMap_;
 
+
 	std::vector<VkDescriptorSet> descriptorSets_;
 
-	bool CreateDescriptorLayoutAndSet(VulkanDevice& vkDev);
+	void CreateDescriptorLayoutAndSet(VulkanDevice& vkDev);
 };
 
 #endif

@@ -13,7 +13,9 @@ public:
 		VulkanImage* envMap,
 		VulkanImage* diffuseMap,
 		VulkanImage* brdfLUT,
-		std::vector<Model*> models);
+		std::vector<Model*> models,
+		VulkanImage* offscreenColorImage = nullptr,
+		uint8_t renderBit = 0u);
 	 ~RendererPBR();
 
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
@@ -23,13 +25,16 @@ public:
 	std::vector<Model*> models_;
 
 private:
-	bool CreateDescriptorLayout(VulkanDevice& vkDev);
-	bool CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh);
+	void CreateDescriptorLayout(VulkanDevice& vkDev);
+	void CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh);
 
 private:
 	VulkanImage* envMap_;
 	VulkanImage* diffuseMap_;
 	VulkanImage* brdfLUT_;
+
+	//VulkanImage* offscreenColorImage_;
+	//VkFramebuffer offscreenFramebuffer_;
 };
 
 #endif

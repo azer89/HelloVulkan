@@ -10,17 +10,22 @@
 
 #include <string>
 
-enum class RenderPassType
+enum RenderPassBit : uint8_t
 {
-	Generic,
-	Clear,
-	Finish,
+	OnScreen_First = 0x01,
+	OnScreen_Last = 0x02,
+	OffScreen_First = 0x04,
+	OffScreen_Last = 0x08,
 };
 
 class RendererBase
 {
 public:
-	explicit RendererBase(const VulkanDevice& vkDev, VulkanImage* depthImage);
+	explicit RendererBase(
+		const VulkanDevice& vkDev, 
+		VulkanImage* depthImage,
+		VulkanImage* offscreenColorImage = nullptr,
+		uint8_t renderPassBit = 0u);
 	virtual ~RendererBase();
 
 	// Insert Vulkan commands into the command buffer.
@@ -55,6 +60,13 @@ protected:
 	// PerFrameUBO
 	std::vector<VulkanBuffer> perFrameUBOs_;
 
+	// Offscreen rendering
+	VulkanImage* offscreenColorImage_;
+	VkFramebuffer offscreenFramebuffer_;
+
+	// Information about the renderpass
+	uint8_t renderPassBit_;
+
 protected:
 	// UBO
 	void CreateUniformBuffers(
@@ -70,14 +82,26 @@ protected:
 		const size_t dataSize);
 
 	void BeginRenderPass(VkCommandBuffer commandBuffer, size_t currentImage);
+	void BeginRenderPass(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer);
 
-	void CreateColorAndDepthRenderPass(
+	void CreateOffscreenRenderPass(
+		VulkanDevice& device,
+		VkRenderPass* renderPass,
+		uint8_t flag = 0u);
+
+	void CreateOnscreenRenderPass(
 		VulkanDevice& device, 
-		bool useDepth, 
 		VkRenderPass* renderPass, 
-		RenderPassType renderPassType = RenderPassType::Generic);
+		uint8_t flag = 0u);
 
-	void CreateColorAndDepthFramebuffers(
+	void CreateOffscreenFrameBuffer(
+		VulkanDevice& vkDev,
+		VkRenderPass renderPass,
+		VkImageView outputImageView,
+		VkImageView depthImageView,
+		VkFramebuffer& framebuffers);
+
+	void CreateOnscreenFramebuffers(
 		VulkanDevice& vkDev, 
 		VkRenderPass renderPass, 
 		VkImageView depthImageView, 

@@ -85,6 +85,28 @@ void VulkanImage::CreateFromHDR(
 	stbi_image_free(pixels);
 }
 
+void VulkanImage::CreateColorResources(VulkanDevice& vkDev, uint32_t width, uint32_t height)
+{
+	VkFormat format = vkDev.GetSwaphchainImageFormat();
+
+	CreateImage(vkDev.GetDevice(),
+		vkDev.GetPhysicalDevice(),
+		width,
+		height,
+		1, // mip
+		1, // layer
+		format,
+		VK_IMAGE_TILING_OPTIMAL,
+		VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+	CreateImageView(
+		vkDev.GetDevice(),
+		format,
+		VK_IMAGE_ASPECT_COLOR_BIT);
+	CreateDefaultSampler(vkDev.GetDevice());
+}
+
 void VulkanImage::CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint32_t height)
 {
 	VkFormat depthFormat = FindDepthFormat(vkDev.GetPhysicalDevice());

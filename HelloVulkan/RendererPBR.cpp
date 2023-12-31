@@ -19,15 +19,15 @@ RendererPBR::RendererPBR(
 	VulkanImage* envMap,
 	VulkanImage* diffuseMap,
 	VulkanImage* brdfLUT,
-	std::vector<Model*> models) :
-	RendererBase(vkDev, depthImage),
+	std::vector<Model*> models,
+	VulkanImage* offscreenColorImage,
+	uint8_t renderBit) :
+	RendererBase(vkDev, depthImage, offscreenColorImage, renderBit),
 	envMap_(envMap),
 	diffuseMap_(diffuseMap),
 	brdfLUT_(brdfLUT),
 	models_(models)
 {
-	CreateColorAndDepthRenderPass(vkDev, true, &renderPass_);
-
 	// Per frame UBO
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
 	
@@ -39,8 +39,21 @@ RendererPBR::RendererPBR(
 		CreateUniformBuffers(vkDev, model->modelBuffers_, sizeof(ModelUBO));
 	}
 
-	CreateColorAndDepthFramebuffers(vkDev, renderPass_, depthImage_->imageView_, swapchainFramebuffers_);
-
+	if (offscreenColorImage_ != nullptr)
+	{
+		CreateOffscreenRenderPass(vkDev, &renderPass_, renderBit);
+		CreateOffscreenFrameBuffer(
+			vkDev, 
+			renderPass_, 
+			offscreenColorImage_->imageView_,
+			depthImage_->imageView_, 
+			offscreenFramebuffer_);
+	}
+	else
+	{
+		CreateOnscreenRenderPass(vkDev, &renderPass_);
+		CreateOnscreenFramebuffers(vkDev, renderPass_, depthImage_->imageView_, swapchainFramebuffers_);
+	}
 	CreateDescriptorPool(
 		vkDev, 
 		2 * models_.size(),  // (PerFrameUBO + ModelUBO) * modelSize
@@ -75,11 +88,19 @@ RendererPBR::RendererPBR(
 
 RendererPBR::~RendererPBR()
 {
+	vkDestroyFramebuffer(device_, offscreenFramebuffer_, nullptr);
 }
 
 void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
 {
-	BeginRenderPass(commandBuffer, currentImage);
+	if (offscreenColorImage_ != nullptr)
+	{
+		BeginRenderPass(commandBuffer, offscreenFramebuffer_);
+	}
+	else
+	{
+		BeginRenderPass(commandBuffer, currentImage);
+	}
 
 	for (Model* model : models_)
 	{
@@ -111,7 +132,7 @@ void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t curren
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-bool RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
+void RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 {
 	std::vector<VkDescriptorSetLayoutBinding> bindings;
 
@@ -172,11 +193,9 @@ bool RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 	};
 
 	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));
-
-	return true;
 }
 
-bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh)
+void RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh)
 {
 	size_t swapchainLength = vkDev.GetSwapChainImageSize();
 
@@ -284,6 +303,4 @@ bool RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 			0, 
 			nullptr);
 	}
-
-	return true;
 }
