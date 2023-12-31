@@ -18,7 +18,7 @@ void AppPBR::Init()
 
 	model_ = std::make_unique<Model>(
 		vulkanDevice, 
-		AppSettings::ModelFolder + "Tachikoma//scene.gltf");
+		AppSettings::ModelFolder + "Tachikoma2//Tachikoma.gltf");
 	std::vector<Model*> models = {model_.get()};
 
 	// Create a cubemap from the input HDR
