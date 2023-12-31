@@ -79,6 +79,11 @@ protected:
 	uint8_t renderPassBit_;
 
 protected:
+	inline bool IsOffScreen()
+	{
+		return offscreenColorImage_ != nullptr;
+	}
+
 	// UBO
 	void CreateUniformBuffers(
 		VulkanDevice& vkDev,
