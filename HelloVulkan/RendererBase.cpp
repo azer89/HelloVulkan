@@ -50,8 +50,8 @@ void RendererBase::BeginRenderPass(VkCommandBuffer commandBuffer, size_t current
 
 void RendererBase::BeginRenderPass(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer)
 {
-	// TODO Refactor this
-	bool offscreenFirst = renderPassBit_ & RenderPassBit::OffScreen_First;
+	// TODO Precompute this
+	bool offScreenColorClear = renderPassBit_ & RenderPassBit::OffScreenColorClear;
 	const VkClearValue clearValues[1] =
 	{
 		VkClearValue {.color = { 1.0f, 1.0f, 1.0f, 1.0f } },
@@ -68,8 +68,8 @@ void RendererBase::BeginRenderPass(VkCommandBuffer commandBuffer, VkFramebuffer 
 		.renderPass = renderPass_,
 		.framebuffer = framebuffer,
 		.renderArea = screenRect,
-		.clearValueCount = offscreenFirst ? 1u : 0u,
-		.pClearValues = offscreenFirst ? &clearValues[0] : nullptr,
+		.clearValueCount = offScreenColorClear ? 1u : 0u,
+		.pClearValues = offScreenColorClear ? &clearValues[0] : nullptr,
 	};
 
 	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
@@ -104,26 +104,29 @@ void RendererBase::CreateOffScreenRenderPass(
 	VkRenderPass* renderPass,
 	uint8_t flag)
 {
-	bool first = flag & RenderPassBit::OffScreen_First;
-	bool last = flag & RenderPassBit::OffScreen_Last;
+	bool colorClear = flag & RenderPassBit::OffScreenColorClear;
+
+	// Transition color attachment to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+	// for the next onscreen render pass
+	bool colorToShader = flag & RenderPassBit::OffScreenColorShaderReadOnly;
 
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,
 		.format = vkDev.GetSwaphchainImageFormat(),
 		.samples = VK_SAMPLE_COUNT_1_BIT,
 		.loadOp = 
-			first ?
+			colorClear ?
 			VK_ATTACHMENT_LOAD_OP_CLEAR :
 			VK_ATTACHMENT_LOAD_OP_LOAD,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
 		.initialLayout = 
-			first ? 
+			colorClear ?
 			VK_IMAGE_LAYOUT_UNDEFINED : 
 			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 		.finalLayout = 
-			last ? 
+			colorToShader ?
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL:
 			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	};
@@ -206,21 +209,22 @@ void RendererBase::CreateOnScreenRenderPass(
 	VkRenderPass* renderPass,
 	uint8_t flag)
 {
-	bool first = flag & RenderPassBit::OnScreen_First;
-	bool last = flag & RenderPassBit::OnScreen_Last;
+	bool clearColor = flag & RenderPassBit::OnScreenColorClear;
+	bool presentColor = flag & RenderPassBit::OnScreenColorPresent;
+	bool clearDepth = flag & RenderPassBit::OnScreenDepthClear;
 
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,
 		.format = vkDev.GetSwaphchainImageFormat(),
 		.samples = VK_SAMPLE_COUNT_1_BIT,
-		.loadOp = first ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD,
+		.loadOp = clearColor ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-		.initialLayout = first ?
+		.initialLayout = clearColor ?
 			VK_IMAGE_LAYOUT_UNDEFINED :  
 			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		.finalLayout = last?
+		.finalLayout = presentColor ?
 			VK_IMAGE_LAYOUT_PRESENT_SRC_KHR : 
 			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	};
@@ -234,13 +238,13 @@ void RendererBase::CreateOnScreenRenderPass(
 		.flags = 0,
 		.format = vkDev.FindDepthFormat(),
 		.samples = VK_SAMPLE_COUNT_1_BIT,
-		.loadOp = first ?
+		.loadOp = clearDepth ?
 				VK_ATTACHMENT_LOAD_OP_CLEAR : 
 				VK_ATTACHMENT_LOAD_OP_LOAD,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-		.initialLayout = first ?
+		.initialLayout = clearDepth ?
 			VK_IMAGE_LAYOUT_UNDEFINED :
 			VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 		.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
