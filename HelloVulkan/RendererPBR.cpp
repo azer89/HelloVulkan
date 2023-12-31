@@ -54,6 +54,7 @@ RendererPBR::RendererPBR(
 		CreateOnScreenRenderPass(vkDev, &renderPass_);
 		CreateOnScreenFramebuffers(vkDev, renderPass_, depthImage_->imageView_);
 	}
+
 	CreateDescriptorPool(
 		vkDev, 
 		2 * models_.size(),  // (PerFrameUBO + ModelUBO) * modelSize

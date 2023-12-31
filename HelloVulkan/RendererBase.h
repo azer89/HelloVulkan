@@ -12,10 +12,21 @@
 
 enum RenderPassBit : uint8_t
 {
-	OnScreen_First = 0x01,
-	OnScreen_Last = 0x02,
-	OffScreen_First = 0x04,
-	OffScreen_Last = 0x08,
+	// Clear color attachment
+	OffScreenColorClear = 0x01,
+
+	// Transition color attachment to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+	// for the next onscreen render pass
+	OffScreenColorShaderReadOnly = 0x02,
+
+	// Clear swapchain color attachment
+	OnScreenColorClear = 0x04,
+
+	// Clear depth attachment
+	OnScreenDepthClear = 0x08,
+
+	// Present swapchain color attachment as VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+	OnScreenColorPresent = 0x10
 };
 
 class RendererBase

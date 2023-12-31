@@ -48,9 +48,12 @@ void AppPBR::Init()
 		brdfLUTCompute.CreateLUT(vulkanDevice, &brdfLut_);
 	}
 
+	// Depth attachment
 	depthImage_.CreateDepthResources(vulkanDevice,
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
 		static_cast<uint32_t>(AppSettings::ScreenHeight));
+
+	// Color attachment
 	colorImage_.CreateColorResources(vulkanDevice,
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
 		static_cast<uint32_t>(AppSettings::ScreenHeight));
@@ -64,7 +67,9 @@ void AppPBR::Init()
 		&environmentCubemap_,
 		&depthImage_,
 		&colorImage_,
-		RenderPassBit::OffScreen_First);
+		// This is the first offscreen render pass so
+		// we need to clear the color attachment
+		RenderPassBit::OffScreenColorClear);
 	pbrPtr_ = std::make_unique<RendererPBR>(
 		vulkanDevice,
 		&depthImage_,
@@ -73,7 +78,9 @@ void AppPBR::Init()
 		&brdfLut_,
 		models,
 		&colorImage_,
-		RenderPassBit::OffScreen_Last);
+		// This is the last offscreen render pass
+		// so transition color attachment to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+		RenderPassBit::OffScreenColorShaderReadOnly);
 	tonemapPtr_ = std::make_unique<RendererTonemap>(
 		vulkanDevice,
 		&colorImage_,

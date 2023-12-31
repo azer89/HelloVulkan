@@ -1,13 +1,15 @@
 #include "RendererFinish.h"
 #include "VulkanUtility.h"
 
+// Present swapchain image 
 RendererFinish::RendererFinish(VulkanDevice& vkDev, VulkanImage* depthImage) : 
 	RendererBase(vkDev, depthImage)
 {
 	CreateOnScreenRenderPass(
 		vkDev,
 		&renderPass_, 
-		RenderPassBit::OnScreen_Last);
+		// Present swapchain image 
+		RenderPassBit::OnScreenColorPresent);
 
 	CreateOnScreenFramebuffers(
 		vkDev, 
