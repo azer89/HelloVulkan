@@ -9,7 +9,7 @@ RendererClear::RendererClear(VulkanDevice& vkDev, VulkanImage* depthImage) :
 		vkDev,
 		shouldClearDepth_,
 		&renderPass_,
-		RenderPassType::First);
+		RenderPassBit::OnScreen_First);
 
 	CreateOnscreenFramebuffers(
 		vkDev, 

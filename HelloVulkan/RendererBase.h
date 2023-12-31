@@ -10,11 +10,12 @@
 
 #include <string>
 
-enum class RenderPassType
+enum RenderPassBit : uint8_t
 {
-	Generic,
-	First,
-	Last,
+	OnScreen_First = 0x01,
+	OnScreen_Last = 0x02,
+	OffScreen_First = 0x04,
+	OffScreen_Last = 0x08,
 };
 
 class RendererBase
@@ -74,13 +75,13 @@ protected:
 	void CreateOffscreenRenderPass(
 		VulkanDevice& device,
 		VkRenderPass* renderPass,
-		RenderPassType rtType);
+		uint8_t flag = 0u);
 
 	void CreateOnscreenRenderPass(
 		VulkanDevice& device, 
 		bool useDepth, 
 		VkRenderPass* renderPass, 
-		RenderPassType renderPassType = RenderPassType::Generic);
+		uint8_t flag = 0u);
 
 	void CreateOffscreenFrameBuffer(
 		VulkanDevice& vkDev,

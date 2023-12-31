@@ -82,8 +82,11 @@ void RendererBase::CreateUniformBuffers(
 void RendererBase::CreateOffscreenRenderPass(
 	VulkanDevice& vkDev,
 	VkRenderPass* renderPass,
-	RenderPassType rtType)
+	uint8_t flag)
 {
+	bool first = flag & RenderPassBit::OffScreen_First;
+	bool last = flag & RenderPassBit::OffScreen_Last;
+
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,
 		.format = vkDev.GetSwaphchainImageFormat(),
@@ -93,7 +96,7 @@ void RendererBase::CreateOffscreenRenderPass(
 		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
 		.initialLayout = 
-			rtType == RenderPassType::First ? 
+			first ? 
 			VK_IMAGE_LAYOUT_UNDEFINED : 
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 		.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
@@ -113,11 +116,11 @@ void RendererBase::CreateOffscreenRenderPass(
 		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
 		.initialLayout = 
-			rtType == RenderPassType::First ?
+			first ?
 			VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL :
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 		.finalLayout = 
-			rtType == RenderPassType::Last ?
+			last ?
 			VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL:
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	};
@@ -182,20 +185,23 @@ void RendererBase::CreateOnscreenRenderPass(
 	VulkanDevice& vkDev,
 	bool useDepth,
 	VkRenderPass* renderPass,
-	RenderPassType rtType)
+	uint8_t flag)
 {
+	bool first = flag & RenderPassBit::OnScreen_First;
+	bool last = flag & RenderPassBit::OnScreen_Last;
+
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,
 		.format = vkDev.GetSwaphchainImageFormat(),
 		.samples = VK_SAMPLE_COUNT_1_BIT,
-		.loadOp = rtType == RenderPassType::First ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD,
+		.loadOp = first ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-		.initialLayout = rtType == RenderPassType::First ?
+		.initialLayout = first ?
 			VK_IMAGE_LAYOUT_UNDEFINED :  
 			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		.finalLayout = rtType == RenderPassType::Last ?
+		.finalLayout = last?
 			VK_IMAGE_LAYOUT_PRESENT_SRC_KHR : 
 			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	};
@@ -209,13 +215,13 @@ void RendererBase::CreateOnscreenRenderPass(
 		.flags = 0,
 		.format = useDepth ? vkDev.FindDepthFormat() : VK_FORMAT_D32_SFLOAT,
 		.samples = VK_SAMPLE_COUNT_1_BIT,
-		.loadOp = rtType == RenderPassType::First ?
+		.loadOp = first ?
 				VK_ATTACHMENT_LOAD_OP_CLEAR : 
 				VK_ATTACHMENT_LOAD_OP_LOAD,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-		.initialLayout = rtType == RenderPassType::First ?
+		.initialLayout = first ?
 			VK_IMAGE_LAYOUT_UNDEFINED :
 			VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 		.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
