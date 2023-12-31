@@ -19,7 +19,9 @@ RendererPBR::RendererPBR(
 	VulkanImage* envMap,
 	VulkanImage* diffuseMap,
 	VulkanImage* brdfLUT,
-	std::vector<Model*> models) :
+	std::vector<Model*> models,
+	VulkanImage* offscreenColorImage,
+	uint8_t renderBit) :
 	RendererBase(vkDev, depthImage),
 	envMap_(envMap),
 	diffuseMap_(diffuseMap),

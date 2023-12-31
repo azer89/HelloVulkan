@@ -13,7 +13,9 @@ public:
 		VulkanImage* envMap,
 		VulkanImage* diffuseMap,
 		VulkanImage* brdfLUT,
-		std::vector<Model*> models);
+		std::vector<Model*> models,
+		VulkanImage* offscreenColorImage = nullptr,
+		uint8_t renderBit = 0u);
 	 ~RendererPBR();
 
 	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
