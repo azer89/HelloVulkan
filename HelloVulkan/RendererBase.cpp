@@ -50,6 +50,7 @@ void RendererBase::BeginRenderPass(VkCommandBuffer commandBuffer, size_t current
 
 void RendererBase::BeginRenderPass(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer)
 {
+	// TODO Refactor this
 	bool offscreenFirst = renderPassBit_ & RenderPassBit::OffScreen_First;
 	const VkClearValue clearValues[1] =
 	{

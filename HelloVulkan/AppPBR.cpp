@@ -56,8 +56,9 @@ void AppPBR::Init()
 		static_cast<uint32_t>(AppSettings::ScreenHeight));
 
 	// Renderers
-	clearPtr_ = std::make_unique<RendererClear>(vulkanDevice, &depthImage_);
-	finishPtr_ = std::make_unique<RendererFinish>(vulkanDevice, &depthImage_);
+	clearPtr_ = std::make_unique<RendererClear>(
+		vulkanDevice, 
+		&depthImage_);
 	skyboxPtr_ = std::make_unique<RendererSkybox>(
 		vulkanDevice,
 		&environmentCubemap_,
@@ -78,6 +79,9 @@ void AppPBR::Init()
 		&colorImage_,
 		&depthImage_
 	);
+	finishPtr_ = std::make_unique<RendererFinish>(
+		vulkanDevice, 
+		&depthImage_);
 
 	renderers_ =
 	{
