@@ -187,5 +187,8 @@
     <None Include="..\Shaders\CubeFilterSpecular.frag">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\Shaders\Tonemap.frag">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -195,6 +195,7 @@
     <None Include="..\Shaders\Equirect2Cube.frag" />
     <None Include="..\Shaders\FullscreenTriangle.vert" />
     <None Include="..\Shaders\Mesh.vert" />
+    <None Include="..\Shaders\Tonemap.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

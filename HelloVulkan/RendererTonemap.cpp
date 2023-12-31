@@ -1,5 +1,6 @@
 #include "RendererTonemap.h"
 #include "VulkanUtility.h"
+#include "AppSettings.h"
 
 RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
 	VulkanImage* colorImage,
@@ -7,7 +8,33 @@ RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
 	RendererBase(vkDev, depthImage),
 	colorImage_(colorImage_)
 {
+	CreateOnscreenRenderPass(vkDev, true, &renderPass_);
 
+	CreateOnscreenFramebuffers(
+		vkDev,
+		renderPass_,
+		depthImage_->imageView_,
+		swapchainFramebuffers_);
+
+	CreateDescriptorPool(
+		vkDev,
+		0, // uniform
+		0, // SSBO
+		1, // Texture
+		1, // One set per swapchain
+		&descriptorPool_);
+	CreateDescriptorLayoutAndSet(vkDev);
+
+	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
+
+	CreateGraphicsPipeline(vkDev,
+		renderPass_,
+		pipelineLayout_,
+		{
+			AppSettings::ShaderFolder + "FullscreenTriangle.vert",
+			AppSettings::ShaderFolder + "Tonemap.frag",
+		},
+		&graphicsPipeline_);
 }
 
 RendererTonemap::~RendererTonemap()
