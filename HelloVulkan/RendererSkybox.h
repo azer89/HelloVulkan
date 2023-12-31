@@ -19,6 +19,9 @@ public:
 private:
 	VulkanImage* envMap_;
 
+	VulkanImage* offscreenColorImage_;
+	VkFramebuffer offscreenFramebuffer_;
+
 	std::vector<VkDescriptorSet> descriptorSets_;
 
 	void CreateDescriptorLayoutAndSet(VulkanDevice& vkDev);

@@ -39,6 +39,11 @@ RendererBase::~RendererBase()
 
 void RendererBase::BeginRenderPass(VkCommandBuffer commandBuffer, size_t currentImage)
 {
+	BeginRenderPass(commandBuffer, swapchainFramebuffers_[currentImage]);
+}
+
+void RendererBase::BeginRenderPass(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer)
+{
 	const VkRect2D screenRect = {
 		.offset = { 0, 0 },
 		.extent = {.width = framebufferWidth_, .height = framebufferHeight_ }
@@ -48,7 +53,7 @@ void RendererBase::BeginRenderPass(VkCommandBuffer commandBuffer, size_t current
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
 		.pNext = nullptr,
 		.renderPass = renderPass_,
-		.framebuffer = swapchainFramebuffers_[currentImage],
+		.framebuffer = framebuffer,
 		.renderArea = screenRect
 	};
 
@@ -183,7 +188,6 @@ void RendererBase::CreateOffscreenRenderPass(
 
 void RendererBase::CreateOnscreenRenderPass(
 	VulkanDevice& vkDev,
-	bool useDepth,
 	VkRenderPass* renderPass,
 	uint8_t flag)
 {
@@ -213,7 +217,7 @@ void RendererBase::CreateOnscreenRenderPass(
 
 	VkAttachmentDescription depthAttachment = {
 		.flags = 0,
-		.format = useDepth ? vkDev.FindDepthFormat() : VK_FORMAT_D32_SFLOAT,
+		.format = vkDev.FindDepthFormat(),
 		.samples = VK_SAMPLE_COUNT_1_BIT,
 		.loadOp = first ?
 				VK_ATTACHMENT_LOAD_OP_CLEAR : 
@@ -251,7 +255,7 @@ void RendererBase::CreateOnscreenRenderPass(
 		.colorAttachmentCount = 1,
 		.pColorAttachments = &colorAttachmentRef,
 		.pResolveAttachments = nullptr,
-		.pDepthStencilAttachment = useDepth ? &depthAttachmentRef : nullptr,
+		.pDepthStencilAttachment = &depthAttachmentRef,
 		.preserveAttachmentCount = 0,
 		.pPreserveAttachments = nullptr
 	};
@@ -262,7 +266,7 @@ void RendererBase::CreateOnscreenRenderPass(
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.attachmentCount = static_cast<uint32_t>(useDepth ? 2 : 1),
+		.attachmentCount = static_cast<uint32_t>(attachments.size()),
 		.pAttachments = attachments.data(),
 		.subpassCount = 1,
 		.pSubpasses = &subpass,

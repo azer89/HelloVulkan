@@ -32,6 +32,8 @@ private:
 	VulkanImage* envMap_;
 	VulkanImage* diffuseMap_;
 	VulkanImage* brdfLUT_;
+
+	VulkanImage* ofscreenColorImage_;
 };
 
 #endif

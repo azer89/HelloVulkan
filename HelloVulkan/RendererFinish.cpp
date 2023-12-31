@@ -6,7 +6,6 @@ RendererFinish::RendererFinish(VulkanDevice& vkDev, VulkanImage* depthImage) :
 {
 	CreateOnscreenRenderPass(
 		vkDev,
-		(depthImage != nullptr),
 		&renderPass_, 
 		RenderPassBit::OnScreen_Last);
 

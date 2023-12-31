@@ -71,6 +71,7 @@ protected:
 		const size_t dataSize);
 
 	void BeginRenderPass(VkCommandBuffer commandBuffer, size_t currentImage);
+	void BeginRenderPass(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer);
 
 	void CreateOffscreenRenderPass(
 		VulkanDevice& device,
@@ -79,7 +80,6 @@ protected:
 
 	void CreateOnscreenRenderPass(
 		VulkanDevice& device, 
-		bool useDepth, 
 		VkRenderPass* renderPass, 
 		uint8_t flag = 0u);
 

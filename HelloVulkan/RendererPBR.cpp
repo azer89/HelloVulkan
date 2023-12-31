@@ -26,7 +26,8 @@ RendererPBR::RendererPBR(
 	envMap_(envMap),
 	diffuseMap_(diffuseMap),
 	brdfLUT_(brdfLUT),
-	models_(models)
+	models_(models),
+	ofscreenColorImage_(offscreenColorImage)
 {
 	// Per frame UBO
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
@@ -39,7 +40,7 @@ RendererPBR::RendererPBR(
 		CreateUniformBuffers(vkDev, model->modelBuffers_, sizeof(ModelUBO));
 	}
 
-	CreateOnscreenRenderPass(vkDev, true, &renderPass_);
+	CreateOnscreenRenderPass(vkDev, &renderPass_);
 
 	CreateOnscreenFramebuffers(vkDev, renderPass_, depthImage_->imageView_, swapchainFramebuffers_);
 
