@@ -99,7 +99,7 @@ void RendererBase::CreateUniformBuffers(
 	}
 }
 
-void RendererBase::CreateOffscreenRenderPass(
+void RendererBase::CreateOffScreenRenderPass(
 	VulkanDevice& vkDev,
 	VkRenderPass* renderPass,
 	uint8_t flag)
@@ -201,7 +201,7 @@ void RendererBase::CreateOffscreenRenderPass(
 	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &renderPassInfo, nullptr, renderPass));
 }
 
-void RendererBase::CreateOnscreenRenderPass(
+void RendererBase::CreateOnScreenRenderPass(
 	VulkanDevice& vkDev,
 	VkRenderPass* renderPass,
 	uint8_t flag)
@@ -292,7 +292,7 @@ void RendererBase::CreateOnscreenRenderPass(
 	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &renderPassInfo, nullptr, renderPass));
 }
 
-void RendererBase::CreateOffscreenFrameBuffer(
+void RendererBase::CreateOffScreenFramebuffer(
 	VulkanDevice& vkDev,
 	VkRenderPass renderPass,
 	VkImageView colorImageView,
@@ -316,15 +316,14 @@ void RendererBase::CreateOffscreenFrameBuffer(
 	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo, nullptr, &framebuffer));
 }
 
-void RendererBase::CreateOnscreenFramebuffers(
+void RendererBase::CreateOnScreenFramebuffers(
 	VulkanDevice& vkDev,
 	VkRenderPass renderPass,
-	VkImageView depthImageView,
-	std::vector<VkFramebuffer>& swapchainFramebuffers)
+	VkImageView depthImageView)
 {
 	size_t swapchainImageSize = vkDev.GetSwapChainImageSize();
 
-	swapchainFramebuffers.resize(swapchainImageSize);
+	swapchainFramebuffers_.resize(swapchainImageSize);
 
 	for (size_t i = 0; i < swapchainImageSize; i++)
 	{
@@ -345,7 +344,7 @@ void RendererBase::CreateOnscreenFramebuffers(
 			.layers = 1
 		};
 
-		VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo, nullptr, &swapchainFramebuffers[i]));
+		VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo, nullptr, &swapchainFramebuffers_[i]));
 	}
 }
 

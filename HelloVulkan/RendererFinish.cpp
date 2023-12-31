@@ -4,16 +4,15 @@
 RendererFinish::RendererFinish(VulkanDevice& vkDev, VulkanImage* depthImage) : 
 	RendererBase(vkDev, depthImage)
 {
-	CreateOnscreenRenderPass(
+	CreateOnScreenRenderPass(
 		vkDev,
 		&renderPass_, 
 		RenderPassBit::OnScreen_Last);
 
-	CreateOnscreenFramebuffers(
+	CreateOnScreenFramebuffers(
 		vkDev, 
 		renderPass_, 
-		depthImage_->imageView_, 
-		swapchainFramebuffers_);
+		depthImage_->imageView_);
 }
 
 void RendererFinish::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)

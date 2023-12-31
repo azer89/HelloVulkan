@@ -84,28 +84,27 @@ protected:
 	void BeginRenderPass(VkCommandBuffer commandBuffer, size_t currentImage);
 	void BeginRenderPass(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer);
 
-	void CreateOffscreenRenderPass(
+	void CreateOffScreenRenderPass(
 		VulkanDevice& device,
 		VkRenderPass* renderPass,
 		uint8_t flag = 0u);
 
-	void CreateOnscreenRenderPass(
+	void CreateOnScreenRenderPass(
 		VulkanDevice& device, 
 		VkRenderPass* renderPass, 
 		uint8_t flag = 0u);
 
-	void CreateOffscreenFrameBuffer(
+	void CreateOffScreenFramebuffer(
 		VulkanDevice& vkDev,
 		VkRenderPass renderPass,
 		VkImageView outputImageView,
 		VkImageView depthImageView,
 		VkFramebuffer& framebuffers);
 
-	void CreateOnscreenFramebuffers(
+	void CreateOnScreenFramebuffers(
 		VulkanDevice& vkDev, 
 		VkRenderPass renderPass, 
-		VkImageView depthImageView, 
-		std::vector<VkFramebuffer>& swapchainFramebuffers);
+		VkImageView depthImageView);
 
 	void CreateDescriptorPool(
 		VulkanDevice& vkDev, 

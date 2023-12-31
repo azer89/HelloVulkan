@@ -8,13 +8,12 @@ RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
 	RendererBase(vkDev, depthImage),
 	colorImage_(colorImage)
 {
-	CreateOnscreenRenderPass(vkDev, &renderPass_);
+	CreateOnScreenRenderPass(vkDev, &renderPass_);
 
-	CreateOnscreenFramebuffers(
+	CreateOnScreenFramebuffers(
 		vkDev,
 		renderPass_,
-		depthImage_->imageView_,
-		swapchainFramebuffers_);
+		depthImage_->imageView_);
 
 	CreateDescriptorPool(
 		vkDev,

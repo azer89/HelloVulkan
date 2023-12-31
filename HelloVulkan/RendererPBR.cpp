@@ -41,8 +41,8 @@ RendererPBR::RendererPBR(
 
 	if (offscreenColorImage_ != nullptr)
 	{
-		CreateOffscreenRenderPass(vkDev, &renderPass_, renderBit);
-		CreateOffscreenFrameBuffer(
+		CreateOffScreenRenderPass(vkDev, &renderPass_, renderBit);
+		CreateOffScreenFramebuffer(
 			vkDev, 
 			renderPass_, 
 			offscreenColorImage_->imageView_,
@@ -51,8 +51,8 @@ RendererPBR::RendererPBR(
 	}
 	else
 	{
-		CreateOnscreenRenderPass(vkDev, &renderPass_);
-		CreateOnscreenFramebuffers(vkDev, renderPass_, depthImage_->imageView_, swapchainFramebuffers_);
+		CreateOnScreenRenderPass(vkDev, &renderPass_);
+		CreateOnScreenFramebuffers(vkDev, renderPass_, depthImage_->imageView_);
 	}
 	CreateDescriptorPool(
 		vkDev, 

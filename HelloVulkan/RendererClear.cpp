@@ -5,16 +5,15 @@ RendererClear::RendererClear(VulkanDevice& vkDev, VulkanImage* depthImage) :
 	RendererBase(vkDev, depthImage), 
 	shouldClearDepth_(depthImage != nullptr)
 {
-	CreateOnscreenRenderPass(
+	CreateOnScreenRenderPass(
 		vkDev,
 		&renderPass_,
 		RenderPassBit::OnScreen_First);
 
-	CreateOnscreenFramebuffers(
+	CreateOnScreenFramebuffers(
 		vkDev, 
 		renderPass_, 
-		depthImage_->imageView_, 
-		swapchainFramebuffers_);
+		depthImage_->imageView_);
 }
 
 void RendererClear::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t swapFramebuffer)
