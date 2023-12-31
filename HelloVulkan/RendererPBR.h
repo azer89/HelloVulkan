@@ -33,7 +33,8 @@ private:
 	VulkanImage* diffuseMap_;
 	VulkanImage* brdfLUT_;
 
-	VulkanImage* ofscreenColorImage_;
+	VulkanImage* offscreenColorImage_;
+	VkFramebuffer offscreenFramebuffer_;
 };
 
 #endif

@@ -20,7 +20,7 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 {
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
 	
-	/*if (offscreenColorImage_ != nullptr)
+	if (offscreenColorImage_ != nullptr)
 	{
 		CreateOffscreenRenderPass(vkDev, &renderPass_);
 		CreateOffscreenFrameBuffer(
@@ -31,14 +31,14 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 			offscreenFramebuffer_);
 	}
 	else
-	{*/
+	{
 		CreateOnscreenRenderPass(vkDev, &renderPass_);
 		CreateOnscreenFramebuffers(
 			vkDev,
 			renderPass_,
 			depthImage_->imageView_,
 			swapchainFramebuffers_);
-	//}
+	}
 	
 	CreateDescriptorPool(
 		vkDev, 
@@ -63,11 +63,19 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 
 RendererSkybox::~RendererSkybox()
 {
+	vkDestroyFramebuffer(device_, offscreenFramebuffer_, nullptr);
 }
 
 void RendererSkybox::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
 {
-	BeginRenderPass(commandBuffer, currentImage);
+	if (offscreenColorImage_ != nullptr)
+	{
+		BeginRenderPass(commandBuffer, offscreenFramebuffer_);
+	}
+	else
+	{
+		BeginRenderPass(commandBuffer, currentImage);
+	}
 
 	vkCmdBindDescriptorSets(
 		commandBuffer, 

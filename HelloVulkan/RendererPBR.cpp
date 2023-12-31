@@ -27,7 +27,7 @@ RendererPBR::RendererPBR(
 	diffuseMap_(diffuseMap),
 	brdfLUT_(brdfLUT),
 	models_(models),
-	ofscreenColorImage_(offscreenColorImage)
+	offscreenColorImage_(offscreenColorImage)
 {
 	// Per frame UBO
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
@@ -40,10 +40,21 @@ RendererPBR::RendererPBR(
 		CreateUniformBuffers(vkDev, model->modelBuffers_, sizeof(ModelUBO));
 	}
 
-	CreateOnscreenRenderPass(vkDev, &renderPass_);
-
-	CreateOnscreenFramebuffers(vkDev, renderPass_, depthImage_->imageView_, swapchainFramebuffers_);
-
+	if (offscreenColorImage_ != nullptr)
+	{
+		CreateOffscreenRenderPass(vkDev, &renderPass_);
+		CreateOffscreenFrameBuffer(
+			vkDev, 
+			renderPass_, 
+			offscreenColorImage_->imageView_,
+			depthImage_->imageView_, 
+			offscreenFramebuffer_);
+	}
+	else
+	{
+		CreateOnscreenRenderPass(vkDev, &renderPass_);
+		CreateOnscreenFramebuffers(vkDev, renderPass_, depthImage_->imageView_, swapchainFramebuffers_);
+	}
 	CreateDescriptorPool(
 		vkDev, 
 		2 * models_.size(),  // (PerFrameUBO + ModelUBO) * modelSize
@@ -78,11 +89,19 @@ RendererPBR::RendererPBR(
 
 RendererPBR::~RendererPBR()
 {
+	vkDestroyFramebuffer(device_, offscreenFramebuffer_, nullptr);
 }
 
 void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
 {
-	BeginRenderPass(commandBuffer, currentImage);
+	if (offscreenColorImage_ != nullptr)
+	{
+		BeginRenderPass(commandBuffer, offscreenFramebuffer_);
+	}
+	else
+	{
+		BeginRenderPass(commandBuffer, currentImage);
+	}
 
 	for (Model* model : models_)
 	{
