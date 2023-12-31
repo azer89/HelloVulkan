@@ -104,6 +104,7 @@ void AppPBR::DestroyResources()
 	finishPtr_.reset();
 	skyboxPtr_.reset();
 	pbrPtr_.reset();
+	tonemapPtr_.reset();
 }
 
 void AppPBR::UpdateUBO(uint32_t imageIndex)

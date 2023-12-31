@@ -22,7 +22,7 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 	
 	if (offscreenColorImage_ != nullptr)
 	{
-		CreateOffscreenRenderPass(vkDev, &renderPass_);
+		CreateOffscreenRenderPass(vkDev, &renderPass_, renderBit);
 		CreateOffscreenFrameBuffer(
 			vkDev,
 			renderPass_,

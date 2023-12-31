@@ -39,7 +39,6 @@ RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
 
 RendererTonemap::~RendererTonemap()
 {
-
 }
 
 void RendererTonemap::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
