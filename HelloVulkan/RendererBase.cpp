@@ -103,8 +103,11 @@ void RendererBase::CreateOffscreenRenderPass(
 		.initialLayout = 
 			first ? 
 			VK_IMAGE_LAYOUT_UNDEFINED : 
-			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-		.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		.finalLayout = 
+			last ? 
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL:
+			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	};
 
 	const VkAttachmentReference colorAttachmentRef = {
@@ -120,14 +123,8 @@ void RendererBase::CreateOffscreenRenderPass(
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-		.initialLayout = 
-			first ?
-			VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL :
-			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-		.finalLayout = 
-			last ?
-			VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL:
-			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+		.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+		.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 	};
 
 	const VkAttachmentReference depthAttachmentRef = {

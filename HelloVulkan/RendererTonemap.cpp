@@ -6,7 +6,7 @@ RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
 	VulkanImage* colorImage,
 	VulkanImage* depthImage) :
 	RendererBase(vkDev, depthImage),
-	colorImage_(colorImage_)
+	colorImage_(colorImage)
 {
 	CreateOnscreenRenderPass(vkDev, &renderPass_);
 

@@ -58,20 +58,34 @@ void AppPBR::Init()
 	// Renderers
 	clearPtr_ = std::make_unique<RendererClear>(vulkanDevice, &depthImage_);
 	finishPtr_ = std::make_unique<RendererFinish>(vulkanDevice, &depthImage_);
+	skyboxPtr_ = std::make_unique<RendererSkybox>(
+		vulkanDevice,
+		&environmentCubemap_,
+		&depthImage_,
+		&colorImage_,
+		RenderPassBit::OffScreen_First);
 	pbrPtr_ = std::make_unique<RendererPBR>(
 		vulkanDevice,
 		&depthImage_,
 		&specularCubemap_,
 		&diffuseCubemap_, 
 		&brdfLut_,
-		models);
-	skyboxPtr_ = std::make_unique<RendererSkybox>(vulkanDevice, &environmentCubemap_, &depthImage_);
+		models,
+		&colorImage_,
+		RenderPassBit::OffScreen_Last);
+	tonemapPtr_ = std::make_unique<RendererTonemap>(
+		vulkanDevice,
+		&colorImage_,
+		&depthImage_
+	);
 
 	renderers_ =
 	{
+		// Must be in order
 		clearPtr_.get(),
 		skyboxPtr_.get(),
 		pbrPtr_.get(),
+		tonemapPtr_.get(),
 		finishPtr_.get()
 	};
 }
