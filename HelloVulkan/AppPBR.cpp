@@ -43,42 +43,54 @@ void AppPBR::Init()
 			CubeFilterType::Specular);
 	}
 	
+	// BRDF look up table
 	{
 		RendererBRDFLUT brdfLUTCompute(vulkanDevice);
 		brdfLUTCompute.CreateLUT(vulkanDevice, &brdfLut_);
 	}
 
+	// Depth attachment (OnScreen and offscreen)
 	depthImage_.CreateDepthResources(vulkanDevice,
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
 		static_cast<uint32_t>(AppSettings::ScreenHeight));
+
+	// Color attachment (OffScreen only)
 	colorImage_.CreateColorResources(vulkanDevice,
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
 		static_cast<uint32_t>(AppSettings::ScreenHeight));
 
 	// Renderers
+	// This is responsible to clear depth and swapchain image
 	clearPtr_ = std::make_unique<RendererClear>(
 		vulkanDevice, 
 		&depthImage_);
+	// This draws a cube
 	skyboxPtr_ = std::make_unique<RendererSkybox>(
 		vulkanDevice,
 		&environmentCubemap_,
 		&depthImage_,
 		&colorImage_,
-		RenderPassBit::OffScreen_First);
+		// This is the first offscreen render pass so
+		// we need to clear the color attachment
+		RenderPassBit::OffScreenColorClear);
+	// This draws meshes with PBR+IBL
 	pbrPtr_ = std::make_unique<RendererPBR>(
 		vulkanDevice,
+		models,
 		&depthImage_,
 		&specularCubemap_,
 		&diffuseCubemap_, 
 		&brdfLut_,
-		models,
 		&colorImage_,
-		RenderPassBit::OffScreen_Last);
+		// This is the last offscreen render pass
+		// so transition color attachment to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+		RenderPassBit::OffScreenColorShaderReadOnly);
 	tonemapPtr_ = std::make_unique<RendererTonemap>(
 		vulkanDevice,
 		&colorImage_,
 		&depthImage_
 	);
+	// This is responsible to present swapchain image
 	finishPtr_ = std::make_unique<RendererFinish>(
 		vulkanDevice, 
 		&depthImage_);
@@ -96,14 +108,18 @@ void AppPBR::Init()
 
 void AppPBR::DestroyResources()
 {
-	// Destroy resources
+	// Destroy images
 	depthImage_.Destroy(vulkanDevice.GetDevice());
 	colorImage_.Destroy(vulkanDevice.GetDevice());
 	environmentCubemap_.Destroy(vulkanDevice.GetDevice());
 	diffuseCubemap_.Destroy(vulkanDevice.GetDevice());
 	specularCubemap_.Destroy(vulkanDevice.GetDevice());
 	brdfLut_.Destroy(vulkanDevice.GetDevice());
+
+	// Destroy meshes
 	model_.reset();
+
+	// Destroy renderers
 	clearPtr_.reset();
 	finishPtr_.reset();
 	skyboxPtr_.reset();

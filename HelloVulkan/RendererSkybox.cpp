@@ -19,10 +19,10 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 {
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
 	
-	if (offscreenColorImage_ != nullptr)
+	if (IsOffScreen())
 	{
-		CreateOffscreenRenderPass(vkDev, &renderPass_, renderBit);
-		CreateOffscreenFrameBuffer(
+		CreateOffScreenRenderPass(vkDev, &renderPass_, renderBit);
+		CreateOffScreenFramebuffer(
 			vkDev,
 			renderPass_,
 			offscreenColorImage_->imageView_,
@@ -31,12 +31,11 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 	}
 	else
 	{
-		CreateOnscreenRenderPass(vkDev, &renderPass_);
-		CreateOnscreenFramebuffers(
+		CreateOnScreenRenderPass(vkDev, &renderPass_);
+		CreateOnScreenFramebuffers(
 			vkDev,
 			renderPass_,
-			depthImage_->imageView_,
-			swapchainFramebuffers_);
+			depthImage_->imageView_);
 	}
 	
 	CreateDescriptorPool(
@@ -67,6 +66,7 @@ RendererSkybox::~RendererSkybox()
 
 void RendererSkybox::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
 {
+	// TODO Precompute
 	if (offscreenColorImage_ != nullptr)
 	{
 		BeginRenderPass(commandBuffer, offscreenFramebuffer_);

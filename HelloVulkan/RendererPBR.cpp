@@ -15,11 +15,11 @@ constexpr size_t PBR_ENV_TEXTURE_COUNT = 3;
 
 RendererPBR::RendererPBR(
 	VulkanDevice& vkDev,
+	std::vector<Model*> models,
 	VulkanImage* depthImage,
 	VulkanImage* envMap,
 	VulkanImage* diffuseMap,
 	VulkanImage* brdfLUT,
-	std::vector<Model*> models,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
 	RendererBase(vkDev, depthImage, offscreenColorImage, renderBit),
@@ -39,10 +39,10 @@ RendererPBR::RendererPBR(
 		CreateUniformBuffers(vkDev, model->modelBuffers_, sizeof(ModelUBO));
 	}
 
-	if (offscreenColorImage_ != nullptr)
+	if (IsOffScreen())
 	{
-		CreateOffscreenRenderPass(vkDev, &renderPass_, renderBit);
-		CreateOffscreenFrameBuffer(
+		CreateOffScreenRenderPass(vkDev, &renderPass_, renderBit);
+		CreateOffScreenFramebuffer(
 			vkDev, 
 			renderPass_, 
 			offscreenColorImage_->imageView_,
@@ -51,9 +51,10 @@ RendererPBR::RendererPBR(
 	}
 	else
 	{
-		CreateOnscreenRenderPass(vkDev, &renderPass_);
-		CreateOnscreenFramebuffers(vkDev, renderPass_, depthImage_->imageView_, swapchainFramebuffers_);
+		CreateOnScreenRenderPass(vkDev, &renderPass_);
+		CreateOnScreenFramebuffers(vkDev, renderPass_, depthImage_->imageView_);
 	}
+
 	CreateDescriptorPool(
 		vkDev, 
 		2 * models_.size(),  // (PerFrameUBO + ModelUBO) * modelSize
@@ -93,7 +94,8 @@ RendererPBR::~RendererPBR()
 
 void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
 {
-	if (offscreenColorImage_ != nullptr)
+	// TODO Precompute
+	if (IsOffScreen())
 	{
 		BeginRenderPass(commandBuffer, offscreenFramebuffer_);
 	}

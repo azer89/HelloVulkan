@@ -10,6 +10,7 @@ public:
 	RendererSkybox(VulkanDevice& vkDev, 
 		VulkanImage* envMap,
 		VulkanImage* depthImage,
+		// If the last two parameters not provided, perform an offscreen render pass
 		VulkanImage* offscreenColorImage = nullptr,
 		uint8_t renderBit = 0u);
 	virtual ~RendererSkybox();

@@ -12,10 +12,21 @@
 
 enum RenderPassBit : uint8_t
 {
-	OnScreen_First = 0x01,
-	OnScreen_Last = 0x02,
-	OffScreen_First = 0x04,
-	OffScreen_Last = 0x08,
+	// Clear color attachment
+	OffScreenColorClear = 0x01,
+
+	// Transition color attachment to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+	// for the next onscreen render pass
+	OffScreenColorShaderReadOnly = 0x02,
+
+	// Clear swapchain color attachment
+	OnScreenColorClear = 0x04,
+
+	// Clear depth attachment
+	OnScreenDepthClear = 0x08,
+
+	// Present swapchain color attachment as VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+	OnScreenColorPresent = 0x10
 };
 
 class RendererBase
@@ -68,6 +79,11 @@ protected:
 	uint8_t renderPassBit_;
 
 protected:
+	inline bool IsOffScreen()
+	{
+		return offscreenColorImage_ != nullptr;
+	}
+
 	// UBO
 	void CreateUniformBuffers(
 		VulkanDevice& vkDev,
@@ -84,28 +100,27 @@ protected:
 	void BeginRenderPass(VkCommandBuffer commandBuffer, size_t currentImage);
 	void BeginRenderPass(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer);
 
-	void CreateOffscreenRenderPass(
+	void CreateOffScreenRenderPass(
 		VulkanDevice& device,
 		VkRenderPass* renderPass,
 		uint8_t flag = 0u);
 
-	void CreateOnscreenRenderPass(
+	void CreateOnScreenRenderPass(
 		VulkanDevice& device, 
 		VkRenderPass* renderPass, 
 		uint8_t flag = 0u);
 
-	void CreateOffscreenFrameBuffer(
+	void CreateOffScreenFramebuffer(
 		VulkanDevice& vkDev,
 		VkRenderPass renderPass,
 		VkImageView outputImageView,
 		VkImageView depthImageView,
 		VkFramebuffer& framebuffers);
 
-	void CreateOnscreenFramebuffers(
+	void CreateOnScreenFramebuffers(
 		VulkanDevice& vkDev, 
 		VkRenderPass renderPass, 
-		VkImageView depthImageView, 
-		std::vector<VkFramebuffer>& swapchainFramebuffers);
+		VkImageView depthImageView);
 
 	void CreateDescriptorPool(
 		VulkanDevice& vkDev, 

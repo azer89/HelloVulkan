@@ -1,20 +1,21 @@
 #include "RendererClear.h"
 #include "VulkanUtility.h"
 
-RendererClear::RendererClear(VulkanDevice& vkDev, VulkanImage* depthImage) : 
-	RendererBase(vkDev, depthImage), 
+// Clear color and depth
+RendererClear::RendererClear(VulkanDevice& vkDev, VulkanImage* depthImage) :
+	RendererBase(vkDev, depthImage),
 	shouldClearDepth_(depthImage != nullptr)
 {
-	CreateOnscreenRenderPass(
+	CreateOnScreenRenderPass(
 		vkDev,
 		&renderPass_,
-		RenderPassBit::OnScreen_First);
+		// Clear color and depth
+		RenderPassBit::OnScreenColorClear | RenderPassBit::OnScreenDepthClear);
 
-	CreateOnscreenFramebuffers(
+	CreateOnScreenFramebuffers(
 		vkDev, 
 		renderPass_, 
-		depthImage_->imageView_, 
-		swapchainFramebuffers_);
+		depthImage_->imageView_);
 }
 
 void RendererClear::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t swapFramebuffer)
