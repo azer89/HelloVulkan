@@ -14,17 +14,25 @@ layout(binding = 0) uniform sampler2D colorImage;
 const float GAMMA = 2.2;
 const float PURE_WHITE = 1.0;
 
-void main()
+vec3 ReinhardTonemap(vec3 color)
 {
-	vec3 color = texture(colorImage, texCoord).rgb;
-	
 	float luminance = dot(color, vec3(0.2126, 0.7152, 0.0722));
-	float mappedLuminance = 
-		(luminance * (1.0 + luminance / ( PURE_WHITE * PURE_WHITE))) / (1.0 + luminance);
+	float mappedLuminance =
+		(luminance * (1.0 + luminance / (PURE_WHITE * PURE_WHITE))) / (1.0 + luminance);
 
 	// Scale color by ratio of average luminances
 	vec3 mappedColor = (mappedLuminance / luminance) * color;
 
 	// Gamma correction
-	fragColor = vec4(pow(mappedColor, vec3(1.0 / GAMMA)), 1.0);
+	return pow(mappedColor, vec3(1.0 / GAMMA));
+}
+
+void main()
+{
+	vec3 color = texture(colorImage, texCoord).rgb;
+
+	vec3 mappedColor = ReinhardTonemap(color);
+
+	// Gamma correction
+	fragColor = vec4(mappedColor, 1.0);
 };
