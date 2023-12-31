@@ -14,9 +14,8 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
-	RendererBase(vkDev, depthImage),
-	envMap_(envMap),
-	offscreenColorImage_(offscreenColorImage)
+	RendererBase(vkDev, depthImage, offscreenColorImage, renderBit),
+	envMap_(envMap)
 {
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
 	

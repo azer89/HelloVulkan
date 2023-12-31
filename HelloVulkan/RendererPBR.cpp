@@ -22,12 +22,11 @@ RendererPBR::RendererPBR(
 	std::vector<Model*> models,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
-	RendererBase(vkDev, depthImage),
+	RendererBase(vkDev, depthImage, offscreenColorImage, renderBit),
 	envMap_(envMap),
 	diffuseMap_(diffuseMap),
 	brdfLUT_(brdfLUT),
-	models_(models),
-	offscreenColorImage_(offscreenColorImage)
+	models_(models)
 {
 	// Per frame UBO
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));

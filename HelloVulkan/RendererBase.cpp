@@ -8,11 +8,17 @@
 #include <array>
 
 // Constructor
-RendererBase::RendererBase(const VulkanDevice& vkDev, VulkanImage* depthImage) :
+RendererBase::RendererBase(
+	const VulkanDevice& vkDev, 
+	VulkanImage* depthImage,
+	VulkanImage* offscreenColorImage,
+	uint8_t renderPassBit) :
 	device_(vkDev.GetDevice()), 
 	framebufferWidth_(vkDev.GetFrameBufferWidth()), 
 	framebufferHeight_(vkDev.GetFrameBufferHeight()), 
-	depthImage_(depthImage)
+	depthImage_(depthImage),
+	offscreenColorImage_(offscreenColorImage),
+	renderPassBit_(renderPassBit)
 {
 }
 
@@ -44,6 +50,12 @@ void RendererBase::BeginRenderPass(VkCommandBuffer commandBuffer, size_t current
 
 void RendererBase::BeginRenderPass(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer)
 {
+	bool offscreenFirst = renderPassBit_ & RenderPassBit::OffScreen_First;
+	const VkClearValue clearValues[1] =
+	{
+		VkClearValue {.color = { 1.0f, 1.0f, 1.0f, 1.0f } },
+	};
+
 	const VkRect2D screenRect = {
 		.offset = { 0, 0 },
 		.extent = {.width = framebufferWidth_, .height = framebufferHeight_ }
@@ -54,7 +66,9 @@ void RendererBase::BeginRenderPass(VkCommandBuffer commandBuffer, VkFramebuffer 
 		.pNext = nullptr,
 		.renderPass = renderPass_,
 		.framebuffer = framebuffer,
-		.renderArea = screenRect
+		.renderArea = screenRect,
+		.clearValueCount = offscreenFirst ? 1u : 0u,
+		.pClearValues = offscreenFirst ? &clearValues[0] : nullptr,
 	};
 
 	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);

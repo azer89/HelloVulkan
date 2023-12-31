@@ -10,5 +10,9 @@ void main()
 {
 	vec3 color = texture(colorImage, texCoord).rgb;
 
-	fragColor = vec4(color.x, 0.0, 0.0, 1.0);
+	// HDR tonemapping and gamma correction
+	color = color / (color + vec3(1.0));
+	color = pow(color, vec3(1.0 / 2.2));
+
+	fragColor = vec4(color, 1.0);
 };

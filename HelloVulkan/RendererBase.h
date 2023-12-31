@@ -21,7 +21,11 @@ enum RenderPassBit : uint8_t
 class RendererBase
 {
 public:
-	explicit RendererBase(const VulkanDevice& vkDev, VulkanImage* depthImage);
+	explicit RendererBase(
+		const VulkanDevice& vkDev, 
+		VulkanImage* depthImage,
+		VulkanImage* offscreenColorImage = nullptr,
+		uint8_t renderPassBit = 0u);
 	virtual ~RendererBase();
 
 	// Insert Vulkan commands into the command buffer.
@@ -55,6 +59,13 @@ protected:
 
 	// PerFrameUBO
 	std::vector<VulkanBuffer> perFrameUBOs_;
+
+	// Offscreen rendering
+	VulkanImage* offscreenColorImage_;
+	VkFramebuffer offscreenFramebuffer_;
+
+	// Information about the renderpass
+	uint8_t renderPassBit_;
 
 protected:
 	// UBO
