@@ -154,6 +154,7 @@
     <ClCompile Include="VulkanImage.cpp" />
     <ClCompile Include="VulkanInstance.cpp" />
     <ClCompile Include="VulkanDevice.cpp" />
+    <ClCompile Include="VulkanRenderPass.cpp" />
     <ClCompile Include="VulkanShader.cpp" />
     <ClCompile Include="VulkanUtility.cpp" />
   </ItemGroup>
@@ -177,6 +178,7 @@
     <ClInclude Include="TextureMapper.h" />
     <ClInclude Include="UBO.h" />
     <ClInclude Include="VulkanBuffer.h" />
+    <ClInclude Include="VulkanRenderPass.h" />
     <ClInclude Include="VulkanShader.h" />
     <ClInclude Include="VulkanImage.h" />
     <ClInclude Include="VulkanInstance.h" />

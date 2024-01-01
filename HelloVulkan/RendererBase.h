@@ -6,11 +6,12 @@
 #include "VulkanDevice.h"
 #include "VulkanImage.h"
 #include "VulkanBuffer.h"
+#include "VulkanRenderPass.h"
 #include "UBO.h"
 
 #include <string>
 
-enum RenderPassBit : uint8_t
+/*enum RenderPassBit : uint8_t
 {
 	// Clear color attachment
 	OffScreenColorClear = 0x01,
@@ -27,7 +28,7 @@ enum RenderPassBit : uint8_t
 
 	// Present swapchain color attachment as VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	OnScreenColorPresent = 0x10
-};
+};*/
 
 class RendererBase
 {
@@ -63,8 +64,11 @@ protected:
 	// Framebuffers (one for each command buffer)
 	std::vector<VkFramebuffer> swapchainFramebuffers_;
 
-	// Pipeline & render pass (using DescriptorSets & pipeline state options)
+	// Render pass
 	VkRenderPass renderPass_ = nullptr;
+	// Information about the renderpass
+	uint8_t renderPassBit_;
+
 	VkPipelineLayout pipelineLayout_ = nullptr;
 	VkPipeline graphicsPipeline_ = nullptr;
 
@@ -75,8 +79,7 @@ protected:
 	VulkanImage* offscreenColorImage_;
 	VkFramebuffer offscreenFramebuffer_;
 
-	// Information about the renderpass
-	uint8_t renderPassBit_;
+	
 
 protected:
 	inline bool IsOffScreen()
