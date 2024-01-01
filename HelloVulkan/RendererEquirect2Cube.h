@@ -14,7 +14,7 @@ public:
 
 	void OffscreenRender(VulkanDevice& vkDev, VulkanImage* outputCubemap);
 
-	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
+	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:
 	VkDescriptorSet descriptorSet_;
@@ -29,7 +29,6 @@ private:
 		VulkanImage* cubemap,
 		std::vector<VkImageView>& cubemapViews);
 
-	void CreateRenderPass(VulkanDevice& vkDev);
 	void CreateDescriptorLayout(VulkanDevice& vkDev);
 	void CreateDescriptorSet(VulkanDevice& vkDev);
 

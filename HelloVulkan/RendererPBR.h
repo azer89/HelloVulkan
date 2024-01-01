@@ -18,7 +18,7 @@ public:
 		uint8_t renderBit = 0u);
 	 ~RendererPBR();
 
-	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
+	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 public:
 	// TODO change this to private
@@ -32,9 +32,6 @@ private:
 	VulkanImage* envMap_;
 	VulkanImage* diffuseMap_;
 	VulkanImage* brdfLUT_;
-
-	//VulkanImage* offscreenColorImage_;
-	//VkFramebuffer offscreenFramebuffer_;
 };
 
 #endif

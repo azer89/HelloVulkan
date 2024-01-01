@@ -6,28 +6,10 @@
 #include "VulkanDevice.h"
 #include "VulkanImage.h"
 #include "VulkanBuffer.h"
+#include "VulkanRenderPass.h"
 #include "UBO.h"
 
 #include <string>
-
-enum RenderPassBit : uint8_t
-{
-	// Clear color attachment
-	OffScreenColorClear = 0x01,
-
-	// Transition color attachment to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	// for the next onscreen render pass
-	OffScreenColorShaderReadOnly = 0x02,
-
-	// Clear swapchain color attachment
-	OnScreenColorClear = 0x04,
-
-	// Clear depth attachment
-	OnScreenDepthClear = 0x08,
-
-	// Present swapchain color attachment as VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	OnScreenColorPresent = 0x10
-};
 
 class RendererBase
 {
@@ -40,7 +22,7 @@ public:
 	virtual ~RendererBase();
 
 	// Insert Vulkan commands into the command buffer.
-	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) = 0;
+	virtual void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) = 0;
 
 	void SetPerFrameUBO(const VulkanDevice& vkDev, uint32_t imageIndex, PerFrameUBO ubo)
 	{
@@ -63,8 +45,9 @@ protected:
 	// Framebuffers (one for each command buffer)
 	std::vector<VkFramebuffer> swapchainFramebuffers_;
 
-	// Pipeline & render pass (using DescriptorSets & pipeline state options)
-	VkRenderPass renderPass_ = nullptr;
+	// Render pass
+	VulkanRenderPass renderPass_;
+
 	VkPipelineLayout pipelineLayout_ = nullptr;
 	VkPipeline graphicsPipeline_ = nullptr;
 
@@ -74,9 +57,6 @@ protected:
 	// Offscreen rendering
 	VulkanImage* offscreenColorImage_;
 	VkFramebuffer offscreenFramebuffer_;
-
-	// Information about the renderpass
-	uint8_t renderPassBit_;
 
 protected:
 	inline bool IsOffScreen()
@@ -97,29 +77,16 @@ protected:
 		const void* data,
 		const size_t dataSize);
 
-	void BeginRenderPass(VkCommandBuffer commandBuffer, size_t currentImage);
-	void BeginRenderPass(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer);
-
-	void CreateOffScreenRenderPass(
-		VulkanDevice& device,
-		VkRenderPass* renderPass,
-		uint8_t flag = 0u);
-
-	void CreateOnScreenRenderPass(
-		VulkanDevice& device, 
-		VkRenderPass* renderPass, 
-		uint8_t flag = 0u);
-
 	void CreateOffScreenFramebuffer(
 		VulkanDevice& vkDev,
-		VkRenderPass renderPass,
+		VulkanRenderPass renderPass,
 		VkImageView outputImageView,
 		VkImageView depthImageView,
 		VkFramebuffer& framebuffers);
 
 	void CreateOnScreenFramebuffers(
 		VulkanDevice& vkDev, 
-		VkRenderPass renderPass, 
+		VulkanRenderPass renderPass, 
 		VkImageView depthImageView);
 
 	void CreateDescriptorPool(

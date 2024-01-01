@@ -6,20 +6,20 @@
 
 namespace FilterSettings
 {
-	const unsigned int sampleCount = 1024;
-	const uint32_t inputCubemapSize = 1024;
-	const uint32_t outputDiffuseMipmapCount = 1u;
-	const uint32_t outputDiffuseSize = 32;
-	const uint32_t outputSpecularSize = 128;
-	const VkFormat format = VK_FORMAT_R32G32B32A32_SFLOAT;
-	const uint32_t layerCount = 6;
+	constexpr unsigned int sampleCount = 1024;
+	constexpr uint32_t inputCubemapSize = 1024;
+	constexpr uint32_t outputDiffuseSize = 32;
+	constexpr uint32_t outputSpecularSize = 128;
+	constexpr VkFormat format = VK_FORMAT_R32G32B32A32_SFLOAT;
+	constexpr uint32_t layerCount = 6;
 }
 
 RendererCubeFilter::RendererCubeFilter(
 	VulkanDevice& vkDev, VulkanImage* inputCubemap) :
 	RendererBase(vkDev, nullptr)
 {
-	CreateRenderPass(vkDev);
+	// Create cube render pass
+	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, FilterSettings::format);
 
 	CreateDescriptorPool(
 		vkDev,
@@ -63,7 +63,7 @@ RendererCubeFilter::RendererCubeFilter(
 	graphicsPipelines_.emplace_back(VK_NULL_HANDLE);
 	CreateOffsreenGraphicsPipeline(
 		vkDev,
-		renderPass_,
+		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
 			AppSettings::ShaderFolder + "FullscreenTriangle.vert",
@@ -78,7 +78,7 @@ RendererCubeFilter::RendererCubeFilter(
 	graphicsPipelines_.emplace_back(VK_NULL_HANDLE);
 	CreateOffsreenGraphicsPipeline(
 		vkDev,
-		renderPass_,
+		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
 			AppSettings::ShaderFolder + "FullscreenTriangle.vert",
@@ -100,7 +100,7 @@ RendererCubeFilter::~RendererCubeFilter()
 	}
 }
 
-void RendererCubeFilter::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
+void RendererCubeFilter::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
 {
 }
 
@@ -131,60 +131,6 @@ void RendererCubeFilter::InitializeOutputCubemap(
 		VK_IMAGE_VIEW_TYPE_CUBE,
 		FilterSettings::layerCount,
 		numMipmap);
-}
-
-void RendererCubeFilter::CreateRenderPass(VulkanDevice& vkDev)
-{
-	const VkImageLayout finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-	std::vector<VkAttachmentDescription> m_attachments;
-	std::vector<VkAttachmentReference> m_attachmentRefs;
-
-	for (int face = 0; face < FilterSettings::layerCount; ++face)
-	{
-		VkAttachmentDescription info =
-		{
-			.flags = 0u,
-			.format = FilterSettings::format,
-			.samples = VK_SAMPLE_COUNT_1_BIT,
-			.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
-			.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-			.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-			.finalLayout = finalLayout,
-		};
-
-		VkAttachmentReference ref =
-		{
-			.attachment = static_cast<uint32_t>(face),
-			.layout = finalLayout
-		};
-
-		m_attachments.push_back(info);
-		m_attachmentRefs.push_back(ref);
-	}
-
-	VkSubpassDescription subpassDesc =
-	{
-		.flags = 0u,
-		.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
-		.colorAttachmentCount = static_cast<uint32_t>(m_attachmentRefs.size()),
-		.pColorAttachments = m_attachmentRefs.data(),
-	};
-
-	VkRenderPassCreateInfo createInfo =
-	{
-		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0u,
-		.attachmentCount = static_cast<uint32_t>(m_attachments.size()),
-		.pAttachments = m_attachments.data(),
-		.subpassCount = 1u,
-		.pSubpasses = &subpassDesc,
-	};
-
-	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &createInfo, nullptr, &renderPass_));
 }
 
 void RendererCubeFilter::CreateDescriptorLayout(VulkanDevice& vkDev)
@@ -384,7 +330,7 @@ VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
 	VkFramebufferCreateInfo info{};
 	info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 	info.pNext = nullptr;
-	info.renderPass = renderPass_;
+	info.renderPass = renderPass_.GetHandle();
 	info.attachmentCount = static_cast<uint32_t>(outputViews.size());
 	info.pAttachments = outputViews.data();
 	info.width = width;
@@ -469,18 +415,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 
 		const std::vector<VkClearValue> clearValues(6u, { 0.0f, 0.0f, 1.0f, 1.0f });
 
-		VkRenderPassBeginInfo info =
-		{
-			.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-			.pNext = nullptr,
-			.renderPass = renderPass_,
-			.framebuffer = frameBuffer,
-			.renderArea = { 0u, 0u, targetSize, targetSize },
-			.clearValueCount = static_cast<uint32_t>(clearValues.size()),
-			.pClearValues = clearValues.data(),
-		};
-
-		vkCmdBeginRenderPass(commandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
+		renderPass_.BeginCubemapRenderPass(commandBuffer, frameBuffer, targetSize);
 
 		vkCmdDraw(commandBuffer, 3, 1u, 0, 0);
 

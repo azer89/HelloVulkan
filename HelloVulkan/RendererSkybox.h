@@ -15,11 +15,10 @@ public:
 		uint8_t renderBit = 0u);
 	virtual ~RendererSkybox();
 
-	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
+	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:
 	VulkanImage* envMap_;
-
 
 	std::vector<VkDescriptorSet> descriptorSets_;
 

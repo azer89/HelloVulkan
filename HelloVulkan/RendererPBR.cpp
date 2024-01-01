@@ -41,7 +41,7 @@ RendererPBR::RendererPBR(
 
 	if (IsOffScreen())
 	{
-		CreateOffScreenRenderPass(vkDev, &renderPass_, renderBit);
+		renderPass_.CreateOffScreenRenderPass(vkDev, renderBit);
 		CreateOffScreenFramebuffer(
 			vkDev, 
 			renderPass_, 
@@ -51,7 +51,7 @@ RendererPBR::RendererPBR(
 	}
 	else
 	{
-		CreateOnScreenRenderPass(vkDev, &renderPass_);
+		renderPass_.CreateOnScreenRenderPass(vkDev);
 		CreateOnScreenFramebuffers(vkDev, renderPass_, depthImage_->imageView_);
 	}
 
@@ -76,7 +76,7 @@ RendererPBR::RendererPBR(
 
 	CreateGraphicsPipeline(
 		vkDev,
-		renderPass_,
+		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
 			AppSettings::ShaderFolder + "Mesh.vert",
@@ -92,17 +92,15 @@ RendererPBR::~RendererPBR()
 	vkDestroyFramebuffer(device_, offscreenFramebuffer_, nullptr);
 }
 
-void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
+void RendererPBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
 {
-	// TODO Precompute
-	if (IsOffScreen())
-	{
-		BeginRenderPass(commandBuffer, offscreenFramebuffer_);
-	}
-	else
-	{
-		BeginRenderPass(commandBuffer, currentImage);
-	}
+	renderPass_.BeginRenderPass(
+		commandBuffer, 
+		IsOffScreen() ? 
+			offscreenFramebuffer_ : 
+			swapchainFramebuffers_[swapchainImageIndex]);
+
+	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
 
 	for (Model* model : models_)
 	{
@@ -114,7 +112,7 @@ void RendererPBR::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t curren
 				pipelineLayout_,
 				0,
 				1,
-				&mesh.descriptorSets_[currentImage],
+				&mesh.descriptorSets_[swapchainImageIndex],
 				0,
 				nullptr);
 

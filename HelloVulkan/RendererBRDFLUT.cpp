@@ -38,7 +38,7 @@ RendererBRDFLUT::~RendererBRDFLUT()
 	vkDestroyPipeline(device_, pipeline_, nullptr);
 }
 
-void RendererBRDFLUT::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
+void RendererBRDFLUT::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
 {
 }
 
@@ -52,7 +52,7 @@ void RendererBRDFLUT::CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT)
 
 	outputLUT->CreateImageFromData(
 		vkDev,
-		&lutData[0],
+		lutData.data(),
 		LUT_WIDTH,
 		LUT_HEIGHT,
 		1,
