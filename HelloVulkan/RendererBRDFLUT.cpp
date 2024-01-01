@@ -76,7 +76,9 @@ void RendererBRDFLUT::Execute(VulkanDevice& vkDev)
 
 	VkCommandBufferBeginInfo commandBufferBeginInfo = {
 		VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-		0, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, 0
+		0, 
+		VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, 
+		0
 	};
 
 	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo));
@@ -93,6 +95,7 @@ void RendererBRDFLUT::Execute(VulkanDevice& vkDev)
 		0,
 		0);
 
+	// Tell the GPU to do some compute
 	vkCmdDispatch(commandBuffer, 
 		static_cast<uint32_t>(LUT_WIDTH), 
 		static_cast<uint32_t>(LUT_HEIGHT),
@@ -226,7 +229,7 @@ void RendererBRDFLUT::CreateComputePipeline(
 			.stage = VK_SHADER_STAGE_COMPUTE_BIT,
 			.module = computeShader,
 			.pName = "main",
-			/* we don't use specialization */
+			// we don't use specialization
 			.pSpecializationInfo = nullptr
 		},
 		.layout = pipelineLayout_,
@@ -234,6 +237,6 @@ void RendererBRDFLUT::CreateComputePipeline(
 		.basePipelineIndex = 0
 	};
 
-	/* no caching, single pipeline creation*/
+	// no caching, single pipeline creation
 	VK_CHECK(vkCreateComputePipelines(device, 0, 1, &computePipelineCreateInfo, nullptr, &pipeline_));
 }
