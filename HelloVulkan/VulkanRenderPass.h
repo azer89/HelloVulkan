@@ -40,12 +40,16 @@ public:
 	//VkRenderPassBeginInfo* BeginInfoPtr() { return &beginInfo_; }
 
 private:
-	VkRenderPassBeginInfo CreateBeginInfo(VulkanDevice& device);
+	void CreateBeginInfo(VulkanDevice& device);
 
 private:
 	VkRenderPass handle_;
 	//VkRenderPassBeginInfo beginInfo_;
 	uint8_t renderPassBit_;
+
+	// Cache for starting the render pass
+	std::vector<VkClearValue> clearValues_;
+	VkRenderPassBeginInfo beginInfo_;
 
 	//bool clearColor_;
 	//bool presentColor_;

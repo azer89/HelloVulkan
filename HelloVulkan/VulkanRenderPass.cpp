@@ -114,6 +114,9 @@ void VulkanRenderPass::CreateOffScreenRenderPass(VulkanDevice& vkDev, uint8_t re
 	};
 
 	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &renderPassInfo, nullptr, &handle_));
+
+	// Cache VkRenderPassBeginInfo
+	CreateBeginInfo(vkDev);
 }
 
 void VulkanRenderPass::CreateOnScreenRenderPass(VulkanDevice& vkDev, uint8_t renderPassBit)
@@ -205,25 +208,26 @@ void VulkanRenderPass::CreateOnScreenRenderPass(VulkanDevice& vkDev, uint8_t ren
 	};
 
 	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &renderPassInfo, nullptr, &handle_));
+
+	// Cache VkRenderPassBeginInfo
+	CreateBeginInfo(vkDev);
 }
 
-VkRenderPassBeginInfo VulkanRenderPass::CreateBeginInfo(VulkanDevice& vkDev)
+void VulkanRenderPass::CreateBeginInfo(VulkanDevice& vkDev)
 {
-	bool clearColor = 
-		renderPassBit_ & RenderPassBit::OnScreenColorClear || 
+	bool clearColor =
+		renderPassBit_ & RenderPassBit::OnScreenColorClear ||
 		renderPassBit_ & RenderPassBit::OffScreenColorClear;
-	bool clearDepth = 
-		renderPassBit_ & RenderPassBit::OnScreenDepthClear ||
-		renderPassBit_ & RenderPassBit::OffScreenColorClear;
+	bool clearDepth =
+		renderPassBit_ & RenderPassBit::OnScreenDepthClear;
 
-	std::vector<VkClearValue> clearValues;
 	if (clearColor)
 	{
-		clearValues.push_back({.color = { 1.0f, 1.0f, 1.0f, 1.0f}});
+		clearValues_.push_back({ .color = { 1.0f, 1.0f, 1.0f, 1.0f} });
 	}
 	if (clearDepth)
 	{
-		clearValues.push_back({.depthStencil = { 1.0f, 0 }});
+		clearValues_.push_back({ .depthStencil = { 1.0f, 0 } });
 	}
 
 	const VkRect2D screenRect = {
@@ -231,14 +235,14 @@ VkRenderPassBeginInfo VulkanRenderPass::CreateBeginInfo(VulkanDevice& vkDev)
 		.extent = {.width = vkDev.GetFrameBufferWidth(), .height = vkDev.GetFrameBufferHeight()}
 	};
 
-	return 
+	beginInfo_ =
 	{
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
 		.renderPass = handle_,
 		.framebuffer = nullptr, // Set this
 		.renderArea = screenRect,
-		.clearValueCount = static_cast<uint32_t>(clearValues.size()),
-		.pClearValues = &clearValues[0]
+		.clearValueCount = static_cast<uint32_t>(clearValues_.size()),
+		.pClearValues = clearValues_.size() == 0 ? nullptr : &clearValues_[0]
 	};
 }
 
@@ -247,10 +251,10 @@ void VulkanRenderPass::BeginRenderPass(
 	VkCommandBuffer commandBuffer, 
 	VkFramebuffer framebuffer)
 {
-	// TODO Cache beginInfo
-	VkRenderPassBeginInfo beginInfo = CreateBeginInfo(vkDev);
-	beginInfo.framebuffer = framebuffer;
-	vkCmdBeginRenderPass(commandBuffer, &beginInfo, VK_SUBPASS_CONTENTS_INLINE);
+	// Set framebuffer to beginInfo_
+	beginInfo_.framebuffer = framebuffer;
+	
+	vkCmdBeginRenderPass(commandBuffer, &beginInfo_, VK_SUBPASS_CONTENTS_INLINE);
 }
 
 void VulkanRenderPass::Destroy(VkDevice device)
