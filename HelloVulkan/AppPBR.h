@@ -18,7 +18,7 @@ class AppPBR : AppBase
 public:
 	AppPBR();
 	int MainLoop() override;
-	void UpdateUBO(uint32_t imageIndex) override;
+	void UpdateUBOs(uint32_t imageIndex) override;
 
 	void Init();
 	void DestroyResources();

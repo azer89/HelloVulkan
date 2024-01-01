@@ -127,7 +127,7 @@ void AppPBR::DestroyResources()
 	tonemapPtr_.reset();
 }
 
-void AppPBR::UpdateUBO(uint32_t imageIndex)
+void AppPBR::UpdateUBOs(uint32_t imageIndex)
 {
 	// Per frame UBO
 	PerFrameUBO skyboxUBO

@@ -41,7 +41,7 @@ protected:
 	void Terminate();
 
 	bool DrawFrame(const std::vector<RendererBase*>& renderers);
-	virtual void UpdateUBO(uint32_t imageIndex) = 0;
+	virtual void UpdateUBOs(uint32_t imageIndex) = 0;
 	void RecordCommandBuffer(const std::vector<RendererBase*>& renderers, uint32_t imageIndex);
 
 protected:
