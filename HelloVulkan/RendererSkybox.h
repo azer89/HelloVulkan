@@ -15,7 +15,7 @@ public:
 		uint8_t renderBit = 0u);
 	virtual ~RendererSkybox();
 
-	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
+	void RecordCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:
 	VulkanImage* envMap_;

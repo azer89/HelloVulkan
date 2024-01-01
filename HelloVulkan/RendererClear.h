@@ -8,7 +8,7 @@ class RendererClear final : public RendererBase
 public:
 	RendererClear(VulkanDevice& vkDev, VulkanImage* depthImage);
 
-	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
+	void RecordCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 };
 
 #endif
