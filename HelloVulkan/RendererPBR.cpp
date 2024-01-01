@@ -94,15 +94,11 @@ RendererPBR::~RendererPBR()
 
 void RendererPBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
 {
-	// TODO Precompute
-	if (IsOffScreen())
-	{
-		renderPass_.BeginRenderPass(commandBuffer, offscreenFramebuffer_);
-	}
-	else
-	{
-		renderPass_.BeginRenderPass(commandBuffer, swapchainFramebuffers_[swapchainImageIndex]);
-	}
+	renderPass_.BeginRenderPass(
+		commandBuffer, 
+		IsOffScreen() ? 
+			offscreenFramebuffer_ : 
+			swapchainFramebuffers_[swapchainImageIndex]);
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
 

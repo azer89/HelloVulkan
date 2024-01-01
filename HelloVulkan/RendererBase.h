@@ -11,25 +11,6 @@
 
 #include <string>
 
-/*enum RenderPassBit : uint8_t
-{
-	// Clear color attachment
-	OffScreenColorClear = 0x01,
-
-	// Transition color attachment to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	// for the next onscreen render pass
-	OffScreenColorShaderReadOnly = 0x02,
-
-	// Clear swapchain color attachment
-	OnScreenColorClear = 0x04,
-
-	// Clear depth attachment
-	OnScreenDepthClear = 0x08,
-
-	// Present swapchain color attachment as VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	OnScreenColorPresent = 0x10
-};*/
-
 class RendererBase
 {
 public:
@@ -66,9 +47,6 @@ protected:
 
 	// Render pass
 	VulkanRenderPass renderPass_;
-	//VkRenderPass renderPass_ = nullptr;
-	// Information about the renderpass
-	//uint8_t renderPassBit_;
 
 	VkPipelineLayout pipelineLayout_ = nullptr;
 	VkPipeline graphicsPipeline_ = nullptr;
@@ -99,19 +77,6 @@ protected:
 		const void* data,
 		const size_t dataSize);
 
-	//void BeginRenderPass(VkCommandBuffer commandBuffer, size_t currentImage);
-	//void BeginRenderPass(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer);
-
-	/*void CreateOffScreenRenderPass(
-		VulkanDevice& device,
-		VkRenderPass* renderPass,
-		uint8_t flag = 0u);
-
-	void CreateOnScreenRenderPass(
-		VulkanDevice& device, 
-		VkRenderPass* renderPass, 
-		uint8_t flag = 0u);
-	*/
 	void CreateOffScreenFramebuffer(
 		VulkanDevice& vkDev,
 		VulkanRenderPass renderPass,

@@ -20,7 +20,6 @@ public:
 private:
 	VulkanImage* envMap_;
 
-
 	std::vector<VkDescriptorSet> descriptorSets_;
 
 	void CreateDescriptorLayoutAndSet(VulkanDevice& vkDev);

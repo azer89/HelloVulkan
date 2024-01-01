@@ -31,22 +31,22 @@ public:
 	virtual void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:
-	//VkRenderPass cubeRenderPass_;
-	
+
 	VkDescriptorSet descriptorSet_;
 	VkSampler inputCubemapSampler_; // A sampler for the input cubemap
 
 	// Two pipelines for each of diffuse and specular maps
 	std::vector<VkPipeline> graphicsPipelines_;
 
-	//void CreateRenderPass(VulkanDevice& vkDev);
 	void CreateDescriptorLayout(VulkanDevice& vkDev);
+
 	void CreateDescriptorSet(VulkanDevice& vkDev, VulkanImage* inputCubemap);
 
 	void InitializeOutputCubemap(VulkanDevice& vkDev, 
 		VulkanImage* outputDiffuseCubemap,
 		uint32_t numMipmap,
 		uint32_t sideLength);
+
 	void CreateOutputCubemapViews(VulkanDevice& vkDev,
 		VulkanImage* outputCubemap,
 		std::vector<std::vector<VkImageView>>& outputCubemapViews,

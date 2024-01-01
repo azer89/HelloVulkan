@@ -32,9 +32,6 @@ private:
 	VulkanImage* envMap_;
 	VulkanImage* diffuseMap_;
 	VulkanImage* brdfLUT_;
-
-	//VulkanImage* offscreenColorImage_;
-	//VkFramebuffer offscreenFramebuffer_;
 };
 
 #endif

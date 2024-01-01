@@ -9,9 +9,6 @@ public:
 	RendererClear(VulkanDevice& vkDev, VulkanImage* depthImage);
 
 	virtual void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
-
-private:
-	bool shouldClearDepth_;
 };
 
 #endif

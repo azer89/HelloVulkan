@@ -20,7 +20,6 @@ RendererCubeFilter::RendererCubeFilter(
 	RendererBase(vkDev, nullptr)
 {
 	// Create cube render pass
-	//CreateRenderPass(vkDev);
 	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, FilterSettings::format);
 
 	CreateDescriptorPool(
@@ -94,8 +93,6 @@ RendererCubeFilter::RendererCubeFilter(
 
 RendererCubeFilter::~RendererCubeFilter()
 {
-	//vkDestroyRenderPass(device_, cubeRenderPass_, nullptr);
-	
 	vkDestroySampler(device_, inputCubemapSampler_, nullptr);
 
 	for (VkPipeline& pipeline : graphicsPipelines_)
@@ -136,60 +133,6 @@ void RendererCubeFilter::InitializeOutputCubemap(
 		FilterSettings::layerCount,
 		numMipmap);
 }
-
-/*void RendererCubeFilter::CreateRenderPass(VulkanDevice& vkDev)
-{
-	const VkImageLayout finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-	std::vector<VkAttachmentDescription> m_attachments;
-	std::vector<VkAttachmentReference> m_attachmentRefs;
-
-	for (int face = 0; face < FilterSettings::layerCount; ++face)
-	{
-		VkAttachmentDescription info =
-		{
-			.flags = 0u,
-			.format = FilterSettings::format,
-			.samples = VK_SAMPLE_COUNT_1_BIT,
-			.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
-			.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-			.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-			.finalLayout = finalLayout,
-		};
-
-		VkAttachmentReference ref =
-		{
-			.attachment = static_cast<uint32_t>(face),
-			.layout = finalLayout
-		};
-
-		m_attachments.push_back(info);
-		m_attachmentRefs.push_back(ref);
-	}
-
-	VkSubpassDescription subpassDesc =
-	{
-		.flags = 0u,
-		.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
-		.colorAttachmentCount = static_cast<uint32_t>(m_attachmentRefs.size()),
-		.pColorAttachments = m_attachmentRefs.data(),
-	};
-
-	VkRenderPassCreateInfo createInfo =
-	{
-		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0u,
-		.attachmentCount = static_cast<uint32_t>(m_attachments.size()),
-		.pAttachments = m_attachments.data(),
-		.subpassCount = 1u,
-		.pSubpasses = &subpassDesc,
-	};
-
-	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &createInfo, nullptr, &cubeRenderPass_));
-}*/
 
 void RendererCubeFilter::CreateDescriptorLayout(VulkanDevice& vkDev)
 {
@@ -473,18 +416,6 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 
 		const std::vector<VkClearValue> clearValues(6u, { 0.0f, 0.0f, 1.0f, 1.0f });
 
-		/*VkRenderPassBeginInfo info =
-		{
-			.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-			.pNext = nullptr,
-			.renderPass = cubeRenderPass_,
-			.framebuffer = frameBuffer,
-			.renderArea = { 0u, 0u, targetSize, targetSize },
-			.clearValueCount = static_cast<uint32_t>(clearValues.size()),
-			.pClearValues = clearValues.data(),
-		};
-
-		vkCmdBeginRenderPass(commandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);*/
 		renderPass_.BeginCubemapRenderPass(commandBuffer, frameBuffer, targetSize);
 
 		vkCmdDraw(commandBuffer, 3, 1u, 0, 0);
