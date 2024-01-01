@@ -31,7 +31,7 @@ public:
 	virtual void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:
-	VkRenderPass cubeRenderPass_;
+	//VkRenderPass cubeRenderPass_;
 	
 	VkDescriptorSet descriptorSet_;
 	VkSampler inputCubemapSampler_; // A sampler for the input cubemap
@@ -39,7 +39,7 @@ private:
 	// Two pipelines for each of diffuse and specular maps
 	std::vector<VkPipeline> graphicsPipelines_;
 
-	void CreateRenderPass(VulkanDevice& vkDev);
+	//void CreateRenderPass(VulkanDevice& vkDev);
 	void CreateDescriptorLayout(VulkanDevice& vkDev);
 	void CreateDescriptorSet(VulkanDevice& vkDev, VulkanImage* inputCubemap);
 

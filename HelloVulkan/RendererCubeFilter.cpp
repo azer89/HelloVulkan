@@ -20,7 +20,8 @@ RendererCubeFilter::RendererCubeFilter(
 	RendererBase(vkDev, nullptr)
 {
 	// Create cube render pass
-	CreateRenderPass(vkDev);
+	//CreateRenderPass(vkDev);
+	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, FilterSettings::format);
 
 	CreateDescriptorPool(
 		vkDev,
@@ -64,7 +65,7 @@ RendererCubeFilter::RendererCubeFilter(
 	graphicsPipelines_.emplace_back(VK_NULL_HANDLE);
 	CreateOffsreenGraphicsPipeline(
 		vkDev,
-		cubeRenderPass_,
+		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
 			AppSettings::ShaderFolder + "FullscreenTriangle.vert",
@@ -79,7 +80,7 @@ RendererCubeFilter::RendererCubeFilter(
 	graphicsPipelines_.emplace_back(VK_NULL_HANDLE);
 	CreateOffsreenGraphicsPipeline(
 		vkDev,
-		cubeRenderPass_,
+		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
 			AppSettings::ShaderFolder + "FullscreenTriangle.vert",
@@ -93,7 +94,7 @@ RendererCubeFilter::RendererCubeFilter(
 
 RendererCubeFilter::~RendererCubeFilter()
 {
-	vkDestroyRenderPass(device_, cubeRenderPass_, nullptr);
+	//vkDestroyRenderPass(device_, cubeRenderPass_, nullptr);
 	
 	vkDestroySampler(device_, inputCubemapSampler_, nullptr);
 
@@ -136,7 +137,7 @@ void RendererCubeFilter::InitializeOutputCubemap(
 		numMipmap);
 }
 
-void RendererCubeFilter::CreateRenderPass(VulkanDevice& vkDev)
+/*void RendererCubeFilter::CreateRenderPass(VulkanDevice& vkDev)
 {
 	const VkImageLayout finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
@@ -188,7 +189,7 @@ void RendererCubeFilter::CreateRenderPass(VulkanDevice& vkDev)
 	};
 
 	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &createInfo, nullptr, &cubeRenderPass_));
-}
+}*/
 
 void RendererCubeFilter::CreateDescriptorLayout(VulkanDevice& vkDev)
 {
@@ -387,7 +388,7 @@ VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
 	VkFramebufferCreateInfo info{};
 	info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 	info.pNext = nullptr;
-	info.renderPass = cubeRenderPass_;
+	info.renderPass = renderPass_.GetHandle();
 	info.attachmentCount = static_cast<uint32_t>(outputViews.size());
 	info.pAttachments = outputViews.data();
 	info.width = width;
@@ -472,7 +473,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 
 		const std::vector<VkClearValue> clearValues(6u, { 0.0f, 0.0f, 1.0f, 1.0f });
 
-		VkRenderPassBeginInfo info =
+		/*VkRenderPassBeginInfo info =
 		{
 			.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
 			.pNext = nullptr,
@@ -483,7 +484,8 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 			.pClearValues = clearValues.data(),
 		};
 
-		vkCmdBeginRenderPass(commandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
+		vkCmdBeginRenderPass(commandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);*/
+		renderPass_.BeginCubemapRenderPass(commandBuffer, frameBuffer, targetSize);
 
 		vkCmdDraw(commandBuffer, 3, 1u, 0, 0);
 
