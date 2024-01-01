@@ -28,7 +28,7 @@ public:
 		VulkanImage* outputCubemap,
 		CubeFilterType filterType);
 
-	virtual void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
+	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:
 

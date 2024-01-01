@@ -6,9 +6,9 @@
 
 namespace CubeSettings
 {
-	const uint32_t sideLength = 1024;
-	const VkFormat format = VK_FORMAT_R32G32B32A32_SFLOAT;
-	const uint32_t layerCount = 6;
+	constexpr uint32_t sideLength = 1024;
+	constexpr VkFormat format = VK_FORMAT_R32G32B32A32_SFLOAT;
+	constexpr uint32_t layerCount = 6;
 }
 
 RendererEquirect2Cube::RendererEquirect2Cube(

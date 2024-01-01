@@ -4,14 +4,6 @@
 #include <array>
 #include <vector>
 
-VulkanRenderPass::VulkanRenderPass()
-{
-}
-
-VulkanRenderPass::~VulkanRenderPass()
-{
-}
-
 void VulkanRenderPass::CreateOffScreenRenderPass(VulkanDevice& vkDev, uint8_t renderPassBit)
 {
 	renderPassBit_ = renderPassBit;

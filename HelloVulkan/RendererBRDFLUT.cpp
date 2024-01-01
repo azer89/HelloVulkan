@@ -52,7 +52,7 @@ void RendererBRDFLUT::CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT)
 
 	outputLUT->CreateImageFromData(
 		vkDev,
-		&lutData[0],
+		lutData.data(),
 		LUT_WIDTH,
 		LUT_HEIGHT,
 		1,

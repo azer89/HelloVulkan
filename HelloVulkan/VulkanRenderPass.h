@@ -25,8 +25,8 @@ enum RenderPassBit : uint8_t
 class VulkanRenderPass
 {
 public:
-	VulkanRenderPass();
-	~VulkanRenderPass();
+	VulkanRenderPass() = default;
+	~VulkanRenderPass() = default;
 
 	void CreateOffScreenRenderPass(VulkanDevice& device, uint8_t renderPassBit = 0u);
 
