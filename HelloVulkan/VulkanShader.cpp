@@ -17,7 +17,9 @@ inline int EndsWith(const char* s, const char* part)
 VkResult VulkanShader::Create(VkDevice device, const char* fileName)
 {
 	if (CompileShaderFile(fileName) < 1)
+	{
 		return VK_NOT_READY;
+	}
 
 	const VkShaderModuleCreateInfo createInfo =
 	{
@@ -260,4 +262,3 @@ glslang_stage_t GLSLangShaderStageFromFileName(const char* fileName)
 	}
 	return GLSLANG_STAGE_VERTEX;
 }
-

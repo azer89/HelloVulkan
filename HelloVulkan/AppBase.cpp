@@ -61,41 +61,36 @@ void AppBase::InitGLFW()
 	glfwMakeContextCurrent(glfwWindow);
 
 	glfwSetWindowUserPointer(glfwWindow, this);
+	
+	auto FuncFramebuffer = [](GLFWwindow* window, int width, int height)
 	{
-		auto func = [](GLFWwindow* window, int width, int height)
-		{
-			static_cast<AppBase*>(glfwGetWindowUserPointer(window))->FrameBufferSizeCallback(window, width, height);
-		};
-		glfwSetFramebufferSizeCallback(glfwWindow, func);
-	}
+		static_cast<AppBase*>(glfwGetWindowUserPointer(window))->FrameBufferSizeCallback(window, width, height);
+	};
+	glfwSetFramebufferSizeCallback(glfwWindow, FuncFramebuffer);
+
+	auto FuncCursor = [](GLFWwindow* window, double x, double y)
 	{
-		auto func = [](GLFWwindow* window, double xpos, double ypos)
-		{
-			static_cast<AppBase*>(glfwGetWindowUserPointer(window))->MouseCallback(window, xpos, ypos);
-		};
-		glfwSetCursorPosCallback(glfwWindow, func);
-	}
+		static_cast<AppBase*>(glfwGetWindowUserPointer(window))->MouseCallback(window, x, y);
+	};
+	glfwSetCursorPosCallback(glfwWindow, FuncCursor);
+
+	auto FuncMouse = [](GLFWwindow* window, int button, int action, int mods)
 	{
-		auto func = [](GLFWwindow* window, int button, int action, int mods)
-		{
-			static_cast<AppBase*>(glfwGetWindowUserPointer(window))->MouseButtonCallback(window, button, action, mods);
-		};
-		glfwSetMouseButtonCallback(glfwWindow, func);
-	}
+		static_cast<AppBase*>(glfwGetWindowUserPointer(window))->MouseButtonCallback(window, button, action, mods);
+	};
+	glfwSetMouseButtonCallback(glfwWindow, FuncMouse);
+
+	auto FuncScroll = [](GLFWwindow* window, double xOffset, double yOffset)
 	{
-		auto func = [](GLFWwindow* window, double xoffset, double yoffset)
-		{
-			static_cast<AppBase*>(glfwGetWindowUserPointer(window))->ScrollCallback(window, xoffset, yoffset);
-		};
-		glfwSetScrollCallback(glfwWindow, func);
-	}
+		static_cast<AppBase*>(glfwGetWindowUserPointer(window))->ScrollCallback(window, xOffset, yOffset);
+	};
+	glfwSetScrollCallback(glfwWindow, FuncScroll);
+
+	auto FuncKey = [](GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
-		auto func = [](GLFWwindow* window, int key, int scancode, int action, int mods)
-		{
-			static_cast<AppBase*>(glfwGetWindowUserPointer(window))->KeyCallback(window, key, scancode, action, mods);
-		};
-		glfwSetKeyCallback(glfwWindow, func);
-	}
+		static_cast<AppBase*>(glfwGetWindowUserPointer(window))->KeyCallback(window, key, scancode, action, mods);
+	};
+	glfwSetKeyCallback(glfwWindow, FuncKey);
 }
 
 bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
@@ -247,19 +242,19 @@ void AppBase::MouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 		return;
 	}
 
-	float xpos = static_cast<float>(xposIn);
-	float ypos = static_cast<float>(yposIn);
+	float xPos = static_cast<float>(xposIn);
+	float yPos = static_cast<float>(yposIn);
 	if (firstMouse)
 	{
-		lastX = xpos;
-		lastY = ypos;
+		lastX = xPos;
+		lastY = yPos;
 		firstMouse = false;
 	}
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-	lastX = xpos;
-	lastY = ypos;
-	camera->ProcessMouseMovement(xoffset, yoffset);
+	float xOffset = xPos - lastX;
+	float yOffset = lastY - yPos; // reversed since y-coordinates go from bottom to top
+	lastX = xPos;
+	lastY = yPos;
+	camera->ProcessMouseMovement(xOffset, yOffset);
 }
 
 void AppBase::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
