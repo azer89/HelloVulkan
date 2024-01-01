@@ -17,7 +17,7 @@ public:
 	virtual void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:
-	VkRenderPass cubeRenderPass_;
+	//VkRenderPass cubeRenderPass_;
 	
 	VkDescriptorSet descriptorSet_;
 	VulkanImage inputHDRImage_;
@@ -31,7 +31,7 @@ private:
 		VulkanImage* cubemap,
 		std::vector<VkImageView>& cubemapViews);
 
-	void CreateRenderPass(VulkanDevice& vkDev);
+	//void CreateRenderPass(VulkanDevice& vkDev);
 	void CreateDescriptorLayout(VulkanDevice& vkDev);
 	void CreateDescriptorSet(VulkanDevice& vkDev);
 

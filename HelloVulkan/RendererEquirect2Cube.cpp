@@ -17,7 +17,8 @@ RendererEquirect2Cube::RendererEquirect2Cube(
 	RendererBase(vkDev, nullptr)
 {
 	InitializeHDRImage(vkDev, hdrFile);
-	CreateRenderPass(vkDev);
+	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, CubeSettings::format);
+	//CreateRenderPass(vkDev);
 
 	CreateDescriptorPool(
 		vkDev,
@@ -33,7 +34,7 @@ RendererEquirect2Cube::RendererEquirect2Cube(
 
 	CreateOffscreenGraphicsPipeline(
 		vkDev,
-		cubeRenderPass_,
+		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
 			AppSettings::ShaderFolder + "FullscreenTriangle.vert",
@@ -45,7 +46,7 @@ RendererEquirect2Cube::RendererEquirect2Cube(
 
 RendererEquirect2Cube::~RendererEquirect2Cube()
 {
-	vkDestroyRenderPass(device_, cubeRenderPass_, nullptr);
+	//vkDestroyRenderPass(device_, cubeRenderPass_, nullptr);
 	inputHDRImage_.Destroy(device_);
 	vkDestroyFramebuffer(device_, frameBuffer_, nullptr);
 }
@@ -94,7 +95,7 @@ void RendererEquirect2Cube::InitializeHDRImage(VulkanDevice& vkDev, const std::s
 		1.f);
 }
 
-void RendererEquirect2Cube::CreateRenderPass(VulkanDevice& vkDev)
+/*void RendererEquirect2Cube::CreateRenderPass(VulkanDevice& vkDev)
 {
 	VkImageLayout finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
@@ -146,7 +147,7 @@ void RendererEquirect2Cube::CreateRenderPass(VulkanDevice& vkDev)
 	};
 
 	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &createInfo, nullptr, &cubeRenderPass_));
-}
+}*/
 
 void RendererEquirect2Cube::CreateDescriptorLayout(VulkanDevice& vkDev)
 {
@@ -301,7 +302,7 @@ void RendererEquirect2Cube::CreateFrameBuffer(
 		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0u,
-		.renderPass = cubeRenderPass_,
+		.renderPass = renderPass_.GetHandle(),
 		.attachmentCount = static_cast<uint32_t>(outputViews.size()),
 		.pAttachments = outputViews.data(),
 		.width = CubeSettings::sideLength,
@@ -387,7 +388,7 @@ void RendererEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanImage* ou
 
 	const std::vector<VkClearValue> clearValues(6u, { 0.0f, 0.0f, 1.0f, 1.0f });
 
-	VkRenderPassBeginInfo info{};
+	/*VkRenderPassBeginInfo info{};
 	info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 	info.pNext = nullptr;
 	info.renderPass = cubeRenderPass_;
@@ -396,7 +397,8 @@ void RendererEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanImage* ou
 	info.clearValueCount = static_cast<uint32_t>(clearValues.size());
 	info.pClearValues = clearValues.data();
 
-	vkCmdBeginRenderPass(commandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
+	vkCmdBeginRenderPass(commandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);*/
+	renderPass_.BeginCubemapRenderPass(commandBuffer, frameBuffer_, CubeSettings::sideLength);
 
 	vkCmdDraw(commandBuffer, 3, 1u, 0, 0);
 
