@@ -51,8 +51,11 @@ VkPipelineShaderStageCreateInfo VulkanShader::GetShaderStageInfo(
 
 size_t VulkanShader::CompileShaderFile(const char* file)
 {
-	if (auto shaderSource = ReadShaderFile(file); !shaderSource.empty())
+	std::string shaderSource = ReadShaderFile(file);
+	if (!shaderSource.empty())
+	{
 		return CompileShader(GLSLangShaderStageFromFileName(file), shaderSource.c_str());
+	}
 
 	return 0;
 }
@@ -68,26 +71,27 @@ std::string VulkanShader::ReadShaderFile(const char* fileName)
 	}
 
 	fseek(file, 0L, SEEK_END);
-	const auto bytesinfile = ftell(file);
+	const auto bytesCount = ftell(file);
 	fseek(file, 0L, SEEK_SET);
 
-	char* buffer = (char*)alloca(bytesinfile + 1);
-	const size_t bytesread = fread(buffer, 1, bytesinfile, file);
+	std::vector<char> buffer(bytesCount + 1, '\0');
+	const size_t bytesRead = fread(buffer.data(), 1, bytesCount, file);
 	fclose(file);
 
-	buffer[bytesread] = 0;
+	buffer[bytesRead] = 0;
 
+	// Byte order mark
 	static constexpr unsigned char BOM[] = { 0xEF, 0xBB, 0xBF };
 
-	if (bytesread > 3)
+	if (bytesRead > 3)
 	{
-		if (!memcmp(buffer, BOM, 3))
+		if (!memcmp(buffer.data(), BOM, 3))
 		{
-			memset(buffer, ' ', 3);
+			memset(buffer.data(), ' ', 3);
 		}
 	}
 
-	std::string code(buffer);
+	std::string code(buffer.data());
 
 	while (code.find("#include ") != code.npos)
 	{
@@ -96,7 +100,7 @@ std::string VulkanShader::ReadShaderFile(const char* fileName)
 		const auto p2 = code.find('>', pos);
 		if (p1 == code.npos || p2 == code.npos || p2 <= p1)
 		{
-			printf("Error while loading shader program: %s\n", code.c_str());
+			std::cerr << "Error while loading shader program: " << code.c_str() << '\n';
 			return std::string();
 		}
 		const std::string name = AppSettings::ShaderFolder + code.substr(p1 + 1, p2 - p1 - 1);
