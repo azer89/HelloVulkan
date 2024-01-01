@@ -32,29 +32,35 @@ public:
 
 	void CreateOnScreenRenderPass(VulkanDevice& device, uint8_t renderPassBit = 0u);
 
-	void BeginRenderPass(VulkanDevice& device, VkCommandBuffer commandBuffer, VkFramebuffer framebuffer);
+	void CreateOffScreenCubemapRenderPass(
+		VulkanDevice& device, 
+		VkFormat cubeFormat,
+		uint8_t renderPassBit = 0u);
+
+	// There's no EndRenderPass() function because you can just call vkCmdEndRenderPass(commandBuffer);
+	void BeginRenderPass(
+		VkCommandBuffer commandBuffer, 
+		VkFramebuffer framebuffer);
+
+	void BeginCubemapRenderPass(
+		VkCommandBuffer commandBuffer, 
+		VkFramebuffer framebuffer,
+		uint32_t cubeSideLength);
 
 	void Destroy(VkDevice vkDev);
 
 	VkRenderPass GetHandle() { return handle_;}
-	//VkRenderPassBeginInfo* BeginInfoPtr() { return &beginInfo_; }
 
 private:
 	void CreateBeginInfo(VulkanDevice& device);
 
 private:
 	VkRenderPass handle_;
-	//VkRenderPassBeginInfo beginInfo_;
 	uint8_t renderPassBit_;
 
 	// Cache for starting the render pass
 	std::vector<VkClearValue> clearValues_;
 	VkRenderPassBeginInfo beginInfo_;
-
-	//bool clearColor_;
-	//bool presentColor_;
-	//bool clearDepth_;
-	//bool colorShaderReadOnly_;
 };
 
 #endif

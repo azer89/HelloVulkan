@@ -213,6 +213,63 @@ void VulkanRenderPass::CreateOnScreenRenderPass(VulkanDevice& vkDev, uint8_t ren
 	CreateBeginInfo(vkDev);
 }
 
+void VulkanRenderPass::CreateOffScreenCubemapRenderPass(
+	VulkanDevice& vkDev,
+	VkFormat cubeFormat,
+	uint8_t renderPassBit)
+{
+	const VkImageLayout finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+	std::vector<VkAttachmentDescription> m_attachments;
+	std::vector<VkAttachmentReference> m_attachmentRefs;
+
+	for (int face = 0; face < 6; ++face)
+	{
+		VkAttachmentDescription info =
+		{
+			.flags = 0u,
+			.format = cubeFormat,
+			.samples = VK_SAMPLE_COUNT_1_BIT,
+			.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+			.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+			.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+			.finalLayout = finalLayout,
+		};
+
+		VkAttachmentReference ref =
+		{
+			.attachment = static_cast<uint32_t>(face),
+			.layout = finalLayout
+		};
+
+		m_attachments.push_back(info);
+		m_attachmentRefs.push_back(ref);
+	}
+
+	VkSubpassDescription subpassDesc =
+	{
+		.flags = 0u,
+		.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+		.colorAttachmentCount = static_cast<uint32_t>(m_attachmentRefs.size()),
+		.pColorAttachments = m_attachmentRefs.data(),
+	};
+
+	VkRenderPassCreateInfo createInfo =
+	{
+		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0u,
+		.attachmentCount = static_cast<uint32_t>(m_attachments.size()),
+		.pAttachments = m_attachments.data(),
+		.subpassCount = 1u,
+		.pSubpasses = &subpassDesc,
+	};
+
+	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &createInfo, nullptr, &handle_));
+}
+
 void VulkanRenderPass::CreateBeginInfo(VulkanDevice& vkDev)
 {
 	bool clearColor =
@@ -225,36 +282,53 @@ void VulkanRenderPass::CreateBeginInfo(VulkanDevice& vkDev)
 	{
 		clearValues_.push_back({ .color = { 1.0f, 1.0f, 1.0f, 1.0f} });
 	}
+
 	if (clearDepth)
 	{
 		clearValues_.push_back({ .depthStencil = { 1.0f, 0 } });
 	}
-
-	const VkRect2D screenRect = {
-		.offset = { 0, 0 },
-		.extent = {.width = vkDev.GetFrameBufferWidth(), .height = vkDev.GetFrameBufferHeight()}
-	};
 
 	beginInfo_ =
 	{
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
 		.renderPass = handle_,
 		.framebuffer = nullptr, // Set this
-		.renderArea = screenRect,
+		.renderArea = { 0u, 0u, vkDev.GetFrameBufferWidth(), vkDev.GetFrameBufferHeight() },
 		.clearValueCount = static_cast<uint32_t>(clearValues_.size()),
 		.pClearValues = clearValues_.size() == 0 ? nullptr : &clearValues_[0]
 	};
 }
 
 void VulkanRenderPass::BeginRenderPass(
-	VulkanDevice& vkDev, 
 	VkCommandBuffer commandBuffer, 
 	VkFramebuffer framebuffer)
 {
+	// Make sure beginInfo has been initialized
 	// Set framebuffer to beginInfo_
 	beginInfo_.framebuffer = framebuffer;
 	
 	vkCmdBeginRenderPass(commandBuffer, &beginInfo_, VK_SUBPASS_CONTENTS_INLINE);
+}
+
+void VulkanRenderPass::BeginCubemapRenderPass(
+	VkCommandBuffer commandBuffer,
+	VkFramebuffer framebuffer,
+	uint32_t cubeSideLength)
+{
+	// We don't cache buffer info because this is for one-time rendering
+	const std::vector<VkClearValue> clearValues(6u, { 0.0f, 0.0f, 1.0f, 1.0f });
+	VkRenderPassBeginInfo info =
+	{
+		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+		.pNext = nullptr,
+		.renderPass = handle_,
+		.framebuffer = framebuffer,
+		.renderArea = { 0u, 0u, cubeSideLength, cubeSideLength },
+		.clearValueCount = static_cast<uint32_t>(clearValues.size()),
+		.pClearValues = clearValues.data(),
+	};
+
+	vkCmdBeginRenderPass(commandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
 }
 
 void VulkanRenderPass::Destroy(VkDevice device)

@@ -69,11 +69,11 @@ void RendererSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer comm
 	// TODO Precompute
 	if (offscreenColorImage_ != nullptr)
 	{
-		renderPass_.BeginRenderPass(vkDev, commandBuffer, offscreenFramebuffer_);
+		renderPass_.BeginRenderPass(commandBuffer, offscreenFramebuffer_);
 	}
 	else
 	{
-		renderPass_.BeginRenderPass(vkDev, commandBuffer, swapchainFramebuffers_[swapchainImageIndex]);
+		renderPass_.BeginRenderPass(commandBuffer, swapchainFramebuffers_[swapchainImageIndex]);
 	}
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);

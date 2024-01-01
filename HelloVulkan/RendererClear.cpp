@@ -38,7 +38,7 @@ void RendererClear::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer comma
 		.clearValueCount = static_cast<uint32_t>(shouldClearDepth_ ? 2 : 1),
 		.pClearValues = &clearValues[0]
 	};*/
-	renderPass_.BeginRenderPass(vkDev, commandBuffer, swapchainFramebuffers_[swapchainImageIndex]);
+	renderPass_.BeginRenderPass(commandBuffer, swapchainFramebuffers_[swapchainImageIndex]);
 	//vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	vkCmdEndRenderPass(commandBuffer);
 }

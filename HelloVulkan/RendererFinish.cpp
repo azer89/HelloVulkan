@@ -31,6 +31,6 @@ void RendererFinish::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer comm
 	};
 
 	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);*/
-	renderPass_.BeginRenderPass(vkDev, commandBuffer, swapchainFramebuffers_[swapchainImageIndex]);
+	renderPass_.BeginRenderPass(commandBuffer, swapchainFramebuffers_[swapchainImageIndex]);
 	vkCmdEndRenderPass(commandBuffer);
 }
