@@ -17,8 +17,8 @@ RendererBase::RendererBase(
 	framebufferWidth_(vkDev.GetFrameBufferWidth()), 
 	framebufferHeight_(vkDev.GetFrameBufferHeight()), 
 	depthImage_(depthImage),
-	offscreenColorImage_(offscreenColorImage),
-	renderPassBit_(renderPassBit)
+	offscreenColorImage_(offscreenColorImage)//,
+	//renderPassBit_(renderPassBit)
 {
 }
 
@@ -38,17 +38,19 @@ RendererBase::~RendererBase()
 		vkDestroyFramebuffer(device_, framebuffer, nullptr);
 	}
 
-	vkDestroyRenderPass(device_, renderPass_, nullptr);
+	renderPass_.Destroy(device_);
+
+	//vkDestroyRenderPass(device_, renderPass_, nullptr);
 	vkDestroyPipelineLayout(device_, pipelineLayout_, nullptr);
 	vkDestroyPipeline(device_, graphicsPipeline_, nullptr);
 }
 
-void RendererBase::BeginRenderPass(VkCommandBuffer commandBuffer, size_t currentImage)
+/*void RendererBase::BeginRenderPass(VkCommandBuffer commandBuffer, size_t currentImage)
 {
 	BeginRenderPass(commandBuffer, swapchainFramebuffers_[currentImage]);
-}
+}*/
 
-void RendererBase::BeginRenderPass(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer)
+/*void RendererBase::BeginRenderPass(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer)
 {
 	// TODO Precompute this
 	bool offScreenColorClear = renderPassBit_ & RenderPassBit::OffScreenColorClear;
@@ -74,7 +76,7 @@ void RendererBase::BeginRenderPass(VkCommandBuffer commandBuffer, VkFramebuffer 
 
 	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
-}
+}*/
 
 void RendererBase::CreateUniformBuffers(
 	VulkanDevice& vkDev,
@@ -99,7 +101,7 @@ void RendererBase::CreateUniformBuffers(
 	}
 }
 
-void RendererBase::CreateOffScreenRenderPass(
+/*void RendererBase::CreateOffScreenRenderPass(
 	VulkanDevice& vkDev,
 	VkRenderPass* renderPass,
 	uint8_t flag)
@@ -202,9 +204,9 @@ void RendererBase::CreateOffScreenRenderPass(
 	};
 
 	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &renderPassInfo, nullptr, renderPass));
-}
+}*/
 
-void RendererBase::CreateOnScreenRenderPass(
+/*void RendererBase::CreateOnScreenRenderPass(
 	VulkanDevice& vkDev,
 	VkRenderPass* renderPass,
 	uint8_t flag)
@@ -294,11 +296,11 @@ void RendererBase::CreateOnScreenRenderPass(
 	};
 
 	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &renderPassInfo, nullptr, renderPass));
-}
+}*/
 
 void RendererBase::CreateOffScreenFramebuffer(
 	VulkanDevice& vkDev,
-	VkRenderPass renderPass,
+	VulkanRenderPass renderPass,
 	VkImageView colorImageView,
 	VkImageView depthImageView,
 	VkFramebuffer& framebuffer)
@@ -309,7 +311,7 @@ void RendererBase::CreateOffScreenFramebuffer(
 		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.renderPass = renderPass,
+		.renderPass = renderPass.GetHandle(),
 		.attachmentCount = static_cast<uint32_t>(attachments.size()),
 		.pAttachments = attachments.data(),
 		.width = vkDev.GetFrameBufferWidth(),
@@ -322,7 +324,7 @@ void RendererBase::CreateOffScreenFramebuffer(
 
 void RendererBase::CreateOnScreenFramebuffers(
 	VulkanDevice& vkDev,
-	VkRenderPass renderPass,
+	VulkanRenderPass renderPass,
 	VkImageView depthImageView)
 {
 	size_t swapchainImageSize = vkDev.GetSwapChainImageSize();
@@ -340,7 +342,7 @@ void RendererBase::CreateOnScreenFramebuffers(
 			.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0,
-			.renderPass = renderPass,
+			.renderPass = renderPass.GetHandle(),
 			.attachmentCount = static_cast<uint32_t>((depthImageView == VK_NULL_HANDLE) ? 1 : 2),
 			.pAttachments = attachments.data(),
 			.width = vkDev.GetFrameBufferWidth(),

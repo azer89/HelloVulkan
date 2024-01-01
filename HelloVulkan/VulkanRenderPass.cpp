@@ -247,12 +247,13 @@ void VulkanRenderPass::BeginRenderPass(
 	VkCommandBuffer commandBuffer, 
 	VkFramebuffer framebuffer)
 {
+	// TODO Cache beginInfo
 	VkRenderPassBeginInfo beginInfo = CreateBeginInfo(vkDev);
 	beginInfo.framebuffer = framebuffer;
 	vkCmdBeginRenderPass(commandBuffer, &beginInfo, VK_SUBPASS_CONTENTS_INLINE);
 }
 
-void VulkanRenderPass::Destroy(VulkanDevice& vkDev)
+void VulkanRenderPass::Destroy(VkDevice device)
 {
-	vkDestroyRenderPass(vkDev.GetDevice(), handle_, nullptr);
+	vkDestroyRenderPass(device, handle_, nullptr);
 }

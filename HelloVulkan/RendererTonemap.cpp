@@ -8,7 +8,7 @@ RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
 	RendererBase(vkDev, depthImage),
 	colorImage_(colorImage)
 {
-	CreateOnScreenRenderPass(vkDev, &renderPass_);
+	renderPass_.CreateOnScreenRenderPass(vkDev);
 
 	CreateOnScreenFramebuffers(
 		vkDev,
@@ -27,7 +27,7 @@ RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
 
 	CreateGraphicsPipeline(vkDev,
-		renderPass_,
+		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
 			AppSettings::ShaderFolder + "FullscreenTriangle.vert",
@@ -40,17 +40,20 @@ RendererTonemap::~RendererTonemap()
 {
 }
 
-void RendererTonemap::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
+void RendererTonemap::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
 {
-	BeginRenderPass(commandBuffer, currentImage);
+	//BeginRenderPass(commandBuffer, currentImage);
+	renderPass_.BeginRenderPass(vkDev, commandBuffer, swapchainFramebuffers_[swapchainImageIndex]);
 
+	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
+	
 	vkCmdBindDescriptorSets(
 		commandBuffer,
 		VK_PIPELINE_BIND_POINT_GRAPHICS,
 		pipelineLayout_,
 		0,
 		1,
-		&descriptorSets_[currentImage],
+		&descriptorSets_[swapchainImageIndex],
 		0,
 		nullptr);
 

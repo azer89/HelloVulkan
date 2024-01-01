@@ -28,9 +28,11 @@ public:
 		VulkanImage* outputCubemap,
 		CubeFilterType filterType);
 
-	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
+	virtual void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:
+	VkRenderPass cubeRenderPass_;
+	
 	VkDescriptorSet descriptorSet_;
 	VkSampler inputCubemapSampler_; // A sampler for the input cubemap
 

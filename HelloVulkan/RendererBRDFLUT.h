@@ -17,7 +17,7 @@ public:
 
 	void Execute(VulkanDevice& vkDev);
 
-	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
+	virtual void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:
 	VulkanBuffer inBuffer_;

@@ -33,7 +33,7 @@ RendererEquirect2Cube::RendererEquirect2Cube(
 
 	CreateOffscreenGraphicsPipeline(
 		vkDev,
-		renderPass_,
+		cubeRenderPass_,
 		pipelineLayout_,
 		{
 			AppSettings::ShaderFolder + "FullscreenTriangle.vert",
@@ -45,11 +45,12 @@ RendererEquirect2Cube::RendererEquirect2Cube(
 
 RendererEquirect2Cube::~RendererEquirect2Cube()
 {
+	vkDestroyRenderPass(device_, cubeRenderPass_, nullptr);
 	inputHDRImage_.Destroy(device_);
 	vkDestroyFramebuffer(device_, frameBuffer_, nullptr);
 }
 
-void RendererEquirect2Cube::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
+void RendererEquirect2Cube::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
 {
 }
 
@@ -144,7 +145,7 @@ void RendererEquirect2Cube::CreateRenderPass(VulkanDevice& vkDev)
 		.pSubpasses = &subpassDesc
 	};
 
-	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &createInfo, nullptr, &renderPass_));
+	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &createInfo, nullptr, &cubeRenderPass_));
 }
 
 void RendererEquirect2Cube::CreateDescriptorLayout(VulkanDevice& vkDev)
@@ -300,7 +301,7 @@ void RendererEquirect2Cube::CreateFrameBuffer(
 		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0u,
-		.renderPass = renderPass_,
+		.renderPass = cubeRenderPass_,
 		.attachmentCount = static_cast<uint32_t>(outputViews.size()),
 		.pAttachments = outputViews.data(),
 		.width = CubeSettings::sideLength,
@@ -389,7 +390,7 @@ void RendererEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanImage* ou
 	VkRenderPassBeginInfo info{};
 	info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 	info.pNext = nullptr;
-	info.renderPass = renderPass_;
+	info.renderPass = cubeRenderPass_;
 	info.framebuffer = frameBuffer_;
 	info.renderArea = { 0u, 0u, CubeSettings::sideLength, CubeSettings::sideLength };
 	info.clearValueCount = static_cast<uint32_t>(clearValues.size());

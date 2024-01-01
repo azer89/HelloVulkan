@@ -14,9 +14,11 @@ public:
 
 	void OffscreenRender(VulkanDevice& vkDev, VulkanImage* outputCubemap);
 
-	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
+	virtual void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:
+	VkRenderPass cubeRenderPass_;
+	
 	VkDescriptorSet descriptorSet_;
 	VulkanImage inputHDRImage_;
 	VkFramebuffer frameBuffer_;

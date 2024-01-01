@@ -21,7 +21,7 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 	
 	if (IsOffScreen())
 	{
-		CreateOffScreenRenderPass(vkDev, &renderPass_, renderBit);
+		renderPass_.CreateOffScreenRenderPass(vkDev, renderBit);
 		CreateOffScreenFramebuffer(
 			vkDev,
 			renderPass_,
@@ -31,7 +31,7 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 	}
 	else
 	{
-		CreateOnScreenRenderPass(vkDev, &renderPass_);
+		renderPass_.CreateOnScreenRenderPass(vkDev);
 		CreateOnScreenFramebuffers(
 			vkDev,
 			renderPass_,
@@ -50,7 +50,7 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
 
 	CreateGraphicsPipeline(vkDev,
-		renderPass_,
+		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
 			AppSettings::ShaderFolder + "Cube.vert",
@@ -64,17 +64,19 @@ RendererSkybox::~RendererSkybox()
 	vkDestroyFramebuffer(device_, offscreenFramebuffer_, nullptr);
 }
 
-void RendererSkybox::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
+void RendererSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
 {
 	// TODO Precompute
 	if (offscreenColorImage_ != nullptr)
 	{
-		BeginRenderPass(commandBuffer, offscreenFramebuffer_);
+		renderPass_.BeginRenderPass(vkDev, commandBuffer, offscreenFramebuffer_);
 	}
 	else
 	{
-		BeginRenderPass(commandBuffer, currentImage);
+		renderPass_.BeginRenderPass(vkDev, commandBuffer, swapchainFramebuffers_[swapchainImageIndex]);
 	}
+
+	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
 
 	vkCmdBindDescriptorSets(
 		commandBuffer, 
@@ -82,7 +84,7 @@ void RendererSkybox::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t cur
 		pipelineLayout_, 
 		0, 
 		1, 
-		&descriptorSets_[currentImage], 
+		&descriptorSets_[swapchainImageIndex], 
 		0, 
 		nullptr);
 

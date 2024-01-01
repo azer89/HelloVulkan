@@ -12,9 +12,7 @@ public:
 		VulkanImage* depthImage);
 	~RendererTonemap();
 
-	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) override;
-
-public:
+	virtual void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:
 	void CreateDescriptorLayoutAndSet(VulkanDevice& vkDev);

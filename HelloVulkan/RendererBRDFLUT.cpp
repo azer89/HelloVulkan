@@ -38,7 +38,7 @@ RendererBRDFLUT::~RendererBRDFLUT()
 	vkDestroyPipeline(device_, pipeline_, nullptr);
 }
 
-void RendererBRDFLUT::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
+void RendererBRDFLUT::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
 {
 }
 

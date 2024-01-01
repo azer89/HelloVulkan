@@ -6,9 +6,8 @@ RendererClear::RendererClear(VulkanDevice& vkDev, VulkanImage* depthImage) :
 	RendererBase(vkDev, depthImage),
 	shouldClearDepth_(depthImage != nullptr)
 {
-	CreateOnScreenRenderPass(
+	renderPass_.CreateOnScreenRenderPass(
 		vkDev,
-		&renderPass_,
 		// Clear color and depth
 		RenderPassBit::OnScreenColorClear | RenderPassBit::OnScreenDepthClear);
 
@@ -18,9 +17,9 @@ RendererClear::RendererClear(VulkanDevice& vkDev, VulkanImage* depthImage) :
 		depthImage_->imageView_);
 }
 
-void RendererClear::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t swapFramebuffer)
+void RendererClear::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
 {
-	const VkClearValue clearValues[2] =
+	/*const VkClearValue clearValues[2] =
 	{
 		VkClearValue {.color = { 1.0f, 1.0f, 1.0f, 1.0f } },
 		VkClearValue {.depthStencil = { 1.0f, 0 } }
@@ -38,8 +37,8 @@ void RendererClear::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t swap
 		.renderArea = screenRect,
 		.clearValueCount = static_cast<uint32_t>(shouldClearDepth_ ? 2 : 1),
 		.pClearValues = &clearValues[0]
-	};
-
-	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+	};*/
+	renderPass_.BeginRenderPass(vkDev, commandBuffer, swapchainFramebuffers_[swapchainImageIndex]);
+	//vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	vkCmdEndRenderPass(commandBuffer);
 }

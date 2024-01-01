@@ -171,7 +171,7 @@ void AppBase::UpdateCommandBuffer(const std::vector<RendererBase*>& renderers, u
 
 	for (auto& r : renderers)
 	{
-		r->FillCommandBuffer(commandBuffer, imageIndex);
+		r->FillCommandBuffer(vulkanDevice, commandBuffer, imageIndex);
 	}
 
 	VK_CHECK(vkEndCommandBuffer(commandBuffer));

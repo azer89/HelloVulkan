@@ -41,7 +41,7 @@ public:
 	virtual ~RendererBase();
 
 	// Insert Vulkan commands into the command buffer.
-	virtual void FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage) = 0;
+	virtual void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) = 0;
 
 	void SetPerFrameUBO(const VulkanDevice& vkDev, uint32_t imageIndex, PerFrameUBO ubo)
 	{
@@ -65,9 +65,10 @@ protected:
 	std::vector<VkFramebuffer> swapchainFramebuffers_;
 
 	// Render pass
-	VkRenderPass renderPass_ = nullptr;
+	VulkanRenderPass renderPass_;
+	//VkRenderPass renderPass_ = nullptr;
 	// Information about the renderpass
-	uint8_t renderPassBit_;
+	//uint8_t renderPassBit_;
 
 	VkPipelineLayout pipelineLayout_ = nullptr;
 	VkPipeline graphicsPipeline_ = nullptr;
@@ -78,8 +79,6 @@ protected:
 	// Offscreen rendering
 	VulkanImage* offscreenColorImage_;
 	VkFramebuffer offscreenFramebuffer_;
-
-	
 
 protected:
 	inline bool IsOffScreen()
@@ -100,10 +99,10 @@ protected:
 		const void* data,
 		const size_t dataSize);
 
-	void BeginRenderPass(VkCommandBuffer commandBuffer, size_t currentImage);
-	void BeginRenderPass(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer);
+	//void BeginRenderPass(VkCommandBuffer commandBuffer, size_t currentImage);
+	//void BeginRenderPass(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer);
 
-	void CreateOffScreenRenderPass(
+	/*void CreateOffScreenRenderPass(
 		VulkanDevice& device,
 		VkRenderPass* renderPass,
 		uint8_t flag = 0u);
@@ -112,17 +111,17 @@ protected:
 		VulkanDevice& device, 
 		VkRenderPass* renderPass, 
 		uint8_t flag = 0u);
-
+	*/
 	void CreateOffScreenFramebuffer(
 		VulkanDevice& vkDev,
-		VkRenderPass renderPass,
+		VulkanRenderPass renderPass,
 		VkImageView outputImageView,
 		VkImageView depthImageView,
 		VkFramebuffer& framebuffers);
 
 	void CreateOnScreenFramebuffers(
 		VulkanDevice& vkDev, 
-		VkRenderPass renderPass, 
+		VulkanRenderPass renderPass, 
 		VkImageView depthImageView);
 
 	void CreateDescriptorPool(

@@ -19,6 +19,7 @@ RendererCubeFilter::RendererCubeFilter(
 	VulkanDevice& vkDev, VulkanImage* inputCubemap) :
 	RendererBase(vkDev, nullptr)
 {
+	// Create cube render pass
 	CreateRenderPass(vkDev);
 
 	CreateDescriptorPool(
@@ -63,7 +64,7 @@ RendererCubeFilter::RendererCubeFilter(
 	graphicsPipelines_.emplace_back(VK_NULL_HANDLE);
 	CreateOffsreenGraphicsPipeline(
 		vkDev,
-		renderPass_,
+		cubeRenderPass_,
 		pipelineLayout_,
 		{
 			AppSettings::ShaderFolder + "FullscreenTriangle.vert",
@@ -78,7 +79,7 @@ RendererCubeFilter::RendererCubeFilter(
 	graphicsPipelines_.emplace_back(VK_NULL_HANDLE);
 	CreateOffsreenGraphicsPipeline(
 		vkDev,
-		renderPass_,
+		cubeRenderPass_,
 		pipelineLayout_,
 		{
 			AppSettings::ShaderFolder + "FullscreenTriangle.vert",
@@ -92,6 +93,8 @@ RendererCubeFilter::RendererCubeFilter(
 
 RendererCubeFilter::~RendererCubeFilter()
 {
+	vkDestroyRenderPass(device_, cubeRenderPass_, nullptr);
+	
 	vkDestroySampler(device_, inputCubemapSampler_, nullptr);
 
 	for (VkPipeline& pipeline : graphicsPipelines_)
@@ -100,7 +103,7 @@ RendererCubeFilter::~RendererCubeFilter()
 	}
 }
 
-void RendererCubeFilter::FillCommandBuffer(VkCommandBuffer commandBuffer, size_t currentImage)
+void RendererCubeFilter::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
 {
 }
 
@@ -184,7 +187,7 @@ void RendererCubeFilter::CreateRenderPass(VulkanDevice& vkDev)
 		.pSubpasses = &subpassDesc,
 	};
 
-	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &createInfo, nullptr, &renderPass_));
+	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &createInfo, nullptr, &cubeRenderPass_));
 }
 
 void RendererCubeFilter::CreateDescriptorLayout(VulkanDevice& vkDev)
@@ -384,7 +387,7 @@ VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
 	VkFramebufferCreateInfo info{};
 	info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 	info.pNext = nullptr;
-	info.renderPass = renderPass_;
+	info.renderPass = cubeRenderPass_;
 	info.attachmentCount = static_cast<uint32_t>(outputViews.size());
 	info.pAttachments = outputViews.data();
 	info.width = width;
@@ -473,7 +476,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		{
 			.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
 			.pNext = nullptr,
-			.renderPass = renderPass_,
+			.renderPass = cubeRenderPass_,
 			.framebuffer = frameBuffer,
 			.renderArea = { 0u, 0u, targetSize, targetSize },
 			.clearValueCount = static_cast<uint32_t>(clearValues.size()),

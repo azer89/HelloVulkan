@@ -34,8 +34,9 @@ public:
 
 	void BeginRenderPass(VulkanDevice& device, VkCommandBuffer commandBuffer, VkFramebuffer framebuffer);
 
-	void Destroy(VulkanDevice& vkDev);
+	void Destroy(VkDevice vkDev);
 
+	VkRenderPass GetHandle() { return handle_;}
 	//VkRenderPassBeginInfo* BeginInfoPtr() { return &beginInfo_; }
 
 private:
