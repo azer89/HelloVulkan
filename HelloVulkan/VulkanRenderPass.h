@@ -6,23 +6,16 @@
 enum RenderPassBit : uint8_t
 {
 	// Clear color attachment
-	OffScreenColorClear = 0x01,
+	ColorClear = 0x01,
 
 	// Clear depth attachment
-	OffScreenDepthClear = 0x02,
+	DepthClear = 0x02,
 
 	// Transition color attachment to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	// for the next onscreen render pass
-	OffScreenColorShaderReadOnly = 0x04,
+	ColorShaderReadOnly = 0x04,
 
-	// Clear swapchain color attachment
-	OnScreenColorClear = 0x08,
-
-	// Clear depth attachment
-	OnScreenDepthClear = 0x10,
-
-	// Present swapchain color attachment as VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	OnScreenColorPresent = 0x20
+	// Transition color attachment to VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
+	ColorPresent = 0x08
 };
 
 class VulkanRenderPass

@@ -91,12 +91,12 @@ void VulkanRenderPass::CreateOffScreenRenderPass(
 {
 	renderPassBit_ = renderPassBit;
 
-	bool clearColor = renderPassBit_ & RenderPassBit::OffScreenColorClear;
-	bool clearDepth = renderPassBit_ & RenderPassBit::OffScreenDepthClear;
+	bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
+	bool clearDepth = renderPassBit_ & RenderPassBit::DepthClear;
 
 	// Transition color attachment to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	// for the next onscreen render pass
-	bool colorShaderReadOnly = renderPassBit_ & RenderPassBit::OffScreenColorShaderReadOnly;
+	bool colorShaderReadOnly = renderPassBit_ & RenderPassBit::ColorShaderReadOnly;
 
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,
@@ -206,10 +206,10 @@ void VulkanRenderPass::CreateOnScreenRenderPass(
 {
 	renderPassBit_ = renderPassBit;
 
-	bool clearColor = renderPassBit_ & RenderPassBit::OnScreenColorClear;
-	bool presentColor = renderPassBit_ & RenderPassBit::OnScreenColorPresent;
-	bool clearDepth = renderPassBit_ & RenderPassBit::OnScreenDepthClear;
-
+	bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
+	bool clearDepth = renderPassBit_ & RenderPassBit::DepthClear;
+	bool presentColor = renderPassBit_ & RenderPassBit::ColorPresent;
+	
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,
 		.format = vkDev.GetSwaphchainImageFormat(),
@@ -305,8 +305,8 @@ void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(
 {
 	renderPassBit_ = renderPassBit;
 
-	bool clearColor = renderPassBit_ & RenderPassBit::OnScreenColorClear;
-	bool presentColor = renderPassBit_ & RenderPassBit::OnScreenColorPresent;
+	bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
+	bool presentColor = renderPassBit_ & RenderPassBit::ColorPresent;
 
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,
@@ -431,12 +431,8 @@ void VulkanRenderPass::CreateOffScreenCubemapRenderPass(
 
 void VulkanRenderPass::CreateBeginInfo(VulkanDevice& vkDev)
 {
-	bool clearColor =
-		renderPassBit_ & RenderPassBit::OnScreenColorClear ||
-		renderPassBit_ & RenderPassBit::OffScreenColorClear;
-	bool clearDepth =
-		renderPassBit_ & RenderPassBit::OnScreenDepthClear ||
-		renderPassBit_ & RenderPassBit::OffScreenDepthClear;
+	bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
+	bool clearDepth = renderPassBit_ & RenderPassBit::DepthClear;
 
 	if (clearColor)
 	{

@@ -75,7 +75,7 @@ void AppPBR::Init()
 		height);
 
 	// Renderers
-	// This is responsible to clear depth and swapchain image
+	// This is responsible to clear swapchain image
 	clearPtr_ = std::make_unique<RendererClear>(
 		vulkanDevice_);
 	// This draws a cube
@@ -86,8 +86,8 @@ void AppPBR::Init()
 		&multiSampledColorImage_,
 		// This is the first offscreen render pass so
 		// we need to clear the color attachment and depth attachment
-		RenderPassBit::OffScreenColorClear | 
-		RenderPassBit::OffScreenDepthClear
+		RenderPassBit::ColorClear | 
+		RenderPassBit::DepthClear
 	);
 	// This draws meshes with PBR+IBL
 	pbrPtr_ = std::make_unique<RendererPBR>(
