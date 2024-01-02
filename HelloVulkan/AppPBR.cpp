@@ -6,18 +6,17 @@
 
 #include "glm/gtc/matrix_transform.hpp"
 
-AppPBR::AppPBR()
+AppPBR::AppPBR() :
+	modelRotation_(0.f)
 {
 }
 
 void AppPBR::Init()
 {
-	modelRotation_ = 0.f;
-
 	std::string hdrFile = AppSettings::TextureFolder + "piazza_bologni_1k.hdr";
 
+	// MSAA
 	VkSampleCountFlagBits msaaSamples = vulkanDevice.GetMSAASamples();
-	//VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT;
 
 	model_ = std::make_unique<Model>(
 		vulkanDevice, 
@@ -52,21 +51,28 @@ void AppPBR::Init()
 		brdfLUTCompute.CreateLUT(vulkanDevice, &brdfLut_);
 	}
 
+	uint32_t width = static_cast<uint32_t>(AppSettings::ScreenWidth);
+	uint32_t height = static_cast<uint32_t>(AppSettings::ScreenHeight);
+
 	// Depth attachment (OnScreen and offscreen)
-	depthImage_.CreateDepthResources(vulkanDevice,
-		static_cast<uint32_t>(AppSettings::ScreenWidth),
-		static_cast<uint32_t>(AppSettings::ScreenHeight),
+	depthImage_.CreateDepthResources(
+		vulkanDevice,
+		width,
+		height,
 		msaaSamples);
 
-	// Color attachment (OffScreen only)
-	multiSampledColorImage_.CreateColorResources(vulkanDevice,
-		static_cast<uint32_t>(AppSettings::ScreenWidth),
-		static_cast<uint32_t>(AppSettings::ScreenHeight),
+	// Color attachments
+	// Multi-sampled
+	multiSampledColorImage_.CreateColorResources(
+		vulkanDevice,
+		width,
+		height,
 		msaaSamples);
-
-	singleSampledColorImage_.CreateColorResources(vulkanDevice,
-			static_cast<uint32_t>(AppSettings::ScreenWidth),
-			static_cast<uint32_t>(AppSettings::ScreenHeight));
+	// Single-sampled
+	singleSampledColorImage_.CreateColorResources(
+		vulkanDevice,
+		width,
+		height);
 
 	// Renderers
 	// This is responsible to clear depth and swapchain image
@@ -91,21 +97,20 @@ void AppPBR::Init()
 		&specularCubemap_,
 		&diffuseCubemap_,
 		&brdfLut_,
-		&multiSampledColorImage_);//,
-		// This is the last offscreen render pass
-		// so transition color attachment to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-		//RenderPassBit::OffScreenColorShaderReadOnly);
-	multisampleResolvePtr = std::make_unique<RendererResolveMultisampling>(
+		&multiSampledColorImage_);
+	// Resolve multiSampledColorImage_ to singleSampledColorImage_
+	multisampleResolvePtr = std::make_unique<RendererResolveMS>(
 		vulkanDevice, &multiSampledColorImage_, &singleSampledColorImage_);
-	// This is OnScreen render pass that transfers colorImage_ to swapchain image
+	// This is OnScreen render pass that transfers singleSampledColorImage_ to swapchain image
 	tonemapPtr_ = std::make_unique<RendererTonemap>(
 		vulkanDevice,
 		&singleSampledColorImage_
 	);
-	// This is responsible to present swapchain image
+	// Present swapchain image
 	finishPtr_ = std::make_unique<RendererFinish>(
 		vulkanDevice);
 
+	// Put all renderer pointers to a vector
 	renderers_ =
 	{
 		// Must be in order

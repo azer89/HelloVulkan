@@ -1,6 +1,6 @@
-#include "RendererResolveMultisampling.h"
+#include "RendererResolveMS.h"
 
-RendererResolveMultisampling::RendererResolveMultisampling(
+RendererResolveMS::RendererResolveMS(
 	VulkanDevice& vkDev,
 	VulkanImage* multiSampledColorImage, // Input
 	VulkanImage* singleSampledColorImage // Output
@@ -9,7 +9,7 @@ RendererResolveMultisampling::RendererResolveMultisampling(
 {
 	renderPass_.CreateMultisampleResolveRenderPass(
 		vkDev,
-		0u, //RenderPassBit::OffScreenColorClear,
+		0u,
 		multiSampledColorImage->multisampleCount_);
 
 	CreateResolveMultisampingFramebuffer(
@@ -20,13 +20,14 @@ RendererResolveMultisampling::RendererResolveMultisampling(
 		offscreenFramebuffer_);
 }
 
-RendererResolveMultisampling::~RendererResolveMultisampling()
+RendererResolveMS::~RendererResolveMS()
 {
-	// TODO
-	vkDestroyFramebuffer(device_, offscreenFramebuffer_, nullptr);
 }
 
-void RendererResolveMultisampling::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
+void RendererResolveMS::FillCommandBuffer(
+	VulkanDevice& vkDev,
+	VkCommandBuffer commandBuffer,
+	size_t currentImage)
 {
 	renderPass_.BeginRenderPass(commandBuffer, offscreenFramebuffer_);
 	vkCmdEndRenderPass(commandBuffer);

@@ -37,6 +37,8 @@ RendererBase::~RendererBase()
 		vkDestroyFramebuffer(device_, framebuffer, nullptr);
 	}
 
+	vkDestroyFramebuffer(device_, offscreenFramebuffer_, nullptr);
+
 	renderPass_.Destroy(device_);
 
 	vkDestroyPipelineLayout(device_, pipelineLayout_, nullptr);

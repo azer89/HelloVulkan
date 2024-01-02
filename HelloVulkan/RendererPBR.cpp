@@ -54,6 +54,7 @@ RendererPBR::RendererPBR(
 	}
 	else
 	{
+		// TODO Currently no MSAA for onscreen rendering
 		renderPass_.CreateOnScreenRenderPass(vkDev, multisampleCount);
 		CreateOnScreenFramebuffers(vkDev, renderPass_, depthImage_->imageView_);
 	}
@@ -93,8 +94,6 @@ RendererPBR::RendererPBR(
 
 RendererPBR::~RendererPBR()
 {
-	// TODO
-	vkDestroyFramebuffer(device_, offscreenFramebuffer_, nullptr);
 }
 
 void RendererPBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
