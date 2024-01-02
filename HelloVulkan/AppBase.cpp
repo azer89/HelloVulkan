@@ -27,10 +27,10 @@ void AppBase::InitVulkan()
 	}
 
 	// Initialize Vulkan instance
-	vulkanInstance.Create();
-	vulkanInstance.SetupDebugCallbacks();
-	vulkanInstance.CreateWindowSurface(glfwWindow);
-	vulkanDevice.CreateCompute(vulkanInstance,
+	vulkanInstance_.Create();
+	vulkanInstance_.SetupDebugCallbacks();
+	vulkanInstance_.CreateWindowSurface(glfwWindow_);
+	vulkanDevice_.CreateCompute(vulkanInstance_,
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
 		static_cast<uint32_t>(AppSettings::ScreenHeight),
 		VkPhysicalDeviceFeatures{});
@@ -48,62 +48,62 @@ void AppBase::InitGLFW()
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
 	// GLFW window creation
-	glfwWindow = glfwCreateWindow(AppSettings::ScreenWidth,
+	glfwWindow_ = glfwCreateWindow(AppSettings::ScreenWidth,
 		AppSettings::ScreenHeight,
 		AppSettings::ScreenTitle.c_str(),
 		nullptr,
 		nullptr);
-	if (glfwWindow == nullptr)
+	if (glfwWindow_ == nullptr)
 	{
 		glfwTerminate();
 		throw std::runtime_error("Failed to create GLFW window");
 	}
-	glfwMakeContextCurrent(glfwWindow);
+	glfwMakeContextCurrent(glfwWindow_);
 
-	glfwSetWindowUserPointer(glfwWindow, this);
+	glfwSetWindowUserPointer(glfwWindow_, this);
 	
 	auto FuncFramebuffer = [](GLFWwindow* window, int width, int height)
 	{
 		static_cast<AppBase*>(glfwGetWindowUserPointer(window))->FrameBufferSizeCallback(window, width, height);
 	};
-	glfwSetFramebufferSizeCallback(glfwWindow, FuncFramebuffer);
+	glfwSetFramebufferSizeCallback(glfwWindow_, FuncFramebuffer);
 
 	auto FuncCursor = [](GLFWwindow* window, double x, double y)
 	{
 		static_cast<AppBase*>(glfwGetWindowUserPointer(window))->MouseCallback(window, x, y);
 	};
-	glfwSetCursorPosCallback(glfwWindow, FuncCursor);
+	glfwSetCursorPosCallback(glfwWindow_, FuncCursor);
 
 	auto FuncMouse = [](GLFWwindow* window, int button, int action, int mods)
 	{
 		static_cast<AppBase*>(glfwGetWindowUserPointer(window))->MouseButtonCallback(window, button, action, mods);
 	};
-	glfwSetMouseButtonCallback(glfwWindow, FuncMouse);
+	glfwSetMouseButtonCallback(glfwWindow_, FuncMouse);
 
 	auto FuncScroll = [](GLFWwindow* window, double xOffset, double yOffset)
 	{
 		static_cast<AppBase*>(glfwGetWindowUserPointer(window))->ScrollCallback(window, xOffset, yOffset);
 	};
-	glfwSetScrollCallback(glfwWindow, FuncScroll);
+	glfwSetScrollCallback(glfwWindow_, FuncScroll);
 
 	auto FuncKey = [](GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
 		static_cast<AppBase*>(glfwGetWindowUserPointer(window))->KeyCallback(window, key, scancode, action, mods);
 	};
-	glfwSetKeyCallback(glfwWindow, FuncKey);
+	glfwSetKeyCallback(glfwWindow_, FuncKey);
 }
 
 bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 {
 	uint32_t imageIndex = 0;
 	VkResult result = vkAcquireNextImageKHR(
-		vulkanDevice.GetDevice(), 
-		vulkanDevice.GetSwapChain(), 
+		vulkanDevice_.GetDevice(), 
+		vulkanDevice_.GetSwapChain(), 
 		0, 
-		vulkanDevice.GetSemaphore(), 
+		vulkanDevice_.GetSemaphore(), 
 		VK_NULL_HANDLE, 
 		&imageIndex);
-	VK_CHECK(vkResetCommandPool(vulkanDevice.GetDevice(), vulkanDevice.GetCommandPool(), 0));
+	VK_CHECK(vkResetCommandPool(vulkanDevice_.GetDevice(), vulkanDevice_.GetCommandPool(), 0));
 
 	if (result != VK_SUCCESS)
 	{
@@ -124,37 +124,37 @@ bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
 		.pNext = nullptr,
 		.waitSemaphoreCount = 1u,
-		.pWaitSemaphores = vulkanDevice.GetSemaphorePtr(),
+		.pWaitSemaphores = vulkanDevice_.GetSemaphorePtr(),
 		.pWaitDstStageMask = waitStages,
 		.commandBufferCount = 1u,
-		.pCommandBuffers = vulkanDevice.GetCommandBufferPtr(imageIndex),
+		.pCommandBuffers = vulkanDevice_.GetCommandBufferPtr(imageIndex),
 		.signalSemaphoreCount = 1u,
-		.pSignalSemaphores = vulkanDevice.GetRenderSemaphorePtr()
+		.pSignalSemaphores = vulkanDevice_.GetRenderSemaphorePtr()
 	};
 
-	VK_CHECK(vkQueueSubmit(vulkanDevice.GetGraphicsQueue(), 1, &si, nullptr));
+	VK_CHECK(vkQueueSubmit(vulkanDevice_.GetGraphicsQueue(), 1, &si, nullptr));
 
 	const VkPresentInfoKHR pi =
 	{
 		.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
 		.pNext = nullptr,
 		.waitSemaphoreCount = 1u,
-		.pWaitSemaphores = vulkanDevice.GetRenderSemaphorePtr(),
+		.pWaitSemaphores = vulkanDevice_.GetRenderSemaphorePtr(),
 		.swapchainCount = 1u,
-		.pSwapchains = vulkanDevice.GetSwapchainPtr(),
+		.pSwapchains = vulkanDevice_.GetSwapchainPtr(),
 		.pImageIndices = &imageIndex
 	};
 
-	VK_CHECK(vkQueuePresentKHR(vulkanDevice.GetGraphicsQueue(), &pi));
+	VK_CHECK(vkQueuePresentKHR(vulkanDevice_.GetGraphicsQueue(), &pi));
 
-	VK_CHECK(vkDeviceWaitIdle(vulkanDevice.GetDevice()));
+	VK_CHECK(vkDeviceWaitIdle(vulkanDevice_.GetDevice()));
 
 	return true;
 }
 
 void AppBase::FillCommandBuffer(const std::vector<RendererBase*>& renderers, uint32_t imageIndex)
 {
-	VkCommandBuffer commandBuffer = vulkanDevice.GetCommandBuffer(imageIndex);
+	VkCommandBuffer commandBuffer = vulkanDevice_.GetCommandBuffer(imageIndex);
 
 	const VkCommandBufferBeginInfo bi =
 	{
@@ -168,7 +168,7 @@ void AppBase::FillCommandBuffer(const std::vector<RendererBase*>& renderers, uin
 
 	for (auto& r : renderers)
 	{
-		r->FillCommandBuffer(vulkanDevice, commandBuffer, imageIndex);
+		r->FillCommandBuffer(vulkanDevice_, commandBuffer, imageIndex);
 	}
 
 	VK_CHECK(vkEndCommandBuffer(commandBuffer));
@@ -176,7 +176,7 @@ void AppBase::FillCommandBuffer(const std::vector<RendererBase*>& renderers, uin
 
 void AppBase::InitIMGUI()
 {
-	showImgui = true;
+	showImgui_ = true;
 
 	/*IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -188,29 +188,29 @@ void AppBase::InitIMGUI()
 
 void AppBase::InitCamera()
 {
-	camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 3.0f));
-	lastX = static_cast<float>(AppSettings::ScreenWidth) / 2.0f;
-	lastY = static_cast<float>(AppSettings::ScreenHeight) / 2.0f;
-	firstMouse = true;
+	camera_ = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 3.0f));
+	lastX_ = static_cast<float>(AppSettings::ScreenWidth) / 2.0f;
+	lastY_ = static_cast<float>(AppSettings::ScreenHeight) / 2.0f;
+	firstMouse_ = true;
 }
 
 void AppBase::InitTiming()
 {
-	deltaTime = 0.0f;	// Time between current frame and last frame
-	lastFrame = 0.0f;
+	deltaTime_ = 0.0f;	// Time between current frame and last frame
+	lastFrame_ = 0.0f;
 }
 
 void AppBase::ProcessTiming()
 {
 	// Per-frame time
 	float currentFrame = static_cast<float>(glfwGetTime());
-	deltaTime = currentFrame - lastFrame;
-	lastFrame = currentFrame;
+	deltaTime_ = currentFrame - lastFrame_;
+	lastFrame_ = currentFrame;
 }
 
 int AppBase::GLFWWindowShouldClose()
 {
-	return glfwWindowShouldClose(glfwWindow);
+	return glfwWindowShouldClose(glfwWindow_);
 }
 
 void AppBase::PollEvents()
@@ -220,11 +220,11 @@ void AppBase::PollEvents()
 
 void AppBase::Terminate()
 {
-	glfwDestroyWindow(glfwWindow);
+	glfwDestroyWindow(glfwWindow_);
 	glfwTerminate();
 
-	vulkanDevice.Destroy();
-	vulkanInstance.Destroy();
+	vulkanDevice_.Destroy();
+	vulkanInstance_.Destroy();
 }
 
 void AppBase::FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
@@ -234,42 +234,42 @@ void AppBase::FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
 
 void AppBase::MouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 {
-	if (!middleMousePressed)
+	if (!middleMousePressed_)
 	{
 		return;
 	}
 
 	float xPos = static_cast<float>(xposIn);
 	float yPos = static_cast<float>(yposIn);
-	if (firstMouse)
+	if (firstMouse_)
 	{
-		lastX = xPos;
-		lastY = yPos;
-		firstMouse = false;
+		lastX_ = xPos;
+		lastY_ = yPos;
+		firstMouse_ = false;
 	}
-	float xOffset = xPos - lastX;
-	float yOffset = lastY - yPos; // reversed since y-coordinates go from bottom to top
-	lastX = xPos;
-	lastY = yPos;
-	camera->ProcessMouseMovement(xOffset, yOffset);
+	float xOffset = xPos - lastX_;
+	float yOffset = lastY_ - yPos; // reversed since y-coordinates go from bottom to top
+	lastX_ = xPos;
+	lastY_ = yPos;
+	camera_->ProcessMouseMovement(xOffset, yOffset);
 }
 
 void AppBase::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
 	if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS)
 	{
-		middleMousePressed = true;
+		middleMousePressed_ = true;
 	}
 	else if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_RELEASE)
 	{
-		middleMousePressed = false;
-		firstMouse = true;
+		middleMousePressed_ = false;
+		firstMouse_ = true;
 	}
 }
 
 void AppBase::ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	camera->ProcessMouseScroll(static_cast<float>(yoffset));
+	camera_->ProcessMouseScroll(static_cast<float>(yoffset));
 }
 
 void AppBase::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -277,35 +277,35 @@ void AppBase::KeyCallback(GLFWwindow* window, int key, int scancode, int action,
 	if (key == GLFW_KEY_I && action == GLFW_PRESS)
 	{
 		// Toggle imgui window
-		showImgui = !showImgui;
+		showImgui_ = !showImgui_;
 	}
 }
 
 // Process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 void AppBase::ProcessInput()
 {
-	if (glfwGetKey(glfwWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	if (glfwGetKey(glfwWindow_, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
-		glfwSetWindowShouldClose(glfwWindow, true);
+		glfwSetWindowShouldClose(glfwWindow_, true);
 	}
 
-	if (glfwGetKey(glfwWindow, GLFW_KEY_W) == GLFW_PRESS)
+	if (glfwGetKey(glfwWindow_, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		camera->ProcessKeyboard(CameraForward, deltaTime);
+		camera_->ProcessKeyboard(CameraForward, deltaTime_);
 	}
 
-	if (glfwGetKey(glfwWindow, GLFW_KEY_S) == GLFW_PRESS)
+	if (glfwGetKey(glfwWindow_, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		camera->ProcessKeyboard(CameraBackward, deltaTime);
+		camera_->ProcessKeyboard(CameraBackward, deltaTime_);
 	}
 
-	if (glfwGetKey(glfwWindow, GLFW_KEY_A) == GLFW_PRESS)
+	if (glfwGetKey(glfwWindow_, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		camera->ProcessKeyboard(CameraLeft, deltaTime);
+		camera_->ProcessKeyboard(CameraLeft, deltaTime_);
 	}
 
-	if (glfwGetKey(glfwWindow, GLFW_KEY_D) == GLFW_PRESS)
+	if (glfwGetKey(glfwWindow_, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		camera->ProcessKeyboard(CameraRight, deltaTime);
+		camera_->ProcessKeyboard(CameraRight, deltaTime_);
 	}
 }

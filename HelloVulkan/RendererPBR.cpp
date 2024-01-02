@@ -16,10 +16,10 @@ constexpr size_t PBR_ENV_TEXTURE_COUNT = 3;
 RendererPBR::RendererPBR(
 	VulkanDevice& vkDev,
 	std::vector<Model*> models,
-	VulkanImage* depthImage,
 	VulkanImage* envMap,
 	VulkanImage* diffuseMap,
 	VulkanImage* brdfLUT,
+	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
 	RendererBase(vkDev, depthImage, offscreenColorImage, renderBit),

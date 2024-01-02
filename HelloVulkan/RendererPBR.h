@@ -10,10 +10,10 @@ class RendererPBR final : public RendererBase
 public:
 	RendererPBR(VulkanDevice& vkDev,
 		std::vector<Model*> models,
-		VulkanImage* depthImage,
 		VulkanImage* envMap,
 		VulkanImage* diffuseMap,
 		VulkanImage* brdfLUT,
+		VulkanImage* depthImage,
 		VulkanImage* offscreenColorImage = nullptr,
 		uint8_t renderBit = 0u);
 	 ~RendererPBR();
