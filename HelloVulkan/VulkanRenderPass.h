@@ -35,7 +35,7 @@ public:
 
 	void CreateOnScreenRenderPass(VulkanDevice& device, uint8_t renderPassBit = 0u);
 
-	void CreateOnScreenClearColorRenderPass(VulkanDevice& device);
+	void CreateOnScreenColorOnlyRenderPass(VulkanDevice& device, uint8_t renderPassBit = 0u);
 
 	void CreateOnScreenClearDepthRenderPass(VulkanDevice& device);
 

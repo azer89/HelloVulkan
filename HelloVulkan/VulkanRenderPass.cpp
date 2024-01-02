@@ -210,20 +210,28 @@ void VulkanRenderPass::CreateOnScreenRenderPass(VulkanDevice& vkDev, uint8_t ren
 	CreateBeginInfo(vkDev);
 }
 
-void VulkanRenderPass::CreateOnScreenClearColorRenderPass(VulkanDevice& vkDev)
+void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(VulkanDevice& vkDev,
+	uint8_t renderPassBit)
 {
-	renderPassBit_ = RenderPassBit::OnScreenColorClear;
+	renderPassBit_ = renderPassBit;
+
+	bool clearColor = renderPassBit_ & RenderPassBit::OnScreenColorClear;
+	bool presentColor = renderPassBit_ & RenderPassBit::OnScreenColorPresent;
 
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,
 		.format = vkDev.GetSwaphchainImageFormat(),
 		.samples = VK_SAMPLE_COUNT_1_BIT,
-		.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+		.loadOp = clearColor ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-		.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-		.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+		.initialLayout = clearColor ?
+			VK_IMAGE_LAYOUT_UNDEFINED :
+			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		.finalLayout = presentColor ?
+			VK_IMAGE_LAYOUT_PRESENT_SRC_KHR :
+			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	};
 
 	const VkAttachmentReference colorAttachmentRef = {

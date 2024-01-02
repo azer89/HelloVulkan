@@ -5,15 +5,14 @@
 RendererFinish::RendererFinish(VulkanDevice& vkDev, VulkanImage* depthImage) : 
 	RendererBase(vkDev, depthImage)
 {
-	renderPass_.CreateOnScreenRenderPass(
+	renderPass_.CreateOnScreenColorOnlyRenderPass(
 		vkDev, 
 		// Present swapchain image 
 		RenderPassBit::OnScreenColorPresent);
 
 	CreateOnScreenFramebuffers(
 		vkDev, 
-		renderPass_, 
-		depthImage_->imageView_);
+		renderPass_);
 }
 
 void RendererFinish::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
