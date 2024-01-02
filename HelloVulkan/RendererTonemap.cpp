@@ -3,9 +3,9 @@
 #include "AppSettings.h"
 
 RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
-	VulkanImage* colorImage) :
+	VulkanImage* singleSampledColorImage) :
 	RendererBase(vkDev, nullptr),
-	colorImage_(colorImage)
+	singleSampledColorImage_(singleSampledColorImage)
 {
 	renderPass_.CreateOnScreenColorOnlyRenderPass(vkDev);
 
@@ -104,8 +104,8 @@ void RendererTonemap::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 
 		const VkDescriptorImageInfo  imageInfo =
 		{
-			colorImage_->defaultImageSampler_,
-			colorImage_->imageView_,
+			singleSampledColorImage_->defaultImageSampler_,
+			singleSampledColorImage_->imageView_,
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 		};
 

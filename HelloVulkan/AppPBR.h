@@ -40,7 +40,8 @@ private:
 	VulkanImage specularCubemap_;
 	VulkanImage brdfLut_;
 
-	VulkanImage colorImage_;
+	VulkanImage multiSampledColorImage_;
+	VulkanImage singleSampledColorImage_;
 	VulkanImage depthImage_;
 
 	float modelRotation_;

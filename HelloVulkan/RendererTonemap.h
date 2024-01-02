@@ -8,7 +8,7 @@ class RendererTonemap final : public RendererBase
 {
 public:
 	RendererTonemap(VulkanDevice& vkDev,
-		VulkanImage* colorImage);
+		VulkanImage* singleSampledColorImage);
 	~RendererTonemap() = default;
 
 	virtual void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
@@ -17,7 +17,7 @@ private:
 	void CreateDescriptorLayoutAndSet(VulkanDevice& vkDev);
 
 private:
-	VulkanImage* colorImage_;
+	VulkanImage* singleSampledColorImage_;
 
 	std::vector<VkDescriptorSet> descriptorSets_;
 };
