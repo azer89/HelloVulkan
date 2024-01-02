@@ -88,6 +88,10 @@ protected:
 		VulkanRenderPass renderPass, 
 		VkImageView depthImageView);
 
+	void CreateOnScreenFramebuffers(
+		VulkanDevice& vkDev,
+		VulkanRenderPass renderPass);
+
 	void CreateDescriptorPool(
 		VulkanDevice& vkDev, 
 		uint32_t uniformBufferCount, 

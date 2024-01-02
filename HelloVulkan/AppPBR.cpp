@@ -72,7 +72,9 @@ void AppPBR::Init()
 		&colorImage_,
 		// This is the first offscreen render pass so
 		// we need to clear the color attachment
-		RenderPassBit::OffScreenColorClear);
+		RenderPassBit::OffScreenColorClear | 
+		RenderPassBit::OffScreenDepthClear
+	);
 	// This draws meshes with PBR+IBL
 	pbrPtr_ = std::make_unique<RendererPBR>(
 		vulkanDevice,
