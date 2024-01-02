@@ -62,8 +62,7 @@ void AppPBR::Init()
 	// Renderers
 	// This is responsible to clear depth and swapchain image
 	clearPtr_ = std::make_unique<RendererClear>(
-		vulkanDevice, 
-		&depthImage_);
+		vulkanDevice);
 	// This draws a cube
 	skyboxPtr_ = std::make_unique<RendererSkybox>(
 		vulkanDevice,
@@ -71,8 +70,10 @@ void AppPBR::Init()
 		&depthImage_,
 		&colorImage_,
 		// This is the first offscreen render pass so
-		// we need to clear the color attachment
-		RenderPassBit::OffScreenColorClear);
+		// we need to clear the color attachment and depth attachment
+		RenderPassBit::OffScreenColorClear | 
+		RenderPassBit::OffScreenDepthClear
+	);
 	// This draws meshes with PBR+IBL
 	pbrPtr_ = std::make_unique<RendererPBR>(
 		vulkanDevice,
@@ -85,15 +86,14 @@ void AppPBR::Init()
 		// This is the last offscreen render pass
 		// so transition color attachment to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 		RenderPassBit::OffScreenColorShaderReadOnly);
+	// This is OnScreen render pass that transfers colorImage_ to swapchain image
 	tonemapPtr_ = std::make_unique<RendererTonemap>(
 		vulkanDevice,
-		&colorImage_,
-		&depthImage_
+		&colorImage_
 	);
 	// This is responsible to present swapchain image
 	finishPtr_ = std::make_unique<RendererFinish>(
-		vulkanDevice, 
-		&depthImage_);
+		vulkanDevice);
 
 	renderers_ =
 	{

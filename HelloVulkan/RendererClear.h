@@ -6,9 +6,12 @@
 class RendererClear final : public RendererBase
 {
 public:
-	RendererClear(VulkanDevice& vkDev, VulkanImage* depthImage);
+	RendererClear(VulkanDevice& vkDev);
+	~RendererClear();
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
+
+private:
 };
 
 #endif

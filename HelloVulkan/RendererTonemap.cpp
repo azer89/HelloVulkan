@@ -3,17 +3,15 @@
 #include "AppSettings.h"
 
 RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
-	VulkanImage* colorImage,
-	VulkanImage* depthImage) :
-	RendererBase(vkDev, depthImage),
+	VulkanImage* colorImage) :
+	RendererBase(vkDev, nullptr),
 	colorImage_(colorImage)
 {
-	renderPass_.CreateOnScreenRenderPass(vkDev);
+	renderPass_.CreateOnScreenColorOnlyRenderPass(vkDev);
 
 	CreateOnScreenFramebuffers(
 		vkDev,
-		renderPass_,
-		depthImage_->imageView_);
+		renderPass_);
 
 	CreateDescriptorPool(
 		vkDev,

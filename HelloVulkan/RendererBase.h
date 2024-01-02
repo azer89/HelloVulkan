@@ -88,6 +88,10 @@ protected:
 		VulkanRenderPass renderPass, 
 		VkImageView depthImageView);
 
+	void CreateOnScreenFramebuffers(
+		VulkanDevice& vkDev,
+		VulkanRenderPass renderPass);
+
 	void CreateDescriptorPool(
 		VulkanDevice& vkDev, 
 		uint32_t uniformBufferCount, 
@@ -108,6 +112,7 @@ protected:
 		const std::vector<std::string>& shaderFiles,
 		VkPipeline* pipeline,
 		bool hasVertexBuffer = false,
+		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT,
 		VkPrimitiveTopology topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST /* defaults to triangles*/,
 		bool useDepth = true,
 		bool useBlending = true,

@@ -33,6 +33,7 @@ public:
 	uint32_t mipCount_;
 	uint32_t layerCount_;
 	VkFormat imageFormat_;
+	VkSampleCountFlagBits multisampleCount_;
 
 public:
 
@@ -91,7 +92,8 @@ public:
 		VkImageTiling tiling,
 		VkImageUsageFlags usage,
 		VkMemoryPropertyFlags properties,
-		VkImageCreateFlags flags = 0);
+		VkImageCreateFlags flags = 0,
+		VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
 
 	void CreateImageFromData(
 		VulkanDevice& vkDev,
@@ -103,9 +105,19 @@ public:
 		VkFormat texFormat,
 		VkImageCreateFlags flags = 0);
 
-	void CreateColorResources(VulkanDevice& vkDev, uint32_t width, uint32_t height);
+	// This is used for offscreen rendering as a color attachment
+	void CreateColorResources(
+		VulkanDevice& vkDev, 
+		uint32_t width, 
+		uint32_t height,
+		VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
 
-	void CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint32_t height);
+	// Depth attachment for onscreen/offscreen rendering
+	void CreateDepthResources(
+		VulkanDevice& vkDev, 
+		uint32_t width, 
+		uint32_t height,
+		VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
 
 	void GenerateMipmap(
 		VulkanDevice& vkDev,

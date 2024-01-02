@@ -8,8 +8,7 @@ class RendererTonemap final : public RendererBase
 {
 public:
 	RendererTonemap(VulkanDevice& vkDev,
-		VulkanImage* colorImage,
-		VulkanImage* depthImage);
+		VulkanImage* colorImage);
 	~RendererTonemap() = default;
 
 	virtual void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;

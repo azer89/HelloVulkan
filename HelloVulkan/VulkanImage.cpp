@@ -85,7 +85,11 @@ void VulkanImage::CreateFromHDR(
 	stbi_image_free(pixels);
 }
 
-void VulkanImage::CreateColorResources(VulkanDevice& vkDev, uint32_t width, uint32_t height)
+void VulkanImage::CreateColorResources(
+	VulkanDevice& vkDev, 
+	uint32_t width, 
+	uint32_t height,
+	VkSampleCountFlagBits sampleCount)
 {
 	VkFormat format = vkDev.GetSwaphchainImageFormat();
 
@@ -98,7 +102,9 @@ void VulkanImage::CreateColorResources(VulkanDevice& vkDev, uint32_t width, uint
 		format,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
+		0u,
+		sampleCount);
 
 	CreateImageView(
 		vkDev.GetDevice(),
@@ -107,7 +113,11 @@ void VulkanImage::CreateColorResources(VulkanDevice& vkDev, uint32_t width, uint
 	CreateDefaultSampler(vkDev.GetDevice());
 }
 
-void VulkanImage::CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint32_t height)
+void VulkanImage::CreateDepthResources(
+	VulkanDevice& vkDev, 
+	uint32_t width, 
+	uint32_t height,
+	VkSampleCountFlagBits sampleCount)
 {
 	VkFormat depthFormat = FindDepthFormat(vkDev.GetPhysicalDevice());
 
@@ -120,7 +130,9 @@ void VulkanImage::CreateDepthResources(VulkanDevice& vkDev, uint32_t width, uint
 		depthFormat,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		0u,
+		sampleCount);
 
 	CreateImageView(vkDev.GetDevice(),
 		depthFormat,
@@ -197,13 +209,15 @@ void VulkanImage::CreateImage(
 	VkImageTiling tiling,
 	VkImageUsageFlags usage,
 	VkMemoryPropertyFlags properties,
-	VkImageCreateFlags flags)
+	VkImageCreateFlags flags,
+	VkSampleCountFlagBits sampleCount)
 {
 	width_ = width;
 	height_ = height;
 	mipCount_ = mipCount;
 	layerCount_ = layerCount;
 	imageFormat_ = format;
+	multisampleCount_ = sampleCount;
 	
 	const VkImageCreateInfo imageInfo = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
@@ -214,7 +228,7 @@ void VulkanImage::CreateImage(
 		.extent = VkExtent3D {.width = width_, .height = height_, .depth = 1 },
 		.mipLevels = mipCount_,
 		.arrayLayers = layerCount_,
-		.samples = VK_SAMPLE_COUNT_1_BIT,
+		.samples = sampleCount,
 		.tiling = tiling,
 		.usage = usage,
 		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,

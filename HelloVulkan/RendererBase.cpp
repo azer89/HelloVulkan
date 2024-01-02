@@ -92,6 +92,34 @@ void RendererBase::CreateOffScreenFramebuffer(
 
 void RendererBase::CreateOnScreenFramebuffers(
 	VulkanDevice& vkDev,
+	VulkanRenderPass renderPass)
+{
+	size_t swapchainImageSize = vkDev.GetSwapChainImageSize();
+
+	swapchainFramebuffers_.resize(swapchainImageSize);
+
+	for (size_t i = 0; i < swapchainImageSize; i++)
+	{
+		VkImageView swapchainImageView = vkDev.GetSwapchainImageView(i);
+
+		const VkFramebufferCreateInfo framebufferInfo = {
+			.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+			.pNext = nullptr,
+			.flags = 0,
+			.renderPass = renderPass.GetHandle(),
+			.attachmentCount = 1u,
+			.pAttachments = &swapchainImageView,
+			.width = vkDev.GetFrameBufferWidth(),
+			.height = vkDev.GetFrameBufferHeight(),
+			.layers = 1
+		};
+
+		VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo, nullptr, &swapchainFramebuffers_[i]));
+	}
+}
+
+void RendererBase::CreateOnScreenFramebuffers(
+	VulkanDevice& vkDev,
 	VulkanRenderPass renderPass,
 	VkImageView depthImageView)
 {
@@ -199,6 +227,7 @@ void RendererBase::CreateGraphicsPipeline(
 	const std::vector<std::string>& shaderFiles,
 	VkPipeline* pipeline,
 	bool hasVertexBuffer,
+	VkSampleCountFlagBits msaaSamples,
 	VkPrimitiveTopology topology,
 	bool useDepth,
 	bool useBlending,
@@ -248,6 +277,8 @@ void RendererBase::CreateGraphicsPipeline(
 	pInfo.depthStencil.depthWriteEnable = static_cast<VkBool32>(useDepth ? VK_TRUE : VK_FALSE);
 
 	pInfo.tessellationState.patchControlPoints = numPatchControlPoints;
+
+	pInfo.multisampling.rasterizationSamples = msaaSamples;
 
 	const VkGraphicsPipelineCreateInfo pipelineInfo = {
 		.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,

@@ -119,6 +119,41 @@ void VulkanDevice::Destroy()
 	vkDestroyDevice(device_, nullptr);
 }
 
+VkSampleCountFlagBits VulkanDevice::GetMaxUsableSampleCount(VkPhysicalDevice d)
+{
+	VkPhysicalDeviceProperties physicalDeviceProperties;
+	vkGetPhysicalDeviceProperties(d, &physicalDeviceProperties);
+
+	VkSampleCountFlags counts = physicalDeviceProperties.limits.framebufferColorSampleCounts &
+		physicalDeviceProperties.limits.framebufferDepthSampleCounts;
+	if (counts & VK_SAMPLE_COUNT_64_BIT)
+	{
+		return VK_SAMPLE_COUNT_64_BIT;
+	}
+	if (counts & VK_SAMPLE_COUNT_32_BIT)
+	{
+		return VK_SAMPLE_COUNT_32_BIT;
+	}
+	if (counts & VK_SAMPLE_COUNT_16_BIT)
+	{
+		return VK_SAMPLE_COUNT_16_BIT;
+	}
+	if (counts & VK_SAMPLE_COUNT_8_BIT)
+	{
+		return VK_SAMPLE_COUNT_8_BIT;
+	}
+	if (counts & VK_SAMPLE_COUNT_4_BIT)
+	{
+		return VK_SAMPLE_COUNT_4_BIT;
+	}
+	if (counts & VK_SAMPLE_COUNT_2_BIT)
+	{
+		return VK_SAMPLE_COUNT_2_BIT;
+	}
+
+	return VK_SAMPLE_COUNT_1_BIT;
+}
+
 VkResult VulkanDevice::CreatePhysicalDevice(VkInstance instance)
 {
 	uint32_t deviceCount = 0;
@@ -133,11 +168,13 @@ VkResult VulkanDevice::CreatePhysicalDevice(VkInstance instance)
 	std::vector<VkPhysicalDevice> devices(deviceCount);
 	VK_CHECK_RET(vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data()));
 
+	msaaSamples_ = VK_SAMPLE_COUNT_1_BIT; // Default
 	for (const auto& d : devices)
 	{
 		if (IsDeviceSuitable(d))
 		{
 			physicalDevice_ = d;
+			msaaSamples_ = GetMaxUsableSampleCount(physicalDevice_);
 			return VK_SUCCESS;
 		}
 	}

@@ -18,10 +18,13 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 	envMap_(envMap)
 {
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
+
+	VkSampleCountFlagBits multisampleCount = VK_SAMPLE_COUNT_1_BIT;
 	
 	if (IsOffScreen())
 	{
-		renderPass_.CreateOffScreenRenderPass(vkDev, renderBit);
+		multisampleCount = offscreenColorImage_->multisampleCount_;
+		renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, multisampleCount);
 		CreateOffScreenFramebuffer(
 			vkDev,
 			renderPass_,
@@ -56,7 +59,10 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 			AppSettings::ShaderFolder + "Cube.vert",
 			AppSettings::ShaderFolder + "Cube.frag",
 		},
-		&graphicsPipeline_);
+		&graphicsPipeline_,
+		false, // has no vertex buffer
+		multisampleCount // For multisampling
+		); 
 }
 
 RendererSkybox::~RendererSkybox()
