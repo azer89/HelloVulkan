@@ -81,6 +81,9 @@
     <ClCompile Include="VulkanRenderPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RendererResolveMultisampling.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppSettings.h">
@@ -156,6 +159,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VulkanRenderPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererResolveMultisampling.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -90,6 +90,30 @@ void RendererBase::CreateOffScreenFramebuffer(
 	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo, nullptr, &framebuffer));
 }
 
+void RendererBase::CreateResolveMultisampingFramebuffer(
+	VulkanDevice& vkDev,
+	VulkanRenderPass renderPass,
+	VkImageView multisampledImageView,
+	VkImageView singleSampledImageView,
+	VkFramebuffer& framebuffer)
+{
+	std::array<VkImageView, 2> attachments = { multisampledImageView, singleSampledImageView };
+
+	const VkFramebufferCreateInfo framebufferInfo = {
+		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0,
+		.renderPass = renderPass.GetHandle(),
+		.attachmentCount = static_cast<uint32_t>(attachments.size()),
+		.pAttachments = attachments.data(),
+		.width = vkDev.GetFrameBufferWidth(),
+		.height = vkDev.GetFrameBufferHeight(),
+		.layers = 1
+	};
+
+	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo, nullptr, &framebuffer));
+}
+
 void RendererBase::CreateOnScreenFramebuffers(
 	VulkanDevice& vkDev,
 	VulkanRenderPass renderPass)

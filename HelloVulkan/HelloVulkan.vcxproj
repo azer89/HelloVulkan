@@ -146,6 +146,7 @@
     <ClCompile Include="RendererClear.cpp" />
     <ClCompile Include="RendererEquirect2Cube.cpp" />
     <ClCompile Include="RendererCubeFilter.cpp" />
+    <ClCompile Include="RendererResolveMultisampling.cpp" />
     <ClCompile Include="RendererSkybox.cpp" />
     <ClCompile Include="RendererFinish.cpp" />
     <ClCompile Include="RendererPBR.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="RendererClear.h" />
     <ClInclude Include="RendererEquirect2Cube.h" />
     <ClInclude Include="RendererCubeFilter.h" />
+    <ClInclude Include="RendererResolveMultisampling.h" />
     <ClInclude Include="RendererSkybox.h" />
     <ClInclude Include="RendererFinish.h" />
     <ClInclude Include="RendererPBR.h" />

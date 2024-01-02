@@ -81,7 +81,14 @@ protected:
 		VulkanRenderPass renderPass,
 		VkImageView outputImageView,
 		VkImageView depthImageView,
-		VkFramebuffer& framebuffers);
+		VkFramebuffer& framebuffer);
+
+	void CreateResolveMultisampingFramebuffer(
+		VulkanDevice& vkDev,
+		VulkanRenderPass renderPass,
+		VkImageView multisampledImageView,
+		VkImageView singleSampledImageView,
+		VkFramebuffer& framebuffer);
 
 	void CreateOnScreenFramebuffers(
 		VulkanDevice& vkDev, 
