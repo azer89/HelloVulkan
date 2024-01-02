@@ -55,7 +55,7 @@ void AppPBR::Init()
 		static_cast<uint32_t>(AppSettings::ScreenHeight));
 
 	// Color attachment (OffScreen only)
-	colorImage_.CreateColorResources(vulkanDevice,
+	multiSampledColorImage_.CreateColorResources(vulkanDevice,
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
 		static_cast<uint32_t>(AppSettings::ScreenHeight));
 
@@ -68,7 +68,7 @@ void AppPBR::Init()
 		vulkanDevice,
 		&environmentCubemap_,
 		&depthImage_,
-		&colorImage_,
+		&multiSampledColorImage_,
 		// This is the first offscreen render pass so
 		// we need to clear the color attachment and depth attachment
 		RenderPassBit::OffScreenColorClear | 
@@ -82,14 +82,14 @@ void AppPBR::Init()
 		&specularCubemap_,
 		&diffuseCubemap_, 
 		&brdfLut_,
-		&colorImage_,
+		&multiSampledColorImage_,
 		// This is the last offscreen render pass
 		// so transition color attachment to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 		RenderPassBit::OffScreenColorShaderReadOnly);
 	// This is OnScreen render pass that transfers colorImage_ to swapchain image
 	tonemapPtr_ = std::make_unique<RendererTonemap>(
 		vulkanDevice,
-		&colorImage_
+		&multiSampledColorImage_
 	);
 	// This is responsible to present swapchain image
 	finishPtr_ = std::make_unique<RendererFinish>(
@@ -110,7 +110,8 @@ void AppPBR::DestroyResources()
 {
 	// Destroy images
 	depthImage_.Destroy(vulkanDevice.GetDevice());
-	colorImage_.Destroy(vulkanDevice.GetDevice());
+	multiSampledColorImage_.Destroy(vulkanDevice.GetDevice());
+	singleSampledColorImage_.Destroy(vulkanDevice.GetDevice());
 	environmentCubemap_.Destroy(vulkanDevice.GetDevice());
 	diffuseCubemap_.Destroy(vulkanDevice.GetDevice());
 	specularCubemap_.Destroy(vulkanDevice.GetDevice());
