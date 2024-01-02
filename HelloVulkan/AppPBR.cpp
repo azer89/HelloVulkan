@@ -89,12 +89,12 @@ void AppPBR::Init()
 		models,
 		&depthImage_,
 		&specularCubemap_,
-		&diffuseCubemap_, 
+		&diffuseCubemap_,
 		&brdfLut_,
-		&multiSampledColorImage_,
+		&multiSampledColorImage_);//,
 		// This is the last offscreen render pass
 		// so transition color attachment to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-		RenderPassBit::OffScreenColorShaderReadOnly);
+		//RenderPassBit::OffScreenColorShaderReadOnly);
 	multisampleResolvePtr = std::make_unique<RendererResolveMultisampling>(
 		vulkanDevice, &multiSampledColorImage_, &singleSampledColorImage_);
 	// This is OnScreen render pass that transfers colorImage_ to swapchain image
@@ -162,7 +162,7 @@ void AppPBR::UpdateUBOs(uint32_t imageIndex)
 	// Model UBOs
 	glm::mat4 modelMatrix(1.f);
 	modelMatrix = glm::rotate(modelMatrix, modelRotation_, glm::vec3(0.f, 1.f, 0.f));
-	//modelRotation_ += deltaTime * 0.1f;
+	modelRotation_ += deltaTime * 0.1f;
 
 	// 1
 	ModelUBO modelUBO1

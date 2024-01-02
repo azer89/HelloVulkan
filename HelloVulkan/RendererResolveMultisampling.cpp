@@ -9,7 +9,7 @@ RendererResolveMultisampling::RendererResolveMultisampling(
 {
 	renderPass_.CreateMultisampleResolveRenderPass(
 		vkDev,
-		0u,
+		0u, //RenderPassBit::OffScreenColorClear,
 		multiSampledColorImage->multisampleCount_);
 
 	CreateResolveMultisampingFramebuffer(
