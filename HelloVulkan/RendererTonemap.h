@@ -10,7 +10,7 @@ public:
 	RendererTonemap(VulkanDevice& vkDev,
 		VulkanImage* colorImage,
 		VulkanImage* depthImage);
-	~RendererTonemap();
+	~RendererTonemap() = default;
 
 	virtual void RecordCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 

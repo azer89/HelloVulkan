@@ -36,10 +36,6 @@ RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
 		&graphicsPipeline_);
 }
 
-RendererTonemap::~RendererTonemap()
-{
-}
-
 void RendererTonemap::RecordCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
 {
 	renderPass_.BeginRenderPass(commandBuffer, swapchainFramebuffers_[swapchainImageIndex]);
