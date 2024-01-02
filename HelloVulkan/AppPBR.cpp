@@ -16,6 +16,9 @@ void AppPBR::Init()
 
 	std::string hdrFile = AppSettings::TextureFolder + "piazza_bologni_1k.hdr";
 
+	VkSampleCountFlagBits msaaSamples = vulkanDevice.GetMSAASamples();
+	//VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT;
+
 	model_ = std::make_unique<Model>(
 		vulkanDevice, 
 		AppSettings::ModelFolder + "Tachikoma//Tachikoma.gltf");
@@ -52,12 +55,18 @@ void AppPBR::Init()
 	// Depth attachment (OnScreen and offscreen)
 	depthImage_.CreateDepthResources(vulkanDevice,
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
-		static_cast<uint32_t>(AppSettings::ScreenHeight));
+		static_cast<uint32_t>(AppSettings::ScreenHeight),
+		msaaSamples);
 
 	// Color attachment (OffScreen only)
 	multiSampledColorImage_.CreateColorResources(vulkanDevice,
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
-		static_cast<uint32_t>(AppSettings::ScreenHeight));
+		static_cast<uint32_t>(AppSettings::ScreenHeight),
+		msaaSamples);
+
+	singleSampledColorImage_.CreateColorResources(vulkanDevice,
+			static_cast<uint32_t>(AppSettings::ScreenWidth),
+			static_cast<uint32_t>(AppSettings::ScreenHeight));
 
 	// Renderers
 	// This is responsible to clear depth and swapchain image
@@ -86,10 +95,12 @@ void AppPBR::Init()
 		// This is the last offscreen render pass
 		// so transition color attachment to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 		RenderPassBit::OffScreenColorShaderReadOnly);
+	multisampleResolvePtr = std::make_unique<RendererResolveMultisampling>(
+		vulkanDevice, &multiSampledColorImage_, &singleSampledColorImage_);
 	// This is OnScreen render pass that transfers colorImage_ to swapchain image
 	tonemapPtr_ = std::make_unique<RendererTonemap>(
 		vulkanDevice,
-		&multiSampledColorImage_
+		&singleSampledColorImage_
 	);
 	// This is responsible to present swapchain image
 	finishPtr_ = std::make_unique<RendererFinish>(
@@ -101,6 +112,7 @@ void AppPBR::Init()
 		clearPtr_.get(),
 		skyboxPtr_.get(),
 		pbrPtr_.get(),
+		multisampleResolvePtr.get(),
 		tonemapPtr_.get(),
 		finishPtr_.get()
 	};
@@ -125,6 +137,7 @@ void AppPBR::DestroyResources()
 	finishPtr_.reset();
 	skyboxPtr_.reset();
 	pbrPtr_.reset();
+	multisampleResolvePtr.reset();
 	tonemapPtr_.reset();
 }
 
@@ -149,7 +162,7 @@ void AppPBR::UpdateUBOs(uint32_t imageIndex)
 	// Model UBOs
 	glm::mat4 modelMatrix(1.f);
 	modelMatrix = glm::rotate(modelMatrix, modelRotation_, glm::vec3(0.f, 1.f, 0.f));
-	modelRotation_ += deltaTime * 0.1f;
+	//modelRotation_ += deltaTime * 0.1f;
 
 	// 1
 	ModelUBO modelUBO1

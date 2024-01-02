@@ -8,7 +8,9 @@ RendererResolveMultisampling::RendererResolveMultisampling(
 	RendererBase(vkDev, nullptr)
 {
 	renderPass_.CreateMultisampleResolveRenderPass(
-		vkDev);
+		vkDev,
+		0u,
+		multiSampledColorImage->multisampleCount_);
 
 	CreateResolveMultisampingFramebuffer(
 		vkDev,
@@ -16,6 +18,12 @@ RendererResolveMultisampling::RendererResolveMultisampling(
 		multiSampledColorImage->imageView_,
 		singleSampledColorImage->imageView_,
 		offscreenFramebuffer_);
+}
+
+RendererResolveMultisampling::~RendererResolveMultisampling()
+{
+	// TODO
+	vkDestroyFramebuffer(device_, offscreenFramebuffer_, nullptr);
 }
 
 void RendererResolveMultisampling::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
