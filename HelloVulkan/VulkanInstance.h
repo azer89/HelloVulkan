@@ -8,8 +8,8 @@
 class VulkanInstance
 {
 public:
-	VulkanInstance();
-	~VulkanInstance();
+	VulkanInstance() = default;
+	~VulkanInstance() = default;
 
 	void Create();
 	void Destroy();

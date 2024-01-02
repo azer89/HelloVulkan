@@ -4,14 +4,6 @@
 
 #include <vector>
 
-VulkanInstance::VulkanInstance()
-{
-}
-
-VulkanInstance::~VulkanInstance()
-{
-}
-
 void VulkanInstance::Create()
 {
 	// https://vulkan.lunarg.com/doc/view/1.1.108.0/windows/validation_layers.html

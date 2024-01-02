@@ -51,9 +51,9 @@ void AppBase::InitGLFW()
 	glfwWindow = glfwCreateWindow(AppSettings::ScreenWidth,
 		AppSettings::ScreenHeight,
 		AppSettings::ScreenTitle.c_str(),
-		NULL,
-		NULL);
-	if (glfwWindow == NULL)
+		nullptr,
+		nullptr);
+	if (glfwWindow == nullptr)
 	{
 		glfwTerminate();
 		throw std::runtime_error("Failed to create GLFW window");
@@ -110,8 +110,11 @@ bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 		return false;
 	}
 
-	UpdateUBO(imageIndex);
-	UpdateCommandBuffer(renderers, imageIndex);
+	// Send UBOs to shaders
+	UpdateUBOs(imageIndex);
+
+	// Rendering here
+	FillCommandBuffer(renderers, imageIndex);
 
 	const VkPipelineStageFlags waitStages[] = 
 		{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
@@ -120,42 +123,36 @@ bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 	{
 		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
 		.pNext = nullptr,
-		.waitSemaphoreCount = 1,
+		.waitSemaphoreCount = 1u,
 		.pWaitSemaphores = vulkanDevice.GetSemaphorePtr(),
 		.pWaitDstStageMask = waitStages,
-		.commandBufferCount = 1,
+		.commandBufferCount = 1u,
 		.pCommandBuffers = vulkanDevice.GetCommandBufferPtr(imageIndex),
-		.signalSemaphoreCount = 1,
+		.signalSemaphoreCount = 1u,
 		.pSignalSemaphores = vulkanDevice.GetRenderSemaphorePtr()
 	};
 
-	{
-		VK_CHECK(vkQueueSubmit(vulkanDevice.GetGraphicsQueue(), 1, &si, nullptr));
-	}
+	VK_CHECK(vkQueueSubmit(vulkanDevice.GetGraphicsQueue(), 1, &si, nullptr));
 
 	const VkPresentInfoKHR pi =
 	{
 		.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
 		.pNext = nullptr,
-		.waitSemaphoreCount = 1,
+		.waitSemaphoreCount = 1u,
 		.pWaitSemaphores = vulkanDevice.GetRenderSemaphorePtr(),
-		.swapchainCount = 1,
+		.swapchainCount = 1u,
 		.pSwapchains = vulkanDevice.GetSwapchainPtr(),
 		.pImageIndices = &imageIndex
 	};
 
-	{
-		VK_CHECK(vkQueuePresentKHR(vulkanDevice.GetGraphicsQueue(), &pi));
-	}
+	VK_CHECK(vkQueuePresentKHR(vulkanDevice.GetGraphicsQueue(), &pi));
 
-	{
-		VK_CHECK(vkDeviceWaitIdle(vulkanDevice.GetDevice()));
-	}
+	VK_CHECK(vkDeviceWaitIdle(vulkanDevice.GetDevice()));
 
 	return true;
 }
 
-void AppBase::UpdateCommandBuffer(const std::vector<RendererBase*>& renderers, uint32_t imageIndex)
+void AppBase::FillCommandBuffer(const std::vector<RendererBase*>& renderers, uint32_t imageIndex)
 {
 	VkCommandBuffer commandBuffer = vulkanDevice.GetCommandBuffer(imageIndex);
 

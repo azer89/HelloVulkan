@@ -21,7 +21,6 @@ public:
 		uint8_t renderPassBit = 0u);
 	virtual ~RendererBase();
 
-	// Insert Vulkan commands into the command buffer.
 	virtual void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) = 0;
 
 	void SetPerFrameUBO(const VulkanDevice& vkDev, uint32_t imageIndex, PerFrameUBO ubo)

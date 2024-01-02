@@ -13,7 +13,7 @@ public:
 		// If the last two parameters not provided, perform an offscreen render pass
 		VulkanImage* offscreenColorImage = nullptr,
 		uint8_t renderBit = 0u);
-	virtual ~RendererSkybox();
+	~RendererSkybox();
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 
