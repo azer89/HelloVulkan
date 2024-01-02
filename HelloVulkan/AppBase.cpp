@@ -114,7 +114,7 @@ bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 	UpdateUBOs(imageIndex);
 
 	// Rendering here
-	RecordCommandBuffer(renderers, imageIndex);
+	FillCommandBuffer(renderers, imageIndex);
 
 	const VkPipelineStageFlags waitStages[] = 
 		{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
@@ -152,7 +152,7 @@ bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 	return true;
 }
 
-void AppBase::RecordCommandBuffer(const std::vector<RendererBase*>& renderers, uint32_t imageIndex)
+void AppBase::FillCommandBuffer(const std::vector<RendererBase*>& renderers, uint32_t imageIndex)
 {
 	VkCommandBuffer commandBuffer = vulkanDevice.GetCommandBuffer(imageIndex);
 
@@ -168,7 +168,7 @@ void AppBase::RecordCommandBuffer(const std::vector<RendererBase*>& renderers, u
 
 	for (auto& r : renderers)
 	{
-		r->RecordCommandBuffer(vulkanDevice, commandBuffer, imageIndex);
+		r->FillCommandBuffer(vulkanDevice, commandBuffer, imageIndex);
 	}
 
 	VK_CHECK(vkEndCommandBuffer(commandBuffer));

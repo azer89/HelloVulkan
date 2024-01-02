@@ -64,7 +64,7 @@ RendererSkybox::~RendererSkybox()
 	vkDestroyFramebuffer(device_, offscreenFramebuffer_, nullptr);
 }
 
-void RendererSkybox::RecordCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
+void RendererSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
 {
 	renderPass_.BeginRenderPass(
 		commandBuffer, 

@@ -16,7 +16,7 @@ RendererClear::RendererClear(VulkanDevice& vkDev, VulkanImage* depthImage) :
 		depthImage_->imageView_);
 }
 
-void RendererClear::RecordCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
+void RendererClear::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
 {
 	renderPass_.BeginRenderPass(commandBuffer, swapchainFramebuffers_[swapchainImageIndex]);
 	vkCmdEndRenderPass(commandBuffer);

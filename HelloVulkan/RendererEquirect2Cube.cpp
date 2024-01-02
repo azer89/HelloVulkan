@@ -50,7 +50,7 @@ RendererEquirect2Cube::~RendererEquirect2Cube()
 	vkDestroyFramebuffer(device_, frameBuffer_, nullptr);
 }
 
-void RendererEquirect2Cube::RecordCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
+void RendererEquirect2Cube::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
 {
 }
 

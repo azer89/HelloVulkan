@@ -92,7 +92,7 @@ RendererPBR::~RendererPBR()
 	vkDestroyFramebuffer(device_, offscreenFramebuffer_, nullptr);
 }
 
-void RendererPBR::RecordCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
+void RendererPBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
 {
 	renderPass_.BeginRenderPass(
 		commandBuffer, 

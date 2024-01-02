@@ -42,7 +42,7 @@ protected:
 
 	bool DrawFrame(const std::vector<RendererBase*>& renderers);
 	virtual void UpdateUBOs(uint32_t imageIndex) = 0;
-	void RecordCommandBuffer(const std::vector<RendererBase*>& renderers, uint32_t imageIndex);
+	void FillCommandBuffer(const std::vector<RendererBase*>& renderers, uint32_t imageIndex);
 
 protected:
 	// Camera

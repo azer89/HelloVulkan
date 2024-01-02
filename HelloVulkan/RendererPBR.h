@@ -18,7 +18,7 @@ public:
 		uint8_t renderBit = 0u);
 	 ~RendererPBR();
 
-	void RecordCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
+	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 public:
 	// TODO change this to private

@@ -100,7 +100,7 @@ RendererCubeFilter::~RendererCubeFilter()
 	}
 }
 
-void RendererCubeFilter::RecordCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
+void RendererCubeFilter::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
 {
 }
 
