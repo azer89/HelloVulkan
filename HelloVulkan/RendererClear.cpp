@@ -2,8 +2,8 @@
 #include "VulkanUtility.h"
 
 // Clear color and depth
-RendererClear::RendererClear(VulkanDevice& vkDev, VulkanImage* depthImage) :
-	RendererBase(vkDev, depthImage)
+RendererClear::RendererClear(VulkanDevice& vkDev) :
+	RendererBase(vkDev, nullptr)
 {
 	renderPass_.CreateOnScreenColorOnlyRenderPass(vkDev, RenderPassBit::OnScreenColorClear);
 

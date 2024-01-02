@@ -14,6 +14,8 @@ void AppPBR::Init()
 {
 	modelRotation_ = 0.f;
 
+	VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT;
+
 	std::string hdrFile = AppSettings::TextureFolder + "piazza_bologni_1k.hdr";
 
 	model_ = std::make_unique<Model>(
@@ -52,18 +54,19 @@ void AppPBR::Init()
 	// Depth attachment (OnScreen and offscreen)
 	depthImage_.CreateDepthResources(vulkanDevice,
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
-		static_cast<uint32_t>(AppSettings::ScreenHeight));
+		static_cast<uint32_t>(AppSettings::ScreenHeight),
+		sampleCount);
 
 	// Color attachment (OffScreen only)
 	colorImage_.CreateColorResources(vulkanDevice,
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
-		static_cast<uint32_t>(AppSettings::ScreenHeight));
+		static_cast<uint32_t>(AppSettings::ScreenHeight),
+		sampleCount);
 
 	// Renderers
 	// This is responsible to clear depth and swapchain image
 	clearPtr_ = std::make_unique<RendererClear>(
-		vulkanDevice, 
-		&depthImage_);
+		vulkanDevice);
 	// This draws a cube
 	skyboxPtr_ = std::make_unique<RendererSkybox>(
 		vulkanDevice,
@@ -90,13 +93,11 @@ void AppPBR::Init()
 	// This is OnScreen render pass that transfers colorImage_ to swapchain image
 	tonemapPtr_ = std::make_unique<RendererTonemap>(
 		vulkanDevice,
-		&colorImage_,
-		&depthImage_
+		&colorImage_
 	);
 	// This is responsible to present swapchain image
 	finishPtr_ = std::make_unique<RendererFinish>(
-		vulkanDevice, 
-		&depthImage_);
+		vulkanDevice);
 
 	renderers_ =
 	{

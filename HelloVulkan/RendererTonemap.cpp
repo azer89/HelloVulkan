@@ -3,9 +3,8 @@
 #include "AppSettings.h"
 
 RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
-	VulkanImage* colorImage,
-	VulkanImage* depthImage) :
-	RendererBase(vkDev, depthImage),
+	VulkanImage* colorImage) :
+	RendererBase(vkDev, nullptr),
 	colorImage_(colorImage)
 {
 	renderPass_.CreateOnScreenColorOnlyRenderPass(vkDev);
