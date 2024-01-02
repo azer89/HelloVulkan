@@ -11,6 +11,7 @@ public:
 		VulkanImage* multiSampledColorImage, // Input
 		VulkanImage* singleSampledColorImage // Output
 	);
+	~RendererResolveMultisampling();
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 };

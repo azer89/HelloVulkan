@@ -93,6 +93,7 @@ RendererPBR::RendererPBR(
 
 RendererPBR::~RendererPBR()
 {
+	// TODO
 	vkDestroyFramebuffer(device_, offscreenFramebuffer_, nullptr);
 }
 

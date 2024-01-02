@@ -7,6 +7,7 @@
 #include "RendererFinish.h"
 #include "RendererPBR.h"
 #include "RendererTonemap.h"
+#include "RendererResolveMultisampling.h"
 #include "VulkanImage.h"
 #include "Model.h"
 
@@ -31,6 +32,7 @@ private:
 	std::unique_ptr<RendererPBR> pbrPtr_;
 	std::unique_ptr<RendererTonemap> tonemapPtr_;
 	std::unique_ptr<RendererFinish> finishPtr_;
+	std::unique_ptr<RendererResolveMultisampling> multisampleResolvePtr;
 	
 	// Cubemap generated from HDR
 	VulkanImage environmentCubemap_;
