@@ -71,7 +71,7 @@ void AppPBR::Init()
 		&depthImage_,
 		&colorImage_,
 		// This is the first offscreen render pass so
-		// we need to clear the color attachment
+		// we need to clear the color attachment and depth attachment
 		RenderPassBit::OffScreenColorClear | 
 		RenderPassBit::OffScreenDepthClear
 	);
@@ -87,6 +87,7 @@ void AppPBR::Init()
 		// This is the last offscreen render pass
 		// so transition color attachment to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 		RenderPassBit::OffScreenColorShaderReadOnly);
+	// This is OnScreen render pass that transfers colorImage_ to swapchain image
 	tonemapPtr_ = std::make_unique<RendererTonemap>(
 		vulkanDevice,
 		&colorImage_,
