@@ -28,6 +28,8 @@ RendererPBR::RendererPBR(
 	brdfLUT_(brdfLUT),
 	models_(models)
 {
+	VkSampleCountFlagBits multisampleCount = VK_SAMPLE_COUNT_1_BIT;
+
 	// Per frame UBO
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
 	
@@ -41,7 +43,8 @@ RendererPBR::RendererPBR(
 
 	if (IsOffScreen())
 	{
-		renderPass_.CreateOffScreenRenderPass(vkDev, renderBit);
+		multisampleCount = offscreenColorImage_->multisampleCount_;
+		renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, multisampleCount);
 		CreateOffScreenFramebuffer(
 			vkDev, 
 			renderPass_, 
@@ -51,7 +54,7 @@ RendererPBR::RendererPBR(
 	}
 	else
 	{
-		renderPass_.CreateOnScreenRenderPass(vkDev);
+		renderPass_.CreateOnScreenRenderPass(vkDev, multisampleCount);
 		CreateOnScreenFramebuffers(vkDev, renderPass_, depthImage_->imageView_);
 	}
 
@@ -83,7 +86,8 @@ RendererPBR::RendererPBR(
 			AppSettings::ShaderFolder + "Mesh.frag"
 		},
 		&graphicsPipeline_,
-		true // hasVertexBuffer
+		true, // hasVertexBuffer
+		multisampleCount // for multisampling
 	);
 }
 

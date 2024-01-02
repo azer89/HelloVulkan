@@ -14,8 +14,6 @@ void AppPBR::Init()
 {
 	modelRotation_ = 0.f;
 
-	VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT;
-
 	std::string hdrFile = AppSettings::TextureFolder + "piazza_bologni_1k.hdr";
 
 	model_ = std::make_unique<Model>(
@@ -54,14 +52,12 @@ void AppPBR::Init()
 	// Depth attachment (OnScreen and offscreen)
 	depthImage_.CreateDepthResources(vulkanDevice,
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
-		static_cast<uint32_t>(AppSettings::ScreenHeight),
-		sampleCount);
+		static_cast<uint32_t>(AppSettings::ScreenHeight));
 
 	// Color attachment (OffScreen only)
 	colorImage_.CreateColorResources(vulkanDevice,
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
-		static_cast<uint32_t>(AppSettings::ScreenHeight),
-		sampleCount);
+		static_cast<uint32_t>(AppSettings::ScreenHeight));
 
 	// Renderers
 	// This is responsible to clear depth and swapchain image

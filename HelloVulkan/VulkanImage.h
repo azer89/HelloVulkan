@@ -33,6 +33,7 @@ public:
 	uint32_t mipCount_;
 	uint32_t layerCount_;
 	VkFormat imageFormat_;
+	VkSampleCountFlagBits multisampleCount_;
 
 public:
 

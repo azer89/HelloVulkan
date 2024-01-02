@@ -217,6 +217,7 @@ void VulkanImage::CreateImage(
 	mipCount_ = mipCount;
 	layerCount_ = layerCount;
 	imageFormat_ = format;
+	multisampleCount_ = sampleCount;
 	
 	const VkImageCreateInfo imageInfo = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
