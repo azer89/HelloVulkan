@@ -227,6 +227,7 @@ void RendererBase::CreateGraphicsPipeline(
 	const std::vector<std::string>& shaderFiles,
 	VkPipeline* pipeline,
 	bool hasVertexBuffer,
+	VkSampleCountFlagBits msaaSamples,
 	VkPrimitiveTopology topology,
 	bool useDepth,
 	bool useBlending,
@@ -276,6 +277,8 @@ void RendererBase::CreateGraphicsPipeline(
 	pInfo.depthStencil.depthWriteEnable = static_cast<VkBool32>(useDepth ? VK_TRUE : VK_FALSE);
 
 	pInfo.tessellationState.patchControlPoints = numPatchControlPoints;
+
+	pInfo.multisampling.rasterizationSamples = msaaSamples;
 
 	const VkGraphicsPipelineCreateInfo pipelineInfo = {
 		.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,

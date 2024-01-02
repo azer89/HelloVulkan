@@ -4,7 +4,10 @@
 #include <array>
 #include <vector>
 
-void VulkanRenderPass::CreateOffScreenRenderPass(VulkanDevice& vkDev, uint8_t renderPassBit)
+void VulkanRenderPass::CreateOffScreenRenderPass(
+	VulkanDevice& vkDev, 
+	uint8_t renderPassBit,
+	VkSampleCountFlagBits msaaSamples)
 {
 	renderPassBit_ = renderPassBit;
 
@@ -18,7 +21,7 @@ void VulkanRenderPass::CreateOffScreenRenderPass(VulkanDevice& vkDev, uint8_t re
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,
 		.format = vkDev.GetSwaphchainImageFormat(),
-		.samples = VK_SAMPLE_COUNT_1_BIT,
+		.samples = msaaSamples,
 		.loadOp =
 			clearColor ?
 			VK_ATTACHMENT_LOAD_OP_CLEAR :
@@ -44,7 +47,7 @@ void VulkanRenderPass::CreateOffScreenRenderPass(VulkanDevice& vkDev, uint8_t re
 	VkAttachmentDescription depthAttachment = {
 		.flags = 0,
 		.format = vkDev.FindDepthFormat(),
-		.samples = VK_SAMPLE_COUNT_1_BIT,
+		.samples = msaaSamples,
 		.loadOp = clearDepth ?
 				VK_ATTACHMENT_LOAD_OP_CLEAR :
 				VK_ATTACHMENT_LOAD_OP_LOAD,
@@ -116,7 +119,10 @@ void VulkanRenderPass::CreateOffScreenRenderPass(VulkanDevice& vkDev, uint8_t re
 	CreateBeginInfo(vkDev);
 }
 
-void VulkanRenderPass::CreateOnScreenRenderPass(VulkanDevice& vkDev, uint8_t renderPassBit)
+void VulkanRenderPass::CreateOnScreenRenderPass(
+	VulkanDevice& vkDev, 
+	uint8_t renderPassBit,
+	VkSampleCountFlagBits msaaSamples)
 {
 	renderPassBit_ = renderPassBit;
 
@@ -127,7 +133,7 @@ void VulkanRenderPass::CreateOnScreenRenderPass(VulkanDevice& vkDev, uint8_t ren
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,
 		.format = vkDev.GetSwaphchainImageFormat(),
-		.samples = VK_SAMPLE_COUNT_1_BIT,
+		.samples = msaaSamples,
 		.loadOp = clearColor ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
@@ -148,7 +154,7 @@ void VulkanRenderPass::CreateOnScreenRenderPass(VulkanDevice& vkDev, uint8_t ren
 	VkAttachmentDescription depthAttachment = {
 		.flags = 0,
 		.format = vkDev.FindDepthFormat(),
-		.samples = VK_SAMPLE_COUNT_1_BIT,
+		.samples = msaaSamples,
 		.loadOp = clearDepth ?
 				VK_ATTACHMENT_LOAD_OP_CLEAR :
 				VK_ATTACHMENT_LOAD_OP_LOAD,
@@ -210,8 +216,10 @@ void VulkanRenderPass::CreateOnScreenRenderPass(VulkanDevice& vkDev, uint8_t ren
 	CreateBeginInfo(vkDev);
 }
 
-void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(VulkanDevice& vkDev,
-	uint8_t renderPassBit)
+void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(
+	VulkanDevice& vkDev,
+	uint8_t renderPassBit,
+	VkSampleCountFlagBits msaaSamples)
 {
 	renderPassBit_ = renderPassBit;
 
@@ -221,7 +229,7 @@ void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(VulkanDevice& vkDev,
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,
 		.format = vkDev.GetSwaphchainImageFormat(),
-		.samples = VK_SAMPLE_COUNT_1_BIT,
+		.samples = msaaSamples,
 		.loadOp = clearColor ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
@@ -281,76 +289,11 @@ void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(VulkanDevice& vkDev,
 	CreateBeginInfo(vkDev);
 }
 
-void VulkanRenderPass::CreateOnScreenClearDepthRenderPass(VulkanDevice& vkDev)
-{
-	renderPassBit_ = RenderPassBit::OnScreenDepthClear;
-
-	VkAttachmentDescription depthAttachment = {
-		.flags = 0,
-		.format = vkDev.FindDepthFormat(),
-		.samples = VK_SAMPLE_COUNT_1_BIT,
-		.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
-		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-		.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-		.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
-	};
-
-	const VkAttachmentReference depthAttachmentRef = {
-		.attachment = 1,
-		.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
-	};
-
-	// Needed?
-	/*VkSubpassDependency dependency =
-	{
-		.srcSubpass = VK_SUBPASS_EXTERNAL,
-		.dstSubpass = 0,
-		.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-		.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-		.srcAccessMask = 0,
-		.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-		.dependencyFlags = 0
-	};*/
-
-	const VkSubpassDescription subpass = {
-		.flags = 0,
-		.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
-		.inputAttachmentCount = 0,
-		.pInputAttachments = nullptr,
-		.colorAttachmentCount = 0,
-		.pColorAttachments = nullptr,
-		.pResolveAttachments = nullptr,
-		.pDepthStencilAttachment = &depthAttachmentRef,
-		.preserveAttachmentCount = 0,
-		.pPreserveAttachments = nullptr
-	};
-
-	std::array<VkAttachmentDescription, 2> attachments = { depthAttachment };
-
-	const VkRenderPassCreateInfo renderPassInfo = {
-		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.attachmentCount = 1u,
-		.pAttachments = &depthAttachment,
-		.subpassCount = 1,
-		.pSubpasses = &subpass,
-		.dependencyCount = 0u,
-		.pDependencies = nullptr
-	};
-
-	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &renderPassInfo, nullptr, &handle_));
-
-	// Cache VkRenderPassBeginInfo
-	CreateBeginInfo(vkDev);
-}
-
 void VulkanRenderPass::CreateOffScreenCubemapRenderPass(
 	VulkanDevice& vkDev,
 	VkFormat cubeFormat,
-	uint8_t renderPassBit)
+	uint8_t renderPassBit,
+	VkSampleCountFlagBits msaaSamples)
 {
 	const VkImageLayout finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
@@ -363,7 +306,7 @@ void VulkanRenderPass::CreateOffScreenCubemapRenderPass(
 		{
 			.flags = 0u,
 			.format = cubeFormat,
-			.samples = VK_SAMPLE_COUNT_1_BIT,
+			.samples = msaaSamples,
 			.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 			.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,

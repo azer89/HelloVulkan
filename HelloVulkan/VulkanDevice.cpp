@@ -168,6 +168,7 @@ VkResult VulkanDevice::CreatePhysicalDevice(VkInstance instance)
 	std::vector<VkPhysicalDevice> devices(deviceCount);
 	VK_CHECK_RET(vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data()));
 
+	msaaSamples_ = VK_SAMPLE_COUNT_1_BIT; // Default
 	for (const auto& d : devices)
 	{
 		if (IsDeviceSuitable(d))
