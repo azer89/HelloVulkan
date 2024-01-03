@@ -32,7 +32,7 @@ private:
 	std::unique_ptr<RendererPBR> pbrPtr_;
 	std::unique_ptr<RendererTonemap> tonemapPtr_;
 	std::unique_ptr<RendererFinish> finishPtr_;
-	std::unique_ptr<RendererResolveMS> multisampleResolvePtr;
+	std::unique_ptr<RendererResolveMS> resolveMSPtr_;
 	
 	// Cubemap generated from HDR
 	VulkanImage environmentCubemap_;

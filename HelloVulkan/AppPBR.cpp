@@ -62,7 +62,7 @@ void AppPBR::Init()
 		msaaSamples);
 
 	// Color attachments
-	// Multi-sampled
+	// Multi-sampled (MSAA)
 	multiSampledColorImage_.CreateColorResources(
 		vulkanDevice_,
 		width,
@@ -99,7 +99,7 @@ void AppPBR::Init()
 		&depthImage_,
 		&multiSampledColorImage_);
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
-	multisampleResolvePtr = std::make_unique<RendererResolveMS>(
+	resolveMSPtr_ = std::make_unique<RendererResolveMS>(
 		vulkanDevice_, &multiSampledColorImage_, &singleSampledColorImage_);
 	// This is on-screen render pass that transfers 
 	// singleSampledColorImage_ to swapchain image
@@ -117,7 +117,7 @@ void AppPBR::Init()
 		clearPtr_.get(),
 		skyboxPtr_.get(),
 		pbrPtr_.get(),
-		multisampleResolvePtr.get(),
+		resolveMSPtr_.get(),
 		tonemapPtr_.get(),
 		finishPtr_.get()
 	};
@@ -142,7 +142,7 @@ void AppPBR::DestroyResources()
 	finishPtr_.reset();
 	skyboxPtr_.reset();
 	pbrPtr_.reset();
-	multisampleResolvePtr.reset();
+	resolveMSPtr_.reset();
 	tonemapPtr_.reset();
 }
 

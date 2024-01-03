@@ -306,6 +306,7 @@ void RendererBase::CreateGraphicsPipeline(
 
 	pInfo.tessellationState.patchControlPoints = numPatchControlPoints;
 
+	// Enable MSAA
 	if (msaaSamples != VK_SAMPLE_COUNT_1_BIT)
 	{
 		pInfo.multisampling.rasterizationSamples = msaaSamples;

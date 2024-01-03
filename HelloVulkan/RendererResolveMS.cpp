@@ -1,5 +1,6 @@
 #include "RendererResolveMS.h"
 
+// MSAA
 RendererResolveMS::RendererResolveMS(
 	VulkanDevice& vkDev,
 	VulkanImage* multiSampledColorImage, // Input
