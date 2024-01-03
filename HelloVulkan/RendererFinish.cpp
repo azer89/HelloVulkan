@@ -10,7 +10,7 @@ RendererFinish::RendererFinish(VulkanDevice& vkDev) :
 		// Present swapchain image 
 		RenderPassBit::ColorPresent);
 
-	CreateOnScreenFramebuffers(
+	CreateSwapchainFramebuffers(
 		vkDev, 
 		renderPass_);
 }

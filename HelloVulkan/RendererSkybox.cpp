@@ -25,17 +25,19 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 	{
 		multisampleCount = offscreenColorImage_->multisampleCount_;
 		renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, multisampleCount);
-		CreateOffScreenFramebuffer(
+		CreateSingleFramebuffer(
 			vkDev,
 			renderPass_,
-			offscreenColorImage_->imageView_,
-			depthImage_->imageView_,
+			{
+				offscreenColorImage_->imageView_,
+				depthImage_->imageView_
+			},
 			offscreenFramebuffer_);
 	}
 	else
 	{
 		renderPass_.CreateOnScreenRenderPass(vkDev);
-		CreateOnScreenFramebuffers(
+		CreateSwapchainFramebuffers(
 			vkDev,
 			renderPass_,
 			depthImage_->imageView_);

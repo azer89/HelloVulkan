@@ -45,18 +45,20 @@ RendererPBR::RendererPBR(
 	{
 		multisampleCount = offscreenColorImage_->multisampleCount_;
 		renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, multisampleCount);
-		CreateOffScreenFramebuffer(
-			vkDev, 
-			renderPass_, 
-			offscreenColorImage_->imageView_,
-			depthImage_->imageView_, 
+		CreateSingleFramebuffer(
+			vkDev,
+			renderPass_,
+			{ 
+				offscreenColorImage_->imageView_,
+				depthImage_->imageView_ 
+			},
 			offscreenFramebuffer_);
 	}
 	else
 	{
 		// TODO Currently no MSAA for onscreen rendering
 		renderPass_.CreateOnScreenRenderPass(vkDev, multisampleCount);
-		CreateOnScreenFramebuffers(vkDev, renderPass_, depthImage_->imageView_);
+		CreateSwapchainFramebuffers(vkDev, renderPass_, depthImage_->imageView_);
 	}
 
 	CreateDescriptorPool(

@@ -9,7 +9,7 @@ RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
 {
 	renderPass_.CreateOnScreenColorOnlyRenderPass(vkDev);
 
-	CreateOnScreenFramebuffers(
+	CreateSwapchainFramebuffers(
 		vkDev,
 		renderPass_);
 

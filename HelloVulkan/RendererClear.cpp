@@ -6,7 +6,7 @@ RendererClear::RendererClear(VulkanDevice& vkDev) :
 {
 	renderPass_.CreateOnScreenColorOnlyRenderPass(vkDev, RenderPassBit::ColorClear);
 
-	CreateOnScreenFramebuffers(
+	CreateSwapchainFramebuffers(
 		vkDev,
 		renderPass_);
 }
