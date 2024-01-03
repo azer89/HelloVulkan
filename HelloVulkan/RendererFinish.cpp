@@ -8,7 +8,7 @@ RendererFinish::RendererFinish(VulkanDevice& vkDev) :
 	renderPass_.CreateOnScreenColorOnlyRenderPass(
 		vkDev, 
 		// Present swapchain image 
-		RenderPassBit::OnScreenColorPresent);
+		RenderPassBit::ColorPresent);
 
 	CreateOnScreenFramebuffers(
 		vkDev, 

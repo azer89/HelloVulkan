@@ -97,7 +97,7 @@ void VulkanInstance::SetupDebugCallbacks()
 	}
 }
 
-void VulkanInstance::CreateWindowSurface(GLFWwindow* glfwWindow)
+void VulkanInstance::CreateWindowSurface(GLFWwindow* glfwWindow_)
 {
-	VK_CHECK(glfwCreateWindowSurface(instance_, glfwWindow, nullptr, &surface_));
+	VK_CHECK(glfwCreateWindowSurface(instance_, glfwWindow_, nullptr, &surface_));
 }

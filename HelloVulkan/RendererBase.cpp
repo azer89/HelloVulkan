@@ -37,6 +37,8 @@ RendererBase::~RendererBase()
 		vkDestroyFramebuffer(device_, framebuffer, nullptr);
 	}
 
+	vkDestroyFramebuffer(device_, offscreenFramebuffer_, nullptr);
+
 	renderPass_.Destroy(device_);
 
 	vkDestroyPipelineLayout(device_, pipelineLayout_, nullptr);
@@ -66,6 +68,7 @@ void RendererBase::CreateUniformBuffers(
 	}
 }
 
+// TODO Refactor frame buffer methods
 void RendererBase::CreateOffScreenFramebuffer(
 	VulkanDevice& vkDev,
 	VulkanRenderPass renderPass,
@@ -74,6 +77,31 @@ void RendererBase::CreateOffScreenFramebuffer(
 	VkFramebuffer& framebuffer)
 {
 	std::array<VkImageView, 2> attachments = { colorImageView, depthImageView };
+
+	const VkFramebufferCreateInfo framebufferInfo = {
+		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0,
+		.renderPass = renderPass.GetHandle(),
+		.attachmentCount = static_cast<uint32_t>(attachments.size()),
+		.pAttachments = attachments.data(),
+		.width = vkDev.GetFrameBufferWidth(),
+		.height = vkDev.GetFrameBufferHeight(),
+		.layers = 1
+	};
+
+	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo, nullptr, &framebuffer));
+}
+
+// Resolve multi-sampled image to single-sampled image
+void RendererBase::CreateResolveMSFramebuffer(
+	VulkanDevice& vkDev,
+	VulkanRenderPass renderPass,
+	VkImageView multisampledImageView,
+	VkImageView singleSampledImageView,
+	VkFramebuffer& framebuffer)
+{
+	std::array<VkImageView, 2> attachments = { multisampledImageView, singleSampledImageView };
 
 	const VkFramebufferCreateInfo framebufferInfo = {
 		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
@@ -278,7 +306,13 @@ void RendererBase::CreateGraphicsPipeline(
 
 	pInfo.tessellationState.patchControlPoints = numPatchControlPoints;
 
-	pInfo.multisampling.rasterizationSamples = msaaSamples;
+	// Enable MSAA
+	if (msaaSamples != VK_SAMPLE_COUNT_1_BIT)
+	{
+		pInfo.multisampling.rasterizationSamples = msaaSamples;
+		pInfo.multisampling.sampleShadingEnable = VK_TRUE;
+		pInfo.multisampling.minSampleShading = 0.25f;
+	}
 
 	const VkGraphicsPipelineCreateInfo pipelineInfo = {
 		.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,

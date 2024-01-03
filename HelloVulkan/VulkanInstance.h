@@ -15,7 +15,7 @@ public:
 	void Destroy();
 
 	void SetupDebugCallbacks();
-	void CreateWindowSurface(GLFWwindow* glfwWindow);
+	void CreateWindowSurface(GLFWwindow* glfwWindow_);
 
 	VkInstance GetInstance() { return instance_; }
 	VkSurfaceKHR GetSurface() { return surface_; }

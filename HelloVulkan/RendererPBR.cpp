@@ -16,10 +16,10 @@ constexpr size_t PBR_ENV_TEXTURE_COUNT = 3;
 RendererPBR::RendererPBR(
 	VulkanDevice& vkDev,
 	std::vector<Model*> models,
-	VulkanImage* depthImage,
 	VulkanImage* envMap,
 	VulkanImage* diffuseMap,
 	VulkanImage* brdfLUT,
+	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
 	RendererBase(vkDev, depthImage, offscreenColorImage, renderBit),
@@ -54,6 +54,7 @@ RendererPBR::RendererPBR(
 	}
 	else
 	{
+		// TODO Currently no MSAA for onscreen rendering
 		renderPass_.CreateOnScreenRenderPass(vkDev, multisampleCount);
 		CreateOnScreenFramebuffers(vkDev, renderPass_, depthImage_->imageView_);
 	}
@@ -93,7 +94,6 @@ RendererPBR::RendererPBR(
 
 RendererPBR::~RendererPBR()
 {
-	vkDestroyFramebuffer(device_, offscreenFramebuffer_, nullptr);
 }
 
 void RendererPBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)

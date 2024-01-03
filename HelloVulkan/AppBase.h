@@ -18,7 +18,7 @@ public:
 	virtual int MainLoop() = 0; 
 
 private:
-	GLFWwindow* glfwWindow;
+	GLFWwindow* glfwWindow_;
 
 protected:
 	void FrameBufferSizeCallback(GLFWwindow* window, int width, int height);
@@ -46,20 +46,20 @@ protected:
 
 protected:
 	// Camera
-	std::unique_ptr<Camera> camera;
-	float lastX;
-	float lastY;
-	bool firstMouse;
-	bool middleMousePressed;
-	bool showImgui;
+	std::unique_ptr<Camera> camera_;
+	float lastX_;
+	float lastY_;
+	bool firstMouse_;
+	bool middleMousePressed_;
+	bool showImgui_;
 
 	// Timing
-	float deltaTime; // Time between current frame and last frame
-	float lastFrame;
+	float deltaTime_; // Time between current frame and last frame
+	float lastFrame_;
 
 	// Vulkan
-	VulkanInstance vulkanInstance;
-	VulkanDevice vulkanDevice;
+	VulkanInstance vulkanInstance_;
+	VulkanDevice vulkanDevice_;
 };
 
 #endif

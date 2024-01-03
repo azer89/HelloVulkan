@@ -1,11 +1,10 @@
 #include "RendererClear.h"
 #include "VulkanUtility.h"
 
-// Clear color and depth
 RendererClear::RendererClear(VulkanDevice& vkDev) :
 	RendererBase(vkDev, nullptr)
 {
-	renderPass_.CreateOnScreenColorOnlyRenderPass(vkDev, RenderPassBit::OnScreenColorClear);
+	renderPass_.CreateOnScreenColorOnlyRenderPass(vkDev, RenderPassBit::ColorClear);
 
 	CreateOnScreenFramebuffers(
 		vkDev,
@@ -14,8 +13,6 @@ RendererClear::RendererClear(VulkanDevice& vkDev) :
 
 RendererClear::~RendererClear()
 {
-	//clearColorRenderPass_.Destroy(device_);
-	//clearDepthRenderPass_.Destroy(device_);
 }
 
 void RendererClear::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)

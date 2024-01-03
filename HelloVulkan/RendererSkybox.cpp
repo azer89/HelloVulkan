@@ -67,7 +67,6 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 
 RendererSkybox::~RendererSkybox()
 {
-	vkDestroyFramebuffer(device_, offscreenFramebuffer_, nullptr);
 }
 
 void RendererSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)

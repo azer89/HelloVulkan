@@ -35,7 +35,7 @@ public:
 	glm::mat4 GetInverseViewMatrix();
 	glm::vec3 Position();
 
-	void ProcessKeyboard(CameraMovement direction, float deltaTime);
+	void ProcessKeyboard(CameraMovement direction, float deltaTime_);
 	void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true);
 	void ProcessMouseScroll(float yoffset);
 

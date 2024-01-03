@@ -4,6 +4,87 @@
 #include <array>
 #include <vector>
 
+// Resolve multi-sampled image to single-sampled image
+void VulkanRenderPass::CreateResolveMSRenderPass(
+	VulkanDevice& vkDev,
+	uint8_t renderPassBit,
+	VkSampleCountFlagBits msaaSamples
+)
+{
+	renderPassBit_ = renderPassBit;
+
+	VkAttachmentDescription multisampledAttachment =
+	{
+		.format = vkDev.GetSwaphchainImageFormat(),
+		.samples = msaaSamples,
+		.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD, // Just load
+		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+		.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, 
+		.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+	};
+
+	const VkAttachmentReference multisampledRef = {
+		.attachment = 0,
+		.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+	};
+
+	VkAttachmentDescription singleSampledAttachment = {
+		.format = vkDev.GetSwaphchainImageFormat(),
+		.samples = VK_SAMPLE_COUNT_1_BIT,
+		.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+		.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+		.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+	};
+
+	const VkAttachmentReference singleSampledRef = {
+		.attachment = 1,
+		.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+	};
+
+	VkSubpassDescription subpass =
+	{
+		.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+		.colorAttachmentCount = 1,
+		.pColorAttachments = &multisampledRef,
+		.pResolveAttachments = &singleSampledRef,
+		.pDepthStencilAttachment = nullptr,
+	};
+
+	VkSubpassDependency dependency =
+	{
+		.srcSubpass = VK_SUBPASS_EXTERNAL,
+		.dstSubpass = 0,
+		.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+		.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+		.srcAccessMask = 0,
+		.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT,
+		.dependencyFlags = 0
+	};
+
+	std::array<VkAttachmentDescription, 2> attachments = { multisampledAttachment, singleSampledAttachment };
+
+	VkRenderPassCreateInfo renderPassInfo =
+	{
+		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+		.attachmentCount = static_cast<uint32_t>(attachments.size()),
+		.pAttachments = attachments.data(),
+		.subpassCount = 1,
+		.pSubpasses = &subpass,
+		.dependencyCount = 1,
+		.pDependencies = &dependency,
+	};
+
+	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &renderPassInfo, nullptr, &handle_));
+
+	// Cache VkRenderPassBeginInfo
+	CreateBeginInfo(vkDev);
+}
+
 void VulkanRenderPass::CreateOffScreenRenderPass(
 	VulkanDevice& vkDev, 
 	uint8_t renderPassBit,
@@ -11,12 +92,12 @@ void VulkanRenderPass::CreateOffScreenRenderPass(
 {
 	renderPassBit_ = renderPassBit;
 
-	bool clearColor = renderPassBit_ & RenderPassBit::OffScreenColorClear;
-	bool clearDepth = renderPassBit_ & RenderPassBit::OffScreenDepthClear;
+	bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
+	bool clearDepth = renderPassBit_ & RenderPassBit::DepthClear;
 
 	// Transition color attachment to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	// for the next onscreen render pass
-	bool colorShaderReadOnly = renderPassBit_ & RenderPassBit::OffScreenColorShaderReadOnly;
+	bool colorShaderReadOnly = renderPassBit_ & RenderPassBit::ColorShaderReadOnly;
 
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,
@@ -126,10 +207,10 @@ void VulkanRenderPass::CreateOnScreenRenderPass(
 {
 	renderPassBit_ = renderPassBit;
 
-	bool clearColor = renderPassBit_ & RenderPassBit::OnScreenColorClear;
-	bool presentColor = renderPassBit_ & RenderPassBit::OnScreenColorPresent;
-	bool clearDepth = renderPassBit_ & RenderPassBit::OnScreenDepthClear;
-
+	bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
+	bool clearDepth = renderPassBit_ & RenderPassBit::DepthClear;
+	bool presentColor = renderPassBit_ & RenderPassBit::ColorPresent;
+	
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,
 		.format = vkDev.GetSwaphchainImageFormat(),
@@ -216,6 +297,8 @@ void VulkanRenderPass::CreateOnScreenRenderPass(
 	CreateBeginInfo(vkDev);
 }
 
+
+
 void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(
 	VulkanDevice& vkDev,
 	uint8_t renderPassBit,
@@ -223,8 +306,8 @@ void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(
 {
 	renderPassBit_ = renderPassBit;
 
-	bool clearColor = renderPassBit_ & RenderPassBit::OnScreenColorClear;
-	bool presentColor = renderPassBit_ & RenderPassBit::OnScreenColorPresent;
+	bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
+	bool presentColor = renderPassBit_ & RenderPassBit::ColorPresent;
 
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,
@@ -349,12 +432,8 @@ void VulkanRenderPass::CreateOffScreenCubemapRenderPass(
 
 void VulkanRenderPass::CreateBeginInfo(VulkanDevice& vkDev)
 {
-	bool clearColor =
-		renderPassBit_ & RenderPassBit::OnScreenColorClear ||
-		renderPassBit_ & RenderPassBit::OffScreenColorClear;
-	bool clearDepth =
-		renderPassBit_ & RenderPassBit::OnScreenDepthClear ||
-		renderPassBit_ & RenderPassBit::OffScreenDepthClear;
+	bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
+	bool clearDepth = renderPassBit_ & RenderPassBit::DepthClear;
 
 	if (clearColor)
 	{
