@@ -287,6 +287,7 @@ VkResult VulkanDevice::CreateDevice(VkPhysicalDeviceFeatures deviceFeatures, uin
 		.ppEnabledLayerNames = nullptr,
 		.enabledExtensionCount = static_cast<uint32_t>(extensions.size()),
 		.ppEnabledExtensionNames = extensions.data(),
+
 		.pEnabledFeatures = &deviceFeatures
 	};
 

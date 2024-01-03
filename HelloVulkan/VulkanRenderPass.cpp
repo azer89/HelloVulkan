@@ -4,7 +4,8 @@
 #include <array>
 #include <vector>
 
-void VulkanRenderPass::CreateMultisampleResolveRenderPass(
+// Resolve multi-sampled image to single-sampled image
+void VulkanRenderPass::CreateResolveMSRenderPass(
 	VulkanDevice& vkDev,
 	uint8_t renderPassBit,
 	VkSampleCountFlagBits msaaSamples

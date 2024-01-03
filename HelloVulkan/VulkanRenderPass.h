@@ -29,7 +29,7 @@ public:
 		uint8_t renderPassBit = 0u,
 		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT);
 
-	void CreateMultisampleResolveRenderPass(
+	void CreateResolveMSRenderPass(
 		VulkanDevice& device,
 		uint8_t renderPassBit = 0u,
 		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT);

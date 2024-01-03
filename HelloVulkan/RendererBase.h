@@ -83,7 +83,7 @@ protected:
 		VkImageView depthImageView,
 		VkFramebuffer& framebuffer);
 
-	void CreateResolveMultisampingFramebuffer(
+	void CreateResolveMSFramebuffer(
 		VulkanDevice& vkDev,
 		VulkanRenderPass renderPass,
 		VkImageView multisampledImageView,

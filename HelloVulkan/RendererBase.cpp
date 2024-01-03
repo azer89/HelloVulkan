@@ -68,6 +68,7 @@ void RendererBase::CreateUniformBuffers(
 	}
 }
 
+// TODO Refactor frame buffer methods
 void RendererBase::CreateOffScreenFramebuffer(
 	VulkanDevice& vkDev,
 	VulkanRenderPass renderPass,
@@ -92,7 +93,8 @@ void RendererBase::CreateOffScreenFramebuffer(
 	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo, nullptr, &framebuffer));
 }
 
-void RendererBase::CreateResolveMultisampingFramebuffer(
+// Resolve multi-sampled image to single-sampled image
+void RendererBase::CreateResolveMSFramebuffer(
 	VulkanDevice& vkDev,
 	VulkanRenderPass renderPass,
 	VkImageView multisampledImageView,
@@ -304,7 +306,12 @@ void RendererBase::CreateGraphicsPipeline(
 
 	pInfo.tessellationState.patchControlPoints = numPatchControlPoints;
 
-	pInfo.multisampling.rasterizationSamples = msaaSamples;
+	if (msaaSamples != VK_SAMPLE_COUNT_1_BIT)
+	{
+		pInfo.multisampling.rasterizationSamples = msaaSamples;
+		pInfo.multisampling.sampleShadingEnable = VK_TRUE;
+		pInfo.multisampling.minSampleShading = 0.25f;
+	}
 
 	const VkGraphicsPipelineCreateInfo pipelineInfo = {
 		.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,

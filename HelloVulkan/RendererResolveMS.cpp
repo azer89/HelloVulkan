@@ -7,12 +7,12 @@ RendererResolveMS::RendererResolveMS(
 ) :
 	RendererBase(vkDev, nullptr)
 {
-	renderPass_.CreateMultisampleResolveRenderPass(
+	renderPass_.CreateResolveMSRenderPass(
 		vkDev,
 		0u,
 		multiSampledColorImage->multisampleCount_);
 
-	CreateResolveMultisampingFramebuffer(
+	CreateResolveMSFramebuffer(
 		vkDev,
 		renderPass_,
 		multiSampledColorImage->imageView_,

@@ -101,7 +101,7 @@ void AppPBR::Init()
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
 	multisampleResolvePtr = std::make_unique<RendererResolveMS>(
 		vulkanDevice_, &multiSampledColorImage_, &singleSampledColorImage_);
-	// This is OnScreen render pass that transfers 
+	// This is on-screen render pass that transfers 
 	// singleSampledColorImage_ to swapchain image
 	tonemapPtr_ = std::make_unique<RendererTonemap>(
 		vulkanDevice_,

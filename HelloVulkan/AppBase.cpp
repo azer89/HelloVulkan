@@ -26,6 +26,11 @@ void AppBase::InitVulkan()
 		std::cerr << "Volk Cannot be initialized\n";
 	}
 
+	// Multisampling / MSAA
+	VkPhysicalDeviceFeatures features = {};
+	features.sampleRateShading = VK_TRUE;
+	features.samplerAnisotropy = VK_TRUE;
+
 	// Initialize Vulkan instance
 	vulkanInstance_.Create();
 	vulkanInstance_.SetupDebugCallbacks();
@@ -33,7 +38,7 @@ void AppBase::InitVulkan()
 	vulkanDevice_.CreateCompute(vulkanInstance_,
 		static_cast<uint32_t>(AppSettings::ScreenWidth),
 		static_cast<uint32_t>(AppSettings::ScreenHeight),
-		VkPhysicalDeviceFeatures{});
+		features);
 }
 
 void AppBase::InitGLSLang()
