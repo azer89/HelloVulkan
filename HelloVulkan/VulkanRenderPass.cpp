@@ -297,8 +297,6 @@ void VulkanRenderPass::CreateOnScreenRenderPass(
 	CreateBeginInfo(vkDev);
 }
 
-
-
 void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(
 	VulkanDevice& vkDev,
 	uint8_t renderPassBit,

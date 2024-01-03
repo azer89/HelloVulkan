@@ -76,15 +76,15 @@ void RendererBase::CreateSingleFramebuffer(
 	VkFramebuffer& framebuffer)
 {
 	const VkFramebufferCreateInfo framebufferInfo = {
-	.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
-	.pNext = nullptr,
-	.flags = 0,
-	.renderPass = renderPass.GetHandle(),
-	.attachmentCount = static_cast<uint32_t>(imageViews.size()),
-	.pAttachments = imageViews.data(),
-	.width = vkDev.GetFrameBufferWidth(),
-	.height = vkDev.GetFrameBufferHeight(),
-	.layers = 1
+		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0,
+		.renderPass = renderPass.GetHandle(),
+		.attachmentCount = static_cast<uint32_t>(imageViews.size()),
+		.pAttachments = imageViews.data(),
+		.width = vkDev.GetFrameBufferWidth(),
+		.height = vkDev.GetFrameBufferHeight(),
+		.layers = 1
 	};
 
 	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo, nullptr, &framebuffer));
