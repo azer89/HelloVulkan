@@ -32,27 +32,29 @@ public:
 	// Getters
 	VkDevice GetDevice() const { return device_; }
 	VkPhysicalDevice GetPhysicalDevice() const { return physicalDevice_; }
-	VkSwapchainKHR GetSwapChain() const { return swapchain_; }
 	VkCommandPool GetCommandPool() const { return commandPool_; }
 	VkQueue GetGraphicsQueue() const { return graphicsQueue_; }
 	uint32_t GetFrameBufferWidth() const { return framebufferWidth_; }
 	uint32_t GetFrameBufferHeight() const { return framebufferHeight_; }
-	size_t GetSwapchainImageCount() const { return swapchainImages_.size(); }
 	size_t GetDeviceQueueIndicesSize() const { return deviceQueueIndices_.size(); }
 	const uint32_t* GetDeviceQueueIndicesData() const { return deviceQueueIndices_.data(); }
 	VkSampleCountFlagBits GetMSAASampleCount() const { return msaaSampleCount_; }
 	VkCommandBuffer GetComputeCommandBuffer() const { return computeCommandBuffer_; }
 	VkQueue GetComputeQueue() const { return computeQueue_; }
-	VkImageView GetSwapchainImageView(unsigned i) const { return swapchainImageViews_[i]; }
-	VkFormat GetSwaphchainImageFormat() const { return swapchainImageFormat_; }
 	VkFormat GetDepthFormat() const { return depthFormat_; };
 	VkCommandBuffer GetCommandBuffer(unsigned int index) const;
+
+	// Getters related to swapchain
+	VkSwapchainKHR GetSwapChain() const { return swapchain_; }
+	size_t GetSwapchainImageCount() const { return swapchainImages_.size(); }
+	VkImageView GetSwapchainImageView(unsigned i) const { return swapchainImageViews_[i]; }
+	VkFormat GetSwaphchainImageFormat() const { return swapchainImageFormat_; }
 
 	// Pointer getters
 	VkSwapchainKHR* GetSwapchainPtr() { return &swapchain_; }
 	VkSemaphore* GetSwapchainSemaphorePtr() { return &swapchainSemaphore_; }
-	VkSemaphore* GetRenderSemaphorePtr() { return &renderSemaphore_; }
 	VkCommandBuffer* GetCommandBufferPtr(unsigned int index);
+	VkSemaphore* GetRenderSemaphorePtr() { return &renderSemaphore_; }
 
 	// For debugging purpose
 	void SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name);
