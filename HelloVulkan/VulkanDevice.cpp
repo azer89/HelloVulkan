@@ -46,9 +46,9 @@ void VulkanDevice::CreateCompute
 	// TODO Create a swapchain class
 	VK_CHECK(CreateSwapchain(instance.GetSurface()));
 	const size_t imageCount = CreateSwapchainImages();
-	commandBuffers_.resize(imageCount);
+	swapchainCommandBuffers_.resize(imageCount);
 
-	VK_CHECK(CreateSemaphore(&semaphore_));
+	VK_CHECK(CreateSemaphore(&swapchainSemaphore_));
 	VK_CHECK(CreateSemaphore(&renderSemaphore_));
 
 	const VkCommandPoolCreateInfo cpi =
@@ -69,7 +69,7 @@ void VulkanDevice::CreateCompute
 		.commandBufferCount = static_cast<uint32_t>(swapchainImages_.size()),
 	};
 
-	VK_CHECK(vkAllocateCommandBuffers(device_, &ai, &commandBuffers_[0]));
+	VK_CHECK(vkAllocateCommandBuffers(device_, &ai, &swapchainCommandBuffers_[0]));
 
 	{
 		// Create compute command pool
@@ -108,7 +108,7 @@ void VulkanDevice::Destroy()
 
 	vkDestroyCommandPool(device_, commandPool_, nullptr);
 
-	vkDestroySemaphore(device_, semaphore_, nullptr);
+	vkDestroySemaphore(device_, swapchainSemaphore_, nullptr);
 	vkDestroySemaphore(device_, renderSemaphore_, nullptr);
 
 	if (useCompute_)
@@ -168,13 +168,14 @@ VkResult VulkanDevice::CreatePhysicalDevice(VkInstance instance)
 	std::vector<VkPhysicalDevice> devices(deviceCount);
 	VK_CHECK_RET(vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data()));
 
-	msaaSamples_ = VK_SAMPLE_COUNT_1_BIT; // Default
+	msaaSampleCount_ = VK_SAMPLE_COUNT_1_BIT; // Default
 	for (const auto& d : devices)
 	{
 		if (IsDeviceSuitable(d))
 		{
 			physicalDevice_ = d;
-			msaaSamples_ = GetMaxUsableSampleCount(physicalDevice_);
+			msaaSampleCount_ = GetMaxUsableSampleCount(physicalDevice_);
+			depthFormat_ = FindDepthFormat();
 			return VK_SUCCESS;
 		}
 	}
@@ -340,6 +341,8 @@ VkPresentModeKHR VulkanDevice::ChooseSwapPresentMode(const std::vector<VkPresent
 
 uint32_t VulkanDevice::ChooseSwapImageCount(const VkSurfaceCapabilitiesKHR& capabilities)
 {
+	// Request one additional image to make sure
+	// we are not waiting on the GPU to complete any operations
 	const uint32_t imageCount = capabilities.minImageCount + 1;
 	const bool imageCountExceeded = capabilities.maxImageCount > 0 && imageCount > capabilities.maxImageCount;
 	return imageCountExceeded ? capabilities.maxImageCount : imageCount;
@@ -531,4 +534,38 @@ void VulkanDevice::EndSingleTimeCommands(VkCommandBuffer commandBuffer)
 	vkQueueWaitIdle(graphicsQueue_);
 
 	vkFreeCommandBuffers(device_, commandPool_, 1, &commandBuffer);
+}
+
+// Getter
+VkCommandBuffer* VulkanDevice::GetCommandBufferPtr(unsigned int index)
+{
+	if (index >= swapchainCommandBuffers_.size())
+	{
+		return nullptr;
+	}
+
+	return &swapchainCommandBuffers_[index];
+}
+
+// Getter
+VkCommandBuffer VulkanDevice::GetCommandBuffer(unsigned int index) const
+{
+	if (index >= swapchainCommandBuffers_.size())
+	{
+		return nullptr;
+	}
+
+	return swapchainCommandBuffers_[index];
+}
+
+void VulkanDevice::SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name)
+{
+	VkDebugUtilsObjectNameInfoEXT nameInfo = {
+		.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT,
+		.pNext = nullptr,
+		.objectType = objType,
+		.objectHandle = reinterpret_cast<uint64_t>(objectHandle),
+		.pObjectName = name
+	};
+	VK_CHECK(vkSetDebugUtilsObjectNameEXT(device_, &nameInfo));
 }

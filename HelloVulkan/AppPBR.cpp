@@ -16,7 +16,7 @@ void AppPBR::Init()
 	std::string hdrFile = AppSettings::TextureFolder + "piazza_bologni_1k.hdr";
 
 	// MSAA
-	VkSampleCountFlagBits msaaSamples = vulkanDevice_.GetMSAASamples();
+	VkSampleCountFlagBits msaaSamples = vulkanDevice_.GetMSAASampleCount();
 
 	model_ = std::make_unique<Model>(
 		vulkanDevice_, 

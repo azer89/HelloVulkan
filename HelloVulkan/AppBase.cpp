@@ -105,7 +105,8 @@ bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 		vulkanDevice_.GetDevice(), 
 		vulkanDevice_.GetSwapChain(), 
 		0, 
-		vulkanDevice_.GetSemaphore(), 
+		// Wait for the swapchain image to become available
+		*(vulkanDevice_.GetSwapchainSemaphorePtr()), 
 		VK_NULL_HANDLE, 
 		&imageIndex);
 	VK_CHECK(vkResetCommandPool(vulkanDevice_.GetDevice(), vulkanDevice_.GetCommandPool(), 0));
@@ -129,11 +130,12 @@ bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
 		.pNext = nullptr,
 		.waitSemaphoreCount = 1u,
-		.pWaitSemaphores = vulkanDevice_.GetSemaphorePtr(),
+		.pWaitSemaphores = vulkanDevice_.GetSwapchainSemaphorePtr(),
 		.pWaitDstStageMask = waitStages,
 		.commandBufferCount = 1u,
 		.pCommandBuffers = vulkanDevice_.GetCommandBufferPtr(imageIndex),
 		.signalSemaphoreCount = 1u,
+		// Wait for rendering to complete
 		.pSignalSemaphores = vulkanDevice_.GetRenderSemaphorePtr()
 	};
 

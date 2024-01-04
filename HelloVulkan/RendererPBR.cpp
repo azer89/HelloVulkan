@@ -203,7 +203,7 @@ void RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 
 void RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh)
 {
-	size_t swapchainLength = vkDev.GetSwapChainImageSize();
+	size_t swapchainLength = vkDev.GetSwapchainImageCount();
 
 	std::vector<VkDescriptorSetLayout> layouts(swapchainLength, descriptorSetLayout_);
 

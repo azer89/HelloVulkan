@@ -123,7 +123,7 @@ void RendererSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 		nullptr, 
 		&descriptorSetLayout_));
 
-	auto swapChainImageSize = vkDev.GetSwapChainImageSize();
+	auto swapChainImageSize = vkDev.GetSwapchainImageCount();
 
 	std::vector<VkDescriptorSetLayout> layouts(swapChainImageSize, descriptorSetLayout_);
 
