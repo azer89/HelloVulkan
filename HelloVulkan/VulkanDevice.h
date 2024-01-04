@@ -33,23 +33,22 @@ public:
 	VkDevice GetDevice() const { return device_; }
 	VkPhysicalDevice GetPhysicalDevice() const { return physicalDevice_; }
 	VkSwapchainKHR GetSwapChain() const { return swapchain_; }
-	VkSemaphore GetSemaphore() const { return semaphore_; }
 	VkCommandPool GetCommandPool() const { return commandPool_; }
 	VkQueue GetGraphicsQueue() const { return graphicsQueue_; }
 	uint32_t GetFrameBufferWidth() const { return framebufferWidth_; }
 	uint32_t GetFrameBufferHeight() const { return framebufferHeight_; }
-	size_t GetSwapChainImageSize() const { return swapchainImages_.size(); }
+	size_t GetSwapchainImageCount() const { return swapchainImages_.size(); }
 	size_t GetDeviceQueueIndicesSize() const { return deviceQueueIndices_.size(); }
 	const uint32_t* GetDeviceQueueIndicesData() const { return deviceQueueIndices_.data(); }
-	VkCommandBuffer GetComputeCommandBuffer() { return computeCommandBuffer_; }
-	VkQueue GetComputeQueue() { return computeQueue_; }
-	VkSampleCountFlagBits GetMSAASamples() { return msaaSamples_; }
+	//VkCommandBuffer GetComputeCommandBuffer() { return computeCommandBuffer_; }
+	//VkQueue GetComputeQueue() { return computeQueue_; }
+	VkSampleCountFlagBits GetMSAASampleCount() { return msaaSampleCount_; }
 
 	VkImageView GetSwapchainImageView(unsigned i) { return swapchainImageViews_[i]; }
 	VkFormat GetSwaphchainImageFormat() { return swapchainImageFormat_; }
 
 	VkSwapchainKHR* GetSwapchainPtr() { return &swapchain_; }
-	VkSemaphore* GetSemaphorePtr() { return &semaphore_; }
+	VkSemaphore* GetSwapchainSemaphorePtr() { return &swapchainSemaphore_; }
 	VkSemaphore* GetRenderSemaphorePtr() { return &renderSemaphore_; }
 
 	VkCommandBuffer* GetCommandBufferPtr(unsigned int index);
@@ -95,7 +94,7 @@ private:
 		VkFormatFeatureFlags features);
 
 private:
-	VkSemaphore semaphore_;
+	VkSemaphore swapchainSemaphore_;
 	VkSemaphore renderSemaphore_;
 	std::vector<VkCommandBuffer> commandBuffers_;
 
@@ -109,7 +108,7 @@ private:
 	uint32_t framebufferWidth_;
 	uint32_t framebufferHeight_;
 
-	VkSampleCountFlagBits msaaSamples_;
+	VkSampleCountFlagBits msaaSampleCount_;
 
 	VkDevice device_;
 	VkPhysicalDevice physicalDevice_;

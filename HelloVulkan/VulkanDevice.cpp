@@ -48,7 +48,7 @@ void VulkanDevice::CreateCompute
 	const size_t imageCount = CreateSwapchainImages();
 	commandBuffers_.resize(imageCount);
 
-	VK_CHECK(CreateSemaphore(&semaphore_));
+	VK_CHECK(CreateSemaphore(&swapchainSemaphore_));
 	VK_CHECK(CreateSemaphore(&renderSemaphore_));
 
 	const VkCommandPoolCreateInfo cpi =
@@ -108,7 +108,7 @@ void VulkanDevice::Destroy()
 
 	vkDestroyCommandPool(device_, commandPool_, nullptr);
 
-	vkDestroySemaphore(device_, semaphore_, nullptr);
+	vkDestroySemaphore(device_, swapchainSemaphore_, nullptr);
 	vkDestroySemaphore(device_, renderSemaphore_, nullptr);
 
 	if (useCompute_)

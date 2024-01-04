@@ -50,7 +50,7 @@ void RendererBase::CreateUniformBuffers(
 	std::vector<VulkanBuffer>& buffers,
 	size_t uniformDataSize)
 {
-	auto swapChainImageSize = vkDev.GetSwapChainImageSize();
+	auto swapChainImageSize = vkDev.GetSwapchainImageCount();
 	buffers.resize(swapChainImageSize);
 	for (size_t i = 0; i < swapChainImageSize; i++)
 	{
@@ -95,7 +95,7 @@ void RendererBase::CreateSwapchainFramebuffers(
 	VulkanRenderPass renderPass,
 	VkImageView depthImageView)
 {
-	size_t swapchainImageSize = vkDev.GetSwapChainImageSize();
+	size_t swapchainImageSize = vkDev.GetSwapchainImageCount();
 
 	swapchainFramebuffers_.resize(swapchainImageSize);
 
@@ -131,7 +131,7 @@ void RendererBase::CreateDescriptorPool(
 	uint32_t setCountPerSwapchain,
 	VkDescriptorPool* descriptorPool)
 {
-	const uint32_t imageCount = static_cast<uint32_t>(vkDev.GetSwapChainImageSize());
+	const uint32_t imageCount = static_cast<uint32_t>(vkDev.GetSwapchainImageCount());
 
 	std::vector<VkDescriptorPoolSize> poolSizes;
 
