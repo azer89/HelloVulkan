@@ -1,19 +1,18 @@
 # 🌋Vulkan PBR+IBL
 
-An implementation of Physically Based Rendering (PBR), a technique that simulates the interaction of light with materials. The scene illumination is achieved through Image-Based Lighting (IBL), which utilizes HDR images to capture nuanced lighting conditions and enhance the realism of 3D object rendering.
+A Vulkan implementation of Physically Based Rendering (PBR), a technique that simulates the interaction of light with materials. The scene illumination is achieved through Image-Based Lighting (IBL), which utilizes HDR images to capture nuanced lighting conditions and enhance the realism of 3D object rendering.
 
 ### Features
 * Cook-Torrance BRDF
 * Offscreen rendering to generate:
     * A cubemap from an equirectangular HDR image
-    * Specular and diffuse maps
-* Compute shader to generate BRDF lookup table
+    * Specular and diffuse cubemaps
 * Reinhard tonemap postprocessing
 * glTF mesh rendering and skybox
 * Automatic runtime compilation from GLSL to SPIR-V
 * Multisample anti-aliasing (MSAA) 
 
-https://github.com/azer89/HelloVulkan/assets/790432/5f1db4de-d72b-4948-8083-5375e30ec2ff
+https://github.com/azer89/HelloVulkan/assets/790432/c56acbff-1404-46ec-a30f-5107234c712d
 
 https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d130bf910
 
