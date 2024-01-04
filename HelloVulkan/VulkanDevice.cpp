@@ -46,7 +46,7 @@ void VulkanDevice::CreateCompute
 	// TODO Create a swapchain class
 	VK_CHECK(CreateSwapchain(instance.GetSurface()));
 	const size_t imageCount = CreateSwapchainImages();
-	commandBuffers_.resize(imageCount);
+	swapchainCommandBuffers_.resize(imageCount);
 
 	VK_CHECK(CreateSemaphore(&swapchainSemaphore_));
 	VK_CHECK(CreateSemaphore(&renderSemaphore_));
@@ -69,7 +69,7 @@ void VulkanDevice::CreateCompute
 		.commandBufferCount = static_cast<uint32_t>(swapchainImages_.size()),
 	};
 
-	VK_CHECK(vkAllocateCommandBuffers(device_, &ai, &commandBuffers_[0]));
+	VK_CHECK(vkAllocateCommandBuffers(device_, &ai, &swapchainCommandBuffers_[0]));
 
 	{
 		// Create compute command pool
@@ -539,23 +539,23 @@ void VulkanDevice::EndSingleTimeCommands(VkCommandBuffer commandBuffer)
 // Getter
 VkCommandBuffer* VulkanDevice::GetCommandBufferPtr(unsigned int index)
 {
-	if (index >= commandBuffers_.size())
+	if (index >= swapchainCommandBuffers_.size())
 	{
 		return nullptr;
 	}
 
-	return &commandBuffers_[index];
+	return &swapchainCommandBuffers_[index];
 }
 
 // Getter
 VkCommandBuffer VulkanDevice::GetCommandBuffer(unsigned int index) const
 {
-	if (index >= commandBuffers_.size())
+	if (index >= swapchainCommandBuffers_.size())
 	{
 		return nullptr;
 	}
 
-	return commandBuffers_[index];
+	return swapchainCommandBuffers_[index];
 }
 
 void VulkanDevice::SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name)

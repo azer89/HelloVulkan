@@ -97,14 +97,14 @@ private:
 private:
 	VkSemaphore swapchainSemaphore_;
 	VkSemaphore renderSemaphore_;
-	std::vector<VkCommandBuffer> commandBuffers_;
-
-	VkSwapchainKHR swapchain_;
 
 	// A queue of rendered images waiting to be presented to the screen
+	VkSwapchainKHR swapchain_;
 	std::vector<VkImage> swapchainImages_;
 	std::vector<VkImageView> swapchainImageViews_;
 	VkFormat swapchainImageFormat_;
+	// We have one command buffer per swapchain
+	std::vector<VkCommandBuffer> swapchainCommandBuffers_;
 
 	VkFormat depthFormat_;
 
