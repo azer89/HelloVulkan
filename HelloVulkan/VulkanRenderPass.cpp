@@ -127,7 +127,7 @@ void VulkanRenderPass::CreateOffScreenRenderPass(
 
 	VkAttachmentDescription depthAttachment = {
 		.flags = 0,
-		.format = vkDev.FindDepthFormat(),
+		.format = vkDev.GetDepthFormat(),
 		.samples = msaaSamples,
 		.loadOp = clearDepth ?
 				VK_ATTACHMENT_LOAD_OP_CLEAR :
@@ -234,7 +234,7 @@ void VulkanRenderPass::CreateOnScreenRenderPass(
 
 	VkAttachmentDescription depthAttachment = {
 		.flags = 0,
-		.format = vkDev.FindDepthFormat(),
+		.format = vkDev.GetDepthFormat(),
 		.samples = msaaSamples,
 		.loadOp = clearDepth ?
 				VK_ATTACHMENT_LOAD_OP_CLEAR :

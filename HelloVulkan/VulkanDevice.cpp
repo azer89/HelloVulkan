@@ -168,13 +168,14 @@ VkResult VulkanDevice::CreatePhysicalDevice(VkInstance instance)
 	std::vector<VkPhysicalDevice> devices(deviceCount);
 	VK_CHECK_RET(vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data()));
 
-	msaaSamples_ = VK_SAMPLE_COUNT_1_BIT; // Default
+	msaaSampleCount_ = VK_SAMPLE_COUNT_1_BIT; // Default
 	for (const auto& d : devices)
 	{
 		if (IsDeviceSuitable(d))
 		{
 			physicalDevice_ = d;
-			msaaSamples_ = GetMaxUsableSampleCount(physicalDevice_);
+			msaaSampleCount_ = GetMaxUsableSampleCount(physicalDevice_);
+			depthFormat_ = FindDepthFormat();
 			return VK_SUCCESS;
 		}
 	}
@@ -547,7 +548,7 @@ VkCommandBuffer* VulkanDevice::GetCommandBufferPtr(unsigned int index)
 }
 
 // Getter
-VkCommandBuffer VulkanDevice::GetCommandBuffer(unsigned int index)
+VkCommandBuffer VulkanDevice::GetCommandBuffer(unsigned int index) const
 {
 	if (index >= commandBuffers_.size())
 	{

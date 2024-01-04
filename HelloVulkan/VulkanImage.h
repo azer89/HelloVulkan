@@ -163,12 +163,6 @@ private:
 		VkPhysicalDevice device, 
 		uint32_t typeFilter, 
 		VkMemoryPropertyFlags properties);
-	VkFormat FindDepthFormat(VkPhysicalDevice device);
-	VkFormat FindSupportedFormat(
-		VkPhysicalDevice device, 
-		const std::vector<VkFormat>& candidates, 
-		VkImageTiling tiling, 
-		VkFormatFeatureFlags features);
 
 	void UpdateImage(
 		VulkanDevice& vkDev,

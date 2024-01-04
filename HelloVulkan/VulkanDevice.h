@@ -29,7 +29,7 @@ public:
 	VkCommandBuffer BeginSingleTimeCommands();
 	void EndSingleTimeCommands(VkCommandBuffer commandBuffer);
 
-	// Getter functions below
+	// Getters
 	VkDevice GetDevice() const { return device_; }
 	VkPhysicalDevice GetPhysicalDevice() const { return physicalDevice_; }
 	VkSwapchainKHR GetSwapChain() const { return swapchain_; }
@@ -40,20 +40,19 @@ public:
 	size_t GetSwapchainImageCount() const { return swapchainImages_.size(); }
 	size_t GetDeviceQueueIndicesSize() const { return deviceQueueIndices_.size(); }
 	const uint32_t* GetDeviceQueueIndicesData() const { return deviceQueueIndices_.data(); }
-	//VkCommandBuffer GetComputeCommandBuffer() { return computeCommandBuffer_; }
-	//VkQueue GetComputeQueue() { return computeQueue_; }
-	VkSampleCountFlagBits GetMSAASampleCount() { return msaaSampleCount_; }
+	VkSampleCountFlagBits GetMSAASampleCount() const { return msaaSampleCount_; }
+	VkCommandBuffer GetComputeCommandBuffer() const { return computeCommandBuffer_; }
+	VkQueue GetComputeQueue() const { return computeQueue_; }
+	VkImageView GetSwapchainImageView(unsigned i) const { return swapchainImageViews_[i]; }
+	VkFormat GetSwaphchainImageFormat() const { return swapchainImageFormat_; }
+	VkFormat GetDepthFormat() const { return depthFormat_; };
+	VkCommandBuffer GetCommandBuffer(unsigned int index) const;
 
-	VkImageView GetSwapchainImageView(unsigned i) { return swapchainImageViews_[i]; }
-	VkFormat GetSwaphchainImageFormat() { return swapchainImageFormat_; }
-
+	// Pointer getters
 	VkSwapchainKHR* GetSwapchainPtr() { return &swapchain_; }
 	VkSemaphore* GetSwapchainSemaphorePtr() { return &swapchainSemaphore_; }
 	VkSemaphore* GetRenderSemaphorePtr() { return &renderSemaphore_; }
-
 	VkCommandBuffer* GetCommandBufferPtr(unsigned int index);
-	VkCommandBuffer GetCommandBuffer(unsigned int index);
-	VkFormat FindDepthFormat();
 
 	// For debugging purpose
 	void SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name);
@@ -88,6 +87,8 @@ private:
 	// Sync
 	VkResult CreateSemaphore(VkSemaphore* outSemaphore);
 
+	VkFormat FindDepthFormat();
+
 	VkFormat FindSupportedFormat(
 		const std::vector<VkFormat>& candidates,
 		VkImageTiling tiling,
@@ -105,6 +106,8 @@ private:
 	std::vector<VkImageView> swapchainImageViews_;
 	VkFormat swapchainImageFormat_;
 
+	VkFormat depthFormat_;
+
 	uint32_t framebufferWidth_;
 	uint32_t framebufferHeight_;
 
@@ -112,25 +115,20 @@ private:
 
 	VkDevice device_;
 	VkPhysicalDevice physicalDevice_;
-	VkQueue graphicsQueue_;
 
+	VkQueue graphicsQueue_;
 	uint32_t graphicsFamily_;
 
 	VkCommandPool commandPool_;
 
-	// Were we initialized with compute capabilities
-	bool useCompute_ = false;
-
-	// [may coincide with graphicsFamily]
-	uint32_t computeFamily_;
+	// This may coincide with graphicsFamily
 	VkQueue computeQueue_;
-
-	// A list of all queues (for shared buffer allocation)
-	std::vector<uint32_t> deviceQueueIndices_;
-	std::vector<VkQueue> deviceQueues_;
-
+	uint32_t computeFamily_;
+	bool useCompute_ = false;
 	VkCommandBuffer computeCommandBuffer_;
 	VkCommandPool computeCommandPool_;
+
+	std::vector<uint32_t> deviceQueueIndices_;
 };
 
 #endif
