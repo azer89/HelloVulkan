@@ -97,22 +97,21 @@ private:
 		VkFormatFeatureFlags features);
 
 private:
+	// Sync
 	VkSemaphore swapchainSemaphore_;
 	VkSemaphore renderSemaphore_;
 
-	// A queue of rendered images waiting to be presented to the screen
 	VkSwapchainKHR swapchain_;
+	// A queue of rendered images waiting to be presented to the screen
 	std::vector<VkImage> swapchainImages_;
 	std::vector<VkImageView> swapchainImageViews_;
 	VkFormat swapchainImageFormat_;
 	// We have one command buffer per swapchain
 	std::vector<VkCommandBuffer> swapchainCommandBuffers_;
 
-	VkFormat depthFormat_;
-
 	uint32_t framebufferWidth_;
 	uint32_t framebufferHeight_;
-
+	VkFormat depthFormat_;
 	VkSampleCountFlagBits msaaSampleCount_;
 
 	VkDevice device_;
@@ -120,7 +119,6 @@ private:
 
 	VkQueue graphicsQueue_;
 	uint32_t graphicsFamily_;
-
 	VkCommandPool commandPool_;
 
 	// This may coincide with graphicsFamily
