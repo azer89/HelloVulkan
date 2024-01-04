@@ -51,27 +51,13 @@ public:
 	VkSwapchainKHR* GetSwapchainPtr() { return &swapchain_; }
 	VkSemaphore* GetSemaphorePtr() { return &semaphore_; }
 	VkSemaphore* GetRenderSemaphorePtr() { return &renderSemaphore_; }
-	VkCommandBuffer* GetCommandBufferPtr(unsigned int index)
-	{
-		if (index >= commandBuffers_.size())
-		{
-			return nullptr;
-		}
 
-		return &commandBuffers_[index];
-	}
-
-	VkCommandBuffer GetCommandBuffer(unsigned int index)
-	{
-		if (index >= commandBuffers_.size())
-		{
-			return nullptr;
-		}
-
-		return commandBuffers_[index];
-	}
-
+	VkCommandBuffer* GetCommandBufferPtr(unsigned int index);
+	VkCommandBuffer GetCommandBuffer(unsigned int index);
 	VkFormat FindDepthFormat();
+
+	// For debugging purpose
+	void SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name);
 
 private:
 	VkResult CreatePhysicalDevice(VkInstance instance);

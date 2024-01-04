@@ -99,6 +99,8 @@ void RendererBase::CreateSwapchainFramebuffers(
 
 	swapchainFramebuffers_.resize(swapchainImageSize);
 
+	// Trick to put a swapchain image to the list of attachment.
+	// Note that depthImageView can be nullptr.
 	std::vector<VkImageView> attachments = { nullptr, depthImageView };
 
 	for (size_t i = 0; i < swapchainImageSize; i++)

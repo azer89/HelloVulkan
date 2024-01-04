@@ -340,6 +340,8 @@ VkPresentModeKHR VulkanDevice::ChooseSwapPresentMode(const std::vector<VkPresent
 
 uint32_t VulkanDevice::ChooseSwapImageCount(const VkSurfaceCapabilitiesKHR& capabilities)
 {
+	// Request one additional image to make sure
+	// we are not waiting on the GPU to complete any operations
 	const uint32_t imageCount = capabilities.minImageCount + 1;
 	const bool imageCountExceeded = capabilities.maxImageCount > 0 && imageCount > capabilities.maxImageCount;
 	return imageCountExceeded ? capabilities.maxImageCount : imageCount;
@@ -531,4 +533,38 @@ void VulkanDevice::EndSingleTimeCommands(VkCommandBuffer commandBuffer)
 	vkQueueWaitIdle(graphicsQueue_);
 
 	vkFreeCommandBuffers(device_, commandPool_, 1, &commandBuffer);
+}
+
+// Getter
+VkCommandBuffer* VulkanDevice::GetCommandBufferPtr(unsigned int index)
+{
+	if (index >= commandBuffers_.size())
+	{
+		return nullptr;
+	}
+
+	return &commandBuffers_[index];
+}
+
+// Getter
+VkCommandBuffer VulkanDevice::GetCommandBuffer(unsigned int index)
+{
+	if (index >= commandBuffers_.size())
+	{
+		return nullptr;
+	}
+
+	return commandBuffers_[index];
+}
+
+void VulkanDevice::SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name)
+{
+	VkDebugUtilsObjectNameInfoEXT nameInfo = {
+		.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT,
+		.pNext = nullptr,
+		.objectType = objType,
+		.objectHandle = reinterpret_cast<uint64_t>(objectHandle),
+		.pObjectName = name
+	};
+	VK_CHECK(vkSetDebugUtilsObjectNameEXT(device_, &nameInfo));
 }
