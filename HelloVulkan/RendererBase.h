@@ -21,7 +21,10 @@ public:
 		uint8_t renderPassBit = 0u);
 	virtual ~RendererBase();
 
-	virtual void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) = 0;
+	virtual void FillCommandBuffer(
+		VulkanDevice& vkDev, 
+		VkCommandBuffer commandBuffer, 
+		size_t currentImage) = 0;
 
 	void SetPerFrameUBO(const VulkanDevice& vkDev, uint32_t imageIndex, PerFrameUBO ubo)
 	{
@@ -76,28 +79,18 @@ protected:
 		const void* data,
 		const size_t dataSize);
 
-	void CreateOffScreenFramebuffer(
+	// Attach an array of image views to a framebuffer
+	void CreateSingleFramebuffer(
 		VulkanDevice& vkDev,
 		VulkanRenderPass renderPass,
-		VkImageView outputImageView,
-		VkImageView depthImageView,
+		const std::vector<VkImageView> imageViews,
 		VkFramebuffer& framebuffer);
 
-	void CreateResolveMSFramebuffer(
-		VulkanDevice& vkDev,
-		VulkanRenderPass renderPass,
-		VkImageView multisampledImageView,
-		VkImageView singleSampledImageView,
-		VkFramebuffer& framebuffer);
-
-	void CreateOnScreenFramebuffers(
+	// Attach a swapchain image and depth image
+	void CreateSwapchainFramebuffers(
 		VulkanDevice& vkDev, 
 		VulkanRenderPass renderPass, 
-		VkImageView depthImageView);
-
-	void CreateOnScreenFramebuffers(
-		VulkanDevice& vkDev,
-		VulkanRenderPass renderPass);
+		VkImageView depthImageView = nullptr);
 
 	void CreateDescriptorPool(
 		VulkanDevice& vkDev, 

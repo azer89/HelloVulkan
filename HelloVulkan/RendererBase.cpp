@@ -68,23 +68,20 @@ void RendererBase::CreateUniformBuffers(
 	}
 }
 
-// TODO Refactor frame buffer methods
-void RendererBase::CreateOffScreenFramebuffer(
+// Attach an array of image views to a framebuffer
+void RendererBase::CreateSingleFramebuffer(
 	VulkanDevice& vkDev,
 	VulkanRenderPass renderPass,
-	VkImageView colorImageView,
-	VkImageView depthImageView,
+	const std::vector<VkImageView> imageViews,
 	VkFramebuffer& framebuffer)
 {
-	std::array<VkImageView, 2> attachments = { colorImageView, depthImageView };
-
 	const VkFramebufferCreateInfo framebufferInfo = {
 		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
 		.renderPass = renderPass.GetHandle(),
-		.attachmentCount = static_cast<uint32_t>(attachments.size()),
-		.pAttachments = attachments.data(),
+		.attachmentCount = static_cast<uint32_t>(imageViews.size()),
+		.pAttachments = imageViews.data(),
 		.width = vkDev.GetFrameBufferWidth(),
 		.height = vkDev.GetFrameBufferHeight(),
 		.layers = 1
@@ -93,60 +90,7 @@ void RendererBase::CreateOffScreenFramebuffer(
 	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo, nullptr, &framebuffer));
 }
 
-// Resolve multi-sampled image to single-sampled image
-void RendererBase::CreateResolveMSFramebuffer(
-	VulkanDevice& vkDev,
-	VulkanRenderPass renderPass,
-	VkImageView multisampledImageView,
-	VkImageView singleSampledImageView,
-	VkFramebuffer& framebuffer)
-{
-	std::array<VkImageView, 2> attachments = { multisampledImageView, singleSampledImageView };
-
-	const VkFramebufferCreateInfo framebufferInfo = {
-		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.renderPass = renderPass.GetHandle(),
-		.attachmentCount = static_cast<uint32_t>(attachments.size()),
-		.pAttachments = attachments.data(),
-		.width = vkDev.GetFrameBufferWidth(),
-		.height = vkDev.GetFrameBufferHeight(),
-		.layers = 1
-	};
-
-	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo, nullptr, &framebuffer));
-}
-
-void RendererBase::CreateOnScreenFramebuffers(
-	VulkanDevice& vkDev,
-	VulkanRenderPass renderPass)
-{
-	size_t swapchainImageSize = vkDev.GetSwapChainImageSize();
-
-	swapchainFramebuffers_.resize(swapchainImageSize);
-
-	for (size_t i = 0; i < swapchainImageSize; i++)
-	{
-		VkImageView swapchainImageView = vkDev.GetSwapchainImageView(i);
-
-		const VkFramebufferCreateInfo framebufferInfo = {
-			.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
-			.pNext = nullptr,
-			.flags = 0,
-			.renderPass = renderPass.GetHandle(),
-			.attachmentCount = 1u,
-			.pAttachments = &swapchainImageView,
-			.width = vkDev.GetFrameBufferWidth(),
-			.height = vkDev.GetFrameBufferHeight(),
-			.layers = 1
-		};
-
-		VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo, nullptr, &swapchainFramebuffers_[i]));
-	}
-}
-
-void RendererBase::CreateOnScreenFramebuffers(
+void RendererBase::CreateSwapchainFramebuffers(
 	VulkanDevice& vkDev,
 	VulkanRenderPass renderPass,
 	VkImageView depthImageView)
@@ -155,19 +99,18 @@ void RendererBase::CreateOnScreenFramebuffers(
 
 	swapchainFramebuffers_.resize(swapchainImageSize);
 
+	std::vector<VkImageView> attachments = { nullptr, depthImageView };
+
 	for (size_t i = 0; i < swapchainImageSize; i++)
 	{
-		std::array<VkImageView, 2> attachments = {
-			vkDev.GetSwapchainImageView(i),
-			depthImageView
-		};
+		attachments[0] = vkDev.GetSwapchainImageView(i);
 
 		const VkFramebufferCreateInfo framebufferInfo = {
 			.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0,
 			.renderPass = renderPass.GetHandle(),
-			.attachmentCount = static_cast<uint32_t>((depthImageView == VK_NULL_HANDLE) ? 1 : 2),
+			.attachmentCount = static_cast<uint32_t>((depthImageView == nullptr) ? 1 : 2),
 			.pAttachments = attachments.data(),
 			.width = vkDev.GetFrameBufferWidth(),
 			.height = vkDev.GetFrameBufferHeight(),

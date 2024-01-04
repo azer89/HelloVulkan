@@ -12,12 +12,13 @@ RendererResolveMS::RendererResolveMS(
 		vkDev,
 		0u,
 		multiSampledColorImage->multisampleCount_);
-
-	CreateResolveMSFramebuffer(
+	CreateSingleFramebuffer(
 		vkDev,
 		renderPass_,
-		multiSampledColorImage->imageView_,
-		singleSampledColorImage->imageView_,
+		{
+			multiSampledColorImage->imageView_,
+			singleSampledColorImage->imageView_ 
+		},
 		offscreenFramebuffer_);
 }
 
