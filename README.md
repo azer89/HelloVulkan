@@ -12,7 +12,7 @@ A Vulkan implementation of Physically Based Rendering (PBR), a technique that si
 * Automatic runtime compilation from GLSL to SPIR-V
 * Multisample anti-aliasing (MSAA) 
 
-https://github.com/azer89/HelloVulkan/assets/790432/c56acbff-1404-46ec-a30f-5107234c712d
+https://github.com/azer89/HelloVulkan/assets/790432/8b0562ed-ab72-4e93-9ce9-31c61c0e986a
 
 https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d130bf910
 
