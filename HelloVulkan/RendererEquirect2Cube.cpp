@@ -238,6 +238,7 @@ void RendererEquirect2Cube::CreateOffscreenGraphicsPipeline(
 	}
 }
 
+// TODO Can be moved to generic function in RendererBase
 void RendererEquirect2Cube::CreateFrameBuffer(
 	VulkanDevice& vkDev, 
 	std::vector<VkImageView> outputViews)

@@ -14,7 +14,7 @@ Camera::Camera(
 	worldUp_(worldUp),
 	yaw_(yaw),
 	pitch_(pitch),
-	front_(glm::vec3(0.0f, 0.0f, -1.0f)),
+	front_(glm::vec3(0.f)),
 	movementSpeed_(CameraSettings::Speed),
 	mouseSensitivity_(CameraSettings::Sensitivity),
 	zoom_(CameraSettings::Zoom)
@@ -74,14 +74,8 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPi
 	// Make sure that when pitch is out of bounds, screen doesn't get flipped
 	if (constrainPitch)
 	{
-		if (pitch_ > 89.0f)
-		{
-			pitch_ = 89.0f;
-		}
-		else if (pitch_ < -89.0f)
-		{
-			pitch_ = -89.0f;
-		}
+		const float pitchLimit = 89.f;
+		pitch_ = glm::clamp(pitch_, -pitchLimit, pitchLimit);
 	}
 
 	// Update orthogonal axes and matrices
@@ -93,14 +87,7 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPi
 void Camera::ProcessMouseScroll(float yoffset)
 {
 	zoom_ -= (float)yoffset;
-	if (zoom_ < 1.0f)
-	{
-		zoom_ = 1.0f;
-	}
-	else if (zoom_ > 45.0f)
-	{
-		zoom_ = 45.0f;
-	}
+	zoom_ = glm::clamp(zoom_, 1.f, 45.f);
 
 	// Update orthogonal axes and matrices
 	UpdateInternal();

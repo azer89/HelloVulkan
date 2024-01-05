@@ -24,23 +24,20 @@ RendererBase::RendererBase(
 // Destructor
 RendererBase::~RendererBase()
 {
-	for (auto buf : perFrameUBOs_)
+	for (auto uboBuffer : perFrameUBOs_)
 	{
-		buf.Destroy(device_);
+		uboBuffer.Destroy(device_);
 	}
-
-	vkDestroyDescriptorSetLayout(device_, descriptorSetLayout_, nullptr);
-	vkDestroyDescriptorPool(device_, descriptorPool_, nullptr);
 
 	for (auto framebuffer : swapchainFramebuffers_)
 	{
 		vkDestroyFramebuffer(device_, framebuffer, nullptr);
 	}
 
+	vkDestroyDescriptorSetLayout(device_, descriptorSetLayout_, nullptr);
+	vkDestroyDescriptorPool(device_, descriptorPool_, nullptr);
 	vkDestroyFramebuffer(device_, offscreenFramebuffer_, nullptr);
-
 	renderPass_.Destroy(device_);
-
 	vkDestroyPipelineLayout(device_, pipelineLayout_, nullptr);
 	vkDestroyPipeline(device_, graphicsPipeline_, nullptr);
 }

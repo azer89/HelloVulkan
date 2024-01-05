@@ -321,23 +321,25 @@ void RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 	}
 }
 
+// TODO Can be moved to generic function in RendererBase
 VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
 	VulkanDevice& vkDev,
 	std::vector<VkImageView> outputViews,
 	uint32_t width,
 	uint32_t height)
 {
-	VkFramebufferCreateInfo info{};
-	info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-	info.pNext = nullptr;
-	info.renderPass = renderPass_.GetHandle();
-	info.attachmentCount = static_cast<uint32_t>(outputViews.size());
-	info.pAttachments = outputViews.data();
-	info.width = width;
-	info.height = height;
-	info.layers = 1u;
-	info.flags = 0u;
-
+	VkFramebufferCreateInfo info =
+	{
+		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0u,
+		.renderPass = renderPass_.GetHandle(),
+		.attachmentCount = static_cast<uint32_t>(outputViews.size()),
+		.pAttachments = outputViews.data(),
+		.width = width,
+		.height = height,
+		.layers = 1u
+	};
 	VkFramebuffer frameBuffer;
 	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &info, nullptr, &frameBuffer));
 	return frameBuffer;
