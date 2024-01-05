@@ -48,6 +48,7 @@ public:
 		VkMemoryPropertyFlags properties);
 
 private:
+	// TODO Possibly move this to VulkanDevice
 	uint32_t FindMemoryType(
 		VkPhysicalDevice device,
 		uint32_t typeFilter,
