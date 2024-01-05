@@ -125,11 +125,12 @@ bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 	const VkPipelineStageFlags waitStages[] = 
 		{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 
-	const VkSubmitInfo si =
+	const VkSubmitInfo submitInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
 		.pNext = nullptr,
 		.waitSemaphoreCount = 1u,
+		// Wait for the swapchain image to become available
 		.pWaitSemaphores = vulkanDevice_.GetSwapchainSemaphorePtr(),
 		.pWaitDstStageMask = waitStages,
 		.commandBufferCount = 1u,
@@ -139,20 +140,21 @@ bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 		.pSignalSemaphores = vulkanDevice_.GetRenderSemaphorePtr()
 	};
 
-	VK_CHECK(vkQueueSubmit(vulkanDevice_.GetGraphicsQueue(), 1, &si, nullptr));
+	VK_CHECK(vkQueueSubmit(vulkanDevice_.GetGraphicsQueue(), 1, &submitInfo, nullptr));
 
-	const VkPresentInfoKHR pi =
+	const VkPresentInfoKHR presentInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
 		.pNext = nullptr,
 		.waitSemaphoreCount = 1u,
+		// Wait for rendering to complete
 		.pWaitSemaphores = vulkanDevice_.GetRenderSemaphorePtr(),
 		.swapchainCount = 1u,
 		.pSwapchains = vulkanDevice_.GetSwapchainPtr(),
 		.pImageIndices = &imageIndex
 	};
 
-	VK_CHECK(vkQueuePresentKHR(vulkanDevice_.GetGraphicsQueue(), &pi));
+	VK_CHECK(vkQueuePresentKHR(vulkanDevice_.GetGraphicsQueue(), &presentInfo));
 
 	VK_CHECK(vkDeviceWaitIdle(vulkanDevice_.GetDevice()));
 
@@ -163,7 +165,7 @@ void AppBase::FillCommandBuffer(const std::vector<RendererBase*>& renderers, uin
 {
 	VkCommandBuffer commandBuffer = vulkanDevice_.GetCommandBuffer(imageIndex);
 
-	const VkCommandBufferBeginInfo bi =
+	const VkCommandBufferBeginInfo beginIndo =
 	{
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
 		.pNext = nullptr,
@@ -171,8 +173,9 @@ void AppBase::FillCommandBuffer(const std::vector<RendererBase*>& renderers, uin
 		.pInheritanceInfo = nullptr
 	};
 
-	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &bi));
+	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginIndo));
 
+	// Iterate through all renderers to fill the command buffer
 	for (auto& r : renderers)
 	{
 		r->FillCommandBuffer(vulkanDevice_, commandBuffer, imageIndex);

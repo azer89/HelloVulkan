@@ -56,7 +56,7 @@ public:
 		VulkanDevice& vkDev,
 		const char* filename);
 
-	void CreateAndInitAllObjects(
+	void CreateImageResources(
 		VulkanDevice& vkDev,
 		const char* filename);
 

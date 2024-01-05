@@ -26,7 +26,7 @@ void VulkanImage::Destroy(VkDevice device)
 	vkDestroySampler(device, defaultImageSampler_, nullptr);
 }
 
-void VulkanImage::CreateAndInitAllObjects(
+void VulkanImage::CreateImageResources(
 	VulkanDevice& vkDev,
 	const char* filename)
 {
