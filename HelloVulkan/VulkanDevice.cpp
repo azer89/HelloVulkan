@@ -266,8 +266,7 @@ VkResult VulkanDevice::CreateDevice(VkPhysicalDeviceFeatures deviceFeatures, uin
 	};
 
 	const float queuePriority = 1.0f;
-
-	const VkDeviceQueueCreateInfo qci =
+	const VkDeviceQueueCreateInfo queueCreateInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
 		.pNext = nullptr,
@@ -277,25 +276,24 @@ VkResult VulkanDevice::CreateDevice(VkPhysicalDeviceFeatures deviceFeatures, uin
 		.pQueuePriorities = &queuePriority
 	};
 
-	const VkDeviceCreateInfo ci =
+	const VkDeviceCreateInfo deviceCreateInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
 		.queueCreateInfoCount = 1,
-		.pQueueCreateInfos = &qci,
+		.pQueueCreateInfos = &queueCreateInfo,
 		.enabledLayerCount = 0,
 		.ppEnabledLayerNames = nullptr,
 		.enabledExtensionCount = static_cast<uint32_t>(extensions.size()),
 		.ppEnabledExtensionNames = extensions.data(),
-
 		.pEnabledFeatures = &deviceFeatures
 	};
 
-	return vkCreateDevice(physicalDevice_, &ci, nullptr, &device_);
+	return vkCreateDevice(physicalDevice_, &deviceCreateInfo, nullptr, &device_);
 }
 
-VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface, bool supportScreenshots)
+VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface)
 {
 	auto swapchainSupport = QuerySwapchainSupport(surface);
 	swapchainImageFormat_ = VK_FORMAT_B8G8R8A8_UNORM;
@@ -312,7 +310,9 @@ VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface, bool supportScreens
 		.imageColorSpace = surfaceFormat.colorSpace,
 		.imageExtent = {.width = framebufferWidth_, .height = framebufferHeight_ },
 		.imageArrayLayers = 1,
-		.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | (supportScreenshots ? VK_IMAGE_USAGE_TRANSFER_SRC_BIT : 0u),
+		.imageUsage = 
+			VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | 
+			VK_IMAGE_USAGE_TRANSFER_DST_BIT,
 		.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE,
 		.queueFamilyIndexCount = 1,
 		.pQueueFamilyIndices = &graphicsFamily_,

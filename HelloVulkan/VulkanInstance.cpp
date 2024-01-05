@@ -12,6 +12,7 @@ void VulkanInstance::Create()
 		"VK_LAYER_KHRONOS_validation"
 	};
 
+	// A list of extensions
 	// Thic projects only works on Windows
 	const std::vector<const char*> exts =
 	{

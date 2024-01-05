@@ -73,7 +73,7 @@ private:
 	VkSampleCountFlagBits GetMaxUsableSampleCount(VkPhysicalDevice d);
 
 	// Swap chain
-	VkResult CreateSwapchain(VkSurfaceKHR surface, bool supportScreenshots = false);
+	VkResult CreateSwapchain(VkSurfaceKHR surface);
 	size_t CreateSwapchainImages();
 	bool CreateSwapChainImageView(
 		unsigned imageIndex,
