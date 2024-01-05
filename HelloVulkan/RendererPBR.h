@@ -10,7 +10,7 @@ class RendererPBR final : public RendererBase
 public:
 	RendererPBR(VulkanDevice& vkDev,
 		std::vector<Model*> models,
-		VulkanImage* envMap,
+		VulkanImage* specularMap,
 		VulkanImage* diffuseMap,
 		VulkanImage* brdfLUT,
 		VulkanImage* depthImage,
@@ -29,7 +29,7 @@ private:
 	void CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh);
 
 private:
-	VulkanImage* envMap_;
+	VulkanImage* specularMap_;
 	VulkanImage* diffuseMap_;
 	VulkanImage* brdfLUT_;
 };

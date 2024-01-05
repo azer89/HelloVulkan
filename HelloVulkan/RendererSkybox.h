@@ -19,7 +19,7 @@ public:
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:
-	VulkanImage* envMap_;
+	VulkanImage* specularMap_;
 
 	std::vector<VkDescriptorSet> descriptorSets_;
 

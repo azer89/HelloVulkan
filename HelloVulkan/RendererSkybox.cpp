@@ -15,7 +15,7 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
 	RendererBase(vkDev, depthImage, offscreenColorImage, renderBit),
-	envMap_(envMap)
+	specularMap_(envMap)
 {
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
 
@@ -147,8 +147,8 @@ void RendererSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 			{ perFrameUBOs_[i].buffer_, 0, sizeof(PerFrameUBO) };
 		const VkDescriptorImageInfo  imageInfo = 
 		{
-			envMap_->defaultImageSampler_,
-			envMap_->imageView_,
+			specularMap_->defaultImageSampler_,
+			specularMap_->imageView_,
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 		};
 
