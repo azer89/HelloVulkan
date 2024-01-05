@@ -154,7 +154,12 @@ bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 		.pImageIndices = &imageIndex
 	};
 
-	VK_CHECK(vkQueuePresentKHR(vulkanDevice_.GetGraphicsQueue(), &presentInfo));
+	result = vkQueuePresentKHR(vulkanDevice_.GetGraphicsQueue(), &presentInfo);
+	if (result == VK_ERROR_OUT_OF_DATE_KHR)
+	{
+		std::cout << " The swapchain has become incompatible with the surface\n";
+	}
+
 
 	VK_CHECK(vkDeviceWaitIdle(vulkanDevice_.GetDevice()));
 
