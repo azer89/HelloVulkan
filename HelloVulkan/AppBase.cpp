@@ -239,7 +239,10 @@ void AppBase::Terminate()
 
 void AppBase::FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
 {
-	// TODO
+	camera_->SetScreenSize(
+		static_cast<float>(width),
+		static_cast<float>(height)
+	);
 }
 
 void AppBase::MouseCallback(GLFWwindow* window, double xposIn, double yposIn)

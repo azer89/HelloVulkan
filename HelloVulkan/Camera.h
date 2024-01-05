@@ -34,6 +34,8 @@ public:
 		float yaw = CameraSettings::Yaw,
 		float pitch = CameraSettings::Pitch);
 
+	void SetScreenSize(float width, float height);
+
 	glm::mat4 GetProjectionMatrix();
 	glm::mat4 GetViewMatrix();
 	glm::mat4 GetInverseViewMatrix();

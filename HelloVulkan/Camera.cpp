@@ -27,6 +27,12 @@ Camera::Camera(
 	UpdateInternal();
 }
 
+void Camera::SetScreenSize(float width, float height)
+{
+	screenWidth_ = width;
+	screenHeight_ = height;
+}
+
 glm::mat4 Camera::GetProjectionMatrix()
 {
 	return projectionMatrix_;
