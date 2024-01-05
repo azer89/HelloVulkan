@@ -8,6 +8,8 @@
 Camera::Camera(
 	glm::vec3 position, 
 	glm::vec3 worldUp, 
+	float screenWidth,
+	float screenHeight,
 	float yaw, 
 	float pitch) :
 	position_(position),
@@ -17,7 +19,9 @@ Camera::Camera(
 	front_(glm::vec3(0.f)),
 	movementSpeed_(CameraSettings::Speed),
 	mouseSensitivity_(CameraSettings::Sensitivity),
-	zoom_(CameraSettings::Zoom)
+	zoom_(CameraSettings::Zoom),
+	screenWidth_(screenWidth),
+	screenHeight_(screenHeight)
 {
 	// Update orthogonal axes and matrices
 	UpdateInternal();
@@ -107,9 +111,7 @@ void Camera::UpdateInternal()
 	up_ = glm::normalize(glm::cross(right_, front_));
 
 	// Projection matrix
-	float aspect = 
-		static_cast<float>(AppSettings::ScreenWidth) / 
-		static_cast<float>(AppSettings::ScreenHeight);
+	float aspect = screenWidth_ / screenHeight_;
 	assert(glm::abs(aspect - std::numeric_limits<float>::epsilon()) > 0.0f);
 
 	float fovy = glm::radians(zoom_);

@@ -3,6 +3,8 @@
 
 #include <glm/glm.hpp>
 
+#include "AppSettings.h"
+
 enum CameraMovement
 {
 	CameraForward,
@@ -27,6 +29,8 @@ public:
 	Camera(
 		glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f),
+		float screenWidth = AppSettings::ScreenWidth,
+		float screenHeight = AppSettings::ScreenHeight,
 		float yaw = CameraSettings::Yaw,
 		float pitch = CameraSettings::Pitch);
 
@@ -59,6 +63,10 @@ private:
 	float movementSpeed_;
 	float mouseSensitivity_;
 	float zoom_;
+
+	// Screen size
+	float screenWidth_;
+	float screenHeight_;
 
 private:
 	void UpdateInternal();

@@ -51,8 +51,8 @@ void AppPBR::Init()
 		brdfLUTCompute.CreateLUT(vulkanDevice_, &brdfLut_);
 	}
 
-	uint32_t width = static_cast<uint32_t>(AppSettings::ScreenWidth);
-	uint32_t height = static_cast<uint32_t>(AppSettings::ScreenHeight);
+	uint32_t width = vulkanDevice_.GetFrameBufferWidth();
+	uint32_t height = vulkanDevice_.GetFrameBufferHeight();
 
 	// Depth attachment (OnScreen and offscreen)
 	depthImage_.CreateDepthResources(
