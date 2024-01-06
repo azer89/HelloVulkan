@@ -20,7 +20,8 @@ RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
 		1, // Texture
 		1, // One set per swapchain
 		&descriptorPool_);
-	CreateDescriptorLayoutAndSet(vkDev);
+	CreateDescriptorLayout(vkDev);
+	CreateDescriptorSet(vkDev);
 
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
 
@@ -32,6 +33,11 @@ RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
 			AppSettings::ShaderFolder + "Tonemap.frag",
 		},
 		&graphicsPipeline_);
+}
+
+void RendererTonemap::OnWindowResized(VulkanDevice& vkDev)
+{
+
 }
 
 void RendererTonemap::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
@@ -55,11 +61,11 @@ void RendererTonemap::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer com
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void RendererTonemap::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
+void RendererTonemap::CreateDescriptorLayout(VulkanDevice& vkDev)
 {
 	uint32_t bindingIndex = 0u;
 
-	std::vector<VkDescriptorSetLayoutBinding> bindings = 
+	std::vector<VkDescriptorSetLayoutBinding> bindings =
 	{
 		DescriptorSetLayoutBinding(
 			bindingIndex++,
@@ -80,7 +86,10 @@ void RendererTonemap::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 		&layoutInfo,
 		nullptr,
 		&descriptorSetLayout_));
+}
 
+void RendererTonemap::CreateDescriptorSet(VulkanDevice& vkDev)
+{
 	auto swapChainImageSize = vkDev.GetSwapchainImageCount();
 
 	std::vector<VkDescriptorSetLayout> layouts(swapChainImageSize, descriptorSetLayout_);
@@ -99,7 +108,7 @@ void RendererTonemap::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 
 	for (size_t i = 0; i < swapChainImageSize; i++)
 	{
-		bindingIndex = 0u;
+		uint32_t bindingIndex = 0u;
 		VkDescriptorSet ds = descriptorSets_[i];
 
 		const VkDescriptorImageInfo  imageInfo =
