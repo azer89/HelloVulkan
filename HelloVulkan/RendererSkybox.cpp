@@ -74,6 +74,7 @@ RendererSkybox::~RendererSkybox()
 void RendererSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
 {
 	renderPass_.BeginRenderPass(
+		vkDev,
 		commandBuffer, 
 		IsOffScreen() ?
 			offscreenFramebuffer_ :

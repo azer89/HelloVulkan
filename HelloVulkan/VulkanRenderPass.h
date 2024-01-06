@@ -52,6 +52,7 @@ public:
 
 	// There's no EndRenderPass() function because you can just call vkCmdEndRenderPass(commandBuffer);
 	void BeginRenderPass(
+		VulkanDevice& vkDev,
 		VkCommandBuffer commandBuffer, 
 		VkFramebuffer framebuffer);
 

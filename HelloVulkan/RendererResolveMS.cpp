@@ -31,6 +31,6 @@ void RendererResolveMS::FillCommandBuffer(
 	VkCommandBuffer commandBuffer,
 	size_t currentImage)
 {
-	renderPass_.BeginRenderPass(commandBuffer, offscreenFramebuffer_);
+	renderPass_.BeginRenderPass(vkDev, commandBuffer, offscreenFramebuffer_);
 	vkCmdEndRenderPass(commandBuffer);
 }
