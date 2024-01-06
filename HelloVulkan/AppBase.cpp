@@ -107,6 +107,14 @@ void AppBase::InitGLFW()
 
 bool AppBase::DrawFrame()
 {
+	// Need to recreate swapchain images and framebuffers 
+	// because the window is resized 
+	if (recreateSwapchain_)
+	{
+		OnWindowResized();
+		recreateSwapchain_ = false;
+	}
+
 	uint32_t imageIndex = 0;
 	VkResult result = vkAcquireNextImageKHR(
 		vulkanDevice_.GetDevice(), 
@@ -116,14 +124,6 @@ bool AppBase::DrawFrame()
 		*(vulkanDevice_.GetSwapchainSemaphorePtr()), 
 		VK_NULL_HANDLE, 
 		&imageIndex);
-
-	// Need to recreate swapchain images and framebuffers 
-	// because the window is resized 
-	if (recreateSwapchain_ || result != VK_SUCCESS)
-	{
-		OnWindowResized();
-		recreateSwapchain_ = false;
-	}
 
 	VK_CHECK(vkResetCommandPool(vulkanDevice_.GetDevice(), vulkanDevice_.GetCommandPool(), 0));
 
