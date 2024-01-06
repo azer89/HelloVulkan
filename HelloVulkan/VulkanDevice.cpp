@@ -306,7 +306,7 @@ VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface)
 		.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
 		.flags = 0,
 		.surface = surface,
-		.minImageCount = ChooseSwapImageCount(swapchainSupport.capabilities),
+		.minImageCount = GetSwapchainImageCount(swapchainSupport.capabilities),
 		.imageFormat = surfaceFormat.format,
 		.imageColorSpace = surfaceFormat.colorSpace,
 		.imageExtent = {.width = framebufferWidth_, .height = framebufferHeight_ },
@@ -340,7 +340,7 @@ VkPresentModeKHR VulkanDevice::ChooseSwapPresentMode(const std::vector<VkPresent
 	return VK_PRESENT_MODE_FIFO_KHR;
 }
 
-uint32_t VulkanDevice::ChooseSwapImageCount(const VkSurfaceCapabilitiesKHR& capabilities)
+uint32_t VulkanDevice::GetSwapchainImageCount(const VkSurfaceCapabilitiesKHR& capabilities)
 {
 	// Request one additional image to make sure
 	// we are not waiting on the GPU to complete any operations

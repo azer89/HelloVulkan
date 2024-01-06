@@ -82,7 +82,7 @@ private:
 	void RecreateSwapchainResources();
 	SwapchainSupportDetails QuerySwapchainSupport(VkSurfaceKHR surface);
 	VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
-	uint32_t ChooseSwapImageCount(const VkSurfaceCapabilitiesKHR& capabilities);
+	uint32_t GetSwapchainImageCount(const VkSurfaceCapabilitiesKHR& capabilities);
 
 	// Sync
 	VkResult CreateSemaphore(VkSemaphore* outSemaphore);
