@@ -103,7 +103,6 @@ void VulkanDevice::Destroy()
 	{
 		vkDestroyImageView(device_, swapchainImageViews_[i], nullptr);
 	}
-
 	vkDestroySwapchainKHR(device_, swapchain_, nullptr);
 
 	vkDestroyCommandPool(device_, commandPool_, nullptr);
@@ -398,7 +397,14 @@ bool VulkanDevice::CreateSwapChainImageView(
 
 void VulkanDevice::RecreateSwapchainResources()
 {
+	for (size_t i = 0; i < swapchainImages_.size(); ++i)
+	{
+		vkDestroyImageView(device_, swapchainImageViews_[i], nullptr);
+	}
+	vkDestroySwapchainKHR(device_, swapchain_, nullptr);
 
+	VK_CHECK(CreateSwapchainImages());
+	CreateSwapchainImages();
 }
 
 SwapchainSupportDetails VulkanDevice::QuerySwapchainSupport(VkSurfaceKHR surface)

@@ -25,8 +25,6 @@ public:
 	void DestroyResources();
 
 private:
-	std::vector<RendererBase*> renderers_;
-
 	std::unique_ptr<RendererClear> clearPtr_;
 	std::unique_ptr<RendererSkybox> skyboxPtr_;
 	std::unique_ptr<RendererPBR> pbrPtr_;

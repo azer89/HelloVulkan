@@ -40,9 +40,11 @@ protected:
 	void ProcessInput();
 	void Terminate();
 
-	bool DrawFrame(const std::vector<RendererBase*>& renderers);
+	bool DrawFrame();
 	virtual void UpdateUBOs(uint32_t imageIndex) = 0;
-	void FillCommandBuffer(const std::vector<RendererBase*>& renderers, uint32_t imageIndex);
+	void FillCommandBuffer(uint32_t imageIndex);
+
+	void OnWindowResized();
 
 protected:
 	// Camera
@@ -60,6 +62,9 @@ protected:
 	// Vulkan
 	VulkanInstance vulkanInstance_;
 	VulkanDevice vulkanDevice_;
+
+	// A list of renderers
+	std::vector<RendererBase*> renderers_;
 };
 
 #endif

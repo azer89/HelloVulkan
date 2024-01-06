@@ -188,7 +188,7 @@ int AppPBR::MainLoop()
 		ProcessTiming();
 		ProcessInput();
 
-		DrawFrame(renderers_);
+		DrawFrame();
 	}
 
 	DestroyResources();

@@ -31,6 +31,9 @@ public:
 		UpdateUniformBuffer(vkDev.GetDevice(), perFrameUBOs_[imageIndex], &ubo, sizeof(PerFrameUBO));
 	}
 
+	// If the window is resized
+	void RecreateSwapchainFramebuffers(VulkanDevice& vkDev);
+
 protected:
 	VkDevice device_ = nullptr;
 
@@ -85,8 +88,6 @@ protected:
 		VulkanRenderPass renderPass,
 		const std::vector<VkImageView> imageViews,
 		VkFramebuffer& framebuffer);
-
-	void RecreateSwapchainFramebuffers(VulkanDevice& vkDev);
 
 	void DestroySwapchainFramebuffers();
 

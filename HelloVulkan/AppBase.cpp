@@ -98,7 +98,7 @@ void AppBase::InitGLFW()
 	glfwSetKeyCallback(glfwWindow_, FuncKey);
 }
 
-bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
+bool AppBase::DrawFrame()
 {
 	uint32_t imageIndex = 0;
 	VkResult result = vkAcquireNextImageKHR(
@@ -120,7 +120,7 @@ bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 	UpdateUBOs(imageIndex);
 
 	// Rendering here
-	FillCommandBuffer(renderers, imageIndex);
+	FillCommandBuffer(imageIndex);
 
 	const VkPipelineStageFlags waitStages[] = 
 		{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
@@ -165,7 +165,7 @@ bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 	return true;
 }
 
-void AppBase::FillCommandBuffer(const std::vector<RendererBase*>& renderers, uint32_t imageIndex)
+void AppBase::FillCommandBuffer(uint32_t imageIndex)
 {
 	VkCommandBuffer commandBuffer = vulkanDevice_.GetCommandBuffer(imageIndex);
 
@@ -180,12 +180,19 @@ void AppBase::FillCommandBuffer(const std::vector<RendererBase*>& renderers, uin
 	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginIndo));
 
 	// Iterate through all renderers to fill the command buffer
-	for (auto& r : renderers)
+	for (auto& r : renderers_)
 	{
 		r->FillCommandBuffer(vulkanDevice_, commandBuffer, imageIndex);
 	}
 
 	VK_CHECK(vkEndCommandBuffer(commandBuffer));
+}
+
+void AppBase::OnWindowResized()
+{
+	for (auto& r : renderers_)
+	{
+	}
 }
 
 void AppBase::InitIMGUI()
