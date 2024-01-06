@@ -21,7 +21,7 @@ public:
 	int MainLoop() override;
 	void UpdateUBOs(uint32_t imageIndex) override;
 
-	void Init() override;
+	void Init();
 	void DestroyResources();
 
 private:

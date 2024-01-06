@@ -40,7 +40,7 @@ protected:
 	void ProcessInput();
 	void Terminate();
 
-	virtual void Init();
+	void CreateSharedImageResources();
 	virtual void UpdateUBOs(uint32_t imageIndex) = 0;
 	bool DrawFrame();
 	void FillCommandBuffer(uint32_t imageIndex);

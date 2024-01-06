@@ -105,7 +105,7 @@ void AppBase::InitGLFW()
 	glfwSetKeyCallback(glfwWindow_, FuncKey);
 }
 
-void AppBase::Init()
+void AppBase::CreateSharedImageResources()
 {
 	depthImage_.Destroy(vulkanDevice_.GetDevice());
 	multiSampledColorImage_.Destroy(vulkanDevice_.GetDevice());
@@ -121,6 +121,7 @@ void AppBase::Init()
 		width,
 		height,
 		msaaSamples);
+	vulkanDevice_.SetVkObjectName(depthImage_.image_, VK_OBJECT_TYPE_IMAGE, "Depth_Image");
 
 	// Color attachments
 	// Multi-sampled (MSAA)
@@ -129,11 +130,14 @@ void AppBase::Init()
 		width,
 		height,
 		msaaSamples);
+	vulkanDevice_.SetVkObjectName(multiSampledColorImage_.image_, VK_OBJECT_TYPE_IMAGE, "Multisampled_Color_Image");
+
 	// Single-sampled
 	singleSampledColorImage_.CreateColorResources(
 		vulkanDevice_,
 		width,
 		height);
+	vulkanDevice_.SetVkObjectName(singleSampledColorImage_.image_, VK_OBJECT_TYPE_IMAGE, "Singlesampled_Color_Image");
 }
 
 bool AppBase::DrawFrame()
@@ -238,7 +242,7 @@ void AppBase::OnWindowResized()
 		windowHeight_
 	);
 
-	Init();
+	CreateSharedImageResources();
 
 	for (auto& r : renderers_)
 	{

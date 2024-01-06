@@ -13,8 +13,8 @@ AppPBR::AppPBR() :
 
 void AppPBR::Init()
 {
-	// Initialize base
-	AppBase::Init();
+	// Initialize attachments
+	CreateSharedImageResources();
 
 	std::string hdrFile = AppSettings::TextureFolder + "piazza_bologni_1k.hdr";
 
@@ -33,6 +33,7 @@ void AppPBR::Init()
 			hdrFile);
 		e2c.OffscreenRender(vulkanDevice_,
 			&environmentCubemap_); // Output
+		vulkanDevice_.SetVkObjectName(environmentCubemap_.image_, VK_OBJECT_TYPE_IMAGE, "Environment_Cubemap");
 	}
 
 	// Cube filtering
@@ -46,36 +47,17 @@ void AppPBR::Init()
 		cubeFilter.OffscreenRender(vulkanDevice_,
 			&specularCubemap_,
 			CubeFilterType::Specular);
+
+		vulkanDevice_.SetVkObjectName(diffuseCubemap_.image_, VK_OBJECT_TYPE_IMAGE, "Diffuse_Cubemap");
+		vulkanDevice_.SetVkObjectName(specularCubemap_.image_, VK_OBJECT_TYPE_IMAGE, "Specular_Cubemap");
 	}
 	
 	// BRDF look up table
 	{
 		RendererBRDFLUT brdfLUTCompute(vulkanDevice_);
 		brdfLUTCompute.CreateLUT(vulkanDevice_, &brdfLut_);
+		vulkanDevice_.SetVkObjectName(brdfLut_.image_, VK_OBJECT_TYPE_IMAGE, "BRDF_LUT");
 	}
-
-	/*uint32_t width = vulkanDevice_.GetFrameBufferWidth();
-	uint32_t height = vulkanDevice_.GetFrameBufferHeight();
-
-	// Depth attachment (OnScreen and offscreen)
-	depthImage_.CreateDepthResources(
-		vulkanDevice_,
-		width,
-		height,
-		msaaSamples);
-
-	// Color attachments
-	// Multi-sampled (MSAA)
-	multiSampledColorImage_.CreateColorResources(
-		vulkanDevice_,
-		width,
-		height,
-		msaaSamples);
-	// Single-sampled
-	singleSampledColorImage_.CreateColorResources(
-		vulkanDevice_,
-		width,
-		height);*/
 
 	// Renderers
 	// This is responsible to clear swapchain image
