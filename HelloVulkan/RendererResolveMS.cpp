@@ -6,24 +6,39 @@ RendererResolveMS::RendererResolveMS(
 	VulkanImage* multiSampledColorImage, // Input
 	VulkanImage* singleSampledColorImage // Output
 ) :
-	RendererBase(vkDev, nullptr)
+	RendererBase(vkDev, nullptr),
+	multiSampledColorImage_(multiSampledColorImage),
+	singleSampledColorImage_(singleSampledColorImage)
 {
 	renderPass_.CreateResolveMSRenderPass(
 		vkDev,
 		0u,
-		multiSampledColorImage->multisampleCount_);
+		multiSampledColorImage_->multisampleCount_);
 	CreateSingleFramebuffer(
 		vkDev,
 		renderPass_,
 		{
-			multiSampledColorImage->imageView_,
-			singleSampledColorImage->imageView_ 
+			multiSampledColorImage_->imageView_,
+			singleSampledColorImage_->imageView_ 
 		},
 		offscreenFramebuffer_);
 }
 
 RendererResolveMS::~RendererResolveMS()
 {
+}
+
+void RendererResolveMS::OnWindowResized(VulkanDevice& vkDev)
+{
+	vkDestroyFramebuffer(vkDev.GetDevice(), offscreenFramebuffer_, nullptr);
+	CreateSingleFramebuffer(
+		vkDev,
+		renderPass_,
+		{
+			multiSampledColorImage_->imageView_,
+			singleSampledColorImage_->imageView_
+		},
+		offscreenFramebuffer_);
 }
 
 void RendererResolveMS::FillCommandBuffer(

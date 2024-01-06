@@ -107,6 +107,10 @@ void AppBase::InitGLFW()
 
 void AppBase::Init()
 {
+	depthImage_.Destroy(vulkanDevice_.GetDevice());
+	multiSampledColorImage_.Destroy(vulkanDevice_.GetDevice());
+	singleSampledColorImage_.Destroy(vulkanDevice_.GetDevice());
+
 	VkSampleCountFlagBits msaaSamples = vulkanDevice_.GetMSAASampleCount();
 	uint32_t width = vulkanDevice_.GetFrameBufferWidth();
 	uint32_t height = vulkanDevice_.GetFrameBufferHeight();
@@ -233,6 +237,8 @@ void AppBase::OnWindowResized()
 		windowWidth_,
 		windowHeight_
 	);
+
+	Init();
 
 	for (auto& r : renderers_)
 	{

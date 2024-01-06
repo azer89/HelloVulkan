@@ -71,6 +71,19 @@ RendererSkybox::~RendererSkybox()
 {
 }
 
+void RendererSkybox::OnWindowResized(VulkanDevice& vkDev)
+{
+	vkDestroyFramebuffer(vkDev.GetDevice(), offscreenFramebuffer_, nullptr);
+	CreateSingleFramebuffer(
+		vkDev,
+		renderPass_,
+		{
+			offscreenColorImage_->imageView_,
+			depthImage_->imageView_
+		},
+		offscreenFramebuffer_);
+}
+
 void RendererSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
 {
 	renderPass_.BeginRenderPass(

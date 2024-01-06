@@ -20,6 +20,8 @@ public:
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 
+	void OnWindowResized(VulkanDevice& vkDev) override;
+
 public:
 	// TODO change this to private
 	std::vector<Model*> models_;
