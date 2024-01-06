@@ -65,6 +65,11 @@ protected:
 
 	// A list of renderers
 	std::vector<RendererBase*> renderers_;
+
+	// Window size
+	uint32_t windowWidth_;
+	uint32_t windowHeight_;
+	bool recreateSwapchain_;
 };
 
 #endif

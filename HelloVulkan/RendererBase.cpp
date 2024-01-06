@@ -84,7 +84,7 @@ void RendererBase::CreateSingleFramebuffer(
 	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo, nullptr, &framebuffer));
 }
 
-void RendererBase::RecreateSwapchainFramebuffers(VulkanDevice& vkDev)
+void RendererBase::DestroySwapchainFrameBufferOnWindowResized(VulkanDevice& vkDev)
 {
 	// If this is offscreen renderer then it does not use swapchain framebuffers
 	if (IsOffScreen())
@@ -92,7 +92,18 @@ void RendererBase::RecreateSwapchainFramebuffers(VulkanDevice& vkDev)
 		return;
 	}
 	DestroySwapchainFramebuffers();
-	CreateSwapchainFramebuffers(vkDev, renderPass_, depthImage_->imageView_);
+}
+
+void RendererBase::RecreateSwapchainFramebuffers(VulkanDevice& vkDev)
+{
+	// If this is offscreen renderer then it does not use swapchain framebuffers
+	if (IsOffScreen())
+	{
+		return;
+	}
+	//DestroySwapchainFramebuffers();
+	VkImageView depthImageView = depthImage_ == nullptr ? nullptr : depthImage_->imageView_;
+	CreateSwapchainFramebuffers(vkDev, renderPass_, depthImageView);
 }
 
 void RendererBase::DestroySwapchainFramebuffers()

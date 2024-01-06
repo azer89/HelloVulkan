@@ -353,10 +353,8 @@ size_t VulkanDevice::CreateSwapchainImages()
 {
 	uint32_t imageCount = 0;
 	VK_CHECK(vkGetSwapchainImagesKHR(device_, swapchain_, &imageCount, nullptr));
-
 	swapchainImages_.resize(imageCount);
 	swapchainImageViews_.resize(imageCount);
-
 	VK_CHECK(vkGetSwapchainImagesKHR(device_, swapchain_, &imageCount, swapchainImages_.data()));
 
 	for (unsigned i = 0; i < imageCount; i++)
@@ -395,7 +393,10 @@ bool VulkanDevice::CreateSwapChainImageView(
 	return (vkCreateImageView(device_, &viewInfo, nullptr, &swapchainImageViews_[imageIndex]) == VK_SUCCESS);
 }
 
-void VulkanDevice::RecreateSwapchainResources()
+void VulkanDevice::RecreateSwapchainResources(
+	VulkanInstance& instance,
+	uint32_t width,
+	uint32_t height)
 {
 	for (size_t i = 0; i < swapchainImages_.size(); ++i)
 	{
@@ -403,7 +404,10 @@ void VulkanDevice::RecreateSwapchainResources()
 	}
 	vkDestroySwapchainKHR(device_, swapchain_, nullptr);
 
-	VK_CHECK(CreateSwapchainImages());
+	framebufferWidth_ = width;
+	framebufferHeight_ = height;
+
+	VK_CHECK(CreateSwapchain(instance.GetSurface()));
 	CreateSwapchainImages();
 }
 

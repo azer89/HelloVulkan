@@ -32,6 +32,7 @@ public:
 	}
 
 	// If the window is resized
+	void DestroySwapchainFrameBufferOnWindowResized(VulkanDevice& vkDev);
 	void RecreateSwapchainFramebuffers(VulkanDevice& vkDev);
 
 protected:
@@ -66,7 +67,8 @@ protected:
 protected:
 	inline bool IsOffScreen()
 	{
-		return offscreenColorImage_ != nullptr;
+		return offscreenColorImage_ != nullptr ||
+			offscreenFramebuffer_ != nullptr;
 	}
 
 	// UBO

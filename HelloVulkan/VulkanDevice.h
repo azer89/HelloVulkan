@@ -26,6 +26,11 @@ public:
 
 	void Destroy();
 
+	void RecreateSwapchainResources(
+		VulkanInstance& instance,
+		uint32_t width,
+		uint32_t height);
+
 	VkCommandBuffer BeginSingleTimeCommands();
 	void EndSingleTimeCommands(VkCommandBuffer commandBuffer);
 
@@ -79,7 +84,6 @@ private:
 		unsigned imageIndex,
 		VkFormat format, 
 		VkImageAspectFlags aspectFlags);
-	void RecreateSwapchainResources();
 	SwapchainSupportDetails QuerySwapchainSupport(VkSurfaceKHR surface);
 	VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 	uint32_t GetSwapchainImageCount(const VkSurfaceCapabilitiesKHR& capabilities);

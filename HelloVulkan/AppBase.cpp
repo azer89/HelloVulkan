@@ -7,7 +7,8 @@
 
 #include <iostream>
 
-AppBase::AppBase()
+AppBase::AppBase() :
+	recreateSwapchain_(false)
 {
 	InitGLFW();
 	InitGLSLang();
@@ -31,13 +32,17 @@ void AppBase::InitVulkan()
 	features.sampleRateShading = VK_TRUE;
 	features.samplerAnisotropy = VK_TRUE;
 
+	// Window dimension
+	windowWidth_ = static_cast<uint32_t>(AppSettings::ScreenWidth);
+	windowHeight_ = static_cast<uint32_t>(AppSettings::ScreenHeight);
+
 	// Initialize Vulkan instance
 	vulkanInstance_.Create();
 	vulkanInstance_.SetupDebugCallbacks();
 	vulkanInstance_.CreateWindowSurface(glfwWindow_);
 	vulkanDevice_.CreateCompute(vulkanInstance_,
-		static_cast<uint32_t>(AppSettings::ScreenWidth),
-		static_cast<uint32_t>(AppSettings::ScreenHeight),
+		static_cast<uint32_t>(windowWidth_),
+		static_cast<uint32_t>(windowHeight_),
 		features);
 }
 
@@ -100,6 +105,12 @@ void AppBase::InitGLFW()
 
 bool AppBase::DrawFrame()
 {
+	if (recreateSwapchain_)
+	{
+		OnWindowResized();
+		recreateSwapchain_ = false;
+	}
+
 	uint32_t imageIndex = 0;
 	VkResult result = vkAcquireNextImageKHR(
 		vulkanDevice_.GetDevice(), 
@@ -109,12 +120,13 @@ bool AppBase::DrawFrame()
 		*(vulkanDevice_.GetSwapchainSemaphorePtr()), 
 		VK_NULL_HANDLE, 
 		&imageIndex);
-	VK_CHECK(vkResetCommandPool(vulkanDevice_.GetDevice(), vulkanDevice_.GetCommandPool(), 0));
 
-	if (result != VK_SUCCESS)
-	{
-		return false;
-	}
+	//if (result == VK_ERROR_OUT_OF_DATE_KHR)
+	//{
+	//	OnWindowResized();
+	//}
+
+	VK_CHECK(vkResetCommandPool(vulkanDevice_.GetDevice(), vulkanDevice_.GetCommandPool(), 0));
 
 	// Send UBOs to shaders
 	UpdateUBOs(imageIndex);
@@ -157,7 +169,9 @@ bool AppBase::DrawFrame()
 	result = vkQueuePresentKHR(vulkanDevice_.GetGraphicsQueue(), &presentInfo);
 	if (result == VK_ERROR_OUT_OF_DATE_KHR)
 	{
-		std::cout << " The swapchain has become incompatible with the surface\n";
+		std::cout << "The swapchain has become incompatible with the surface\n";
+		//OnWindowResized();
+		recreateSwapchain_ = true;
 	}
 
 	VK_CHECK(vkDeviceWaitIdle(vulkanDevice_.GetDevice()));
@@ -192,6 +206,18 @@ void AppBase::OnWindowResized()
 {
 	for (auto& r : renderers_)
 	{
+		r->DestroySwapchainFrameBufferOnWindowResized(vulkanDevice_);
+	}
+
+	vulkanDevice_.RecreateSwapchainResources(
+		vulkanInstance_,
+		windowWidth_,
+		windowHeight_
+	);
+
+	for (auto& r : renderers_)
+	{
+		r->RecreateSwapchainFramebuffers(vulkanDevice_);
 	}
 }
 
@@ -250,9 +276,12 @@ void AppBase::Terminate()
 
 void AppBase::FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
 {
+	windowWidth_ = static_cast<uint32_t>(width);
+	windowHeight_ = static_cast<uint32_t>(height);
+
 	camera_->SetScreenSize(
-		static_cast<float>(width),
-		static_cast<float>(height)
+		static_cast<float>(windowWidth_),
+		static_cast<float>(windowHeight_)
 	);
 }
 
