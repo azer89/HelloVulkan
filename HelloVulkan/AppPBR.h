@@ -14,7 +14,7 @@
 #include <vector>
 #include <memory>
 
-class AppPBR : AppBase
+class AppPBR final : AppBase
 {
 public:
 	AppPBR();
@@ -31,11 +31,10 @@ private:
 	std::unique_ptr<RendererTonemap> tonemapPtr_;
 	std::unique_ptr<RendererFinish> finishPtr_;
 	std::unique_ptr<RendererResolveMS> resolveMSPtr_;
-	
-	// Cubemap generated from HDR
-	VulkanImage environmentCubemap_;
 
 	// PBR stuff
+	// TODO change to unique ptrs
+	VulkanImage environmentCubemap_;
 	VulkanImage diffuseCubemap_;
 	VulkanImage specularCubemap_;
 	VulkanImage brdfLut_;

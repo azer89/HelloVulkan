@@ -17,16 +17,21 @@ public:
 	AppBase();
 	virtual int MainLoop() = 0; 
 
-private:
-	GLFWwindow* glfwWindow_;
-
 protected:
+	virtual void UpdateUBOs(uint32_t imageIndex) = 0;
+	void FillCommandBuffer(uint32_t imageIndex);
+	void CreateSharedImageResources();
+	void OnWindowResized();
+	bool DrawFrame();
+
+	// GLFW callbacks
 	void FrameBufferSizeCallback(GLFWwindow* window, int width, int height);
 	void MouseCallback(GLFWwindow* window, double xpos, double ypos);
 	void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 	void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 	void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
+	// Init functions
 	void InitVulkan();
 	void InitIMGUI();
 	void InitGLSLang();
@@ -34,18 +39,17 @@ protected:
 	void InitCamera();
 	void InitTiming();
 	
+	// Functions related to the main loop
 	int GLFWWindowShouldClose();
 	void PollEvents();
 	void ProcessTiming();
 	void ProcessInput();
+
+	// Should be used to destroy resources
 	void Terminate();
 
-	void CreateSharedImageResources();
-	virtual void UpdateUBOs(uint32_t imageIndex) = 0;
-	bool DrawFrame();
-	void FillCommandBuffer(uint32_t imageIndex);
-
-	void OnWindowResized();
+private:
+	GLFWwindow* glfwWindow_;
 
 protected:
 	// Camera
@@ -73,6 +77,7 @@ protected:
 	bool recreateSwapchain_;
 
 	// Shared by multiple render passes
+	// TODO change to unique ptrs
 	VulkanImage multiSampledColorImage_;
 	VulkanImage singleSampledColorImage_;
 	VulkanImage depthImage_;

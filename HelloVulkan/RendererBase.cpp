@@ -14,8 +14,6 @@ RendererBase::RendererBase(
 	VulkanImage* offscreenColorImage,
 	uint8_t renderPassBit) :
 	device_(vkDev.GetDevice()), 
-	framebufferWidth_(vkDev.GetFrameBufferWidth()), 
-	framebufferHeight_(vkDev.GetFrameBufferHeight()), 
 	depthImage_(depthImage),
 	offscreenColorImage_(offscreenColorImage)
 {
@@ -62,28 +60,6 @@ void RendererBase::CreateUniformBuffers(
 	}
 }
 
-// Attach an array of image views to a framebuffer
-void RendererBase::CreateSingleFramebuffer(
-	VulkanDevice& vkDev,
-	VulkanRenderPass renderPass,
-	const std::vector<VkImageView> imageViews,
-	VkFramebuffer& framebuffer)
-{
-	const VkFramebufferCreateInfo framebufferInfo = {
-		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.renderPass = renderPass.GetHandle(),
-		.attachmentCount = static_cast<uint32_t>(imageViews.size()),
-		.pAttachments = imageViews.data(),
-		.width = vkDev.GetFrameBufferWidth(),
-		.height = vkDev.GetFrameBufferHeight(),
-		.layers = 1
-	};
-
-	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo, nullptr, &framebuffer));
-}
-
 void RendererBase::BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
@@ -118,12 +94,27 @@ void RendererBase::OnWindowResized(VulkanDevice& vkDev)
 	CreateSwapchainFramebuffers(vkDev, renderPass_, depthImageView);
 }
 
-void RendererBase::DestroySwapchainFramebuffers()
+// Attach an array of image views to a framebuffer
+void RendererBase::CreateSingleFramebuffer(
+	VulkanDevice& vkDev,
+	VulkanRenderPass renderPass,
+	const std::vector<VkImageView>& imageViews,
+	VkFramebuffer& framebuffer)
 {
-	for (auto framebuffer : swapchainFramebuffers_)
-	{
-		vkDestroyFramebuffer(device_, framebuffer, nullptr);
-	}
+	const VkFramebufferCreateInfo framebufferInfo = {
+		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0,
+		.renderPass = renderPass.GetHandle(),
+		.attachmentCount = static_cast<uint32_t>(imageViews.size()),
+		// TODO cache the attachments so that framebuffer recreation is easier
+		.pAttachments = imageViews.data(),
+		.width = vkDev.GetFrameBufferWidth(),
+		.height = vkDev.GetFrameBufferHeight(),
+		.layers = 1
+	};
+
+	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo, nullptr, &framebuffer));
 }
 
 void RendererBase::CreateSwapchainFramebuffers(
@@ -137,6 +128,7 @@ void RendererBase::CreateSwapchainFramebuffers(
 
 	// Trick to put a swapchain image to the list of attachment.
 	// Note that depthImageView can be nullptr.
+	// TODO cache the attachments so that framebuffer recreation is easier
 	std::vector<VkImageView> attachments = { nullptr, depthImageView };
 
 	for (size_t i = 0; i < swapchainImageSize; i++)
@@ -156,6 +148,14 @@ void RendererBase::CreateSwapchainFramebuffers(
 		};
 
 		VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo, nullptr, &swapchainFramebuffers_[i]));
+	}
+}
+
+void RendererBase::DestroySwapchainFramebuffers()
+{
+	for (auto framebuffer : swapchainFramebuffers_)
+	{
+		vkDestroyFramebuffer(device_, framebuffer, nullptr);
 	}
 }
 

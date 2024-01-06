@@ -16,6 +16,7 @@ class RendererBase
 public:
 	explicit RendererBase(
 		const VulkanDevice& vkDev, 
+		// TODO refactor pointers of VulkanImage as render pass attachments
 		VulkanImage* depthImage,
 		VulkanImage* offscreenColorImage = nullptr,
 		uint8_t renderPassBit = 0u);
@@ -36,9 +37,6 @@ public:
 
 protected:
 	VkDevice device_ = nullptr;
-
-	uint32_t framebufferWidth_ = 0;
-	uint32_t framebufferHeight_ = 0;
 
 	// Depth buffer
 	VulkanImage* depthImage_;
@@ -89,16 +87,17 @@ protected:
 	void CreateSingleFramebuffer(
 		VulkanDevice& vkDev,
 		VulkanRenderPass renderPass,
-		const std::vector<VkImageView> imageViews,
+		const std::vector<VkImageView>& imageViews,
 		VkFramebuffer& framebuffer);
-
-	void DestroySwapchainFramebuffers();
 
 	// Attach a swapchain image and depth image
 	void CreateSwapchainFramebuffers(
 		VulkanDevice& vkDev, 
 		VulkanRenderPass renderPass, 
 		VkImageView depthImageView = nullptr);
+
+	// TODO consolidate offscreen/onscreen into a single function
+	void DestroySwapchainFramebuffers();
 
 	void CreateDescriptorPool(
 		VulkanDevice& vkDev, 

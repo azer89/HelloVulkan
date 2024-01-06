@@ -20,10 +20,8 @@ private:
 	// Model data 
 	std::unordered_map<std::string, VulkanImage> textureMap_; // key is the filename
 	std::string directory_;
-
 	std::string blackTextureFilePath_;
-
-	VulkanDevice& device_;
+	VkDevice device_;
 
 public:
 

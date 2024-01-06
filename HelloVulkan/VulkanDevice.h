@@ -14,6 +14,10 @@ struct SwapchainSupportDetails
 	std::vector<VkPresentModeKHR> presentModes;
 };
 
+/*
+TODO
+The name of this class is slightly innacurate since it also manages the swaphchain images.
+*/
 class VulkanDevice
 {
 public:
