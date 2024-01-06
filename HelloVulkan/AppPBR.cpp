@@ -13,10 +13,13 @@ AppPBR::AppPBR() :
 
 void AppPBR::Init()
 {
+	// Initialize base
+	AppBase::Init();
+
 	std::string hdrFile = AppSettings::TextureFolder + "piazza_bologni_1k.hdr";
 
 	// MSAA
-	VkSampleCountFlagBits msaaSamples = vulkanDevice_.GetMSAASampleCount();
+	//VkSampleCountFlagBits msaaSamples = vulkanDevice_.GetMSAASampleCount();
 
 	model_ = std::make_unique<Model>(
 		vulkanDevice_, 
@@ -51,7 +54,7 @@ void AppPBR::Init()
 		brdfLUTCompute.CreateLUT(vulkanDevice_, &brdfLut_);
 	}
 
-	uint32_t width = vulkanDevice_.GetFrameBufferWidth();
+	/*uint32_t width = vulkanDevice_.GetFrameBufferWidth();
 	uint32_t height = vulkanDevice_.GetFrameBufferHeight();
 
 	// Depth attachment (OnScreen and offscreen)
@@ -72,7 +75,7 @@ void AppPBR::Init()
 	singleSampledColorImage_.CreateColorResources(
 		vulkanDevice_,
 		width,
-		height);
+		height);*/
 
 	// Renderers
 	// This is responsible to clear swapchain image
@@ -126,9 +129,6 @@ void AppPBR::Init()
 void AppPBR::DestroyResources()
 {
 	// Destroy images
-	depthImage_.Destroy(vulkanDevice_.GetDevice());
-	multiSampledColorImage_.Destroy(vulkanDevice_.GetDevice());
-	singleSampledColorImage_.Destroy(vulkanDevice_.GetDevice());
 	environmentCubemap_.Destroy(vulkanDevice_.GetDevice());
 	diffuseCubemap_.Destroy(vulkanDevice_.GetDevice());
 	specularCubemap_.Destroy(vulkanDevice_.GetDevice());

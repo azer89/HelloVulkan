@@ -21,7 +21,7 @@ public:
 	int MainLoop() override;
 	void UpdateUBOs(uint32_t imageIndex) override;
 
-	void Init();
+	void Init() override;
 	void DestroyResources();
 
 private:
@@ -39,10 +39,6 @@ private:
 	VulkanImage diffuseCubemap_;
 	VulkanImage specularCubemap_;
 	VulkanImage brdfLut_;
-
-	VulkanImage multiSampledColorImage_;
-	VulkanImage singleSampledColorImage_;
-	VulkanImage depthImage_;
 
 	float modelRotation_;
 	std::unique_ptr<Model> model_;

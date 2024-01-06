@@ -40,8 +40,9 @@ protected:
 	void ProcessInput();
 	void Terminate();
 
-	bool DrawFrame();
+	virtual void Init();
 	virtual void UpdateUBOs(uint32_t imageIndex) = 0;
+	bool DrawFrame();
 	void FillCommandBuffer(uint32_t imageIndex);
 
 	void OnWindowResized();
@@ -70,6 +71,11 @@ protected:
 	uint32_t windowWidth_;
 	uint32_t windowHeight_;
 	bool recreateSwapchain_;
+
+	// Shared by multiple render passes
+	VulkanImage multiSampledColorImage_;
+	VulkanImage singleSampledColorImage_;
+	VulkanImage depthImage_;
 };
 
 #endif

@@ -105,6 +105,33 @@ void AppBase::InitGLFW()
 	glfwSetKeyCallback(glfwWindow_, FuncKey);
 }
 
+void AppBase::Init()
+{
+	VkSampleCountFlagBits msaaSamples = vulkanDevice_.GetMSAASampleCount();
+	uint32_t width = vulkanDevice_.GetFrameBufferWidth();
+	uint32_t height = vulkanDevice_.GetFrameBufferHeight();
+
+	// Depth attachment (OnScreen and offscreen)
+	depthImage_.CreateDepthResources(
+		vulkanDevice_,
+		width,
+		height,
+		msaaSamples);
+
+	// Color attachments
+	// Multi-sampled (MSAA)
+	multiSampledColorImage_.CreateColorResources(
+		vulkanDevice_,
+		width,
+		height,
+		msaaSamples);
+	// Single-sampled
+	singleSampledColorImage_.CreateColorResources(
+		vulkanDevice_,
+		width,
+		height);
+}
+
 bool AppBase::DrawFrame()
 {
 	// Need to recreate swapchain images and framebuffers 
@@ -261,6 +288,10 @@ void AppBase::Terminate()
 {
 	glfwDestroyWindow(glfwWindow_);
 	glfwTerminate();
+
+	depthImage_.Destroy(vulkanDevice_.GetDevice());
+	multiSampledColorImage_.Destroy(vulkanDevice_.GetDevice());
+	singleSampledColorImage_.Destroy(vulkanDevice_.GetDevice());
 
 	vulkanDevice_.Destroy();
 	vulkanInstance_.Destroy();
