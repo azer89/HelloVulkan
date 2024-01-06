@@ -17,7 +17,8 @@ public:
 
 private:
 	void CreateDescriptorLayout(VulkanDevice& vkDev);
-	void CreateDescriptorSet(VulkanDevice& vkDev);
+	void AllocateDescriptorSets(VulkanDevice& vkDev);
+	void UpdateDescriptorSets(VulkanDevice& vkDev);
 
 private:
 	VulkanImage* singleSampledColorImage_;

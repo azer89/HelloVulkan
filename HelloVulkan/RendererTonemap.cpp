@@ -21,7 +21,8 @@ RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
 		1, // One set per swapchain
 		&descriptorPool_);
 	CreateDescriptorLayout(vkDev);
-	CreateDescriptorSet(vkDev);
+	AllocateDescriptorSets(vkDev);
+	UpdateDescriptorSets(vkDev);
 
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
 
@@ -37,7 +38,8 @@ RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
 
 void RendererTonemap::OnWindowResized(VulkanDevice& vkDev)
 {
-
+	RendererBase::OnWindowResized(vkDev);
+	UpdateDescriptorSets(vkDev);
 }
 
 void RendererTonemap::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
@@ -88,7 +90,7 @@ void RendererTonemap::CreateDescriptorLayout(VulkanDevice& vkDev)
 		&descriptorSetLayout_));
 }
 
-void RendererTonemap::CreateDescriptorSet(VulkanDevice& vkDev)
+void RendererTonemap::AllocateDescriptorSets(VulkanDevice& vkDev)
 {
 	auto swapChainImageSize = vkDev.GetSwapchainImageCount();
 
@@ -105,7 +107,11 @@ void RendererTonemap::CreateDescriptorSet(VulkanDevice& vkDev)
 	descriptorSets_.resize(swapChainImageSize);
 
 	VK_CHECK(vkAllocateDescriptorSets(vkDev.GetDevice(), &allocInfo, descriptorSets_.data()));
+}
 
+void RendererTonemap::UpdateDescriptorSets(VulkanDevice& vkDev)
+{
+	auto swapChainImageSize = vkDev.GetSwapchainImageCount();
 	for (size_t i = 0; i < swapChainImageSize; i++)
 	{
 		uint32_t bindingIndex = 0u;
