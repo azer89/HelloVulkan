@@ -759,3 +759,8 @@ uint32_t VulkanImage::BytesPerTexFormat(VkFormat fmt)
 	}
 	return 0;
 }
+
+void VulkanImage::SetDebugName(VulkanDevice& vkDev, const std::string& debugName)
+{
+	vkDev.SetVkObjectName(image_, VK_OBJECT_TYPE_IMAGE, debugName.c_str());
+}

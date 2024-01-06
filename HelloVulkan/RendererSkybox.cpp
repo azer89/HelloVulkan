@@ -20,28 +20,18 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
 
 	VkSampleCountFlagBits multisampleCount = VK_SAMPLE_COUNT_1_BIT;
-	
-	if (IsOffScreen())
-	{
-		multisampleCount = offscreenColorImage_->multisampleCount_;
-		renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, multisampleCount);
-		CreateSingleFramebuffer(
-			vkDev,
-			renderPass_,
-			{
-				offscreenColorImage_->imageView_,
-				depthImage_->imageView_
-			},
-			offscreenFramebuffer_);
-	}
-	else
-	{
-		renderPass_.CreateOnScreenRenderPass(vkDev);
-		CreateSwapchainFramebuffers(
-			vkDev,
-			renderPass_,
-			depthImage_->imageView_);
-	}
+
+	// Note that this pipeline is offscreen rendering
+	multisampleCount = offscreenColorImage_->multisampleCount_;
+	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, multisampleCount);
+	CreateSingleFramebuffer(
+		vkDev,
+		renderPass_,
+		{
+			offscreenColorImage_->imageView_,
+			depthImage_->imageView_
+		},
+		offscreenFramebuffer_);
 	
 	CreateDescriptorPool(
 		vkDev, 
@@ -93,23 +83,7 @@ void RendererSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer comm
 			offscreenFramebuffer_ :
 			swapchainFramebuffers_[swapchainImageIndex]);
 
-	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
-
-	VkViewport viewport =
-	{
-		.x = 0.0f,
-		.y = 0.0f,
-		.width = (float)vkDev.GetFrameBufferWidth(),
-		.height = (float)vkDev.GetFrameBufferHeight(),
-		.minDepth = 0.0f,
-		.maxDepth = 1.0f
-	};
-	vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
-
-	VkRect2D scissor{};
-	scissor.offset = { 0, 0 };
-	scissor.extent = { vkDev.GetFrameBufferWidth(), vkDev.GetFrameBufferHeight() };
-	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+	BindPipeline(vkDev, commandBuffer);
 
 	vkCmdBindDescriptorSets(
 		commandBuffer, 

@@ -5,6 +5,8 @@
 
 #include "VulkanDevice.h"
 
+#include <string>
+
 int NumMipMap(int w, int h);
 
 struct ImageBarrierCreateInfo
@@ -157,6 +159,8 @@ public:
 		VkImageLayout newLayout,
 		uint32_t layerCount = 1,
 		uint32_t mipLevels = 1);
+
+	void SetDebugName(VulkanDevice& vkDev, const std::string& debugName);
 
 private:
 	void UpdateImage(

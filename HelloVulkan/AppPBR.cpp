@@ -18,9 +18,6 @@ void AppPBR::Init()
 
 	std::string hdrFile = AppSettings::TextureFolder + "piazza_bologni_1k.hdr";
 
-	// MSAA
-	//VkSampleCountFlagBits msaaSamples = vulkanDevice_.GetMSAASampleCount();
-
 	model_ = std::make_unique<Model>(
 		vulkanDevice_, 
 		AppSettings::ModelFolder + "Tachikoma//Tachikoma.gltf");
@@ -33,7 +30,7 @@ void AppPBR::Init()
 			hdrFile);
 		e2c.OffscreenRender(vulkanDevice_,
 			&environmentCubemap_); // Output
-		vulkanDevice_.SetVkObjectName(environmentCubemap_.image_, VK_OBJECT_TYPE_IMAGE, "Environment_Cubemap");
+		environmentCubemap_.SetDebugName(vulkanDevice_, "Environment_Cubemap");
 	}
 
 	// Cube filtering
@@ -48,15 +45,15 @@ void AppPBR::Init()
 			&specularCubemap_,
 			CubeFilterType::Specular);
 
-		vulkanDevice_.SetVkObjectName(diffuseCubemap_.image_, VK_OBJECT_TYPE_IMAGE, "Diffuse_Cubemap");
-		vulkanDevice_.SetVkObjectName(specularCubemap_.image_, VK_OBJECT_TYPE_IMAGE, "Specular_Cubemap");
+		diffuseCubemap_.SetDebugName(vulkanDevice_, "Diffuse_Cubemap");
+		specularCubemap_.SetDebugName(vulkanDevice_, "Specular_Cubemap");
 	}
 	
 	// BRDF look up table
 	{
 		RendererBRDFLUT brdfLUTCompute(vulkanDevice_);
 		brdfLUTCompute.CreateLUT(vulkanDevice_, &brdfLut_);
-		vulkanDevice_.SetVkObjectName(brdfLut_.image_, VK_OBJECT_TYPE_IMAGE, "BRDF_LUT");
+		brdfLut_.SetDebugName(vulkanDevice_, "BRDF_LUT");
 	}
 
 	// Renderers

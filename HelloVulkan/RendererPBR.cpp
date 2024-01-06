@@ -41,25 +41,17 @@ RendererPBR::RendererPBR(
 		CreateUniformBuffers(vkDev, model->modelBuffers_, sizeof(ModelUBO));
 	}
 
-	if (IsOffScreen())
-	{
-		multisampleCount = offscreenColorImage_->multisampleCount_;
-		renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, multisampleCount);
-		CreateSingleFramebuffer(
-			vkDev,
-			renderPass_,
-			{ 
-				offscreenColorImage_->imageView_,
-				depthImage_->imageView_ 
-			},
-			offscreenFramebuffer_);
-	}
-	else
-	{
-		// TODO Currently no MSAA for onscreen rendering
-		renderPass_.CreateOnScreenRenderPass(vkDev, multisampleCount);
-		CreateSwapchainFramebuffers(vkDev, renderPass_, depthImage_->imageView_);
-	}
+	// Note that this pipeline is offscreen rendering
+	multisampleCount = offscreenColorImage_->multisampleCount_;
+	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, multisampleCount);
+	CreateSingleFramebuffer(
+		vkDev,
+		renderPass_,
+		{ 
+			offscreenColorImage_->imageView_,
+			depthImage_->imageView_ 
+		},
+		offscreenFramebuffer_);
 
 	CreateDescriptorPool(
 		vkDev, 
@@ -120,24 +112,7 @@ void RendererPBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer command
 			offscreenFramebuffer_ : 
 			swapchainFramebuffers_[swapchainImageIndex]);
 
-	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
-
-	VkViewport viewport =
-	{
-		.x = 0.0f,
-		.y = 0.0f,
-		.width = (float)vkDev.GetFrameBufferWidth(),
-		.height = (float)vkDev.GetFrameBufferHeight(),
-		.minDepth = 0.0f,
-		.maxDepth = 1.0f
-	};
-	vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
-
-	VkRect2D scissor{};
-	scissor.offset = { 0, 0 };
-	scissor.extent = { vkDev.GetFrameBufferWidth(), vkDev.GetFrameBufferHeight()};
-	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
-
+	BindPipeline(vkDev, commandBuffer);
 
 	for (Model* model : models_)
 	{

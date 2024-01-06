@@ -45,7 +45,6 @@ RendererEquirect2Cube::RendererEquirect2Cube(
 
 RendererEquirect2Cube::~RendererEquirect2Cube()
 {
-	//vkDestroyRenderPass(device_, cubeRenderPass_, nullptr);
 	inputHDRImage_.Destroy(device_);
 	vkDestroyFramebuffer(device_, frameBuffer_, nullptr);
 }

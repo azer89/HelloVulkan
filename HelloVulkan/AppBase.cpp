@@ -121,7 +121,7 @@ void AppBase::CreateSharedImageResources()
 		width,
 		height,
 		msaaSamples);
-	vulkanDevice_.SetVkObjectName(depthImage_.image_, VK_OBJECT_TYPE_IMAGE, "Depth_Image");
+	depthImage_.SetDebugName(vulkanDevice_, "Depth_Image");
 
 	// Color attachments
 	// Multi-sampled (MSAA)
@@ -130,14 +130,14 @@ void AppBase::CreateSharedImageResources()
 		width,
 		height,
 		msaaSamples);
-	vulkanDevice_.SetVkObjectName(multiSampledColorImage_.image_, VK_OBJECT_TYPE_IMAGE, "Multisampled_Color_Image");
+	multiSampledColorImage_.SetDebugName(vulkanDevice_, "Multisampled_Color_Image");
 
 	// Single-sampled
 	singleSampledColorImage_.CreateColorResources(
 		vulkanDevice_,
 		width,
 		height);
-	vulkanDevice_.SetVkObjectName(singleSampledColorImage_.image_, VK_OBJECT_TYPE_IMAGE, "Singlesampled_Color_Image");
+	singleSampledColorImage_.SetDebugName(vulkanDevice_, "Singlesampled_Color_Image");
 }
 
 bool AppBase::DrawFrame()

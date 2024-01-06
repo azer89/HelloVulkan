@@ -70,6 +70,8 @@ protected:
 			offscreenFramebuffer_ != nullptr;
 	}
 
+	void BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuffer);
+
 	// UBO
 	void CreateUniformBuffers(
 		VulkanDevice& vkDev,
@@ -122,7 +124,6 @@ protected:
 		VkPrimitiveTopology topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST /* defaults to triangles*/,
 		bool useDepth = true,
 		bool useBlending = true,
-		bool dynamicScissorState = false,
 		uint32_t numPatchControlPoints = 0);
 
 	VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(
