@@ -225,6 +225,17 @@ void AppBase::FillCommandBuffer(uint32_t imageIndex)
 
 	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginIndo));
 
+	/*VkViewport viewport =
+	{
+		.x = 0.0f,
+		.y = 0.0f,
+		.width = (float)vulkanDevice_.GetFrameBufferWidth(),
+		.height = (float)vulkanDevice_.GetFrameBufferHeight(),
+		.minDepth = 0.0f,
+		.maxDepth = 1.0f
+	};
+	vkCmdSetViewport(commandBuffer, 0, 1, &viewport);*/
+
 	// Iterate through all renderers to fill the command buffer
 	for (auto& r : renderers_)
 	{

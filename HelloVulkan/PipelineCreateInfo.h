@@ -16,6 +16,7 @@ struct PipelineCreateInfo
 	VkPipelineColorBlendAttachmentState colorBlendAttachment;
 	VkPipelineColorBlendStateCreateInfo colorBlending;
 	VkPipelineDepthStencilStateCreateInfo depthStencil;
+	//std::vector<VkDynamicState> dynamicStateList;
 	VkPipelineDynamicStateCreateInfo dynamicState;
 	VkPipelineTessellationStateCreateInfo tessellationState;
 
@@ -108,12 +109,13 @@ struct PipelineCreateInfo
 			.minDepthBounds = 0.0f,
 			.maxDepthBounds = 1.0f
 		}),
+		//dynamicStateList({ VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR }),
 		dynamicState({
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0,
-			.dynamicStateCount = 0,
-			.pDynamicStates = nullptr
+			.dynamicStateCount = 0u, // static_cast<uint32_t>(dynamicStateList.size()),
+			.pDynamicStates = nullptr //dynamicStateList.data()
 		}),
 		tessellationState({
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO,

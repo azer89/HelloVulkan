@@ -38,7 +38,6 @@ public:
 
 	glm::mat4 GetProjectionMatrix();
 	glm::mat4 GetViewMatrix();
-	glm::mat4 GetInverseViewMatrix();
 	glm::vec3 Position();
 
 	void ProcessKeyboard(CameraMovement direction, float deltaTime_);

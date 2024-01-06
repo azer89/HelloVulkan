@@ -122,6 +122,23 @@ void RendererPBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer command
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
 
+	VkViewport viewport =
+	{
+		.x = 0.0f,
+		.y = 0.0f,
+		.width = (float)vkDev.GetFrameBufferWidth(),
+		.height = (float)vkDev.GetFrameBufferHeight(),
+		.minDepth = 0.0f,
+		.maxDepth = 1.0f
+	};
+	vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
+
+	VkRect2D scissor{};
+	scissor.offset = { 0, 0 };
+	scissor.extent = { vkDev.GetFrameBufferWidth(), vkDev.GetFrameBufferHeight()};
+	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+
+
 	for (Model* model : models_)
 	{
 		for (Mesh& mesh : model->meshes_)

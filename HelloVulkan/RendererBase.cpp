@@ -274,6 +274,10 @@ void RendererBase::CreateGraphicsPipeline(
 		pInfo.multisampling.minSampleShading = 0.25f;
 	}
 
+	std::vector<VkDynamicState> dynamicStates = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
+	pInfo.dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
+	pInfo.dynamicState.pDynamicStates = dynamicStates.data();
+
 	const VkGraphicsPipelineCreateInfo pipelineInfo = {
 		.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
 		.stageCount = static_cast<uint32_t>(shaderStages.size()),
@@ -286,7 +290,7 @@ void RendererBase::CreateGraphicsPipeline(
 		.pMultisampleState = &pInfo.multisampling,
 		.pDepthStencilState = useDepth ? &pInfo.depthStencil : nullptr,
 		.pColorBlendState = &pInfo.colorBlending,
-		.pDynamicState = dynamicScissorState ? &pInfo.dynamicState : nullptr,
+		.pDynamicState = &pInfo.dynamicState,
 		.layout = pipelineLayout,
 		.renderPass = renderPass,
 		.subpass = 0,

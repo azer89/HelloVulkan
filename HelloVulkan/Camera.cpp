@@ -31,6 +31,9 @@ void Camera::SetScreenSize(float width, float height)
 {
 	screenWidth_ = width;
 	screenHeight_ = height;
+
+	// Update orthogonal axes and matrices
+	UpdateInternal();
 }
 
 glm::mat4 Camera::GetProjectionMatrix()
