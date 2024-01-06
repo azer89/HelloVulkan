@@ -94,14 +94,14 @@ void RendererBase::DestroySwapchainFrameBufferOnWindowResized(VulkanDevice& vkDe
 	DestroySwapchainFramebuffers();
 }
 
-void RendererBase::RecreateSwapchainFramebuffers(VulkanDevice& vkDev)
+void RendererBase::RecreateSwapchainFramebufferOnWindowResized(VulkanDevice& vkDev)
 {
 	// If this is offscreen renderer then it does not use swapchain framebuffers
 	if (IsOffScreen())
 	{
 		return;
 	}
-	//DestroySwapchainFramebuffers();
+
 	VkImageView depthImageView = depthImage_ == nullptr ? nullptr : depthImage_->imageView_;
 	CreateSwapchainFramebuffers(vkDev, renderPass_, depthImageView);
 }

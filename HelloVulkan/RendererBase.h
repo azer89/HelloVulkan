@@ -33,7 +33,7 @@ public:
 
 	// If the window is resized
 	void DestroySwapchainFrameBufferOnWindowResized(VulkanDevice& vkDev);
-	void RecreateSwapchainFramebuffers(VulkanDevice& vkDev);
+	virtual void RecreateSwapchainFramebufferOnWindowResized(VulkanDevice& vkDev);
 
 protected:
 	VkDevice device_ = nullptr;
