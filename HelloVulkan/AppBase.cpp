@@ -201,11 +201,6 @@ void AppBase::FillCommandBuffer(uint32_t imageIndex)
 
 void AppBase::OnWindowResized()
 {
-	for (auto& r : renderers_)
-	{
-		r->DestroySwapchainFrameBufferOnWindowResized(vulkanDevice_);
-	}
-
 	vulkanDevice_.RecreateSwapchainResources(
 		vulkanInstance_,
 		windowWidth_,
@@ -214,7 +209,7 @@ void AppBase::OnWindowResized()
 
 	for (auto& r : renderers_)
 	{
-		r->RecreateSwapchainFramebufferOnWindowResized(vulkanDevice_);
+		r->OnWindowResized(vulkanDevice_);
 	}
 }
 
