@@ -24,14 +24,11 @@ RendererBase::RendererBase(
 // Destructor
 RendererBase::~RendererBase()
 {
+	DestroySwapchainFramebuffers();
+
 	for (auto uboBuffer : perFrameUBOs_)
 	{
 		uboBuffer.Destroy(device_);
-	}
-
-	for (auto framebuffer : swapchainFramebuffers_)
-	{
-		vkDestroyFramebuffer(device_, framebuffer, nullptr);
 	}
 
 	vkDestroyDescriptorSetLayout(device_, descriptorSetLayout_, nullptr);
@@ -85,6 +82,25 @@ void RendererBase::CreateSingleFramebuffer(
 	};
 
 	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo, nullptr, &framebuffer));
+}
+
+void RendererBase::RecreateSwapchainFramebuffers(VulkanDevice& vkDev)
+{
+	// If this is offscreen renderer then it does not use swapchain framebuffers
+	if (IsOffScreen())
+	{
+		return;
+	}
+	DestroySwapchainFramebuffers();
+	CreateSwapchainFramebuffers(vkDev, renderPass_, depthImage_->imageView_);
+}
+
+void RendererBase::DestroySwapchainFramebuffers()
+{
+	for (auto framebuffer : swapchainFramebuffers_)
+	{
+		vkDestroyFramebuffer(device_, framebuffer, nullptr);
+	}
 }
 
 void RendererBase::CreateSwapchainFramebuffers(

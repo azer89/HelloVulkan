@@ -86,6 +86,10 @@ protected:
 		const std::vector<VkImageView> imageViews,
 		VkFramebuffer& framebuffer);
 
+	void RecreateSwapchainFramebuffers(VulkanDevice& vkDev);
+
+	void DestroySwapchainFramebuffers();
+
 	// Attach a swapchain image and depth image
 	void CreateSwapchainFramebuffers(
 		VulkanDevice& vkDev, 

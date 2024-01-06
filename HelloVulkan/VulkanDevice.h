@@ -78,10 +78,8 @@ private:
 	bool CreateSwapChainImageView(
 		unsigned imageIndex,
 		VkFormat format, 
-		VkImageAspectFlags aspectFlags,
-		VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_2D, 
-		uint32_t layerCount = 1, 
-		uint32_t mipLevels = 1);
+		VkImageAspectFlags aspectFlags);
+	void RecreateSwapchainResources();
 	SwapchainSupportDetails QuerySwapchainSupport(VkSurfaceKHR surface);
 	VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 	uint32_t ChooseSwapImageCount(const VkSurfaceCapabilitiesKHR& capabilities);

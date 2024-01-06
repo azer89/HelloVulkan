@@ -295,12 +295,13 @@ VkResult VulkanDevice::CreateDevice(VkPhysicalDeviceFeatures deviceFeatures, uin
 
 VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface)
 {
-	auto swapchainSupport = QuerySwapchainSupport(surface);
 	swapchainImageFormat_ = VK_FORMAT_B8G8R8A8_UNORM;
 	VkSurfaceFormatKHR surfaceFormat = { swapchainImageFormat_, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
+
+	auto swapchainSupport = QuerySwapchainSupport(surface);
 	auto presentMode = ChooseSwapPresentMode(swapchainSupport.presentModes);
 
-	const VkSwapchainCreateInfoKHR ci =
+	const VkSwapchainCreateInfoKHR createInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
 		.flags = 0,
@@ -323,7 +324,7 @@ VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface)
 		.oldSwapchain = VK_NULL_HANDLE
 	};
 
-	return vkCreateSwapchainKHR(device_, &ci, nullptr, &swapchain_);
+	return vkCreateSwapchainKHR(device_, &createInfo, nullptr, &swapchain_);
 }
 
 VkPresentModeKHR VulkanDevice::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)
@@ -363,7 +364,7 @@ size_t VulkanDevice::CreateSwapchainImages()
 	{
 		if (!CreateSwapChainImageView(i, swapchainImageFormat_, VK_IMAGE_ASPECT_COLOR_BIT))
 		{
-			exit(0);
+			throw std::runtime_error("Cannot create swapchain image view\n");
 		}
 	}
 	return static_cast<size_t>(imageCount);
@@ -372,10 +373,7 @@ size_t VulkanDevice::CreateSwapchainImages()
 bool VulkanDevice::CreateSwapChainImageView(
 	unsigned imageIndex,
 	VkFormat format,
-	VkImageAspectFlags aspectFlags,
-	VkImageViewType viewType,
-	uint32_t layerCount,
-	uint32_t mipLevels)
+	VkImageAspectFlags aspectFlags)
 {
 	const VkImageViewCreateInfo viewInfo =
 	{
@@ -383,19 +381,24 @@ bool VulkanDevice::CreateSwapChainImageView(
 		.pNext = nullptr,
 		.flags = 0,
 		.image = swapchainImages_[imageIndex],
-		.viewType = viewType,
+		.viewType = VK_IMAGE_VIEW_TYPE_2D,
 		.format = format,
 		.subresourceRange =
 		{
 			.aspectMask = aspectFlags,
 			.baseMipLevel = 0,
-			.levelCount = mipLevels,
+			.levelCount = 1u,
 			.baseArrayLayer = 0,
-			.layerCount = layerCount
+			.layerCount = 1u
 		}
 	};
 
 	return (vkCreateImageView(device_, &viewInfo, nullptr, &swapchainImageViews_[imageIndex]) == VK_SUCCESS);
+}
+
+void VulkanDevice::RecreateSwapchainResources()
+{
+
 }
 
 SwapchainSupportDetails VulkanDevice::QuerySwapchainSupport(VkSurfaceKHR surface)

@@ -160,7 +160,6 @@ bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 		std::cout << " The swapchain has become incompatible with the surface\n";
 	}
 
-
 	VK_CHECK(vkDeviceWaitIdle(vulkanDevice_.GetDevice()));
 
 	return true;
