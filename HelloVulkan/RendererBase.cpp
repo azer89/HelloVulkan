@@ -14,8 +14,6 @@ RendererBase::RendererBase(
 	VulkanImage* offscreenColorImage,
 	uint8_t renderPassBit) :
 	device_(vkDev.GetDevice()), 
-	framebufferWidth_(vkDev.GetFrameBufferWidth()), 
-	framebufferHeight_(vkDev.GetFrameBufferHeight()), 
 	depthImage_(depthImage),
 	offscreenColorImage_(offscreenColorImage)
 {
@@ -24,14 +22,11 @@ RendererBase::RendererBase(
 // Destructor
 RendererBase::~RendererBase()
 {
+	DestroySwapchainFramebuffers();
+
 	for (auto uboBuffer : perFrameUBOs_)
 	{
 		uboBuffer.Destroy(device_);
-	}
-
-	for (auto framebuffer : swapchainFramebuffers_)
-	{
-		vkDestroyFramebuffer(device_, framebuffer, nullptr);
 	}
 
 	vkDestroyDescriptorSetLayout(device_, descriptorSetLayout_, nullptr);
@@ -65,11 +60,45 @@ void RendererBase::CreateUniformBuffers(
 	}
 }
 
+void RendererBase::BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
+{
+	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
+
+	VkViewport viewport =
+	{
+		.x = 0.0f,
+		.y = 0.0f,
+		.width = (float)vkDev.GetFrameBufferWidth(),
+		.height = (float)vkDev.GetFrameBufferHeight(),
+		.minDepth = 0.0f,
+		.maxDepth = 1.0f
+	};
+	vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
+
+	VkRect2D scissor{};
+	scissor.offset = { 0, 0 };
+	scissor.extent = { vkDev.GetFrameBufferWidth(), vkDev.GetFrameBufferHeight() };
+	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+}
+
+void RendererBase::OnWindowResized(VulkanDevice& vkDev)
+{
+	// If this is offscreen renderer then it does not use swapchain framebuffers
+	if (IsOffScreen())
+	{
+		return;
+	}
+
+	DestroySwapchainFramebuffers();
+	VkImageView depthImageView = depthImage_ == nullptr ? nullptr : depthImage_->imageView_;
+	CreateSwapchainFramebuffers(vkDev, renderPass_, depthImageView);
+}
+
 // Attach an array of image views to a framebuffer
 void RendererBase::CreateSingleFramebuffer(
 	VulkanDevice& vkDev,
 	VulkanRenderPass renderPass,
-	const std::vector<VkImageView> imageViews,
+	const std::vector<VkImageView>& imageViews,
 	VkFramebuffer& framebuffer)
 {
 	const VkFramebufferCreateInfo framebufferInfo = {
@@ -78,6 +107,7 @@ void RendererBase::CreateSingleFramebuffer(
 		.flags = 0,
 		.renderPass = renderPass.GetHandle(),
 		.attachmentCount = static_cast<uint32_t>(imageViews.size()),
+		// TODO cache the attachments so that framebuffer recreation is easier
 		.pAttachments = imageViews.data(),
 		.width = vkDev.GetFrameBufferWidth(),
 		.height = vkDev.GetFrameBufferHeight(),
@@ -98,6 +128,7 @@ void RendererBase::CreateSwapchainFramebuffers(
 
 	// Trick to put a swapchain image to the list of attachment.
 	// Note that depthImageView can be nullptr.
+	// TODO cache the attachments so that framebuffer recreation is easier
 	std::vector<VkImageView> attachments = { nullptr, depthImageView };
 
 	for (size_t i = 0; i < swapchainImageSize; i++)
@@ -117,6 +148,14 @@ void RendererBase::CreateSwapchainFramebuffers(
 		};
 
 		VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo, nullptr, &swapchainFramebuffers_[i]));
+	}
+}
+
+void RendererBase::DestroySwapchainFramebuffers()
+{
+	for (auto framebuffer : swapchainFramebuffers_)
+	{
+		vkDestroyFramebuffer(device_, framebuffer, nullptr);
 	}
 }
 
@@ -201,7 +240,6 @@ void RendererBase::CreateGraphicsPipeline(
 	VkPrimitiveTopology topology,
 	bool useDepth,
 	bool useBlending,
-	bool dynamicScissorState,
 	uint32_t numPatchControlPoints)
 {
 	std::vector<VulkanShader> shaderModules;
@@ -256,6 +294,10 @@ void RendererBase::CreateGraphicsPipeline(
 		pInfo.multisampling.minSampleShading = 0.25f;
 	}
 
+	std::vector<VkDynamicState> dynamicStates = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
+	pInfo.dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
+	pInfo.dynamicState.pDynamicStates = dynamicStates.data();
+
 	const VkGraphicsPipelineCreateInfo pipelineInfo = {
 		.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
 		.stageCount = static_cast<uint32_t>(shaderStages.size()),
@@ -268,7 +310,7 @@ void RendererBase::CreateGraphicsPipeline(
 		.pMultisampleState = &pInfo.multisampling,
 		.pDepthStencilState = useDepth ? &pInfo.depthStencil : nullptr,
 		.pColorBlendState = &pInfo.colorBlending,
-		.pDynamicState = dynamicScissorState ? &pInfo.dynamicState : nullptr,
+		.pDynamicState = &pInfo.dynamicState,
 		.layout = pipelineLayout,
 		.renderPass = renderPass,
 		.subpass = 0,

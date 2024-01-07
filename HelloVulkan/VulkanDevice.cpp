@@ -103,7 +103,6 @@ void VulkanDevice::Destroy()
 	{
 		vkDestroyImageView(device_, swapchainImageViews_[i], nullptr);
 	}
-
 	vkDestroySwapchainKHR(device_, swapchain_, nullptr);
 
 	vkDestroyCommandPool(device_, commandPool_, nullptr);
@@ -266,8 +265,7 @@ VkResult VulkanDevice::CreateDevice(VkPhysicalDeviceFeatures deviceFeatures, uin
 	};
 
 	const float queuePriority = 1.0f;
-
-	const VkDeviceQueueCreateInfo qci =
+	const VkDeviceQueueCreateInfo queueCreateInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
 		.pNext = nullptr,
@@ -277,42 +275,44 @@ VkResult VulkanDevice::CreateDevice(VkPhysicalDeviceFeatures deviceFeatures, uin
 		.pQueuePriorities = &queuePriority
 	};
 
-	const VkDeviceCreateInfo ci =
+	const VkDeviceCreateInfo deviceCreateInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
 		.queueCreateInfoCount = 1,
-		.pQueueCreateInfos = &qci,
+		.pQueueCreateInfos = &queueCreateInfo,
 		.enabledLayerCount = 0,
 		.ppEnabledLayerNames = nullptr,
 		.enabledExtensionCount = static_cast<uint32_t>(extensions.size()),
 		.ppEnabledExtensionNames = extensions.data(),
-
 		.pEnabledFeatures = &deviceFeatures
 	};
 
-	return vkCreateDevice(physicalDevice_, &ci, nullptr, &device_);
+	return vkCreateDevice(physicalDevice_, &deviceCreateInfo, nullptr, &device_);
 }
 
-VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface, bool supportScreenshots)
+VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface)
 {
-	auto swapchainSupport = QuerySwapchainSupport(surface);
 	swapchainImageFormat_ = VK_FORMAT_B8G8R8A8_UNORM;
 	VkSurfaceFormatKHR surfaceFormat = { swapchainImageFormat_, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
+
+	auto swapchainSupport = QuerySwapchainSupport(surface);
 	auto presentMode = ChooseSwapPresentMode(swapchainSupport.presentModes);
 
-	const VkSwapchainCreateInfoKHR ci =
+	const VkSwapchainCreateInfoKHR createInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
 		.flags = 0,
 		.surface = surface,
-		.minImageCount = ChooseSwapImageCount(swapchainSupport.capabilities),
+		.minImageCount = GetSwapchainImageCount(swapchainSupport.capabilities),
 		.imageFormat = surfaceFormat.format,
 		.imageColorSpace = surfaceFormat.colorSpace,
 		.imageExtent = {.width = framebufferWidth_, .height = framebufferHeight_ },
 		.imageArrayLayers = 1,
-		.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | (supportScreenshots ? VK_IMAGE_USAGE_TRANSFER_SRC_BIT : 0u),
+		.imageUsage = 
+			VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | 
+			VK_IMAGE_USAGE_TRANSFER_DST_BIT,
 		.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE,
 		.queueFamilyIndexCount = 1,
 		.pQueueFamilyIndices = &graphicsFamily_,
@@ -323,7 +323,7 @@ VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface, bool supportScreens
 		.oldSwapchain = VK_NULL_HANDLE
 	};
 
-	return vkCreateSwapchainKHR(device_, &ci, nullptr, &swapchain_);
+	return vkCreateSwapchainKHR(device_, &createInfo, nullptr, &swapchain_);
 }
 
 VkPresentModeKHR VulkanDevice::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)
@@ -339,7 +339,7 @@ VkPresentModeKHR VulkanDevice::ChooseSwapPresentMode(const std::vector<VkPresent
 	return VK_PRESENT_MODE_FIFO_KHR;
 }
 
-uint32_t VulkanDevice::ChooseSwapImageCount(const VkSurfaceCapabilitiesKHR& capabilities)
+uint32_t VulkanDevice::GetSwapchainImageCount(const VkSurfaceCapabilitiesKHR& capabilities)
 {
 	// Request one additional image to make sure
 	// we are not waiting on the GPU to complete any operations
@@ -353,17 +353,15 @@ size_t VulkanDevice::CreateSwapchainImages()
 {
 	uint32_t imageCount = 0;
 	VK_CHECK(vkGetSwapchainImagesKHR(device_, swapchain_, &imageCount, nullptr));
-
 	swapchainImages_.resize(imageCount);
 	swapchainImageViews_.resize(imageCount);
-
 	VK_CHECK(vkGetSwapchainImagesKHR(device_, swapchain_, &imageCount, swapchainImages_.data()));
 
 	for (unsigned i = 0; i < imageCount; i++)
 	{
 		if (!CreateSwapChainImageView(i, swapchainImageFormat_, VK_IMAGE_ASPECT_COLOR_BIT))
 		{
-			exit(0);
+			throw std::runtime_error("Cannot create swapchain image view\n");
 		}
 	}
 	return static_cast<size_t>(imageCount);
@@ -372,10 +370,7 @@ size_t VulkanDevice::CreateSwapchainImages()
 bool VulkanDevice::CreateSwapChainImageView(
 	unsigned imageIndex,
 	VkFormat format,
-	VkImageAspectFlags aspectFlags,
-	VkImageViewType viewType,
-	uint32_t layerCount,
-	uint32_t mipLevels)
+	VkImageAspectFlags aspectFlags)
 {
 	const VkImageViewCreateInfo viewInfo =
 	{
@@ -383,19 +378,37 @@ bool VulkanDevice::CreateSwapChainImageView(
 		.pNext = nullptr,
 		.flags = 0,
 		.image = swapchainImages_[imageIndex],
-		.viewType = viewType,
+		.viewType = VK_IMAGE_VIEW_TYPE_2D,
 		.format = format,
 		.subresourceRange =
 		{
 			.aspectMask = aspectFlags,
 			.baseMipLevel = 0,
-			.levelCount = mipLevels,
+			.levelCount = 1u,
 			.baseArrayLayer = 0,
-			.layerCount = layerCount
+			.layerCount = 1u
 		}
 	};
 
 	return (vkCreateImageView(device_, &viewInfo, nullptr, &swapchainImageViews_[imageIndex]) == VK_SUCCESS);
+}
+
+void VulkanDevice::RecreateSwapchainResources(
+	VulkanInstance& instance,
+	uint32_t width,
+	uint32_t height)
+{
+	for (size_t i = 0; i < swapchainImages_.size(); ++i)
+	{
+		vkDestroyImageView(device_, swapchainImageViews_[i], nullptr);
+	}
+	vkDestroySwapchainKHR(device_, swapchain_, nullptr);
+
+	framebufferWidth_ = width;
+	framebufferHeight_ = height;
+
+	VK_CHECK(CreateSwapchain(instance.GetSurface()));
+	CreateSwapchainImages();
 }
 
 SwapchainSupportDetails VulkanDevice::QuerySwapchainSupport(VkSurfaceKHR surface)

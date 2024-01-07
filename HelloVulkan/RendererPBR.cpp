@@ -9,21 +9,21 @@
 #include <array>
 
 // Constants
-constexpr uint32_t PBR_TEXTURE_START_BIND_INDEX = 2;
-constexpr size_t PBR_MESH_TEXTURE_COUNT = 6;
-constexpr size_t PBR_ENV_TEXTURE_COUNT = 3;
+constexpr uint32_t PBR_TEXTURE_START_BIND_INDEX = 2; // Because we have two UBOs
+constexpr size_t PBR_MESH_TEXTURE_COUNT = 6; 
+constexpr size_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 
 RendererPBR::RendererPBR(
 	VulkanDevice& vkDev,
 	std::vector<Model*> models,
-	VulkanImage* envMap,
+	VulkanImage* specularMap,
 	VulkanImage* diffuseMap,
 	VulkanImage* brdfLUT,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
 	RendererBase(vkDev, depthImage, offscreenColorImage, renderBit),
-	envMap_(envMap),
+	specularMap_(specularMap),
 	diffuseMap_(diffuseMap),
 	brdfLUT_(brdfLUT),
 	models_(models)
@@ -41,25 +41,17 @@ RendererPBR::RendererPBR(
 		CreateUniformBuffers(vkDev, model->modelBuffers_, sizeof(ModelUBO));
 	}
 
-	if (IsOffScreen())
-	{
-		multisampleCount = offscreenColorImage_->multisampleCount_;
-		renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, multisampleCount);
-		CreateSingleFramebuffer(
-			vkDev,
-			renderPass_,
-			{ 
-				offscreenColorImage_->imageView_,
-				depthImage_->imageView_ 
-			},
-			offscreenFramebuffer_);
-	}
-	else
-	{
-		// TODO Currently no MSAA for onscreen rendering
-		renderPass_.CreateOnScreenRenderPass(vkDev, multisampleCount);
-		CreateSwapchainFramebuffers(vkDev, renderPass_, depthImage_->imageView_);
-	}
+	// Note that this pipeline is offscreen rendering
+	multisampleCount = offscreenColorImage_->multisampleCount_;
+	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, multisampleCount);
+	CreateSingleFramebuffer(
+		vkDev,
+		renderPass_,
+		{ 
+			offscreenColorImage_->imageView_,
+			depthImage_->imageView_ 
+		},
+		offscreenFramebuffer_);
 
 	CreateDescriptorPool(
 		vkDev, 
@@ -98,15 +90,29 @@ RendererPBR::~RendererPBR()
 {
 }
 
+void RendererPBR::OnWindowResized(VulkanDevice& vkDev)
+{
+	vkDestroyFramebuffer(vkDev.GetDevice(), offscreenFramebuffer_, nullptr);
+	CreateSingleFramebuffer(
+		vkDev,
+		renderPass_,
+		{
+			offscreenColorImage_->imageView_,
+			depthImage_->imageView_
+		},
+		offscreenFramebuffer_);
+}
+
 void RendererPBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
 {
 	renderPass_.BeginRenderPass(
+		vkDev,
 		commandBuffer, 
 		IsOffScreen() ? 
 			offscreenFramebuffer_ : 
 			swapchainFramebuffers_[swapchainImageIndex]);
 
-	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
+	BindPipeline(vkDev, commandBuffer);
 
 	for (Model* model : models_)
 	{
@@ -165,7 +171,7 @@ void RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 		);
 	}
 
-	// envMap
+	// Specular map
 	bindings.emplace_back(
 		DescriptorSetLayoutBinding(
 			bindingIndex++,
@@ -272,19 +278,19 @@ void RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 			bindIndex++;
 		}
 
-		const VkDescriptorImageInfo imageInfoEnv = 
+		const VkDescriptorImageInfo specularImageInfo = 
 		{ 
-			envMap_->defaultImageSampler_,
-			envMap_->imageView_, 
+			specularMap_->defaultImageSampler_,
+			specularMap_->imageView_, 
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL 
 		};
-		const VkDescriptorImageInfo imageInfoEnvIrr = 
+		const VkDescriptorImageInfo diffuseImageInfo = 
 		{ 
 			diffuseMap_->defaultImageSampler_,
 			diffuseMap_->imageView_, 
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL 
 		};
-		const VkDescriptorImageInfo imageInfoBRDF = 
+		const VkDescriptorImageInfo BRDFLUTImageInfo = 
 		{ 
 			brdfLUT_->defaultImageSampler_,
 			brdfLUT_->imageView_, 
@@ -292,13 +298,13 @@ void RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 		};
 
 		descriptorWrites.emplace_back(
-			ImageWriteDescriptorSet(ds, &imageInfoEnv, bindIndex++)
+			ImageWriteDescriptorSet(ds, &specularImageInfo, bindIndex++)
 		);
 		descriptorWrites.emplace_back(
-			ImageWriteDescriptorSet(ds, &imageInfoEnvIrr, bindIndex++)
+			ImageWriteDescriptorSet(ds, &diffuseImageInfo, bindIndex++)
 		);
 		descriptorWrites.emplace_back(
-			ImageWriteDescriptorSet(ds, &imageInfoBRDF, bindIndex++)
+			ImageWriteDescriptorSet(ds, &BRDFLUTImageInfo, bindIndex++)
 		);
 
 		vkUpdateDescriptorSets
@@ -307,6 +313,7 @@ void RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 			static_cast<uint32_t>(descriptorWrites.size()), 
 			descriptorWrites.data(), 
 			0, 
-			nullptr);
+			nullptr
+		);
 	}
 }

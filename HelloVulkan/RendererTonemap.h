@@ -13,8 +13,12 @@ public:
 
 	virtual void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 
+	void OnWindowResized(VulkanDevice& vkDev) override;
+
 private:
-	void CreateDescriptorLayoutAndSet(VulkanDevice& vkDev);
+	void CreateDescriptorLayout(VulkanDevice& vkDev);
+	void AllocateDescriptorSets(VulkanDevice& vkDev);
+	void UpdateDescriptorSets(VulkanDevice& vkDev);
 
 private:
 	VulkanImage* singleSampledColorImage_;

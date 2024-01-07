@@ -16,6 +16,7 @@ class RendererBase
 public:
 	explicit RendererBase(
 		const VulkanDevice& vkDev, 
+		// TODO refactor pointers of VulkanImage as render pass attachments
 		VulkanImage* depthImage,
 		VulkanImage* offscreenColorImage = nullptr,
 		uint8_t renderPassBit = 0u);
@@ -31,11 +32,11 @@ public:
 		UpdateUniformBuffer(vkDev.GetDevice(), perFrameUBOs_[imageIndex], &ubo, sizeof(PerFrameUBO));
 	}
 
+	// If the window is resized
+	virtual void OnWindowResized(VulkanDevice& vkDev);
+
 protected:
 	VkDevice device_ = nullptr;
-
-	uint32_t framebufferWidth_ = 0;
-	uint32_t framebufferHeight_ = 0;
 
 	// Depth buffer
 	VulkanImage* depthImage_;
@@ -63,8 +64,11 @@ protected:
 protected:
 	inline bool IsOffScreen()
 	{
-		return offscreenColorImage_ != nullptr;
+		return offscreenColorImage_ != nullptr ||
+			offscreenFramebuffer_ != nullptr;
 	}
+
+	void BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuffer);
 
 	// UBO
 	void CreateUniformBuffers(
@@ -79,11 +83,12 @@ protected:
 		const void* data,
 		const size_t dataSize);
 
+	// TODO consolidate offscreen/onscreen into a single function
 	// Attach an array of image views to a framebuffer
 	void CreateSingleFramebuffer(
 		VulkanDevice& vkDev,
 		VulkanRenderPass renderPass,
-		const std::vector<VkImageView> imageViews,
+		const std::vector<VkImageView>& imageViews,
 		VkFramebuffer& framebuffer);
 
 	// Attach a swapchain image and depth image
@@ -91,6 +96,8 @@ protected:
 		VulkanDevice& vkDev, 
 		VulkanRenderPass renderPass, 
 		VkImageView depthImageView = nullptr);
+	
+	void DestroySwapchainFramebuffers();
 
 	void CreateDescriptorPool(
 		VulkanDevice& vkDev, 
@@ -116,7 +123,6 @@ protected:
 		VkPrimitiveTopology topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST /* defaults to triangles*/,
 		bool useDepth = true,
 		bool useBlending = true,
-		bool dynamicScissorState = false,
 		uint32_t numPatchControlPoints = 0);
 
 	VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(

@@ -3,6 +3,8 @@
 
 #include <glm/glm.hpp>
 
+#include "AppSettings.h"
+
 enum CameraMovement
 {
 	CameraForward,
@@ -25,14 +27,17 @@ class Camera
 {
 public:
 	Camera(
-		glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3 position,
 		glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f),
+		float screenWidth = AppSettings::InitialScreenWidth,
+		float screenHeight = AppSettings::InitialScreenHeight,
 		float yaw = CameraSettings::Yaw,
 		float pitch = CameraSettings::Pitch);
 
+	void SetScreenSize(float width, float height);
+
 	glm::mat4 GetProjectionMatrix();
 	glm::mat4 GetViewMatrix();
-	glm::mat4 GetInverseViewMatrix();
 	glm::vec3 Position();
 
 	void ProcessKeyboard(CameraMovement direction, float deltaTime_);
@@ -59,6 +64,10 @@ private:
 	float movementSpeed_;
 	float mouseSensitivity_;
 	float zoom_;
+
+	// Screen size
+	float screenWidth_;
+	float screenHeight_;
 
 private:
 	void UpdateInternal();

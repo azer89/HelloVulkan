@@ -15,33 +15,23 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
 	RendererBase(vkDev, depthImage, offscreenColorImage, renderBit),
-	envMap_(envMap)
+	specularMap_(envMap)
 {
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
 
 	VkSampleCountFlagBits multisampleCount = VK_SAMPLE_COUNT_1_BIT;
-	
-	if (IsOffScreen())
-	{
-		multisampleCount = offscreenColorImage_->multisampleCount_;
-		renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, multisampleCount);
-		CreateSingleFramebuffer(
-			vkDev,
-			renderPass_,
-			{
-				offscreenColorImage_->imageView_,
-				depthImage_->imageView_
-			},
-			offscreenFramebuffer_);
-	}
-	else
-	{
-		renderPass_.CreateOnScreenRenderPass(vkDev);
-		CreateSwapchainFramebuffers(
-			vkDev,
-			renderPass_,
-			depthImage_->imageView_);
-	}
+
+	// Note that this pipeline is offscreen rendering
+	multisampleCount = offscreenColorImage_->multisampleCount_;
+	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, multisampleCount);
+	CreateSingleFramebuffer(
+		vkDev,
+		renderPass_,
+		{
+			offscreenColorImage_->imageView_,
+			depthImage_->imageView_
+		},
+		offscreenFramebuffer_);
 	
 	CreateDescriptorPool(
 		vkDev, 
@@ -71,15 +61,29 @@ RendererSkybox::~RendererSkybox()
 {
 }
 
+void RendererSkybox::OnWindowResized(VulkanDevice& vkDev)
+{
+	vkDestroyFramebuffer(vkDev.GetDevice(), offscreenFramebuffer_, nullptr);
+	CreateSingleFramebuffer(
+		vkDev,
+		renderPass_,
+		{
+			offscreenColorImage_->imageView_,
+			depthImage_->imageView_
+		},
+		offscreenFramebuffer_);
+}
+
 void RendererSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
 {
 	renderPass_.BeginRenderPass(
+		vkDev,
 		commandBuffer, 
 		IsOffScreen() ?
 			offscreenFramebuffer_ :
 			swapchainFramebuffers_[swapchainImageIndex]);
 
-	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
+	BindPipeline(vkDev, commandBuffer);
 
 	vkCmdBindDescriptorSets(
 		commandBuffer, 
@@ -147,8 +151,8 @@ void RendererSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 			{ perFrameUBOs_[i].buffer_, 0, sizeof(PerFrameUBO) };
 		const VkDescriptorImageInfo  imageInfo = 
 		{
-			envMap_->defaultImageSampler_,
-			envMap_->imageView_,
+			specularMap_->defaultImageSampler_,
+			specularMap_->imageView_,
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 		};
 

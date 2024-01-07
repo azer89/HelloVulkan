@@ -13,10 +13,10 @@ AppPBR::AppPBR() :
 
 void AppPBR::Init()
 {
-	std::string hdrFile = AppSettings::TextureFolder + "piazza_bologni_1k.hdr";
+	// Initialize attachments
+	CreateSharedImageResources();
 
-	// MSAA
-	VkSampleCountFlagBits msaaSamples = vulkanDevice_.GetMSAASampleCount();
+	std::string hdrFile = AppSettings::TextureFolder + "piazza_bologni_1k.hdr";
 
 	model_ = std::make_unique<Model>(
 		vulkanDevice_, 
@@ -30,6 +30,7 @@ void AppPBR::Init()
 			hdrFile);
 		e2c.OffscreenRender(vulkanDevice_,
 			&environmentCubemap_); // Output
+		environmentCubemap_.SetDebugName(vulkanDevice_, "Environment_Cubemap");
 	}
 
 	// Cube filtering
@@ -43,36 +44,17 @@ void AppPBR::Init()
 		cubeFilter.OffscreenRender(vulkanDevice_,
 			&specularCubemap_,
 			CubeFilterType::Specular);
+
+		diffuseCubemap_.SetDebugName(vulkanDevice_, "Diffuse_Cubemap");
+		specularCubemap_.SetDebugName(vulkanDevice_, "Specular_Cubemap");
 	}
 	
 	// BRDF look up table
 	{
 		RendererBRDFLUT brdfLUTCompute(vulkanDevice_);
 		brdfLUTCompute.CreateLUT(vulkanDevice_, &brdfLut_);
+		brdfLut_.SetDebugName(vulkanDevice_, "BRDF_LUT");
 	}
-
-	uint32_t width = static_cast<uint32_t>(AppSettings::ScreenWidth);
-	uint32_t height = static_cast<uint32_t>(AppSettings::ScreenHeight);
-
-	// Depth attachment (OnScreen and offscreen)
-	depthImage_.CreateDepthResources(
-		vulkanDevice_,
-		width,
-		height,
-		msaaSamples);
-
-	// Color attachments
-	// Multi-sampled (MSAA)
-	multiSampledColorImage_.CreateColorResources(
-		vulkanDevice_,
-		width,
-		height,
-		msaaSamples);
-	// Single-sampled
-	singleSampledColorImage_.CreateColorResources(
-		vulkanDevice_,
-		width,
-		height);
 
 	// Renderers
 	// This is responsible to clear swapchain image
@@ -126,9 +108,6 @@ void AppPBR::Init()
 void AppPBR::DestroyResources()
 {
 	// Destroy images
-	depthImage_.Destroy(vulkanDevice_.GetDevice());
-	multiSampledColorImage_.Destroy(vulkanDevice_.GetDevice());
-	singleSampledColorImage_.Destroy(vulkanDevice_.GetDevice());
 	environmentCubemap_.Destroy(vulkanDevice_.GetDevice());
 	diffuseCubemap_.Destroy(vulkanDevice_.GetDevice());
 	specularCubemap_.Destroy(vulkanDevice_.GetDevice());
@@ -188,7 +167,7 @@ int AppPBR::MainLoop()
 		ProcessTiming();
 		ProcessInput();
 
-		DrawFrame(renderers_);
+		DrawFrame();
 	}
 
 	DestroyResources();

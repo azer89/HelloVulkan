@@ -108,11 +108,12 @@ struct PipelineCreateInfo
 			.minDepthBounds = 0.0f,
 			.maxDepthBounds = 1.0f
 		}),
+		// Change below if you want window resizing
 		dynamicState({
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0,
-			.dynamicStateCount = 0,
+			.dynamicStateCount = 0u,
 			.pDynamicStates = nullptr
 		}),
 		tessellationState({

@@ -7,9 +7,8 @@
 
 namespace AppSettings
 {
-	// TODO need to deal with screen resizing
-	static int ScreenWidth = 1600;
-	static int ScreenHeight = 1200;
+	static int InitialScreenWidth = 1600;
+	static int InitialScreenHeight = 1200;
 
 	// VK_PRESENT_MODE_FIFO_KHR --> Lock to screen FPS
 	// VK_PRESENT_MODE_MAILBOX_KHR --> Triple buffering

@@ -5,6 +5,8 @@
 
 #include "VulkanDevice.h"
 
+#include <string>
+
 int NumMipMap(int w, int h);
 
 struct ImageBarrierCreateInfo
@@ -158,12 +160,9 @@ public:
 		uint32_t layerCount = 1,
 		uint32_t mipLevels = 1);
 
-private:
-	uint32_t FindMemoryType(
-		VkPhysicalDevice device, 
-		uint32_t typeFilter, 
-		VkMemoryPropertyFlags properties);
+	void SetDebugName(VulkanDevice& vkDev, const std::string& debugName);
 
+private:
 	void UpdateImage(
 		VulkanDevice& vkDev,
 		uint32_t texWidth,
@@ -176,6 +175,12 @@ private:
 	bool HasStencilComponent(VkFormat format);
 
 	uint32_t BytesPerTexFormat(VkFormat fmt);
+
+	// TODO Possibly move this to VulkanDevice
+	uint32_t FindMemoryType(
+		VkPhysicalDevice device,
+		uint32_t typeFilter,
+		VkMemoryPropertyFlags properties);
 };
 
 #endif

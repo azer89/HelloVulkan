@@ -14,6 +14,10 @@ struct SwapchainSupportDetails
 	std::vector<VkPresentModeKHR> presentModes;
 };
 
+/*
+TODO
+The name of this class is slightly innacurate since it also manages the swaphchain images.
+*/
 class VulkanDevice
 {
 public:
@@ -25,6 +29,11 @@ public:
 	);
 
 	void Destroy();
+
+	void RecreateSwapchainResources(
+		VulkanInstance& instance,
+		uint32_t width,
+		uint32_t height);
 
 	VkCommandBuffer BeginSingleTimeCommands();
 	void EndSingleTimeCommands(VkCommandBuffer commandBuffer);
@@ -73,18 +82,15 @@ private:
 	VkSampleCountFlagBits GetMaxUsableSampleCount(VkPhysicalDevice d);
 
 	// Swap chain
-	VkResult CreateSwapchain(VkSurfaceKHR surface, bool supportScreenshots = false);
+	VkResult CreateSwapchain(VkSurfaceKHR surface);
 	size_t CreateSwapchainImages();
 	bool CreateSwapChainImageView(
 		unsigned imageIndex,
 		VkFormat format, 
-		VkImageAspectFlags aspectFlags,
-		VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_2D, 
-		uint32_t layerCount = 1, 
-		uint32_t mipLevels = 1);
+		VkImageAspectFlags aspectFlags);
 	SwapchainSupportDetails QuerySwapchainSupport(VkSurfaceKHR surface);
 	VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
-	uint32_t ChooseSwapImageCount(const VkSurfaceCapabilitiesKHR& capabilities);
+	uint32_t GetSwapchainImageCount(const VkSurfaceCapabilitiesKHR& capabilities);
 
 	// Sync
 	VkResult CreateSemaphore(VkSemaphore* outSemaphore);

@@ -447,20 +447,22 @@ void VulkanRenderPass::CreateBeginInfo(VulkanDevice& vkDev)
 	{
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
 		.renderPass = handle_,
-		.framebuffer = nullptr, // Set this
-		.renderArea = { 0u, 0u, vkDev.GetFrameBufferWidth(), vkDev.GetFrameBufferHeight() },
+		.framebuffer = nullptr, // Has to be set in BeginRenderPass()
+		.renderArea = { }, // Has to be set in BeginRenderPass()
 		.clearValueCount = static_cast<uint32_t>(clearValues_.size()),
 		.pClearValues = clearValues_.size() == 0 ? nullptr : &clearValues_[0]
 	};
 }
 
 void VulkanRenderPass::BeginRenderPass(
+	VulkanDevice& vkDev,
 	VkCommandBuffer commandBuffer, 
 	VkFramebuffer framebuffer)
 {
 	// Make sure beginInfo has been initialized
 	// Set framebuffer to beginInfo_
 	beginInfo_.framebuffer = framebuffer;
+	beginInfo_.renderArea = { 0u, 0u, vkDev.GetFrameBufferWidth(), vkDev.GetFrameBufferHeight() };
 	
 	vkCmdBeginRenderPass(commandBuffer, &beginInfo_, VK_SUBPASS_CONTENTS_INLINE);
 }

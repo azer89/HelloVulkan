@@ -14,7 +14,7 @@ inline glm::mat4 mat4_cast(const aiMatrix4x4& m)
 }
 
 Model::Model(VulkanDevice& vkDev, const std::string& path) :
-	device_(vkDev),
+	device_(vkDev.GetDevice()),
 	blackTextureFilePath_(AppSettings::TextureFolder + "Black1x1.png")
 {
 	// In case a texture type cannot be found, replace it with a default texture
@@ -31,18 +31,18 @@ Model::~Model()
 {
 	for (Mesh& mesh : meshes_)
 	{
-		mesh.Destroy(device_.GetDevice());
+		mesh.Destroy(device_);
 	}
 
 	for (auto buffer : modelBuffers_)
 	{
-		buffer.Destroy(device_.GetDevice());
+		buffer.Destroy(device_);
 	}
 
 	// C++20 feature
 	for (VulkanImage& tex : std::views::values(textureMap_))
 	{
-		tex.Destroy(device_.GetDevice());
+		tex.Destroy(device_);
 	}
 }
 

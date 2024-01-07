@@ -10,7 +10,7 @@ class RendererPBR final : public RendererBase
 public:
 	RendererPBR(VulkanDevice& vkDev,
 		std::vector<Model*> models,
-		VulkanImage* envMap,
+		VulkanImage* specularMap,
 		VulkanImage* diffuseMap,
 		VulkanImage* brdfLUT,
 		VulkanImage* depthImage,
@@ -19,6 +19,8 @@ public:
 	 ~RendererPBR();
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
+
+	void OnWindowResized(VulkanDevice& vkDev) override;
 
 public:
 	// TODO change this to private
@@ -29,7 +31,7 @@ private:
 	void CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh);
 
 private:
-	VulkanImage* envMap_;
+	VulkanImage* specularMap_;
 	VulkanImage* diffuseMap_;
 	VulkanImage* brdfLUT_;
 };

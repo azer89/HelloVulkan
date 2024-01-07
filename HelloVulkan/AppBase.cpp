@@ -7,7 +7,8 @@
 
 #include <iostream>
 
-AppBase::AppBase()
+AppBase::AppBase() :
+	recreateSwapchain_(false)
 {
 	InitGLFW();
 	InitGLSLang();
@@ -36,8 +37,8 @@ void AppBase::InitVulkan()
 	vulkanInstance_.SetupDebugCallbacks();
 	vulkanInstance_.CreateWindowSurface(glfwWindow_);
 	vulkanDevice_.CreateCompute(vulkanInstance_,
-		static_cast<uint32_t>(AppSettings::ScreenWidth),
-		static_cast<uint32_t>(AppSettings::ScreenHeight),
+		static_cast<uint32_t>(windowWidth_),
+		static_cast<uint32_t>(windowHeight_),
 		features);
 }
 
@@ -52,9 +53,15 @@ void AppBase::InitGLFW()
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
+	int w = AppSettings::InitialScreenWidth;
+	int h = AppSettings::InitialScreenHeight;
+
 	// GLFW window creation
-	glfwWindow_ = glfwCreateWindow(AppSettings::ScreenWidth,
-		AppSettings::ScreenHeight,
+	windowWidth_ = static_cast<uint32_t>(w);
+	windowHeight_ = static_cast<uint32_t>(h);
+	glfwWindow_ = glfwCreateWindow(
+		w,
+		h,
 		AppSettings::ScreenTitle.c_str(),
 		nullptr,
 		nullptr);
@@ -98,8 +105,51 @@ void AppBase::InitGLFW()
 	glfwSetKeyCallback(glfwWindow_, FuncKey);
 }
 
-bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
+void AppBase::CreateSharedImageResources()
 {
+	depthImage_.Destroy(vulkanDevice_.GetDevice());
+	multiSampledColorImage_.Destroy(vulkanDevice_.GetDevice());
+	singleSampledColorImage_.Destroy(vulkanDevice_.GetDevice());
+
+	VkSampleCountFlagBits msaaSamples = vulkanDevice_.GetMSAASampleCount();
+	uint32_t width = vulkanDevice_.GetFrameBufferWidth();
+	uint32_t height = vulkanDevice_.GetFrameBufferHeight();
+
+	// Depth attachment (OnScreen and offscreen)
+	depthImage_.CreateDepthResources(
+		vulkanDevice_,
+		width,
+		height,
+		msaaSamples);
+	depthImage_.SetDebugName(vulkanDevice_, "Depth_Image");
+
+	// Color attachments
+	// Multi-sampled (MSAA)
+	multiSampledColorImage_.CreateColorResources(
+		vulkanDevice_,
+		width,
+		height,
+		msaaSamples);
+	multiSampledColorImage_.SetDebugName(vulkanDevice_, "Multisampled_Color_Image");
+
+	// Single-sampled
+	singleSampledColorImage_.CreateColorResources(
+		vulkanDevice_,
+		width,
+		height);
+	singleSampledColorImage_.SetDebugName(vulkanDevice_, "Singlesampled_Color_Image");
+}
+
+bool AppBase::DrawFrame()
+{
+	// Need to recreate swapchain images and framebuffers 
+	// because the window is resized 
+	if (recreateSwapchain_)
+	{
+		OnWindowResized();
+		recreateSwapchain_ = false;
+	}
+
 	uint32_t imageIndex = 0;
 	VkResult result = vkAcquireNextImageKHR(
 		vulkanDevice_.GetDevice(), 
@@ -109,18 +159,14 @@ bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 		*(vulkanDevice_.GetSwapchainSemaphorePtr()), 
 		VK_NULL_HANDLE, 
 		&imageIndex);
-	VK_CHECK(vkResetCommandPool(vulkanDevice_.GetDevice(), vulkanDevice_.GetCommandPool(), 0));
 
-	if (result != VK_SUCCESS)
-	{
-		return false;
-	}
+	VK_CHECK(vkResetCommandPool(vulkanDevice_.GetDevice(), vulkanDevice_.GetCommandPool(), 0));
 
 	// Send UBOs to shaders
 	UpdateUBOs(imageIndex);
 
 	// Rendering here
-	FillCommandBuffer(renderers, imageIndex);
+	FillCommandBuffer(imageIndex);
 
 	const VkPipelineStageFlags waitStages[] = 
 		{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
@@ -154,14 +200,18 @@ bool AppBase::DrawFrame(const std::vector<RendererBase*>& renderers)
 		.pImageIndices = &imageIndex
 	};
 
-	VK_CHECK(vkQueuePresentKHR(vulkanDevice_.GetGraphicsQueue(), &presentInfo));
+	result = vkQueuePresentKHR(vulkanDevice_.GetGraphicsQueue(), &presentInfo);
+	if (result == VK_ERROR_OUT_OF_DATE_KHR)
+	{
+		recreateSwapchain_ = true;
+	}
 
 	VK_CHECK(vkDeviceWaitIdle(vulkanDevice_.GetDevice()));
 
 	return true;
 }
 
-void AppBase::FillCommandBuffer(const std::vector<RendererBase*>& renderers, uint32_t imageIndex)
+void AppBase::FillCommandBuffer(uint32_t imageIndex)
 {
 	VkCommandBuffer commandBuffer = vulkanDevice_.GetCommandBuffer(imageIndex);
 
@@ -175,13 +225,40 @@ void AppBase::FillCommandBuffer(const std::vector<RendererBase*>& renderers, uin
 
 	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginIndo));
 
+	/*VkViewport viewport =
+	{
+		.x = 0.0f,
+		.y = 0.0f,
+		.width = (float)vulkanDevice_.GetFrameBufferWidth(),
+		.height = (float)vulkanDevice_.GetFrameBufferHeight(),
+		.minDepth = 0.0f,
+		.maxDepth = 1.0f
+	};
+	vkCmdSetViewport(commandBuffer, 0, 1, &viewport);*/
+
 	// Iterate through all renderers to fill the command buffer
-	for (auto& r : renderers)
+	for (auto& r : renderers_)
 	{
 		r->FillCommandBuffer(vulkanDevice_, commandBuffer, imageIndex);
 	}
 
 	VK_CHECK(vkEndCommandBuffer(commandBuffer));
+}
+
+void AppBase::OnWindowResized()
+{
+	vulkanDevice_.RecreateSwapchainResources(
+		vulkanInstance_,
+		windowWidth_,
+		windowHeight_
+	);
+
+	CreateSharedImageResources();
+
+	for (auto& r : renderers_)
+	{
+		r->OnWindowResized(vulkanDevice_);
+	}
 }
 
 void AppBase::InitIMGUI()
@@ -199,8 +276,8 @@ void AppBase::InitIMGUI()
 void AppBase::InitCamera()
 {
 	camera_ = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 3.0f));
-	lastX_ = static_cast<float>(AppSettings::ScreenWidth) / 2.0f;
-	lastY_ = static_cast<float>(AppSettings::ScreenHeight) / 2.0f;
+	lastX_ = static_cast<float>(windowWidth_) / 2.0f;
+	lastY_ = static_cast<float>(windowHeight_) / 2.0f;
 	firstMouse_ = true;
 }
 
@@ -233,13 +310,23 @@ void AppBase::Terminate()
 	glfwDestroyWindow(glfwWindow_);
 	glfwTerminate();
 
+	depthImage_.Destroy(vulkanDevice_.GetDevice());
+	multiSampledColorImage_.Destroy(vulkanDevice_.GetDevice());
+	singleSampledColorImage_.Destroy(vulkanDevice_.GetDevice());
+
 	vulkanDevice_.Destroy();
 	vulkanInstance_.Destroy();
 }
 
 void AppBase::FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
 {
-	// TODO
+	windowWidth_ = static_cast<uint32_t>(width);
+	windowHeight_ = static_cast<uint32_t>(height);
+
+	camera_->SetScreenSize(
+		static_cast<float>(windowWidth_),
+		static_cast<float>(windowHeight_)
+	);
 }
 
 void AppBase::MouseCallback(GLFWwindow* window, double xposIn, double yposIn)
