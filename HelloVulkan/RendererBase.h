@@ -83,6 +83,7 @@ protected:
 		const void* data,
 		const size_t dataSize);
 
+	// TODO consolidate offscreen/onscreen into a single function
 	// Attach an array of image views to a framebuffer
 	void CreateSingleFramebuffer(
 		VulkanDevice& vkDev,
@@ -95,8 +96,7 @@ protected:
 		VulkanDevice& vkDev, 
 		VulkanRenderPass renderPass, 
 		VkImageView depthImageView = nullptr);
-
-	// TODO consolidate offscreen/onscreen into a single function
+	
 	void DestroySwapchainFramebuffers();
 
 	void CreateDescriptorPool(
