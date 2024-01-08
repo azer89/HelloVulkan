@@ -46,31 +46,61 @@ void VulkanDevice::CreateCompute
 	// TODO Create a swapchain class
 	VK_CHECK(CreateSwapchain(instance.GetSurface()));
 	const size_t imageCount = CreateSwapchainImages();
-	swapchainCommandBuffers_.resize(imageCount);
 
-	VK_CHECK(CreateSemaphore(&swapchainSemaphore_));
-	VK_CHECK(CreateSemaphore(&renderSemaphore_));
+	//swapchainCommandBuffers_.resize(imageCount);
+	//VK_CHECK(CreateSemaphore(&swapchainSemaphore_));
+	//VK_CHECK(CreateSemaphore(&renderSemaphore_));
 
 	const VkCommandPoolCreateInfo cpi =
 	{
 		.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-		.flags = 0,
+		.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
 		.queueFamilyIndex = graphicsFamily_
 	};
 
 	VK_CHECK(vkCreateCommandPool(device_, &cpi, nullptr, &commandPool_));
 
-	const VkCommandBufferAllocateInfo ai =
+	// TODO Create function CreateCommandBuffer()
+	const VkCommandBufferAllocateInfo cmdAllocateInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
 		.pNext = nullptr,
 		.commandPool = commandPool_,
 		.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-		.commandBufferCount = static_cast<uint32_t>(swapchainImages_.size()),
+		.commandBufferCount = 1u,
 	};
 
-	VK_CHECK(vkAllocateCommandBuffers(device_, &ai, &swapchainCommandBuffers_[0]));
-
+	//VK_CHECK(vkAllocateCommandBuffers(device_, &ai, &swapchainCommandBuffers_[0]));
+	/*
+	swapchainCommandBuffers_.resize(imageCount);
+	VK_CHECK(CreateSemaphore(&swapchainSemaphore_));
+	VK_CHECK(CreateSemaphore(&renderSemaphore_));
+	*/
+	// Frame contexts
+	frameIndex_ = 0;
+	//frameContexts_ = std::vector<FrameContext>(2);
+	/*for (unsigned int i = 0; i < 2; ++i)
+	{
+		VK_CHECK(CreateSemaphore(&(frameContexts_[i].swapchainSemaphore_)));
+		VK_CHECK(CreateSemaphore(&(frameContexts_[i].renderSemaphore_)));
+		VK_CHECK(CreateFence(&(frameContexts_[i].renderFence_)));
+		VK_CHECK(vkAllocateCommandBuffers(device_, &ai, &(frameContexts_[i].commandBuffer_)));
+	}*/
+	swapchainSemaphores_.resize(2);
+	renderSemaphores_.resize(2);
+	renderFences_.resize(2);
+	commandBuffers_.resize(2);
+	for (unsigned int i = 0; i < 2; ++i)
+	{
+		/*std::vector<VkSemaphore> swapchainSemaphores_;
+		std::vector<VkSemaphore> renderSemaphores_;
+		std::vector<VkFence> renderFences_;
+		std::vector<VkCommandBuffer> commandBuffers_;*/
+		VK_CHECK(CreateSemaphore(&swapchainSemaphores_[i]));
+		VK_CHECK(CreateSemaphore(&renderSemaphores_[i]));
+		VK_CHECK(CreateFence(&renderFences_[i]));
+		VK_CHECK(vkAllocateCommandBuffers(device_, &cmdAllocateInfo, &commandBuffers_[i]));
+	}
 	{
 		// Create compute command pool
 		const VkCommandPoolCreateInfo cpi1 =
@@ -99,6 +129,21 @@ void VulkanDevice::CreateCompute
 
 void VulkanDevice::Destroy()
 {
+	//vkDestroySemaphore(device_, swapchainSemaphore_, nullptr);
+	//vkDestroySemaphore(device_, renderSemaphore_, nullptr);
+	/*for (unsigned int i = 0; i < 2; ++i)
+	{
+		vkDestroySemaphore(device_, frameContexts_[i].swapchainSemaphore_, nullptr);
+		vkDestroySemaphore(device_, frameContexts_[i].renderSemaphore_, nullptr);
+		vkDestroyFence(device_, frameContexts_[i].renderFence_, nullptr);
+	}*/
+	for (unsigned int i = 0; i < 2; ++i)
+	{
+		vkDestroySemaphore(device_, swapchainSemaphores_[i], nullptr);
+		vkDestroySemaphore(device_, renderSemaphores_[i], nullptr);
+		vkDestroyFence(device_, renderFences_[i], nullptr);
+	}
+
 	for (size_t i = 0; i < swapchainImages_.size(); i++)
 	{
 		vkDestroyImageView(device_, swapchainImageViews_[i], nullptr);
@@ -106,9 +151,6 @@ void VulkanDevice::Destroy()
 	vkDestroySwapchainKHR(device_, swapchain_, nullptr);
 
 	vkDestroyCommandPool(device_, commandPool_, nullptr);
-
-	vkDestroySemaphore(device_, swapchainSemaphore_, nullptr);
-	vkDestroySemaphore(device_, renderSemaphore_, nullptr);
 
 	if (useCompute_)
 	{
@@ -451,6 +493,27 @@ VkResult VulkanDevice::CreateSemaphore(VkSemaphore* outSemaphore)
 	return vkCreateSemaphore(device_, &ci, nullptr, outSemaphore);
 }
 
+VkResult VulkanDevice::CreateFence(VkFence* fence)
+{
+	VkFenceCreateInfo fenceInfo =
+	{
+		.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+		.flags = VK_FENCE_CREATE_SIGNALED_BIT
+	};
+
+	return vkCreateFence(device_, &fenceInfo, nullptr, fence);
+}
+
+/*FrameData& VulkanDevice::GetFrameContext()
+{
+	return frameContexts_[frameIndex_];
+}*/
+
+void VulkanDevice::IncrementFrameIndex()
+{
+	frameIndex_ = (frameIndex_ + 1) % 2;
+}
+
 bool VulkanDevice::IsDeviceSuitable(VkPhysicalDevice d)
 {
 	VkPhysicalDeviceProperties deviceProperties;
@@ -550,7 +613,7 @@ void VulkanDevice::EndSingleTimeCommands(VkCommandBuffer commandBuffer)
 }
 
 // Getter
-VkCommandBuffer* VulkanDevice::GetCommandBufferPtr(unsigned int index)
+/*VkCommandBuffer* VulkanDevice::GetCommandBufferPtr(unsigned int index)
 {
 	if (index >= swapchainCommandBuffers_.size())
 	{
@@ -569,7 +632,7 @@ VkCommandBuffer VulkanDevice::GetCommandBuffer(unsigned int index) const
 	}
 
 	return swapchainCommandBuffers_[index];
-}
+}*/
 
 void VulkanDevice::SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name)
 {

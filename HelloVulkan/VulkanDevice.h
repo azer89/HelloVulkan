@@ -2,6 +2,7 @@
 #define VULKAN_DEVICE
 
 #include "VulkanInstance.h"
+#include "AppSettings.h"
 
 #include "volk.h"
 
@@ -14,6 +15,14 @@ struct SwapchainSupportDetails
 	std::vector<VkPresentModeKHR> presentModes;
 };
 
+/*struct FrameData
+{
+	VkSemaphore swapchainSemaphore_;
+	VkSemaphore renderSemaphore_;
+	VkFence renderFence_;
+	VkCommandBuffer commandBuffer_;
+};*/
+
 /*
 TODO
 The name of this class is slightly innacurate since it also manages the swaphchain images.
@@ -21,6 +30,13 @@ The name of this class is slightly innacurate since it also manages the swaphcha
 class VulkanDevice
 {
 public:
+	VulkanDevice() :
+		frameIndex_(0)
+	{
+
+	}
+	~VulkanDevice() = default;
+
 	void CreateCompute(
 		VulkanInstance& instance,
 		uint32_t width, 
@@ -41,7 +57,7 @@ public:
 	// Getters
 	VkDevice GetDevice() const { return device_; }
 	VkPhysicalDevice GetPhysicalDevice() const { return physicalDevice_; }
-	VkCommandPool GetCommandPool() const { return commandPool_; }
+	//VkCommandPool GetCommandPool() const { return commandPool_; }
 	VkQueue GetGraphicsQueue() const { return graphicsQueue_; }
 	uint32_t GetFrameBufferWidth() const { return framebufferWidth_; }
 	uint32_t GetFrameBufferHeight() const { return framebufferHeight_; }
@@ -51,7 +67,7 @@ public:
 	VkCommandBuffer GetComputeCommandBuffer() const { return computeCommandBuffer_; }
 	VkQueue GetComputeQueue() const { return computeQueue_; }
 	VkFormat GetDepthFormat() const { return depthFormat_; };
-	VkCommandBuffer GetCommandBuffer(unsigned int index) const;
+	//VkCommandBuffer GetCommandBuffer(unsigned int index) const;
 
 	// Getters related to swapchain
 	VkSwapchainKHR GetSwapChain() const { return swapchain_; }
@@ -61,9 +77,12 @@ public:
 
 	// Pointer getters
 	VkSwapchainKHR* GetSwapchainPtr() { return &swapchain_; }
-	VkSemaphore* GetSwapchainSemaphorePtr() { return &swapchainSemaphore_; }
-	VkCommandBuffer* GetCommandBufferPtr(unsigned int index);
-	VkSemaphore* GetRenderSemaphorePtr() { return &renderSemaphore_; }
+	//FrameData& GetFrameContext();
+	
+	void IncrementFrameIndex();
+	//VkSemaphore* GetSwapchainSemaphorePtr() { return &swapchainSemaphore_; }
+	//VkCommandBuffer* GetCommandBufferPtr(unsigned int index);
+	//VkSemaphore* GetRenderSemaphorePtr() { return &renderSemaphore_; }
 
 	// For debugging purpose
 	void SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name);
@@ -94,6 +113,7 @@ private:
 
 	// Sync
 	VkResult CreateSemaphore(VkSemaphore* outSemaphore);
+	VkResult CreateFence(VkFence* fence);
 
 	VkFormat FindDepthFormat();
 
@@ -104,16 +124,18 @@ private:
 
 private:
 	// Sync
-	VkSemaphore swapchainSemaphore_;
-	VkSemaphore renderSemaphore_;
+	//VkSemaphore swapchainSemaphore_;
+	//VkSemaphore renderSemaphore_;
+	//std::vector<VkCommandBuffer> swapchainCommandBuffers_;
+	//std::vector<FrameContext> frameContexts_;
+	
+	
 
 	VkSwapchainKHR swapchain_;
 	// A queue of rendered images waiting to be presented to the screen
 	std::vector<VkImage> swapchainImages_;
 	std::vector<VkImageView> swapchainImageViews_;
 	VkFormat swapchainImageFormat_;
-	// We have one command buffer per swapchain
-	std::vector<VkCommandBuffer> swapchainCommandBuffers_;
 
 	uint32_t framebufferWidth_;
 	uint32_t framebufferHeight_;
@@ -135,6 +157,15 @@ private:
 	VkCommandPool computeCommandPool_;
 
 	std::vector<uint32_t> deviceQueueIndices_;
+
+public:
+	int frameIndex_;
+	//FrameData frameContexts_[2];
+	std::vector<VkCommandBuffer> commandBuffers_;
+	std::vector<VkSemaphore> swapchainSemaphores_;
+	std::vector<VkSemaphore> renderSemaphores_;
+	std::vector<VkFence> renderFences_;
+	
 };
 
 #endif
