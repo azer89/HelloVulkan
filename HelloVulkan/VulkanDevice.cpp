@@ -61,14 +61,14 @@ void VulkanDevice::CreateCompute
 	VK_CHECK(vkCreateCommandPool(device_, &cpi, nullptr, &commandPool_));
 
 	// TODO Create function CreateCommandBuffer()
-	const VkCommandBufferAllocateInfo cmdAllocateInfo =
+	/*const VkCommandBufferAllocateInfo cmdAllocateInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
 		.pNext = nullptr,
 		.commandPool = commandPool_,
 		.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
 		.commandBufferCount = 1u,
-	};
+	};*/
 
 	//VK_CHECK(vkAllocateCommandBuffers(device_, &ai, &swapchainCommandBuffers_[0]));
 	/*
@@ -99,7 +99,8 @@ void VulkanDevice::CreateCompute
 		VK_CHECK(CreateSemaphore(&swapchainSemaphores_[i]));
 		VK_CHECK(CreateSemaphore(&renderSemaphores_[i]));
 		VK_CHECK(CreateFence(&renderFences_[i]));
-		VK_CHECK(vkAllocateCommandBuffers(device_, &cmdAllocateInfo, &commandBuffers_[i]));
+		//VK_CHECK(vkAllocateCommandBuffers(device_, &cmdAllocateInfo, &commandBuffers_[i]));
+		VK_CHECK(CreateCommandBuffer(commandPool_, &commandBuffers_[i]));
 	}
 	{
 		// Create compute command pool
@@ -112,7 +113,7 @@ void VulkanDevice::CreateCompute
 		};
 		VK_CHECK(vkCreateCommandPool(device_, &cpi1, nullptr, &computeCommandPool_));
 
-		const VkCommandBufferAllocateInfo ai1 =
+		/*const VkCommandBufferAllocateInfo ai1 =
 		{
 			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
 			.pNext = nullptr,
@@ -121,7 +122,8 @@ void VulkanDevice::CreateCompute
 			.commandBufferCount = 1,
 		};
 
-		VK_CHECK(vkAllocateCommandBuffers(device_, &ai1, &computeCommandBuffer_));
+		VK_CHECK(vkAllocateCommandBuffers(device_, &ai1, &computeCommandBuffer_));*/
+		CreateCommandBuffer(computeCommandPool_, &computeCommandBuffer_);
 	}
 
 	useCompute_ = true;
@@ -504,6 +506,19 @@ VkResult VulkanDevice::CreateFence(VkFence* fence)
 	return vkCreateFence(device_, &fenceInfo, nullptr, fence);
 }
 
+VkResult VulkanDevice::CreateCommandBuffer(VkCommandPool pool, VkCommandBuffer* commandBuffer)
+{
+	const VkCommandBufferAllocateInfo allocInfo = {
+		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+		.pNext = nullptr,
+		.commandPool = pool,
+		.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+		.commandBufferCount = 1
+	};
+
+	return vkAllocateCommandBuffers(device_, &allocInfo, commandBuffer);
+}
+
 /*FrameData& VulkanDevice::GetFrameContext()
 {
 	return frameContexts_[frameIndex_];
@@ -568,7 +583,7 @@ VkCommandBuffer VulkanDevice::BeginSingleTimeCommands()
 {
 	VkCommandBuffer commandBuffer;
 
-	const VkCommandBufferAllocateInfo allocInfo = {
+	/*const VkCommandBufferAllocateInfo allocInfo = {
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
 		.pNext = nullptr,
 		.commandPool = commandPool_,
@@ -576,7 +591,8 @@ VkCommandBuffer VulkanDevice::BeginSingleTimeCommands()
 		.commandBufferCount = 1
 	};
 
-	vkAllocateCommandBuffers(device_, &allocInfo, &commandBuffer);
+	vkAllocateCommandBuffers(device_, &allocInfo, &commandBuffer);*/
+	CreateCommandBuffer(commandPool_, &commandBuffer);
 
 	const VkCommandBufferBeginInfo beginInfo = {
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,

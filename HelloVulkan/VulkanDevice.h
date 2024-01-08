@@ -30,11 +30,7 @@ The name of this class is slightly innacurate since it also manages the swaphcha
 class VulkanDevice
 {
 public:
-	VulkanDevice() :
-		frameIndex_(0)
-	{
-
-	}
+	VulkanDevice() = default;
 	~VulkanDevice() = default;
 
 	void CreateCompute(
@@ -115,6 +111,8 @@ private:
 	VkResult CreateSemaphore(VkSemaphore* outSemaphore);
 	VkResult CreateFence(VkFence* fence);
 
+	VkResult CreateCommandBuffer(VkCommandPool pool, VkCommandBuffer* commandBuffer);
+
 	VkFormat FindDepthFormat();
 
 	VkFormat FindSupportedFormat(
@@ -129,8 +127,6 @@ private:
 	//std::vector<VkCommandBuffer> swapchainCommandBuffers_;
 	//std::vector<FrameContext> frameContexts_;
 	
-	
-
 	VkSwapchainKHR swapchain_;
 	// A queue of rendered images waiting to be presented to the screen
 	std::vector<VkImage> swapchainImages_;

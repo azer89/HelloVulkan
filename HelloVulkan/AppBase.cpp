@@ -165,6 +165,12 @@ bool AppBase::DrawFrame()
 		VK_NULL_HANDLE, 
 		&imageIndex);
 
+	if (result == VK_ERROR_OUT_OF_DATE_KHR)
+	{
+		OnWindowResized();
+		return true;
+	}
+
 	vkResetFences(vulkanDevice_.GetDevice(), 1, &(vulkanDevice_.renderFences_[frameIdx]));
 	vkResetCommandBuffer(vulkanDevice_.commandBuffers_[frameIdx], 0);
 	//VK_CHECK(vkResetCommandPool(vulkanDevice_.GetDevice(), vulkanDevice_.GetCommandPool(), 0));
@@ -210,11 +216,14 @@ bool AppBase::DrawFrame()
 	};
 
 	result = vkQueuePresentKHR(vulkanDevice_.GetGraphicsQueue(), &presentInfo);
-	if (result == VK_ERROR_OUT_OF_DATE_KHR)
+	/*if (result == VK_ERROR_OUT_OF_DATE_KHR)
 	{
 		recreateSwapchain_ = true;
+	}*/
+	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || recreateSwapchain_)
+	{
+		OnWindowResized();
 	}
-
 	// TODO replace this using VkFence
 	//VK_CHECK(vkDeviceWaitIdle(vulkanDevice_.GetDevice()));
 
@@ -250,6 +259,16 @@ void AppBase::FillCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageInd
 
 void AppBase::OnWindowResized()
 {
+	int width = 0, height = 0;
+	glfwGetFramebufferSize(glfwWindow_, &width, &height);
+	while (width == 0 || height == 0)
+	{
+		glfwGetFramebufferSize(glfwWindow_, &width, &height);
+		glfwWaitEvents();
+	}
+
+	vkDeviceWaitIdle(vulkanDevice_.GetDevice());
+
 	vulkanDevice_.RecreateSwapchainResources(
 		vulkanInstance_,
 		windowWidth_,
@@ -262,6 +281,8 @@ void AppBase::OnWindowResized()
 	{
 		r->OnWindowResized(vulkanDevice_);
 	}
+
+	recreateSwapchain_ = false;
 }
 
 void AppBase::InitIMGUI()
@@ -330,6 +351,8 @@ void AppBase::FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
 		static_cast<float>(windowWidth_),
 		static_cast<float>(windowHeight_)
 	);
+
+	recreateSwapchain_ = true;
 }
 
 void AppBase::MouseCallback(GLFWwindow* window, double xposIn, double yposIn)
