@@ -18,7 +18,7 @@ https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d
 
 <img width="850" alt="vulkan_tachikoma" src="https://github.com/azer89/HelloVulkan/assets/790432/535a2d75-fffd-436f-bf18-df18968b79e0">
 
-<img width="850" alt="vulkan_sponza" src="https://github.com/azer89/HelloVulkan/assets/790432/bf2f27c4-86c3-4b75-a1f7-2f6674b2a3d1">
+<img width="850" alt="vulkan_sponza" src="https://github.com/azer89/HelloVulkan/assets/790432/54598b36-b136-4d0e-89bf-86239d9219c8">
 
 
 ### PBR Workflow
