@@ -117,7 +117,7 @@ void RendererTonemap::UpdateDescriptorSets(VulkanDevice& vkDev)
 		uint32_t bindingIndex = 0u;
 		VkDescriptorSet ds = descriptorSets_[i];
 
-		const VkDescriptorImageInfo  imageInfo =
+		const VkDescriptorImageInfo imageInfo =
 		{
 			singleSampledColorImage_->defaultImageSampler_,
 			singleSampledColorImage_->imageView_,

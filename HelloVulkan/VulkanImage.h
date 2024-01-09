@@ -160,6 +160,8 @@ public:
 		uint32_t layerCount = 1,
 		uint32_t mipLevels = 1);
 
+	VkDescriptorImageInfo GetDescriptorImageInfo();
+
 	void SetDebugName(VulkanDevice& vkDev, const std::string& debugName);
 
 private:

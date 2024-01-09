@@ -225,15 +225,33 @@ void RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 
 	VK_CHECK(vkAllocateDescriptorSets(vkDev.GetDevice(), &allocInfo, mesh.descriptorSets_.data()));
 
+	// Mesh textures
+	std::vector<VkDescriptorImageInfo> imageInfoArray;
+	std::vector<uint32_t> bindIndexArray;
+	for (const auto& elem : mesh.textures_)
+	{
+		imageInfoArray.push_back(elem.second->GetDescriptorImageInfo());
+		// The enum index starts from 1
+		uint32_t meshBindIndex = PBR_TEXTURE_START_BIND_INDEX + static_cast<uint32_t>(elem.first) - 1;
+		bindIndexArray.emplace_back(meshBindIndex);
+	}
+
+	// PBR textures
+	const VkDescriptorImageInfo specularImageInfo = specularMap_->GetDescriptorImageInfo();
+	const VkDescriptorImageInfo diffuseImageInfo = diffuseMap_->GetDescriptorImageInfo();
+	const VkDescriptorImageInfo BRDFLUTImageInfo = brdfLUT_->GetDescriptorImageInfo();
+
+	// Create a descriptor per swapchain
 	for (size_t i = 0; i < swapchainLength; i++)
 	{
+		uint32_t bindIndex = 0;
+
 		VkDescriptorSet ds = mesh.descriptorSets_[i];
 
 		const VkDescriptorBufferInfo bufferInfo1 = { perFrameUBOs_[i].buffer_, 0, sizeof(PerFrameUBO)};
 		const VkDescriptorBufferInfo bufferInfo2 = { parentModel->modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
 
-		uint32_t bindIndex = 0;
-
+		// UBOs
 		std::vector<VkWriteDescriptorSet> descriptorWrites;
 		descriptorWrites.emplace_back(
 			BufferWriteDescriptorSet(
@@ -247,22 +265,8 @@ void RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 				&bufferInfo2, 
 				bindIndex++, 
 				VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
-		
-		std::vector<VkDescriptorImageInfo> imageInfoArray;
-		std::vector<uint32_t> bindIndexArray;
-		for (const auto& elem : mesh.textures_)
-		{
-			imageInfoArray.emplace_back<VkDescriptorImageInfo>
-				({
-					elem.second->defaultImageSampler_,
-					elem.second->imageView_,
-					VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-					});
-			// The enum index starts from 1
-			uint32_t meshBindIndex = PBR_TEXTURE_START_BIND_INDEX + static_cast<uint32_t>(elem.first) - 1;
-			bindIndexArray.emplace_back(meshBindIndex);
-		}
 
+		// Mesh textures
 		for (size_t i = 0; i < imageInfoArray.size(); ++i)
 		{
 			descriptorWrites.emplace_back
@@ -278,25 +282,7 @@ void RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 			bindIndex++;
 		}
 
-		const VkDescriptorImageInfo specularImageInfo = 
-		{ 
-			specularMap_->defaultImageSampler_,
-			specularMap_->imageView_, 
-			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL 
-		};
-		const VkDescriptorImageInfo diffuseImageInfo = 
-		{ 
-			diffuseMap_->defaultImageSampler_,
-			diffuseMap_->imageView_, 
-			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL 
-		};
-		const VkDescriptorImageInfo BRDFLUTImageInfo = 
-		{ 
-			brdfLUT_->defaultImageSampler_,
-			brdfLUT_->imageView_, 
-			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL 
-		};
-
+		// PBR textures
 		descriptorWrites.emplace_back(
 			ImageWriteDescriptorSet(ds, &specularImageInfo, bindIndex++)
 		);
