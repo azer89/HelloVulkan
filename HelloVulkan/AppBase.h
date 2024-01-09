@@ -74,7 +74,7 @@ protected:
 	// Window size
 	uint32_t windowWidth_;
 	uint32_t windowHeight_;
-	bool recreateSwapchain_;
+	bool shouldRecreateSwapchain_;
 
 	// Shared by multiple render passes
 	// TODO change to unique ptrs

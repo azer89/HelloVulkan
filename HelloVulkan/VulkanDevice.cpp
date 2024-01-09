@@ -61,9 +61,9 @@ void VulkanDevice::CreateCompute
 	frameDataArray_ = std::vector<FrameData>(AppSettings::FrameOverlapCount);
 	for (unsigned int i = 0; i < AppSettings::FrameOverlapCount; ++i)
 	{
-		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].swapchainSemaphore_)));
+		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].nextSwapchainImageSemaphore_)));
 		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].renderSemaphore_)));
-		VK_CHECK(CreateFence(&(frameDataArray_[i].renderFence_)));
+		VK_CHECK(CreateFence(&(frameDataArray_[i].queueSubmitFence_)));
 		VK_CHECK(CreateCommandBuffer(commandPool_, &(frameDataArray_[i].commandBuffer_)));
 	}
 	/*swapchainSemaphores_.resize(2);
@@ -98,9 +98,9 @@ void VulkanDevice::Destroy()
 {
 	for (unsigned int i = 0; i < AppSettings::FrameOverlapCount; ++i)
 	{
-		vkDestroySemaphore(device_, frameDataArray_[i].swapchainSemaphore_, nullptr);
+		vkDestroySemaphore(device_, frameDataArray_[i].nextSwapchainImageSemaphore_, nullptr);
 		vkDestroySemaphore(device_, frameDataArray_[i].renderSemaphore_, nullptr);
-		vkDestroyFence(device_, frameDataArray_[i].renderFence_, nullptr);
+		vkDestroyFence(device_, frameDataArray_[i].queueSubmitFence_, nullptr);
 	}
 
 	for (size_t i = 0; i < swapchainImages_.size(); i++)

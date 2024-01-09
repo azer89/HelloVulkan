@@ -17,9 +17,9 @@ struct SwapchainSupportDetails
 
 struct FrameData
 {
-	VkSemaphore swapchainSemaphore_;
+	VkSemaphore nextSwapchainImageSemaphore_;
 	VkSemaphore renderSemaphore_;
-	VkFence renderFence_;
+	VkFence queueSubmitFence_;
 	VkCommandBuffer commandBuffer_;
 };
 
