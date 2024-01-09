@@ -14,7 +14,7 @@ namespace AppSettings
 	// VK_PRESENT_MODE_MAILBOX_KHR --> Triple buffering
 	const VkPresentModeKHR PresentMode = VK_PRESENT_MODE_FIFO_KHR;
 
-	// Number of frames to overlap when rendering
+	// Number of overlapping frames when rendering
 	const unsigned int FrameOverlapCount = 2;
 	
 	const std::string ScreenTitle = "Hello Vulkan";

@@ -56,7 +56,7 @@ void VulkanDevice::CreateCompute
 
 	VK_CHECK(vkCreateCommandPool(device_, &cpi, nullptr, &commandPool_));
 
-	// Frame contexts
+	// Frame data
 	frameIndex_ = 0;
 	frameDataArray_ = std::vector<FrameData>(AppSettings::FrameOverlapCount);
 	for (unsigned int i = 0; i < AppSettings::FrameOverlapCount; ++i)

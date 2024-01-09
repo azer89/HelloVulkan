@@ -134,7 +134,7 @@ private:
 	VkQueue graphicsQueue_;
 	uint32_t graphicsFamily_;
 
-	// Note that all graphics command buffers is created from this command pool below.
+	// Note that all graphics command buffers are created from this command pool below.
 	// So you need to create multiple command pools if you want to use vkResetCommandPool().
 	VkCommandPool commandPool_;
 
