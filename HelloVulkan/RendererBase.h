@@ -35,8 +35,6 @@ public:
 		UpdateUniformBuffer(vkDev.GetDevice(), perFrameUBOs_[imageIndex], &ubo, sizeof(PerFrameUBO));
 	}
 
-	
-
 protected:
 	VkDevice device_ = nullptr;
 
