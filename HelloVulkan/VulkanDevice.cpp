@@ -58,13 +58,13 @@ void VulkanDevice::CreateCompute
 
 	// Frame contexts
 	frameIndex_ = 0;
-	frameContexts_ = std::vector<FrameContext>(AppSettings::FrameOverlapCount);
+	frameDataArray_ = std::vector<FrameData>(AppSettings::FrameOverlapCount);
 	for (unsigned int i = 0; i < AppSettings::FrameOverlapCount; ++i)
 	{
-		VK_CHECK(CreateSemaphore(&(frameContexts_[i].swapchainSemaphore_)));
-		VK_CHECK(CreateSemaphore(&(frameContexts_[i].renderSemaphore_)));
-		VK_CHECK(CreateFence(&(frameContexts_[i].renderFence_)));
-		VK_CHECK(CreateCommandBuffer(commandPool_, &(frameContexts_[i].commandBuffer_)));
+		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].swapchainSemaphore_)));
+		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].renderSemaphore_)));
+		VK_CHECK(CreateFence(&(frameDataArray_[i].renderFence_)));
+		VK_CHECK(CreateCommandBuffer(commandPool_, &(frameDataArray_[i].commandBuffer_)));
 	}
 	/*swapchainSemaphores_.resize(2);
 	renderSemaphores_.resize(2);
@@ -98,9 +98,9 @@ void VulkanDevice::Destroy()
 {
 	for (unsigned int i = 0; i < AppSettings::FrameOverlapCount; ++i)
 	{
-		vkDestroySemaphore(device_, frameContexts_[i].swapchainSemaphore_, nullptr);
-		vkDestroySemaphore(device_, frameContexts_[i].renderSemaphore_, nullptr);
-		vkDestroyFence(device_, frameContexts_[i].renderFence_, nullptr);
+		vkDestroySemaphore(device_, frameDataArray_[i].swapchainSemaphore_, nullptr);
+		vkDestroySemaphore(device_, frameDataArray_[i].renderSemaphore_, nullptr);
+		vkDestroyFence(device_, frameDataArray_[i].renderFence_, nullptr);
 	}
 
 	for (size_t i = 0; i < swapchainImages_.size(); i++)
@@ -476,9 +476,9 @@ VkResult VulkanDevice::CreateCommandBuffer(VkCommandPool pool, VkCommandBuffer* 
 	return vkAllocateCommandBuffers(device_, &allocInfo, commandBuffer);
 }
 
-FrameContext& VulkanDevice::GetFrameContext()
+FrameData& VulkanDevice::GetCurrentFrameData()
 {
-	return frameContexts_[frameIndex_];
+	return frameDataArray_[frameIndex_];
 }
 
 void VulkanDevice::IncrementFrameIndex()

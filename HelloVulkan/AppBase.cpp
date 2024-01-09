@@ -149,7 +149,7 @@ bool AppBase::DrawFrame()
 		OnWindowResized();
 		recreateSwapchain_ = false;
 	}*/
-	FrameContext& frameContext = vulkanDevice_.GetFrameContext();
+	FrameData& frameContext = vulkanDevice_.GetCurrentFrameData();
 	//std::cout << frameContextPtr->renderFence_ << '\n';
 	//int frameIdx = vulkanDevice_.frameIndex_;
 	vkWaitForFences(vulkanDevice_.GetDevice(), 1, &(frameContext.renderFence_), VK_TRUE, UINT64_MAX);

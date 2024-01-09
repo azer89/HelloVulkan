@@ -15,7 +15,7 @@ struct SwapchainSupportDetails
 	std::vector<VkPresentModeKHR> presentModes;
 };
 
-struct FrameContext
+struct FrameData
 {
 	VkSemaphore swapchainSemaphore_;
 	VkSemaphore renderSemaphore_;
@@ -59,7 +59,6 @@ public:
 	VkCommandBuffer GetComputeCommandBuffer() const { return computeCommandBuffer_; }
 	VkQueue GetComputeQueue() const { return computeQueue_; }
 	VkFormat GetDepthFormat() const { return depthFormat_; };
-	//VkCommandBuffer GetCommandBuffer(unsigned int index) const;
 
 	// Getters related to swapchain
 	VkSwapchainKHR GetSwapChain() const { return swapchain_; }
@@ -69,12 +68,9 @@ public:
 
 	// Pointer getters
 	VkSwapchainKHR* GetSwapchainPtr() { return &swapchain_; }
-	FrameContext& GetFrameContext();
-	
+
+	FrameData& GetCurrentFrameData();
 	void IncrementFrameIndex();
-	//VkSemaphore* GetSwapchainSemaphorePtr() { return &swapchainSemaphore_; }
-	//VkCommandBuffer* GetCommandBufferPtr(unsigned int index);
-	//VkSemaphore* GetRenderSemaphorePtr() { return &renderSemaphore_; }
 
 	// For debugging purpose
 	void SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name);
@@ -145,11 +141,7 @@ private:
 	std::vector<uint32_t> deviceQueueIndices_;
 
 	int frameIndex_;
-	std::vector<FrameContext> frameContexts_;
-	/*std::vector<VkCommandBuffer> commandBuffers_;
-	std::vector<VkSemaphore> swapchainSemaphores_;
-	std::vector<VkSemaphore> renderSemaphores_;
-	std::vector<VkFence> renderFences_;*/
+	std::vector<FrameData> frameDataArray_;
 };
 
 #endif
