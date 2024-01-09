@@ -19,7 +19,7 @@ public:
 
 protected:
 	virtual void UpdateUBOs(uint32_t imageIndex) = 0;
-	void FillCommandBuffer(uint32_t imageIndex);
+	void FillCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 	void CreateSharedImageResources();
 	void OnWindowResized();
 	bool DrawFrame();
@@ -74,7 +74,7 @@ protected:
 	// Window size
 	uint32_t windowWidth_;
 	uint32_t windowHeight_;
-	bool recreateSwapchain_;
+	bool shouldRecreateSwapchain_;
 
 	// Shared by multiple render passes
 	// TODO change to unique ptrs

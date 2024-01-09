@@ -2,6 +2,7 @@
 #define VULKAN_DEVICE
 
 #include "VulkanInstance.h"
+#include "AppSettings.h"
 
 #include "volk.h"
 
@@ -9,18 +10,32 @@
 
 struct SwapchainSupportDetails
 {
-	VkSurfaceCapabilitiesKHR capabilities = {};
-	std::vector<VkSurfaceFormatKHR> formats;
-	std::vector<VkPresentModeKHR> presentModes;
+	VkSurfaceCapabilitiesKHR capabilities_ = {};
+	std::vector<VkSurfaceFormatKHR> formats_;
+	std::vector<VkPresentModeKHR> presentModes_;
 };
 
-/*
-TODO
-The name of this class is slightly innacurate since it also manages the swaphchain images.
-*/
+struct FrameData
+{
+	VkSemaphore nextSwapchainImageSemaphore_;
+	VkSemaphore renderSemaphore_;
+	VkFence queueSubmitFence_;
+	VkCommandBuffer commandBuffer_;
+
+	void Destroy(VkDevice device)
+	{
+		vkDestroySemaphore(device, nextSwapchainImageSemaphore_, nullptr);
+		vkDestroySemaphore(device, renderSemaphore_, nullptr);
+		vkDestroyFence(device, queueSubmitFence_, nullptr);
+	}
+};
+
 class VulkanDevice
 {
 public:
+	VulkanDevice() = default;
+	~VulkanDevice() = default;
+
 	void CreateCompute(
 		VulkanInstance& instance,
 		uint32_t width, 
@@ -41,7 +56,6 @@ public:
 	// Getters
 	VkDevice GetDevice() const { return device_; }
 	VkPhysicalDevice GetPhysicalDevice() const { return physicalDevice_; }
-	VkCommandPool GetCommandPool() const { return commandPool_; }
 	VkQueue GetGraphicsQueue() const { return graphicsQueue_; }
 	uint32_t GetFrameBufferWidth() const { return framebufferWidth_; }
 	uint32_t GetFrameBufferHeight() const { return framebufferHeight_; }
@@ -51,7 +65,6 @@ public:
 	VkCommandBuffer GetComputeCommandBuffer() const { return computeCommandBuffer_; }
 	VkQueue GetComputeQueue() const { return computeQueue_; }
 	VkFormat GetDepthFormat() const { return depthFormat_; };
-	VkCommandBuffer GetCommandBuffer(unsigned int index) const;
 
 	// Getters related to swapchain
 	VkSwapchainKHR GetSwapChain() const { return swapchain_; }
@@ -61,9 +74,10 @@ public:
 
 	// Pointer getters
 	VkSwapchainKHR* GetSwapchainPtr() { return &swapchain_; }
-	VkSemaphore* GetSwapchainSemaphorePtr() { return &swapchainSemaphore_; }
-	VkCommandBuffer* GetCommandBufferPtr(unsigned int index);
-	VkSemaphore* GetRenderSemaphorePtr() { return &renderSemaphore_; }
+
+	// Sync objects and render command buffer
+	FrameData& GetCurrentFrameData();
+	void IncrementFrameIndex();
 
 	// For debugging purpose
 	void SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name);
@@ -81,7 +95,7 @@ private:
 	bool IsDeviceSuitable(VkPhysicalDevice d);
 	VkSampleCountFlagBits GetMaxUsableSampleCount(VkPhysicalDevice d);
 
-	// Swap chain
+	// Swapchain
 	VkResult CreateSwapchain(VkSurfaceKHR surface);
 	size_t CreateSwapchainImages();
 	bool CreateSwapChainImageView(
@@ -90,30 +104,24 @@ private:
 		VkImageAspectFlags aspectFlags);
 	SwapchainSupportDetails QuerySwapchainSupport(VkSurfaceKHR surface);
 	VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
-	uint32_t GetSwapchainImageCount(const VkSurfaceCapabilitiesKHR& capabilities);
+	uint32_t GetSwapchainImageCount(const VkSurfaceCapabilitiesKHR& capabilities_);
 
-	// Sync
 	VkResult CreateSemaphore(VkSemaphore* outSemaphore);
+	VkResult CreateFence(VkFence* fence);
+	VkResult CreateCommandBuffer(VkCommandPool pool, VkCommandBuffer* commandBuffer);
 
 	VkFormat FindDepthFormat();
-
 	VkFormat FindSupportedFormat(
 		const std::vector<VkFormat>& candidates,
 		VkImageTiling tiling,
 		VkFormatFeatureFlags features);
 
 private:
-	// Sync
-	VkSemaphore swapchainSemaphore_;
-	VkSemaphore renderSemaphore_;
-
 	VkSwapchainKHR swapchain_;
 	// A queue of rendered images waiting to be presented to the screen
 	std::vector<VkImage> swapchainImages_;
 	std::vector<VkImageView> swapchainImageViews_;
 	VkFormat swapchainImageFormat_;
-	// We have one command buffer per swapchain
-	std::vector<VkCommandBuffer> swapchainCommandBuffers_;
 
 	uint32_t framebufferWidth_;
 	uint32_t framebufferHeight_;
@@ -125,6 +133,9 @@ private:
 
 	VkQueue graphicsQueue_;
 	uint32_t graphicsFamily_;
+
+	// Note that all graphics command buffers are created from this command pool below.
+	// So you need to create multiple command pools if you want to use vkResetCommandPool().
 	VkCommandPool commandPool_;
 
 	// This may coincide with graphicsFamily
@@ -135,6 +146,9 @@ private:
 	VkCommandPool computeCommandPool_;
 
 	std::vector<uint32_t> deviceQueueIndices_;
+
+	int frameIndex_;
+	std::vector<FrameData> frameDataArray_;
 };
 
 #endif

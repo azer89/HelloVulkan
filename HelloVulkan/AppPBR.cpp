@@ -170,6 +170,9 @@ int AppPBR::MainLoop()
 		DrawFrame();
 	}
 
+	// Wait until everything is finished
+	vkDeviceWaitIdle(vulkanDevice_.GetDevice());
+
 	DestroyResources();
 
 	Terminate();

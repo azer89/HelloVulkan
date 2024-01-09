@@ -46,30 +46,26 @@ void VulkanDevice::CreateCompute
 	// TODO Create a swapchain class
 	VK_CHECK(CreateSwapchain(instance.GetSurface()));
 	const size_t imageCount = CreateSwapchainImages();
-	swapchainCommandBuffers_.resize(imageCount);
-
-	VK_CHECK(CreateSemaphore(&swapchainSemaphore_));
-	VK_CHECK(CreateSemaphore(&renderSemaphore_));
 
 	const VkCommandPoolCreateInfo cpi =
 	{
 		.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-		.flags = 0,
+		.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
 		.queueFamilyIndex = graphicsFamily_
 	};
 
 	VK_CHECK(vkCreateCommandPool(device_, &cpi, nullptr, &commandPool_));
 
-	const VkCommandBufferAllocateInfo ai =
+	// Frame data
+	frameIndex_ = 0;
+	frameDataArray_ = std::vector<FrameData>(AppSettings::FrameOverlapCount);
+	for (unsigned int i = 0; i < AppSettings::FrameOverlapCount; ++i)
 	{
-		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-		.pNext = nullptr,
-		.commandPool = commandPool_,
-		.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-		.commandBufferCount = static_cast<uint32_t>(swapchainImages_.size()),
-	};
-
-	VK_CHECK(vkAllocateCommandBuffers(device_, &ai, &swapchainCommandBuffers_[0]));
+		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].nextSwapchainImageSemaphore_)));
+		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].renderSemaphore_)));
+		VK_CHECK(CreateFence(&(frameDataArray_[i].queueSubmitFence_)));
+		VK_CHECK(CreateCommandBuffer(commandPool_, &(frameDataArray_[i].commandBuffer_)));
+	}
 
 	{
 		// Create compute command pool
@@ -82,16 +78,7 @@ void VulkanDevice::CreateCompute
 		};
 		VK_CHECK(vkCreateCommandPool(device_, &cpi1, nullptr, &computeCommandPool_));
 
-		const VkCommandBufferAllocateInfo ai1 =
-		{
-			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-			.pNext = nullptr,
-			.commandPool = computeCommandPool_,
-			.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-			.commandBufferCount = 1,
-		};
-
-		VK_CHECK(vkAllocateCommandBuffers(device_, &ai1, &computeCommandBuffer_));
+		CreateCommandBuffer(computeCommandPool_, &computeCommandBuffer_);
 	}
 
 	useCompute_ = true;
@@ -99,6 +86,11 @@ void VulkanDevice::CreateCompute
 
 void VulkanDevice::Destroy()
 {
+	for (unsigned int i = 0; i < AppSettings::FrameOverlapCount; ++i)
+	{
+		frameDataArray_[i].Destroy(device_);
+	}
+
 	for (size_t i = 0; i < swapchainImages_.size(); i++)
 	{
 		vkDestroyImageView(device_, swapchainImageViews_[i], nullptr);
@@ -106,9 +98,6 @@ void VulkanDevice::Destroy()
 	vkDestroySwapchainKHR(device_, swapchain_, nullptr);
 
 	vkDestroyCommandPool(device_, commandPool_, nullptr);
-
-	vkDestroySemaphore(device_, swapchainSemaphore_, nullptr);
-	vkDestroySemaphore(device_, renderSemaphore_, nullptr);
 
 	if (useCompute_)
 	{
@@ -298,14 +287,14 @@ VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface)
 	VkSurfaceFormatKHR surfaceFormat = { swapchainImageFormat_, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
 
 	auto swapchainSupport = QuerySwapchainSupport(surface);
-	auto presentMode = ChooseSwapPresentMode(swapchainSupport.presentModes);
+	auto presentMode = ChooseSwapPresentMode(swapchainSupport.presentModes_);
 
 	const VkSwapchainCreateInfoKHR createInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
 		.flags = 0,
 		.surface = surface,
-		.minImageCount = GetSwapchainImageCount(swapchainSupport.capabilities),
+		.minImageCount = GetSwapchainImageCount(swapchainSupport.capabilities_),
 		.imageFormat = surfaceFormat.format,
 		.imageColorSpace = surfaceFormat.colorSpace,
 		.imageExtent = {.width = framebufferWidth_, .height = framebufferHeight_ },
@@ -316,7 +305,7 @@ VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface)
 		.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE,
 		.queueFamilyIndexCount = 1,
 		.pQueueFamilyIndices = &graphicsFamily_,
-		.preTransform = swapchainSupport.capabilities.currentTransform,
+		.preTransform = swapchainSupport.capabilities_.currentTransform,
 		.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
 		.presentMode = presentMode,
 		.clipped = VK_TRUE,
@@ -339,13 +328,13 @@ VkPresentModeKHR VulkanDevice::ChooseSwapPresentMode(const std::vector<VkPresent
 	return VK_PRESENT_MODE_FIFO_KHR;
 }
 
-uint32_t VulkanDevice::GetSwapchainImageCount(const VkSurfaceCapabilitiesKHR& capabilities)
+uint32_t VulkanDevice::GetSwapchainImageCount(const VkSurfaceCapabilitiesKHR& capabilities_)
 {
 	// Request one additional image to make sure
 	// we are not waiting on the GPU to complete any operations
-	const uint32_t imageCount = capabilities.minImageCount + 1;
-	const bool imageCountExceeded = capabilities.maxImageCount > 0 && imageCount > capabilities.maxImageCount;
-	return imageCountExceeded ? capabilities.maxImageCount : imageCount;
+	const uint32_t imageCount = capabilities_.minImageCount + 1;
+	const bool imageCountExceeded = capabilities_.maxImageCount > 0 && imageCount > capabilities_.maxImageCount;
+	return imageCountExceeded ? capabilities_.maxImageCount : imageCount;
 }
 
 
@@ -414,19 +403,19 @@ void VulkanDevice::RecreateSwapchainResources(
 SwapchainSupportDetails VulkanDevice::QuerySwapchainSupport(VkSurfaceKHR surface)
 {
 	SwapchainSupportDetails details;
-	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice_, surface, &details.capabilities);
+	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice_, surface, &details.capabilities_);
 
 	uint32_t formatCount;
 	vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice_, surface, &formatCount, nullptr);
 
 	if (formatCount)
 	{
-		details.formats.resize(formatCount);
+		details.formats_.resize(formatCount);
 		vkGetPhysicalDeviceSurfaceFormatsKHR(
 			physicalDevice_, 
 			surface, 
 			&formatCount, 
-			details.formats.data());
+			details.formats_.data());
 	}
 
 	uint32_t presentModeCount;
@@ -434,8 +423,8 @@ SwapchainSupportDetails VulkanDevice::QuerySwapchainSupport(VkSurfaceKHR surface
 
 	if (presentModeCount)
 	{
-		details.presentModes.resize(presentModeCount);
-		vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice_, surface, &presentModeCount, details.presentModes.data());
+		details.presentModes_.resize(presentModeCount);
+		vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice_, surface, &presentModeCount, details.presentModes_.data());
 	}
 
 	return details;
@@ -449,6 +438,40 @@ VkResult VulkanDevice::CreateSemaphore(VkSemaphore* outSemaphore)
 	};
 
 	return vkCreateSemaphore(device_, &ci, nullptr, outSemaphore);
+}
+
+VkResult VulkanDevice::CreateFence(VkFence* fence)
+{
+	VkFenceCreateInfo fenceInfo =
+	{
+		.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+		.flags = VK_FENCE_CREATE_SIGNALED_BIT
+	};
+
+	return vkCreateFence(device_, &fenceInfo, nullptr, fence);
+}
+
+VkResult VulkanDevice::CreateCommandBuffer(VkCommandPool pool, VkCommandBuffer* commandBuffer)
+{
+	const VkCommandBufferAllocateInfo allocInfo = {
+		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+		.pNext = nullptr,
+		.commandPool = pool,
+		.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+		.commandBufferCount = 1
+	};
+
+	return vkAllocateCommandBuffers(device_, &allocInfo, commandBuffer);
+}
+
+FrameData& VulkanDevice::GetCurrentFrameData()
+{
+	return frameDataArray_[frameIndex_];
+}
+
+void VulkanDevice::IncrementFrameIndex()
+{
+	frameIndex_ = (frameIndex_ + 1) % 2;
 }
 
 bool VulkanDevice::IsDeviceSuitable(VkPhysicalDevice d)
@@ -497,23 +520,13 @@ VkFormat VulkanDevice::FindSupportedFormat(
 		}
 	}
 
-	std::cerr << "Failed to find supported format\n";
-	exit(0);
+	throw std::runtime_error("Failed to find supported format\n");
 }
 
 VkCommandBuffer VulkanDevice::BeginSingleTimeCommands()
 {
 	VkCommandBuffer commandBuffer;
-
-	const VkCommandBufferAllocateInfo allocInfo = {
-		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-		.pNext = nullptr,
-		.commandPool = commandPool_,
-		.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-		.commandBufferCount = 1
-	};
-
-	vkAllocateCommandBuffers(device_, &allocInfo, &commandBuffer);
+	CreateCommandBuffer(commandPool_, &commandBuffer);
 
 	const VkCommandBufferBeginInfo beginInfo = {
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -547,28 +560,6 @@ void VulkanDevice::EndSingleTimeCommands(VkCommandBuffer commandBuffer)
 	vkQueueWaitIdle(graphicsQueue_);
 
 	vkFreeCommandBuffers(device_, commandPool_, 1, &commandBuffer);
-}
-
-// Getter
-VkCommandBuffer* VulkanDevice::GetCommandBufferPtr(unsigned int index)
-{
-	if (index >= swapchainCommandBuffers_.size())
-	{
-		return nullptr;
-	}
-
-	return &swapchainCommandBuffers_[index];
-}
-
-// Getter
-VkCommandBuffer VulkanDevice::GetCommandBuffer(unsigned int index) const
-{
-	if (index >= swapchainCommandBuffers_.size())
-	{
-		return nullptr;
-	}
-
-	return swapchainCommandBuffers_[index];
 }
 
 void VulkanDevice::SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name)
