@@ -15,18 +15,14 @@ struct SwapchainSupportDetails
 	std::vector<VkPresentModeKHR> presentModes;
 };
 
-/*struct FrameData
+struct FrameContext
 {
 	VkSemaphore swapchainSemaphore_;
 	VkSemaphore renderSemaphore_;
 	VkFence renderFence_;
 	VkCommandBuffer commandBuffer_;
-};*/
+};
 
-/*
-TODO
-The name of this class is slightly innacurate since it also manages the swaphchain images.
-*/
 class VulkanDevice
 {
 public:
@@ -73,7 +69,7 @@ public:
 
 	// Pointer getters
 	VkSwapchainKHR* GetSwapchainPtr() { return &swapchain_; }
-	//FrameData& GetFrameContext();
+	FrameContext& GetFrameContext();
 	
 	void IncrementFrameIndex();
 	//VkSemaphore* GetSwapchainSemaphorePtr() { return &swapchainSemaphore_; }
@@ -107,26 +103,17 @@ private:
 	VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 	uint32_t GetSwapchainImageCount(const VkSurfaceCapabilitiesKHR& capabilities);
 
-	// Sync
 	VkResult CreateSemaphore(VkSemaphore* outSemaphore);
 	VkResult CreateFence(VkFence* fence);
-
 	VkResult CreateCommandBuffer(VkCommandPool pool, VkCommandBuffer* commandBuffer);
 
 	VkFormat FindDepthFormat();
-
 	VkFormat FindSupportedFormat(
 		const std::vector<VkFormat>& candidates,
 		VkImageTiling tiling,
 		VkFormatFeatureFlags features);
 
 private:
-	// Sync
-	//VkSemaphore swapchainSemaphore_;
-	//VkSemaphore renderSemaphore_;
-	//std::vector<VkCommandBuffer> swapchainCommandBuffers_;
-	//std::vector<FrameContext> frameContexts_;
-	
 	VkSwapchainKHR swapchain_;
 	// A queue of rendered images waiting to be presented to the screen
 	std::vector<VkImage> swapchainImages_;
@@ -143,6 +130,9 @@ private:
 
 	VkQueue graphicsQueue_;
 	uint32_t graphicsFamily_;
+
+	// Note that all graphics command buffers is created from this command pool below.
+	// So you need to create multiple command pools if you want to use vkResetCommandPool().
 	VkCommandPool commandPool_;
 
 	// This may coincide with graphicsFamily
@@ -154,14 +144,12 @@ private:
 
 	std::vector<uint32_t> deviceQueueIndices_;
 
-public:
 	int frameIndex_;
-	//FrameData frameContexts_[2];
-	std::vector<VkCommandBuffer> commandBuffers_;
+	std::vector<FrameContext> frameContexts_;
+	/*std::vector<VkCommandBuffer> commandBuffers_;
 	std::vector<VkSemaphore> swapchainSemaphores_;
 	std::vector<VkSemaphore> renderSemaphores_;
-	std::vector<VkFence> renderFences_;
-	
+	std::vector<VkFence> renderFences_;*/
 };
 
 #endif

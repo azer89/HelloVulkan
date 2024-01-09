@@ -149,10 +149,10 @@ bool AppBase::DrawFrame()
 		OnWindowResized();
 		recreateSwapchain_ = false;
 	}*/
-	//FrameData& frameContext = vulkanDevice_.GetFrameContext();
+	FrameContext& frameContext = vulkanDevice_.GetFrameContext();
 	//std::cout << frameContextPtr->renderFence_ << '\n';
-	int frameIdx = vulkanDevice_.frameIndex_;
-	vkWaitForFences(vulkanDevice_.GetDevice(), 1, &(vulkanDevice_.renderFences_[frameIdx]), VK_TRUE, UINT64_MAX);
+	//int frameIdx = vulkanDevice_.frameIndex_;
+	vkWaitForFences(vulkanDevice_.GetDevice(), 1, &(frameContext.renderFence_), VK_TRUE, UINT64_MAX);
 
 	uint32_t imageIndex = 0;
 	VkResult result = vkAcquireNextImageKHR(
@@ -161,7 +161,7 @@ bool AppBase::DrawFrame()
 		0, 
 		// Wait for the swapchain image to become available
 		//*(vulkanDevice_.GetSwapchainSemaphorePtr()), 
-		vulkanDevice_.swapchainSemaphores_[frameIdx],
+		frameContext.swapchainSemaphore_,
 		VK_NULL_HANDLE, 
 		&imageIndex);
 
@@ -171,15 +171,15 @@ bool AppBase::DrawFrame()
 		return true;
 	}
 
-	vkResetFences(vulkanDevice_.GetDevice(), 1, &(vulkanDevice_.renderFences_[frameIdx]));
-	vkResetCommandBuffer(vulkanDevice_.commandBuffers_[frameIdx], 0);
+	vkResetFences(vulkanDevice_.GetDevice(), 1, &(frameContext.renderFence_));
+	vkResetCommandBuffer(frameContext.commandBuffer_, 0);
 	//VK_CHECK(vkResetCommandPool(vulkanDevice_.GetDevice(), vulkanDevice_.GetCommandPool(), 0));
 
 	// Send UBOs to shaders
 	UpdateUBOs(imageIndex);
 
 	// Rendering here
-	FillCommandBuffer(vulkanDevice_.commandBuffers_[frameIdx], imageIndex);
+	FillCommandBuffer(frameContext.commandBuffer_, imageIndex);
 
 	const VkPipelineStageFlags waitStages[] = 
 		{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
@@ -191,17 +191,17 @@ bool AppBase::DrawFrame()
 		.waitSemaphoreCount = 1u,
 		// Wait for the swapchain image to become available
 		//.pWaitSemaphores = vulkanDevice_.GetSwapchainSemaphorePtr(),
-		.pWaitSemaphores = &(vulkanDevice_.swapchainSemaphores_[frameIdx]),
+		.pWaitSemaphores = &(frameContext.swapchainSemaphore_),
 		.pWaitDstStageMask = waitStages,
 		.commandBufferCount = 1u,
 		//.pCommandBuffers = vulkanDevice_.GetCommandBufferPtr(imageIndex),
-		.pCommandBuffers = &(vulkanDevice_.commandBuffers_[frameIdx]),
+		.pCommandBuffers = &(frameContext.commandBuffer_),
 		.signalSemaphoreCount = 1u,
 		// Wait for rendering to complete
-		.pSignalSemaphores = &(vulkanDevice_.renderSemaphores_[frameIdx])
+		.pSignalSemaphores = &(frameContext.renderSemaphore_)
 	};
 
-	VK_CHECK(vkQueueSubmit(vulkanDevice_.GetGraphicsQueue(), 1, &submitInfo, vulkanDevice_.renderFences_[frameIdx]));
+	VK_CHECK(vkQueueSubmit(vulkanDevice_.GetGraphicsQueue(), 1, &submitInfo, frameContext.renderFence_));
 
 	const VkPresentInfoKHR presentInfo =
 	{
@@ -209,7 +209,7 @@ bool AppBase::DrawFrame()
 		.pNext = nullptr,
 		.waitSemaphoreCount = 1u,
 		// Wait for rendering to complete
-		.pWaitSemaphores = &(vulkanDevice_.renderSemaphores_[frameIdx]),
+		.pWaitSemaphores = &(frameContext.renderSemaphore_),
 		.swapchainCount = 1u,
 		.pSwapchains = vulkanDevice_.GetSwapchainPtr(),
 		.pImageIndices = &imageIndex

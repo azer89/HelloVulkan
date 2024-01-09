@@ -15,7 +15,7 @@ namespace AppSettings
 	const VkPresentModeKHR PresentMode = VK_PRESENT_MODE_FIFO_KHR;
 
 	// Number of frames to overlap when rendering
-	//constexpr unsigned int FrameOverlap = 2;
+	const unsigned int FrameOverlapCount = 2;
 	
 	const std::string ScreenTitle = "Hello Vulkan";
 	const std::string ShaderFolder = "C://Users//azer//workspace//HelloVulkan//Shaders//";
