@@ -22,6 +22,9 @@ public:
 		uint8_t renderPassBit = 0u);
 	virtual ~RendererBase();
 
+	// If the window is resized
+	virtual void OnWindowResized(VulkanDevice& vkDev);
+
 	virtual void FillCommandBuffer(
 		VulkanDevice& vkDev, 
 		VkCommandBuffer commandBuffer, 
@@ -32,8 +35,7 @@ public:
 		UpdateUniformBuffer(vkDev.GetDevice(), perFrameUBOs_[imageIndex], &ubo, sizeof(PerFrameUBO));
 	}
 
-	// If the window is resized
-	virtual void OnWindowResized(VulkanDevice& vkDev);
+	
 
 protected:
 	VkDevice device_ = nullptr;

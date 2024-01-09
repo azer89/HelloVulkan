@@ -15,7 +15,7 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
 	RendererBase(vkDev, depthImage, offscreenColorImage, renderBit),
-	specularMap_(envMap)
+	envCubemap_(envMap)
 {
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
 
@@ -143,22 +143,18 @@ void RendererSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 
 	VK_CHECK(vkAllocateDescriptorSets(vkDev.GetDevice(), &allocInfo, descriptorSets_.data()));
 
+	const VkDescriptorImageInfo imageInfo = envCubemap_->GetDescriptorImageInfo();
+
 	for (size_t i = 0; i < swapChainImageSize; i++)
 	{
 		VkDescriptorSet ds = descriptorSets_[i];
 
 		const VkDescriptorBufferInfo bufferInfo = 
 			{ perFrameUBOs_[i].buffer_, 0, sizeof(PerFrameUBO) };
-		const VkDescriptorImageInfo  imageInfo = 
-		{
-			specularMap_->defaultImageSampler_,
-			specularMap_->imageView_,
-			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-		};
 
 		const std::array<VkWriteDescriptorSet, 2> descriptorWrites = {
-			BufferWriteDescriptorSet(ds, &bufferInfo,  0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER),
-			ImageWriteDescriptorSet(ds, &imageInfo,   1)
+			BufferWriteDescriptorSet(ds, &bufferInfo, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER),
+			ImageWriteDescriptorSet(ds, &imageInfo, 1)
 		};
 
 		vkUpdateDescriptorSets(

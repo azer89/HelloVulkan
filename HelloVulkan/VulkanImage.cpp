@@ -760,6 +760,16 @@ uint32_t VulkanImage::BytesPerTexFormat(VkFormat fmt)
 	return 0;
 }
 
+VkDescriptorImageInfo VulkanImage::GetDescriptorImageInfo()
+{
+	return
+	{
+		defaultImageSampler_,
+		imageView_,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+	};
+}
+
 void VulkanImage::SetDebugName(VulkanDevice& vkDev, const std::string& debugName)
 {
 	vkDev.SetVkObjectName(image_, VK_OBJECT_TYPE_IMAGE, debugName.c_str());

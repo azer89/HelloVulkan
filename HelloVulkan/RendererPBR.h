@@ -31,7 +31,7 @@ private:
 	void CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh);
 
 private:
-	VulkanImage* specularMap_;
+	VulkanImage* envCubemap_;
 	VulkanImage* diffuseMap_;
 	VulkanImage* brdfLUT_;
 };

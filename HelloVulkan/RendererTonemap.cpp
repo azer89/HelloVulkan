@@ -111,18 +111,13 @@ void RendererTonemap::AllocateDescriptorSets(VulkanDevice& vkDev)
 
 void RendererTonemap::UpdateDescriptorSets(VulkanDevice& vkDev)
 {
+	const VkDescriptorImageInfo imageInfo = singleSampledColorImage_->GetDescriptorImageInfo();
+
 	auto swapChainImageSize = vkDev.GetSwapchainImageCount();
-	for (size_t i = 0; i < swapChainImageSize; i++)
+	for (size_t i = 0; i < swapChainImageSize; ++i)
 	{
 		uint32_t bindingIndex = 0u;
 		VkDescriptorSet ds = descriptorSets_[i];
-
-		const VkDescriptorImageInfo  imageInfo =
-		{
-			singleSampledColorImage_->defaultImageSampler_,
-			singleSampledColorImage_->imageView_,
-			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-		};
 
 		std::vector<VkWriteDescriptorSet> descriptorWrites = {
 			ImageWriteDescriptorSet(ds, &imageInfo, bindingIndex++)

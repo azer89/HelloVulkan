@@ -134,12 +134,7 @@ void RendererEquirect2Cube::CreateDescriptorSet(VulkanDevice& vkDev)
 	uint32_t bindIndex = 0;
 	std::vector<VkWriteDescriptorSet> descriptorWrites;
 
-	VkDescriptorImageInfo imageInfo =
-	{
-		inputHDRImage_.defaultImageSampler_,
-		inputHDRImage_.imageView_,
-		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	};
+	VkDescriptorImageInfo imageInfo = inputHDRImage_.GetDescriptorImageInfo();
 
 	descriptorWrites.emplace_back
 	(
