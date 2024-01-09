@@ -160,8 +160,10 @@ public:
 		uint32_t layerCount = 1,
 		uint32_t mipLevels = 1);
 
+	// To create descriptor sets
 	VkDescriptorImageInfo GetDescriptorImageInfo();
 
+	// For validation layer
 	void SetDebugName(VulkanDevice& vkDev, const std::string& debugName);
 
 private:
