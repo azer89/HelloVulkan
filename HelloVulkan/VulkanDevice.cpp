@@ -66,17 +66,7 @@ void VulkanDevice::CreateCompute
 		VK_CHECK(CreateFence(&(frameDataArray_[i].queueSubmitFence_)));
 		VK_CHECK(CreateCommandBuffer(commandPool_, &(frameDataArray_[i].commandBuffer_)));
 	}
-	/*swapchainSemaphores_.resize(2);
-	renderSemaphores_.resize(2);
-	renderFences_.resize(2);
-	commandBuffers_.resize(2);
-	for (unsigned int i = 0; i < 2; ++i)
-	{
-		VK_CHECK(CreateSemaphore(&swapchainSemaphores_[i]));
-		VK_CHECK(CreateSemaphore(&renderSemaphores_[i]));
-		VK_CHECK(CreateFence(&renderFences_[i]));
-		VK_CHECK(CreateCommandBuffer(commandPool_, &commandBuffers_[i]));
-	}*/
+
 	{
 		// Create compute command pool
 		const VkCommandPoolCreateInfo cpi1 =
@@ -98,9 +88,7 @@ void VulkanDevice::Destroy()
 {
 	for (unsigned int i = 0; i < AppSettings::FrameOverlapCount; ++i)
 	{
-		vkDestroySemaphore(device_, frameDataArray_[i].nextSwapchainImageSemaphore_, nullptr);
-		vkDestroySemaphore(device_, frameDataArray_[i].renderSemaphore_, nullptr);
-		vkDestroyFence(device_, frameDataArray_[i].queueSubmitFence_, nullptr);
+		frameDataArray_[i].Destroy(device_);
 	}
 
 	for (size_t i = 0; i < swapchainImages_.size(); i++)
@@ -299,14 +287,14 @@ VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface)
 	VkSurfaceFormatKHR surfaceFormat = { swapchainImageFormat_, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
 
 	auto swapchainSupport = QuerySwapchainSupport(surface);
-	auto presentMode = ChooseSwapPresentMode(swapchainSupport.presentModes);
+	auto presentMode = ChooseSwapPresentMode(swapchainSupport.presentModes_);
 
 	const VkSwapchainCreateInfoKHR createInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
 		.flags = 0,
 		.surface = surface,
-		.minImageCount = GetSwapchainImageCount(swapchainSupport.capabilities),
+		.minImageCount = GetSwapchainImageCount(swapchainSupport.capabilities_),
 		.imageFormat = surfaceFormat.format,
 		.imageColorSpace = surfaceFormat.colorSpace,
 		.imageExtent = {.width = framebufferWidth_, .height = framebufferHeight_ },
@@ -317,7 +305,7 @@ VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface)
 		.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE,
 		.queueFamilyIndexCount = 1,
 		.pQueueFamilyIndices = &graphicsFamily_,
-		.preTransform = swapchainSupport.capabilities.currentTransform,
+		.preTransform = swapchainSupport.capabilities_.currentTransform,
 		.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
 		.presentMode = presentMode,
 		.clipped = VK_TRUE,
@@ -340,13 +328,13 @@ VkPresentModeKHR VulkanDevice::ChooseSwapPresentMode(const std::vector<VkPresent
 	return VK_PRESENT_MODE_FIFO_KHR;
 }
 
-uint32_t VulkanDevice::GetSwapchainImageCount(const VkSurfaceCapabilitiesKHR& capabilities)
+uint32_t VulkanDevice::GetSwapchainImageCount(const VkSurfaceCapabilitiesKHR& capabilities_)
 {
 	// Request one additional image to make sure
 	// we are not waiting on the GPU to complete any operations
-	const uint32_t imageCount = capabilities.minImageCount + 1;
-	const bool imageCountExceeded = capabilities.maxImageCount > 0 && imageCount > capabilities.maxImageCount;
-	return imageCountExceeded ? capabilities.maxImageCount : imageCount;
+	const uint32_t imageCount = capabilities_.minImageCount + 1;
+	const bool imageCountExceeded = capabilities_.maxImageCount > 0 && imageCount > capabilities_.maxImageCount;
+	return imageCountExceeded ? capabilities_.maxImageCount : imageCount;
 }
 
 
@@ -415,19 +403,19 @@ void VulkanDevice::RecreateSwapchainResources(
 SwapchainSupportDetails VulkanDevice::QuerySwapchainSupport(VkSurfaceKHR surface)
 {
 	SwapchainSupportDetails details;
-	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice_, surface, &details.capabilities);
+	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice_, surface, &details.capabilities_);
 
 	uint32_t formatCount;
 	vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice_, surface, &formatCount, nullptr);
 
 	if (formatCount)
 	{
-		details.formats.resize(formatCount);
+		details.formats_.resize(formatCount);
 		vkGetPhysicalDeviceSurfaceFormatsKHR(
 			physicalDevice_, 
 			surface, 
 			&formatCount, 
-			details.formats.data());
+			details.formats_.data());
 	}
 
 	uint32_t presentModeCount;
@@ -435,8 +423,8 @@ SwapchainSupportDetails VulkanDevice::QuerySwapchainSupport(VkSurfaceKHR surface
 
 	if (presentModeCount)
 	{
-		details.presentModes.resize(presentModeCount);
-		vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice_, surface, &presentModeCount, details.presentModes.data());
+		details.presentModes_.resize(presentModeCount);
+		vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice_, surface, &presentModeCount, details.presentModes_.data());
 	}
 
 	return details;
@@ -532,8 +520,7 @@ VkFormat VulkanDevice::FindSupportedFormat(
 		}
 	}
 
-	std::cerr << "Failed to find supported format\n";
-	exit(0);
+	throw std::runtime_error("Failed to find supported format\n");
 }
 
 VkCommandBuffer VulkanDevice::BeginSingleTimeCommands()

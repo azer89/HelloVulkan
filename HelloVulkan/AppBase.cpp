@@ -168,7 +168,7 @@ bool AppBase::DrawFrame()
 	// Send UBOs to shaders
 	UpdateUBOs(imageIndex);
 
-	// Rendering here
+	// Start recording command buffers
 	FillCommandBuffer(frameData.commandBuffer_, imageIndex);
 
 	const VkPipelineStageFlags waitStages[] = 
@@ -204,7 +204,6 @@ bool AppBase::DrawFrame()
 	};
 
 	result = vkQueuePresentKHR(vulkanDevice_.GetGraphicsQueue(), &presentInfo);
-
 	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || shouldRecreateSwapchain_)
 	{
 		OnWindowResized();
@@ -216,11 +215,9 @@ bool AppBase::DrawFrame()
 	return true;
 }
 
+// Fill/record command buffer
 void AppBase::FillCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
 {
-	//TODO
-	//VkCommandBuffer commandBuffer = vulkanDevice_.GetCommandBuffer(imageIndex);
-
 	const VkCommandBufferBeginInfo beginIndo =
 	{
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -240,6 +237,7 @@ void AppBase::FillCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageInd
 	VK_CHECK(vkEndCommandBuffer(commandBuffer));
 }
 
+// Recreate resources when window is resized
 void AppBase::OnWindowResized()
 {
 	int width = 0, height = 0;

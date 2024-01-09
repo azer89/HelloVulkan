@@ -10,9 +10,9 @@
 
 struct SwapchainSupportDetails
 {
-	VkSurfaceCapabilitiesKHR capabilities = {};
-	std::vector<VkSurfaceFormatKHR> formats;
-	std::vector<VkPresentModeKHR> presentModes;
+	VkSurfaceCapabilitiesKHR capabilities_ = {};
+	std::vector<VkSurfaceFormatKHR> formats_;
+	std::vector<VkPresentModeKHR> presentModes_;
 };
 
 struct FrameData
@@ -21,6 +21,13 @@ struct FrameData
 	VkSemaphore renderSemaphore_;
 	VkFence queueSubmitFence_;
 	VkCommandBuffer commandBuffer_;
+
+	void Destroy(VkDevice device)
+	{
+		vkDestroySemaphore(device, nextSwapchainImageSemaphore_, nullptr);
+		vkDestroySemaphore(device, renderSemaphore_, nullptr);
+		vkDestroyFence(device, queueSubmitFence_, nullptr);
+	}
 };
 
 class VulkanDevice
@@ -49,7 +56,6 @@ public:
 	// Getters
 	VkDevice GetDevice() const { return device_; }
 	VkPhysicalDevice GetPhysicalDevice() const { return physicalDevice_; }
-	//VkCommandPool GetCommandPool() const { return commandPool_; }
 	VkQueue GetGraphicsQueue() const { return graphicsQueue_; }
 	uint32_t GetFrameBufferWidth() const { return framebufferWidth_; }
 	uint32_t GetFrameBufferHeight() const { return framebufferHeight_; }
@@ -69,6 +75,7 @@ public:
 	// Pointer getters
 	VkSwapchainKHR* GetSwapchainPtr() { return &swapchain_; }
 
+	// Sync objects and render command buffer
 	FrameData& GetCurrentFrameData();
 	void IncrementFrameIndex();
 
@@ -88,7 +95,7 @@ private:
 	bool IsDeviceSuitable(VkPhysicalDevice d);
 	VkSampleCountFlagBits GetMaxUsableSampleCount(VkPhysicalDevice d);
 
-	// Swap chain
+	// Swapchain
 	VkResult CreateSwapchain(VkSurfaceKHR surface);
 	size_t CreateSwapchainImages();
 	bool CreateSwapChainImageView(
@@ -97,7 +104,7 @@ private:
 		VkImageAspectFlags aspectFlags);
 	SwapchainSupportDetails QuerySwapchainSupport(VkSurfaceKHR surface);
 	VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
-	uint32_t GetSwapchainImageCount(const VkSurfaceCapabilitiesKHR& capabilities);
+	uint32_t GetSwapchainImageCount(const VkSurfaceCapabilitiesKHR& capabilities_);
 
 	VkResult CreateSemaphore(VkSemaphore* outSemaphore);
 	VkResult CreateFence(VkFence* fence);
