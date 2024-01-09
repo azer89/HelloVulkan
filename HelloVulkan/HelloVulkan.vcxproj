@@ -180,6 +180,7 @@
     <ClInclude Include="TextureMapper.h" />
     <ClInclude Include="UBO.h" />
     <ClInclude Include="VulkanBuffer.h" />
+    <ClInclude Include="VulkanFramebuffer.h" />
     <ClInclude Include="VulkanRenderPass.h" />
     <ClInclude Include="VulkanShader.h" />
     <ClInclude Include="VulkanImage.h" />

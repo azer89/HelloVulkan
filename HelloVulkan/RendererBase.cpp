@@ -131,22 +131,21 @@ void RendererBase::CreateSwapchainFramebuffers(
 	// TODO cache the attachments so that framebuffer recreation is easier
 	std::vector<VkImageView> attachments = { nullptr, depthImageView };
 
+	VkFramebufferCreateInfo framebufferInfo = {
+		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0,
+		.renderPass = renderPass.GetHandle(),
+		.attachmentCount = static_cast<uint32_t>((depthImageView == nullptr) ? 1 : 2),
+		.width = vkDev.GetFrameBufferWidth(),
+		.height = vkDev.GetFrameBufferHeight(),
+		.layers = 1
+	};
+
 	for (size_t i = 0; i < swapchainImageSize; i++)
 	{
 		attachments[0] = vkDev.GetSwapchainImageView(i);
-
-		const VkFramebufferCreateInfo framebufferInfo = {
-			.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
-			.pNext = nullptr,
-			.flags = 0,
-			.renderPass = renderPass.GetHandle(),
-			.attachmentCount = static_cast<uint32_t>((depthImageView == nullptr) ? 1 : 2),
-			.pAttachments = attachments.data(),
-			.width = vkDev.GetFrameBufferWidth(),
-			.height = vkDev.GetFrameBufferHeight(),
-			.layers = 1
-		};
-
+		framebufferInfo.pAttachments = attachments.data();
 		VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo, nullptr, &swapchainFramebuffers_[i]));
 	}
 }
