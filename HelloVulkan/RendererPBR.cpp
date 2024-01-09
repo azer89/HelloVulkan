@@ -23,7 +23,7 @@ RendererPBR::RendererPBR(
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
 	RendererBase(vkDev, depthImage, offscreenColorImage, renderBit),
-	specularMap_(specularMap),
+	envCubemap_(specularMap),
 	diffuseMap_(diffuseMap),
 	brdfLUT_(brdfLUT),
 	models_(models)
@@ -237,7 +237,7 @@ void RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 	}
 
 	// PBR textures
-	const VkDescriptorImageInfo specularImageInfo = specularMap_->GetDescriptorImageInfo();
+	const VkDescriptorImageInfo specularImageInfo = envCubemap_->GetDescriptorImageInfo();
 	const VkDescriptorImageInfo diffuseImageInfo = diffuseMap_->GetDescriptorImageInfo();
 	const VkDescriptorImageInfo BRDFLUTImageInfo = brdfLUT_->GetDescriptorImageInfo();
 

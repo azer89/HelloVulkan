@@ -21,7 +21,7 @@ public:
 	void OnWindowResized(VulkanDevice& vkDev) override;
 
 private:
-	VulkanImage* specularMap_;
+	VulkanImage* envCubemap_;
 
 	std::vector<VkDescriptorSet> descriptorSets_;
 
