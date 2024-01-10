@@ -9,7 +9,7 @@ constexpr uint32_t BUFFER_SIZE = 2 * sizeof(float) * LUT_WIDTH * LUT_HEIGHT;
 
 RendererBRDFLUT::RendererBRDFLUT(
 	VulkanDevice& vkDev) :
-	RendererBase(vkDev, {})
+	RendererBase(vkDev, true)
 {
 	inBuffer_.CreateSharedBuffer(vkDev, sizeof(float),
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,

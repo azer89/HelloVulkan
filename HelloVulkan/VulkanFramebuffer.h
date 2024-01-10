@@ -28,7 +28,7 @@ public:
 
 	VkFramebuffer GetFramebuffer(size_t index) const;
 
-	void Recreate(VulkanDevice& vkDev, uint32_t width, uint32_t height);
+	void Recreate(VulkanDevice& vkDev);
 
 private:
 	std::vector<VkFramebuffer> framebuffers_;

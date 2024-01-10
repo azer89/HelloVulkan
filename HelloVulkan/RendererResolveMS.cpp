@@ -6,7 +6,7 @@ RendererResolveMS::RendererResolveMS(
 	VulkanImage* multiSampledColorImage, // Input
 	VulkanImage* singleSampledColorImage // Output
 ) :
-	RendererBase(vkDev, nullptr),
+	RendererBase(vkDev, true),
 	multiSampledColorImage_(multiSampledColorImage),
 	singleSampledColorImage_(singleSampledColorImage)
 {
@@ -14,21 +14,30 @@ RendererResolveMS::RendererResolveMS(
 		vkDev,
 		0u,
 		multiSampledColorImage_->multisampleCount_);
-	CreateSingleFramebuffer(
+
+	framebuffer_.Create(
+		vkDev, 
+		renderPass_.GetHandle(),
+		{
+			multiSampledColorImage_,
+			singleSampledColorImage_
+		},
+		isOffscreen_);
+	/*CreateSingleFramebuffer(
 		vkDev,
 		renderPass_,
 		{
 			multiSampledColorImage_->imageView_,
 			singleSampledColorImage_->imageView_ 
 		},
-		offscreenFramebuffer_);
+		offscreenFramebuffer_);*/
 }
 
 RendererResolveMS::~RendererResolveMS()
 {
 }
 
-void RendererResolveMS::OnWindowResized(VulkanDevice& vkDev)
+/*void RendererResolveMS::OnWindowResized(VulkanDevice& vkDev)
 {
 	vkDestroyFramebuffer(vkDev.GetDevice(), offscreenFramebuffer_, nullptr);
 	CreateSingleFramebuffer(
@@ -39,13 +48,14 @@ void RendererResolveMS::OnWindowResized(VulkanDevice& vkDev)
 			singleSampledColorImage_->imageView_
 		},
 		offscreenFramebuffer_);
-}
+}*/
 
 void RendererResolveMS::FillCommandBuffer(
 	VulkanDevice& vkDev,
 	VkCommandBuffer commandBuffer,
 	size_t currentImage)
 {
-	renderPass_.BeginRenderPass(vkDev, commandBuffer, offscreenFramebuffer_);
+	//renderPass_.BeginRenderPass(vkDev, commandBuffer, offscreenFramebuffer_);
+	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
 	vkCmdEndRenderPass(commandBuffer);
 }

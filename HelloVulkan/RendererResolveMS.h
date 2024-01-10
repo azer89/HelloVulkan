@@ -18,7 +18,7 @@ public:
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 
-	void OnWindowResized(VulkanDevice& vkDev) override;
+	//void OnWindowResized(VulkanDevice& vkDev) override;
 
 private:
 	VulkanImage* multiSampledColorImage_; // Input

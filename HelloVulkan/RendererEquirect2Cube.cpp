@@ -14,7 +14,9 @@ namespace CubeSettings
 RendererEquirect2Cube::RendererEquirect2Cube(
 	VulkanDevice& vkDev, 
 	const std::string& hdrFile) :
-	RendererBase(vkDev, nullptr)
+	RendererBase(
+		vkDev, 
+		true) // isOffscreen
 {
 	InitializeHDRImage(vkDev, hdrFile);
 	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, CubeSettings::format);

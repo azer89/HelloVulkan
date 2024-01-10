@@ -34,7 +34,7 @@ void VulkanFramebuffer::Create(VulkanDevice& vkDev,
 		.layers = 1
 	};
 
-	Recreate(vkDev, w, h);
+	Recreate(vkDev);
 }
 
 void VulkanFramebuffer::Destroy()
@@ -61,7 +61,7 @@ VkFramebuffer VulkanFramebuffer::GetFramebuffer(size_t index) const
 	return VK_NULL_HANDLE;
 }
 
-void VulkanFramebuffer::Recreate(VulkanDevice& vkDev, uint32_t width, uint32_t height)
+void VulkanFramebuffer::Recreate(VulkanDevice& vkDev)
 {
 	size_t swapchainImageCount = offscreen_ ? 0 : 1;
 	size_t attachmentLength = attachmentImages_.size() + swapchainImageCount;
@@ -77,8 +77,8 @@ void VulkanFramebuffer::Recreate(VulkanDevice& vkDev, uint32_t width, uint32_t h
 		attachments[i + swapchainImageCount] = attachmentImages_[i]->imageView_;
 	}
 
-	framebufferInfo_.width = width;
-	framebufferInfo_.height = height;
+	framebufferInfo_.width = vkDev.GetFrameBufferWidth();
+	framebufferInfo_.height = vkDev.GetFrameBufferHeight();
 
 	for (size_t i = 0; i < framebufferCount_; ++i)
 	{

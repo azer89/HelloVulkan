@@ -20,8 +20,7 @@ public:
 		// TODO refactor pointers of VulkanImage as render pass attachments
 		//VulkanImage* depthImage,
 		//VulkanImage* offscreenColorImage = nullptr,
-		bool isOffscreen = false,
-		uint8_t renderPassBit = 0u);
+		bool isOffscreen = false);
 	virtual ~RendererBase();
 
 	// If the window is resized
@@ -90,17 +89,17 @@ protected:
 
 	// TODO consolidate offscreen/onscreen into a single function
 	// Attach an array of image views to a framebuffer
-	void CreateSingleFramebuffer(
-		VulkanDevice& vkDev,
-		VulkanRenderPass renderPass,
-		const std::vector<VulkanImage>& images);//,
-		//VkFramebuffer& framebuffer);
+	//void CreateSingleFramebuffer(
+	//	VulkanDevice& vkDev,
+	//	VulkanRenderPass renderPass,
+	//	const std::vector<VulkanImage>& images);//,
+	//	//VkFramebuffer& framebuffer);
 	
 	// Attach a swapchain image and depth image
-	void CreateSwapchainFramebuffers(
-		VulkanDevice& vkDev, 
-		VulkanRenderPass renderPass, 
-		const std::vector<VulkanImage>& images);
+	//void CreateSwapchainFramebuffers(
+	//	VulkanDevice& vkDev, 
+	//	VulkanRenderPass renderPass, 
+	//	const std::vector<VulkanImage>& images);
 	
 	//void DestroySwapchainFramebuffers();
 

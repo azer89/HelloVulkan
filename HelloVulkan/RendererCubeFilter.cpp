@@ -16,7 +16,7 @@ namespace FilterSettings
 
 RendererCubeFilter::RendererCubeFilter(
 	VulkanDevice& vkDev, VulkanImage* inputCubemap) :
-	RendererBase(vkDev, nullptr)
+	RendererBase(vkDev, true)
 {
 	// Create cube render pass
 	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, FilterSettings::format);

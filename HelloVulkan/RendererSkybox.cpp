@@ -14,7 +14,7 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
-	RendererBase(vkDev, depthImage, offscreenColorImage, renderBit),
+	RendererBase(vkDev, true),
 	envCubemap_(envMap)
 {
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
@@ -22,9 +22,9 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 	VkSampleCountFlagBits multisampleCount = VK_SAMPLE_COUNT_1_BIT;
 
 	// Note that this pipeline is offscreen rendering
-	multisampleCount = offscreenColorImage_->multisampleCount_;
+	multisampleCount = offscreenColorImage->multisampleCount_;
 	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, multisampleCount);
-	CreateSingleFramebuffer(
+	/*CreateSingleFramebuffer(
 		vkDev,
 		renderPass_,
 		{
@@ -32,7 +32,17 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 			depthImage_->imageView_
 		},
 		offscreenFramebuffer_);
-	
+	*/
+	framebuffer_.Create(
+		vkDev,
+		renderPass_.GetHandle(),
+		{
+			offscreenColorImage,
+			depthImage
+		},
+		isOffscreen_
+	);
+
 	CreateDescriptorPool(
 		vkDev, 
 		1, // uniform
@@ -61,7 +71,7 @@ RendererSkybox::~RendererSkybox()
 {
 }
 
-void RendererSkybox::OnWindowResized(VulkanDevice& vkDev)
+/*void RendererSkybox::OnWindowResized(VulkanDevice& vkDev)
 {
 	vkDestroyFramebuffer(vkDev.GetDevice(), offscreenFramebuffer_, nullptr);
 	CreateSingleFramebuffer(
@@ -72,16 +82,17 @@ void RendererSkybox::OnWindowResized(VulkanDevice& vkDev)
 			depthImage_->imageView_
 		},
 		offscreenFramebuffer_);
-}
+}*/
 
 void RendererSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
 {
-	renderPass_.BeginRenderPass(
+	/*renderPass_.BeginRenderPass(
 		vkDev,
 		commandBuffer, 
 		IsOffScreen() ?
 			offscreenFramebuffer_ :
-			swapchainFramebuffers_[swapchainImageIndex]);
+			swapchainFramebuffers_[swapchainImageIndex]);*/
+	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
 
 	BindPipeline(vkDev, commandBuffer);
 

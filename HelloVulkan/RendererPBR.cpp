@@ -22,7 +22,7 @@ RendererPBR::RendererPBR(
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
-	RendererBase(vkDev, depthImage, offscreenColorImage, renderBit),
+	RendererBase(vkDev, true), // isOffscreen
 	envCubemap_(specularMap),
 	diffuseMap_(diffuseMap),
 	brdfLUT_(brdfLUT),
@@ -42,16 +42,25 @@ RendererPBR::RendererPBR(
 	}
 
 	// Note that this pipeline is offscreen rendering
-	multisampleCount = offscreenColorImage_->multisampleCount_;
+	multisampleCount = offscreenColorImage->multisampleCount_;
 	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, multisampleCount);
-	CreateSingleFramebuffer(
+
+	/*CreateSingleFramebuffer(
 		vkDev,
 		renderPass_,
 		{ 
 			offscreenColorImage_->imageView_,
 			depthImage_->imageView_ 
 		},
-		offscreenFramebuffer_);
+		offscreenFramebuffer_);*/
+	framebuffer_.Create(
+		vkDev, 
+		renderPass_.GetHandle(), 
+		{
+			offscreenColorImage,
+			depthImage
+		}, 
+		isOffscreen_);
 
 	CreateDescriptorPool(
 		vkDev, 
@@ -90,7 +99,7 @@ RendererPBR::~RendererPBR()
 {
 }
 
-void RendererPBR::OnWindowResized(VulkanDevice& vkDev)
+/*void RendererPBR::OnWindowResized(VulkanDevice& vkDev)
 {
 	vkDestroyFramebuffer(vkDev.GetDevice(), offscreenFramebuffer_, nullptr);
 	CreateSingleFramebuffer(
@@ -101,16 +110,18 @@ void RendererPBR::OnWindowResized(VulkanDevice& vkDev)
 			depthImage_->imageView_
 		},
 		offscreenFramebuffer_);
-}
+}*/
 
 void RendererPBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
 {
-	renderPass_.BeginRenderPass(
+	/*renderPass_.BeginRenderPass(
 		vkDev,
 		commandBuffer, 
 		IsOffScreen() ? 
 			offscreenFramebuffer_ : 
 			swapchainFramebuffers_[swapchainImageIndex]);
+	*/
+	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
 
 	BindPipeline(vkDev, commandBuffer);
 
