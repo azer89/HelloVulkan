@@ -43,7 +43,8 @@ void VulkanFramebuffer::Destroy()
 	{
 		vkDestroyFramebuffer(device_, f, nullptr);
 	}
-	framebuffers_.clear();
+	// Don't clear because we may recreate
+	//framebuffers_.clear();
 }
 
 VkFramebuffer VulkanFramebuffer::GetFramebuffer() const
@@ -64,6 +65,12 @@ void VulkanFramebuffer::Recreate(uint32_t width, uint32_t height)
 {
 	size_t swapchainImageCount = swapchainImages_.size() > 0 ? 1 : 0;
 	size_t attachmentLength = images_.size() + swapchainImageCount;
+
+	if (attachmentLength <= 0)
+	{
+		return;
+	}
+
 	std::vector<VkImageView> attachments(attachmentLength, VK_NULL_HANDLE);
 	for (size_t i = 0; i < images_.size(); ++i)
 	{

@@ -7,6 +7,7 @@
 #include "VulkanImage.h"
 #include "VulkanBuffer.h"
 #include "VulkanRenderPass.h"
+#include "VulkanFramebuffer.h"
 #include "UBO.h"
 
 #include <string>
@@ -17,8 +18,9 @@ public:
 	explicit RendererBase(
 		const VulkanDevice& vkDev, 
 		// TODO refactor pointers of VulkanImage as render pass attachments
-		VulkanImage* depthImage,
-		VulkanImage* offscreenColorImage = nullptr,
+		//VulkanImage* depthImage,
+		//VulkanImage* offscreenColorImage = nullptr,
+		bool isOffscreen = false,
 		uint8_t renderPassBit = 0u);
 	virtual ~RendererBase();
 
@@ -38,15 +40,19 @@ public:
 protected:
 	VkDevice device_ = nullptr;
 
+	// Offscreen rendering
+	bool isOffscreen_;
+
 	// Depth buffer
-	VulkanImage* depthImage_;
+	//VulkanImage* depthImage_;
+	VulkanFramebuffer framebuffer_;
 
 	// Descriptor set (layout + pool + sets) -> uses uniform buffers, textures, framebuffers
 	VkDescriptorSetLayout descriptorSetLayout_ = nullptr;
 	VkDescriptorPool descriptorPool_ = nullptr;
 
 	// Framebuffers (one for each command buffer)
-	std::vector<VkFramebuffer> swapchainFramebuffers_;
+	//std::vector<VkFramebuffer> swapchainFramebuffers_;
 
 	// Render pass
 	VulkanRenderPass renderPass_;
@@ -56,17 +62,16 @@ protected:
 
 	// PerFrameUBO
 	std::vector<VulkanBuffer> perFrameUBOs_;
-
-	// Offscreen rendering
-	VulkanImage* offscreenColorImage_;
-	VkFramebuffer offscreenFramebuffer_;
+	
+	//VulkanImage* offscreenColorImage_;
+	//VkFramebuffer offscreenFramebuffer_;
 
 protected:
-	inline bool IsOffScreen()
+	/*inline bool IsOffScreen()
 	{
 		return offscreenColorImage_ != nullptr ||
 			offscreenFramebuffer_ != nullptr;
-	}
+	}*/
 
 	void BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuffer);
 
@@ -88,16 +93,16 @@ protected:
 	void CreateSingleFramebuffer(
 		VulkanDevice& vkDev,
 		VulkanRenderPass renderPass,
-		const std::vector<VkImageView>& imageViews,
-		VkFramebuffer& framebuffer);
-
+		const std::vector<VulkanImage>& images);//,
+		//VkFramebuffer& framebuffer);
+	
 	// Attach a swapchain image and depth image
 	void CreateSwapchainFramebuffers(
 		VulkanDevice& vkDev, 
 		VulkanRenderPass renderPass, 
-		VkImageView depthImageView = nullptr);
+		const std::vector<VulkanImage>& images);
 	
-	void DestroySwapchainFramebuffers();
+	//void DestroySwapchainFramebuffers();
 
 	void CreateDescriptorPool(
 		VulkanDevice& vkDev, 

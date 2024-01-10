@@ -10,19 +10,22 @@
 // Constructor
 RendererBase::RendererBase(
 	const VulkanDevice& vkDev, 
-	VulkanImage* depthImage,
-	VulkanImage* offscreenColorImage,
+	//VulkanImage* depthImage,
+	//VulkanImage* offscreenColorImage,
+	bool isOffscreen,
 	uint8_t renderPassBit) :
-	device_(vkDev.GetDevice()), 
-	depthImage_(depthImage),
-	offscreenColorImage_(offscreenColorImage)
+	device_(vkDev.GetDevice()),
+	isOffscreen_(isOffscreen)
+	//depthImage_(depthImage),
+	//offscreenColorImage_(offscreenColorImage)
 {
 }
 
 // Destructor
 RendererBase::~RendererBase()
 {
-	DestroySwapchainFramebuffers();
+	//DestroySwapchainFramebuffers();
+	framebuffer_.Destroy();
 
 	for (auto uboBuffer : perFrameUBOs_)
 	{
@@ -31,7 +34,7 @@ RendererBase::~RendererBase()
 
 	vkDestroyDescriptorSetLayout(device_, descriptorSetLayout_, nullptr);
 	vkDestroyDescriptorPool(device_, descriptorPool_, nullptr);
-	vkDestroyFramebuffer(device_, offscreenFramebuffer_, nullptr);
+	//vkDestroyFramebuffer(device_, offscreenFramebuffer_, nullptr);
 	renderPass_.Destroy(device_);
 	vkDestroyPipelineLayout(device_, pipelineLayout_, nullptr);
 	vkDestroyPipeline(device_, graphicsPipeline_, nullptr);
@@ -84,22 +87,25 @@ void RendererBase::BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuff
 void RendererBase::OnWindowResized(VulkanDevice& vkDev)
 {
 	// If this is offscreen renderer then it does not use swapchain framebuffers
-	if (IsOffScreen())
+	/*if (IsOffScreen())
 	{
 		return;
 	}
 
 	DestroySwapchainFramebuffers();
 	VkImageView depthImageView = depthImage_ == nullptr ? nullptr : depthImage_->imageView_;
-	CreateSwapchainFramebuffers(vkDev, renderPass_, depthImageView);
+	CreateSwapchainFramebuffers(vkDev, renderPass_, depthImageView);*/
+
+	
 }
 
 // Attach an array of image views to a framebuffer
 void RendererBase::CreateSingleFramebuffer(
 	VulkanDevice& vkDev,
 	VulkanRenderPass renderPass,
-	const std::vector<VkImageView>& imageViews,
-	VkFramebuffer& framebuffer)
+	//const std::vector<VkImageView>& imageViews,
+	const std::vector<VulkanImage>& images)//,
+	//VkFramebuffer& framebuffer)
 {
 	const VkFramebufferCreateInfo framebufferInfo = {
 		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
@@ -120,9 +126,15 @@ void RendererBase::CreateSingleFramebuffer(
 void RendererBase::CreateSwapchainFramebuffers(
 	VulkanDevice& vkDev,
 	VulkanRenderPass renderPass,
-	VkImageView depthImageView)
+	//VkImageView depthImageView
+	const std::vector<VulkanImage>& images
+)
 {
-	size_t swapchainImageSize = vkDev.GetSwapchainImageCount();
+	framebuffer_.Create(vkDev,
+		renderPass_,
+		);
+
+	/*size_t swapchainImageSize = vkDev.GetSwapchainImageCount();
 
 	swapchainFramebuffers_.resize(swapchainImageSize);
 
@@ -147,16 +159,16 @@ void RendererBase::CreateSwapchainFramebuffers(
 		attachments[0] = vkDev.GetSwapchainImageView(i);
 		framebufferInfo.pAttachments = attachments.data();
 		VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo, nullptr, &swapchainFramebuffers_[i]));
-	}
+	}*/
 }
 
-void RendererBase::DestroySwapchainFramebuffers()
+/*void RendererBase::DestroySwapchainFramebuffers()
 {
 	for (auto framebuffer : swapchainFramebuffers_)
 	{
 		vkDestroyFramebuffer(device_, framebuffer, nullptr);
 	}
-}
+}*/
 
 void RendererBase::CreateDescriptorPool(
 	VulkanDevice& vkDev,

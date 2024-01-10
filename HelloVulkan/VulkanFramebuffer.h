@@ -10,7 +10,10 @@ public:
 	VulkanFramebuffer():
 		device_(VK_NULL_HANDLE),
 		framebufferCount_(0),
-		framebufferInfo_({})
+		framebufferInfo_({}),
+		swapchainImages_({}),
+		images_({}),
+		framebuffers_({})
 	{
 	}
 
