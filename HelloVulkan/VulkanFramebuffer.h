@@ -9,55 +9,29 @@ class VulkanFramebuffer
 public:
 	VulkanFramebuffer():
 		device_(VK_NULL_HANDLE),
-		framebufferCount_(0)
+		framebufferCount_(0),
+		framebufferInfo_({})
 	{
 	}
 
 	void Create(VulkanDevice& vkDev,
-		const std::vector<VulkanImage*> images,
-		uint32_t framebufferCount)
-	{
-		device_ = vkDev.GetDevice();
-		images_ = images;
-		framebufferCount_ = framebufferCount;
-		framebuffers_.resize(framebufferCount_);
-	}
+		VkRenderPass renderPass,
+		const std::vector<VulkanImage*> swapchainImages,
+		const std::vector<VulkanImage*> images);
 
-	void Destroy()
-	{
-		for (VkFramebuffer& f : framebuffers_)
-		{
-			vkDestroyFramebuffer(device_, f, nullptr);
-		}
-		framebuffers_.clear();
-	}
+	void Destroy();
 
-	VkFramebuffer GetFramebuffer() const
-	{
-		return GetFramebuffer(0);
-	}
+	VkFramebuffer GetFramebuffer() const;
 
-	VkFramebuffer GetFramebuffer(size_t index) const
-	{
-		if (index >= 0 && index < framebuffers_.size())
-		{
-			return framebuffers_[index];
-		}
+	VkFramebuffer GetFramebuffer(size_t index) const;
 
-		return VK_NULL_HANDLE;
-	}
-
-	void Recreate(uint32_t width, uint32_t height)
-	{
-		for (size_t i = 0; i < framebufferCount_; ++i)
-		{
-
-		}
-	}
+	void Recreate(uint32_t width, uint32_t height);
 
 private:
 	std::vector<VkFramebuffer> framebuffers_;
+	std::vector<VulkanImage*> swapchainImages_;
 	std::vector<VulkanImage*> images_;
+	VkFramebufferCreateInfo framebufferInfo_; // Caching creation info
 	VkDevice device_;
 	uint32_t framebufferCount_;
 };

@@ -152,6 +152,7 @@
     <ClCompile Include="RendererPBR.cpp" />
     <ClCompile Include="RendererTonemap.cpp" />
     <ClCompile Include="VulkanBuffer.cpp" />
+    <ClCompile Include="VulkanFramebuffer.cpp" />
     <ClCompile Include="VulkanImage.cpp" />
     <ClCompile Include="VulkanInstance.cpp" />
     <ClCompile Include="VulkanDevice.cpp" />
