@@ -3,19 +3,19 @@
 
 void VulkanFramebuffer::Create(VulkanDevice& vkDev,
 	VkRenderPass renderPass,
-	const std::vector<VulkanImage*> swapchainImages,
-	const std::vector<VulkanImage*> images)
+	const std::vector<VulkanImage*> attachmentImages,
+	bool offscreen)
 {
-	if (swapchainImages.size() == 0 && images.size() == 0)
-	{
-		std::cerr << "No framebuffer attachment\n";
-	}
-
+	offscreen_ = offscreen;
 	device_ = vkDev.GetDevice();
-	swapchainImages_ = swapchainImages;
-	images_ = images;
-	framebufferCount_ = swapchainImages.size() > 0 ? swapchainImages.size() : 1;
+	attachmentImages_ = attachmentImages;
+	framebufferCount_ = offscreen_ ? 1 : vkDev.GetSwapchainImageCount();
 	framebuffers_.resize(framebufferCount_);
+
+	if (offscreen_ && attachmentImages_.size() == 0)
+	{
+		std::cerr << "Need at least one image attachment to create a framebuffer\n";
+	}
 
 	uint32_t w = vkDev.GetFrameBufferWidth();
 	uint32_t h = vkDev.GetFrameBufferHeight();
@@ -34,7 +34,7 @@ void VulkanFramebuffer::Create(VulkanDevice& vkDev,
 		.layers = 1
 	};
 
-	Recreate(w, h);
+	Recreate(vkDev, w, h);
 }
 
 void VulkanFramebuffer::Destroy()
@@ -61,10 +61,10 @@ VkFramebuffer VulkanFramebuffer::GetFramebuffer(size_t index) const
 	return VK_NULL_HANDLE;
 }
 
-void VulkanFramebuffer::Recreate(uint32_t width, uint32_t height)
+void VulkanFramebuffer::Recreate(VulkanDevice& vkDev, uint32_t width, uint32_t height)
 {
-	size_t swapchainImageCount = swapchainImages_.size() > 0 ? 1 : 0;
-	size_t attachmentLength = images_.size() + swapchainImageCount;
+	size_t swapchainImageCount = offscreen_ ? 0 : 1;
+	size_t attachmentLength = attachmentImages_.size() + swapchainImageCount;
 
 	if (attachmentLength <= 0)
 	{
@@ -72,9 +72,9 @@ void VulkanFramebuffer::Recreate(uint32_t width, uint32_t height)
 	}
 
 	std::vector<VkImageView> attachments(attachmentLength, VK_NULL_HANDLE);
-	for (size_t i = 0; i < images_.size(); ++i)
+	for (size_t i = 0; i < attachmentImages_.size(); ++i)
 	{
-		attachments[i + swapchainImageCount] = images_[i]->imageView_;
+		attachments[i + swapchainImageCount] = attachmentImages_[i]->imageView_;
 	}
 
 	framebufferInfo_.width = width;
@@ -84,8 +84,9 @@ void VulkanFramebuffer::Recreate(uint32_t width, uint32_t height)
 	{
 		if (swapchainImageCount > 0)
 		{
-			attachments[0] = swapchainImages_[i]->imageView_;
+			attachments[0] = vkDev.GetSwapchainImageView(i);
 		}
+
 		framebufferInfo_.attachmentCount = static_cast<uint32_t>(attachmentLength);
 		framebufferInfo_.pAttachments = attachments.data();
 		VK_CHECK(vkCreateFramebuffer(device_, &framebufferInfo_, nullptr, &framebuffers_[i]));

@@ -11,16 +11,16 @@ public:
 		device_(VK_NULL_HANDLE),
 		framebufferCount_(0),
 		framebufferInfo_({}),
-		swapchainImages_({}),
-		images_({}),
-		framebuffers_({})
+		attachmentImages_({}),
+		framebuffers_({}),
+		offscreen_(false)
 	{
 	}
 
 	void Create(VulkanDevice& vkDev,
 		VkRenderPass renderPass,
-		const std::vector<VulkanImage*> swapchainImages,
-		const std::vector<VulkanImage*> images);
+		const std::vector<VulkanImage*> attachmentImage,
+		bool offscreen);
 
 	void Destroy();
 
@@ -28,15 +28,15 @@ public:
 
 	VkFramebuffer GetFramebuffer(size_t index) const;
 
-	void Recreate(uint32_t width, uint32_t height);
+	void Recreate(VulkanDevice& vkDev, uint32_t width, uint32_t height);
 
 private:
 	std::vector<VkFramebuffer> framebuffers_;
-	std::vector<VulkanImage*> swapchainImages_;
-	std::vector<VulkanImage*> images_;
+	std::vector<VulkanImage*> attachmentImages_;
 	VkFramebufferCreateInfo framebufferInfo_; // Caching creation info
 	VkDevice device_;
 	uint32_t framebufferCount_;
+	bool offscreen_;
 };
 
 #endif
