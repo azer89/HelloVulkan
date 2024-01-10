@@ -24,15 +24,6 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 	// Note that this pipeline is offscreen rendering
 	multisampleCount = offscreenColorImage->multisampleCount_;
 	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, multisampleCount);
-	/*CreateSingleFramebuffer(
-		vkDev,
-		renderPass_,
-		{
-			offscreenColorImage_->imageView_,
-			depthImage_->imageView_
-		},
-		offscreenFramebuffer_);
-	*/
 	framebuffer_.Create(
 		vkDev,
 		renderPass_.GetHandle(),
@@ -71,27 +62,8 @@ RendererSkybox::~RendererSkybox()
 {
 }
 
-/*void RendererSkybox::OnWindowResized(VulkanDevice& vkDev)
-{
-	vkDestroyFramebuffer(vkDev.GetDevice(), offscreenFramebuffer_, nullptr);
-	CreateSingleFramebuffer(
-		vkDev,
-		renderPass_,
-		{
-			offscreenColorImage_->imageView_,
-			depthImage_->imageView_
-		},
-		offscreenFramebuffer_);
-}*/
-
 void RendererSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
 {
-	/*renderPass_.BeginRenderPass(
-		vkDev,
-		commandBuffer, 
-		IsOffScreen() ?
-			offscreenFramebuffer_ :
-			swapchainFramebuffers_[swapchainImageIndex]);*/
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
 
 	BindPipeline(vkDev, commandBuffer);

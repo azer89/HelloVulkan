@@ -9,9 +9,6 @@ RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
 {
 	renderPass_.CreateOnScreenColorOnlyRenderPass(vkDev);
 
-	//CreateSwapchainFramebuffers(
-	//	vkDev,
-	//	renderPass_);
 	framebuffer_.Create(vkDev, renderPass_.GetHandle(), {}, isOffscreen_);
 
 	CreateDescriptorPool(
@@ -45,7 +42,6 @@ void RendererTonemap::OnWindowResized(VulkanDevice& vkDev)
 
 void RendererTonemap::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
 {
-	//renderPass_.BeginRenderPass(vkDev, commandBuffer, swapchainFramebuffers_[swapchainImageIndex]);
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));
 
 	BindPipeline(vkDev, commandBuffer);
