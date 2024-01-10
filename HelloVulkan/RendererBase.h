@@ -16,10 +16,7 @@ class RendererBase
 {
 public:
 	explicit RendererBase(
-		const VulkanDevice& vkDev, 
-		// TODO refactor pointers of VulkanImage as render pass attachments
-		//VulkanImage* depthImage,
-		//VulkanImage* offscreenColorImage = nullptr,
+		const VulkanDevice& vkDev,
 		bool isOffscreen = false);
 	virtual ~RendererBase();
 
@@ -42,16 +39,11 @@ protected:
 	// Offscreen rendering
 	bool isOffscreen_;
 
-	// Depth buffer
-	//VulkanImage* depthImage_;
 	VulkanFramebuffer framebuffer_;
 
 	// Descriptor set (layout + pool + sets) -> uses uniform buffers, textures, framebuffers
 	VkDescriptorSetLayout descriptorSetLayout_ = nullptr;
 	VkDescriptorPool descriptorPool_ = nullptr;
-
-	// Framebuffers (one for each command buffer)
-	//std::vector<VkFramebuffer> swapchainFramebuffers_;
 
 	// Render pass
 	VulkanRenderPass renderPass_;
@@ -61,17 +53,8 @@ protected:
 
 	// PerFrameUBO
 	std::vector<VulkanBuffer> perFrameUBOs_;
-	
-	//VulkanImage* offscreenColorImage_;
-	//VkFramebuffer offscreenFramebuffer_;
 
 protected:
-	/*inline bool IsOffScreen()
-	{
-		return offscreenColorImage_ != nullptr ||
-			offscreenFramebuffer_ != nullptr;
-	}*/
-
 	void BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuffer);
 
 	// UBO
@@ -86,22 +69,6 @@ protected:
 		VulkanBuffer& buffer,
 		const void* data,
 		const size_t dataSize);
-
-	// TODO consolidate offscreen/onscreen into a single function
-	// Attach an array of image views to a framebuffer
-	//void CreateSingleFramebuffer(
-	//	VulkanDevice& vkDev,
-	//	VulkanRenderPass renderPass,
-	//	const std::vector<VulkanImage>& images);//,
-	//	//VkFramebuffer& framebuffer);
-	
-	// Attach a swapchain image and depth image
-	//void CreateSwapchainFramebuffers(
-	//	VulkanDevice& vkDev, 
-	//	VulkanRenderPass renderPass, 
-	//	const std::vector<VulkanImage>& images);
-	
-	//void DestroySwapchainFramebuffers();
 
 	void CreateDescriptorPool(
 		VulkanDevice& vkDev, 

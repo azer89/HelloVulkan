@@ -85,15 +85,7 @@ void RendererBase::BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuff
 
 void RendererBase::OnWindowResized(VulkanDevice& vkDev)
 {
-	// If this is offscreen renderer then it does not use swapchain framebuffers
-	/*if (IsOffScreen())
-	{
-		return;
-	}
-
-	DestroySwapchainFramebuffers();
-	VkImageView depthImageView = depthImage_ == nullptr ? nullptr : depthImage_->imageView_;
-	CreateSwapchainFramebuffers(vkDev, renderPass_, depthImageView);*/
+	framebuffer_.Destroy();
 	framebuffer_.Recreate(vkDev);
 	
 }
