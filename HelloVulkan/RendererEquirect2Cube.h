@@ -19,7 +19,8 @@ public:
 private:
 	VkDescriptorSet descriptorSet_;
 	VulkanImage inputHDRImage_;
-	VkFramebuffer frameBuffer_;
+	// TODO replace this below with framebuffer_
+	VkFramebuffer cubeFramebuffer_;
 
 private:
 	void InitializeHDRImage(VulkanDevice& vkDev, const std::string& hdrFile);

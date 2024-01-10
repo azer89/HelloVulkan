@@ -48,7 +48,7 @@ RendererEquirect2Cube::RendererEquirect2Cube(
 RendererEquirect2Cube::~RendererEquirect2Cube()
 {
 	inputHDRImage_.Destroy(device_);
-	vkDestroyFramebuffer(device_, frameBuffer_, nullptr);
+	vkDestroyFramebuffer(device_, cubeFramebuffer_, nullptr);
 }
 
 void RendererEquirect2Cube::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
@@ -252,7 +252,7 @@ void RendererEquirect2Cube::CreateFrameBuffer(
 		.layers = 1u,
 	};
 
-	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &info, nullptr, &frameBuffer_));
+	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &info, nullptr, &cubeFramebuffer_));
 }
 
 // TODO Move this to VulkanImage
@@ -328,7 +328,7 @@ void RendererEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanImage* ou
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
 
-	renderPass_.BeginCubemapRenderPass(commandBuffer, frameBuffer_, CubeSettings::sideLength);
+	renderPass_.BeginCubemapRenderPass(commandBuffer, cubeFramebuffer_, CubeSettings::sideLength);
 
 	vkCmdDraw(commandBuffer, 3, 1u, 0, 0);
 
