@@ -48,7 +48,8 @@ public:
 		height_(0),
 		mipCount_(0),
 		layerCount_(0),
-		imageFormat_(VK_FORMAT_UNDEFINED)
+		imageFormat_(VK_FORMAT_UNDEFINED),
+		multisampleCount_(VK_SAMPLE_COUNT_1_BIT)
 	{
 	}
 

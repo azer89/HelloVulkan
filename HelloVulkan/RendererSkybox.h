@@ -10,15 +10,12 @@ public:
 	RendererSkybox(VulkanDevice& vkDev, 
 		VulkanImage* envMap,
 		VulkanImage* depthImage,
-		// If the last two parameters not provided, perform an offscreen render pass
-		VulkanImage* offscreenColorImage = nullptr,
+		VulkanImage* offscreenColorImage,
 		uint8_t renderBit = 0u
 	);
 	~RendererSkybox();
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
-
-	void OnWindowResized(VulkanDevice& vkDev) override;
 
 private:
 	VulkanImage* envCubemap_;
