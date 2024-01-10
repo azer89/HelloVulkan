@@ -9,14 +9,10 @@
 
 // Constructor
 RendererBase::RendererBase(
-	const VulkanDevice& vkDev, 
-	//VulkanImage* depthImage,
-	//VulkanImage* offscreenColorImage,
+	const VulkanDevice& vkDev,
 	bool isOffscreen) :
 	device_(vkDev.GetDevice()),
 	isOffscreen_(isOffscreen)
-	//depthImage_(depthImage),
-	//offscreenColorImage_(offscreenColorImage)
 {
 }
 
