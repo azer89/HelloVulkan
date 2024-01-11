@@ -2,7 +2,7 @@
 #define VULKAN_DEVICE
 
 #include "VulkanInstance.h"
-#include "AppSettings.h"
+#include "Configs.h"
 
 #include "volk.h"
 

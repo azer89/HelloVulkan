@@ -1,5 +1,5 @@
 #include "AppBase.h"
-#include "AppSettings.h"
+#include "Configs.h"
 #include "VulkanUtility.h"
 
 #include "volk.h"

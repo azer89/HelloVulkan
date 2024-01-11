@@ -2,7 +2,7 @@
 #include "PipelineCreateInfo.h"
 #include "VulkanUtility.h"
 #include "VulkanShader.h"
-#include "AppSettings.h"
+#include "Configs.h"
 
 namespace CubeSettings
 {

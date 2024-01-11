@@ -1,5 +1,5 @@
 #include "Model.h"
-#include "AppSettings.h"
+#include "Configs.h"
 
 #include "assimp/postprocess.h"
 #include "glm/glm.hpp"

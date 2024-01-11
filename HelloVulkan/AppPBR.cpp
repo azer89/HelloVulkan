@@ -1,5 +1,5 @@
 #include "AppPBR.h"
-#include "AppSettings.h"
+#include "Configs.h"
 #include "RendererEquirect2Cube.h"
 #include "RendererCubeFilter.h"
 #include "RendererBRDFLUT.h"

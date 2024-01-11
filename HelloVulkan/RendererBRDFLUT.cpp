@@ -1,6 +1,6 @@
 #include "RendererBRDFLUT.h"
 #include "VulkanShader.h"
-#include "AppSettings.h"
+#include "Configs.h"
 
 // TODO Use push constants to send the image dimension
 constexpr int LUT_WIDTH = 256;

@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 
-#include "AppSettings.h"
+#include "Configs.h"
 
 enum CameraMovement
 {

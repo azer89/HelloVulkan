@@ -1,6 +1,6 @@
 #include "RendererTonemap.h"
 #include "VulkanUtility.h"
-#include "AppSettings.h"
+#include "Configs.h"
 
 RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
 	VulkanImage* singleSampledColorImage) :

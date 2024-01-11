@@ -1,6 +1,6 @@
 #include "RendererPBR.h"
 #include "VulkanUtility.h"
-#include "AppSettings.h"
+#include "Configs.h"
 
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"

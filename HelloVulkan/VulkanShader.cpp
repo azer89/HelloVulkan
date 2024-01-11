@@ -1,5 +1,5 @@
 #include "VulkanShader.h"
-#include "AppSettings.h"
+#include "Configs.h"
 
 #include <iostream>
 
