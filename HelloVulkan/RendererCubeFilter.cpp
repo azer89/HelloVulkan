@@ -2,24 +2,14 @@
 #include "PipelineCreateInfo.h"
 #include "VulkanUtility.h"
 #include "VulkanShader.h"
-#include "AppSettings.h"
-
-namespace FilterSettings
-{
-	constexpr unsigned int sampleCount = 1024;
-	constexpr uint32_t inputCubemapSize = 1024;
-	constexpr uint32_t outputDiffuseSize = 32;
-	constexpr uint32_t outputSpecularSize = 128;
-	constexpr VkFormat format = VK_FORMAT_R32G32B32A32_SFLOAT;
-	constexpr uint32_t layerCount = 6;
-}
+#include "Configs.h"
 
 RendererCubeFilter::RendererCubeFilter(
 	VulkanDevice& vkDev, VulkanImage* inputCubemap) :
 	RendererBase(vkDev, true) // Offscreen
 {
 	// Create cube render pass
-	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, FilterSettings::format);
+	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, IBLConfig::CubeFormat);
 
 	CreateDescriptorPool(
 		vkDev,
@@ -30,12 +20,12 @@ RendererCubeFilter::RendererCubeFilter(
 		&descriptorPool_);
 
 	// Input cubemap
-	uint32_t inputNumMipmap = NumMipMap(FilterSettings::inputCubemapSize, FilterSettings::inputCubemapSize);
+	uint32_t inputNumMipmap = NumMipMap(IBLConfig::InputCubeSideLength, IBLConfig::InputCubeSideLength);
 	inputCubemap->GenerateMipmap(
 		vkDev,
 		inputNumMipmap,
-		FilterSettings::inputCubemapSize,
-		FilterSettings::inputCubemapSize,
+		IBLConfig::InputCubeSideLength,
+		IBLConfig::InputCubeSideLength,
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	);
 	inputCubemap->CreateSampler(
@@ -69,8 +59,8 @@ RendererCubeFilter::RendererCubeFilter(
 			AppSettings::ShaderFolder + "FullscreenTriangle.vert",
 			AppSettings::ShaderFolder + "CubeFilterDiffuse.frag"
 		},
-		FilterSettings::outputDiffuseSize,
-		FilterSettings::outputDiffuseSize,
+		IBLConfig::OutputDiffuseSideLength,
+		IBLConfig::OutputDiffuseSideLength,
 		&graphicsPipelines_[0]
 	);
 
@@ -84,8 +74,8 @@ RendererCubeFilter::RendererCubeFilter(
 			AppSettings::ShaderFolder + "FullscreenTriangle.vert",
 			AppSettings::ShaderFolder + "CubeFilterSpecular.frag"
 		},
-		FilterSettings::outputSpecularSize,
-		FilterSettings::outputSpecularSize,
+		IBLConfig::OutputSpecularSideLength,
+		IBLConfig::OutputSpecularSideLength,
 		&graphicsPipelines_[1]
 	);
 }
@@ -108,16 +98,16 @@ void RendererCubeFilter::InitializeOutputCubemap(
 	VulkanDevice& vkDev, 
 	VulkanImage* outputDiffuseCubemap,
 	uint32_t numMipmap,
-	uint32_t sideLength)
+	uint32_t inputCubeSideLength)
 {
 	outputDiffuseCubemap->CreateImage(
 		vkDev.GetDevice(),
 		vkDev.GetPhysicalDevice(),
-		sideLength,
-		sideLength,
+		inputCubeSideLength,
+		inputCubeSideLength,
 		numMipmap,
-		FilterSettings::layerCount,
-		FilterSettings::format,
+		IBLConfig::LayerCount,
+		IBLConfig::CubeFormat,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -129,7 +119,7 @@ void RendererCubeFilter::InitializeOutputCubemap(
 		VK_FORMAT_R32G32B32A32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT,
 		VK_IMAGE_VIEW_TYPE_CUBE,
-		FilterSettings::layerCount,
+		IBLConfig::LayerCount,
 		numMipmap);
 }
 
@@ -205,11 +195,11 @@ void RendererCubeFilter::CreateOutputCubemapViews(VulkanDevice& vkDev,
 	uint32_t numMip)
 {
 	outputCubemapViews = 
-		std::vector<std::vector<VkImageView>>(numMip, std::vector<VkImageView>(FilterSettings::layerCount, VK_NULL_HANDLE));
+		std::vector<std::vector<VkImageView>>(numMip, std::vector<VkImageView>(IBLConfig::LayerCount, VK_NULL_HANDLE));
 	for (uint32_t a = 0; a < numMip; ++a)
 	{
 		outputCubemapViews[a] = {};
-		for (uint32_t b = 0; b < FilterSettings::layerCount; ++b)
+		for (uint32_t b = 0; b < IBLConfig::LayerCount; ++b)
 		{
 			VkImageSubresourceRange subresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0u, 1u, 0u, 1u };
 			subresourceRange.baseMipLevel = a;
@@ -276,9 +266,9 @@ void RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 		VK_COLOR_COMPONENT_B_BIT | 
 		VK_COLOR_COMPONENT_A_BIT;
 	colorBlendAttachment.blendEnable = VK_FALSE;
-	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments(FilterSettings::layerCount, colorBlendAttachment);
+	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments(IBLConfig::LayerCount, colorBlendAttachment);
 
-	pInfo.colorBlending.attachmentCount = FilterSettings::layerCount;
+	pInfo.colorBlending.attachmentCount = IBLConfig::LayerCount;
 	pInfo.colorBlending.pAttachments = colorBlendAttachments.data();
 
 	// No depth test
@@ -351,11 +341,11 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 {
 	uint32_t outputMipMapCount = filterType == CubeFilterType::Diffuse ?
 		1u :
-		NumMipMap(FilterSettings::outputSpecularSize, FilterSettings::outputSpecularSize);
+		NumMipMap(IBLConfig::OutputSpecularSideLength, IBLConfig::OutputSpecularSideLength);
 
 	uint32_t outputSideLength = filterType == CubeFilterType::Diffuse ?
-		FilterSettings::outputDiffuseSize :
-		FilterSettings::outputSpecularSize;
+		IBLConfig::OutputDiffuseSideLength :
+		IBLConfig::OutputSpecularSideLength;
 
 	InitializeOutputCubemap(vkDev, outputCubemap, outputMipMapCount, outputSideLength);
 
@@ -406,7 +396,7 @@ void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		values.roughness = filterType == CubeFilterType::Diffuse || outputMipMapCount == 1 ?
 			0.f :
 			static_cast<float>(i) / static_cast<float>(outputMipMapCount - 1);
-		values.sampleCount = FilterSettings::sampleCount;
+		values.outputDiffuseSampleCount = IBLConfig::OutputDiffuseSampleCount;
 
 		vkCmdPushConstants(
 			commandBuffer,

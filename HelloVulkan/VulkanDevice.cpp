@@ -1,6 +1,6 @@
 #include "VulkanDevice.h"
 #include "VulkanUtility.h"
-#include "AppSettings.h"
+#include "Configs.h"
 
 void VulkanDevice::CreateCompute
 (

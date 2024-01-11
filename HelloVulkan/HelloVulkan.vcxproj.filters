@@ -89,7 +89,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AppSettings.h">
+    <ClInclude Include="Configs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AppBase.h">

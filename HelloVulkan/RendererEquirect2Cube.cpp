@@ -2,14 +2,7 @@
 #include "PipelineCreateInfo.h"
 #include "VulkanUtility.h"
 #include "VulkanShader.h"
-#include "AppSettings.h"
-
-namespace CubeSettings
-{
-	constexpr uint32_t sideLength = 1024;
-	constexpr VkFormat format = VK_FORMAT_R32G32B32A32_SFLOAT;
-	constexpr uint32_t layerCount = 6;
-}
+#include "Configs.h"
 
 RendererEquirect2Cube::RendererEquirect2Cube(
 	VulkanDevice& vkDev, 
@@ -19,7 +12,7 @@ RendererEquirect2Cube::RendererEquirect2Cube(
 		true) // isOffscreen
 {
 	InitializeHDRImage(vkDev, hdrFile);
-	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, CubeSettings::format);
+	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, IBLConfig::CubeFormat);
 
 	CreateDescriptorPool(
 		vkDev,
@@ -57,16 +50,16 @@ void RendererEquirect2Cube::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuff
 
 void RendererEquirect2Cube::InitializeCubemap(VulkanDevice& vkDev, VulkanImage* cubemap)
 {
-	uint32_t mipmapCount = NumMipMap(CubeSettings::sideLength, CubeSettings::sideLength);
+	uint32_t mipmapCount = NumMipMap(IBLConfig::InputCubeSideLength, IBLConfig::InputCubeSideLength);
 
 	cubemap->CreateImage(
 		vkDev.GetDevice(),
 		vkDev.GetPhysicalDevice(),
-		CubeSettings::sideLength,
-		CubeSettings::sideLength,
+		IBLConfig::InputCubeSideLength,
+		IBLConfig::InputCubeSideLength,
 		mipmapCount,
-		CubeSettings::layerCount,
-		CubeSettings::format,
+		IBLConfig::LayerCount,
+		IBLConfig::CubeFormat,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -78,7 +71,7 @@ void RendererEquirect2Cube::InitializeCubemap(VulkanDevice& vkDev, VulkanImage* 
 		VK_FORMAT_R32G32B32A32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT,
 		VK_IMAGE_VIEW_TYPE_CUBE,
-		CubeSettings::layerCount,
+		IBLConfig::LayerCount,
 		mipmapCount);
 }
 
@@ -180,18 +173,18 @@ void RendererEquirect2Cube::CreateOffscreenGraphicsPipeline(
 	// Pipeline create info
 	PipelineCreateInfo pInfo(vkDev);
 
-	pInfo.viewport.width = CubeSettings::sideLength;
-	pInfo.viewport.height = CubeSettings::sideLength;
+	pInfo.viewport.width = IBLConfig::InputCubeSideLength;
+	pInfo.viewport.height = IBLConfig::InputCubeSideLength;
 
-	pInfo.scissor.extent = { CubeSettings::sideLength, CubeSettings::sideLength };
+	pInfo.scissor.extent = { IBLConfig::InputCubeSideLength, IBLConfig::InputCubeSideLength };
 
 	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
 	colorBlendAttachment.colorWriteMask =
 		VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 	colorBlendAttachment.blendEnable = VK_FALSE;
-	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments(CubeSettings::layerCount, colorBlendAttachment);
+	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments(IBLConfig::LayerCount, colorBlendAttachment);
 
-	pInfo.colorBlending.attachmentCount = CubeSettings::layerCount;
+	pInfo.colorBlending.attachmentCount = IBLConfig::LayerCount;
 	pInfo.colorBlending.pAttachments = colorBlendAttachments.data();
 
 	// No depth test
@@ -247,8 +240,8 @@ void RendererEquirect2Cube::CreateFrameBuffer(
 		.renderPass = renderPass_.GetHandle(),
 		.attachmentCount = static_cast<uint32_t>(outputViews.size()),
 		.pAttachments = outputViews.data(),
-		.width = CubeSettings::sideLength,
-		.height = CubeSettings::sideLength,
+		.width = IBLConfig::InputCubeSideLength,
+		.height = IBLConfig::InputCubeSideLength,
 		.layers = 1u,
 	};
 
@@ -261,8 +254,8 @@ void RendererEquirect2Cube::CreateCubemapViews(
 	VulkanImage* cubemap,
 	std::vector<VkImageView>& cubemapViews)
 {
-	cubemapViews = std::vector<VkImageView>(CubeSettings::layerCount, VK_NULL_HANDLE);
-	for (size_t i = 0; i < CubeSettings::layerCount; i++)
+	cubemapViews = std::vector<VkImageView>(IBLConfig::LayerCount, VK_NULL_HANDLE);
+	for (size_t i = 0; i < IBLConfig::LayerCount; i++)
 	{
 		const VkImageViewCreateInfo viewInfo =
 		{
@@ -328,7 +321,7 @@ void RendererEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanImage* ou
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
 
-	renderPass_.BeginCubemapRenderPass(commandBuffer, cubeFramebuffer_, CubeSettings::sideLength);
+	renderPass_.BeginCubemapRenderPass(commandBuffer, cubeFramebuffer_, IBLConfig::InputCubeSideLength);
 
 	vkCmdDraw(commandBuffer, 3, 1u, 0, 0);
 
@@ -351,7 +344,7 @@ void RendererEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanImage* ou
 	outputEnvMap->CreateDefaultSampler(vkDev.GetDevice());
 
 	// Destroy image views
-	for (size_t i = 0; i < CubeSettings::layerCount; i++)
+	for (size_t i = 0; i < IBLConfig::LayerCount; i++)
 	{
 		vkDestroyImageView(vkDev.GetDevice(), outputViews[i], nullptr);
 	}

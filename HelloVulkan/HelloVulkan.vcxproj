@@ -162,7 +162,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppBase.h" />
-    <ClInclude Include="AppSettings.h" />
+    <ClInclude Include="Configs.h" />
     <ClInclude Include="AppPBR.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="RendererBRDFLUT.h" />

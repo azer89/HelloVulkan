@@ -1,11 +1,6 @@
 #include "RendererBRDFLUT.h"
 #include "VulkanShader.h"
-#include "AppSettings.h"
-
-// TODO Use push constants to send the image dimension
-constexpr int LUT_WIDTH = 256;
-constexpr int LUT_HEIGHT = 256;
-constexpr uint32_t BUFFER_SIZE = 2 * sizeof(float) * LUT_WIDTH * LUT_HEIGHT;
+#include "Configs.h"
 
 RendererBRDFLUT::RendererBRDFLUT(
 	VulkanDevice& vkDev) :
@@ -15,7 +10,7 @@ RendererBRDFLUT::RendererBRDFLUT(
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-	outBuffer_.CreateSharedBuffer(vkDev, BUFFER_SIZE,
+	outBuffer_.CreateSharedBuffer(vkDev, IBLConfig::LUTBufferSize,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
@@ -44,17 +39,17 @@ void RendererBRDFLUT::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer com
 
 void RendererBRDFLUT::CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT)
 {
-	std::vector<float> lutData(BUFFER_SIZE, 0);
+	std::vector<float> lutData(IBLConfig::LUTBufferSize, 0);
 
 	Execute(vkDev);
 
-	outBuffer_.DownloadBufferData(vkDev, 0, lutData.data(), BUFFER_SIZE);
+	outBuffer_.DownloadBufferData(vkDev, 0, lutData.data(), IBLConfig::LUTBufferSize);
 
 	outputLUT->CreateImageFromData(
 		vkDev,
 		lutData.data(),
-		LUT_WIDTH,
-		LUT_HEIGHT,
+		IBLConfig::LUTWidth,
+		IBLConfig::LUTHeight,
 		1,
 		1,
 		VK_FORMAT_R32G32_SFLOAT);
@@ -97,8 +92,8 @@ void RendererBRDFLUT::Execute(VulkanDevice& vkDev)
 
 	// Tell the GPU to do some compute
 	vkCmdDispatch(commandBuffer, 
-		static_cast<uint32_t>(LUT_WIDTH), 
-		static_cast<uint32_t>(LUT_HEIGHT),
+		static_cast<uint32_t>(IBLConfig::LUTWidth),
+		static_cast<uint32_t>(IBLConfig::LUTHeight),
 		1u);
 
 	VkMemoryBarrier readoutBarrier = {

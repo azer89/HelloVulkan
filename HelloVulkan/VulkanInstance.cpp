@@ -1,6 +1,6 @@
 #include "VulkanInstance.h"
 #include "VulkanUtility.h"
-#include "AppSettings.h"
+#include "Configs.h"
 
 #include <vector>
 

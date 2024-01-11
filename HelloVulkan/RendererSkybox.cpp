@@ -1,6 +1,6 @@
 #include "RendererSkybox.h"
 #include "VulkanUtility.h"
-#include "AppSettings.h"
+#include "Configs.h"
 #include "UBO.h"
 
 #include "glm/glm.hpp"

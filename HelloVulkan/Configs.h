@@ -23,4 +23,20 @@ namespace AppSettings
 	const std::string TextureFolder = "C://Users//azer//workspace//HelloVulkan//Textures//";
 };
 
+namespace IBLConfig
+{
+	constexpr unsigned int OutputDiffuseSampleCount = 1024;
+	constexpr uint32_t InputCubeSideLength = 1024;
+	constexpr uint32_t OutputDiffuseSideLength = 32;
+	constexpr uint32_t OutputSpecularSideLength = 128;
+	constexpr VkFormat CubeFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
+	constexpr uint32_t LayerCount = 6;
+
+	// BRDF LUT
+	// TODO Use push constants to send the image dimension
+	constexpr int LUTWidth = 256;
+	constexpr int LUTHeight = 256;
+	constexpr uint32_t LUTBufferSize = 2 * sizeof(float) * LUTWidth * LUTHeight;
+}
+
 #endif

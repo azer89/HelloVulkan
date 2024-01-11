@@ -89,7 +89,7 @@ void VulkanImage::CreateColorResources(
 	VulkanDevice& vkDev, 
 	uint32_t width, 
 	uint32_t height,
-	VkSampleCountFlagBits sampleCount)
+	VkSampleCountFlagBits outputDiffuseSampleCount)
 {
 	VkFormat format = vkDev.GetSwaphchainImageFormat();
 
@@ -104,7 +104,7 @@ void VulkanImage::CreateColorResources(
 		VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
 		0u,
-		sampleCount);
+		outputDiffuseSampleCount);
 
 	CreateImageView(
 		vkDev.GetDevice(),
@@ -117,7 +117,7 @@ void VulkanImage::CreateDepthResources(
 	VulkanDevice& vkDev, 
 	uint32_t width, 
 	uint32_t height,
-	VkSampleCountFlagBits sampleCount)
+	VkSampleCountFlagBits outputDiffuseSampleCount)
 {
 	VkFormat depthFormat = vkDev.GetDepthFormat();
 
@@ -132,7 +132,7 @@ void VulkanImage::CreateDepthResources(
 		VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 		0u,
-		sampleCount);
+		outputDiffuseSampleCount);
 
 	CreateImageView(vkDev.GetDevice(),
 		depthFormat,
@@ -210,14 +210,14 @@ void VulkanImage::CreateImage(
 	VkImageUsageFlags usage,
 	VkMemoryPropertyFlags properties,
 	VkImageCreateFlags flags,
-	VkSampleCountFlagBits sampleCount)
+	VkSampleCountFlagBits outputDiffuseSampleCount)
 {
 	width_ = width;
 	height_ = height;
 	mipCount_ = mipCount;
 	layerCount_ = layerCount;
 	imageFormat_ = format;
-	multisampleCount_ = sampleCount; // MSAA
+	multisampleCount_ = outputDiffuseSampleCount; // MSAA
 	
 	const VkImageCreateInfo imageInfo = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
@@ -228,7 +228,7 @@ void VulkanImage::CreateImage(
 		.extent = VkExtent3D {.width = width_, .height = height_, .depth = 1 },
 		.mipLevels = mipCount_,
 		.arrayLayers = layerCount_,
-		.samples = sampleCount,
+		.samples = outputDiffuseSampleCount,
 		.tiling = tiling,
 		.usage = usage,
 		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
