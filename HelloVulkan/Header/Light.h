@@ -19,6 +19,8 @@ public:
 	Lights() = default;
 	~Lights() = default;
 
+	void Destroy();
+
 	void AddLights(VulkanDevice& vkDev, const std::vector<LightData> lights);
 
 	VkBuffer GetSSBOBuffer() { return storageBuffer_.buffer_; }
@@ -31,8 +33,9 @@ public:
 
 private:
 	size_t storageBufferSize_;
-
 	VulkanBuffer storageBuffer_;
+
+	VkDevice device_;
 };
 
 #endif

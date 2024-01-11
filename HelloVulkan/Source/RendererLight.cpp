@@ -64,7 +64,7 @@ void RendererLight::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer comma
 void RendererLight::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 {
 	const std::array<VkDescriptorSetLayoutBinding, 2> bindings = {
-		DescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT),
+		DescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT),
 		DescriptorSetLayoutBinding(1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT),
 	};
 
@@ -107,6 +107,7 @@ void RendererLight::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 			.range = lights_->GetSSBOSize()
 		};
 
+		// TODO the code below can be simplified
 		const std::array<VkWriteDescriptorSet, 2> descriptorWrites = {
 			VkWriteDescriptorSet {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,

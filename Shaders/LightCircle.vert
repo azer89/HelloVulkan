@@ -7,6 +7,13 @@ layout(binding = 0) uniform PerFrameUBO
 	vec4 cameraPosition;
 } frameUBO;
 
+struct VertexData
+{
+	vec4 position;
+	vec4 color;
+};
+
+
 const vec2 OFFSETS[6] = vec2[](
 	vec2(-1.0, -1.0),
 	vec2(-1.0, 1.0),

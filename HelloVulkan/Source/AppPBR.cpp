@@ -56,6 +56,15 @@ void AppPBR::Init()
 		brdfLut_.SetDebugName(vulkanDevice_, "BRDF_LUT");
 	}
 
+	// Lights
+	lights_.AddLights(vulkanDevice_,
+	{
+		{
+			.position_ = glm::vec4(1.0f, 2.0f, 1.0f, 0.0f),
+			.color_ = glm::vec4(10.f)
+		}
+	});
+
 	// Renderers
 	// This is responsible to clear swapchain image
 	clearPtr_ = std::make_unique<RendererClear>(
@@ -80,6 +89,11 @@ void AppPBR::Init()
 		&brdfLut_,
 		&depthImage_,
 		&multiSampledColorImage_);
+	lightPtr_ = std::make_unique<RendererLight>(
+		vulkanDevice_,
+		&lights_,
+		&multiSampledColorImage_
+	);
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
 	resolveMSPtr_ = std::make_unique<RendererResolveMS>(
 		vulkanDevice_, &multiSampledColorImage_, &singleSampledColorImage_);
@@ -116,11 +130,15 @@ void AppPBR::DestroyResources()
 	// Destroy meshes
 	model_.reset();
 
+	// Lights
+	lights_.Destroy();
+
 	// Destroy renderers
 	clearPtr_.reset();
 	finishPtr_.reset();
 	skyboxPtr_.reset();
 	pbrPtr_.reset();
+	lightPtr_.reset();
 	resolveMSPtr_.reset();
 	tonemapPtr_.reset();
 }

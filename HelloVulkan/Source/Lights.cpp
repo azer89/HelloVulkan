@@ -1,7 +1,13 @@
 #include "Light.h"
 
+void Lights::Destroy()
+{
+	storageBuffer_.Destroy(device_);
+}
+
 void Lights::AddLights(VulkanDevice& vkDev, const std::vector<LightData> lights)
 {
+	device_ = vkDev.GetDevice();
 	storageBufferSize_ = sizeof(LightData) * lights.size();
 	AllocateSSBOBuffer(vkDev, lights.data());
 }
