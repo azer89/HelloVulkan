@@ -25,18 +25,18 @@ namespace AppSettings
 
 namespace IBLConfig
 {
-	constexpr unsigned int outputDiffuseSampleCount = 1024;
-	constexpr uint32_t inputCubeSideLength = 1024;
-	constexpr uint32_t outputDiffuseSideLength = 32;
-	constexpr uint32_t outputSpecularSideLength = 128;
+	constexpr unsigned int OutputDiffuseSampleCount = 1024;
+	constexpr uint32_t InputCubeSideLength = 1024;
+	constexpr uint32_t OutputDiffuseSideLength = 32;
+	constexpr uint32_t OutputSpecularSideLength = 128;
 	constexpr VkFormat CubeFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
-	constexpr uint32_t layerCount = 6;
+	constexpr uint32_t LayerCount = 6;
 
 	// BRDF LUT
 	// TODO Use push constants to send the image dimension
-	constexpr int lutWidth = 256;
-	constexpr int lutHeight = 256;
-	constexpr uint32_t lutBufferSize = 2 * sizeof(float) * lutWidth * lutHeight;
+	constexpr int LUTWidth = 256;
+	constexpr int LUTHeight = 256;
+	constexpr uint32_t LUTBufferSize = 2 * sizeof(float) * LUTWidth * LUTHeight;
 }
 
 #endif

@@ -10,7 +10,7 @@ RendererBRDFLUT::RendererBRDFLUT(
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-	outBuffer_.CreateSharedBuffer(vkDev, IBLConfig::lutBufferSize,
+	outBuffer_.CreateSharedBuffer(vkDev, IBLConfig::LUTBufferSize,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
@@ -39,17 +39,17 @@ void RendererBRDFLUT::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer com
 
 void RendererBRDFLUT::CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT)
 {
-	std::vector<float> lutData(IBLConfig::lutBufferSize, 0);
+	std::vector<float> lutData(IBLConfig::LUTBufferSize, 0);
 
 	Execute(vkDev);
 
-	outBuffer_.DownloadBufferData(vkDev, 0, lutData.data(), IBLConfig::lutBufferSize);
+	outBuffer_.DownloadBufferData(vkDev, 0, lutData.data(), IBLConfig::LUTBufferSize);
 
 	outputLUT->CreateImageFromData(
 		vkDev,
 		lutData.data(),
-		IBLConfig::lutWidth,
-		IBLConfig::lutHeight,
+		IBLConfig::LUTWidth,
+		IBLConfig::LUTHeight,
 		1,
 		1,
 		VK_FORMAT_R32G32_SFLOAT);
@@ -92,8 +92,8 @@ void RendererBRDFLUT::Execute(VulkanDevice& vkDev)
 
 	// Tell the GPU to do some compute
 	vkCmdDispatch(commandBuffer, 
-		static_cast<uint32_t>(IBLConfig::lutWidth),
-		static_cast<uint32_t>(IBLConfig::lutHeight),
+		static_cast<uint32_t>(IBLConfig::LUTWidth),
+		static_cast<uint32_t>(IBLConfig::LUTHeight),
 		1u);
 
 	VkMemoryBarrier readoutBarrier = {

@@ -50,15 +50,15 @@ void RendererEquirect2Cube::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuff
 
 void RendererEquirect2Cube::InitializeCubemap(VulkanDevice& vkDev, VulkanImage* cubemap)
 {
-	uint32_t mipmapCount = NumMipMap(IBLConfig::inputCubeSideLength, IBLConfig::inputCubeSideLength);
+	uint32_t mipmapCount = NumMipMap(IBLConfig::InputCubeSideLength, IBLConfig::InputCubeSideLength);
 
 	cubemap->CreateImage(
 		vkDev.GetDevice(),
 		vkDev.GetPhysicalDevice(),
-		IBLConfig::inputCubeSideLength,
-		IBLConfig::inputCubeSideLength,
+		IBLConfig::InputCubeSideLength,
+		IBLConfig::InputCubeSideLength,
 		mipmapCount,
-		IBLConfig::layerCount,
+		IBLConfig::LayerCount,
 		IBLConfig::CubeFormat,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
@@ -71,7 +71,7 @@ void RendererEquirect2Cube::InitializeCubemap(VulkanDevice& vkDev, VulkanImage* 
 		VK_FORMAT_R32G32B32A32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT,
 		VK_IMAGE_VIEW_TYPE_CUBE,
-		IBLConfig::layerCount,
+		IBLConfig::LayerCount,
 		mipmapCount);
 }
 
@@ -173,18 +173,18 @@ void RendererEquirect2Cube::CreateOffscreenGraphicsPipeline(
 	// Pipeline create info
 	PipelineCreateInfo pInfo(vkDev);
 
-	pInfo.viewport.width = IBLConfig::inputCubeSideLength;
-	pInfo.viewport.height = IBLConfig::inputCubeSideLength;
+	pInfo.viewport.width = IBLConfig::InputCubeSideLength;
+	pInfo.viewport.height = IBLConfig::InputCubeSideLength;
 
-	pInfo.scissor.extent = { IBLConfig::inputCubeSideLength, IBLConfig::inputCubeSideLength };
+	pInfo.scissor.extent = { IBLConfig::InputCubeSideLength, IBLConfig::InputCubeSideLength };
 
 	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
 	colorBlendAttachment.colorWriteMask =
 		VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 	colorBlendAttachment.blendEnable = VK_FALSE;
-	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments(IBLConfig::layerCount, colorBlendAttachment);
+	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments(IBLConfig::LayerCount, colorBlendAttachment);
 
-	pInfo.colorBlending.attachmentCount = IBLConfig::layerCount;
+	pInfo.colorBlending.attachmentCount = IBLConfig::LayerCount;
 	pInfo.colorBlending.pAttachments = colorBlendAttachments.data();
 
 	// No depth test
@@ -240,8 +240,8 @@ void RendererEquirect2Cube::CreateFrameBuffer(
 		.renderPass = renderPass_.GetHandle(),
 		.attachmentCount = static_cast<uint32_t>(outputViews.size()),
 		.pAttachments = outputViews.data(),
-		.width = IBLConfig::inputCubeSideLength,
-		.height = IBLConfig::inputCubeSideLength,
+		.width = IBLConfig::InputCubeSideLength,
+		.height = IBLConfig::InputCubeSideLength,
 		.layers = 1u,
 	};
 
@@ -254,8 +254,8 @@ void RendererEquirect2Cube::CreateCubemapViews(
 	VulkanImage* cubemap,
 	std::vector<VkImageView>& cubemapViews)
 {
-	cubemapViews = std::vector<VkImageView>(IBLConfig::layerCount, VK_NULL_HANDLE);
-	for (size_t i = 0; i < IBLConfig::layerCount; i++)
+	cubemapViews = std::vector<VkImageView>(IBLConfig::LayerCount, VK_NULL_HANDLE);
+	for (size_t i = 0; i < IBLConfig::LayerCount; i++)
 	{
 		const VkImageViewCreateInfo viewInfo =
 		{
@@ -321,7 +321,7 @@ void RendererEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanImage* ou
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
 
-	renderPass_.BeginCubemapRenderPass(commandBuffer, cubeFramebuffer_, IBLConfig::inputCubeSideLength);
+	renderPass_.BeginCubemapRenderPass(commandBuffer, cubeFramebuffer_, IBLConfig::InputCubeSideLength);
 
 	vkCmdDraw(commandBuffer, 3, 1u, 0, 0);
 
@@ -344,7 +344,7 @@ void RendererEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanImage* ou
 	outputEnvMap->CreateDefaultSampler(vkDev.GetDevice());
 
 	// Destroy image views
-	for (size_t i = 0; i < IBLConfig::layerCount; i++)
+	for (size_t i = 0; i < IBLConfig::LayerCount; i++)
 	{
 		vkDestroyImageView(vkDev.GetDevice(), outputViews[i], nullptr);
 	}
