@@ -4,6 +4,9 @@
 #include "VulkanDevice.h"
 #include "VulkanImage.h"
 
+/*
+Containing a single or multiple framebuffers.
+*/
 class VulkanFramebuffer
 {
 public:

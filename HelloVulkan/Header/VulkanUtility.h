@@ -8,7 +8,6 @@ Adapted from
 	https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook
 */
 
-
 #include <iostream>
 
 #include "volk.h"

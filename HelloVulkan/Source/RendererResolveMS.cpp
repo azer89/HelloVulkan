@@ -1,6 +1,8 @@
 #include "RendererResolveMS.h"
 
-// MSAA
+/*
+Resolves a multisampled color image to a singlesampled color image
+*/
 RendererResolveMS::RendererResolveMS(
 	VulkanDevice& vkDev,
 	VulkanImage* multiSampledColorImage, // Input

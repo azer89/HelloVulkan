@@ -10,8 +10,6 @@ public:
 	~RendererClear();
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
-
-private:
 };
 
 #endif

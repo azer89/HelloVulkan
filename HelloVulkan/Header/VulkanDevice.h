@@ -2,7 +2,6 @@
 #define VULKAN_DEVICE
 
 #include "VulkanInstance.h"
-#include "Configs.h"
 
 #include "volk.h"
 
@@ -15,6 +14,10 @@ struct SwapchainSupportDetails
 	std::vector<VkPresentModeKHR> presentModes_;
 };
 
+/*
+Struct containing synchronization objects for every frame draw and also
+a command buffer
+*/
 struct FrameData
 {
 	VkSemaphore nextSwapchainImageSemaphore_;
@@ -30,6 +33,9 @@ struct FrameData
 	}
 };
 
+/*
+Class that encapsulate a Vulkan device and the swapchain 
+*/
 class VulkanDevice
 {
 public:

@@ -1,5 +1,5 @@
-#ifndef RENDERER_CUBE
-#define RENDERER_CUBE
+#ifndef RENDERER_SKYBOX
+#define RENDERER_SKYBOX
 
 #include "RendererBase.h"
 #include "VulkanImage.h"

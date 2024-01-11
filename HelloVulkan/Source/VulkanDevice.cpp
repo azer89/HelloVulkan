@@ -43,7 +43,7 @@ void VulkanDevice::CreateCompute
 		std::cerr << "Cannot get surface support KHR\n";
 	}
 
-	// TODO Create a swapchain class
+	// Swapchain
 	VK_CHECK(CreateSwapchain(instance.GetSurface()));
 	const size_t imageCount = CreateSwapchainImages();
 

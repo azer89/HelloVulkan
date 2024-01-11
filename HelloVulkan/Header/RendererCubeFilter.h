@@ -8,7 +8,10 @@
 
 enum class CubeFilterType : unsigned int
 {
+	// Iradiance / diffuse map
 	Diffuse = 0,
+
+	// Prefilter / specular map (mipmapped)
 	Specular = 1, 
 };
 

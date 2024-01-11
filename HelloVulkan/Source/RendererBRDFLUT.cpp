@@ -50,8 +50,8 @@ void RendererBRDFLUT::CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT)
 		lutData.data(),
 		IBLConfig::LUTWidth,
 		IBLConfig::LUTHeight,
-		1,
-		1,
+		1, // Mipmap count
+		1, // Layer count
 		VK_FORMAT_R32G32_SFLOAT);
 
 	outputLUT->CreateImageView(
@@ -84,17 +84,17 @@ void RendererBRDFLUT::Execute(VulkanDevice& vkDev)
 		commandBuffer,
 		VK_PIPELINE_BIND_POINT_COMPUTE,
 		pipelineLayout_,
-		0,
-		1,
+		0, // firstSet
+		1, // descriptorSetCount
 		&descriptorSet_,
-		0,
-		0);
+		0, // dynamicOffsetCount
+		0); // pDynamicOffsets
 
 	// Tell the GPU to do some compute
 	vkCmdDispatch(commandBuffer, 
-		static_cast<uint32_t>(IBLConfig::LUTWidth),
-		static_cast<uint32_t>(IBLConfig::LUTHeight),
-		1u);
+		static_cast<uint32_t>(IBLConfig::LUTWidth), // groupCountX
+		static_cast<uint32_t>(IBLConfig::LUTHeight), // groupCountY
+		1u); // groupCountZ
 
 	VkMemoryBarrier readoutBarrier = {
 		.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER,
@@ -108,7 +108,7 @@ void RendererBRDFLUT::Execute(VulkanDevice& vkDev)
 		VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 
 		VK_PIPELINE_STAGE_HOST_BIT, 
 		0, 
-		1, 
+		1, // memoryBarrierCount
 		&readoutBarrier, 
 		0, 
 		nullptr, 
@@ -123,7 +123,7 @@ void RendererBRDFLUT::Execute(VulkanDevice& vkDev)
 		0, 
 		0, 
 		0, 
-		1, 
+		1, // commandBufferCount
 		&commandBuffer, 
 		0, 
 		0

@@ -4,6 +4,9 @@
 #include "RendererBase.h"
 #include "VulkanImage.h"
 
+/*
+This applies tonemap to a color image and transfers image to a swapchain image
+*/
 class RendererTonemap final : public RendererBase
 {
 public:

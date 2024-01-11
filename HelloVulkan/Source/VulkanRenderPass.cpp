@@ -92,8 +92,8 @@ void VulkanRenderPass::CreateOffScreenRenderPass(
 {
 	renderPassBit_ = renderPassBit;
 
-	bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
-	bool clearDepth = renderPassBit_ & RenderPassBit::DepthClear;
+	const bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
+	const bool clearDepth = renderPassBit_ & RenderPassBit::DepthClear;
 
 	// Transition color attachment to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	// for the next onscreen render pass
@@ -207,11 +207,11 @@ void VulkanRenderPass::CreateOnScreenRenderPass(
 {
 	renderPassBit_ = renderPassBit;
 
-	bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
-	bool clearDepth = renderPassBit_ & RenderPassBit::DepthClear;
-	bool presentColor = renderPassBit_ & RenderPassBit::ColorPresent;
+	const bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
+	const bool clearDepth = renderPassBit_ & RenderPassBit::DepthClear;
+	const bool presentColor = renderPassBit_ & RenderPassBit::ColorPresent;
 	
-	VkAttachmentDescription colorAttachment = {
+	const VkAttachmentDescription colorAttachment = {
 		.flags = 0,
 		.format = vkDev.GetSwaphchainImageFormat(),
 		.samples = msaaSamples,
@@ -232,7 +232,7 @@ void VulkanRenderPass::CreateOnScreenRenderPass(
 		.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	};
 
-	VkAttachmentDescription depthAttachment = {
+	const VkAttachmentDescription depthAttachment = {
 		.flags = 0,
 		.format = vkDev.GetDepthFormat(),
 		.samples = msaaSamples,
@@ -304,8 +304,8 @@ void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(
 {
 	renderPassBit_ = renderPassBit;
 
-	bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
-	bool presentColor = renderPassBit_ & RenderPassBit::ColorPresent;
+	const bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
+	const bool presentColor = renderPassBit_ & RenderPassBit::ColorPresent;
 
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,

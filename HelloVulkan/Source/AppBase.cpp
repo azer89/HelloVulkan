@@ -111,9 +111,9 @@ void AppBase::CreateSharedImageResources()
 	multiSampledColorImage_.Destroy(vulkanDevice_.GetDevice());
 	singleSampledColorImage_.Destroy(vulkanDevice_.GetDevice());
 
-	VkSampleCountFlagBits msaaSamples = vulkanDevice_.GetMSAASampleCount();
-	uint32_t width = vulkanDevice_.GetFrameBufferWidth();
-	uint32_t height = vulkanDevice_.GetFrameBufferHeight();
+	const VkSampleCountFlagBits msaaSamples = vulkanDevice_.GetMSAASampleCount();
+	const uint32_t width = vulkanDevice_.GetFrameBufferWidth();
+	const uint32_t height = vulkanDevice_.GetFrameBufferHeight();
 
 	// Depth attachment (OnScreen and offscreen)
 	depthImage_.CreateDepthResources(

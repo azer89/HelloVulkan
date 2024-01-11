@@ -22,7 +22,7 @@ Model::Model(VulkanDevice& vkDev, const std::string& path) :
 	textureMap_[blackTextureFilePath_].CreateImageResources(
 		vkDev, 
 		blackTextureFilePath_.c_str());
-	// TODO Create Sampler
+
 	// Load model here
 	LoadModel(vkDev, path);
 }

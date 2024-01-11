@@ -4,7 +4,6 @@
 #include "volk.h"
 
 #include "VulkanDevice.h"
-#include "VulkanImage.h"
 #include "VulkanBuffer.h"
 #include "VulkanRenderPass.h"
 #include "VulkanFramebuffer.h"
@@ -12,6 +11,9 @@
 
 #include <string>
 
+/*
+This mainly encapsulates a graphics pipeline, framebuffers, and a render pass.
+ */
 class RendererBase
 {
 public:

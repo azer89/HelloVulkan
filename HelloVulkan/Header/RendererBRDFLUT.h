@@ -1,5 +1,5 @@
-#ifndef RENDERER_BRDF
-#define RENDERER_BRDF
+#ifndef RENDERER_BRDF_LUT
+#define RENDERER_BRDF_LUT
 
 #include "RendererBase.h"
 #include "VulkanDevice.h"

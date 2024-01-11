@@ -43,7 +43,7 @@ void VulkanFramebuffer::Destroy()
 	{
 		vkDestroyFramebuffer(device_, f, nullptr);
 	}
-	// Don't clear because we may recreate
+	// NOTE Don't clear because we may recreate
 	//framebuffers_.clear();
 }
 

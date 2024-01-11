@@ -14,7 +14,7 @@ public:
 		VulkanImage* diffuseMap,
 		VulkanImage* brdfLUT,
 		VulkanImage* depthImage,
-		VulkanImage* offscreenColorImage = nullptr,
+		VulkanImage* offscreenColorImage,
 		uint8_t renderBit = 0u);
 	 ~RendererPBR();
 
@@ -28,9 +28,9 @@ private:
 	void CreateDescriptorLayout(VulkanDevice& vkDev);
 	void CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh);
 
-private:
-	VulkanImage* envCubemap_;
-	VulkanImage* diffuseMap_;
+	// Image-Based Lighting
+	VulkanImage* specularCubemap_;
+	VulkanImage* diffuseCubemap_;
 	VulkanImage* brdfLUT_;
 };
 

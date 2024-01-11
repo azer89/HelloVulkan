@@ -1,5 +1,5 @@
-#ifndef TEXTURE_TYPE
-#define TEXTURE_TYPE
+#ifndef TEXTURE_MAPPER
+#define TEXTURE_MAPPER
 
 #include "assimp//material.h"
 

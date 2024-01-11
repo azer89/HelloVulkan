@@ -1,7 +1,9 @@
 #include "RendererFinish.h"
 #include "VulkanUtility.h"
 
-// Present swapchain image 
+/*
+	Present swapchain image 
+*/
 RendererFinish::RendererFinish(VulkanDevice& vkDev) : 
 	RendererBase(vkDev, 
 		false) // Onscreen
