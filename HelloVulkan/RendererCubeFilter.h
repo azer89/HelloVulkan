@@ -15,7 +15,7 @@ enum class CubeFilterType : unsigned int
 struct PushConstantCubeFilter
 {
 	float roughness = 0.f;
-	uint32_t sampleCount = 1u;
+	uint32_t outputDiffuseSampleCount = 1u;
 };
 
 class RendererCubeFilter final : public RendererBase
@@ -45,7 +45,7 @@ private:
 	void InitializeOutputCubemap(VulkanDevice& vkDev, 
 		VulkanImage* outputDiffuseCubemap,
 		uint32_t numMipmap,
-		uint32_t sideLength);
+		uint32_t inputCubeSideLength);
 
 	void CreateOutputCubemapViews(VulkanDevice& vkDev,
 		VulkanImage* outputCubemap,
