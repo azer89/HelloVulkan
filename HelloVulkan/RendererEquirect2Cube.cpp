@@ -12,7 +12,7 @@ RendererEquirect2Cube::RendererEquirect2Cube(
 		true) // isOffscreen
 {
 	InitializeHDRImage(vkDev, hdrFile);
-	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, IBLConfig::format);
+	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, IBLConfig::CubeFormat);
 
 	CreateDescriptorPool(
 		vkDev,
@@ -59,7 +59,7 @@ void RendererEquirect2Cube::InitializeCubemap(VulkanDevice& vkDev, VulkanImage* 
 		IBLConfig::inputCubeSideLength,
 		mipmapCount,
 		IBLConfig::layerCount,
-		IBLConfig::format,
+		IBLConfig::CubeFormat,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,

@@ -29,7 +29,7 @@ namespace IBLConfig
 	constexpr uint32_t inputCubeSideLength = 1024;
 	constexpr uint32_t outputDiffuseSideLength = 32;
 	constexpr uint32_t outputSpecularSideLength = 128;
-	constexpr VkFormat format = VK_FORMAT_R32G32B32A32_SFLOAT;
+	constexpr VkFormat CubeFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
 	constexpr uint32_t layerCount = 6;
 
 	// BRDF LUT

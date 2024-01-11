@@ -9,7 +9,7 @@ RendererCubeFilter::RendererCubeFilter(
 	RendererBase(vkDev, true) // Offscreen
 {
 	// Create cube render pass
-	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, IBLConfig::format);
+	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, IBLConfig::CubeFormat);
 
 	CreateDescriptorPool(
 		vkDev,
@@ -107,7 +107,7 @@ void RendererCubeFilter::InitializeOutputCubemap(
 		inputCubeSideLength,
 		numMipmap,
 		IBLConfig::layerCount,
-		IBLConfig::format,
+		IBLConfig::CubeFormat,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
