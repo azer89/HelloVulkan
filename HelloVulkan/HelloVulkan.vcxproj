@@ -185,6 +185,7 @@
     <ClCompile Include="Source\AppBase.cpp" />
     <ClCompile Include="Source\AppPBR.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
+    <ClCompile Include="Source\Lights.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
     <ClCompile Include="Source\Model.cpp" />

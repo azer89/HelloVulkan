@@ -10,14 +10,20 @@ class RendererLight final : public RendererBase
 public:
 	RendererLight(
 		VulkanDevice& vkDev,
-		std::vector<Light>& lights
+		Lights* lights,
+		VulkanImage* offscreenColorImage,
+		uint8_t renderBit = 0u
 	);
 	~RendererLight();
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:
-	std::vector<Light> lights_;
+	void CreateDescriptorLayoutAndSet(VulkanDevice& vkDev);
+
+private:
+	Lights* lights_;
+	std::vector<VkDescriptorSet> descriptorSets_;
 };
 
 #endif
