@@ -11,6 +11,7 @@ public:
 	RendererLight(
 		VulkanDevice& vkDev,
 		Lights* lights,
+		VulkanImage* depthImage,
 		VulkanImage* offscreenColorImage,
 		uint8_t renderBit = 0u
 	);

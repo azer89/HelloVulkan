@@ -25,6 +25,7 @@ public:
 
 	VkBuffer GetSSBOBuffer() { return storageBuffer_.buffer_; }
 	size_t GetSSBOSize() { return storageBufferSize_;  }
+	uint32_t GetLightCount() { return lightCount_; }
 
 public:
 	size_t AllocateSSBOBuffer(
@@ -32,6 +33,8 @@ public:
 		const void* lightData);
 
 private:
+	uint32_t lightCount_;
+
 	size_t storageBufferSize_;
 	VulkanBuffer storageBuffer_;
 

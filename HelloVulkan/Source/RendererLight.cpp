@@ -8,6 +8,7 @@
 RendererLight::RendererLight(
 	VulkanDevice& vkDev,
 	Lights* lights,
+	VulkanImage* depthImage, // TODO remove depth
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
 	RendererBase(vkDev, true), // Offscreen rendering
@@ -22,7 +23,8 @@ RendererLight::RendererLight(
 		vkDev,
 		renderPass_.GetHandle(),
 		{
-			offscreenColorImage
+			offscreenColorImage,
+			depthImage
 		},
 		isOffscreen_
 	);
@@ -58,7 +60,28 @@ RendererLight::~RendererLight()
 
 void RendererLight::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
 {
+	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
 
+	BindPipeline(vkDev, commandBuffer);
+
+	vkCmdBindDescriptorSets(
+		commandBuffer,
+		VK_PIPELINE_BIND_POINT_GRAPHICS,
+		pipelineLayout_,
+		0,
+		1,
+		&descriptorSets_[currentImage],
+		0,
+		nullptr);
+
+	vkCmdDraw(
+		commandBuffer, 
+		4, // Draw a quad
+		lights_->GetLightCount(), 
+		0, 
+		0);
+
+	vkCmdEndRenderPass(commandBuffer);
 }
 
 void RendererLight::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)

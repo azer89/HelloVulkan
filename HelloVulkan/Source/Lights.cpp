@@ -9,6 +9,7 @@ void Lights::AddLights(VulkanDevice& vkDev, const std::vector<LightData> lights)
 {
 	device_ = vkDev.GetDevice();
 	storageBufferSize_ = sizeof(LightData) * lights.size();
+	lightCount_ = static_cast<uint32_t>(lights.size());
 	AllocateSSBOBuffer(vkDev, lights.data());
 }
 

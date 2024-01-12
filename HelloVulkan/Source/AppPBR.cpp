@@ -92,6 +92,7 @@ void AppPBR::Init()
 	lightPtr_ = std::make_unique<RendererLight>(
 		vulkanDevice_,
 		&lights_,
+		&depthImage_,
 		&multiSampledColorImage_
 	);
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
@@ -113,6 +114,7 @@ void AppPBR::Init()
 		clearPtr_.get(),
 		skyboxPtr_.get(),
 		pbrPtr_.get(),
+		lightPtr_.get(),
 		resolveMSPtr_.get(),
 		tonemapPtr_.get(),
 		finishPtr_.get()
