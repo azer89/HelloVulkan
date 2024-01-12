@@ -108,7 +108,7 @@ void RendererPBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer command
 
 	PushConstantPBR pc
 	{
-		.lightCount = 4u
+		.lightCount = lights_->GetLightCount()
 	};
 	vkCmdPushConstants(
 		commandBuffer,
