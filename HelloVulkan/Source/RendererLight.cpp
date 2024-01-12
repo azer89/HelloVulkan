@@ -76,7 +76,7 @@ void RendererLight::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer comma
 
 	vkCmdDraw(
 		commandBuffer, 
-		4, // Draw a quad
+		6, // Draw a quad
 		lights_->GetLightCount(), 
 		0, 
 		0);

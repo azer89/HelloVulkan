@@ -16,7 +16,7 @@ void AppPBR::Init()
 	// Initialize attachments
 	CreateSharedImageResources();
 
-	std::string hdrFile = AppSettings::TextureFolder + "piazza_bologni_1k.hdr";
+	std::string hdrFile = AppSettings::TextureFolder + "the_sky_is_on_fire_4k.hdr";
 
 	model_ = std::make_unique<Model>(
 		vulkanDevice_, 
@@ -60,7 +60,7 @@ void AppPBR::Init()
 	lights_.AddLights(vulkanDevice_,
 	{
 		{
-			.position_ = glm::vec4(1.0f, 2.0f, 1.0f, 0.0f),
+			.position_ = glm::vec4(0.0f, 3.0f, 0.0f, 0.0f),
 			.color_ = glm::vec4(10.f)
 		}
 	});
@@ -161,6 +161,7 @@ void AppPBR::UpdateUBOs(uint32_t imageIndex)
 		.cameraView = camera_->GetViewMatrix(),
 		.cameraPosition = glm::vec4(camera_->Position(), 1.f)
 	};
+	lightPtr_->SetPerFrameUBO(vulkanDevice_, imageIndex, pbrUBO);
 	pbrPtr_->SetPerFrameUBO(vulkanDevice_, imageIndex, pbrUBO);
 
 	// Model UBOs

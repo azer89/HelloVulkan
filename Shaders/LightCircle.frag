@@ -7,5 +7,10 @@ layout(location = 0) out vec4 fragColor;
 
 void main()
 {
+	float dist = sqrt(dot(fragOffset, fragOffset));
+	if (dist >= 1.0)
+	{
+		discard;
+	}
 	fragColor = vec4(1.0);
 }
