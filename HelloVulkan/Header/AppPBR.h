@@ -8,7 +8,9 @@
 #include "RendererPBR.h"
 #include "RendererTonemap.h"
 #include "RendererResolveMS.h"
+#include "RendererLight.h"
 #include "VulkanImage.h"
+#include "Light.h"
 #include "Model.h"
 
 #include <vector>
@@ -22,6 +24,7 @@ public:
 	void UpdateUBOs(uint32_t imageIndex) override;
 
 	void Init();
+	void InitLights();
 	void DestroyResources();
 
 private:
@@ -31,6 +34,7 @@ private:
 	std::unique_ptr<RendererTonemap> tonemapPtr_;
 	std::unique_ptr<RendererFinish> finishPtr_;
 	std::unique_ptr<RendererResolveMS> resolveMSPtr_;
+	std::unique_ptr<RendererLight> lightPtr_;
 
 	// PBR stuff
 	// TODO change to unique ptrs
@@ -41,6 +45,8 @@ private:
 
 	float modelRotation_;
 	std::unique_ptr<Model> model_;
+
+	Lights lights_;
 };
 
 #endif

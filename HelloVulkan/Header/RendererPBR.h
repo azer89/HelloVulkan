@@ -4,12 +4,19 @@
 #include "RendererBase.h"
 #include "VulkanImage.h"
 #include "Model.h"
+#include "Light.h"
+
+struct PushConstantPBR
+{
+	uint32_t lightCount = 1u;
+};
 
 class RendererPBR final : public RendererBase
 {
 public:
 	RendererPBR(VulkanDevice& vkDev,
 		std::vector<Model*> models,
+		Lights* lights,
 		VulkanImage* specularMap,
 		VulkanImage* diffuseMap,
 		VulkanImage* brdfLUT,
@@ -27,6 +34,8 @@ public:
 private:
 	void CreateDescriptorLayout(VulkanDevice& vkDev);
 	void CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh);
+
+	Lights* lights_;
 
 	// Image-Based Lighting
 	VulkanImage* specularCubemap_;

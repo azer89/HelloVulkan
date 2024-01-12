@@ -139,6 +139,8 @@
     <None Include="..\Shaders\CubeFilterDiffuse.frag" />
     <None Include="..\Shaders\CubeFilterSpecular.frag" />
     <None Include="..\Shaders\Hammersley.frag" />
+    <None Include="..\Shaders\LightCircle.frag" />
+    <None Include="..\Shaders\LightCircle.vert" />
     <None Include="..\Shaders\Mesh.frag" />
     <None Include="..\Shaders\PBRHeader.frag" />
     <None Include="..\Shaders\Cube.frag" />
@@ -153,6 +155,7 @@
     <ClInclude Include="Header\AppPBR.h" />
     <ClInclude Include="Header\Camera.h" />
     <ClInclude Include="Header\Configs.h" />
+    <ClInclude Include="Header\Light.h" />
     <ClInclude Include="Header\Mesh.h" />
     <ClInclude Include="Header\Model.h" />
     <ClInclude Include="Header\PipelineCreateInfo.h" />
@@ -162,6 +165,7 @@
     <ClInclude Include="Header\RendererCubeFilter.h" />
     <ClInclude Include="Header\RendererEquirect2Cube.h" />
     <ClInclude Include="Header\RendererFinish.h" />
+    <ClInclude Include="Header\RendererLight.h" />
     <ClInclude Include="Header\RendererPBR.h" />
     <ClInclude Include="Header\RendererResolveMS.h" />
     <ClInclude Include="Header\RendererSkybox.h" />
@@ -181,6 +185,7 @@
     <ClCompile Include="Source\AppBase.cpp" />
     <ClCompile Include="Source\AppPBR.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
+    <ClCompile Include="Source\Lights.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
     <ClCompile Include="Source\Model.cpp" />
@@ -190,6 +195,7 @@
     <ClCompile Include="Source\RendererCubeFilter.cpp" />
     <ClCompile Include="Source\RendererEquirect2Cube.cpp" />
     <ClCompile Include="Source\RendererFinish.cpp" />
+    <ClCompile Include="Source\RendererLight.cpp" />
     <ClCompile Include="Source\RendererPBR.cpp" />
     <ClCompile Include="Source\RendererResolveMS.cpp" />
     <ClCompile Include="Source\RendererSkybox.cpp" />

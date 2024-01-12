@@ -14,36 +14,34 @@ layout(binding = 0) uniform PerFrameUBO
 }
 frameUBO;
 
-layout(binding = 2) uniform sampler2D textureAlbedo;
-layout(binding = 3) uniform sampler2D textureNormal;
-layout(binding = 4) uniform sampler2D textureMetalness;
-layout(binding = 5) uniform sampler2D textureRoughness;
-layout(binding = 6) uniform sampler2D textureAO;
-layout(binding = 7) uniform sampler2D textureEmissive;
+layout(push_constant) uniform PushConstantPBR
+{
+	// TODO Not used but will add more variables later
+	uint lightCount;
+}
+pc;
 
-layout(binding = 8) uniform samplerCube specularMap;
-layout(binding = 9) uniform samplerCube diffuseMap;
-layout(binding = 10) uniform sampler2D brdfLUT;
+// SSBO
+struct LightData
+{
+	vec4 position;
+	vec4 color;
+};
+layout(binding = 2) readonly buffer Lights { LightData data []; } inLights;
+
+layout(binding = 3) uniform sampler2D textureAlbedo;
+layout(binding = 4) uniform sampler2D textureNormal;
+layout(binding = 5) uniform sampler2D textureMetalness;
+layout(binding = 6) uniform sampler2D textureRoughness;
+layout(binding = 7) uniform sampler2D textureAO;
+layout(binding = 8) uniform sampler2D textureEmissive;
+
+layout(binding = 9) uniform samplerCube specularMap;
+layout(binding = 10) uniform samplerCube diffuseMap;
+layout(binding = 11) uniform sampler2D brdfLUT;
 
 // Specular max LOD
 const float MAX_REFLECTION_LOD = 4.0;
-
-// TODO Use SSBO and push constant
-const int NUM_LIGHTS = 4;
-vec3 lightPositions[NUM_LIGHTS] = 
-{ 
-	vec3(-1.5, 0.7,  1.5),
-	vec3( 1.5, 0.7,  1.5),
-	vec3(-1.5, 0.7, -1.5),
-	vec3( 1.5, 0.7, -1.5)
-};
-vec3 lightColors[NUM_LIGHTS] = 
-{
-	vec3(1.0, 1.0, 1.0),
-	vec3(1.0, 1.0, 1.0),
-	vec3(1.0, 1.0, 1.0),
-	vec3(1.0, 1.0, 1.0)
-};
 
 // Include files
 #include <PBRHeader.frag>
@@ -96,16 +94,18 @@ void main()
 
 	// Reflectance equation
 	vec3 Lo = vec3(0.0);
-	for (int i = 0; i < NUM_LIGHTS; ++i)
+	for (int i = 0; i < inLights.data.length(); ++i)
 	{
-		vec3 L = normalize(lightPositions[i] - worldPos); // Incident light vector
+		LightData light = inLights.data[i];
+
+		vec3 L = normalize(light.position.xyz - worldPos); // Incident light vector
 		vec3 H = normalize(V + L); // Halfway vector
 		float NoH = max(dot(N, H), 0.0);
 		float NoL = max(dot(N, L), 0.0);
 		float HoV = max(dot(H, V), 0.0);
-		float distance = length(lightPositions[i] - worldPos);
+		float distance = length(light.position.xyz - worldPos);
 		float attenuation = 1.0 / (distance * distance);
-		vec3 radiance = lightColors[i] * attenuation;
+		vec3 radiance = light.color.xyz * attenuation;
 		
 		// Cook-Torrance BRDF
 		float D = DistributionGGX(NoH, roughness);

@@ -51,6 +51,12 @@
     <None Include="..\Shaders\Tonemap.frag">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\Shaders\LightCircle.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Shaders\LightCircle.vert">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\AppBase.h">
@@ -134,6 +140,12 @@
     <ClInclude Include="Header\VulkanUtility.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\RendererLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AppBase.cpp">
@@ -206,6 +218,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\VulkanUtility.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RendererLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Lights.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

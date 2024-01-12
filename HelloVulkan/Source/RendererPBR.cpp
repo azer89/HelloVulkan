@@ -9,13 +9,15 @@
 #include <array>
 
 // Constants
-constexpr uint32_t PBR_TEXTURE_START_BIND_INDEX = 2; // Because we have two UBOs
+constexpr uint32_t UBO_COUNT = 2;
+constexpr uint32_t SSBO_COUNT = 1;
 constexpr size_t PBR_MESH_TEXTURE_COUNT = 6; 
 constexpr size_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 
 RendererPBR::RendererPBR(
 	VulkanDevice& vkDev,
 	std::vector<Model*> models,
+	Lights* lights,
 	VulkanImage* specularMap,
 	VulkanImage* diffuseMap,
 	VulkanImage* brdfLUT,
@@ -23,10 +25,11 @@ RendererPBR::RendererPBR(
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
 	RendererBase(vkDev, true), // Offscreen
+	models_(models),
+	lights_(lights),
 	specularCubemap_(specularMap),
 	diffuseCubemap_(diffuseMap),
-	brdfLUT_(brdfLUT),
-	models_(models)
+	brdfLUT_(brdfLUT)
 {
 	VkSampleCountFlagBits multisampleCount = VK_SAMPLE_COUNT_1_BIT;
 
@@ -56,8 +59,8 @@ RendererPBR::RendererPBR(
 
 	CreateDescriptorPool(
 		vkDev, 
-		2 * models_.size(),  // (PerFrameUBO + ModelUBO) * modelSize
-		0,  // SSBO
+		UBO_COUNT * models_.size(), 
+		SSBO_COUNT,
 		(PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT) * numMeshes,
 		numMeshes, // decsriptor count per swapchain
 		&descriptorPool_);
@@ -71,7 +74,14 @@ RendererPBR::RendererPBR(
 		}
 	}
 
-	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
+	// Push constants
+	std::vector<VkPushConstantRange> ranges(1u);
+	VkPushConstantRange& range = ranges.front();
+	range.offset = 0u;
+	range.size = sizeof(PushConstantPBR);
+	range.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_, ranges);
 
 	CreateGraphicsPipeline(
 		vkDev,
@@ -96,6 +106,17 @@ void RendererPBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer command
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
 
 	BindPipeline(vkDev, commandBuffer);
+
+	PushConstantPBR pc
+	{
+		.lightCount = lights_->GetLightCount()
+	};
+	vkCmdPushConstants(
+		commandBuffer,
+		pipelineLayout_,
+		VK_SHADER_STAGE_FRAGMENT_BIT,
+		0,
+		sizeof(PushConstantPBR), &pc);
 
 	for (Model* model : models_)
 	{
@@ -132,15 +153,23 @@ void RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 	std::vector<VkDescriptorSetLayoutBinding> bindings;
 
 	uint32_t bindingIndex = 0;
+	// UBO
 	bindings.emplace_back(
 		DescriptorSetLayoutBinding(
 			bindingIndex++, 
 			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 
 			VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT));
+	// UBO
 	bindings.emplace_back(
 		DescriptorSetLayoutBinding(
 			bindingIndex++, 
 			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 
+			VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT));
+	// SSBO
+	bindings.emplace_back(
+		DescriptorSetLayoutBinding(
+			bindingIndex++,
+			VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
 			VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT));
 
 	// PBR textures
@@ -215,7 +244,7 @@ void RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 	{
 		imageInfoArray.push_back(elem.second->GetDescriptorImageInfo());
 		// The enum index starts from 1
-		uint32_t meshBindIndex = PBR_TEXTURE_START_BIND_INDEX + static_cast<uint32_t>(elem.first) - 1;
+		uint32_t meshBindIndex = UBO_COUNT + SSBO_COUNT + static_cast<uint32_t>(elem.first) - 1;
 		bindIndexArray.emplace_back(meshBindIndex);
 	}
 
@@ -233,8 +262,9 @@ void RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 
 		const VkDescriptorBufferInfo bufferInfo1 = { perFrameUBOs_[i].buffer_, 0, sizeof(PerFrameUBO)};
 		const VkDescriptorBufferInfo bufferInfo2 = { parentModel->modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
+		const VkDescriptorBufferInfo bufferInfo3 = { lights_->GetSSBOBuffer(), 0, lights_->GetSSBOSize() };
 
-		// UBOs
+		// UBO
 		std::vector<VkWriteDescriptorSet> descriptorWrites;
 		descriptorWrites.emplace_back(
 			BufferWriteDescriptorSet(
@@ -242,12 +272,20 @@ void RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 				&bufferInfo1, 
 				bindIndex++, 
 				VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
+		// UBO
 		descriptorWrites.emplace_back(
 			BufferWriteDescriptorSet(
 				ds, 
 				&bufferInfo2, 
 				bindIndex++, 
 				VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
+		// SSBO
+		descriptorWrites.emplace_back(
+			BufferWriteDescriptorSet(
+				ds,
+				&bufferInfo3,
+				bindIndex++,
+				VK_DESCRIPTOR_TYPE_STORAGE_BUFFER));
 
 		// Mesh textures
 		for (size_t i = 0; i < imageInfoArray.size(); ++i)

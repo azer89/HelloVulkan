@@ -16,11 +16,14 @@ void AppPBR::Init()
 	// Initialize attachments
 	CreateSharedImageResources();
 
-	std::string hdrFile = AppSettings::TextureFolder + "piazza_bologni_1k.hdr";
+	// Initialize lights
+	InitLights();
+
+	std::string hdrFile = AppSettings::TextureFolder + "the_sky_is_on_fire_4k.hdr";
 
 	model_ = std::make_unique<Model>(
 		vulkanDevice_, 
-		AppSettings::ModelFolder + "Tachikoma//Tachikoma.gltf");
+		AppSettings::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
 	std::vector<Model*> models = {model_.get()};
 
 	// Create a cubemap from the input HDR
@@ -75,11 +78,18 @@ void AppPBR::Init()
 	pbrPtr_ = std::make_unique<RendererPBR>(
 		vulkanDevice_,
 		models,
+		&lights_,
 		&specularCubemap_,
 		&diffuseCubemap_,
 		&brdfLut_,
 		&depthImage_,
 		&multiSampledColorImage_);
+	lightPtr_ = std::make_unique<RendererLight>(
+		vulkanDevice_,
+		&lights_,
+		&depthImage_,
+		&multiSampledColorImage_
+	);
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
 	resolveMSPtr_ = std::make_unique<RendererResolveMS>(
 		vulkanDevice_, &multiSampledColorImage_, &singleSampledColorImage_);
@@ -99,10 +109,35 @@ void AppPBR::Init()
 		clearPtr_.get(),
 		skyboxPtr_.get(),
 		pbrPtr_.get(),
+		lightPtr_.get(),
 		resolveMSPtr_.get(),
 		tonemapPtr_.get(),
 		finishPtr_.get()
 	};
+}
+
+void AppPBR::InitLights()
+{
+	// Lights (SSBO)
+	lights_.AddLights(vulkanDevice_,
+	{
+		{
+			.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f),
+			.color_ = glm::vec4(1.f, 0.f, 0.f, 1.f)
+		},
+		{
+			.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f),
+			.color_ = glm::vec4(1.f, 0.f, 0.f, 1.f)
+		},
+		{
+			.position_ = glm::vec4(-1.5f, 0.7f, -1.5f, 1.f),
+			.color_ = glm::vec4(0.f, 1.f, 0.f, 1.f)
+		},
+		{
+			.position_ = glm::vec4(1.5f, 0.7f, -1.5f, 1.f),
+			.color_ = glm::vec4(0.f, 1.f, 0.f, 1.f)
+		}
+	});
 }
 
 void AppPBR::DestroyResources()
@@ -116,11 +151,15 @@ void AppPBR::DestroyResources()
 	// Destroy meshes
 	model_.reset();
 
+	// Lights
+	lights_.Destroy();
+
 	// Destroy renderers
 	clearPtr_.reset();
 	finishPtr_.reset();
 	skyboxPtr_.reset();
 	pbrPtr_.reset();
+	lightPtr_.reset();
 	resolveMSPtr_.reset();
 	tonemapPtr_.reset();
 }
@@ -141,12 +180,13 @@ void AppPBR::UpdateUBOs(uint32_t imageIndex)
 		.cameraView = camera_->GetViewMatrix(),
 		.cameraPosition = glm::vec4(camera_->Position(), 1.f)
 	};
+	lightPtr_->SetPerFrameUBO(vulkanDevice_, imageIndex, pbrUBO);
 	pbrPtr_->SetPerFrameUBO(vulkanDevice_, imageIndex, pbrUBO);
 
 	// Model UBOs
 	glm::mat4 modelMatrix(1.f);
 	modelMatrix = glm::rotate(modelMatrix, modelRotation_, glm::vec3(0.f, 1.f, 0.f));
-	modelRotation_ += deltaTime_ * 0.1f;
+	//modelRotation_ += deltaTime_ * 0.1f;
 
 	// 1
 	ModelUBO modelUBO1
