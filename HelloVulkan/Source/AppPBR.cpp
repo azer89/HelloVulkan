@@ -56,12 +56,24 @@ void AppPBR::Init()
 		brdfLut_.SetDebugName(vulkanDevice_, "BRDF_LUT");
 	}
 
-	// Lights
+	// Lights (SSBO)
 	lights_.AddLights(vulkanDevice_,
 	{
 		{
-			.position_ = glm::vec4(0.0f, 3.0f, 0.0f, 0.0f),
-			.color_ = glm::vec4(10.f)
+			.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f),
+			.color_ = glm::vec4(1.f, 0.f, 0.f, 1.f)
+		},
+		{
+			.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f),
+			.color_ = glm::vec4(1.f, 0.f, 0.f, 1.f)
+		},
+		{
+			.position_ = glm::vec4(-1.5f, 0.7f, -1.5f, 1.f),
+			.color_ = glm::vec4(0.f, 0.f, 1.f, 1.f)
+		},
+		{
+			.position_ = glm::vec4(1.5f, 0.7f, -1.5f, 1.f),
+			.color_ = glm::vec4(0.f, 0.f, 1.f, 1.f)
 		}
 	});
 

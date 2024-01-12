@@ -2,6 +2,7 @@
 #extension GL_ARB_separate_shader_objects : enable
 
 layout(location = 0) out vec2 fragOffset;
+layout(location = 1) out vec4 circleColor;
 
 layout(binding = 0) uniform PerFrameUBO
 {
@@ -42,5 +43,6 @@ void main()
 		RADIUS * fragOffset.x * camRight +
 		RADIUS * fragOffset.y * camUp;
 
+	circleColor = light.color;
 	gl_Position = frameUBO.cameraProjection * frameUBO.cameraView * vec4(positionWorld, 1.0);
 }
