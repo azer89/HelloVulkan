@@ -17,8 +17,7 @@ struct LightData
 	vec4 color;
 };
 
-layout(binding = 1) readonly buffer Lights { LightData data []; }
-inLights;
+layout(binding = 1) readonly buffer Lights { LightData data []; } inLights;
 
 const vec2 OFFSETS[6] = vec2[](
 	vec2(-1.0, -1.0),

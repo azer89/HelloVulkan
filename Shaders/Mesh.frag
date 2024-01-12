@@ -20,16 +20,24 @@ layout(push_constant) uniform PushConstantPBR
 }
 pc;
 
-layout(binding = 2) uniform sampler2D textureAlbedo;
-layout(binding = 3) uniform sampler2D textureNormal;
-layout(binding = 4) uniform sampler2D textureMetalness;
-layout(binding = 5) uniform sampler2D textureRoughness;
-layout(binding = 6) uniform sampler2D textureAO;
-layout(binding = 7) uniform sampler2D textureEmissive;
+// SSBO
+struct LightData
+{
+	vec4 position;
+	vec4 color;
+};
+layout(binding = 1) readonly buffer Lights { LightData data []; } inLights;
 
-layout(binding = 8) uniform samplerCube specularMap;
-layout(binding = 9) uniform samplerCube diffuseMap;
-layout(binding = 10) uniform sampler2D brdfLUT;
+layout(binding = 3) uniform sampler2D textureAlbedo;
+layout(binding = 4) uniform sampler2D textureNormal;
+layout(binding = 5) uniform sampler2D textureMetalness;
+layout(binding = 6) uniform sampler2D textureRoughness;
+layout(binding = 7) uniform sampler2D textureAO;
+layout(binding = 8) uniform sampler2D textureEmissive;
+
+layout(binding = 9) uniform samplerCube specularMap;
+layout(binding = 10) uniform samplerCube diffuseMap;
+layout(binding = 11) uniform sampler2D brdfLUT;
 
 // Specular max LOD
 const float MAX_REFLECTION_LOD = 4.0;

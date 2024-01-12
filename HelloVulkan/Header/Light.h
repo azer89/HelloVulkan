@@ -23,9 +23,9 @@ public:
 
 	void AddLights(VulkanDevice& vkDev, const std::vector<LightData> lights);
 
-	VkBuffer GetSSBOBuffer() { return storageBuffer_.buffer_; }
-	size_t GetSSBOSize() { return storageBufferSize_;  }
-	uint32_t GetLightCount() { return lightCount_; }
+	VkBuffer GetSSBOBuffer() const { return storageBuffer_.buffer_; }
+	size_t GetSSBOSize() const { return storageBufferSize_;  }
+	uint32_t GetLightCount() const { return lightCount_; }
 
 public:
 	size_t AllocateSSBOBuffer(
