@@ -11,7 +11,7 @@ A Vulkan implementation of Physically Based Rendering (PBR), a technique that si
 * glTF mesh rendering and skybox
 * Multisample anti-aliasing (MSAA) 
 * Automatic runtime compilation from GLSL to SPIR-V
-* SSBO, UBO, and Push Constants.
+* Shader Storage Buffer Objects (SSBO), Uniform Buffer Objects (UBO), and Push Constants.
   
 https://github.com/azer89/HelloVulkan/assets/790432/8b0562ed-ab72-4e93-9ce9-31c61c0e986a
 
