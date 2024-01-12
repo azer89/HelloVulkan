@@ -16,11 +16,14 @@ void AppPBR::Init()
 	// Initialize attachments
 	CreateSharedImageResources();
 
+	// Initialize lights
+	InitLights();
+
 	std::string hdrFile = AppSettings::TextureFolder + "the_sky_is_on_fire_4k.hdr";
 
 	model_ = std::make_unique<Model>(
 		vulkanDevice_, 
-		AppSettings::ModelFolder + "Tachikoma//Tachikoma.gltf");
+		AppSettings::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
 	std::vector<Model*> models = {model_.get()};
 
 	// Create a cubemap from the input HDR
@@ -55,27 +58,6 @@ void AppPBR::Init()
 		brdfLUTCompute.CreateLUT(vulkanDevice_, &brdfLut_);
 		brdfLut_.SetDebugName(vulkanDevice_, "BRDF_LUT");
 	}
-
-	// Lights (SSBO)
-	lights_.AddLights(vulkanDevice_,
-	{
-		{
-			.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f),
-			.color_ = glm::vec4(1.f, 0.f, 0.f, 1.f)
-		},
-		{
-			.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f),
-			.color_ = glm::vec4(1.f, 0.f, 0.f, 1.f)
-		},
-		{
-			.position_ = glm::vec4(-1.5f, 0.7f, -1.5f, 1.f),
-			.color_ = glm::vec4(0.f, 1.f, 0.f, 1.f)
-		},
-		{
-			.position_ = glm::vec4(1.5f, 0.7f, -1.5f, 1.f),
-			.color_ = glm::vec4(0.f, 1.f, 0.f, 1.f)
-		}
-	});
 
 	// Renderers
 	// This is responsible to clear swapchain image
@@ -132,6 +114,30 @@ void AppPBR::Init()
 		tonemapPtr_.get(),
 		finishPtr_.get()
 	};
+}
+
+void AppPBR::InitLights()
+{
+	// Lights (SSBO)
+	lights_.AddLights(vulkanDevice_,
+	{
+		{
+			.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f),
+			.color_ = glm::vec4(1.f, 0.f, 0.f, 1.f)
+		},
+		{
+			.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f),
+			.color_ = glm::vec4(1.f, 0.f, 0.f, 1.f)
+		},
+		{
+			.position_ = glm::vec4(-1.5f, 0.7f, -1.5f, 1.f),
+			.color_ = glm::vec4(0.f, 1.f, 0.f, 1.f)
+		},
+		{
+			.position_ = glm::vec4(1.5f, 0.7f, -1.5f, 1.f),
+			.color_ = glm::vec4(0.f, 1.f, 0.f, 1.f)
+		}
+	});
 }
 
 void AppPBR::DestroyResources()

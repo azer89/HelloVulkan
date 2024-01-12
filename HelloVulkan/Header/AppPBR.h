@@ -24,6 +24,7 @@ public:
 	void UpdateUBOs(uint32_t imageIndex) override;
 
 	void Init();
+	void InitLights();
 	void DestroyResources();
 
 private:

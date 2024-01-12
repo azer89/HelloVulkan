@@ -9,7 +9,8 @@
 #include <array>
 
 // Constants
-constexpr uint32_t PBR_TEXTURE_START_BIND_INDEX = 3; // Because we have two UBOs and one SSBO
+constexpr uint32_t UBO_COUNT = 2;
+constexpr uint32_t SSBO_COUNT = 1;
 constexpr size_t PBR_MESH_TEXTURE_COUNT = 6; 
 constexpr size_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 
@@ -58,8 +59,8 @@ RendererPBR::RendererPBR(
 
 	CreateDescriptorPool(
 		vkDev, 
-		2 * models_.size(),  // (PerFrameUBO + ModelUBO) * modelSize
-		1,  // SSBO
+		UBO_COUNT * models_.size(), 
+		SSBO_COUNT,
 		(PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT) * numMeshes,
 		numMeshes, // decsriptor count per swapchain
 		&descriptorPool_);
@@ -243,7 +244,7 @@ void RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 	{
 		imageInfoArray.push_back(elem.second->GetDescriptorImageInfo());
 		// The enum index starts from 1
-		uint32_t meshBindIndex = PBR_TEXTURE_START_BIND_INDEX + static_cast<uint32_t>(elem.first) - 1;
+		uint32_t meshBindIndex = UBO_COUNT + SSBO_COUNT + static_cast<uint32_t>(elem.first) - 1;
 		bindIndexArray.emplace_back(meshBindIndex);
 	}
 
@@ -259,7 +260,6 @@ void RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 
 		VkDescriptorSet ds = mesh.descriptorSets_[i];
 
-		// TODO move these out of the loop
 		const VkDescriptorBufferInfo bufferInfo1 = { perFrameUBOs_[i].buffer_, 0, sizeof(PerFrameUBO)};
 		const VkDescriptorBufferInfo bufferInfo2 = { parentModel->modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
 		const VkDescriptorBufferInfo bufferInfo3 = { lights_->GetSSBOBuffer(), 0, lights_->GetSSBOSize() };
