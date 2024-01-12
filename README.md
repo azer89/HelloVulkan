@@ -17,7 +17,8 @@ https://github.com/azer89/HelloVulkan/assets/790432/8b0562ed-ab72-4e93-9ce9-31c6
 
 https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d130bf910
 
-<img width="850" alt="vulkan_sponza" src="https://github.com/azer89/HelloVulkan/assets/790432/014549d1-c651-419e-ae60-388ca77a4e95">
+
+<img width="850" alt="vulkan_sponza" src="https://github.com/azer89/HelloVulkan/assets/790432/544764b5-2bd0-4f47-9673-3a5b566e29e1">
 
 <img width="850" alt="vulkan_tachikoma" src="https://github.com/azer89/HelloVulkan/assets/790432/535a2d75-fffd-436f-bf18-df18968b79e0">
 
