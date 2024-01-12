@@ -9,9 +9,10 @@ A Vulkan implementation of Physically Based Rendering (PBR), a technique that si
     * Specular and diffuse cubemaps
 * Reinhard tonemap postprocessing
 * glTF mesh rendering and skybox
-* Automatic runtime compilation from GLSL to SPIR-V
 * Multisample anti-aliasing (MSAA) 
-
+* Automatic runtime compilation from GLSL to SPIR-V
+* SSBO, UBO, and Push Constants.
+  
 https://github.com/azer89/HelloVulkan/assets/790432/8b0562ed-ab72-4e93-9ce9-31c61c0e986a
 
 https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d130bf910
