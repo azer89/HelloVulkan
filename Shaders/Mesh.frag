@@ -14,6 +14,12 @@ layout(binding = 0) uniform PerFrameUBO
 }
 frameUBO;
 
+layout(push_constant) uniform PushConstantPBR
+{
+	uint lightCount;
+}
+pc;
+
 layout(binding = 2) uniform sampler2D textureAlbedo;
 layout(binding = 3) uniform sampler2D textureNormal;
 layout(binding = 4) uniform sampler2D textureMetalness;
@@ -96,7 +102,7 @@ void main()
 
 	// Reflectance equation
 	vec3 Lo = vec3(0.0);
-	for (int i = 0; i < NUM_LIGHTS; ++i)
+	for (int i = 0; i < pc.lightCount; ++i)
 	{
 		vec3 L = normalize(lightPositions[i] - worldPos); // Incident light vector
 		vec3 H = normalize(V + L); // Halfway vector

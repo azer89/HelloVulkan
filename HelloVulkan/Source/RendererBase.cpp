@@ -129,6 +129,7 @@ void RendererBase::CreateDescriptorPool(
 	VK_CHECK(vkCreateDescriptorPool(vkDev.GetDevice(), &poolInfo, nullptr, descriptorPool));
 }
 
+// TODO Move pushConstantRanges before pipelineLayout
 void RendererBase::CreatePipelineLayout(
 	VkDevice device, 
 	VkDescriptorSetLayout dsLayout, 

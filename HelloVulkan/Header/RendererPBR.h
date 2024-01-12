@@ -5,6 +5,11 @@
 #include "VulkanImage.h"
 #include "Model.h"
 
+struct PushConstantPBR
+{
+	uint32_t lightCount = 1u;
+};
+
 class RendererPBR final : public RendererBase
 {
 public:

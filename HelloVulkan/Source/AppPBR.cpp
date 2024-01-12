@@ -167,7 +167,7 @@ void AppPBR::UpdateUBOs(uint32_t imageIndex)
 	// Model UBOs
 	glm::mat4 modelMatrix(1.f);
 	modelMatrix = glm::rotate(modelMatrix, modelRotation_, glm::vec3(0.f, 1.f, 0.f));
-	modelRotation_ += deltaTime_ * 0.1f;
+	//modelRotation_ += deltaTime_ * 0.1f;
 
 	// 1
 	ModelUBO modelUBO1

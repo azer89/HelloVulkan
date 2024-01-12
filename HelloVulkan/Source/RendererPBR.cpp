@@ -71,7 +71,14 @@ RendererPBR::RendererPBR(
 		}
 	}
 
-	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
+	// Push constants
+	std::vector<VkPushConstantRange> ranges(1u);
+	VkPushConstantRange& range = ranges.front();
+	range.offset = 0u;
+	range.size = sizeof(PushConstantPBR);
+	range.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_, ranges);
 
 	CreateGraphicsPipeline(
 		vkDev,
@@ -96,6 +103,17 @@ void RendererPBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer command
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
 
 	BindPipeline(vkDev, commandBuffer);
+
+	PushConstantPBR pc
+	{
+		.lightCount = 4u
+	};
+	vkCmdPushConstants(
+		commandBuffer,
+		pipelineLayout_,
+		VK_SHADER_STAGE_FRAGMENT_BIT,
+		0,
+		sizeof(PushConstantPBR), &pc);
 
 	for (Model* model : models_)
 	{
