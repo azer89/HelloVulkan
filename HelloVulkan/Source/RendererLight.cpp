@@ -119,7 +119,7 @@ void RendererLight::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 
 	for (size_t i = 0; i < scImageCount; ++i)
 	{
-		const VkDescriptorBufferInfo bufferInfo = {
+		const VkDescriptorBufferInfo bufferInfo1 = {
 			.buffer = perFrameUBOs_[i].buffer_,
 			.offset = 0,
 			.range = sizeof(PerFrameUBO)
@@ -130,26 +130,17 @@ void RendererLight::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 			.range = lights_->GetSSBOSize()
 		};
 
-		// TODO the code below can be simplified
 		const std::array<VkWriteDescriptorSet, 2> descriptorWrites = {
-			VkWriteDescriptorSet {
-				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-				.dstSet = descriptorSets_[i],
-				.dstBinding = 0,
-				.dstArrayElement = 0,
-				.descriptorCount = 1,
-				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.pBufferInfo = &bufferInfo
-			},
-			VkWriteDescriptorSet {
-				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-				.dstSet = descriptorSets_[i],
-				.dstBinding = 1,
-				.dstArrayElement = 0,
-				.descriptorCount = 1,
-				.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-				.pBufferInfo = &bufferInfo2
-			},
+			BufferWriteDescriptorSet(
+				descriptorSets_[i],
+				&bufferInfo1,
+				0,
+				VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER),
+			BufferWriteDescriptorSet(
+				descriptorSets_[i],
+				&bufferInfo2,
+				1,
+				VK_DESCRIPTOR_TYPE_STORAGE_BUFFER)
 		};
 
 		vkUpdateDescriptorSets(

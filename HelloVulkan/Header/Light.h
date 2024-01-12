@@ -7,12 +7,18 @@
 #include "VulkanDevice.h"
 #include "VulkanBuffer.h"
 
+/*
+A single light
+*/
 struct LightData
 {
 	glm::vec4 position_;
 	glm::vec4 color_;
 };
 
+/*
+A collection of lights, including SSBO
+*/
 class Lights
 {
 public:
@@ -28,6 +34,7 @@ public:
 	uint32_t GetLightCount() const { return lightCount_; }
 
 public:
+	// TODO Move this to VulkanBuffer
 	size_t AllocateSSBOBuffer(
 		VulkanDevice& vkDev,
 		const void* lightData);
