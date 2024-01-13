@@ -14,6 +14,7 @@ void main()
 		discard;
 	}
 
+	// Blurry edge
 	float alpha = 1.0 - pow(dist, 5.0);
 
 	fragColor = vec4(circleColor.xyz, alpha);

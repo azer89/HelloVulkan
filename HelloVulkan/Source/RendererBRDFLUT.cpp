@@ -96,6 +96,7 @@ void RendererBRDFLUT::Execute(VulkanDevice& vkDev)
 		static_cast<uint32_t>(IBLConfig::LUTHeight), // groupCountY
 		1u); // groupCountZ
 
+	// We have to create a memory barrier efore the CPU can read back data.
 	VkMemoryBarrier readoutBarrier = {
 		.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER,
 		.pNext = nullptr,
@@ -105,14 +106,14 @@ void RendererBRDFLUT::Execute(VulkanDevice& vkDev)
 
 	vkCmdPipelineBarrier(
 		commandBuffer, 
-		VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 
-		VK_PIPELINE_STAGE_HOST_BIT, 
-		0, 
+		VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, // srcStageMask
+		VK_PIPELINE_STAGE_HOST_BIT, // dstStageMask
+		0, // dependencyFlags
 		1, // memoryBarrierCount
 		&readoutBarrier, 
-		0, 
+		0, // bufferMemoryBarrierCount 
 		nullptr, 
-		0, 
+		0, // imageMemoryBarrierCount
 		nullptr);
 
 	VK_CHECK(vkEndCommandBuffer(commandBuffer));
@@ -130,6 +131,9 @@ void RendererBRDFLUT::Execute(VulkanDevice& vkDev)
 	};
 
 	VK_CHECK(vkQueueSubmit(vkDev.GetComputeQueue(), 1, &submitInfo, 0));
+
+	// Wait for the compute shader completion.
+	// Alternatively we can use a fence.
 	VK_CHECK(vkQueueWaitIdle(vkDev.GetComputeQueue()));
 }
 
@@ -163,7 +167,12 @@ void RendererBRDFLUT::CreateComputeDescriptorSet(VkDevice device, VkDescriptorSe
 	VkDescriptorPoolSize descriptorPoolSize = { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 2 };
 
 	VkDescriptorPoolCreateInfo descriptorPoolCreateInfo = {
-		VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO, 0, 0, 1, 1, &descriptorPoolSize
+		VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+		0,
+		0,
+		1,
+		1,
+		&descriptorPoolSize
 	};
 
 	VK_CHECK(vkCreateDescriptorPool(device, &descriptorPoolCreateInfo, 0, &descriptorPool_));
@@ -171,39 +180,30 @@ void RendererBRDFLUT::CreateComputeDescriptorSet(VkDevice device, VkDescriptorSe
 	// Descriptor set
 	VkDescriptorSetAllocateInfo descriptorSetAllocateInfo = {
 		VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-		0, descriptorPool_, 1, &descriptorSetLayout_
+		0,
+		descriptorPool_,
+		1,
+		&descriptorSetLayout_
 	};
 
+	// Descriptor set
 	VK_CHECK(vkAllocateDescriptorSets(device, &descriptorSetAllocateInfo, &descriptorSet_));
 
 	// Finally, update descriptor set with concrete buffer pointers
 	VkDescriptorBufferInfo inBufferInfo = { inBuffer_.buffer_, 0, VK_WHOLE_SIZE };
-
 	VkDescriptorBufferInfo outBufferInfo = { outBuffer_.buffer_, 0, VK_WHOLE_SIZE };
 
 	VkWriteDescriptorSet writeDescriptorSet[2] = {
-		{ 
-			VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, 
-			0, 
-			descriptorSet_, 
-			0, 
-			0, 
-			1, 
-			VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 
-			0,  
-			&inBufferInfo, 0 },
-		{ 
-			VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, 
-			0, 
-			descriptorSet_, 
-			1, 
-			0, 
-			1, 
-			VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 
-			0, 
-			&outBufferInfo, 
-			0 
-		}
+		BufferWriteDescriptorSet(
+			descriptorSet_,
+			&inBufferInfo,
+			0, // dstBinding
+			VK_DESCRIPTOR_TYPE_STORAGE_BUFFER),
+		BufferWriteDescriptorSet(
+			descriptorSet_,
+			&outBufferInfo,
+			1, // dstBinding
+			VK_DESCRIPTOR_TYPE_STORAGE_BUFFER),
 	};
 
 	vkUpdateDescriptorSets(device, 2, writeDescriptorSet, 0, 0);
