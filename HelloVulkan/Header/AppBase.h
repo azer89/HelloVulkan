@@ -48,10 +48,9 @@ protected:
 	// Should be used to destroy resources
 	void Terminate();
 
-private:
+protected:
 	GLFWwindow* glfwWindow_;
 
-protected:
 	// Camera
 	std::unique_ptr<Camera> camera_;
 	float lastX_;

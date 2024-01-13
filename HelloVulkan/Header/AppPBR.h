@@ -9,6 +9,7 @@
 #include "RendererTonemap.h"
 #include "RendererResolveMS.h"
 #include "RendererLight.h"
+#include "RendererImGui.h"
 #include "VulkanImage.h"
 #include "Light.h"
 #include "Model.h"
@@ -35,6 +36,7 @@ private:
 	std::unique_ptr<RendererFinish> finishPtr_;
 	std::unique_ptr<RendererResolveMS> resolveMSPtr_;
 	std::unique_ptr<RendererLight> lightPtr_;
+	std::unique_ptr<RendererImGui> imguiPtr_;
 
 	// PBR stuff
 	// TODO change to unique ptrs

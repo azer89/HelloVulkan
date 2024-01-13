@@ -99,6 +99,8 @@ void AppPBR::Init()
 		vulkanDevice_,
 		&singleSampledColorImage_
 	);
+	// ImGui here
+	imguiPtr_ = std::make_unique<RendererImGui>(vulkanDevice_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
 	finishPtr_ = std::make_unique<RendererFinish>(vulkanDevice_);
 
@@ -162,6 +164,7 @@ void AppPBR::DestroyResources()
 	lightPtr_.reset();
 	resolveMSPtr_.reset();
 	tonemapPtr_.reset();
+	imguiPtr_.reset();
 }
 
 void AppPBR::UpdateUBOs(uint32_t imageIndex)

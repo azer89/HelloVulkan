@@ -3,7 +3,9 @@
 #include "VulkanUtility.h"
 
 #include "volk.h"
-#include "glslang_c_interface.h" // Init GLSLang
+
+// Init GLSLang
+#include "glslang_c_interface.h" 
 
 #include <iostream>
 
@@ -269,13 +271,6 @@ void AppBase::OnWindowResized()
 void AppBase::InitIMGUI()
 {
 	showImgui_ = true;
-
-	/*IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsLight();*/
-
-	// Setup Platform/Renderer backends
 }
 
 void AppBase::InitCamera()
