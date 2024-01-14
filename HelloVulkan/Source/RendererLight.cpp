@@ -45,8 +45,8 @@ RendererLight::RendererLight(
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
-			AppSettings::ShaderFolder + "LightCircle.vert",
-			AppSettings::ShaderFolder + "LightCircle.frag",
+			AppConfig::ShaderFolder + "LightCircle.vert",
+			AppConfig::ShaderFolder + "LightCircle.frag",
 		},
 		&graphicsPipeline_,
 		false, // has no vertex buffer

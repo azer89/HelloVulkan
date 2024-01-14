@@ -49,8 +49,8 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
-			AppSettings::ShaderFolder + "Cube.vert",
-			AppSettings::ShaderFolder + "Cube.frag",
+			AppConfig::ShaderFolder + "Cube.vert",
+			AppConfig::ShaderFolder + "Cube.frag",
 		},
 		&graphicsPipeline_,
 		false, // has no vertex buffer

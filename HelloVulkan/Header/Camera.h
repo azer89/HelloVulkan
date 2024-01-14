@@ -29,8 +29,8 @@ public:
 	Camera(
 		glm::vec3 position,
 		glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f),
-		float screenWidth = AppSettings::InitialScreenWidth,
-		float screenHeight = AppSettings::InitialScreenHeight,
+		float screenWidth = AppConfig::InitialScreenWidth,
+		float screenHeight = AppConfig::InitialScreenHeight,
 		float yaw = CameraSettings::Yaw,
 		float pitch = CameraSettings::Pitch);
 

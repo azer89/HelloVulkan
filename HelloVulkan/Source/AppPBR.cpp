@@ -22,11 +22,11 @@ void AppPBR::Init()
 	// Initialize lights
 	InitLights();
 
-	std::string hdrFile = AppSettings::TextureFolder + "the_sky_is_on_fire_4k.hdr";
+	std::string hdrFile = AppConfig::TextureFolder + "the_sky_is_on_fire_4k.hdr";
 
 	model_ = std::make_unique<Model>(
 		vulkanDevice_, 
-		AppSettings::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
+		AppConfig::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
 	std::vector<Model*> models = {model_.get()};
 
 	// Create a cubemap from the input HDR
@@ -190,7 +190,7 @@ void AppPBR::UpdateUI()
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 	ImGui::SetNextWindowSize(ImVec2(400, 600));
-	ImGui::Begin(AppSettings::ScreenTitle.c_str());
+	ImGui::Begin(AppConfig::ScreenTitle.c_str());
 
 	ImGui::SetWindowFontScale(1.75f);
 	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));

@@ -88,8 +88,8 @@ RendererPBR::RendererPBR(
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
-			AppSettings::ShaderFolder + "Mesh.vert",
-			AppSettings::ShaderFolder + "Mesh.frag"
+			AppConfig::ShaderFolder + "Mesh.vert",
+			AppConfig::ShaderFolder + "Mesh.frag"
 		},
 		&graphicsPipeline_,
 		true, // hasVertexBuffer
