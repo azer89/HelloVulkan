@@ -176,11 +176,13 @@ void AppPBR::UpdateUI()
 	ImGui_ImplVulkan_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-	ImGui::SetNextWindowSize(ImVec2(500, 100));
+	ImGui::SetNextWindowSize(ImVec2(400, 600));
+	ImGui::Begin(AppSettings::ScreenTitle.c_str());
 
-	ImGui::Begin("Hello World");
+	ImGui::SetWindowFontScale(1.75f);
+	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));
+
 	ImGui::End();
-
 	ImGui::Render();
 }
 
