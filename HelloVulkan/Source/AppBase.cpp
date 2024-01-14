@@ -55,8 +55,8 @@ void AppBase::InitGLFW()
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-	int w = AppSettings::InitialScreenWidth;
-	int h = AppSettings::InitialScreenHeight;
+	int w = AppConfig::InitialScreenWidth;
+	int h = AppConfig::InitialScreenHeight;
 
 	// GLFW window creation
 	windowWidth_ = static_cast<uint32_t>(w);
@@ -64,7 +64,7 @@ void AppBase::InitGLFW()
 	glfwWindow_ = glfwCreateWindow(
 		w,
 		h,
-		AppSettings::ScreenTitle.c_str(),
+		AppConfig::ScreenTitle.c_str(),
 		nullptr,
 		nullptr);
 	if (glfwWindow_ == nullptr)

@@ -22,11 +22,11 @@ void AppPBR::Init()
 	// Initialize lights
 	InitLights();
 
-	std::string hdrFile = AppSettings::TextureFolder + "the_sky_is_on_fire_4k.hdr";
+	std::string hdrFile = AppConfig::TextureFolder + "the_sky_is_on_fire_4k.hdr";
 
 	model_ = std::make_unique<Model>(
 		vulkanDevice_, 
-		AppSettings::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
+		AppConfig::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
 	std::vector<Model*> models = {model_.get()};
 
 	// Create a cubemap from the input HDR
@@ -129,19 +129,19 @@ void AppPBR::InitLights()
 	{
 		{
 			.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f),
-			.color_ = glm::vec4(1.f, 0.f, 0.f, 1.f)
+			.color_ = glm::vec4(1.f)
 		},
 		{
 			.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f),
-			.color_ = glm::vec4(1.f, 0.f, 0.f, 1.f)
+			.color_ = glm::vec4(1.f)
 		},
 		{
 			.position_ = glm::vec4(-1.5f, 0.7f, -1.5f, 1.f),
-			.color_ = glm::vec4(0.f, 1.f, 0.f, 1.f)
+			.color_ = glm::vec4(1.f)
 		},
 		{
 			.position_ = glm::vec4(1.5f, 0.7f, -1.5f, 1.f),
-			.color_ = glm::vec4(0.f, 1.f, 0.f, 1.f)
+			.color_ = glm::vec4(1.f)
 		}
 	});
 }
@@ -169,19 +169,6 @@ void AppPBR::DestroyResources()
 	resolveMSPtr_.reset();
 	tonemapPtr_.reset();
 	imguiPtr_.reset();
-}
-
-void AppPBR::UpdateUI()
-{
-	ImGui_ImplVulkan_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
-	ImGui::SetNextWindowSize(ImVec2(500, 100));
-
-	ImGui::Begin("Hello World");
-	ImGui::End();
-
-	ImGui::Render();
 }
 
 void AppPBR::UpdateUBOs(uint32_t imageIndex)
@@ -216,6 +203,42 @@ void AppPBR::UpdateUBOs(uint32_t imageIndex)
 	model_->SetModelUBO(vulkanDevice_, imageIndex, modelUBO1);
 }
 
+void AppPBR::UpdateUI()
+{
+	if (!showImgui_)
+	{
+		ImGui_ImplVulkan_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+		ImGui::End();
+		ImGui::Render();
+
+		return;
+	}
+
+	static bool lightRender = true;
+	static float lightIntensity = 1.f;
+
+	ImGui_ImplVulkan_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+	ImGui::SetNextWindowSize(ImVec2(400, 300));
+	ImGui::Begin(AppConfig::ScreenTitle.c_str());
+
+	ImGui::SetWindowFontScale(1.5f);
+	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));
+	ImGui::Separator();
+	ImGui::Text("Lights");
+	ImGui::Checkbox("Render", &lightRender);
+	ImGui::SliderFloat("Intensity", &lightIntensity, 0.1f, 100.f);
+
+	ImGui::End();
+	ImGui::Render();
+
+	lightPtr_->RenderEnable(lightRender);
+	pbrPtr_->SetLightIntensity(lightIntensity);
+}
+
 // This is called from main.cpp
 int AppPBR::MainLoop()
 {
@@ -227,7 +250,6 @@ int AppPBR::MainLoop()
 		PollEvents();
 		ProcessTiming();
 		ProcessInput();
-
 		DrawFrame();
 	}
 

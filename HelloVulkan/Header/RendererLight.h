@@ -19,12 +19,15 @@ public:
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 
+	void RenderEnable(bool enable) { shouldRender_ = enable; }
+
 private:
 	void CreateDescriptorLayoutAndSet(VulkanDevice& vkDev);
 
 private:
 	Lights* lights_;
 	std::vector<VkDescriptorSet> descriptorSets_;
+	bool shouldRender_;
 };
 
 #endif

@@ -12,7 +12,8 @@ RendererLight::RendererLight(
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
 	RendererBase(vkDev, true), // Offscreen rendering
-	lights_(lights)
+	lights_(lights),
+	shouldRender_(true)
 {
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
 
@@ -44,8 +45,8 @@ RendererLight::RendererLight(
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
-			AppSettings::ShaderFolder + "LightCircle.vert",
-			AppSettings::ShaderFolder + "LightCircle.frag",
+			AppConfig::ShaderFolder + "LightCircle.vert",
+			AppConfig::ShaderFolder + "LightCircle.frag",
 		},
 		&graphicsPipeline_,
 		false, // has no vertex buffer
@@ -60,6 +61,11 @@ RendererLight::~RendererLight()
 
 void RendererLight::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
 {
+	if (!shouldRender_)
+	{
+		return;
+	}
+
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
 
 	BindPipeline(vkDev, commandBuffer);

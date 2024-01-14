@@ -16,8 +16,7 @@ frameUBO;
 
 layout(push_constant) uniform PushConstantPBR
 {
-	// TODO Not used but will add more variables later
-	uint lightCount;
+	float lightIntensity;
 }
 pc;
 
@@ -97,6 +96,7 @@ void main()
 	for (int i = 0; i < inLights.data.length(); ++i)
 	{
 		LightData light = inLights.data[i];
+		light.color *= pc.lightIntensity;
 
 		vec3 L = normalize(light.position.xyz - worldPos); // Incident light vector
 		vec3 H = normalize(V + L); // Halfway vector

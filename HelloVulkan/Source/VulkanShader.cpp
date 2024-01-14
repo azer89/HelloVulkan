@@ -105,7 +105,7 @@ std::string VulkanShader::ReadShaderFile(const char* fileName)
 			std::cerr << "Error while loading shader program: " << code.c_str() << '\n';
 			return std::string();
 		}
-		const std::string name = AppSettings::ShaderFolder + code.substr(p1 + 1, p2 - p1 - 1);
+		const std::string name = AppConfig::ShaderFolder + code.substr(p1 + 1, p2 - p1 - 1);
 		const std::string include = ReadShaderFile(name.c_str());
 		code.replace(pos, p2 - pos + 1, include.c_str());
 	}

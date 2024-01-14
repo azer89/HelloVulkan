@@ -28,8 +28,8 @@ RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
-			AppSettings::ShaderFolder + "FullscreenTriangle.vert",
-			AppSettings::ShaderFolder + "Tonemap.frag",
+			AppConfig::ShaderFolder + "FullscreenTriangle.vert",
+			AppConfig::ShaderFolder + "Tonemap.frag",
 		},
 		&graphicsPipeline_);
 }

@@ -56,8 +56,8 @@ RendererCubeFilter::RendererCubeFilter(
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
-			AppSettings::ShaderFolder + "FullscreenTriangle.vert",
-			AppSettings::ShaderFolder + "CubeFilterDiffuse.frag"
+			AppConfig::ShaderFolder + "FullscreenTriangle.vert",
+			AppConfig::ShaderFolder + "CubeFilterDiffuse.frag"
 		},
 		IBLConfig::OutputDiffuseSideLength,
 		IBLConfig::OutputDiffuseSideLength,
@@ -71,8 +71,8 @@ RendererCubeFilter::RendererCubeFilter(
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
-			AppSettings::ShaderFolder + "FullscreenTriangle.vert",
-			AppSettings::ShaderFolder + "CubeFilterSpecular.frag"
+			AppConfig::ShaderFolder + "FullscreenTriangle.vert",
+			AppConfig::ShaderFolder + "CubeFilterSpecular.frag"
 		},
 		IBLConfig::OutputSpecularSideLength,
 		IBLConfig::OutputSpecularSideLength,

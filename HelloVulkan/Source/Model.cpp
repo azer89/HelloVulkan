@@ -15,7 +15,7 @@ inline glm::mat4 mat4_cast(const aiMatrix4x4& m)
 
 Model::Model(VulkanDevice& vkDev, const std::string& path) :
 	device_(vkDev.GetDevice()),
-	blackTextureFilePath_(AppSettings::TextureFolder + "Black1x1.png")
+	blackTextureFilePath_(AppConfig::TextureFolder + "Black1x1.png")
 {
 	// In case a texture type cannot be found, replace it with a default texture
 	textureMap_[blackTextureFilePath_] = {};

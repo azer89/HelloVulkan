@@ -31,8 +31,8 @@ RendererEquirect2Cube::RendererEquirect2Cube(
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
-			AppSettings::ShaderFolder + "FullscreenTriangle.vert",
-			AppSettings::ShaderFolder + "Equirect2Cube.frag"
+			AppConfig::ShaderFolder + "FullscreenTriangle.vert",
+			AppConfig::ShaderFolder + "Equirect2Cube.frag"
 		},
 		&graphicsPipeline_
 	);

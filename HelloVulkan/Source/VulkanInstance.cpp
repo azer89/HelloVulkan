@@ -28,7 +28,7 @@ void VulkanInstance::Create()
 	{
 		.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
 		.pNext = nullptr,
-		.pApplicationName = AppSettings::ScreenTitle.c_str(),
+		.pApplicationName = AppConfig::ScreenTitle.c_str(),
 		.applicationVersion = VK_MAKE_VERSION(1, 0, 0),
 		.pEngineName = "No Engine",
 		.engineVersion = VK_MAKE_VERSION(1, 0, 0),

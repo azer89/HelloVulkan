@@ -58,8 +58,8 @@ void VulkanDevice::CreateCompute
 
 	// Frame data
 	frameIndex_ = 0;
-	frameDataArray_ = std::vector<FrameData>(AppSettings::FrameOverlapCount);
-	for (unsigned int i = 0; i < AppSettings::FrameOverlapCount; ++i)
+	frameDataArray_ = std::vector<FrameData>(AppConfig::FrameOverlapCount);
+	for (unsigned int i = 0; i < AppConfig::FrameOverlapCount; ++i)
 	{
 		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].nextSwapchainImageSemaphore_)));
 		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].renderSemaphore_)));
@@ -86,7 +86,7 @@ void VulkanDevice::CreateCompute
 
 void VulkanDevice::Destroy()
 {
-	for (unsigned int i = 0; i < AppSettings::FrameOverlapCount; ++i)
+	for (unsigned int i = 0; i < AppConfig::FrameOverlapCount; ++i)
 	{
 		frameDataArray_[i].Destroy(device_);
 	}
@@ -319,7 +319,7 @@ VkPresentModeKHR VulkanDevice::ChooseSwapPresentMode(const std::vector<VkPresent
 {
 	for (const VkPresentModeKHR& mode : availablePresentModes)
 	{
-		if (mode == AppSettings::PresentMode)
+		if (mode == AppConfig::PresentMode)
 		{
 			return mode;
 		}

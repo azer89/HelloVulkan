@@ -5,7 +5,7 @@
 
 #include "volk.h"
 
-namespace AppSettings
+namespace AppConfig
 {
 	const int InitialScreenWidth = 1600;
 	const int InitialScreenHeight = 1200;
