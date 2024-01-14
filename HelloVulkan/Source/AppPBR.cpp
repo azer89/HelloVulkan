@@ -200,6 +200,7 @@ void AppPBR::UpdateUBOs(uint32_t imageIndex)
 	model_->SetModelUBO(vulkanDevice_, imageIndex, modelUBO1);
 }
 
+// This is called from main.cpp
 int AppPBR::MainLoop()
 {
 	Init();
