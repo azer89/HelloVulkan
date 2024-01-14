@@ -171,37 +171,6 @@ void AppPBR::DestroyResources()
 	imguiPtr_.reset();
 }
 
-void AppPBR::UpdateUI()
-{
-	if (!showImgui_)
-	{
-		ImGui_ImplVulkan_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-		ImGui::End();
-		ImGui::Render();
-
-		return;
-	}
-
-	static bool renderLights = true;
-
-	ImGui_ImplVulkan_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
-	ImGui::SetNextWindowSize(ImVec2(400, 600));
-	ImGui::Begin(AppConfig::ScreenTitle.c_str());
-
-	ImGui::SetWindowFontScale(1.75f);
-	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));
-	ImGui::Checkbox("Render Lights", &renderLights);
-
-	ImGui::End();
-	ImGui::Render();
-
-	lightPtr_->RenderEnable(renderLights);
-}
-
 void AppPBR::UpdateUBOs(uint32_t imageIndex)
 {
 	// Per frame UBO
@@ -232,6 +201,41 @@ void AppPBR::UpdateUBOs(uint32_t imageIndex)
 		.model = modelMatrix
 	};
 	model_->SetModelUBO(vulkanDevice_, imageIndex, modelUBO1);
+}
+
+void AppPBR::UpdateUI()
+{
+	if (!showImgui_)
+	{
+		ImGui_ImplVulkan_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+		ImGui::End();
+		ImGui::Render();
+
+		return;
+	}
+
+	static bool lightRender = true;
+	static float lightIntensity = 1.f;
+
+	ImGui_ImplVulkan_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+	ImGui::SetNextWindowSize(ImVec2(400, 300));
+	ImGui::Begin(AppConfig::ScreenTitle.c_str());
+
+	ImGui::SetWindowFontScale(1.5f);
+	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));
+	ImGui::Separator();
+	ImGui::Text("Lights");
+	ImGui::Checkbox("Render", &lightRender);
+	ImGui::SliderFloat("Intensity", &lightIntensity, 0.1f, 100.f);
+
+	ImGui::End();
+	ImGui::Render();
+
+	lightPtr_->RenderEnable(lightRender);
 }
 
 // This is called from main.cpp
