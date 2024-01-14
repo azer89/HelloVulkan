@@ -8,7 +8,7 @@
 
 struct PushConstantPBR
 {
-	uint32_t lightCount = 1u;
+	float lightIntensity = 1.f;
 };
 
 class RendererPBR final : public RendererBase
@@ -27,6 +27,8 @@ public:
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 
+	void SetLightIntensity(float intensity) { pc_.lightIntensity = intensity; }
+
 public:
 	// TODO change this to private
 	std::vector<Model*> models_;
@@ -41,6 +43,8 @@ private:
 	VulkanImage* specularCubemap_;
 	VulkanImage* diffuseCubemap_;
 	VulkanImage* brdfLUT_;
+
+	PushConstantPBR pc_;
 };
 
 #endif

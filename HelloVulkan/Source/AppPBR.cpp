@@ -129,19 +129,19 @@ void AppPBR::InitLights()
 	{
 		{
 			.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f),
-			.color_ = glm::vec4(1.f, 0.f, 0.f, 1.f)
+			.color_ = glm::vec4(1.f)
 		},
 		{
 			.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f),
-			.color_ = glm::vec4(1.f, 0.f, 0.f, 1.f)
+			.color_ = glm::vec4(1.f)
 		},
 		{
 			.position_ = glm::vec4(-1.5f, 0.7f, -1.5f, 1.f),
-			.color_ = glm::vec4(0.f, 1.f, 0.f, 1.f)
+			.color_ = glm::vec4(1.f)
 		},
 		{
 			.position_ = glm::vec4(1.5f, 0.7f, -1.5f, 1.f),
-			.color_ = glm::vec4(0.f, 1.f, 0.f, 1.f)
+			.color_ = glm::vec4(1.f)
 		}
 	});
 }
@@ -236,6 +236,7 @@ void AppPBR::UpdateUI()
 	ImGui::Render();
 
 	lightPtr_->RenderEnable(lightRender);
+	pbrPtr_->SetLightIntensity(lightIntensity);
 }
 
 // This is called from main.cpp

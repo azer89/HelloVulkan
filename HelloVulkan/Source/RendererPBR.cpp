@@ -107,16 +107,12 @@ void RendererPBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer command
 
 	BindPipeline(vkDev, commandBuffer);
 
-	PushConstantPBR pc
-	{
-		.lightCount = lights_->GetLightCount()
-	};
 	vkCmdPushConstants(
 		commandBuffer,
 		pipelineLayout_,
 		VK_SHADER_STAGE_FRAGMENT_BIT,
 		0,
-		sizeof(PushConstantPBR), &pc);
+		sizeof(PushConstantPBR), &pc_);
 
 	for (Model* model : models_)
 	{
