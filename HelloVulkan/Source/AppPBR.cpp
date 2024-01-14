@@ -173,6 +173,19 @@ void AppPBR::DestroyResources()
 
 void AppPBR::UpdateUI()
 {
+	if (!showImgui_)
+	{
+		ImGui_ImplVulkan_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+		ImGui::End();
+		ImGui::Render();
+
+		return;
+	}
+
+	static bool renderLights = true;
+
 	ImGui_ImplVulkan_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
@@ -181,9 +194,12 @@ void AppPBR::UpdateUI()
 
 	ImGui::SetWindowFontScale(1.75f);
 	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));
+	ImGui::Checkbox("Render Lights", &renderLights);
 
 	ImGui::End();
 	ImGui::Render();
+
+	lightPtr_->RenderEnable(renderLights);
 }
 
 void AppPBR::UpdateUBOs(uint32_t imageIndex)
@@ -229,7 +245,6 @@ int AppPBR::MainLoop()
 		PollEvents();
 		ProcessTiming();
 		ProcessInput();
-
 		DrawFrame();
 	}
 
