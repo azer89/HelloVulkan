@@ -114,6 +114,7 @@ void AppPBR::Init()
 		lightPtr_.get(),
 		resolveMSPtr_.get(),
 		tonemapPtr_.get(),
+		imguiPtr_.get(),
 		finishPtr_.get()
 	};
 }
