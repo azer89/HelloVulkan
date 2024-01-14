@@ -23,6 +23,7 @@ public:
 	AppPBR();
 	int MainLoop() override;
 	void UpdateUBOs(uint32_t imageIndex) override;
+	void UpdateUI() override;
 
 	void Init();
 	void InitLights();

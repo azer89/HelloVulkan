@@ -170,6 +170,9 @@ bool AppBase::DrawFrame()
 	// Send UBOs to shaders
 	UpdateUBOs(imageIndex);
 
+	// ImGui
+	UpdateUI();
+
 	// Start recording command buffers
 	FillCommandBuffer(frameData.commandBuffer_, imageIndex);
 
@@ -215,6 +218,11 @@ bool AppBase::DrawFrame()
 	vulkanDevice_.IncrementFrameIndex();
 
 	return true;
+}
+
+void AppBase::UpdateUI()
+{
+	// Empty, must be implemented in a derived class
 }
 
 // Fill/record command buffer

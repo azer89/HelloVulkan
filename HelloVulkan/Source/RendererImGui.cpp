@@ -76,16 +76,6 @@ RendererImGui::~RendererImGui()
 
 void RendererImGui::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
 {
-	ImGui_ImplVulkan_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
-	ImGui::SetNextWindowSize(ImVec2(500, 100));
-
-	ImGui::Begin("Hello World");
-	ImGui::End();
-
-	ImGui::Render();
-
 	ImDrawData* draw_data = ImGui::GetDrawData();
 
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer(currentImage));

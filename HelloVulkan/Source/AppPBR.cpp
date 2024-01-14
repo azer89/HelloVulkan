@@ -6,6 +6,9 @@
 
 #include "glm/gtc/matrix_transform.hpp"
 
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_volk.h"
+
 AppPBR::AppPBR() :
 	modelRotation_(0.f)
 {
@@ -166,6 +169,19 @@ void AppPBR::DestroyResources()
 	resolveMSPtr_.reset();
 	tonemapPtr_.reset();
 	imguiPtr_.reset();
+}
+
+void AppPBR::UpdateUI()
+{
+	ImGui_ImplVulkan_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+	ImGui::SetNextWindowSize(ImVec2(500, 100));
+
+	ImGui::Begin("Hello World");
+	ImGui::End();
+
+	ImGui::Render();
 }
 
 void AppPBR::UpdateUBOs(uint32_t imageIndex)
