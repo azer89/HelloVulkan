@@ -13,14 +13,6 @@ public:
 	~RendererImGui();
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
-
-private:
-	void CreateDescriptorLayout(VulkanDevice& vkDev);
-	void AllocateDescriptorSets(VulkanDevice& vkDev);
-	void UpdateDescriptorSets(VulkanDevice& vkDev);
-
-private:
-	std::vector<VkDescriptorSet> descriptorSets_;
 };
 
 #endif
