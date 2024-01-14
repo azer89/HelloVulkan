@@ -42,9 +42,9 @@ RendererImGui::RendererImGui(
 
 	// Known issue when using both ImGui and volk
 	// https://github.com/ocornut/imgui/issues/4854
-	ImGui_ImplVulkan_LoadFunctions([](const char* function_name, void* vulkan_instance)
+	ImGui_ImplVulkan_LoadFunctions([](const char* functionName, void* vulkanInstance)
 	{
-		return vkGetInstanceProcAddr(*(reinterpret_cast<VkInstance*>(vulkan_instance)), function_name);
+		return vkGetInstanceProcAddr(*(reinterpret_cast<VkInstance*>(vulkanInstance)), functionName);
 	}, &vulkanInstance);
 
 	ImGui_ImplGlfw_InitForVulkan(glfwWindow, true);
