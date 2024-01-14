@@ -22,11 +22,11 @@ void AppPBR::Init()
 	// Initialize lights
 	InitLights();
 
-	std::string hdrFile = AppConfig::TextureFolder + "the_sky_is_on_fire_4k.hdr";
+	std::string hdrFile = AppConfig::TextureFolder + "piazza_bologni_1k.hdr";
 
 	model_ = std::make_unique<Model>(
 		vulkanDevice_, 
-		AppConfig::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
+		AppConfig::ModelFolder + "Tachikoma//Tachikoma.gltf");
 	std::vector<Model*> models = {model_.get()};
 
 	// Create a cubemap from the input HDR
@@ -218,25 +218,26 @@ void AppPBR::UpdateUI()
 
 	static bool lightRender = true;
 	static float lightIntensity = 1.f;
+	static float pbrBaseReflectivity = 0.04f; // F0
 
 	ImGui_ImplVulkan_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-	ImGui::SetNextWindowSize(ImVec2(400, 300));
+	ImGui::SetNextWindowSize(ImVec2(600, 200));
 	ImGui::Begin(AppConfig::ScreenTitle.c_str());
 
-	ImGui::SetWindowFontScale(1.5f);
+	ImGui::SetWindowFontScale(1.25f);
 	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));
-	ImGui::Separator();
-	ImGui::Text("Lights");
-	ImGui::Checkbox("Render", &lightRender);
-	ImGui::SliderFloat("Intensity", &lightIntensity, 0.1f, 100.f);
+	ImGui::Checkbox("Render Lights", &lightRender);
+	ImGui::SliderFloat("Light Intensity", &lightIntensity, 0.1f, 100.f);
+	ImGui::SliderFloat("Base Reflectivity", &pbrBaseReflectivity, 0.01f, 1.f);
 
 	ImGui::End();
 	ImGui::Render();
 
 	lightPtr_->RenderEnable(lightRender);
 	pbrPtr_->SetLightIntensity(lightIntensity);
+	pbrPtr_->SetBaseReflectivity(pbrBaseReflectivity);
 }
 
 // This is called from main.cpp

@@ -9,6 +9,7 @@
 struct PushConstantPBR
 {
 	float lightIntensity = 1.f;
+	float baseReflectivity = 0.04f;
 };
 
 class RendererPBR final : public RendererBase
@@ -28,6 +29,7 @@ public:
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 	void SetLightIntensity(float intensity) { pc_.lightIntensity = intensity; }
+	void SetBaseReflectivity(float baseReflectivity) { pc_.baseReflectivity = baseReflectivity; }
 
 public:
 	// TODO change this to private
