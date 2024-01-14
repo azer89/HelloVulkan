@@ -3,7 +3,10 @@
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
-#include "imgui_impl_vulkan.h"
+
+// Known issue when using both ImGui and volk
+// https://github.com/ocornut/imgui/issues/4854
+#include "imgui_impl_volk.h"
 
 RendererImGui::RendererImGui(
 	VulkanDevice& vkDev,
@@ -29,6 +32,13 @@ RendererImGui::RendererImGui(
 
 	ImGui::StyleColorsDark();
 	//ImGui::StyleColorsLight();
+
+	// Known issue when using both ImGui and volk
+	// https://github.com/ocornut/imgui/issues/4854
+	ImGui_ImplVulkan_LoadFunctions([](const char* function_name, void* vulkan_instance)
+	{
+		return vkGetInstanceProcAddr(*(reinterpret_cast<VkInstance*>(vulkan_instance)), function_name);
+	}, &vulkanInstance);
 
 	// Setup Platform/Renderer backends
 	ImGui_ImplGlfw_InitForVulkan(glfwWindow, false);

@@ -20,17 +20,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ImGui\backends\imgui_impl_glfw.h" />
-    <ClInclude Include="..\..\ImGui\backends\imgui_impl_vulkan.h" />
     <ClInclude Include="..\..\ImGui\imgui.h" />
+    <ClInclude Include="imgui_impl_volk.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ImGui\backends\imgui_impl_glfw.cpp" />
-    <ClCompile Include="..\..\ImGui\backends\imgui_impl_vulkan.cpp" />
     <ClCompile Include="..\..\ImGui\imgui.cpp" />
     <ClCompile Include="..\..\ImGui\imgui_demo.cpp" />
     <ClCompile Include="..\..\ImGui\imgui_draw.cpp" />
     <ClCompile Include="..\..\ImGui\imgui_tables.cpp" />
     <ClCompile Include="..\..\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="imgui_impl_volk.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -118,7 +118,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(VULKAN_SDK)\Include;..\..\ImGui;..\..\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)\Include;..\..\ImGui;..\..\GLFW\include;..\..\volk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,7 +133,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(VULKAN_SDK)\Include;..\..\ImGui;..\..\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)\Include;..\..\ImGui;..\..\GLFW\include;..\..\volk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

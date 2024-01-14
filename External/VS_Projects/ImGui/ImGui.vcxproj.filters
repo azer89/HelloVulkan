@@ -21,15 +21,12 @@
     <ClInclude Include="..\..\ImGui\backends\imgui_impl_glfw.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ImGui\backends\imgui_impl_vulkan.h">
+    <ClInclude Include="imgui_impl_volk.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ImGui\backends\imgui_impl_glfw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ImGui\backends\imgui_impl_vulkan.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ImGui\imgui.cpp">
@@ -45,6 +42,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ImGui\imgui_widgets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_volk.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
