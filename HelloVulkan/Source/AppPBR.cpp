@@ -6,6 +6,9 @@
 
 #include "glm/gtc/matrix_transform.hpp"
 
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_volk.h"
+
 AppPBR::AppPBR() :
 	modelRotation_(0.f)
 {
@@ -99,6 +102,8 @@ void AppPBR::Init()
 		vulkanDevice_,
 		&singleSampledColorImage_
 	);
+	// ImGui here
+	imguiPtr_ = std::make_unique<RendererImGui>(vulkanDevice_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
 	finishPtr_ = std::make_unique<RendererFinish>(vulkanDevice_);
 
@@ -112,6 +117,7 @@ void AppPBR::Init()
 		lightPtr_.get(),
 		resolveMSPtr_.get(),
 		tonemapPtr_.get(),
+		imguiPtr_.get(),
 		finishPtr_.get()
 	};
 }
@@ -162,6 +168,20 @@ void AppPBR::DestroyResources()
 	lightPtr_.reset();
 	resolveMSPtr_.reset();
 	tonemapPtr_.reset();
+	imguiPtr_.reset();
+}
+
+void AppPBR::UpdateUI()
+{
+	ImGui_ImplVulkan_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+	ImGui::SetNextWindowSize(ImVec2(500, 100));
+
+	ImGui::Begin("Hello World");
+	ImGui::End();
+
+	ImGui::Render();
 }
 
 void AppPBR::UpdateUBOs(uint32_t imageIndex)
@@ -196,6 +216,7 @@ void AppPBR::UpdateUBOs(uint32_t imageIndex)
 	model_->SetModelUBO(vulkanDevice_, imageIndex, modelUBO1);
 }
 
+// This is called from main.cpp
 int AppPBR::MainLoop()
 {
 	Init();

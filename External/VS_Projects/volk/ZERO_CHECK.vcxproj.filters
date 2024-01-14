@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\volk\CMakeFiles\206c158e89901e933cf4c18481cc70c8\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{6B2061AC-BE15-3AA5-9FB1-0E9D0FB29345}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

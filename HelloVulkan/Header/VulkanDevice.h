@@ -63,6 +63,7 @@ public:
 	VkDevice GetDevice() const { return device_; }
 	VkPhysicalDevice GetPhysicalDevice() const { return physicalDevice_; }
 	VkQueue GetGraphicsQueue() const { return graphicsQueue_; }
+	uint32_t GetGraphicsFamily() const { return graphicsFamily_; }
 	uint32_t GetFrameBufferWidth() const { return framebufferWidth_; }
 	uint32_t GetFrameBufferHeight() const { return framebufferHeight_; }
 	size_t GetDeviceQueueIndicesSize() const { return deviceQueueIndices_.size(); }

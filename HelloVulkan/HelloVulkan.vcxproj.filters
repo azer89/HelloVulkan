@@ -146,6 +146,9 @@
     <ClInclude Include="Header\RendererLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Header\RendererImGui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AppBase.cpp">
@@ -224,6 +227,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Lights.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RendererImGui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

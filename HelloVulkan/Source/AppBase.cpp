@@ -3,7 +3,9 @@
 #include "VulkanUtility.h"
 
 #include "volk.h"
-#include "glslang_c_interface.h" // Init GLSLang
+
+// Init GLSLang
+#include "glslang_c_interface.h" 
 
 #include <iostream>
 
@@ -168,6 +170,9 @@ bool AppBase::DrawFrame()
 	// Send UBOs to shaders
 	UpdateUBOs(imageIndex);
 
+	// ImGui
+	UpdateUI();
+
 	// Start recording command buffers
 	FillCommandBuffer(frameData.commandBuffer_, imageIndex);
 
@@ -213,6 +218,11 @@ bool AppBase::DrawFrame()
 	vulkanDevice_.IncrementFrameIndex();
 
 	return true;
+}
+
+void AppBase::UpdateUI()
+{
+	// Empty, must be implemented in a derived class
 }
 
 // Fill/record command buffer
@@ -269,13 +279,6 @@ void AppBase::OnWindowResized()
 void AppBase::InitIMGUI()
 {
 	showImgui_ = true;
-
-	/*IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsLight();*/
-
-	// Setup Platform/Renderer backends
 }
 
 void AppBase::InitCamera()

@@ -19,7 +19,9 @@ public:
 
 protected:
 	virtual void UpdateUBOs(uint32_t imageIndex) = 0;
+	virtual void UpdateUI();
 	void FillCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+
 	void CreateSharedImageResources();
 	void OnWindowResized();
 	bool DrawFrame();
@@ -48,10 +50,9 @@ protected:
 	// Should be used to destroy resources
 	void Terminate();
 
-private:
+protected:
 	GLFWwindow* glfwWindow_;
 
-protected:
 	// Camera
 	std::unique_ptr<Camera> camera_;
 	float lastX_;

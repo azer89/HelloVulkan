@@ -1,0 +1,426 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\CCompilerTest.c">
+      <Filter>UnitTests\Compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\code\Common\Version.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\code\Common\Base64.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utSimd.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utIOSystem.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utIOStreamBuffer.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utIssues.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utAnim.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\AssimpAPITest.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\AssimpAPITest_aiMatrix3x3.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\AssimpAPITest_aiMatrix4x4.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\AssimpAPITest_aiQuaternion.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\AssimpAPITest_aiVector2D.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\AssimpAPITest_aiVector3D.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\MathTest.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utBatchLoader.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utDefaultIOStream.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utFastAtof.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utMetadata.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\SceneDiffer.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\AbstractImportExportBase.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utTypes.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utVersion.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utProfiler.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utSharedPPData.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utStringUtils.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\Common\utMaybe.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\Common\utMesh.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\Common\utStandardShapes.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\Common\uiScene.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\Common\utLineSplitter.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\Common\utSpatialSort.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\Common\utAssertHandler.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\Common\utXmlParser.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\Common\utBase64.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\Common\utHash.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\Common\utBaseProcess.cpp">
+      <Filter>UnitTests\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\Geometry\utGeometryUtils.cpp">
+      <Filter>UnitTests\GeometryTools</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\ImportExport\Assxml\utAssxmlImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utLWSImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utLWOImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utSMDImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utglTFImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utglTF2ImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utHMPImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utIFCImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utFBXImporterExporter.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utImporter.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\ImportExport\utExporter.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\ut3DImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\ut3DSImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utACImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utAMFImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utASEImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utD3MFImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utQ3DImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utSTLImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utXImporterExporter.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utX3DImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utDXFImporterExporter.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utPMXImporter.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utPLYImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utObjImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utObjTools.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utOpenGEXImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utSIBImporter.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utBlenderIntermediate.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utBlendImportAreaLight.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utBlenderImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utBlendImportMaterials.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utBlenderWork.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utBVHImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utColladaExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utColladaImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utCSMImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utB3DImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utMDCImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utAssbinImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\ImportExport\utAssjsonImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\ImportExport\utCOBImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\ImportExport\utOgreImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\ImportExport\utQ3BSPFileImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\ImportExport\utOFFImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\ImportExport\utNFFImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\ImportExport\utXGLImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\ImportExport\utMD2Importer.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\ImportExport\utMD5Importer.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\ImportExport\utMDLImporter.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\ImportExport\MDL\utMDLImporter_HL1_ImportSettings.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\ImportExport\MDL\utMDLImporter_HL1_Materials.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\ImportExport\MDL\utMDLImporter_HL1_Nodes.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\ImportExport\RAW\utRAWImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\ImportExport\Terragen\utTerragenImportExport.cpp">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utMaterialSystem.cpp">
+      <Filter>UnitTests\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utMatrix3x3.cpp">
+      <Filter>UnitTests\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utMatrix4x4.cpp">
+      <Filter>UnitTests\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utVector3.cpp">
+      <Filter>UnitTests\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utImproveCacheLocality.cpp">
+      <Filter>UnitTests\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utFixInfacingNormals.cpp">
+      <Filter>UnitTests\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utGenNormals.cpp">
+      <Filter>UnitTests\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utTriangulate.cpp">
+      <Filter>UnitTests\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utTextureTransform.cpp">
+      <Filter>UnitTests\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utRemoveRedundantMaterials.cpp">
+      <Filter>UnitTests\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utRemoveVCProcess.cpp">
+      <Filter>UnitTests\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utScaleProcess.cpp">
+      <Filter>UnitTests\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utArmaturePopulate.cpp">
+      <Filter>UnitTests\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utJoinVertices.cpp">
+      <Filter>UnitTests\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utRemoveComments.cpp">
+      <Filter>UnitTests\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utRemoveComponent.cpp">
+      <Filter>UnitTests\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utVertexTriangleAdjacency.cpp">
+      <Filter>UnitTests\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utSplitLargeMeshes.cpp">
+      <Filter>UnitTests\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utFindDegenerates.cpp">
+      <Filter>UnitTests\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utFindInvalidData.cpp">
+      <Filter>UnitTests\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utLimitBoneWeights.cpp">
+      <Filter>UnitTests\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utPretransformVertices.cpp">
+      <Filter>UnitTests\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utScenePreprocessor.cpp">
+      <Filter>UnitTests\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utTargetAnimation.cpp">
+      <Filter>UnitTests\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utSortByPType.cpp">
+      <Filter>UnitTests\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utSceneCombiner.cpp">
+      <Filter>UnitTests\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\utGenBoundingBoxesProcess.cpp">
+      <Filter>UnitTests\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\src\gtest-all.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\MathTest.h">
+      <Filter>UnitTests\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\RandomNumberGeneration.h">
+      <Filter>UnitTests\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\SceneDiffer.h">
+      <Filter>UnitTests\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\UTLogStream.h">
+      <Filter>UnitTests\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\TestIOSystem.h">
+      <Filter>UnitTests\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\TestModelFactory.h">
+      <Filter>UnitTests\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit\ImportExport\MDL\MDLHL1TestFiles.h">
+      <Filter>UnitTests\ImportExport</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\test\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{8C6DCFEF-430D-3826-BB61-49D837FDDF5C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UnitTests">
+      <UniqueIdentifier>{46DBDF8D-B684-3067-AACE-FE1D13098BC1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UnitTests\Common">
+      <UniqueIdentifier>{2257EC33-2D6F-3F26-967B-8CDB70B1E443}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UnitTests\Compiler">
+      <UniqueIdentifier>{C3D88D5E-C29D-3289-9825-B9C00952AFFC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UnitTests\GeometryTools">
+      <UniqueIdentifier>{C7096FD9-BE55-3236-8917-7E5A715E3B9C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UnitTests\ImportExport">
+      <UniqueIdentifier>{670AE4A0-B910-3F19-94B8-7C0E4BAF1410}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UnitTests\Material">
+      <UniqueIdentifier>{08F0CA0D-96F2-3E02-AB1A-D02FA3316AD0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UnitTests\Math">
+      <UniqueIdentifier>{80A9E154-0571-398C-AC34-C87587DDD90B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UnitTests\PostProcess">
+      <UniqueIdentifier>{0A73FE15-79E5-355A-80CD-C76127FE7002}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

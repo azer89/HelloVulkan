@@ -10,3 +10,6 @@
 [submodule "External/volk"]
 	path = External/volk
 	url = https://github.com/zeux/volk.git
+[submodule "External/ImGui"]
+	path = External/ImGui
+	url = https://github.com/ocornut/imgui.git
