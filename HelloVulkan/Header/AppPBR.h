@@ -45,6 +45,7 @@ private:
 	VulkanImage diffuseCubemap_;
 	VulkanImage specularCubemap_;
 	VulkanImage brdfLut_;
+	float cubemapMipmapCount_;
 
 	float modelRotation_;
 	std::unique_ptr<Model> model_;

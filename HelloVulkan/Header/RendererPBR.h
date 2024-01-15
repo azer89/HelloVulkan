@@ -10,6 +10,7 @@ struct PushConstantPBR
 {
 	float lightIntensity = 1.f;
 	float baseReflectivity = 0.04f;
+	float maxReflectionLod = 4.f;
 };
 
 class RendererPBR final : public RendererBase
@@ -30,6 +31,7 @@ public:
 
 	void SetLightIntensity(float intensity) { pc_.lightIntensity = intensity; }
 	void SetBaseReflectivity(float baseReflectivity) { pc_.baseReflectivity = baseReflectivity; }
+	void SetMaxReflectionLod(float maxLod) { pc_.maxReflectionLod = maxLod; }
 
 public:
 	// TODO change this to private

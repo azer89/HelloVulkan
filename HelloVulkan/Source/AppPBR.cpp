@@ -26,7 +26,7 @@ void AppPBR::Init()
 
 	model_ = std::make_unique<Model>(
 		vulkanDevice_, 
-		AppConfig::ModelFolder + "Tachikoma//Tachikoma.gltf");
+		AppConfig::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
 	std::vector<Model*> models = {model_.get()};
 
 	// Create a cubemap from the input HDR
@@ -53,6 +53,8 @@ void AppPBR::Init()
 
 		diffuseCubemap_.SetDebugName(vulkanDevice_, "Diffuse_Cubemap");
 		specularCubemap_.SetDebugName(vulkanDevice_, "Specular_Cubemap");
+
+		cubemapMipmapCount_ = NumMipMap(IBLConfig::InputCubeSideLength, IBLConfig::InputCubeSideLength);
 	}
 	
 	// BRDF look up table
@@ -219,6 +221,7 @@ void AppPBR::UpdateUI()
 	static bool lightRender = true;
 	static float lightIntensity = 1.f;
 	static float pbrBaseReflectivity = 0.04f; // F0
+	static float maxReflectivityLod = 4.0f;
 
 	ImGui_ImplVulkan_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -231,6 +234,7 @@ void AppPBR::UpdateUI()
 	ImGui::Checkbox("Render Lights", &lightRender);
 	ImGui::SliderFloat("Light Intensity", &lightIntensity, 0.1f, 100.f);
 	ImGui::SliderFloat("Base Reflectivity", &pbrBaseReflectivity, 0.01f, 1.f);
+	ImGui::SliderFloat("Max Mipmap Lod", &maxReflectivityLod, 0.1f, cubemapMipmapCount_);
 
 	ImGui::End();
 	ImGui::Render();
@@ -238,6 +242,7 @@ void AppPBR::UpdateUI()
 	lightPtr_->RenderEnable(lightRender);
 	pbrPtr_->SetLightIntensity(lightIntensity);
 	pbrPtr_->SetBaseReflectivity(pbrBaseReflectivity);
+	pbrPtr_->SetMaxReflectionLod(maxReflectivityLod);
 }
 
 // This is called from main.cpp
