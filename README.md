@@ -1,18 +1,19 @@
-# 🌋Vulkan PBR+IBL
+# 🌋Hello Engine🖖🏽
 
-A Vulkan implementation of Physically Based Rendering (PBR), a technique that simulates the interaction of light with materials. The scene illumination is achieved through Image-Based Lighting (IBL), which utilizes HDR images to capture nuanced lighting conditions and enhance the realism of 3D object rendering.
+A real-time rendering engine using Vulkan.
 
 ### Features
-* Cook-Torrance BRDF.
+* Physically-Based Rendering (PBR) with Cook-Torrance BRDF.
+* Image-Based Lighting.
 * Offscreen rendering to generate:
     * A cubemap from an equirectangular HDR image.
     * Specular and diffuse cubemaps.
 * Reinhard tonemap postprocessing.
-* glTF mesh rendering and skybox.
+* Mesh loading and rendering.
 * Multisample anti-aliasing (MSAA).
 * Automatic runtime compilation from GLSL to SPIR-V.
 * A simple abstraction layer that supports a sequence of render passes.
-* Minor features: Instancing with SSBOs, ImGui, UBOs, and Push Constants.
+* Minor features: Skybox, instancing with SSBOs, ImGui, UBOs, and push constants.
   
 https://github.com/azer89/HelloVulkan/assets/790432/8b0562ed-ab72-4e93-9ce9-31c61c0e986a
 
@@ -23,9 +24,6 @@ https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d
 
 <img width="850" alt="vulkan_tachikoma" src="https://github.com/azer89/HelloVulkan/assets/790432/535a2d75-fffd-436f-bf18-df18968b79e0">
 
-### PBR Workflow
-
-<img width="500" alt="PBR Wrkflow" src="https://github.com/azer89/HelloVulkan/assets/790432/686699df-6c29-4efb-8102-858955afed55">
 
 ### Build
 * C++20
