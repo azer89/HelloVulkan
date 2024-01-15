@@ -17,6 +17,7 @@ frameUBO;
 layout(push_constant) uniform PushConstantPBR
 {
 	float lightIntensity;
+	float baseReflectivity;
 }
 pc;
 
@@ -88,7 +89,7 @@ void main()
 
 	// Calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
 	// of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)  
-	vec3 F0 = vec3(0.04);
+	vec3 F0 = vec3(pc.baseReflectivity);
 	F0 = mix(F0, albedo, metallic);
 
 	// Reflectance equation
