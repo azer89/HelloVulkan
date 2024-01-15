@@ -219,6 +219,7 @@ void AppPBR::UpdateUI()
 	static bool lightRender = true;
 	static float lightIntensity = 1.f;
 	static float pbrBaseReflectivity = 0.04f; // F0
+	static float maxReflectivityLod = 4.0f;
 
 	ImGui_ImplVulkan_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -231,6 +232,7 @@ void AppPBR::UpdateUI()
 	ImGui::Checkbox("Render Lights", &lightRender);
 	ImGui::SliderFloat("Light Intensity", &lightIntensity, 0.1f, 100.f);
 	ImGui::SliderFloat("Base Reflectivity", &pbrBaseReflectivity, 0.01f, 1.f);
+	ImGui::SliderFloat("Max Lod", &maxReflectivityLod, 0.1f, 10.f);
 
 	ImGui::End();
 	ImGui::Render();
@@ -238,6 +240,7 @@ void AppPBR::UpdateUI()
 	lightPtr_->RenderEnable(lightRender);
 	pbrPtr_->SetLightIntensity(lightIntensity);
 	pbrPtr_->SetBaseReflectivity(pbrBaseReflectivity);
+	pbrPtr_->SetMaxReflectionLod(maxReflectivityLod);
 }
 
 // This is called from main.cpp

@@ -18,6 +18,7 @@ layout(push_constant) uniform PushConstantPBR
 {
 	float lightIntensity;
 	float baseReflectivity;
+	float maxReflectionLod;
 }
 pc;
 
@@ -39,9 +40,6 @@ layout(binding = 8) uniform sampler2D textureEmissive;
 layout(binding = 9) uniform samplerCube specularMap;
 layout(binding = 10) uniform samplerCube diffuseMap;
 layout(binding = 11) uniform sampler2D brdfLUT;
-
-// Specular max LOD
-const float MAX_REFLECTION_LOD = 4.0;
 
 // Include files
 #include <PBRHeader.frag>
@@ -147,7 +145,7 @@ void main()
 	// Sample both the pre-filter map and the BRDF lut and combine them together as
 	// per the Split-Sum approximation to get the IBL specular part.
 	vec3 R = reflect(-V, N);
-	vec3 prefilteredColor = textureLod(specularMap, R, roughness * MAX_REFLECTION_LOD).rgb;
+	vec3 prefilteredColor = textureLod(specularMap, R, roughness * pc.maxReflectionLod).rgb;
 	vec2 brdf = texture(brdfLUT, vec2(NoV, roughness)).rg;
 	vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
 
