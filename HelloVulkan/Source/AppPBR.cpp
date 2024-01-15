@@ -223,7 +223,7 @@ void AppPBR::UpdateUI()
 	ImGui_ImplVulkan_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-	ImGui::SetNextWindowSize(ImVec2(600, 200));
+	ImGui::SetNextWindowSize(ImVec2(525, 200));
 	ImGui::Begin(AppConfig::ScreenTitle.c_str());
 
 	ImGui::SetWindowFontScale(1.25f);

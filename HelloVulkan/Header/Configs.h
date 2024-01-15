@@ -33,7 +33,7 @@ namespace IBLConfig
 	constexpr uint32_t LayerCount = 6;
 
 	// BRDF LUT
-	// TODO Use push constants to send the image dimension
+	constexpr int LUTSampleCount = 1024;
 	constexpr int LUTWidth = 256;
 	constexpr int LUTHeight = 256;
 	constexpr uint32_t LUTBufferSize = 2 * sizeof(float) * LUTWidth * LUTHeight;

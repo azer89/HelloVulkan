@@ -12,10 +12,13 @@ layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 layout (set = 0, binding = 0) buffer SRC { float data[]; } src;
 layout (set = 0, binding = 1) buffer DST { float data[]; } dst;
 
-// TODO Use push constants instead of hardcoded const
-const uint BRDF_W = 256;
-const uint BRDF_H = 256;
-const uint SAMPLE_COUNT = 1024u;
+layout(push_constant) uniform PushConstantsBRDFLUT
+{
+	uint width;
+	uint height;
+	uint sampleCount;
+}
+pc;
 
 #include <PBRHeader.frag>
 #include <Hammersley.frag>
@@ -27,9 +30,9 @@ vec2 BRDF(float NoV, float roughness)
 	vec3 V = vec3(sqrt(1.0 - NoV * NoV), 0.0, NoV);
 
 	vec2 LUT = vec2(0.0);
-	for (uint i = 0u; i < SAMPLE_COUNT; i++)
+	for (uint i = 0u; i < pc.sampleCount; i++)
 	{
-		vec2 Xi = Hammersley(i, SAMPLE_COUNT);
+		vec2 Xi = Hammersley(i, pc.sampleCount);
 		vec3 H = ImportanceSampleGGX(Xi, N, roughness);
 		vec3 L = 2.0 * dot(V, H) * H - V;
 
@@ -50,18 +53,18 @@ vec2 BRDF(float NoV, float roughness)
 				Fc * G_Vis); // Roughness
 		}
 	}
-	return LUT / float(SAMPLE_COUNT);
+	return LUT / float(pc.sampleCount);
 }
 
 void main() 
 {
 	vec2 uv;
-	uv.x = (float(gl_GlobalInvocationID.x) + 0.5) / float(BRDF_W);
-	uv.y = (float(gl_GlobalInvocationID.y) + 0.5) / float(BRDF_H);
+	uv.x = (float(gl_GlobalInvocationID.x) + 0.5) / float(pc.width);
+	uv.y = (float(gl_GlobalInvocationID.y) + 0.5) / float(pc.height);
 
 	vec2 v = BRDF(uv.x, 1.0 - uv.y);
 
-	uint offset = gl_GlobalInvocationID.y * BRDF_W + gl_GlobalInvocationID.x;
+	uint offset = gl_GlobalInvocationID.y * pc.width + gl_GlobalInvocationID.x;
 
 	dst.data[offset * 2 + 0] = v.x;
 	dst.data[offset * 2 + 1] = v.y;

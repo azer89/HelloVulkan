@@ -2,6 +2,13 @@
 #include "VulkanShader.h"
 #include "Configs.h"
 
+struct PushConstantsBRDFLUT
+{
+	uint32_t width;
+	uint32_t height;
+	uint32_t sampleCount;
+};
+
 RendererBRDFLUT::RendererBRDFLUT(
 	VulkanDevice& vkDev) :
 	RendererBase(vkDev, true)
@@ -18,8 +25,15 @@ RendererBRDFLUT::RendererBRDFLUT(
 	VulkanShader shader;
 	shader.Create(vkDev.GetDevice(), shaderFile.c_str());
 
+	// Push constants
+	std::vector<VkPushConstantRange> ranges(1u);
+	VkPushConstantRange& range = ranges.front();
+	range.offset = 0u;
+	range.size = sizeof(PushConstantsBRDFLUT);
+	range.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
+
 	CreateComputeDescriptorSetLayout(vkDev.GetDevice());
-	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
+	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_, ranges);
 	CreateComputePipeline(vkDev.GetDevice(), shader.GetShaderModule());
 	CreateComputeDescriptorSet(vkDev.GetDevice(), descriptorSetLayout_);
 
@@ -79,6 +93,19 @@ void RendererBRDFLUT::Execute(VulkanDevice& vkDev)
 	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo));
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline_);
+
+	PushConstantsBRDFLUT pc =
+	{
+		.width = IBLConfig::LUTWidth,
+		.height = IBLConfig::LUTHeight,
+		.sampleCount = IBLConfig::LUTSampleCount
+	};
+	vkCmdPushConstants(
+		commandBuffer,
+		pipelineLayout_,
+		VK_SHADER_STAGE_COMPUTE_BIT,
+		0,
+		sizeof(PushConstantsBRDFLUT), &pc);
 
 	vkCmdBindDescriptorSets(
 		commandBuffer,
