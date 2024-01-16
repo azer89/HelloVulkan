@@ -24,6 +24,7 @@ https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d
 
 <img width="850" alt="vulkan_tachikoma" src="https://github.com/azer89/HelloVulkan/assets/790432/535a2d75-fffd-436f-bf18-df18968b79e0">
 
+<img width="850" alt="freya" src="https://github.com/azer89/HelloVulkan/assets/790432/ea17eb7e-d967-42b7-acb9-be6e6cfdace2">
 
 ### Build
 * C++20
@@ -41,5 +42,6 @@ Technical Resources:
 
 Assets:
 * [Tachikoma](https://sketchfab.com/3d-models/tachikoma-7ec03deb78de4a1b908d2bc736ff0f15)
+* [Freya](https://sketchfab.com/3d-models/freya-crescent-6d8eae57c17f4a81a23301ee0afda8cf)
 * [Polyhaven](https://polyhaven.com/)
 * [glTF Assets](https://github.com/KhronosGroup/glTF-Sample-Assets)
