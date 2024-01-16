@@ -123,38 +123,41 @@ void RendererBRDFLUT::Execute(VulkanDevice& vkDev)
 		static_cast<uint32_t>(IBLConfig::LUTHeight), // groupCountY
 		1u); // groupCountZ
 
-	// We have to create a memory barrier efore the CPU can read back data.
+	// https://github.com/KhronosGroup/Vulkan-Docs/wiki/Synchronization-Examples-(Legacy-synchronization-APIs)#cpu-read-back-of-data-written-by-a-compute-shader
+	// We have to create a memory barrier before the CPU can read back data.
 	VkMemoryBarrier readoutBarrier = {
 		.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER,
 		.pNext = nullptr,
-		.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT,
-		.dstAccessMask = VK_ACCESS_HOST_READ_BIT
+		.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT, // Write access to SSBO
+		.dstAccessMask = VK_ACCESS_HOST_READ_BIT // Read SSBO by a host / CPU
 	};
 
 	vkCmdPipelineBarrier(
-		commandBuffer, 
+		commandBuffer, // commandBuffer
+		// Compute shader
 		VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, // srcStageMask
+		// Host / CPU
 		VK_PIPELINE_STAGE_HOST_BIT, // dstStageMask
 		0, // dependencyFlags
 		1, // memoryBarrierCount
-		&readoutBarrier, 
+		&readoutBarrier, // pMemoryBarriers
 		0, // bufferMemoryBarrierCount 
-		nullptr, 
+		nullptr, // pBufferMemoryBarriers
 		0, // imageMemoryBarrierCount
-		nullptr);
+		nullptr); // pImageMemoryBarriers
 
 	VK_CHECK(vkEndCommandBuffer(commandBuffer));
 
 	VkSubmitInfo submitInfo = {
-		VK_STRUCTURE_TYPE_SUBMIT_INFO,
-		0, 
-		0, 
-		0, 
-		0, 
-		1, // commandBufferCount
-		&commandBuffer, 
-		0, 
-		0
+		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+		.pNext = 0, 
+		.waitSemaphoreCount = 0, 
+		.pWaitSemaphores = 0, 
+		.pWaitDstStageMask = 0, 
+		.commandBufferCount = 1, // commandBufferCount
+		.pCommandBuffers = &commandBuffer, 
+		.signalSemaphoreCount = 0, 
+		.pSignalSemaphores = 0
 	};
 
 	VK_CHECK(vkQueueSubmit(vkDev.GetComputeQueue(), 1, &submitInfo, 0));
