@@ -124,7 +124,6 @@ void RendererBRDFLUT::Execute(VulkanDevice& vkDev)
 		1u); // groupCountZ
 
 	// https://github.com/KhronosGroup/Vulkan-Docs/wiki/Synchronization-Examples-(Legacy-synchronization-APIs)#cpu-read-back-of-data-written-by-a-compute-shader
-	// We have to create a memory barrier before the CPU can read back data.
 	VkMemoryBarrier readoutBarrier = {
 		.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER,
 		.pNext = nullptr,
