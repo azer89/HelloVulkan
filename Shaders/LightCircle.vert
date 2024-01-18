@@ -13,6 +13,7 @@ layout(binding = 0) uniform PerFrameUBO
 
 struct LightData
 {
+	float radius;
 	vec4 position;
 	vec4 color;
 };

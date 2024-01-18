@@ -130,18 +130,22 @@ void AppPBR::InitLights()
 	lights_.AddLights(vulkanDevice_,
 	{
 		{
+			.radius_ = 1.f,
 			.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f),
 			.color_ = glm::vec4(1.f)
 		},
 		{
+			.radius_ = 1.f,
 			.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f),
 			.color_ = glm::vec4(1.f)
 		},
 		{
+			.radius_ = 1.f,
 			.position_ = glm::vec4(-1.5f, 0.7f, -1.5f, 1.f),
 			.color_ = glm::vec4(1.f)
 		},
 		{
+			.radius_ = 1.f,
 			.position_ = glm::vec4(1.5f, 0.7f, -1.5f, 1.f),
 			.color_ = glm::vec4(1.f)
 		}

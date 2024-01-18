@@ -25,6 +25,7 @@ pc;
 // SSBO
 struct LightData
 {
+	float radius;
 	vec4 position;
 	vec4 color;
 };

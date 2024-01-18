@@ -11,6 +11,8 @@ A single light
 */
 struct LightData
 {
+	float radius_;
+	alignas(16)
 	glm::vec4 position_;
 	glm::vec4 color_;
 };
