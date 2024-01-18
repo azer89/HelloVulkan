@@ -29,11 +29,21 @@ void VulkanImage::CreateImageResources(
 	const char* filename)
 {
 	CreateFromFile(vkDev, filename);
+	GenerateMipmap(vkDev,
+		mipCount_,
+		width_,
+		height_,
+		VK_IMAGE_LAYOUT_UNDEFINED);
 	CreateImageView(
 		vkDev.GetDevice(),
 		VK_FORMAT_R8G8B8A8_UNORM,
-		VK_IMAGE_ASPECT_COLOR_BIT);
-	CreateDefaultSampler(vkDev.GetDevice());
+		VK_IMAGE_ASPECT_COLOR_BIT,
+		VK_IMAGE_VIEW_TYPE_2D,
+		layerCount_,
+		mipCount_);
+	CreateDefaultSampler(vkDev.GetDevice(),
+		0.f, // minLod
+		static_cast<float>(mipCount_)); // maxLod
 }
 
 void VulkanImage::CreateFromFile(
@@ -161,7 +171,7 @@ void VulkanImage::CreateImageFromData(
 		layerCount,
 		texFormat, 
 		VK_IMAGE_TILING_OPTIMAL, 
-		VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, 
+		VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
 		flags);
 
@@ -613,7 +623,7 @@ void VulkanImage::GenerateMipmap(
 
 		// Source
 		imageBlit.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		imageBlit.srcSubresource.layerCount = 6u;
+		imageBlit.srcSubresource.layerCount = layerCount_;
 		imageBlit.srcSubresource.mipLevel = i - 1;
 		imageBlit.srcOffsets[1].x = int32_t(width >> (i - 1));
 		imageBlit.srcOffsets[1].y = int32_t(height >> (i - 1));
@@ -621,7 +631,7 @@ void VulkanImage::GenerateMipmap(
 
 		// Destination
 		imageBlit.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		imageBlit.dstSubresource.layerCount = 6u;
+		imageBlit.dstSubresource.layerCount = layerCount_;
 		imageBlit.dstSubresource.mipLevel = i;
 		imageBlit.dstOffsets[1].x = int32_t(width >> i);
 		imageBlit.dstOffsets[1].y = int32_t(height >> i);
@@ -631,7 +641,7 @@ void VulkanImage::GenerateMipmap(
 			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
 			.baseMipLevel = i,
 			.levelCount = 1,
-			.layerCount = 6u
+			.layerCount = layerCount_
 		};
 
 		//  Transiton current mip level to transfer dest
