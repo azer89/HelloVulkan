@@ -37,8 +37,13 @@ void VulkanImage::CreateImageResources(
 	CreateImageView(
 		vkDev.GetDevice(),
 		VK_FORMAT_R8G8B8A8_UNORM,
-		VK_IMAGE_ASPECT_COLOR_BIT);
-	CreateDefaultSampler(vkDev.GetDevice());
+		VK_IMAGE_ASPECT_COLOR_BIT,
+		VK_IMAGE_VIEW_TYPE_2D,
+		layerCount_,
+		mipCount_);
+	CreateDefaultSampler(vkDev.GetDevice(),
+		0.f, // minLod
+		static_cast<float>(mipCount_)); // maxLod
 }
 
 void VulkanImage::CreateFromFile(
