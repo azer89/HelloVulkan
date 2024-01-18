@@ -78,7 +78,17 @@ void VulkanDevice::CreateCompute
 		};
 		VK_CHECK(vkCreateCommandPool(device_, &cpi1, nullptr, &computeCommandPool_));
 
+		// Single time compute command buffer
 		CreateCommandBuffer(computeCommandPool_, &computeCommandBuffer_);
+
+		for (unsigned int i = 0; i < AppConfig::FrameOverlapCount; ++i)
+		{
+			VK_CHECK(CreateCommandBuffer(commandPool_, &(frameDataArray_[i].compCommandBuffer_)));
+			VK_CHECK(CreateSemaphore(&(frameDataArray_[i].computeSemaphore_)));
+		}
+
+		// Create compute semaphore
+		//VK_CHECK(CreateSemaphore(&computeSemaphore_));
 	}
 
 	useCompute_ = true;
@@ -90,6 +100,8 @@ void VulkanDevice::Destroy()
 	{
 		frameDataArray_[i].Destroy(device_);
 	}
+
+	//vkDestroySemaphore(device_, computeSemaphore_, nullptr);
 
 	for (size_t i = 0; i < swapchainImages_.size(); i++)
 	{

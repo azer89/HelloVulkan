@@ -1,0 +1,129 @@
+#version 460 core
+
+layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+
+// SSBO
+struct AABB
+{
+	vec4 minPoint;
+	vec4 maxPoint;
+};
+layout(set = 0, binding = 0) buffer Clusters
+{
+	AABB data[];
+} clusters;
+
+// UBO
+layout(set = 0, binding = 1) uniform ClusterForwardUBO
+{
+	mat4 cameraInverseProjection;
+	mat4 cameraView;
+	vec2 screenSize;
+	float sliceScaling;
+	float sliceBias;
+	float cameraNear;
+	float cameraFar;
+	uint sliceCountX;
+	uint sliceCountY;
+	uint sliceCountZ;
+}
+ubo;
+
+// https://mynameismjp.wordpress.com/2009/03/10/reconstructing-position-from-depth/
+vec4 ScreenToView(vec4 screen)
+{
+	vec4 clip = vec4(
+		screen.x * 2.0 - 1.0, 
+		screen.y * 2.0 - 1.0, 
+		screen.z, 
+		screen.w);
+	vec4 view = ubo.cameraInverseProjection * clip;
+
+	// Normalize
+	// https://stackoverflow.com/questions/25463735/w-coordinate-in-inverse-projection
+	view = view / view.w;
+
+	return view;
+}
+
+
+vec3 RayIntersectZPlane(vec3 incident, float zOffset) 
+{
+	return incident * zOffset / incident.z;
+}
+
+// Creates a line from the eye to the screenpoint, then finds its intersection
+// with a z oriented plane located at the given distance to the origin
+vec3 LineIntersectionToZPlane(vec3 A, vec3 B, float zDistance)
+{
+	// Plane normal
+	vec3 normal = vec3(0.0, 0.0, 1.0);
+
+	vec3 ab = B - A;
+
+	// The intersection length for the line and the plane
+	// https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-plane-and-ray-disk-intersection.html
+	float t = (zDistance - dot(normal, A)) / dot(normal, ab);
+
+	// The actual xyz position of the point along the line
+	vec3 result = A + t * ab;
+
+	return result;
+}
+
+void main()
+{
+	// Eye position is zero in view space
+	const vec3 eyePos = vec3(0.0);
+
+	uint tileIndex =
+		gl_WorkGroupID.x +
+		gl_WorkGroupID.y * gl_NumWorkGroups.x +
+		gl_WorkGroupID.z * gl_NumWorkGroups.x * gl_NumWorkGroups.y;
+
+	vec2 normPerTileSize = vec2(1.0 / float(ubo.sliceCountX), 
+		1.0 / float(ubo.sliceCountY));
+
+	// Min and max point in screen space
+	// Top Right
+	vec4 maxSS = vec4(
+		(gl_WorkGroupID.x + 1.0) * normPerTileSize.x,
+		(gl_WorkGroupID.y + 1.0) * normPerTileSize.y, 
+		0.0, 
+		1.0);
+	// Bottom Left
+	vec4 minSS = vec4(
+		gl_WorkGroupID.x * normPerTileSize.x,
+		gl_WorkGroupID.y * normPerTileSize.y,
+		0.0, 
+		1.0);
+	
+	// Min and max in view space
+	vec3 maxVS = ScreenToView(maxSS).xyz;
+	vec3 minVS = ScreenToView(minSS).xyz;
+
+	// Near and far of the cluster in view space
+	float tileNear = -ubo.cameraNear * 
+		pow(ubo.cameraFar / ubo.cameraNear, float(gl_WorkGroupID.z) / ubo.sliceCountZ);
+	float tileFar = -ubo.cameraNear * 
+		pow(ubo.cameraFar / ubo.cameraNear, float(gl_WorkGroupID.z + 1) / ubo.sliceCountZ);
+
+	// Intersection points
+	/*vec3 minNear = RayIntersectZPlane(minVS, tileNear);
+	vec3 minFar = RayIntersectZPlane(minVS, tileFar);
+	vec3 maxNear = RayIntersectZPlane(maxVS, tileNear);
+	vec3 maxFar = RayIntersectZPlane(maxVS, tileFar);*/
+	vec3 minNear = LineIntersectionToZPlane(eyePos, minVS, tileNear);
+	vec3 minFar = LineIntersectionToZPlane(eyePos, minVS, tileFar);
+	vec3 maxNear = LineIntersectionToZPlane(eyePos, maxVS, tileNear);
+	vec3 maxFar = LineIntersectionToZPlane(eyePos, maxVS, tileFar);
+
+	//vec3 minAABB = min(min(minNear, minFar), min(maxNear, maxFar));
+	//vec3 maxAABB = max(max(minNear, minFar), max(maxNear, maxFar));
+
+	//clusters.data[tileIndex].minPoint = vec4(minAABB, 0.0);
+	//clusters.data[tileIndex].maxPoint = vec4(maxAABB, 0.0);
+
+	clusters.data[tileIndex].minPoint = vec4(minFar.x, minFar.y, tileNear, 0.0);
+	clusters.data[tileIndex].maxPoint = vec4(maxFar.x, maxFar.y, tileFar, 0.0);
+}

@@ -18,8 +18,10 @@ public:
 	virtual int MainLoop() = 0; 
 
 protected:
+	// Called in DrawFrame()
 	virtual void UpdateUBOs(uint32_t imageIndex) = 0;
 	virtual void UpdateUI();
+	virtual void FillComputeCommandBuffer(VkCommandBuffer compCommandBuffer, uint32_t imageIndex);
 	void FillCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 
 	void CreateSharedImageResources();

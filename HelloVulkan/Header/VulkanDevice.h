@@ -25,10 +25,14 @@ struct FrameData
 	VkFence queueSubmitFence_;
 	VkCommandBuffer commandBuffer_;
 
+	VkCommandBuffer compCommandBuffer_;
+	VkSemaphore computeSemaphore_;
+
 	void Destroy(VkDevice device)
 	{
 		vkDestroySemaphore(device, nextSwapchainImageSemaphore_, nullptr);
 		vkDestroySemaphore(device, renderSemaphore_, nullptr);
+		vkDestroySemaphore(device, computeSemaphore_, nullptr);
 		vkDestroyFence(device, queueSubmitFence_, nullptr);
 	}
 };
@@ -82,6 +86,7 @@ public:
 
 	// Pointer getters
 	VkSwapchainKHR* GetSwapchainPtr() { return &swapchain_; }
+	//VkSemaphore* GetComputeSemaphore() { return &computeSemaphore_; }
 
 	// Sync objects and render command buffer
 	FrameData& GetCurrentFrameData();
@@ -152,6 +157,7 @@ private:
 	bool useCompute_ = false;
 	VkCommandBuffer computeCommandBuffer_;
 	VkCommandPool computeCommandPool_;
+	//VkSemaphore computeSemaphore_;
 
 	std::vector<uint32_t> deviceQueueIndices_;
 

@@ -35,7 +35,7 @@ RendererBRDFLUT::RendererBRDFLUT(
 	CreateComputeDescriptorSetLayout(vkDev.GetDevice());
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_, ranges);
 	CreateComputePipeline(vkDev.GetDevice(), shader.GetShaderModule());
-	CreateComputeDescriptorSet(vkDev.GetDevice(), descriptorSetLayout_);
+	CreateComputeDescriptorSet(vkDev.GetDevice());
 
 	shader.Destroy(vkDev.GetDevice());
 }
@@ -190,29 +190,29 @@ void RendererBRDFLUT::CreateComputeDescriptorSetLayout(VkDevice device)
 		&descriptorSetLayout_));
 }
 
-void RendererBRDFLUT::CreateComputeDescriptorSet(VkDevice device, VkDescriptorSetLayout descriptorSetLayout)
+void RendererBRDFLUT::CreateComputeDescriptorSet(VkDevice device)
 {
 	// Descriptor pool
 	VkDescriptorPoolSize descriptorPoolSize = { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 2 };
 
 	VkDescriptorPoolCreateInfo descriptorPoolCreateInfo = {
-		VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-		0,
-		0,
-		1,
-		1,
-		&descriptorPoolSize
+		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+		.pNext = 0,
+		.flags = 0,
+		.maxSets = 1,
+		.poolSizeCount = 1,
+		.pPoolSizes = &descriptorPoolSize
 	};
 
 	VK_CHECK(vkCreateDescriptorPool(device, &descriptorPoolCreateInfo, 0, &descriptorPool_));
 
 	// Descriptor set
 	VkDescriptorSetAllocateInfo descriptorSetAllocateInfo = {
-		VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-		0,
-		descriptorPool_,
-		1,
-		&descriptorSetLayout_
+		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+		.pNext = 0,
+		.descriptorPool = descriptorPool_,
+		.descriptorSetCount = 1,
+		.pSetLayouts = &descriptorSetLayout_
 	};
 
 	// Descriptor set

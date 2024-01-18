@@ -10,9 +10,12 @@
 #include "RendererResolveMS.h"
 #include "RendererLight.h"
 #include "RendererImGui.h"
+#include "RendererCullLights.h"
+#include "RendererAABBDebug.h"
 #include "VulkanImage.h"
 #include "Light.h"
 #include "Model.h"
+#include "ClusterForwardBuffers.h"
 
 #include <vector>
 #include <memory>
@@ -24,6 +27,7 @@ public:
 	int MainLoop() override;
 	void UpdateUBOs(uint32_t imageIndex) override;
 	void UpdateUI() override;
+	void FillComputeCommandBuffer(VkCommandBuffer compCommandBuffer, uint32_t imageIndex) override;
 
 	void Init();
 	void InitLights();
@@ -38,6 +42,11 @@ private:
 	std::unique_ptr<RendererResolveMS> resolveMSPtr_;
 	std::unique_ptr<RendererLight> lightPtr_;
 	std::unique_ptr<RendererImGui> imguiPtr_;
+	std::unique_ptr<RendererCullLights> cullLightsPtr_;
+	std::unique_ptr<RendererAABBDebug> aabbDebugPtr_;
+
+	// Buffers for Clustered Forward
+	ClusterForwardBuffers cfBuffers_;
 
 	// PBR stuff
 	// TODO change to unique ptrs

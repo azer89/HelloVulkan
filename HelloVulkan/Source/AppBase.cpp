@@ -8,6 +8,7 @@
 #include "glslang_c_interface.h" 
 
 #include <iostream>
+#include <array>
 
 AppBase::AppBase() :
 	shouldRecreateSwapchain_(false)
@@ -166,6 +167,7 @@ bool AppBase::DrawFrame()
 
 	vkResetFences(vulkanDevice_.GetDevice(), 1, &(frameData.queueSubmitFence_));
 	vkResetCommandBuffer(frameData.commandBuffer_, 0);
+	vkResetCommandBuffer(frameData.compCommandBuffer_, 0);
 
 	// Send UBOs to shaders
 	UpdateUBOs(imageIndex);
@@ -173,20 +175,55 @@ bool AppBase::DrawFrame()
 	// ImGui
 	UpdateUI();
 
+	// Compute
+	{
+		vkResetCommandBuffer(frameData.compCommandBuffer_, 0);
+
+		VkCommandBufferBeginInfo commandBufferBeginInfo = 
+		{
+			VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+		};
+
+		VK_CHECK(vkBeginCommandBuffer(frameData.compCommandBuffer_, &commandBufferBeginInfo));
+
+		FillComputeCommandBuffer(frameData.compCommandBuffer_, imageIndex);
+
+		VK_CHECK(vkEndCommandBuffer(frameData.compCommandBuffer_));
+
+		VkPipelineStageFlags waitStageMask = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+		VkSubmitInfo computeSubmitInfo =
+		{
+			.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+			.pNext = 0,
+			.waitSemaphoreCount = 0,
+			.pWaitSemaphores = nullptr,
+			.pWaitDstStageMask = &waitStageMask,
+			.commandBufferCount = 1,
+			.pCommandBuffers = &(frameData.compCommandBuffer_),
+			.signalSemaphoreCount = 1,
+			.pSignalSemaphores = &(frameData.computeSemaphore_)
+		};
+		
+		VK_CHECK(vkQueueSubmit(vulkanDevice_.GetComputeQueue(), 1, &computeSubmitInfo, VK_NULL_HANDLE));
+	}
+
 	// Start recording command buffers
 	FillCommandBuffer(frameData.commandBuffer_, imageIndex);
 
-	const VkPipelineStageFlags waitStages[] = 
-		{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	//const VkPipelineStageFlags waitStages[] = 
+	//	{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	VkPipelineStageFlags graphicsWaitStageMasks[] = { VK_PIPELINE_STAGE_VERTEX_INPUT_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	std::array<VkSemaphore, 2> waitSemaphores = { frameData.computeSemaphore_, frameData.nextSwapchainImageSemaphore_ };
 
 	const VkSubmitInfo submitInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
 		.pNext = nullptr,
-		.waitSemaphoreCount = 1u,
+		.waitSemaphoreCount = 2u,
 		// Wait for the swapchain image to become available
-		.pWaitSemaphores = &(frameData.nextSwapchainImageSemaphore_),
-		.pWaitDstStageMask = waitStages,
+		//.pWaitSemaphores = &(frameData.nextSwapchainImageSemaphore_),
+		.pWaitSemaphores = waitSemaphores.data(),
+		.pWaitDstStageMask = graphicsWaitStageMasks,
 		.commandBufferCount = 1u,
 		.pCommandBuffers = &(frameData.commandBuffer_),
 		.signalSemaphoreCount = 1u,
@@ -221,6 +258,11 @@ bool AppBase::DrawFrame()
 }
 
 void AppBase::UpdateUI()
+{
+	// Empty, must be implemented in a derived class
+}
+
+void AppBase::FillComputeCommandBuffer(VkCommandBuffer compCommandBuffer, uint32_t imageIndex)
 {
 	// Empty, must be implemented in a derived class
 }

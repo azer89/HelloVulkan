@@ -4,6 +4,7 @@
 #include "glm/glm.hpp"
 
 #include "Configs.h"
+#include "UBO.h"
 
 enum CameraMovement
 {
@@ -44,7 +45,10 @@ public:
 	void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true);
 	void ProcessMouseScroll(float yoffset);
 
+	ClusterForwardUBO GetClusterForwardUBO();
+
 private:
+	glm::mat4 inverseProjectionMatrix_;
 	glm::mat4 projectionMatrix_;
 	glm::mat4 viewMatrix_;
 

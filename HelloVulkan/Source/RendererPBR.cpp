@@ -9,8 +9,8 @@
 #include <array>
 
 // Constants
-constexpr uint32_t UBO_COUNT = 2;
-constexpr uint32_t SSBO_COUNT = 1;
+constexpr uint32_t UBO_COUNT = 3;
+constexpr uint32_t SSBO_COUNT = 4;
 constexpr size_t PBR_MESH_TEXTURE_COUNT = 6; 
 constexpr size_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 
@@ -18,6 +18,7 @@ RendererPBR::RendererPBR(
 	VulkanDevice& vkDev,
 	std::vector<Model*> models,
 	Lights* lights,
+	ClusterForwardBuffers* cfBuffers,
 	VulkanImage* specularMap,
 	VulkanImage* diffuseMap,
 	VulkanImage* brdfLUT,
@@ -27,6 +28,7 @@ RendererPBR::RendererPBR(
 	RendererBase(vkDev, true), // Offscreen
 	models_(models),
 	lights_(lights),
+	cfBuffers_(cfBuffers),
 	specularCubemap_(specularMap),
 	diffuseCubemap_(diffuseMap),
 	brdfLUT_(brdfLUT)
@@ -35,6 +37,9 @@ RendererPBR::RendererPBR(
 
 	// Per frame UBO
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
+
+	// Clustered Forward UBO
+	CreateUniformBuffers(vkDev, clusterForwardUBOs_, sizeof(ClusterForwardUBO));
 	
 	// Model UBO
 	uint32_t numMeshes = 0u;
@@ -89,7 +94,7 @@ RendererPBR::RendererPBR(
 		pipelineLayout_,
 		{
 			AppConfig::ShaderFolder + "Mesh.vert",
-			AppConfig::ShaderFolder + "Mesh.frag"
+			AppConfig::ShaderFolder + "MeshClusterForward.frag"
 		},
 		&graphicsPipeline_,
 		true, // hasVertexBuffer
@@ -99,6 +104,10 @@ RendererPBR::RendererPBR(
 
 RendererPBR::~RendererPBR()
 {
+	for (auto uboBuffer : clusterForwardUBOs_)
+	{
+		uboBuffer.Destroy(device_);
+	}
 }
 
 void RendererPBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
@@ -161,6 +170,35 @@ void RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 			bindingIndex++, 
 			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 
 			VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT));
+
+	// UBO
+	bindings.emplace_back(
+		DescriptorSetLayoutBinding(
+			bindingIndex++,
+			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+			VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT));
+
+	// SSBO
+	bindings.emplace_back(
+		DescriptorSetLayoutBinding(
+			bindingIndex++,
+			VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+			VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT));
+
+	// SSBO
+	bindings.emplace_back(
+		DescriptorSetLayoutBinding(
+			bindingIndex++,
+			VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+			VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT));
+
+	// SSBO
+	bindings.emplace_back(
+		DescriptorSetLayoutBinding(
+			bindingIndex++,
+			VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+			VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT));
+
 	// SSBO
 	bindings.emplace_back(
 		DescriptorSetLayoutBinding(
@@ -258,7 +296,11 @@ void RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 
 		const VkDescriptorBufferInfo bufferInfo1 = { perFrameUBOs_[i].buffer_, 0, sizeof(PerFrameUBO)};
 		const VkDescriptorBufferInfo bufferInfo2 = { parentModel->modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
-		const VkDescriptorBufferInfo bufferInfo3 = { lights_->GetSSBOBuffer(), 0, lights_->GetSSBOSize() };
+		const VkDescriptorBufferInfo bufferInfo3 = { clusterForwardUBOs_[i].buffer_, 0, sizeof(ClusterForwardUBO) };
+		const VkDescriptorBufferInfo bufferInfo4 = { lights_->GetSSBOBuffer(), 0, lights_->GetSSBOSize() };
+		const VkDescriptorBufferInfo bufferInfo5 = { cfBuffers_->lightCellsBuffers_[i].buffer_, 0, VK_WHOLE_SIZE};
+		const VkDescriptorBufferInfo bufferInfo6 = { cfBuffers_->lightIndicesBuffers_[i].buffer_, 0, VK_WHOLE_SIZE};
+		const VkDescriptorBufferInfo bufferInfo7 = { cfBuffers_->aabbBuffer_.buffer_, 0, VK_WHOLE_SIZE };
 
 		// UBO
 		std::vector<VkWriteDescriptorSet> descriptorWrites;
@@ -275,11 +317,44 @@ void RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 				&bufferInfo2, 
 				bindIndex++, 
 				VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
-		// SSBO
+
+		// UBO
 		descriptorWrites.emplace_back(
 			BufferWriteDescriptorSet(
 				ds,
 				&bufferInfo3,
+				bindIndex++,
+				VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
+
+		// SSBO
+		descriptorWrites.emplace_back(
+			BufferWriteDescriptorSet(
+				ds,
+				&bufferInfo4,
+				bindIndex++,
+				VK_DESCRIPTOR_TYPE_STORAGE_BUFFER));
+
+		// SSBO
+		descriptorWrites.emplace_back(
+			BufferWriteDescriptorSet(
+				ds,
+				&bufferInfo5,
+				bindIndex++,
+				VK_DESCRIPTOR_TYPE_STORAGE_BUFFER));
+
+		// SSBO
+		descriptorWrites.emplace_back(
+			BufferWriteDescriptorSet(
+				ds,
+				&bufferInfo6,
+				bindIndex++,
+				VK_DESCRIPTOR_TYPE_STORAGE_BUFFER));
+
+		// SSBO
+		descriptorWrites.emplace_back(
+			BufferWriteDescriptorSet(
+				ds,
+				&bufferInfo7,
 				bindIndex++,
 				VK_DESCRIPTOR_TYPE_STORAGE_BUFFER));
 

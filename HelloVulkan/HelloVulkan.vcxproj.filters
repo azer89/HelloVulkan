@@ -57,6 +57,21 @@
     <None Include="..\Shaders\LightCircle.vert">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\Shaders\MeshClusterForward.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Shaders\AABB.comp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Shaders\CullLights.comp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Shaders\AABBRender.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Shaders\AABBRender.vert">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\AppBase.h">
@@ -149,6 +164,18 @@
     <ClInclude Include="Header\RendererImGui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Header\RendererAABB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\RendererCullLights.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\ClusterForwardBuffers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\RendererAABBDebug.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AppBase.cpp">
@@ -230,6 +257,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\RendererImGui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RendererAABB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RendererCullLights.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ClusterForwardBuffers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RendererAABBDebug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

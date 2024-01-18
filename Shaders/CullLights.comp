@@ -1,0 +1,135 @@
+#version 460 core
+
+layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+
+// SSBO (input)
+struct AABB
+{
+	vec4 minPoint;
+	vec4 maxPoint;
+};
+layout(set = 0, binding = 0) buffer Clusters
+{
+	AABB data[];
+}
+clusters;
+
+// SSBO (input)
+struct LightData
+{
+	vec4 position;
+	vec4 color;
+	float radius;
+};
+layout(set = 0, binding = 1) buffer Lights 
+{ 
+	LightData data[]; 
+}
+lights;
+
+// SSBO 
+layout(set = 0, binding = 2) buffer AtomicCounter
+{
+	uint globalIndex;
+};
+
+// SSBO (output)
+struct LightCell
+{
+	uint offset;
+	uint count;
+};
+layout(set = 0, binding = 3) buffer LightCells
+{
+	LightCell data[];
+}
+lightCells;
+
+// SSBO (output)
+layout(set = 0, binding = 4) buffer LightIndices
+{
+	uint data[];
+}
+lightIndices;
+
+// UBO
+layout(set = 0, binding = 5) uniform ClusterForwardUBO
+{
+	mat4 cameraInverseProjection;
+	mat4 cameraView;
+	vec2 screenSize;
+	float sliceScaling;
+	float sliceBias;
+	float cameraNear;
+	float cameraFar;
+	uint sliceCountX;
+	uint sliceCountY;
+	uint sliceCountZ;
+}
+ubo;
+
+#define MAX_LIGHTS_PER_CLUSTER 50
+
+float SquaredDistancePointAABB(vec3 point, uint tile)
+{
+	AABB currentCell = clusters.data[tile];
+
+	float sqDist = 0.0;
+	for (uint i = 0; i < 3; ++i)
+	{
+		float v = point[i];
+		if (v < currentCell.minPoint[i])
+		{
+			float diff = currentCell.minPoint[i] - v;
+			sqDist += (diff * diff);
+		}
+		else if (v > currentCell.maxPoint[i])
+		{
+			float diff = currentCell.maxPoint[i] - v;
+			sqDist += (diff * diff);
+		}
+	}
+
+	return sqDist;
+}
+
+bool TestSphereAABB(uint light, uint tile)
+{
+	float radius = lights.data[light].radius;
+	vec4 posWorld = lights.data[light].position;
+	vec4 posView = ubo.cameraView * posWorld;
+	float squaredDistance = SquaredDistancePointAABB(posView.xyz, tile);
+
+	return squaredDistance <= (radius * radius);
+}
+
+void main()
+{
+	uint tileIndex =
+		gl_WorkGroupID.x +
+		gl_WorkGroupID.y * gl_NumWorkGroups.x +
+		gl_WorkGroupID.z * gl_NumWorkGroups.x * gl_NumWorkGroups.y;
+
+	uint visibleLightIndices[MAX_LIGHTS_PER_CLUSTER];
+
+	uint numAllLights = lights.data.length();
+	
+	uint lightIter = 0;
+	for (uint i = 0; i < numAllLights && lightIter < MAX_LIGHTS_PER_CLUSTER; ++i)
+	{
+		if (TestSphereAABB(i, tileIndex))
+		{
+			visibleLightIndices[lightIter++] = i;
+		}
+	}
+
+	uint offset = atomicAdd(globalIndex, lightIter);
+
+	for (uint i = 0; i < lightIter; ++i)
+	{
+		lightIndices.data[offset + i] = visibleLightIndices[i];
+	}
+
+	lightCells.data[tileIndex].offset = offset;
+	lightCells.data[tileIndex].count  = lightIter;
+}

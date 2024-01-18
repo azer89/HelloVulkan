@@ -120,10 +120,10 @@ void Camera::UpdateInternal()
 	up_ = glm::normalize(glm::cross(right_, front_));
 
 	// Projection matrix
-	/*float aspect = screenWidth_ / screenHeight_;
+	float aspect = screenWidth_ / screenHeight_;
 	assert(glm::abs(aspect - std::numeric_limits<float>::epsilon()) > 0.0f);
 
-	float fovy = glm::radians(zoom_);
+	/*float fovy = glm::radians(zoom_);
 	float far = AppConfig::cameraFar;
 	float near = AppConfig::cameraNear;
 	const float tanHalfFovy = tan(fovy / 2.f);
@@ -135,11 +135,15 @@ void Camera::UpdateInternal()
 	projectionMatrix_[2][2] = far / (far - near);
 	projectionMatrix_[2][3] = 1.f;
 	projectionMatrix_[3][2] = -(far * near) / (far - near);*/
+
 	projectionMatrix_ = glm::perspective(glm::radians(zoom_),
 		static_cast<float>(screenWidth_) / static_cast<float>(screenHeight_),
 		AppConfig::cameraNear,
 		AppConfig::cameraFar);
 	projectionMatrix_[1][1] *= -1;
+
+	// Inverse
+	inverseProjectionMatrix_ = glm::inverse(projectionMatrix_);
 
 	// View matrix
 	/*const glm::vec3 w = front_;
@@ -159,6 +163,27 @@ void Camera::UpdateInternal()
 	viewMatrix_[3][0] = -glm::dot(u, position_);
 	viewMatrix_[3][1] = -glm::dot(v, position_);
 	viewMatrix_[3][2] = -glm::dot(w, position_);*/
+	
+	viewMatrix_  = glm::lookAt(position_, position_ + front_, up_);
+}
 
-	viewMatrix_ = glm::lookAt(position_, position_ + front_, up_);
+ClusterForwardUBO Camera::GetClusterForwardUBO()
+{
+	float zFloat = static_cast<float>(ClusterForwardConfig::sliceCountZ);
+	float log2FarDivNear = glm::log2(AppConfig::cameraFar / AppConfig::cameraNear);
+	float log2Near = glm::log2(AppConfig::cameraNear);
+
+	return
+	{
+		.cameraInverseProjection = inverseProjectionMatrix_,
+		.cameraView = viewMatrix_,
+		.screenSize = glm::vec2(screenWidth_, screenHeight_),
+		.sliceScaling = zFloat / log2FarDivNear,
+		.sliceBias = -(zFloat * log2Near / log2FarDivNear),
+		.cameraNear = AppConfig::cameraNear,
+		.cameraFar = AppConfig::cameraFar,
+		.sliceCountX = ClusterForwardConfig::sliceCountX,
+		.sliceCountY = ClusterForwardConfig::sliceCountY,
+		.sliceCountZ = ClusterForwardConfig::sliceCountZ
+	};
 }

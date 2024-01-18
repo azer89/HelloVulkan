@@ -14,13 +14,28 @@ layout(push_constant) uniform PushConstantPBR
 }
 pc;
 
-layout(binding = 0) uniform PerFrameUBO
+layout(set = 0, binding = 0) uniform PerFrameUBO
 {
 	mat4 cameraProjection;
 	mat4 cameraView;
 	vec4 cameraPosition;
 }
 frameUBO;
+
+layout(set = 0, binding = 2) uniform ClusterForwardUBO
+{
+	mat4 cameraInverseProjection;
+	mat4 cameraView;
+	vec2 screenSize;
+	float sliceScaling;
+	float sliceBias;
+	float cameraNear;
+	float cameraFar;
+	uint sliceCountX;
+	uint sliceCountY;
+	uint sliceCountZ;
+}
+cfUBO;
 
 // SSBO
 struct LightData
@@ -29,22 +44,63 @@ struct LightData
 	vec4 color;
 	float radius;
 };
-layout(binding = 2) readonly buffer Lights { LightData data []; } inLights;
+layout(set = 0, binding = 3) readonly buffer Lights { LightData data []; } inLights;
 
-layout(binding = 3) uniform sampler2D textureAlbedo;
-layout(binding = 4) uniform sampler2D textureNormal;
-layout(binding = 5) uniform sampler2D textureMetalness;
-layout(binding = 6) uniform sampler2D textureRoughness;
-layout(binding = 7) uniform sampler2D textureAO;
-layout(binding = 8) uniform sampler2D textureEmissive;
+// SSBO
+struct LightCell
+{
+	uint offset;
+	uint count;
+};
+layout(set = 0, binding = 4) buffer LightCells
+{
+	LightCell data [];
+}
+lightCells;
 
-layout(binding = 9) uniform samplerCube specularMap;
-layout(binding = 10) uniform samplerCube diffuseMap;
-layout(binding = 11) uniform sampler2D brdfLUT;
+// SSBO
+layout(set = 0, binding = 5) buffer LightIndices
+{
+	uint data [];
+}
+lightIndices;
+
+struct AABB
+{
+	vec4 minPoint;
+	vec4 maxPoint;
+};
+layout(set = 0, binding = 6) buffer Clusters
+{
+	AABB data [];
+}
+clusters;
+
+layout(set = 0, binding = 7) uniform sampler2D textureAlbedo;
+layout(set = 0, binding = 8) uniform sampler2D textureNormal;
+layout(set = 0, binding = 9) uniform sampler2D textureMetalness;
+layout(set = 0, binding = 10) uniform sampler2D textureRoughness;
+layout(set = 0, binding = 11) uniform sampler2D textureAO;
+layout(set = 0, binding = 12) uniform sampler2D textureEmissive;
+
+layout(set = 0, binding = 13) uniform samplerCube specularMap;
+layout(set = 0, binding = 14) uniform samplerCube diffuseMap;
+layout(set = 0, binding = 15) uniform sampler2D brdfLUT;
 
 // Include files
 #include <PBRHeader.frag>
 #include <Hammersley.frag>
+
+vec3 DEBUG_COLORS[8] = vec3[](
+	vec3(0.04, 0.04, 0),
+	vec3(0, 0, 0.08),
+	vec3(0, 0.08, 0),
+	vec3(0, 0.08, 0.08),
+	vec3(0.08, 0, 0),
+	vec3(0.08, 0, 0.08),
+	vec3(0.08, 0.08, 0),
+	vec3(0, 0.04, 0.04)
+);
 
 // Tangent-normals to world-space
 vec3 GetNormalFromMap(vec3 tangentNormal, vec3 worldPos, vec3 normal, vec2 texCoord)
@@ -62,8 +118,37 @@ vec3 GetNormalFromMap(vec3 tangentNormal, vec3 worldPos, vec3 normal, vec2 texCo
 	return normalize(TBN * tangentNormal);
 }
 
+float LinearDepth(float depthSample)
+{
+	float depthRange = 2.0 * depthSample - 1.0;
+	float zNear = cfUBO.cameraNear;
+	float zFar = cfUBO.cameraFar;
+	float linear = 2.0 * zNear * zFar / (zFar + zNear - depthRange * (zFar - zNear));
+	return linear;
+}
+
 void main()
 {
+	uint zIndex = uint(max(log2(LinearDepth(gl_FragCoord.z)) * cfUBO.sliceScaling + cfUBO.sliceBias, 0.0));
+
+	vec2 tileSize = 
+		vec2(cfUBO.screenSize.x / float(cfUBO.sliceCountX), 
+			 cfUBO.screenSize.y / float(cfUBO.sliceCountY));
+
+	uvec3 cluster = uvec3(
+		gl_FragCoord.x / tileSize.x,
+		gl_FragCoord.y / tileSize.y,
+		zIndex);
+
+	uint clusterIdx =
+		cluster.x +
+		cluster.y * cfUBO.sliceCountX +
+		cluster.z * cfUBO.sliceCountX * cfUBO.sliceCountY;
+
+	uint lightCount = lightCells.data[clusterIdx].count;
+	uint lightIndexOffset = lightCells.data[clusterIdx].offset;
+
+	// PBR
 	vec4 albedo4 = texture(textureAlbedo, texCoord).rgba;
 
 	if (albedo4.a < 0.5)
@@ -72,7 +157,7 @@ void main()
 	}
 
 	// Material properties
-	vec3 albedo = pow(albedo4.rgb, vec3(2.2)); 
+	vec3 albedo = pow(albedo4.rgb, vec3(2.2));
 	vec3 emissive = texture(textureEmissive, texCoord).rgb;
 	float metallic = texture(textureMetalness, texCoord).b;
 	float roughness = texture(textureRoughness, texCoord).g;
@@ -93,9 +178,14 @@ void main()
 
 	// Reflectance equation
 	vec3 Lo = vec3(0.0);
-	for (int i = 0; i < inLights.data.length(); ++i)
+
+	//for (int i = 0; i < inLights.data.length(); ++i)
+	for (int i = 0; i < lightCount; ++i)
 	{
-		LightData light = inLights.data[i];
+		//LightData light = inLights.data[i];
+		uint lightIndex = lightIndices.data[i + lightIndexOffset];
+		LightData light = inLights.data[lightIndex];
+
 		light.color *= pc.lightIntensity;
 
 		vec3 L = normalize(light.position.xyz - worldPos); // Incident light vector
@@ -105,8 +195,9 @@ void main()
 		float HoV = max(dot(H, V), 0.0);
 		float distance = length(light.position.xyz - worldPos);
 		float attenuation = 1.0 / (distance * distance);
+		//float attenuation = pow(clamp(1 - pow((distance / light.radius), 4.0), 0.0, 1.0), 2.0)/(1.0  + (distance * distance));
 		vec3 radiance = light.color.xyz * attenuation;
-		
+
 		// Cook-Torrance BRDF
 		float D = DistributionGGX(NoH, roughness);
 		float G = GeometrySchlickGGX(NoL, NoV, alpha);
@@ -153,5 +244,15 @@ void main()
 	vec3 ambient = (kD * diffuse + specular) * ao;
 	vec3 color = ambient + emissive + Lo;
 
-	fragColor = vec4(color, 1.0);
+	fragColor = vec4(color, 1.0); // Default
+
+	//float lightCountColor = float(lightCount) / 50.0;
+	//fragColor = vec4(lightCountColor, lightCountColor, lightCountColor, 1.0);
+
+	//float linDepth = LinearDepth(gl_FragCoord.z);
+	//fragColor = vec4(linDepth, linDepth, linDepth, 1.0);
+
+	//fragColor = vec4(color, 1.0) + vec4(DEBUG_COLORS[uint(mod(float(cluster.x + cluster.y + cluster.z), 8.0))], 0.0);
+	//float cLightCount = 1.0 - (float(lightCount) / 50.0);
+	//fragColor = vec4(color, 1.0) + vec4(cLightCount * 0.1, 0.0, 0.0, 0.0);
 }

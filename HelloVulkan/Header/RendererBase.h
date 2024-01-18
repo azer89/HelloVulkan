@@ -51,6 +51,8 @@ protected:
 	VulkanRenderPass renderPass_;
 
 	VkPipelineLayout pipelineLayout_ = nullptr;
+
+	// TODO Rename to pipeline_ so that can be used for both graphics and compute
 	VkPipeline graphicsPipeline_ = nullptr;
 
 	// PerFrameUBO

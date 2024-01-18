@@ -11,10 +11,28 @@ A single light
 */
 struct LightData
 {
-	float radius_;
 	alignas(16)
 	glm::vec4 position_;
+	alignas(16)
 	glm::vec4 color_;
+	alignas(4)
+	float radius_;
+};
+
+struct AABB
+{
+	alignas(16)
+	glm::vec4 minPoint;
+	alignas(16)
+	glm::vec4 maxPoint;
+};
+
+struct LightCell
+{
+	alignas(4)
+	unsigned int offset;
+	alignas(4)
+	unsigned int count;
 };
 
 /*
@@ -33,8 +51,6 @@ public:
 	VkBuffer GetSSBOBuffer() const { return storageBuffer_.buffer_; }
 	size_t GetSSBOSize() const { return storageBufferSize_;  }
 	uint32_t GetLightCount() const { return lightCount_; }
-
-public:
 
 private:
 	uint32_t lightCount_;

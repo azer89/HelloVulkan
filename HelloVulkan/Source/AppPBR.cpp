@@ -3,11 +3,30 @@
 #include "RendererEquirect2Cube.h"
 #include "RendererCubeFilter.h"
 #include "RendererBRDFLUT.h"
+#include "RendererAABB.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_volk.h"
+
+#include <random>
+
+template <typename T>
+inline T RandomNumber()
+{
+	static std::uniform_real_distribution<T> distribution(0.0, 1.0);
+	static std::random_device rd;
+	static std::mt19937 generator(rd());
+	return distribution(generator);
+}
+
+// Returns a random real in [min,max)
+template <typename T>
+inline T RandomNumber(T min, T max)
+{
+	return min + (max - min) * RandomNumber<T>();
+}
 
 AppPBR::AppPBR() :
 	modelRotation_(0.f)
@@ -22,11 +41,14 @@ void AppPBR::Init()
 	// Initialize lights
 	InitLights();
 
+	// Clustered forward buffers
+	cfBuffers_.CreateBuffers(vulkanDevice_, lights_.GetLightCount());
+
 	std::string hdrFile = AppConfig::TextureFolder + "piazza_bologni_1k.hdr";
 
 	model_ = std::make_unique<Model>(
 		vulkanDevice_, 
-		AppConfig::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
+		AppConfig::ModelFolder + "Sponza//Sponza.gltf");
 	std::vector<Model*> models = {model_.get()};
 
 	// Create a cubemap from the input HDR
@@ -64,6 +86,12 @@ void AppPBR::Init()
 		brdfLut_.SetDebugName(vulkanDevice_, "BRDF_LUT");
 	}
 
+	{
+		RendererAABB aabbCompute(vulkanDevice_);
+		ClusterForwardUBO ubo = camera_->GetClusterForwardUBO();
+		aabbCompute.CreateClusters(vulkanDevice_, ubo, &(cfBuffers_.aabbBuffer_));
+	}
+
 	// Renderers
 	// This is responsible to clear swapchain image
 	clearPtr_ = std::make_unique<RendererClear>(
@@ -84,6 +112,7 @@ void AppPBR::Init()
 		vulkanDevice_,
 		models,
 		&lights_,
+		&cfBuffers_,
 		&specularCubemap_,
 		&diffuseCubemap_,
 		&brdfLut_,
@@ -95,6 +124,14 @@ void AppPBR::Init()
 		&depthImage_,
 		&multiSampledColorImage_
 	);
+	// aabbDebugPtr_
+	aabbDebugPtr_ = std::make_unique<RendererAABBDebug>(
+		vulkanDevice_,
+		&cfBuffers_,
+		&depthImage_,
+		&multiSampledColorImage_
+	);
+	aabbDebugPtr_->SetInverseCameraUBO(vulkanDevice_, camera_.get());
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
 	resolveMSPtr_ = std::make_unique<RendererResolveMS>(
 		vulkanDevice_, &multiSampledColorImage_, &singleSampledColorImage_);
@@ -117,39 +154,79 @@ void AppPBR::Init()
 		skyboxPtr_.get(),
 		pbrPtr_.get(),
 		lightPtr_.get(),
+		//aabbDebugPtr_.get(),
+
 		resolveMSPtr_.get(),
 		tonemapPtr_.get(),
 		imguiPtr_.get(),
 		finishPtr_.get()
 	};
+
+	// Compute
+	cullLightsPtr_ = std::make_unique<RendererCullLights>(vulkanDevice_, &lights_, &cfBuffers_);
 }
 
 void AppPBR::InitLights()
 {
+	std::vector<LightData> lights;
+
+	float pi2 = glm::two_pi<float>();
+	constexpr unsigned int NR_LIGHTS = 500;
+	for (unsigned int i = 0; i < NR_LIGHTS; ++i)
+	{
+		float yPos = RandomNumber<float>(0.05f, 1.0f);
+		float radius = RandomNumber<float>(0.0f, 10.0f);
+		float rad = RandomNumber<float>(0.0f, pi2);
+		float xPos = glm::cos(rad);
+
+		glm::vec4 position(
+			glm::cos(rad) * radius,
+			yPos,
+			glm::sin(rad) * radius,
+			1.f
+		);
+
+		glm::vec4 color(
+			RandomNumber<float>(0.5f, 1.0f),
+			RandomNumber<float>(0.5f, 1.0f),
+			RandomNumber<float>(0.5f, 1.0f),
+			1.f
+		);
+
+		LightData l;
+		l.color_ = color;
+		l.position_ = position;
+		l.radius_ = 4.f;
+
+		lights.push_back(l);
+	}
+
+	lights_.AddLights(vulkanDevice_, lights);
+
 	// Lights (SSBO)
-	lights_.AddLights(vulkanDevice_,
+	/*lights_.AddLights(vulkanDevice_,
 	{
 		{
-			.radius_ = 1.f,
 			.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f),
-			.color_ = glm::vec4(1.f)
+			.color_ = glm::vec4(1.f),
+			.radius_ = 8.f
 		},
 		{
-			.radius_ = 1.f,
 			.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f),
-			.color_ = glm::vec4(1.f)
+			.color_ = glm::vec4(1.f),
+			.radius_ = 8.f
 		},
 		{
-			.radius_ = 1.f,
 			.position_ = glm::vec4(-1.5f, 0.7f, -1.5f, 1.f),
-			.color_ = glm::vec4(1.f)
+			.color_ = glm::vec4(1.f),
+			.radius_ = 8.f
 		},
 		{
-			.radius_ = 1.f,
 			.position_ = glm::vec4(1.5f, 0.7f, -1.5f, 1.f),
-			.color_ = glm::vec4(1.f)
+			.color_ = glm::vec4(1.f),
+			.radius_ = 8.f,
 		}
-	});
+	});*/
 }
 
 void AppPBR::DestroyResources()
@@ -166,6 +243,9 @@ void AppPBR::DestroyResources()
 	// Lights
 	lights_.Destroy();
 
+	// Clustered forward buffers
+	cfBuffers_.Destroy(vulkanDevice_.GetDevice());
+
 	// Destroy renderers
 	clearPtr_.reset();
 	finishPtr_.reset();
@@ -175,11 +255,14 @@ void AppPBR::DestroyResources()
 	resolveMSPtr_.reset();
 	tonemapPtr_.reset();
 	imguiPtr_.reset();
+	cullLightsPtr_.reset();
+	aabbDebugPtr_.reset();
 }
 
 void AppPBR::UpdateUBOs(uint32_t imageIndex)
 {
 	// Per frame UBO
+	// TODO Move to camera class
 	PerFrameUBO skyboxUBO
 	{
 		.cameraProjection = camera_->GetProjectionMatrix(),
@@ -187,14 +270,17 @@ void AppPBR::UpdateUBOs(uint32_t imageIndex)
 		.cameraPosition = glm::vec4(camera_->Position(), 1.f)
 	};
 	skyboxPtr_->SetPerFrameUBO(vulkanDevice_, imageIndex, skyboxUBO);
+	// TODO Move to camera class
 	PerFrameUBO pbrUBO
 	{
 		.cameraProjection = camera_->GetProjectionMatrix(),
 		.cameraView = camera_->GetViewMatrix(),
 		.cameraPosition = glm::vec4(camera_->Position(), 1.f)
 	};
+	aabbDebugPtr_->SetPerFrameUBO(vulkanDevice_, imageIndex, pbrUBO);
 	lightPtr_->SetPerFrameUBO(vulkanDevice_, imageIndex, pbrUBO);
 	pbrPtr_->SetPerFrameUBO(vulkanDevice_, imageIndex, pbrUBO);
+	pbrPtr_->SeClusterForwardUBO(vulkanDevice_, imageIndex, camera_->GetClusterForwardUBO());
 
 	// Model UBOs
 	glm::mat4 modelMatrix(1.f);
@@ -207,6 +293,10 @@ void AppPBR::UpdateUBOs(uint32_t imageIndex)
 		.model = modelMatrix
 	};
 	model_->SetModelUBO(vulkanDevice_, imageIndex, modelUBO1);
+
+	cullLightsPtr_->ResetGlobalIndex(vulkanDevice_, imageIndex);
+	cullLightsPtr_->SetClusterForwardUBO(vulkanDevice_, imageIndex, camera_->GetClusterForwardUBO());
+
 }
 
 void AppPBR::UpdateUI()
@@ -240,6 +330,11 @@ void AppPBR::UpdateUI()
 	ImGui::SliderFloat("Base Reflectivity", &pbrBaseReflectivity, 0.01f, 1.f);
 	ImGui::SliderFloat("Max Mipmap Lod", &maxReflectivityLod, 0.1f, cubemapMipmapCount_);
 
+	if (ImGui::Button("Reset Frustum"))
+	{
+		aabbDebugPtr_->SetInverseCameraUBO(vulkanDevice_, camera_.get());
+	}
+
 	ImGui::End();
 	ImGui::Render();
 
@@ -247,6 +342,11 @@ void AppPBR::UpdateUI()
 	pbrPtr_->SetLightIntensity(lightIntensity);
 	pbrPtr_->SetBaseReflectivity(pbrBaseReflectivity);
 	pbrPtr_->SetMaxReflectionLod(maxReflectivityLod);
+}
+
+void AppPBR::FillComputeCommandBuffer(VkCommandBuffer compCommandBuffer, uint32_t imageIndex)
+{
+	cullLightsPtr_->FillComputeCommandBuffer(vulkanDevice_, compCommandBuffer, imageIndex);
 }
 
 // This is called from main.cpp

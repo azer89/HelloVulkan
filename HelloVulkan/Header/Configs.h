@@ -7,10 +7,11 @@
 
 namespace AppConfig
 {
-	const int InitialScreenWidth = 1600;
-	const int InitialScreenHeight = 1200;
+	const int InitialScreenWidth = 1366;
+	const int InitialScreenHeight = 768;
+
 	const float cameraNear = 0.1f;
-	const float cameraFar = 100.0f;
+	const float cameraFar = 200.0f;
 
 	// VK_PRESENT_MODE_FIFO_KHR --> Lock to screen FPS
 	// VK_PRESENT_MODE_MAILBOX_KHR --> Triple buffering
@@ -39,6 +40,17 @@ namespace IBLConfig
 	constexpr int LUTWidth = 256;
 	constexpr int LUTHeight = 256;
 	constexpr uint32_t LUTBufferSize = 2 * sizeof(float) * LUTWidth * LUTHeight;
+}
+
+namespace ClusterForwardConfig
+{
+	constexpr unsigned int sliceCountX = 16;
+	constexpr unsigned int sliceCountY = 9;
+	constexpr unsigned int sliceCountZ = 24;
+	constexpr unsigned int numClusters = sliceCountX * sliceCountY * sliceCountZ;
+
+	// Note that this also has to be set inside the compute shader
+	constexpr unsigned int maxLightPerCluster = 50;
 }
 
 #endif

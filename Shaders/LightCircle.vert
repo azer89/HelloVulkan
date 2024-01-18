@@ -13,9 +13,9 @@ layout(binding = 0) uniform PerFrameUBO
 
 struct LightData
 {
-	float radius;
 	vec4 position;
 	vec4 color;
+	float radius;
 };
 
 layout(binding = 1) readonly buffer Lights { LightData data []; } inLights;
@@ -28,7 +28,7 @@ const vec2 OFFSETS[6] = vec2[](
 	vec2(-1.0,  1.0),
 	vec2( 1.0,  1.0)
 );
-const float RADIUS = 0.1;
+const float RADIUS = 0.03;
 
 void main()
 {

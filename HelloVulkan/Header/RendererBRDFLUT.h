@@ -30,7 +30,7 @@ private:
 private:
 	void CreateComputeDescriptorSetLayout(VkDevice device);
 	
-	void CreateComputeDescriptorSet(VkDevice device, VkDescriptorSetLayout descriptorSetLayout);
+	void CreateComputeDescriptorSet(VkDevice device);
 
 	void CreateComputePipeline(
 		VkDevice device,
