@@ -3,7 +3,6 @@
 A real-time rendering engine using Vulkan.
 
 ### Features
-* Clustered Forward Shading
 * Physically-Based Rendering (PBR) with Cook-Torrance BRDF.
 * Image-Based Lighting.
 * Offscreen rendering to generate:
