@@ -8,6 +8,7 @@ A real-time rendering engine using Vulkan.
 * Offscreen rendering to generate:
     * A cubemap from an equirectangular HDR image.
     * Specular and diffuse cubemaps.
+    * Compute shader to generate BRDF lookup table.
 * Reinhard tonemap postprocessing.
 * Mesh loading and rendering.
 * Multisample anti-aliasing (MSAA).
