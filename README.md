@@ -24,7 +24,7 @@ https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d
 
 <img width="850" alt="vulkan_tachikoma" src="https://github.com/azer89/HelloVulkan/assets/790432/535a2d75-fffd-436f-bf18-df18968b79e0">
 
-<img width="850" alt="freya" src="https://github.com/azer89/HelloVulkan/assets/790432/ea17eb7e-d967-42b7-acb9-be6e6cfdace2">
+<img width="850" alt="freya" src="https://github.com/azer89/HelloVulkan/assets/790432/c3dd2921-b46a-458c-af26-fa49fecc884b">
 
 ### Build
 * C++20
