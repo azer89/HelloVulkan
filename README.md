@@ -26,8 +26,8 @@ https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d
 
 ### Clustered Forward Shading *(Work in progress)*
 
-I am currently working on an unoptimized clustered forward rendering technique that can achieve 50-60 FPS while rendering 50,000 lights using a 3060M graphics card.
-The experimental code is located in the `ClusteredForward` branch.
+I am currently working on a clustered forward rendering technique that can achieve 50-60 FPS while rendering 50,000 lights using a 3060M graphics card.
+The unoptimized code is located in the `ClusteredForward` branch.
 
 <img width="850" alt="clustered_forward" src="https://github.com/azer89/HelloVulkan/assets/790432/a7a0fe29-0f37-46cf-80bb-752f0dcc5bd0">
 
