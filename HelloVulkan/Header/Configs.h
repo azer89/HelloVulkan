@@ -9,6 +9,8 @@ namespace AppConfig
 {
 	const int InitialScreenWidth = 1600;
 	const int InitialScreenHeight = 1200;
+	const float cameraNear = 0.1f;
+	const float cameraFar = 100.0f;
 
 	// VK_PRESENT_MODE_FIFO_KHR --> Lock to screen FPS
 	// VK_PRESENT_MODE_MAILBOX_KHR --> Triple buffering

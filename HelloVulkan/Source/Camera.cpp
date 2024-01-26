@@ -1,9 +1,9 @@
 #include "Camera.h"
 #include "Configs.h"
 
-#define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#include <glm/glm.hpp>
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 
 Camera::Camera(
 	glm::vec3 position, 
@@ -120,12 +120,12 @@ void Camera::UpdateInternal()
 	up_ = glm::normalize(glm::cross(right_, front_));
 
 	// Projection matrix
-	float aspect = screenWidth_ / screenHeight_;
+	/*float aspect = screenWidth_ / screenHeight_;
 	assert(glm::abs(aspect - std::numeric_limits<float>::epsilon()) > 0.0f);
 
 	float fovy = glm::radians(zoom_);
-	float far = 100.0f;
-	float near = 0.1f;
+	float far = AppConfig::cameraFar;
+	float near = AppConfig::cameraNear;
 	const float tanHalfFovy = tan(fovy / 2.f);
 
 	projectionMatrix_ = glm::mat4();
@@ -134,10 +134,15 @@ void Camera::UpdateInternal()
 	projectionMatrix_[1][1] = 1.f / (tanHalfFovy);
 	projectionMatrix_[2][2] = far / (far - near);
 	projectionMatrix_[2][3] = 1.f;
-	projectionMatrix_[3][2] = -(far * near) / (far - near);
+	projectionMatrix_[3][2] = -(far * near) / (far - near);*/
+	projectionMatrix_ = glm::perspective(glm::radians(zoom_),
+		static_cast<float>(screenWidth_) / static_cast<float>(screenHeight_),
+		AppConfig::cameraNear,
+		AppConfig::cameraFar);
+	projectionMatrix_[1][1] *= -1;
 
 	// View matrix
-	const glm::vec3 w = front_;
+	/*const glm::vec3 w = front_;
 	const glm::vec3 u = right_;
 	const glm::vec3 v{ glm::cross(w, u) }; // Flip Y axis
 
@@ -153,5 +158,7 @@ void Camera::UpdateInternal()
 	viewMatrix_[2][2] = w.z;
 	viewMatrix_[3][0] = -glm::dot(u, position_);
 	viewMatrix_[3][1] = -glm::dot(v, position_);
-	viewMatrix_[3][2] = -glm::dot(w, position_);
+	viewMatrix_[3][2] = -glm::dot(w, position_);*/
+
+	viewMatrix_ = glm::lookAt(position_, position_ + front_, up_);
 }
