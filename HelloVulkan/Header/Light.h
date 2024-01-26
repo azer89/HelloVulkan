@@ -1,8 +1,7 @@
 #ifndef LIGHT
 #define LIGHT
 
-#include "glm/vec3.hpp"
-#include "glm/vec4.hpp"
+#include "glm/glm.hpp"
 
 #include "VulkanDevice.h"
 #include "VulkanBuffer.h"

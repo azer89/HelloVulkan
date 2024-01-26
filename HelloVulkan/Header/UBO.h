@@ -1,12 +1,15 @@
 #ifndef UNIFORM_BUFFER_OBJECTS
 #define UNIFORM_BUFFER_OBJECTS
 
-#include "glm/gtc/matrix_transform.hpp"
+#include "glm/glm.hpp"
 
 struct PerFrameUBO
 {
+	alignas(16)
 	glm::mat4 cameraProjection;
+	alignas(16)
 	glm::mat4 cameraView;
+	alignas(16)
 	glm::vec4 cameraPosition;
 };
 

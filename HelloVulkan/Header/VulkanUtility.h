@@ -9,6 +9,7 @@ Adapted from
 */
 
 #include <iostream>
+#include <random>
 
 #include "volk.h"
 
@@ -58,6 +59,25 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugReportCallback
 
 	std::cerr << "Debug callback (" << pLayerPrefix << "): " << pMessage << "\n\n";
 	return VK_FALSE;
+}
+
+namespace Utility
+{
+	template <typename T>
+	inline T RandomNumber()
+	{
+		static std::uniform_real_distribution<T> distribution(0.0, 1.0);
+		static std::random_device rd;
+		static std::mt19937 generator(rd());
+		return distribution(generator);
+	}
+
+	// Returns a random real in [min,max)
+	template <typename T>
+	inline T RandomNumber(T min, T max)
+	{
+		return min + (max - min) * RandomNumber<T>();
+	}
 }
 
 #endif
