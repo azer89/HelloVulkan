@@ -33,16 +33,25 @@ PipelineSkybox::PipelineSkybox(VulkanDevice& vkDev,
 		IsOffscreen()
 	);
 
-	CreateDescriptorPool(
+	/*CreateDescriptorPool(
 		vkDev, 
 		1, // uniform
 		0, // SSBO
 		1, // Texture
 		1, // One set per swapchain
-		&descriptorPool_);
+		&descriptorPool_);*/
+	descriptor_.CreatePool(
+		vkDev,
+		{
+			.uboCount_ = 1u,
+			.ssboCount_ = 0u,
+			.samplerCount_ = 1u,
+			.swapchainCount_ = static_cast<uint32_t>(vkDev.GetSwapchainImageCount()),
+			.setCountPerSwapchain_ = 1u,
+		});
 	CreateDescriptorLayoutAndSet(vkDev);
 	
-	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
+	CreatePipelineLayout(vkDev.GetDevice(), descriptor_.layout_, &pipelineLayout_);
 
 	CreateGraphicsPipeline(vkDev,
 		renderPass_.GetHandle(),
@@ -84,7 +93,20 @@ void PipelineSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer comm
 
 void PipelineSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 {
-	const std::array<VkDescriptorSetLayoutBinding, 2> bindings = {
+	descriptor_.CreateLayout(vkDev,
+	{
+		{
+			.descriptorType_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+			.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT,
+			.bindingCount_ = 1
+		},
+		{
+			.descriptorType_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
+			.bindingCount_ = 1
+		}
+	});
+	/*const std::array<VkDescriptorSetLayoutBinding, 2> bindings = {
 		DescriptorSetLayoutBinding(
 			0, 
 			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 
@@ -107,11 +129,27 @@ void PipelineSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 		vkDev.GetDevice(), 
 		&layoutInfo, 
 		nullptr, 
-		&descriptorSetLayout_));
+		&descriptorSetLayout_));*/
 
 	auto swapChainImageSize = vkDev.GetSwapchainImageCount();
+	descriptorSets_.resize(swapChainImageSize);
 
-	std::vector<VkDescriptorSetLayout> layouts(swapChainImageSize, descriptorSetLayout_);
+	VkDescriptorImageInfo imageInfo = envCubemap_->GetDescriptorImageInfo();
+
+	for (size_t i = 0; i < swapChainImageSize; i++)
+	{
+		VkDescriptorBufferInfo bufferInfo = { perFrameUBOs_[i].buffer_, 0, sizeof(PerFrameUBO) };
+
+		descriptor_.CreateSet(
+			vkDev,
+			{
+				{.bufferInfoPtr_ = &bufferInfo, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER },
+				{.imageInfoPtr_ = &imageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER }
+			},
+			&(descriptorSets_[i]));
+	}
+
+	/*std::vector<VkDescriptorSetLayout> layouts(swapChainImageSize, descriptorSetLayout_);
 
 	const VkDescriptorSetAllocateInfo allocInfo = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
@@ -145,5 +183,5 @@ void PipelineSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 			descriptorWrites.data(), 
 			0, 
 			nullptr);
-	}
+	}*/
 }
