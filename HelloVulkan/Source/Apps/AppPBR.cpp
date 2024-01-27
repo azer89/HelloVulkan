@@ -31,7 +31,7 @@ void AppPBR::Init()
 
 	// Create a cubemap from the input HDR
 	{
-		RendererEquirect2Cube e2c(
+		PipelineEquirect2Cube e2c(
 			vulkanDevice_,
 			hdrFile);
 		e2c.OffscreenRender(vulkanDevice_,
@@ -41,7 +41,7 @@ void AppPBR::Init()
 
 	// Cube filtering
 	{
-		RendererCubeFilter cubeFilter(vulkanDevice_, &environmentCubemap_);
+		PipelineCubeFilter cubeFilter(vulkanDevice_, &environmentCubemap_);
 		// Diffuse
 		cubeFilter.OffscreenRender(vulkanDevice_,
 			&diffuseCubemap_,
@@ -59,17 +59,17 @@ void AppPBR::Init()
 	
 	// BRDF look up table
 	{
-		RendererBRDFLUT brdfLUTCompute(vulkanDevice_);
+		PipelineBRDFLUT brdfLUTCompute(vulkanDevice_);
 		brdfLUTCompute.CreateLUT(vulkanDevice_, &brdfLut_);
 		brdfLut_.SetDebugName(vulkanDevice_, "BRDF_LUT");
 	}
 
 	// Renderers
 	// This is responsible to clear swapchain image
-	clearPtr_ = std::make_unique<RendererClear>(
+	clearPtr_ = std::make_unique<PipelineClear>(
 		vulkanDevice_);
 	// This draws a cube
-	skyboxPtr_ = std::make_unique<RendererSkybox>(
+	skyboxPtr_ = std::make_unique<PipelineSkybox>(
 		vulkanDevice_,
 		&environmentCubemap_,
 		&depthImage_,
@@ -80,7 +80,7 @@ void AppPBR::Init()
 		RenderPassBit::DepthClear
 	);
 	// This draws meshes with PBR+IBL
-	pbrPtr_ = std::make_unique<RendererPBR>(
+	pbrPtr_ = std::make_unique<PipelinePBR>(
 		vulkanDevice_,
 		models,
 		&lights_,
@@ -89,25 +89,25 @@ void AppPBR::Init()
 		&brdfLut_,
 		&depthImage_,
 		&multiSampledColorImage_);
-	lightPtr_ = std::make_unique<RendererLight>(
+	lightPtr_ = std::make_unique<PipelineLight>(
 		vulkanDevice_,
 		&lights_,
 		&depthImage_,
 		&multiSampledColorImage_
 	);
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
-	resolveMSPtr_ = std::make_unique<RendererResolveMS>(
+	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(
 		vulkanDevice_, &multiSampledColorImage_, &singleSampledColorImage_);
 	// This is on-screen render pass that transfers 
 	// singleSampledColorImage_ to swapchain image
-	tonemapPtr_ = std::make_unique<RendererTonemap>(
+	tonemapPtr_ = std::make_unique<PipelineTonemap>(
 		vulkanDevice_,
 		&singleSampledColorImage_
 	);
 	// ImGui here
-	imguiPtr_ = std::make_unique<RendererImGui>(vulkanDevice_, vulkanInstance_.GetInstance(), glfwWindow_);
+	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanDevice_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
-	finishPtr_ = std::make_unique<RendererFinish>(vulkanDevice_);
+	finishPtr_ = std::make_unique<PipelineFinish>(vulkanDevice_);
 
 	// Put all renderer pointers to a vector
 	renderers_ =

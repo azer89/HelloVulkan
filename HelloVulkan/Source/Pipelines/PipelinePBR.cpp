@@ -11,7 +11,7 @@ constexpr uint32_t SSBO_COUNT = 1;
 constexpr size_t PBR_MESH_TEXTURE_COUNT = 6; 
 constexpr size_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 
-RendererPBR::RendererPBR(
+PipelinePBR::PipelinePBR(
 	VulkanDevice& vkDev,
 	std::vector<Model*> models,
 	Lights* lights,
@@ -94,11 +94,11 @@ RendererPBR::RendererPBR(
 	);
 }
 
-RendererPBR::~RendererPBR()
+PipelinePBR::~PipelinePBR()
 {
 }
 
-void RendererPBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
+void PipelinePBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
 {
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
 
@@ -141,7 +141,7 @@ void RendererPBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer command
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
+void PipelinePBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 {
 	std::vector<VkDescriptorSetLayoutBinding> bindings;
 
@@ -212,7 +212,7 @@ void RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));
 }
 
-void RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh)
+void PipelinePBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh)
 {
 	size_t swapchainLength = vkDev.GetSwapchainImageCount();
 

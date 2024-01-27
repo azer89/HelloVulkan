@@ -6,11 +6,11 @@
 
 #include <string>
 
-class RendererEquirect2Cube final : public PipelineBase
+class PipelineEquirect2Cube final : public PipelineBase
 {
 public:
-	RendererEquirect2Cube(VulkanDevice& vkDev, const std::string& hdrFile);
-	~RendererEquirect2Cube();
+	PipelineEquirect2Cube(VulkanDevice& vkDev, const std::string& hdrFile);
+	~PipelineEquirect2Cube();
 
 	void OffscreenRender(VulkanDevice& vkDev, VulkanImage* outputCubemap);
 

@@ -3,10 +3,10 @@
 
 #include "PipelineBase.h"
 
-class RendererFinish final : public PipelineBase
+class PipelineFinish final : public PipelineBase
 {
 public:
-	RendererFinish(VulkanDevice& vkDev);
+	PipelineFinish(VulkanDevice& vkDev);
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 };

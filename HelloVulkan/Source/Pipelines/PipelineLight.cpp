@@ -5,7 +5,7 @@
 
 #include <array>
 
-RendererLight::RendererLight(
+PipelineLight::PipelineLight(
 	VulkanDevice& vkDev,
 	Lights* lights,
 	VulkanImage* depthImage, // TODO remove depth
@@ -54,12 +54,12 @@ RendererLight::RendererLight(
 		);
 }
 
-RendererLight::~RendererLight()
+PipelineLight::~PipelineLight()
 {
 
 }
 
-void RendererLight::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
+void PipelineLight::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
 {
 	if (!shouldRender_)
 	{
@@ -90,7 +90,7 @@ void RendererLight::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer comma
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void RendererLight::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
+void PipelineLight::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 {
 	const std::array<VkDescriptorSetLayoutBinding, 2> bindings = {
 		DescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT),

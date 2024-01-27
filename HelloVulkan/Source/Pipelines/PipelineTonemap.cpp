@@ -2,7 +2,7 @@
 #include "VulkanUtility.h"
 #include "Configs.h"
 
-RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
+PipelineTonemap::PipelineTonemap(VulkanDevice& vkDev,
 	VulkanImage* singleSampledColorImage) :
 	PipelineBase(vkDev, false), // Onscreen renderer
 	singleSampledColorImage_(singleSampledColorImage)
@@ -34,13 +34,13 @@ RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
 		&graphicsPipeline_);
 }
 
-void RendererTonemap::OnWindowResized(VulkanDevice& vkDev)
+void PipelineTonemap::OnWindowResized(VulkanDevice& vkDev)
 {
 	PipelineBase::OnWindowResized(vkDev);
 	UpdateDescriptorSets(vkDev);
 }
 
-void RendererTonemap::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
+void PipelineTonemap::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
 {
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));
 
@@ -61,7 +61,7 @@ void RendererTonemap::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer com
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void RendererTonemap::CreateDescriptorLayout(VulkanDevice& vkDev)
+void PipelineTonemap::CreateDescriptorLayout(VulkanDevice& vkDev)
 {
 	uint32_t bindingIndex = 0u;
 
@@ -88,7 +88,7 @@ void RendererTonemap::CreateDescriptorLayout(VulkanDevice& vkDev)
 		&descriptorSetLayout_));
 }
 
-void RendererTonemap::AllocateDescriptorSets(VulkanDevice& vkDev)
+void PipelineTonemap::AllocateDescriptorSets(VulkanDevice& vkDev)
 {
 	auto swapChainImageSize = vkDev.GetSwapchainImageCount();
 
@@ -107,7 +107,7 @@ void RendererTonemap::AllocateDescriptorSets(VulkanDevice& vkDev)
 	VK_CHECK(vkAllocateDescriptorSets(vkDev.GetDevice(), &allocInfo, descriptorSets_.data()));
 }
 
-void RendererTonemap::UpdateDescriptorSets(VulkanDevice& vkDev)
+void PipelineTonemap::UpdateDescriptorSets(VulkanDevice& vkDev)
 {
 	const VkDescriptorImageInfo imageInfo = singleSampledColorImage_->GetDescriptorImageInfo();
 

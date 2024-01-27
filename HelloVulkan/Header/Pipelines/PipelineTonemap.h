@@ -7,12 +7,12 @@
 /*
 This applies tonemap to a color image and transfers image to a swapchain image
 */
-class RendererTonemap final : public PipelineBase
+class PipelineTonemap final : public PipelineBase
 {
 public:
-	RendererTonemap(VulkanDevice& vkDev,
+	PipelineTonemap(VulkanDevice& vkDev,
 		VulkanImage* singleSampledColorImage);
-	~RendererTonemap() = default;
+	~PipelineTonemap() = default;
 
 	virtual void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 

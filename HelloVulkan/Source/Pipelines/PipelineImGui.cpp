@@ -8,7 +8,7 @@
 // https://github.com/ocornut/imgui/issues/4854
 #include "imgui_impl_volk.h"
 
-RendererImGui::RendererImGui(
+PipelineImGui::PipelineImGui(
 	VulkanDevice& vkDev,
 	VkInstance vulkanInstance,
 	GLFWwindow* glfwWindow) :
@@ -67,14 +67,14 @@ RendererImGui::RendererImGui(
 	ImGui_ImplVulkan_Init(&init_info, renderPass_.GetHandle());
 }
 
-RendererImGui::~RendererImGui()
+PipelineImGui::~PipelineImGui()
 {
 	ImGui_ImplVulkan_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 }
 
-void RendererImGui::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
+void PipelineImGui::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
 {
 	ImDrawData* draw_data = ImGui::GetDrawData();
 

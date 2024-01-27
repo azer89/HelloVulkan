@@ -5,17 +5,17 @@
 #include "PipelineBase.h"
 #include "Light.h"
 
-class RendererLight final : public PipelineBase
+class PipelineLight final : public PipelineBase
 {
 public:
-	RendererLight(
+	PipelineLight(
 		VulkanDevice& vkDev,
 		Lights* lights,
 		VulkanImage* depthImage,
 		VulkanImage* offscreenColorImage,
 		uint8_t renderBit = 0u
 	);
-	~RendererLight();
+	~PipelineLight();
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 

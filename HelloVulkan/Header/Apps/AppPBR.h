@@ -30,14 +30,14 @@ public:
 	void DestroyResources();
 
 private:
-	std::unique_ptr<RendererClear> clearPtr_;
-	std::unique_ptr<RendererSkybox> skyboxPtr_;
-	std::unique_ptr<RendererPBR> pbrPtr_;
-	std::unique_ptr<RendererTonemap> tonemapPtr_;
-	std::unique_ptr<RendererFinish> finishPtr_;
-	std::unique_ptr<RendererResolveMS> resolveMSPtr_;
-	std::unique_ptr<RendererLight> lightPtr_;
-	std::unique_ptr<RendererImGui> imguiPtr_;
+	std::unique_ptr<PipelineClear> clearPtr_;
+	std::unique_ptr<PipelineSkybox> skyboxPtr_;
+	std::unique_ptr<PipelinePBR> pbrPtr_;
+	std::unique_ptr<PipelineTonemap> tonemapPtr_;
+	std::unique_ptr<PipelineFinish> finishPtr_;
+	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;
+	std::unique_ptr<PipelineLight> lightPtr_;
+	std::unique_ptr<PipelineImGui> imguiPtr_;
 
 	// PBR stuff
 	// TODO change to unique ptrs

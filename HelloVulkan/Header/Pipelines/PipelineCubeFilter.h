@@ -21,11 +21,11 @@ struct PushConstantCubeFilter
 	uint32_t outputDiffuseSampleCount = 1u;
 };
 
-class RendererCubeFilter final : public PipelineBase
+class PipelineCubeFilter final : public PipelineBase
 {
 public:
-	RendererCubeFilter(VulkanDevice& vkDev, VulkanImage* inputCubemap);
-	~RendererCubeFilter();
+	PipelineCubeFilter(VulkanDevice& vkDev, VulkanImage* inputCubemap);
+	~PipelineCubeFilter();
 
 	void OffscreenRender(VulkanDevice& vkDev, 
 		VulkanImage* outputCubemap,

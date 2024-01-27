@@ -7,11 +7,11 @@
 #include "VulkanBuffer.h"
 #include "VulkanUtility.h"
 
-class RendererBRDFLUT final : PipelineBase
+class PipelineBRDFLUT final : PipelineBase
 {
 public:
-	RendererBRDFLUT(VulkanDevice& vkDev);
-	~RendererBRDFLUT();
+	PipelineBRDFLUT(VulkanDevice& vkDev);
+	~PipelineBRDFLUT();
 
 	void CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT);
 

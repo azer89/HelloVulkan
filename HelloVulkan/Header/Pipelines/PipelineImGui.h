@@ -3,14 +3,14 @@
 
 #include "PipelineBase.h"
 
-class RendererImGui final : public PipelineBase
+class PipelineImGui final : public PipelineBase
 {
 public:
-	RendererImGui(
+	PipelineImGui(
 		VulkanDevice& vkDev, 
 		VkInstance vulkanInstance,
 		GLFWwindow* glfwWindow);
-	~RendererImGui();
+	~PipelineImGui();
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 };

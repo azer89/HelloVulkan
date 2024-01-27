@@ -8,7 +8,7 @@
 #include <cmath>
 #include <array>
 
-RendererSkybox::RendererSkybox(VulkanDevice& vkDev, 
+PipelineSkybox::PipelineSkybox(VulkanDevice& vkDev, 
 	VulkanImage* envMap,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
@@ -57,11 +57,11 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 		); 
 }
 
-RendererSkybox::~RendererSkybox()
+PipelineSkybox::~PipelineSkybox()
 {
 }
 
-void RendererSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
+void PipelineSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
 {
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
 
@@ -82,7 +82,7 @@ void RendererSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer comm
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void RendererSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
+void PipelineSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 {
 	const std::array<VkDescriptorSetLayoutBinding, 2> bindings = {
 		DescriptorSetLayoutBinding(

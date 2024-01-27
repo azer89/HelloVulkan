@@ -1,7 +1,7 @@
 #include "PipelineClear.h"
 #include "VulkanUtility.h"
 
-RendererClear::RendererClear(VulkanDevice& vkDev) :
+PipelineClear::PipelineClear(VulkanDevice& vkDev) :
 	PipelineBase(
 		vkDev,
 		false // Onscreen
@@ -11,11 +11,11 @@ RendererClear::RendererClear(VulkanDevice& vkDev) :
 	framebuffer_.Create(vkDev, renderPass_.GetHandle(), {}, isOffscreen_);
 }
 
-RendererClear::~RendererClear()
+PipelineClear::~PipelineClear()
 {
 }
 
-void RendererClear::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
+void PipelineClear::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
 {
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));
 	vkCmdEndRenderPass(commandBuffer);

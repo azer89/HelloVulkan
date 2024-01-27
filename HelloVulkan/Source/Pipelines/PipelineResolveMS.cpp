@@ -3,7 +3,7 @@
 /*
 Resolves a multisampled color image to a singlesampled color image
 */
-RendererResolveMS::RendererResolveMS(
+PipelineResolveMS::PipelineResolveMS(
 	VulkanDevice& vkDev,
 	VulkanImage* multiSampledColorImage, // Input
 	VulkanImage* singleSampledColorImage // Output
@@ -27,11 +27,11 @@ RendererResolveMS::RendererResolveMS(
 		isOffscreen_);
 }
 
-RendererResolveMS::~RendererResolveMS()
+PipelineResolveMS::~PipelineResolveMS()
 {
 }
 
-void RendererResolveMS::FillCommandBuffer(
+void PipelineResolveMS::FillCommandBuffer(
 	VulkanDevice& vkDev,
 	VkCommandBuffer commandBuffer,
 	size_t currentImage)

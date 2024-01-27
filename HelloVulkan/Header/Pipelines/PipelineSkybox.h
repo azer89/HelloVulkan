@@ -4,16 +4,16 @@
 #include "PipelineBase.h"
 #include "VulkanImage.h"
 
-class RendererSkybox final : public PipelineBase
+class PipelineSkybox final : public PipelineBase
 {
 public:
-	RendererSkybox(VulkanDevice& vkDev, 
+	PipelineSkybox(VulkanDevice& vkDev, 
 		VulkanImage* envMap,
 		VulkanImage* depthImage,
 		VulkanImage* offscreenColorImage,
 		uint8_t renderBit = 0u
 	);
-	~RendererSkybox();
+	~PipelineSkybox();
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 

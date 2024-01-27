@@ -3,11 +3,11 @@
 
 #include "PipelineBase.h"
 
-class RendererClear final : public PipelineBase
+class PipelineClear final : public PipelineBase
 {
 public:
-	RendererClear(VulkanDevice& vkDev);
-	~RendererClear();
+	PipelineClear(VulkanDevice& vkDev);
+	~PipelineClear();
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 };
