@@ -21,17 +21,26 @@ PipelineImGui::PipelineImGui(
 	framebuffer_.Create(vkDev, renderPass_.GetHandle(), {}, IsOffscreen());
 
 	// Create descriptor pool
-	CreateDescriptorPool(
+	/*CreateDescriptorPool(
 		vkDev,
 		0, // uniform
 		0, // SSBO
 		1, // Texture
 		1, // One set per swapchain
 		&descriptorPool_,
-		VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT);
-
+		VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT);*/
 	uint32_t imageCount = static_cast<uint32_t>(vkDev.GetSwapchainImageCount());
-
+	descriptor_.CreatePool(
+		vkDev,
+		{
+			.uboCount_ = 0u,
+			.ssboCount_ = 0u,
+			.samplerCount_ = 1u,
+			.swapchainCount_ = imageCount,
+			.setCountPerSwapchain_ = 1u,
+			.flags_ = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT
+		});
+	
 	// ImGui
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -56,7 +65,7 @@ PipelineImGui::PipelineImGui(
 		.QueueFamily = vkDev.GetGraphicsFamily(),
 		.Queue = vkDev.GetGraphicsQueue(),
 		.PipelineCache = nullptr,
-		.DescriptorPool = descriptorPool_,
+		.DescriptorPool = descriptor_.pool_,
 		.Subpass = 0,
 		.MinImageCount = imageCount,
 		.ImageCount = imageCount,
