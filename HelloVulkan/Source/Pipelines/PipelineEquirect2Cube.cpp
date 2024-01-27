@@ -14,17 +14,27 @@ PipelineEquirect2Cube::PipelineEquirect2Cube(
 	InitializeHDRImage(vkDev, hdrFile);
 	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, IBLConfig::CubeFormat);
 
-	CreateDescriptorPool(
+	/*CreateDescriptorPool(
 		vkDev,
 		0, // UBO
 		0, // SSBO
 		1, // Sampler
 		1, // Descriptor count per swapchain
-		&descriptorPool_);
+		&descriptorPool_);*/
+	descriptor_.CreatePool(
+		vkDev,
+		{
+			.uboCount_ = 0u,
+			.ssboCount_ = 0u,
+			.samplerCount_ = 1u,
+			.swapchainCount_ = 1u,
+			.setCountPerSwapchain_ = 1u,
+			.flags_ = 0
+		});
 
 	CreateDescriptorLayout(vkDev);
 	CreateDescriptorSet(vkDev);
-	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
+	CreatePipelineLayout(vkDev.GetDevice(), descriptor_.layout_, &pipelineLayout_);
 
 	CreateOffscreenGraphicsPipeline(
 		vkDev,
@@ -90,7 +100,7 @@ void PipelineEquirect2Cube::InitializeHDRImage(VulkanDevice& vkDev, const std::s
 
 void PipelineEquirect2Cube::CreateDescriptorLayout(VulkanDevice& vkDev)
 {
-	std::vector<VkDescriptorSetLayoutBinding> bindings;
+	/*std::vector<VkDescriptorSetLayoutBinding> bindings;
 
 	uint32_t bindingIndex = 0;
 
@@ -111,12 +121,30 @@ void PipelineEquirect2Cube::CreateDescriptorLayout(VulkanDevice& vkDev)
 		.pBindings = bindings.data()
 	};
 
-	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));
+	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));*/
+	descriptor_.CreateLayout(vkDev,
+	{
+		{
+			.descriptorType_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
+			.bindingCount_ = 1
+		}
+	});
+
 }
 
 void PipelineEquirect2Cube::CreateDescriptorSet(VulkanDevice& vkDev)
 {
-	const VkDescriptorSetAllocateInfo allocInfo = {
+	VkDescriptorImageInfo imageInfo = inputHDRImage_.GetDescriptorImageInfo();
+
+	descriptor_.CreateSet(
+		vkDev,
+		{
+			{.imageInfoPtr_ = &imageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER }
+		},
+		&descriptorSet_);
+
+	/*const VkDescriptorSetAllocateInfo allocInfo = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
 		.pNext = nullptr,
 		.descriptorPool = descriptorPool_,
@@ -146,7 +174,7 @@ void PipelineEquirect2Cube::CreateDescriptorSet(VulkanDevice& vkDev)
 		descriptorWrites.data(),
 		0,
 		nullptr
-	);
+	);*/
 }
 
 void PipelineEquirect2Cube::CreateOffscreenGraphicsPipeline(
