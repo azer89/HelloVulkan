@@ -69,7 +69,6 @@ PipelinePBR::PipelinePBR(
 			.samplerCount_ = (PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT) * numMeshes,
 			.swapchainCount_ = static_cast<uint32_t>(vkDev.GetSwapchainImageCount()),
 			.setCountPerSwapchain_ = numMeshes,
-			.flags_ = 0
 		});
 	CreateDescriptorLayout(vkDev);
 

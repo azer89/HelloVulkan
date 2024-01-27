@@ -207,6 +207,7 @@ void PipelineBRDFLUT::CreateComputeDescriptorSetLayout(VulkanDevice& vkDev)
 void PipelineBRDFLUT::CreateComputeDescriptorSet(VulkanDevice& vkDev/*, VkDescriptorSetLayout descriptorSetLayout*/)
 {
 	// Descriptor pool
+	// TODO Can be moved to constructor
 	descriptor_.CreatePool(
 		vkDev,
 		{
@@ -214,8 +215,7 @@ void PipelineBRDFLUT::CreateComputeDescriptorSet(VulkanDevice& vkDev/*, VkDescri
 			.ssboCount_ = 2u,
 			.samplerCount_ = 0u,
 			.swapchainCount_ = 1u,
-			.setCountPerSwapchain_ = 1u,
-			.flags_ = 0
+			.setCountPerSwapchain_ = 1u
 		});
 	/*VkDescriptorPoolSize descriptorPoolSize = {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 2};
 

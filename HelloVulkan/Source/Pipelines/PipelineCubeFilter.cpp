@@ -11,13 +11,23 @@ PipelineCubeFilter::PipelineCubeFilter(
 	// Create cube render pass
 	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, IBLConfig::CubeFormat);
 
-	CreateDescriptorPool(
+	/*CreateDescriptorPool(
 		vkDev,
 		0, // UBO
 		0, // SSBO
 		1, // Sampler
 		1, // Descriptor count per swapchain
-		&descriptorPool_);
+		&descriptorPool_);*/
+	descriptor_.CreatePool(
+		vkDev,
+		{
+			.uboCount_ = 0u,
+			.ssboCount_ = 0u,
+			.samplerCount_ = 1u,
+			.swapchainCount_ = 1u,
+			.setCountPerSwapchain_ = 1u,
+			.flags_ = 0
+		});
 
 	// Input cubemap
 	uint32_t inputNumMipmap = NumMipMap(IBLConfig::InputCubeSideLength, IBLConfig::InputCubeSideLength);
@@ -40,6 +50,7 @@ PipelineCubeFilter::PipelineCubeFilter(
 	CreateDescriptorSet(vkDev, inputCubemap);
 
 	// Push constants
+	// TODO Can be simplified
 	std::vector<VkPushConstantRange> ranges(1u);
 	VkPushConstantRange& range = ranges.front();
 	range.offset = 0u;
@@ -47,7 +58,7 @@ PipelineCubeFilter::PipelineCubeFilter(
 	range.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
 	// Pipeline layout
-	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_, ranges);
+	CreatePipelineLayout(vkDev.GetDevice(), descriptor_.layout_, &pipelineLayout_, ranges);
 
 	// Diffuse pipeline
 	graphicsPipelines_.emplace_back(VK_NULL_HANDLE);
@@ -125,7 +136,15 @@ void PipelineCubeFilter::InitializeOutputCubemap(
 
 void PipelineCubeFilter::CreateDescriptorLayout(VulkanDevice& vkDev)
 {
-	std::vector<VkDescriptorSetLayoutBinding> bindings;
+	descriptor_.CreateLayout(vkDev,
+	{
+		{
+			.descriptorType_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
+			.bindingCount_ = 1
+		}
+	});
+	/*std::vector<VkDescriptorSetLayoutBinding> bindings;
 
 	uint32_t bindingIndex = 0;
 
@@ -146,12 +165,26 @@ void PipelineCubeFilter::CreateDescriptorLayout(VulkanDevice& vkDev)
 		.pBindings = bindings.data()
 	};
 
-	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));
+	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));*/
 }
 
 void PipelineCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanImage* inputCubemap)
 {
-	const VkDescriptorSetAllocateInfo allocInfo = {
+	VkDescriptorImageInfo imageInfo =
+	{
+		inputCubemapSampler_, // Local sampler created in the constructor
+		inputCubemap->imageView_,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+	};
+
+	descriptor_.CreateSet(
+		vkDev, 
+		{
+			{.imageInfoPtr_ = &imageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER }
+		},
+		&descriptorSet_);
+
+	/*const VkDescriptorSetAllocateInfo allocInfo = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
 		.pNext = nullptr,
 		.descriptorPool = descriptorPool_,
@@ -186,7 +219,7 @@ void PipelineCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanImage* i
 		descriptorWrites.data(),
 		0,
 		nullptr
-	);
+	);*/
 }
 
 void PipelineCubeFilter::CreateOutputCubemapViews(VulkanDevice& vkDev,
