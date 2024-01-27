@@ -28,8 +28,8 @@ PipelineBase::~PipelineBase()
 
 	descriptor_.Destroy(device_);
 
-	vkDestroyDescriptorSetLayout(device_, descriptorSetLayout_, nullptr);
-	vkDestroyDescriptorPool(device_, descriptorPool_, nullptr);
+	//vkDestroyDescriptorSetLayout(device_, descriptorSetLayout_, nullptr);
+	//vkDestroyDescriptorPool(device_, descriptorPool_, nullptr);
 	
 	renderPass_.Destroy(device_);
 	vkDestroyPipelineLayout(device_, pipelineLayout_, nullptr);
@@ -307,7 +307,7 @@ void PipelineBase::UpdateUniformBuffer(
 	vkUnmapMemory(device, bufferMemory);
 }
 
-VkDescriptorSetLayoutBinding PipelineBase::DescriptorSetLayoutBinding(
+/*VkDescriptorSetLayoutBinding PipelineBase::DescriptorSetLayoutBinding(
 	uint32_t binding,
 	VkDescriptorType descriptorType,
 	VkShaderStageFlags stageFlags,
@@ -321,9 +321,9 @@ VkDescriptorSetLayoutBinding PipelineBase::DescriptorSetLayoutBinding(
 		.stageFlags = stageFlags,
 		.pImmutableSamplers = nullptr
 	};
-}
+}*/
 
-VkWriteDescriptorSet PipelineBase::BufferWriteDescriptorSet(
+/*VkWriteDescriptorSet PipelineBase::BufferWriteDescriptorSet(
 	VkDescriptorSet ds,
 	const VkDescriptorBufferInfo* bi,
 	uint32_t bindIdx,
@@ -342,9 +342,9 @@ VkWriteDescriptorSet PipelineBase::BufferWriteDescriptorSet(
 		.pBufferInfo = bi,
 		.pTexelBufferView = nullptr
 	};
-}
+}*/
 
-VkWriteDescriptorSet PipelineBase::ImageWriteDescriptorSet(
+/*VkWriteDescriptorSet PipelineBase::ImageWriteDescriptorSet(
 	VkDescriptorSet ds,
 	const VkDescriptorImageInfo* ii,
 	uint32_t bindIdx)
@@ -362,4 +362,4 @@ VkWriteDescriptorSet PipelineBase::ImageWriteDescriptorSet(
 		.pBufferInfo = nullptr,
 		.pTexelBufferView = nullptr
 	};
-}
+}*/

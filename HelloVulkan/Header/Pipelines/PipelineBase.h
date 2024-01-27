@@ -53,8 +53,8 @@ protected:
 	VulkanFramebuffer framebuffer_;
 
 	// Descriptor set (layout + pool + sets) -> uses uniform buffers, textures, framebuffers
-	VkDescriptorSetLayout descriptorSetLayout_ = nullptr;
-	VkDescriptorPool descriptorPool_ = nullptr;
+	//VkDescriptorSetLayout descriptorSetLayout_ = nullptr;
+	//VkDescriptorPool descriptorPool_ = nullptr;
 
 	VulkanDescriptor descriptor_;
 
@@ -121,22 +121,22 @@ protected:
 		VkDevice device,
 		VkShaderModule computeShader);
 
-	VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(
+	/*VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(
 		uint32_t binding,
 		VkDescriptorType descriptorType,
 		VkShaderStageFlags stageFlags,
-		uint32_t descriptorCount = 1);
+		uint32_t descriptorCount = 1);*/
 
-	VkWriteDescriptorSet BufferWriteDescriptorSet(
+	/*VkWriteDescriptorSet BufferWriteDescriptorSet(
 		VkDescriptorSet ds,
 		const VkDescriptorBufferInfo* bi,
 		uint32_t bindIdx,
-		VkDescriptorType dType);
+		VkDescriptorType dType);*/
 
-	VkWriteDescriptorSet ImageWriteDescriptorSet(
+	/*VkWriteDescriptorSet ImageWriteDescriptorSet(
 		VkDescriptorSet ds,
 		const VkDescriptorImageInfo* ii,
-		uint32_t bindIdx);
+		uint32_t bindIdx);*/
 };
 
 #endif
