@@ -20,15 +20,6 @@ PipelineImGui::PipelineImGui(
 	// Create framebuffer
 	framebuffer_.Create(vkDev, renderPass_.GetHandle(), {}, IsOffscreen());
 
-	// Create descriptor pool
-	/*CreateDescriptorPool(
-		vkDev,
-		0, // uniform
-		0, // SSBO
-		1, // Texture
-		1, // One set per swapchain
-		&descriptorPool_,
-		VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT);*/
 	uint32_t imageCount = static_cast<uint32_t>(vkDev.GetSwapchainImageCount());
 	descriptor_.CreatePool(
 		vkDev,

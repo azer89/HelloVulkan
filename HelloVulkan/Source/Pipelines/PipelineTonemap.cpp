@@ -11,13 +11,6 @@ PipelineTonemap::PipelineTonemap(VulkanDevice& vkDev,
 
 	framebuffer_.Create(vkDev, renderPass_.GetHandle(), {}, IsOffscreen());
 
-	/*CreateDescriptorPool(
-		vkDev,
-		0, // uniform
-		0, // SSBO
-		1, // Texture
-		1, // One set per swapchain
-		&descriptorPool_);*/
 	descriptor_.CreatePool(
 		vkDev,
 		{
@@ -73,29 +66,6 @@ void PipelineTonemap::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer com
 
 void PipelineTonemap::CreateDescriptorLayout(VulkanDevice& vkDev)
 {
-	/*uint32_t bindingIndex = 0u;
-
-	std::vector<VkDescriptorSetLayoutBinding> bindings =
-	{
-		DescriptorSetLayoutBinding(
-			bindingIndex++,
-			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			VK_SHADER_STAGE_FRAGMENT_BIT)
-	};
-
-	const VkDescriptorSetLayoutCreateInfo layoutInfo = {
-		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.bindingCount = static_cast<uint32_t>(bindings.size()),
-		.pBindings = bindings.data()
-	};
-
-	VK_CHECK(vkCreateDescriptorSetLayout(
-		vkDev.GetDevice(),
-		&layoutInfo,
-		nullptr,
-		&descriptorSetLayout_));*/
 	descriptor_.CreateLayout(vkDev,
 	{
 		{
@@ -108,21 +78,6 @@ void PipelineTonemap::CreateDescriptorLayout(VulkanDevice& vkDev)
 
 void PipelineTonemap::AllocateDescriptorSets(VulkanDevice& vkDev)
 {
-	/*auto swapChainImageSize = vkDev.GetSwapchainImageCount();
-
-	std::vector<VkDescriptorSetLayout> layouts(swapChainImageSize, descriptorSetLayout_);
-
-	const VkDescriptorSetAllocateInfo allocInfo = {
-		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-		.pNext = nullptr,
-		.descriptorPool = descriptorPool_,
-		.descriptorSetCount = static_cast<uint32_t>(swapChainImageSize),
-		.pSetLayouts = layouts.data()
-	};
-
-	descriptorSets_.resize(swapChainImageSize);
-
-	VK_CHECK(vkAllocateDescriptorSets(vkDev.GetDevice(), &allocInfo, descriptorSets_.data()));*/
 	auto swapChainImageSize = vkDev.GetSwapchainImageCount();
 	descriptorSets_.resize(swapChainImageSize);
 
@@ -145,19 +100,5 @@ void PipelineTonemap::UpdateDescriptorSets(VulkanDevice& vkDev)
 				{.imageInfoPtr_ = &imageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER }
 			},
 			&(descriptorSets_[i]));
-
-		/*uint32_t bindingIndex = 0u;
-		VkDescriptorSet ds = descriptorSets_[i];
-
-		std::vector<VkWriteDescriptorSet> descriptorWrites = {
-			ImageWriteDescriptorSet(ds, &imageInfo, bindingIndex++)
-		};
-
-		vkUpdateDescriptorSets(
-			vkDev.GetDevice(),
-			static_cast<uint32_t>(descriptorWrites.size()),
-			descriptorWrites.data(),
-			0,
-			nullptr);*/
 	}
 }

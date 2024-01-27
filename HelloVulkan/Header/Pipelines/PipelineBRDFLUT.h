@@ -28,7 +28,7 @@ private:
 private:
 	void CreateComputeDescriptorSetLayout(VulkanDevice& vkDev);
 	
-	void CreateComputeDescriptorSet(VulkanDevice& vkDev/*, VkDescriptorSetLayout descriptorSetLayout*/);
+	void CreateComputeDescriptorSet(VulkanDevice& vkDev);
 };
 
 #endif

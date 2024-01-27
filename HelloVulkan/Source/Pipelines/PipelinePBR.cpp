@@ -54,13 +54,6 @@ PipelinePBR::PipelinePBR(
 		}, 
 		IsOffscreen());
 
-	/*CreateDescriptorPool(
-		vkDev, 
-		UBO_COUNT * models_.size(), 
-		SSBO_COUNT,
-		(PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT) * numMeshes,
-		numMeshes, // decsriptor count per swapchain
-		&descriptorPool_);*/
 	descriptor_.CreatePool(
 		vkDev, 
 		{
@@ -87,7 +80,6 @@ PipelinePBR::PipelinePBR(
 	range.size = sizeof(PushConstantPBR);
 	range.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
-	//CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_, ranges);
 	CreatePipelineLayout(vkDev.GetDevice(), descriptor_.layout_, &pipelineLayout_, ranges);
 
 	CreateGraphicsPipeline(
@@ -171,74 +163,6 @@ void PipelinePBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 			.bindingCount_ = PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT
 		}
 	});
-
-	/*std::vector<VkDescriptorSetLayoutBinding> bindings;
-
-	uint32_t bindingIndex = 0;
-	// UBO
-	bindings.emplace_back(
-		DescriptorSetLayoutBinding(
-			bindingIndex++, 
-			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 
-			VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT));
-	// UBO
-	bindings.emplace_back(
-		DescriptorSetLayoutBinding(
-			bindingIndex++, 
-			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 
-			VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT));
-	// SSBO
-	bindings.emplace_back(
-		DescriptorSetLayoutBinding(
-			bindingIndex++,
-			VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-			VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT));
-
-	// PBR textures
-	for (size_t i = 0; i < PBR_MESH_TEXTURE_COUNT; ++i)
-	{
-		bindings.emplace_back(
-			DescriptorSetLayoutBinding(
-				bindingIndex++,
-				VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-				VK_SHADER_STAGE_FRAGMENT_BIT)
-		);
-	}
-
-	// Specular map
-	bindings.emplace_back(
-		DescriptorSetLayoutBinding(
-			bindingIndex++,
-			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			VK_SHADER_STAGE_FRAGMENT_BIT)
-	);
-
-	// Diffuse map
-	bindings.emplace_back(
-		DescriptorSetLayoutBinding(
-			bindingIndex++,
-			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			VK_SHADER_STAGE_FRAGMENT_BIT)
-	);
-
-	// brdfLUT
-	bindings.emplace_back(
-		DescriptorSetLayoutBinding(
-			bindingIndex++,
-			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			VK_SHADER_STAGE_FRAGMENT_BIT)
-	);
-
-	const VkDescriptorSetLayoutCreateInfo layoutInfo =
-	{
-		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.bindingCount = static_cast<uint32_t>(bindings.size()),
-		.pBindings = bindings.data()
-	};
-
-	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));*/
 }
 
 // TODO Still quite convoluted
@@ -280,107 +204,4 @@ void PipelinePBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 
 		descriptor_.CreateSet(vkDev, writes, &(mesh.descriptorSets_[i]));
 	}
-
-	/*size_t swapchainLength = vkDev.GetSwapchainImageCount();
-
-	std::vector<VkDescriptorSetLayout> layouts(swapchainLength, descriptorSetLayout_);
-
-	const VkDescriptorSetAllocateInfo allocInfo = {
-		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-		.pNext = nullptr,
-		.descriptorPool = descriptorPool_,
-		.descriptorSetCount = static_cast<uint32_t>(swapchainLength),
-		.pSetLayouts = layouts.data()
-	};
-
-	mesh.descriptorSets_.resize(swapchainLength);
-
-	VK_CHECK(vkAllocateDescriptorSets(vkDev.GetDevice(), &allocInfo, mesh.descriptorSets_.data()));
-
-	// Mesh textures
-	std::vector<VkDescriptorImageInfo> imageInfoArray;
-	std::vector<uint32_t> bindIndexArray;
-	for (const auto& elem : mesh.textures_)
-	{
-		imageInfoArray.push_back(elem.second->GetDescriptorImageInfo());
-		// The enum index starts from 1
-		uint32_t meshBindIndex = UBO_COUNT + SSBO_COUNT + static_cast<uint32_t>(elem.first) - 1;
-		bindIndexArray.emplace_back(meshBindIndex);
-	}
-
-	// PBR textures
-	const VkDescriptorImageInfo specularImageInfo = specularCubemap_->GetDescriptorImageInfo();
-	const VkDescriptorImageInfo diffuseImageInfo = diffuseCubemap_->GetDescriptorImageInfo();
-	const VkDescriptorImageInfo BRDFLUTImageInfo = brdfLUT_->GetDescriptorImageInfo();
-
-	// Create a descriptor per swapchain
-	for (size_t i = 0; i < swapchainLength; i++)
-	{
-		uint32_t bindIndex = 0;
-
-		VkDescriptorSet ds = mesh.descriptorSets_[i];
-
-		const VkDescriptorBufferInfo bufferInfo1 = { perFrameUBOs_[i].buffer_, 0, sizeof(PerFrameUBO)};
-		const VkDescriptorBufferInfo bufferInfo2 = { parentModel->modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
-		const VkDescriptorBufferInfo bufferInfo3 = { lights_->GetSSBOBuffer(), 0, lights_->GetSSBOSize() };
-
-		// UBO
-		std::vector<VkWriteDescriptorSet> descriptorWrites;
-		descriptorWrites.emplace_back(
-			BufferWriteDescriptorSet(
-				ds, 
-				&bufferInfo1, 
-				bindIndex++, 
-				VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
-		// UBO
-		descriptorWrites.emplace_back(
-			BufferWriteDescriptorSet(
-				ds, 
-				&bufferInfo2, 
-				bindIndex++, 
-				VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER));
-		// SSBO
-		descriptorWrites.emplace_back(
-			BufferWriteDescriptorSet(
-				ds,
-				&bufferInfo3,
-				bindIndex++,
-				VK_DESCRIPTOR_TYPE_STORAGE_BUFFER));
-
-		// Mesh textures
-		for (size_t i = 0; i < imageInfoArray.size(); ++i)
-		{
-			descriptorWrites.emplace_back
-			(
-				ImageWriteDescriptorSet(
-					ds, 
-					&imageInfoArray[i],
-					// Note that we don't use bindIndex
-					bindIndexArray[i])
-			);
-
-			// Keep incrementing
-			bindIndex++;
-		}
-
-		// PBR textures
-		descriptorWrites.emplace_back(
-			ImageWriteDescriptorSet(ds, &specularImageInfo, bindIndex++)
-		);
-		descriptorWrites.emplace_back(
-			ImageWriteDescriptorSet(ds, &diffuseImageInfo, bindIndex++)
-		);
-		descriptorWrites.emplace_back(
-			ImageWriteDescriptorSet(ds, &BRDFLUTImageInfo, bindIndex++)
-		);
-
-		vkUpdateDescriptorSets
-		(
-			vkDev.GetDevice(), 
-			static_cast<uint32_t>(descriptorWrites.size()), 
-			descriptorWrites.data(), 
-			0, 
-			nullptr
-		);
-	}*/
 }

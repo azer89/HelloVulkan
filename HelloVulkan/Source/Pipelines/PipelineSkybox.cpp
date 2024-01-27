@@ -33,13 +33,6 @@ PipelineSkybox::PipelineSkybox(VulkanDevice& vkDev,
 		IsOffscreen()
 	);
 
-	/*CreateDescriptorPool(
-		vkDev, 
-		1, // uniform
-		0, // SSBO
-		1, // Texture
-		1, // One set per swapchain
-		&descriptorPool_);*/
 	descriptor_.CreatePool(
 		vkDev,
 		{
@@ -106,30 +99,6 @@ void PipelineSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 			.bindingCount_ = 1
 		}
 	});
-	/*const std::array<VkDescriptorSetLayoutBinding, 2> bindings = {
-		DescriptorSetLayoutBinding(
-			0, 
-			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 
-			VK_SHADER_STAGE_VERTEX_BIT),
-		DescriptorSetLayoutBinding(
-			1, 
-			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 
-			VK_SHADER_STAGE_FRAGMENT_BIT)
-	};
-
-	const VkDescriptorSetLayoutCreateInfo layoutInfo = {
-		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.bindingCount = static_cast<uint32_t>(bindings.size()),
-		.pBindings = bindings.data()
-	};
-
-	VK_CHECK(vkCreateDescriptorSetLayout(
-		vkDev.GetDevice(), 
-		&layoutInfo, 
-		nullptr, 
-		&descriptorSetLayout_));*/
 
 	auto swapChainImageSize = vkDev.GetSwapchainImageCount();
 	descriptorSets_.resize(swapChainImageSize);
@@ -148,40 +117,4 @@ void PipelineSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 			},
 			&(descriptorSets_[i]));
 	}
-
-	/*std::vector<VkDescriptorSetLayout> layouts(swapChainImageSize, descriptorSetLayout_);
-
-	const VkDescriptorSetAllocateInfo allocInfo = {
-		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-		.pNext = nullptr,
-		.descriptorPool = descriptorPool_,
-		.descriptorSetCount = static_cast<uint32_t>(swapChainImageSize),
-		.pSetLayouts = layouts.data()
-	};
-
-	descriptorSets_.resize(swapChainImageSize);
-
-	VK_CHECK(vkAllocateDescriptorSets(vkDev.GetDevice(), &allocInfo, descriptorSets_.data()));
-
-	const VkDescriptorImageInfo imageInfo = envCubemap_->GetDescriptorImageInfo();
-
-	for (size_t i = 0; i < swapChainImageSize; i++)
-	{
-		VkDescriptorSet ds = descriptorSets_[i];
-
-		const VkDescriptorBufferInfo bufferInfo = 
-			{ perFrameUBOs_[i].buffer_, 0, sizeof(PerFrameUBO) };
-
-		const std::array<VkWriteDescriptorSet, 2> descriptorWrites = {
-			BufferWriteDescriptorSet(ds, &bufferInfo, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER),
-			ImageWriteDescriptorSet(ds, &imageInfo, 1)
-		};
-
-		vkUpdateDescriptorSets(
-			vkDev.GetDevice(), 
-			static_cast<uint32_t>(descriptorWrites.size()), 
-			descriptorWrites.data(), 
-			0, 
-			nullptr);
-	}*/
 }

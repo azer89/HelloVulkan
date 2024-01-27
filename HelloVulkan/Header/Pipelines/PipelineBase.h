@@ -47,14 +47,9 @@ protected:
 	VkDevice device_ = nullptr;
 
 	// Offscreen rendering
-	//bool isOffscreen_;
 	PipelineFlags flags_;
 
 	VulkanFramebuffer framebuffer_;
-
-	// Descriptor set (layout + pool + sets) -> uses uniform buffers, textures, framebuffers
-	//VkDescriptorSetLayout descriptorSetLayout_ = nullptr;
-	//VkDescriptorPool descriptorPool_ = nullptr;
 
 	VulkanDescriptor descriptor_;
 
@@ -120,23 +115,6 @@ protected:
 	void CreateComputePipeline(
 		VkDevice device,
 		VkShaderModule computeShader);
-
-	/*VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(
-		uint32_t binding,
-		VkDescriptorType descriptorType,
-		VkShaderStageFlags stageFlags,
-		uint32_t descriptorCount = 1);*/
-
-	/*VkWriteDescriptorSet BufferWriteDescriptorSet(
-		VkDescriptorSet ds,
-		const VkDescriptorBufferInfo* bi,
-		uint32_t bindIdx,
-		VkDescriptorType dType);*/
-
-	/*VkWriteDescriptorSet ImageWriteDescriptorSet(
-		VkDescriptorSet ds,
-		const VkDescriptorImageInfo* ii,
-		uint32_t bindIdx);*/
 };
 
 #endif

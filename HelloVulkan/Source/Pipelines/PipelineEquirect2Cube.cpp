@@ -14,13 +14,6 @@ PipelineEquirect2Cube::PipelineEquirect2Cube(
 	InitializeHDRImage(vkDev, hdrFile);
 	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, IBLConfig::CubeFormat);
 
-	/*CreateDescriptorPool(
-		vkDev,
-		0, // UBO
-		0, // SSBO
-		1, // Sampler
-		1, // Descriptor count per swapchain
-		&descriptorPool_);*/
 	descriptor_.CreatePool(
 		vkDev,
 		{
@@ -100,28 +93,6 @@ void PipelineEquirect2Cube::InitializeHDRImage(VulkanDevice& vkDev, const std::s
 
 void PipelineEquirect2Cube::CreateDescriptorLayout(VulkanDevice& vkDev)
 {
-	/*std::vector<VkDescriptorSetLayoutBinding> bindings;
-
-	uint32_t bindingIndex = 0;
-
-	// Input HDR
-	bindings.emplace_back(
-		DescriptorSetLayoutBinding(
-			bindingIndex++,
-			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			VK_SHADER_STAGE_FRAGMENT_BIT)
-	);
-
-	const VkDescriptorSetLayoutCreateInfo layoutInfo =
-	{
-		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.bindingCount = static_cast<uint32_t>(bindings.size()),
-		.pBindings = bindings.data()
-	};
-
-	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));*/
 	descriptor_.CreateLayout(vkDev,
 	{
 		{
@@ -130,7 +101,6 @@ void PipelineEquirect2Cube::CreateDescriptorLayout(VulkanDevice& vkDev)
 			.bindingCount_ = 1
 		}
 	});
-
 }
 
 void PipelineEquirect2Cube::CreateDescriptorSet(VulkanDevice& vkDev)
@@ -143,38 +113,6 @@ void PipelineEquirect2Cube::CreateDescriptorSet(VulkanDevice& vkDev)
 			{.imageInfoPtr_ = &imageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER }
 		},
 		&descriptorSet_);
-
-	/*const VkDescriptorSetAllocateInfo allocInfo = {
-		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-		.pNext = nullptr,
-		.descriptorPool = descriptorPool_,
-		.descriptorSetCount = 1u,
-		.pSetLayouts = &descriptorSetLayout_
-	};
-
-	VK_CHECK(vkAllocateDescriptorSets(vkDev.GetDevice(), &allocInfo, &descriptorSet_));
-
-	uint32_t bindIndex = 0;
-	std::vector<VkWriteDescriptorSet> descriptorWrites;
-
-	VkDescriptorImageInfo imageInfo = inputHDRImage_.GetDescriptorImageInfo();
-
-	descriptorWrites.emplace_back
-	(
-		ImageWriteDescriptorSet(
-			descriptorSet_,
-			&imageInfo,
-			bindIndex++)
-	);
-
-	vkUpdateDescriptorSets
-	(
-		vkDev.GetDevice(),
-		static_cast<uint32_t>(descriptorWrites.size()),
-		descriptorWrites.data(),
-		0,
-		nullptr
-	);*/
 }
 
 void PipelineEquirect2Cube::CreateOffscreenGraphicsPipeline(

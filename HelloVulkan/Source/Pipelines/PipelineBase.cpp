@@ -19,19 +19,15 @@ PipelineBase::PipelineBase(
 // Destructor
 PipelineBase::~PipelineBase()
 {
-	framebuffer_.Destroy();
-
 	for (auto uboBuffer : perFrameUBOs_)
 	{
 		uboBuffer.Destroy(device_);
 	}
 
+	framebuffer_.Destroy();
 	descriptor_.Destroy(device_);
-
-	//vkDestroyDescriptorSetLayout(device_, descriptorSetLayout_, nullptr);
-	//vkDestroyDescriptorPool(device_, descriptorPool_, nullptr);
-	
 	renderPass_.Destroy(device_);
+
 	vkDestroyPipelineLayout(device_, pipelineLayout_, nullptr);
 	vkDestroyPipeline(device_, pipeline_, nullptr);
 }
@@ -306,60 +302,3 @@ void PipelineBase::UpdateUniformBuffer(
 
 	vkUnmapMemory(device, bufferMemory);
 }
-
-/*VkDescriptorSetLayoutBinding PipelineBase::DescriptorSetLayoutBinding(
-	uint32_t binding,
-	VkDescriptorType descriptorType,
-	VkShaderStageFlags stageFlags,
-	uint32_t descriptorCount)
-{
-	return VkDescriptorSetLayoutBinding
-	{
-		.binding = binding,
-		.descriptorType = descriptorType,
-		.descriptorCount = descriptorCount,
-		.stageFlags = stageFlags,
-		.pImmutableSamplers = nullptr
-	};
-}*/
-
-/*VkWriteDescriptorSet PipelineBase::BufferWriteDescriptorSet(
-	VkDescriptorSet ds,
-	const VkDescriptorBufferInfo* bi,
-	uint32_t bindIdx,
-	VkDescriptorType dType)
-{
-	return 
-	{
-		.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-		.pNext = nullptr,
-		.dstSet = ds,
-		.dstBinding = bindIdx,
-		.dstArrayElement = 0,
-		.descriptorCount = 1,
-		.descriptorType = dType,
-		.pImageInfo = nullptr,
-		.pBufferInfo = bi,
-		.pTexelBufferView = nullptr
-	};
-}*/
-
-/*VkWriteDescriptorSet PipelineBase::ImageWriteDescriptorSet(
-	VkDescriptorSet ds,
-	const VkDescriptorImageInfo* ii,
-	uint32_t bindIdx)
-{
-	return 
-	{
-		.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-		.pNext = nullptr,
-		.dstSet = ds,
-		.dstBinding = bindIdx,
-		.dstArrayElement = 0,
-		.descriptorCount = 1,
-		.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-		.pImageInfo = ii,
-		.pBufferInfo = nullptr,
-		.pTexelBufferView = nullptr
-	};
-}*/

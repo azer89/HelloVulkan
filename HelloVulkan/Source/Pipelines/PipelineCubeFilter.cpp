@@ -11,13 +11,6 @@ PipelineCubeFilter::PipelineCubeFilter(
 	// Create cube render pass
 	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, IBLConfig::CubeFormat);
 
-	/*CreateDescriptorPool(
-		vkDev,
-		0, // UBO
-		0, // SSBO
-		1, // Sampler
-		1, // Descriptor count per swapchain
-		&descriptorPool_);*/
 	descriptor_.CreatePool(
 		vkDev,
 		{
@@ -25,8 +18,7 @@ PipelineCubeFilter::PipelineCubeFilter(
 			.ssboCount_ = 0u,
 			.samplerCount_ = 1u,
 			.swapchainCount_ = 1u,
-			.setCountPerSwapchain_ = 1u,
-			.flags_ = 0
+			.setCountPerSwapchain_ = 1u
 		});
 
 	// Input cubemap
@@ -144,28 +136,6 @@ void PipelineCubeFilter::CreateDescriptorLayout(VulkanDevice& vkDev)
 			.bindingCount_ = 1
 		}
 	});
-	/*std::vector<VkDescriptorSetLayoutBinding> bindings;
-
-	uint32_t bindingIndex = 0;
-
-	// Input HDR
-	bindings.emplace_back(
-		DescriptorSetLayoutBinding(
-			bindingIndex++,
-			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			VK_SHADER_STAGE_FRAGMENT_BIT)
-	);
-
-	const VkDescriptorSetLayoutCreateInfo layoutInfo =
-	{
-		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.bindingCount = static_cast<uint32_t>(bindings.size()),
-		.pBindings = bindings.data()
-	};
-
-	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));*/
 }
 
 void PipelineCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanImage* inputCubemap)
@@ -183,43 +153,6 @@ void PipelineCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanImage* i
 			{.imageInfoPtr_ = &imageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER }
 		},
 		&descriptorSet_);
-
-	/*const VkDescriptorSetAllocateInfo allocInfo = {
-		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-		.pNext = nullptr,
-		.descriptorPool = descriptorPool_,
-		.descriptorSetCount = 1u,
-		.pSetLayouts = &descriptorSetLayout_
-	};
-
-	VK_CHECK(vkAllocateDescriptorSets(vkDev.GetDevice(), &allocInfo, &descriptorSet_));
-
-	uint32_t bindIndex = 0;
-	std::vector<VkWriteDescriptorSet> descriptorWrites;
-
-	const VkDescriptorImageInfo imageInfo =
-	{
-		inputCubemapSampler_, // Local sampler created in the constructor
-		inputCubemap->imageView_,
-		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	};
-
-	descriptorWrites.emplace_back
-	(
-		ImageWriteDescriptorSet(
-			descriptorSet_,
-			&imageInfo,
-			bindIndex++)
-	);
-
-	vkUpdateDescriptorSets
-	(
-		vkDev.GetDevice(),
-		static_cast<uint32_t>(descriptorWrites.size()),
-		descriptorWrites.data(),
-		0,
-		nullptr
-	);*/
 }
 
 void PipelineCubeFilter::CreateOutputCubemapViews(VulkanDevice& vkDev,

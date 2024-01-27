@@ -168,27 +168,6 @@ void PipelineBRDFLUT::Execute(VulkanDevice& vkDev)
 
 void PipelineBRDFLUT::CreateComputeDescriptorSetLayout(VulkanDevice& vkDev)
 {
-	/*VkDescriptorSetLayoutBinding descriptorSetLayoutBindings[2] =
-	{
-		{ 0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_COMPUTE_BIT, 0 },
-		{ 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_COMPUTE_BIT, 0 }
-	};
-
-	VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo =
-	{
-		VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-		0,
-		0,
-		2,
-		descriptorSetLayoutBindings
-	};
-
-	VK_CHECK(vkCreateDescriptorSetLayout(
-		device,
-		&descriptorSetLayoutCreateInfo,
-		0,
-		&descriptorSetLayout_));*/
-
 	descriptor_.CreateLayout(vkDev,
 	{
 		{
@@ -217,21 +196,9 @@ void PipelineBRDFLUT::CreateComputeDescriptorSet(VulkanDevice& vkDev/*, VkDescri
 			.swapchainCount_ = 1u,
 			.setCountPerSwapchain_ = 1u
 		});
-	/*VkDescriptorPoolSize descriptorPoolSize = {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 2};
-
-	VkDescriptorPoolCreateInfo descriptorPoolCreateInfo = {
-		VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-		0,
-		0,
-		1,
-		1,
-		&descriptorPoolSize
-	};
-
-	VK_CHECK(vkCreateDescriptorPool(device, &descriptorPoolCreateInfo, 0, &descriptorPool_));*/
 
 	// Descriptor set
-	// TODO We actually do not need in buffer
+	// TODO We actually do not need inBuffer
 	VkDescriptorBufferInfo inBufferInfo = { inBuffer_.buffer_, 0, VK_WHOLE_SIZE }; 
 	VkDescriptorBufferInfo outBufferInfo = { outBuffer_.buffer_, 0, VK_WHOLE_SIZE };
 
@@ -242,34 +209,4 @@ void PipelineBRDFLUT::CreateComputeDescriptorSet(VulkanDevice& vkDev/*, VkDescri
 			{.bufferInfoPtr_ = &outBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER }
 		},
 		&descriptorSet_);
-
-	/*VkDescriptorSetAllocateInfo descriptorSetAllocateInfo = {
-		VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-		0,
-		descriptorPool_,
-		1,
-		&descriptorSetLayout_
-	};
-
-	// Descriptor set
-	VK_CHECK(vkAllocateDescriptorSets(vkDev.GetDevice(), &descriptorSetAllocateInfo, &descriptorSet_));
-
-	// Finally, update descriptor set with concrete buffer pointers
-	VkDescriptorBufferInfo inBufferInfo = { inBuffer_.buffer_, 0, VK_WHOLE_SIZE };
-	VkDescriptorBufferInfo outBufferInfo = { outBuffer_.buffer_, 0, VK_WHOLE_SIZE };
-
-	VkWriteDescriptorSet writeDescriptorSet[2] = {
-		BufferWriteDescriptorSet(
-			descriptorSet_,
-			&inBufferInfo,
-			0, // dstBinding
-			VK_DESCRIPTOR_TYPE_STORAGE_BUFFER),
-		BufferWriteDescriptorSet(
-			descriptorSet_,
-			&outBufferInfo,
-			1, // dstBinding
-			VK_DESCRIPTOR_TYPE_STORAGE_BUFFER),
-	};
-
-	vkUpdateDescriptorSets(device, 2, writeDescriptorSet, 0, 0);*/
 }
