@@ -48,7 +48,7 @@ PipelineLight::PipelineLight(
 			AppConfig::ShaderFolder + "LightCircle.vert",
 			AppConfig::ShaderFolder + "LightCircle.frag",
 		},
-		&graphicsPipeline_,
+		&pipeline_,
 		false, // has no vertex buffer
 		multisampleCount // For multisampling
 		);

@@ -34,7 +34,7 @@ PipelineEquirect2Cube::PipelineEquirect2Cube(
 			AppConfig::ShaderFolder + "FullscreenTriangle.vert",
 			AppConfig::ShaderFolder + "Equirect2Cube.frag"
 		},
-		&graphicsPipeline_
+		&pipeline_
 	);
 }
 
@@ -319,7 +319,7 @@ void PipelineEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanImage* ou
 		0,
 		nullptr);
 
-	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
+	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_);
 
 	renderPass_.BeginCubemapRenderPass(commandBuffer, cubeFramebuffer_, IBLConfig::InputCubeSideLength);
 

@@ -51,7 +51,7 @@ protected:
 	VulkanRenderPass renderPass_;
 
 	VkPipelineLayout pipelineLayout_ = nullptr;
-	VkPipeline graphicsPipeline_ = nullptr;
+	VkPipeline pipeline_ = nullptr;
 
 	// PerFrameUBO
 	std::vector<VulkanBuffer> perFrameUBOs_;

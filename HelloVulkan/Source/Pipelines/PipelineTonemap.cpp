@@ -31,7 +31,7 @@ PipelineTonemap::PipelineTonemap(VulkanDevice& vkDev,
 			AppConfig::ShaderFolder + "FullscreenTriangle.vert",
 			AppConfig::ShaderFolder + "Tonemap.frag",
 		},
-		&graphicsPipeline_);
+		&pipeline_);
 }
 
 void PipelineTonemap::OnWindowResized(VulkanDevice& vkDev)

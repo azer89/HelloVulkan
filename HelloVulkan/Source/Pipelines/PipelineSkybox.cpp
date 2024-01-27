@@ -51,7 +51,7 @@ PipelineSkybox::PipelineSkybox(VulkanDevice& vkDev,
 			AppConfig::ShaderFolder + "Cube.vert",
 			AppConfig::ShaderFolder + "Cube.frag",
 		},
-		&graphicsPipeline_,
+		&pipeline_,
 		false, // has no vertex buffer
 		multisampleCount // For multisampling
 		); 

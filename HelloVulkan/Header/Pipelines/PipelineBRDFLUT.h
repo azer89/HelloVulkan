@@ -25,8 +25,6 @@ private:
 
 	VkDescriptorSet descriptorSet_;
 
-	VkPipeline pipeline_;
-
 private:
 	void CreateComputeDescriptorSetLayout(VkDevice device);
 	

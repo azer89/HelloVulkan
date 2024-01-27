@@ -30,7 +30,7 @@ PipelineBase::~PipelineBase()
 	vkDestroyDescriptorPool(device_, descriptorPool_, nullptr);
 	renderPass_.Destroy(device_);
 	vkDestroyPipelineLayout(device_, pipelineLayout_, nullptr);
-	vkDestroyPipeline(device_, graphicsPipeline_, nullptr);
+	vkDestroyPipeline(device_, pipeline_, nullptr);
 }
 
 void PipelineBase::CreateUniformBuffers(
@@ -58,7 +58,7 @@ void PipelineBase::CreateUniformBuffers(
 
 void PipelineBase::BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
-	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
+	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_);
 
 	VkViewport viewport =
 	{

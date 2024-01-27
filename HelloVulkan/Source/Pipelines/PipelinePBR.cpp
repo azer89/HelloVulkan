@@ -88,7 +88,7 @@ PipelinePBR::PipelinePBR(
 			AppConfig::ShaderFolder + "Mesh.vert",
 			AppConfig::ShaderFolder + "Mesh.frag"
 		},
-		&graphicsPipeline_,
+		&pipeline_,
 		true, // hasVertexBuffer
 		multisampleCount // for multisampling
 	);

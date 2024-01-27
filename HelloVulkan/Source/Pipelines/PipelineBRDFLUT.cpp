@@ -44,7 +44,6 @@ PipelineBRDFLUT::~PipelineBRDFLUT()
 {
 	inBuffer_.Destroy(device_);
 	outBuffer_.Destroy(device_);
-	vkDestroyPipeline(device_, pipeline_, nullptr);
 }
 
 void PipelineBRDFLUT::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
