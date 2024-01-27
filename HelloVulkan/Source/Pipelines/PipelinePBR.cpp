@@ -242,16 +242,19 @@ void PipelinePBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));*/
 }
 
+// TODO Still quite convoluted
 void PipelinePBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh)
 {
 	VkDescriptorImageInfo specularImageInfo = specularCubemap_->GetDescriptorImageInfo();
 	VkDescriptorImageInfo diffuseImageInfo = diffuseCubemap_->GetDescriptorImageInfo();
 	VkDescriptorImageInfo lutImageInfo = brdfLUT_->GetDescriptorImageInfo();
 
-	std::vector<VkDescriptorImageInfo> meshTextureInfos;
+	std::vector<VkDescriptorImageInfo> meshTextureInfos(PBR_MESH_TEXTURE_COUNT);
 	for (const auto& elem : mesh.textures_)
 	{
-		meshTextureInfos.push_back(elem.second->GetDescriptorImageInfo());
+		// Should be ordered based on elem.first
+		uint32_t index = static_cast<uint32_t>(elem.first) - 1;
+		meshTextureInfos[index] = elem.second->GetDescriptorImageInfo();
 	}
 
 	size_t swapchainLength = vkDev.GetSwapchainImageCount();
@@ -264,6 +267,7 @@ void PipelinePBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 		VkDescriptorBufferInfo bufferInfo3 = { lights_->GetSSBOBuffer(), 0, lights_->GetSSBOSize() };
 
 		std::vector<DescriptorWrite> writes;
+
 		writes.push_back({ .bufferInfoPtr_ = &bufferInfo1, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
 		writes.push_back({ .bufferInfoPtr_ = &bufferInfo2, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
 		writes.push_back({ .bufferInfoPtr_ = &bufferInfo3, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
