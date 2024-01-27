@@ -30,16 +30,25 @@ PipelineLight::PipelineLight(
 		IsOffscreen()
 	);
 
-	CreateDescriptorPool(
+	/*CreateDescriptorPool(
 		vkDev,
 		1, // UBO
 		1, // SSBO
 		0, // Texture
 		1, // One set per swapchain
-		&descriptorPool_);
+		&descriptorPool_);*/
+	descriptor_.CreatePool(
+		vkDev,
+		{
+			.uboCount_ = 1u,
+			.ssboCount_ = 1u,
+			.samplerCount_ = 0u,
+			.swapchainCount_ = static_cast<uint32_t>(vkDev.GetSwapchainImageCount()),
+			.setCountPerSwapchain_ = 1u,
+		});
 	CreateDescriptorLayoutAndSet(vkDev);
 
-	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
+	CreatePipelineLayout(vkDev.GetDevice(), descriptor_.layout_, &pipelineLayout_);
 
 	CreateGraphicsPipeline(vkDev,
 		renderPass_.GetHandle(),
@@ -92,7 +101,21 @@ void PipelineLight::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer comma
 
 void PipelineLight::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 {
-	const std::array<VkDescriptorSetLayoutBinding, 2> bindings = {
+	descriptor_.CreateLayout(vkDev,
+	{
+		{
+			.descriptorType_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+			.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+			.bindingCount_ = 1
+		},
+		{
+			.descriptorType_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+			.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT,
+			.bindingCount_ = 1
+		}
+	});
+
+	/*const std::array<VkDescriptorSetLayoutBinding, 2> bindings = {
 		DescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT),
 		DescriptorSetLayoutBinding(1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT),
 	};
@@ -105,11 +128,11 @@ void PipelineLight::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 		.pBindings = bindings.data()
 	};
 
-	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));
+	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));*/
 
-	size_t scImageCount = vkDev.GetSwapchainImageCount();
+	size_t swapchainLength = vkDev.GetSwapchainImageCount();
 
-	std::vector<VkDescriptorSetLayout> layouts(scImageCount, descriptorSetLayout_);
+	/*std::vector<VkDescriptorSetLayout> layouts(scImageCount, descriptorSetLayout_);
 
 	const VkDescriptorSetAllocateInfo allocInfo = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
@@ -122,21 +145,23 @@ void PipelineLight::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 	descriptorSets_.resize(scImageCount);
 
 	VK_CHECK(vkAllocateDescriptorSets(vkDev.GetDevice(), &allocInfo, descriptorSets_.data()));
+	*/
 
-	for (size_t i = 0; i < scImageCount; ++i)
+	descriptorSets_.resize(swapchainLength);
+	for (size_t i = 0; i < swapchainLength; ++i)
 	{
-		const VkDescriptorBufferInfo bufferInfo1 = {
-			.buffer = perFrameUBOs_[i].buffer_,
-			.offset = 0,
-			.range = sizeof(PerFrameUBO)
-		};
-		const VkDescriptorBufferInfo bufferInfo2 = {
-			.buffer = lights_->GetSSBOBuffer(),
-			.offset = 0,
-			.range = lights_->GetSSBOSize()
-		};
+		VkDescriptorBufferInfo bufferInfo1 = {.buffer = perFrameUBOs_[i].buffer_, .offset = 0, .range = sizeof(PerFrameUBO)};
+		VkDescriptorBufferInfo bufferInfo2 = {.buffer = lights_->GetSSBOBuffer(), .offset = 0, .range = lights_->GetSSBOSize()};
 
-		const std::array<VkWriteDescriptorSet, 2> descriptorWrites = {
+		descriptor_.CreateSet(
+			vkDev, 
+			{
+				{.bufferInfoPtr_ = &bufferInfo1, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER },
+				{.bufferInfoPtr_ = &bufferInfo2, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER }
+			}, 
+			&(descriptorSets_[i]));
+
+		/*const std::array<VkWriteDescriptorSet, 2> descriptorWrites = {
 			BufferWriteDescriptorSet(
 				descriptorSets_[i],
 				&bufferInfo1,
@@ -154,6 +179,6 @@ void PipelineLight::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 			static_cast<uint32_t>(descriptorWrites.size()), 
 			descriptorWrites.data(), 
 			0, 
-			nullptr);
+			nullptr);*/
 	}
 }
