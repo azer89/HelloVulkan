@@ -11,18 +11,28 @@ PipelineTonemap::PipelineTonemap(VulkanDevice& vkDev,
 
 	framebuffer_.Create(vkDev, renderPass_.GetHandle(), {}, IsOffscreen());
 
-	CreateDescriptorPool(
+	/*CreateDescriptorPool(
 		vkDev,
 		0, // uniform
 		0, // SSBO
 		1, // Texture
 		1, // One set per swapchain
-		&descriptorPool_);
+		&descriptorPool_);*/
+	descriptor_.CreatePool(
+		vkDev,
+		{
+			.uboCount_ = 0u,
+			.ssboCount_ = 0u,
+			.samplerCount_ = 1u,
+			.swapchainCount_ = static_cast<uint32_t>(vkDev.GetSwapchainImageCount()),
+			.setCountPerSwapchain_ = 1u,
+		});
+
 	CreateDescriptorLayout(vkDev);
 	AllocateDescriptorSets(vkDev);
 	UpdateDescriptorSets(vkDev);
 
-	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
+	CreatePipelineLayout(vkDev.GetDevice(), descriptor_.layout_, &pipelineLayout_);
 
 	CreateGraphicsPipeline(vkDev,
 		renderPass_.GetHandle(),
@@ -63,7 +73,7 @@ void PipelineTonemap::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer com
 
 void PipelineTonemap::CreateDescriptorLayout(VulkanDevice& vkDev)
 {
-	uint32_t bindingIndex = 0u;
+	/*uint32_t bindingIndex = 0u;
 
 	std::vector<VkDescriptorSetLayoutBinding> bindings =
 	{
@@ -85,12 +95,20 @@ void PipelineTonemap::CreateDescriptorLayout(VulkanDevice& vkDev)
 		vkDev.GetDevice(),
 		&layoutInfo,
 		nullptr,
-		&descriptorSetLayout_));
+		&descriptorSetLayout_));*/
+	descriptor_.CreateLayout(vkDev,
+	{
+		{
+			.descriptorType_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
+			.bindingCount_ = 1
+		}
+	});
 }
 
 void PipelineTonemap::AllocateDescriptorSets(VulkanDevice& vkDev)
 {
-	auto swapChainImageSize = vkDev.GetSwapchainImageCount();
+	/*auto swapChainImageSize = vkDev.GetSwapchainImageCount();
 
 	std::vector<VkDescriptorSetLayout> layouts(swapChainImageSize, descriptorSetLayout_);
 
@@ -104,17 +122,31 @@ void PipelineTonemap::AllocateDescriptorSets(VulkanDevice& vkDev)
 
 	descriptorSets_.resize(swapChainImageSize);
 
-	VK_CHECK(vkAllocateDescriptorSets(vkDev.GetDevice(), &allocInfo, descriptorSets_.data()));
+	VK_CHECK(vkAllocateDescriptorSets(vkDev.GetDevice(), &allocInfo, descriptorSets_.data()));*/
+	auto swapChainImageSize = vkDev.GetSwapchainImageCount();
+	descriptorSets_.resize(swapChainImageSize);
+
+	for (size_t i = 0; i < swapChainImageSize; i++)
+	{
+		descriptor_.AllocateSet(vkDev, &(descriptorSets_[i]));
+	}
 }
 
 void PipelineTonemap::UpdateDescriptorSets(VulkanDevice& vkDev)
 {
-	const VkDescriptorImageInfo imageInfo = singleSampledColorImage_->GetDescriptorImageInfo();
+	VkDescriptorImageInfo imageInfo = singleSampledColorImage_->GetDescriptorImageInfo();
 
 	auto swapChainImageSize = vkDev.GetSwapchainImageCount();
 	for (size_t i = 0; i < swapChainImageSize; ++i)
 	{
-		uint32_t bindingIndex = 0u;
+		descriptor_.UpdateSet(
+			vkDev,
+			{
+				{.imageInfoPtr_ = &imageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER }
+			},
+			&(descriptorSets_[i]));
+
+		/*uint32_t bindingIndex = 0u;
 		VkDescriptorSet ds = descriptorSets_[i];
 
 		std::vector<VkWriteDescriptorSet> descriptorWrites = {
@@ -126,6 +158,6 @@ void PipelineTonemap::UpdateDescriptorSets(VulkanDevice& vkDev)
 			static_cast<uint32_t>(descriptorWrites.size()),
 			descriptorWrites.data(),
 			0,
-			nullptr);
+			nullptr);*/
 	}
 }

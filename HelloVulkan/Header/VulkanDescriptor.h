@@ -42,6 +42,10 @@ public:
 
 	void CreateSet(VulkanDevice& vkDev, const std::vector<DescriptorWrite>& writes, VkDescriptorSet* set);
 
+	void AllocateSet(VulkanDevice& vkDev, VkDescriptorSet* set);
+
+	void UpdateSet(VulkanDevice& vkDev, const std::vector<DescriptorWrite>& writes, VkDescriptorSet* set);
+
 	void Destroy(VkDevice device);
 
 public:
