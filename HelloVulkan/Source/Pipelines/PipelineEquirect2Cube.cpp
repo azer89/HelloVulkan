@@ -14,17 +14,20 @@ PipelineEquirect2Cube::PipelineEquirect2Cube(
 	InitializeHDRImage(vkDev, hdrFile);
 	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, IBLConfig::CubeFormat);
 
-	CreateDescriptorPool(
+	descriptor_.CreatePool(
 		vkDev,
-		0, // UBO
-		0, // SSBO
-		1, // Sampler
-		1, // Descriptor count per swapchain
-		&descriptorPool_);
+		{
+			.uboCount_ = 0u,
+			.ssboCount_ = 0u,
+			.samplerCount_ = 1u,
+			.swapchainCount_ = 1u,
+			.setCountPerSwapchain_ = 1u,
+			.flags_ = 0
+		});
 
 	CreateDescriptorLayout(vkDev);
 	CreateDescriptorSet(vkDev);
-	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
+	CreatePipelineLayout(vkDev.GetDevice(), descriptor_.layout_, &pipelineLayout_);
 
 	CreateOffscreenGraphicsPipeline(
 		vkDev,
@@ -90,63 +93,26 @@ void PipelineEquirect2Cube::InitializeHDRImage(VulkanDevice& vkDev, const std::s
 
 void PipelineEquirect2Cube::CreateDescriptorLayout(VulkanDevice& vkDev)
 {
-	std::vector<VkDescriptorSetLayoutBinding> bindings;
-
-	uint32_t bindingIndex = 0;
-
-	// Input HDR
-	bindings.emplace_back(
-		DescriptorSetLayoutBinding(
-			bindingIndex++,
-			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			VK_SHADER_STAGE_FRAGMENT_BIT)
-	);
-
-	const VkDescriptorSetLayoutCreateInfo layoutInfo =
+	descriptor_.CreateLayout(vkDev,
 	{
-		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.bindingCount = static_cast<uint32_t>(bindings.size()),
-		.pBindings = bindings.data()
-	};
-
-	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));
+		{
+			.descriptorType_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
+			.bindingCount_ = 1
+		}
+	});
 }
 
 void PipelineEquirect2Cube::CreateDescriptorSet(VulkanDevice& vkDev)
 {
-	const VkDescriptorSetAllocateInfo allocInfo = {
-		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-		.pNext = nullptr,
-		.descriptorPool = descriptorPool_,
-		.descriptorSetCount = 1u,
-		.pSetLayouts = &descriptorSetLayout_
-	};
-
-	VK_CHECK(vkAllocateDescriptorSets(vkDev.GetDevice(), &allocInfo, &descriptorSet_));
-
-	uint32_t bindIndex = 0;
-	std::vector<VkWriteDescriptorSet> descriptorWrites;
-
 	VkDescriptorImageInfo imageInfo = inputHDRImage_.GetDescriptorImageInfo();
 
-	descriptorWrites.emplace_back
-	(
-		ImageWriteDescriptorSet(
-			descriptorSet_,
-			&imageInfo,
-			bindIndex++)
-	);
-
-	vkUpdateDescriptorSets
-	(
-		vkDev.GetDevice(),
-		static_cast<uint32_t>(descriptorWrites.size()),
-		descriptorWrites.data(),
-		0,
-		nullptr
-	);
+	descriptor_.CreateSet(
+		vkDev,
+		{
+			{.imageInfoPtr_ = &imageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER }
+		},
+		&descriptorSet_);
 }
 
 void PipelineEquirect2Cube::CreateOffscreenGraphicsPipeline(

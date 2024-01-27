@@ -7,6 +7,7 @@
 #include "VulkanBuffer.h"
 #include "VulkanRenderPass.h"
 #include "VulkanFramebuffer.h"
+#include "VulkanDescriptor.h"
 #include "UBO.h"
 
 #include <string>
@@ -46,14 +47,11 @@ protected:
 	VkDevice device_ = nullptr;
 
 	// Offscreen rendering
-	//bool isOffscreen_;
 	PipelineFlags flags_;
 
 	VulkanFramebuffer framebuffer_;
 
-	// Descriptor set (layout + pool + sets) -> uses uniform buffers, textures, framebuffers
-	VkDescriptorSetLayout descriptorSetLayout_ = nullptr;
-	VkDescriptorPool descriptorPool_ = nullptr;
+	VulkanDescriptor descriptor_;
 
 	// Render pass
 	VulkanRenderPass renderPass_;
@@ -73,12 +71,14 @@ protected:
 	void BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuffer);
 
 	// UBO
+	// TODO move to VulkanBuffer
 	void CreateUniformBuffers(
 		VulkanDevice& vkDev,
 		std::vector<VulkanBuffer>& buffers,
 		size_t uniformDataSize);
 
 	// UBO
+	// TODO move to VulkanBuffer
 	void UpdateUniformBuffer(
 		VkDevice device,
 		VulkanBuffer& buffer,
@@ -115,23 +115,6 @@ protected:
 	void CreateComputePipeline(
 		VkDevice device,
 		VkShaderModule computeShader);
-
-	VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(
-		uint32_t binding,
-		VkDescriptorType descriptorType,
-		VkShaderStageFlags stageFlags,
-		uint32_t descriptorCount = 1);
-
-	VkWriteDescriptorSet BufferWriteDescriptorSet(
-		VkDescriptorSet ds,
-		const VkDescriptorBufferInfo* bi,
-		uint32_t bindIdx,
-		VkDescriptorType dType);
-
-	VkWriteDescriptorSet ImageWriteDescriptorSet(
-		VkDescriptorSet ds,
-		const VkDescriptorImageInfo* ii,
-		uint32_t bindIdx);
 };
 
 #endif
