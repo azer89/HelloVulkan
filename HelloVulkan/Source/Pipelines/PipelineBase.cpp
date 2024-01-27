@@ -26,8 +26,11 @@ PipelineBase::~PipelineBase()
 		uboBuffer.Destroy(device_);
 	}
 
+	descriptor_.Destroy(device_);
+
 	vkDestroyDescriptorSetLayout(device_, descriptorSetLayout_, nullptr);
 	vkDestroyDescriptorPool(device_, descriptorPool_, nullptr);
+	
 	renderPass_.Destroy(device_);
 	vkDestroyPipelineLayout(device_, pipelineLayout_, nullptr);
 	vkDestroyPipeline(device_, pipeline_, nullptr);

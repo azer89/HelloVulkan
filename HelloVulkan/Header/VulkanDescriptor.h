@@ -10,14 +10,14 @@
 struct DescriptorBinding
 {
 	VkDescriptorType descriptorType_;
-	VkShaderStageFlagBits shaderFlagBits_;
+	VkShaderStageFlags shaderFlags_;
 	uint32_t bindingCount_;
 };
 
 struct DescriptorWrite
 {
-	VkDescriptorImageInfo* imageInfoPtr_ = nullptr;
-	VkDescriptorBufferInfo* bufferInfoPtr_ = nullptr;
+	VkDescriptorImageInfo* imageInfoPtr_;
+	VkDescriptorBufferInfo* bufferInfoPtr_;
 	VkDescriptorType type_;
 };
 
@@ -44,7 +44,7 @@ public:
 
 	void Destroy(VkDevice device);
 
-private:
+public:
 	VkDescriptorPool pool_ = nullptr;
 	VkDescriptorSetLayout layout_ = nullptr;
 

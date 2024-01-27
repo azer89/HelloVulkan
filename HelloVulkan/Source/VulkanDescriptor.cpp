@@ -61,7 +61,7 @@ void VulkanDescriptor::CreateLayout(VulkanDevice& vkDev,
 				(
 					bindingIndex++,
 					bindings[i].descriptorType_,
-					bindings[i].shaderFlagBits_
+					bindings[i].shaderFlags_
 				)
 			);
 		}

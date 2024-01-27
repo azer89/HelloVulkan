@@ -7,6 +7,7 @@
 #include "VulkanBuffer.h"
 #include "VulkanRenderPass.h"
 #include "VulkanFramebuffer.h"
+#include "VulkanDescriptor.h"
 #include "UBO.h"
 
 #include <string>
@@ -54,6 +55,8 @@ protected:
 	// Descriptor set (layout + pool + sets) -> uses uniform buffers, textures, framebuffers
 	VkDescriptorSetLayout descriptorSetLayout_ = nullptr;
 	VkDescriptorPool descriptorPool_ = nullptr;
+
+	VulkanDescriptor descriptor_;
 
 	// Render pass
 	VulkanRenderPass renderPass_;
