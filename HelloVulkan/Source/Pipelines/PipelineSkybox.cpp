@@ -13,7 +13,7 @@ PipelineSkybox::PipelineSkybox(VulkanDevice& vkDev,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
-	PipelineBase(vkDev, true),
+	PipelineBase(vkDev, PipelineFlags::GraphicsOffScreen),
 	envCubemap_(envMap)
 {
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
@@ -30,7 +30,7 @@ PipelineSkybox::PipelineSkybox(VulkanDevice& vkDev,
 			offscreenColorImage,
 			depthImage
 		},
-		isOffscreen_
+		IsOffscreen()
 	);
 
 	CreateDescriptorPool(

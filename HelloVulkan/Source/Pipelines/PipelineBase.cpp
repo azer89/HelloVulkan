@@ -10,9 +10,9 @@
 // Constructor
 PipelineBase::PipelineBase(
 	const VulkanDevice& vkDev,
-	bool isOffscreen) :
+	PipelineFlags flags) :
 	device_(vkDev.GetDevice()),
-	isOffscreen_(isOffscreen)
+	flags_(flags)
 {
 }
 

@@ -11,6 +11,13 @@
 
 #include <string>
 
+enum PipelineFlags : uint8_t
+{
+	GraphicsOnScreen = 0x01,
+	GraphicsOffScreen = 0x02,
+	Compute = 0x04,
+};
+
 /*
 This mainly encapsulates a graphics pipeline, framebuffers, and a render pass.
  */
@@ -19,7 +26,7 @@ class PipelineBase
 public:
 	explicit PipelineBase(
 		const VulkanDevice& vkDev,
-		bool isOffscreen = false);
+		PipelineFlags flags);
 	virtual ~PipelineBase();
 
 	// If the window is resized
@@ -39,7 +46,8 @@ protected:
 	VkDevice device_ = nullptr;
 
 	// Offscreen rendering
-	bool isOffscreen_;
+	//bool isOffscreen_;
+	PipelineFlags flags_;
 
 	VulkanFramebuffer framebuffer_;
 
@@ -57,6 +65,11 @@ protected:
 	std::vector<VulkanBuffer> perFrameUBOs_;
 
 protected:
+	bool IsOffscreen()
+	{
+		return flags_ & PipelineFlags::GraphicsOffScreen;
+	}
+
 	void BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuffer);
 
 	// UBO

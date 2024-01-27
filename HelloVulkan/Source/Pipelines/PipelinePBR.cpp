@@ -21,7 +21,7 @@ PipelinePBR::PipelinePBR(
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
-	PipelineBase(vkDev, true), // Offscreen
+	PipelineBase(vkDev, PipelineFlags::GraphicsOffScreen), // Offscreen
 	models_(models),
 	lights_(lights),
 	specularCubemap_(specularMap),
@@ -52,7 +52,7 @@ PipelinePBR::PipelinePBR(
 			offscreenColorImage,
 			depthImage
 		}, 
-		isOffscreen_);
+		IsOffscreen());
 
 	CreateDescriptorPool(
 		vkDev, 

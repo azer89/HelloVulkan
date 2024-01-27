@@ -8,10 +8,10 @@
 PipelineLight::PipelineLight(
 	VulkanDevice& vkDev,
 	Lights* lights,
-	VulkanImage* depthImage, // TODO remove depth
+	VulkanImage* depthImage, 
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
-	PipelineBase(vkDev, true), // Offscreen rendering
+	PipelineBase(vkDev, PipelineFlags::GraphicsOffScreen), // Offscreen rendering
 	lights_(lights),
 	shouldRender_(true)
 {
@@ -27,7 +27,7 @@ PipelineLight::PipelineLight(
 			offscreenColorImage,
 			depthImage
 		},
-		isOffscreen_
+		IsOffscreen()
 	);
 
 	CreateDescriptorPool(

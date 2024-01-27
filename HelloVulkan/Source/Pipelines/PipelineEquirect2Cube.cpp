@@ -9,7 +9,7 @@ PipelineEquirect2Cube::PipelineEquirect2Cube(
 	const std::string& hdrFile) :
 	PipelineBase(
 		vkDev, 
-		true) // isOffscreen
+		PipelineFlags::GraphicsOffScreen)
 {
 	InitializeHDRImage(vkDev, hdrFile);
 	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, IBLConfig::CubeFormat);

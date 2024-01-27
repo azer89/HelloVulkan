@@ -8,7 +8,7 @@ PipelineResolveMS::PipelineResolveMS(
 	VulkanImage* multiSampledColorImage, // Input
 	VulkanImage* singleSampledColorImage // Output
 ) :
-	PipelineBase(vkDev, true), // Offscreen
+	PipelineBase(vkDev, PipelineFlags::GraphicsOffScreen), // Offscreen
 	multiSampledColorImage_(multiSampledColorImage),
 	singleSampledColorImage_(singleSampledColorImage)
 {
@@ -24,7 +24,7 @@ PipelineResolveMS::PipelineResolveMS(
 			multiSampledColorImage_,
 			singleSampledColorImage_
 		},
-		isOffscreen_);
+		IsOffscreen());
 }
 
 PipelineResolveMS::~PipelineResolveMS()

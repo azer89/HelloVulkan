@@ -4,12 +4,12 @@
 
 PipelineTonemap::PipelineTonemap(VulkanDevice& vkDev,
 	VulkanImage* singleSampledColorImage) :
-	PipelineBase(vkDev, false), // Onscreen renderer
+	PipelineBase(vkDev, PipelineFlags::GraphicsOnScreen),
 	singleSampledColorImage_(singleSampledColorImage)
 {
 	renderPass_.CreateOnScreenColorOnlyRenderPass(vkDev);
 
-	framebuffer_.Create(vkDev, renderPass_.GetHandle(), {}, isOffscreen_);
+	framebuffer_.Create(vkDev, renderPass_.GetHandle(), {}, IsOffscreen());
 
 	CreateDescriptorPool(
 		vkDev,

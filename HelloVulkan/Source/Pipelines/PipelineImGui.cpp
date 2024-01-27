@@ -12,13 +12,13 @@ PipelineImGui::PipelineImGui(
 	VulkanDevice& vkDev,
 	VkInstance vulkanInstance,
 	GLFWwindow* glfwWindow) :
-	PipelineBase(vkDev, false) // Onscreen
+	PipelineBase(vkDev, PipelineFlags::GraphicsOnScreen) // Onscreen
 {
 	// Create render pass
 	renderPass_.CreateOnScreenColorOnlyRenderPass(vkDev);
 
 	// Create framebuffer
-	framebuffer_.Create(vkDev, renderPass_.GetHandle(), {}, isOffscreen_);
+	framebuffer_.Create(vkDev, renderPass_.GetHandle(), {}, IsOffscreen());
 
 	// Create descriptor pool
 	CreateDescriptorPool(
