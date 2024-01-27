@@ -1,5 +1,5 @@
-#ifndef RENDERER_BRDF_LUT
-#define RENDERER_BRDF_LUT
+#ifndef PIPELINE_BRDF_LUT
+#define PIPELINE_BRDF_LUT
 
 #include "PipelineBase.h"
 #include "VulkanDevice.h"

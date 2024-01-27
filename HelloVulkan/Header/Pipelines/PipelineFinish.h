@@ -1,5 +1,5 @@
-#ifndef RENDERER_FINISH
-#define RENDERER_FINISH
+#ifndef PIPELINE_FINISH
+#define PIPELINE_FINISH
 
 #include "PipelineBase.h"
 

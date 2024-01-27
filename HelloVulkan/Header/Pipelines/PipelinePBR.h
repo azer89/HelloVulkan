@@ -1,5 +1,5 @@
-#ifndef RENDERER_PBR
-#define RENDERER_PBR
+#ifndef PIPELINE_PBR
+#define PIPELINE_PBR
 
 #include "PipelineBase.h"
 #include "VulkanImage.h"

@@ -1,5 +1,5 @@
-#ifndef RENDERER_TONEMAP
-#define RENDERER_TONEMAP
+#ifndef PIPELINE_TONEMAP
+#define PIPELINE_TONEMAP
 
 #include "PipelineBase.h"
 #include "VulkanImage.h"

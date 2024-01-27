@@ -1,5 +1,5 @@
-#ifndef RENDERER_CUBE_FILTER
-#define RENDERER_CUBE_FILTER
+#ifndef PIPELINE_CUBE_FILTER
+#define PIPELINE_CUBE_FILTER
 
 #include "PipelineBase.h"
 #include "VulkanImage.h"

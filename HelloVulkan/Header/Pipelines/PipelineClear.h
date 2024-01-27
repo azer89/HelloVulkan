@@ -1,5 +1,5 @@
-#ifndef RENDERER_CLEAR
-#define RENDERER_CLEAR
+#ifndef PIPELINE_CLEAR
+#define PIPELINE_CLEAR
 
 #include "PipelineBase.h"
 

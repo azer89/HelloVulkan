@@ -1,5 +1,5 @@
-#ifndef RENDERER_SKYBOX
-#define RENDERER_SKYBOX
+#ifndef PIPELINE_SKYBOX
+#define PIPELINE_SKYBOX
 
 #include "PipelineBase.h"
 #include "VulkanImage.h"

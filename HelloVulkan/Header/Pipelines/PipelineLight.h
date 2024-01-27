@@ -1,5 +1,5 @@
-#ifndef RENDERER_LIGHT
-#define RENDERER_LIGHT
+#ifndef PIPELINE_LIGHT
+#define PIPELINE_LIGHT
 
 #include "VulkanDevice.h"
 #include "PipelineBase.h"

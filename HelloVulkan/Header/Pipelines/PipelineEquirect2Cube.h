@@ -1,5 +1,5 @@
-#ifndef RENDERER_EQUIRECT_2_CUBE
-#define RENDERER_EQUIRECT_2_CUBE
+#ifndef PIPELINE_EQUIRECT_2_CUBE
+#define PIPELINE_EQUIRECT_2_CUBE
 
 #include "PipelineBase.h"
 #include "VulkanImage.h"

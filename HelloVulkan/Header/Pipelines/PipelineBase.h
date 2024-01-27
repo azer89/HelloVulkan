@@ -1,5 +1,5 @@
-#ifndef RENDERER_BASE
-#define RENDERER_BASE
+#ifndef PIPELINE_BASE
+#define PIPELINE_BASE
 
 #include "volk.h"
 

@@ -1,5 +1,5 @@
-#ifndef RENDERER_IMGUI
-#define RENDERER_IMGUI
+#ifndef PIPELINE_IMGUI
+#define PIPELINE_IMGUI
 
 #include "PipelineBase.h"
 
