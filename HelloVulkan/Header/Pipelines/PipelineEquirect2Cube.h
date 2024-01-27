@@ -6,7 +6,7 @@
 
 #include <string>
 
-class RendererEquirect2Cube final : public RendererBase
+class RendererEquirect2Cube final : public PipelineBase
 {
 public:
 	RendererEquirect2Cube(VulkanDevice& vkDev, const std::string& hdrFile);

@@ -70,7 +70,7 @@ protected:
 	VulkanDevice vulkanDevice_;
 
 	// A list of renderers
-	std::vector<RendererBase*> renderers_;
+	std::vector<PipelineBase*> renderers_;
 
 	// Window size
 	uint32_t windowWidth_;

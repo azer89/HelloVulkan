@@ -14,13 +14,13 @@
 /*
 This mainly encapsulates a graphics pipeline, framebuffers, and a render pass.
  */
-class RendererBase
+class PipelineBase
 {
 public:
-	explicit RendererBase(
+	explicit PipelineBase(
 		const VulkanDevice& vkDev,
 		bool isOffscreen = false);
-	virtual ~RendererBase();
+	virtual ~PipelineBase();
 
 	// If the window is resized
 	virtual void OnWindowResized(VulkanDevice& vkDev);

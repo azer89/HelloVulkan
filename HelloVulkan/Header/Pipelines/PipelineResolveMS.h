@@ -6,7 +6,7 @@
 /*
 Class that resolves a multi-sampled color image to a single-sampled color image
 */
-class RendererResolveMS final : public RendererBase
+class RendererResolveMS final : public PipelineBase
 {
 public:
 	RendererResolveMS(

@@ -7,7 +7,7 @@
 RendererEquirect2Cube::RendererEquirect2Cube(
 	VulkanDevice& vkDev, 
 	const std::string& hdrFile) :
-	RendererBase(
+	PipelineBase(
 		vkDev, 
 		true) // isOffscreen
 {
@@ -227,7 +227,7 @@ void RendererEquirect2Cube::CreateOffscreenGraphicsPipeline(
 	}
 }
 
-// TODO Can be moved to generic function in RendererBase
+// TODO Can be moved to generic function in PipelineBase
 void RendererEquirect2Cube::CreateFrameBuffer(
 	VulkanDevice& vkDev, 
 	std::vector<VkImageView> outputViews)

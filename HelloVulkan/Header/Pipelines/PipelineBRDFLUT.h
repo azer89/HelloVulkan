@@ -7,7 +7,7 @@
 #include "VulkanBuffer.h"
 #include "VulkanUtility.h"
 
-class RendererBRDFLUT final : RendererBase
+class RendererBRDFLUT final : PipelineBase
 {
 public:
 	RendererBRDFLUT(VulkanDevice& vkDev);

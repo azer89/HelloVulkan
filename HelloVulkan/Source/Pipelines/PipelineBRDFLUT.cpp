@@ -11,7 +11,7 @@ struct PushConstantsBRDFLUT
 
 RendererBRDFLUT::RendererBRDFLUT(
 	VulkanDevice& vkDev) :
-	RendererBase(vkDev, true)
+	PipelineBase(vkDev, true)
 {
 	inBuffer_.CreateSharedBuffer(vkDev, sizeof(float),
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,

@@ -5,7 +5,7 @@
 #include "PipelineBase.h"
 #include "Light.h"
 
-class RendererLight final : public RendererBase
+class RendererLight final : public PipelineBase
 {
 public:
 	RendererLight(

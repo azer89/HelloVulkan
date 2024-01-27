@@ -8,7 +8,7 @@ RendererResolveMS::RendererResolveMS(
 	VulkanImage* multiSampledColorImage, // Input
 	VulkanImage* singleSampledColorImage // Output
 ) :
-	RendererBase(vkDev, true), // Offscreen
+	PipelineBase(vkDev, true), // Offscreen
 	multiSampledColorImage_(multiSampledColorImage),
 	singleSampledColorImage_(singleSampledColorImage)
 {

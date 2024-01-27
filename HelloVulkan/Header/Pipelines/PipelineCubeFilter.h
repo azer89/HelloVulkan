@@ -21,7 +21,7 @@ struct PushConstantCubeFilter
 	uint32_t outputDiffuseSampleCount = 1u;
 };
 
-class RendererCubeFilter final : public RendererBase
+class RendererCubeFilter final : public PipelineBase
 {
 public:
 	RendererCubeFilter(VulkanDevice& vkDev, VulkanImage* inputCubemap);

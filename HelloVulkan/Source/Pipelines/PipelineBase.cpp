@@ -8,7 +8,7 @@
 #include <array>
 
 // Constructor
-RendererBase::RendererBase(
+PipelineBase::PipelineBase(
 	const VulkanDevice& vkDev,
 	bool isOffscreen) :
 	device_(vkDev.GetDevice()),
@@ -17,7 +17,7 @@ RendererBase::RendererBase(
 }
 
 // Destructor
-RendererBase::~RendererBase()
+PipelineBase::~PipelineBase()
 {
 	framebuffer_.Destroy();
 
@@ -33,7 +33,7 @@ RendererBase::~RendererBase()
 	vkDestroyPipeline(device_, graphicsPipeline_, nullptr);
 }
 
-void RendererBase::CreateUniformBuffers(
+void PipelineBase::CreateUniformBuffers(
 	VulkanDevice& vkDev,
 	std::vector<VulkanBuffer>& buffers,
 	size_t uniformDataSize)
@@ -56,7 +56,7 @@ void RendererBase::CreateUniformBuffers(
 	}
 }
 
-void RendererBase::BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
+void PipelineBase::BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
 
@@ -77,14 +77,14 @@ void RendererBase::BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuff
 	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 }
 
-void RendererBase::OnWindowResized(VulkanDevice& vkDev)
+void PipelineBase::OnWindowResized(VulkanDevice& vkDev)
 {
 	framebuffer_.Destroy();
 	framebuffer_.Recreate(vkDev);
 	
 }
 
-void RendererBase::CreateDescriptorPool(
+void PipelineBase::CreateDescriptorPool(
 	VulkanDevice& vkDev,
 	uint32_t uniformBufferCount,
 	uint32_t storageBufferCount,
@@ -130,7 +130,7 @@ void RendererBase::CreateDescriptorPool(
 	VK_CHECK(vkCreateDescriptorPool(vkDev.GetDevice(), &poolInfo, nullptr, descriptorPool));
 }
 
-void RendererBase::CreatePipelineLayout(
+void PipelineBase::CreatePipelineLayout(
 	VkDevice device, 
 	VkDescriptorSetLayout dsLayout, 
 	VkPipelineLayout* pipelineLayout,
@@ -155,7 +155,7 @@ void RendererBase::CreatePipelineLayout(
 	VK_CHECK(vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, pipelineLayout));
 }
 
-void RendererBase::CreateGraphicsPipeline(
+void PipelineBase::CreateGraphicsPipeline(
 	VulkanDevice& vkDev,
 	VkRenderPass renderPass,
 	VkPipelineLayout pipelineLayout,
@@ -258,7 +258,7 @@ void RendererBase::CreateGraphicsPipeline(
 	}
 }
 
-void RendererBase::UpdateUniformBuffer(
+void PipelineBase::UpdateUniformBuffer(
 	VkDevice device,
 	VulkanBuffer& buffer,
 	const void* data,
@@ -279,7 +279,7 @@ void RendererBase::UpdateUniformBuffer(
 	vkUnmapMemory(device, bufferMemory);
 }
 
-VkDescriptorSetLayoutBinding RendererBase::DescriptorSetLayoutBinding(
+VkDescriptorSetLayoutBinding PipelineBase::DescriptorSetLayoutBinding(
 	uint32_t binding,
 	VkDescriptorType descriptorType,
 	VkShaderStageFlags stageFlags,
@@ -295,7 +295,7 @@ VkDescriptorSetLayoutBinding RendererBase::DescriptorSetLayoutBinding(
 	};
 }
 
-VkWriteDescriptorSet RendererBase::BufferWriteDescriptorSet(
+VkWriteDescriptorSet PipelineBase::BufferWriteDescriptorSet(
 	VkDescriptorSet ds,
 	const VkDescriptorBufferInfo* bi,
 	uint32_t bindIdx,
@@ -316,7 +316,7 @@ VkWriteDescriptorSet RendererBase::BufferWriteDescriptorSet(
 	};
 }
 
-VkWriteDescriptorSet RendererBase::ImageWriteDescriptorSet(
+VkWriteDescriptorSet PipelineBase::ImageWriteDescriptorSet(
 	VkDescriptorSet ds,
 	const VkDescriptorImageInfo* ii,
 	uint32_t bindIdx)

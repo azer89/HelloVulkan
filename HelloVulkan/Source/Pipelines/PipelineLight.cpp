@@ -11,7 +11,7 @@ RendererLight::RendererLight(
 	VulkanImage* depthImage, // TODO remove depth
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
-	RendererBase(vkDev, true), // Offscreen rendering
+	PipelineBase(vkDev, true), // Offscreen rendering
 	lights_(lights),
 	shouldRender_(true)
 {

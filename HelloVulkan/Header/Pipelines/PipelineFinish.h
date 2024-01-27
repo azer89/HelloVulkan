@@ -3,7 +3,7 @@
 
 #include "PipelineBase.h"
 
-class RendererFinish final : public RendererBase
+class RendererFinish final : public PipelineBase
 {
 public:
 	RendererFinish(VulkanDevice& vkDev);

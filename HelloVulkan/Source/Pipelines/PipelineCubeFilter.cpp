@@ -6,7 +6,7 @@
 
 RendererCubeFilter::RendererCubeFilter(
 	VulkanDevice& vkDev, VulkanImage* inputCubemap) :
-	RendererBase(vkDev, true) // Offscreen
+	PipelineBase(vkDev, true) // Offscreen
 {
 	// Create cube render pass
 	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, IBLConfig::CubeFormat);
@@ -311,7 +311,7 @@ void RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 	}
 }
 
-// TODO Can be moved to generic function in RendererBase
+// TODO Can be moved to generic function in PipelineBase
 VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
 	VulkanDevice& vkDev,
 	std::vector<VkImageView> outputViews,

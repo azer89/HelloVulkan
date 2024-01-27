@@ -4,7 +4,7 @@
 #include "PipelineBase.h"
 #include "VulkanImage.h"
 
-class RendererSkybox final : public RendererBase
+class RendererSkybox final : public PipelineBase
 {
 public:
 	RendererSkybox(VulkanDevice& vkDev, 

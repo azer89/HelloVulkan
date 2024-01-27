@@ -5,7 +5,7 @@
 	Present swapchain image 
 */
 RendererFinish::RendererFinish(VulkanDevice& vkDev) : 
-	RendererBase(vkDev, 
+	PipelineBase(vkDev, 
 		false) // Onscreen
 {
 	renderPass_.CreateOnScreenColorOnlyRenderPass(

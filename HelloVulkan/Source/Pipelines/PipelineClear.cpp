@@ -2,7 +2,7 @@
 #include "VulkanUtility.h"
 
 RendererClear::RendererClear(VulkanDevice& vkDev) :
-	RendererBase(
+	PipelineBase(
 		vkDev,
 		false // Onscreen
 		)

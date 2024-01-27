@@ -4,7 +4,7 @@
 
 RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
 	VulkanImage* singleSampledColorImage) :
-	RendererBase(vkDev, false), // Onscreen renderer
+	PipelineBase(vkDev, false), // Onscreen renderer
 	singleSampledColorImage_(singleSampledColorImage)
 {
 	renderPass_.CreateOnScreenColorOnlyRenderPass(vkDev);
@@ -36,7 +36,7 @@ RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
 
 void RendererTonemap::OnWindowResized(VulkanDevice& vkDev)
 {
-	RendererBase::OnWindowResized(vkDev);
+	PipelineBase::OnWindowResized(vkDev);
 	UpdateDescriptorSets(vkDev);
 }
 

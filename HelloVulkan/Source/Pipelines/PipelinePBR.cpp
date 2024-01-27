@@ -21,7 +21,7 @@ RendererPBR::RendererPBR(
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
-	RendererBase(vkDev, true), // Offscreen
+	PipelineBase(vkDev, true), // Offscreen
 	models_(models),
 	lights_(lights),
 	specularCubemap_(specularMap),

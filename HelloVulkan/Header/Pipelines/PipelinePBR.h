@@ -13,7 +13,7 @@ struct PushConstantPBR
 	float maxReflectionLod = 4.f;
 };
 
-class RendererPBR final : public RendererBase
+class RendererPBR final : public PipelineBase
 {
 public:
 	RendererPBR(VulkanDevice& vkDev,

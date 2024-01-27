@@ -12,7 +12,7 @@ RendererImGui::RendererImGui(
 	VulkanDevice& vkDev,
 	VkInstance vulkanInstance,
 	GLFWwindow* glfwWindow) :
-	RendererBase(vkDev, false) // Onscreen
+	PipelineBase(vkDev, false) // Onscreen
 {
 	// Create render pass
 	renderPass_.CreateOnScreenColorOnlyRenderPass(vkDev);

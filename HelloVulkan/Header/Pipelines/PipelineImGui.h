@@ -3,7 +3,7 @@
 
 #include "PipelineBase.h"
 
-class RendererImGui final : public RendererBase
+class RendererImGui final : public PipelineBase
 {
 public:
 	RendererImGui(
