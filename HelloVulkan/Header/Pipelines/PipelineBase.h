@@ -73,12 +73,14 @@ protected:
 	void BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuffer);
 
 	// UBO
+	// TODO move to VulkanBuffer
 	void CreateUniformBuffers(
 		VulkanDevice& vkDev,
 		std::vector<VulkanBuffer>& buffers,
 		size_t uniformDataSize);
 
 	// UBO
+	// TODO move to VulkanBuffer
 	void UpdateUniformBuffer(
 		VkDevice device,
 		VulkanBuffer& buffer,

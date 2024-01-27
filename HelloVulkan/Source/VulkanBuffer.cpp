@@ -38,44 +38,6 @@ bool VulkanBuffer::CreateBuffer(
 	return true;
 }
 
-void VulkanBuffer::CopyFrom(VulkanDevice& vkDev, VkBuffer srcBuffer, VkDeviceSize size)
-{
-	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
-
-	const VkBufferCopy copyRegion = {
-		.srcOffset = 0,
-		.dstOffset = 0,
-		.size = size
-	};
-
-	vkCmdCopyBuffer(commandBuffer, srcBuffer, buffer_, 1, &copyRegion);
-
-	vkDev.EndSingleTimeCommands(commandBuffer);
-}
-
-void VulkanBuffer::UploadBufferData(
-	VulkanDevice& vkDev,
-	VkDeviceSize deviceOffset,
-	const void* data,
-	const size_t dataSize)
-{
-	void* mappedData = nullptr;
-	vkMapMemory(vkDev.GetDevice(), bufferMemory_, deviceOffset, dataSize, 0, &mappedData);
-	memcpy(mappedData, data, dataSize);
-	vkUnmapMemory(vkDev.GetDevice(), bufferMemory_);
-}
-
-void VulkanBuffer::DownloadBufferData(VulkanDevice& vkDev,
-	VkDeviceSize deviceOffset,
-	void* outData,
-	const size_t dataSize)
-{
-	void* mappedData = nullptr;
-	vkMapMemory(vkDev.GetDevice(), bufferMemory_, deviceOffset, dataSize, 0, &mappedData);
-	memcpy(outData, mappedData, dataSize);
-	vkUnmapMemory(vkDev.GetDevice(), bufferMemory_);
-}
-
 void VulkanBuffer::CreateSharedBuffer(
 	VulkanDevice& vkDev,
 	VkDeviceSize size,
@@ -124,6 +86,44 @@ void VulkanBuffer::CreateSharedBuffer(
 	VK_CHECK(vkAllocateMemory(vkDev.GetDevice(), &allocInfo, nullptr, &bufferMemory_));
 
 	vkBindBufferMemory(vkDev.GetDevice(), buffer_, bufferMemory_, 0);
+}
+
+void VulkanBuffer::CopyFrom(VulkanDevice& vkDev, VkBuffer srcBuffer, VkDeviceSize size)
+{
+	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
+
+	const VkBufferCopy copyRegion = {
+		.srcOffset = 0,
+		.dstOffset = 0,
+		.size = size
+	};
+
+	vkCmdCopyBuffer(commandBuffer, srcBuffer, buffer_, 1, &copyRegion);
+
+	vkDev.EndSingleTimeCommands(commandBuffer);
+}
+
+void VulkanBuffer::UploadBufferData(
+	VulkanDevice& vkDev,
+	VkDeviceSize deviceOffset,
+	const void* data,
+	const size_t dataSize)
+{
+	void* mappedData = nullptr;
+	vkMapMemory(vkDev.GetDevice(), bufferMemory_, deviceOffset, dataSize, 0, &mappedData);
+	memcpy(mappedData, data, dataSize);
+	vkUnmapMemory(vkDev.GetDevice(), bufferMemory_);
+}
+
+void VulkanBuffer::DownloadBufferData(VulkanDevice& vkDev,
+	VkDeviceSize deviceOffset,
+	void* outData,
+	const size_t dataSize)
+{
+	void* mappedData = nullptr;
+	vkMapMemory(vkDev.GetDevice(), bufferMemory_, deviceOffset, dataSize, 0, &mappedData);
+	memcpy(outData, mappedData, dataSize);
+	vkUnmapMemory(vkDev.GetDevice(), bufferMemory_);
 }
 
 uint32_t VulkanBuffer::FindMemoryType(
