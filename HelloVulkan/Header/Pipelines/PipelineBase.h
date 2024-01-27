@@ -112,6 +112,10 @@ protected:
 		bool useBlending = true,
 		uint32_t numPatchControlPoints = 0);
 
+	void CreateComputePipeline(
+		VkDevice device,
+		VkShaderModule computeShader);
+
 	VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(
 		uint32_t binding,
 		VkDescriptorType descriptorType,

@@ -29,10 +29,6 @@ private:
 	void CreateComputeDescriptorSetLayout(VkDevice device);
 	
 	void CreateComputeDescriptorSet(VkDevice device, VkDescriptorSetLayout descriptorSetLayout);
-
-	void CreateComputePipeline(
-		VkDevice device,
-		VkShaderModule computeShader);
 };
 
 #endif

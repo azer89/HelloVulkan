@@ -33,9 +33,9 @@ PipelineBRDFLUT::PipelineBRDFLUT(
 	range.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
 
 	CreateComputeDescriptorSetLayout(vkDev.GetDevice());
+	CreateComputeDescriptorSet(vkDev.GetDevice(), descriptorSetLayout_);
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_, ranges);
 	CreateComputePipeline(vkDev.GetDevice(), shader.GetShaderModule());
-	CreateComputeDescriptorSet(vkDev.GetDevice(), descriptorSetLayout_);
 
 	shader.Destroy(vkDev.GetDevice());
 }
@@ -235,31 +235,4 @@ void PipelineBRDFLUT::CreateComputeDescriptorSet(VkDevice device, VkDescriptorSe
 	};
 
 	vkUpdateDescriptorSets(device, 2, writeDescriptorSet, 0, 0);
-}
-
-void PipelineBRDFLUT::CreateComputePipeline(
-	VkDevice device,
-	VkShaderModule computeShader)
-{
-	VkComputePipelineCreateInfo computePipelineCreateInfo = {
-		.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.stage = {  // ShaderStageInfo, just like in graphics pipeline, but with a single COMPUTE stage
-			.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-			.pNext = nullptr,
-			.flags = 0,
-			.stage = VK_SHADER_STAGE_COMPUTE_BIT,
-			.module = computeShader,
-			.pName = "main",
-			// we don't use specialization
-			.pSpecializationInfo = nullptr
-		},
-		.layout = pipelineLayout_,
-		.basePipelineHandle = 0,
-		.basePipelineIndex = 0
-	};
-
-	// no caching, single pipeline creation
-	VK_CHECK(vkCreateComputePipelines(device, 0, 1, &computePipelineCreateInfo, nullptr, &pipeline_));
 }

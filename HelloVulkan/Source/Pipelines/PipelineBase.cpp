@@ -258,6 +258,31 @@ void PipelineBase::CreateGraphicsPipeline(
 	}
 }
 
+void PipelineBase::CreateComputePipeline(
+	VkDevice device,
+	VkShaderModule computeShader)
+{
+	VkComputePipelineCreateInfo computePipelineCreateInfo = {
+		.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0,
+		.stage = {  // ShaderStageInfo
+			.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+			.pNext = nullptr,
+			.flags = 0,
+			.stage = VK_SHADER_STAGE_COMPUTE_BIT,
+			.module = computeShader,
+			.pName = "main",
+			.pSpecializationInfo = nullptr
+		},
+		.layout = pipelineLayout_,
+		.basePipelineHandle = 0,
+		.basePipelineIndex = 0
+	};
+
+	VK_CHECK(vkCreateComputePipelines(device, 0, 1, &computePipelineCreateInfo, nullptr, &pipeline_));
+}
+
 void PipelineBase::UpdateUniformBuffer(
 	VkDevice device,
 	VulkanBuffer& buffer,
