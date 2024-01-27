@@ -1,4 +1,4 @@
-#include "RendererSkybox.h"
+#include "PipelineSkybox.h"
 #include "VulkanUtility.h"
 #include "Configs.h"
 #include "UBO.h"
@@ -8,12 +8,12 @@
 #include <cmath>
 #include <array>
 
-RendererSkybox::RendererSkybox(VulkanDevice& vkDev, 
+PipelineSkybox::PipelineSkybox(VulkanDevice& vkDev, 
 	VulkanImage* envMap,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
-	RendererBase(vkDev, true),
+	PipelineBase(vkDev, PipelineFlags::GraphicsOffScreen),
 	envCubemap_(envMap)
 {
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
@@ -30,7 +30,7 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 			offscreenColorImage,
 			depthImage
 		},
-		isOffscreen_
+		IsOffscreen()
 	);
 
 	CreateDescriptorPool(
@@ -51,17 +51,17 @@ RendererSkybox::RendererSkybox(VulkanDevice& vkDev,
 			AppConfig::ShaderFolder + "Cube.vert",
 			AppConfig::ShaderFolder + "Cube.frag",
 		},
-		&graphicsPipeline_,
+		&pipeline_,
 		false, // has no vertex buffer
 		multisampleCount // For multisampling
 		); 
 }
 
-RendererSkybox::~RendererSkybox()
+PipelineSkybox::~PipelineSkybox()
 {
 }
 
-void RendererSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
+void PipelineSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
 {
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
 
@@ -82,7 +82,7 @@ void RendererSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer comm
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void RendererSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
+void PipelineSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 {
 	const std::array<VkDescriptorSetLayoutBinding, 2> bindings = {
 		DescriptorSetLayoutBinding(

@@ -1,7 +1,7 @@
-#ifndef RENDERER_CUBE_FILTER
-#define RENDERER_CUBE_FILTER
+#ifndef PIPELINE_CUBE_FILTER
+#define PIPELINE_CUBE_FILTER
 
-#include "RendererBase.h"
+#include "PipelineBase.h"
 #include "VulkanImage.h"
 
 #include <string>
@@ -21,11 +21,11 @@ struct PushConstantCubeFilter
 	uint32_t outputDiffuseSampleCount = 1u;
 };
 
-class RendererCubeFilter final : public RendererBase
+class PipelineCubeFilter final : public PipelineBase
 {
 public:
-	RendererCubeFilter(VulkanDevice& vkDev, VulkanImage* inputCubemap);
-	~RendererCubeFilter();
+	PipelineCubeFilter(VulkanDevice& vkDev, VulkanImage* inputCubemap);
+	~PipelineCubeFilter();
 
 	void OffscreenRender(VulkanDevice& vkDev, 
 		VulkanImage* outputCubemap,

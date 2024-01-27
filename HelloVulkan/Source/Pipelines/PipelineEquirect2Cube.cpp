@@ -1,15 +1,15 @@
-#include "RendererEquirect2Cube.h"
+#include "PipelineEquirect2Cube.h"
 #include "PipelineCreateInfo.h"
 #include "VulkanUtility.h"
 #include "VulkanShader.h"
 #include "Configs.h"
 
-RendererEquirect2Cube::RendererEquirect2Cube(
+PipelineEquirect2Cube::PipelineEquirect2Cube(
 	VulkanDevice& vkDev, 
 	const std::string& hdrFile) :
-	RendererBase(
+	PipelineBase(
 		vkDev, 
-		true) // isOffscreen
+		PipelineFlags::GraphicsOffScreen)
 {
 	InitializeHDRImage(vkDev, hdrFile);
 	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, IBLConfig::CubeFormat);
@@ -34,21 +34,21 @@ RendererEquirect2Cube::RendererEquirect2Cube(
 			AppConfig::ShaderFolder + "FullscreenTriangle.vert",
 			AppConfig::ShaderFolder + "Equirect2Cube.frag"
 		},
-		&graphicsPipeline_
+		&pipeline_
 	);
 }
 
-RendererEquirect2Cube::~RendererEquirect2Cube()
+PipelineEquirect2Cube::~PipelineEquirect2Cube()
 {
 	inputHDRImage_.Destroy(device_);
 	vkDestroyFramebuffer(device_, cubeFramebuffer_, nullptr);
 }
 
-void RendererEquirect2Cube::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
+void PipelineEquirect2Cube::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
 {
 }
 
-void RendererEquirect2Cube::InitializeCubemap(VulkanDevice& vkDev, VulkanImage* cubemap)
+void PipelineEquirect2Cube::InitializeCubemap(VulkanDevice& vkDev, VulkanImage* cubemap)
 {
 	uint32_t mipmapCount = NumMipMap(IBLConfig::InputCubeSideLength, IBLConfig::InputCubeSideLength);
 
@@ -75,7 +75,7 @@ void RendererEquirect2Cube::InitializeCubemap(VulkanDevice& vkDev, VulkanImage* 
 		mipmapCount);
 }
 
-void RendererEquirect2Cube::InitializeHDRImage(VulkanDevice& vkDev, const std::string& hdrFile)
+void PipelineEquirect2Cube::InitializeHDRImage(VulkanDevice& vkDev, const std::string& hdrFile)
 {
 	inputHDRImage_.CreateFromHDR(vkDev, hdrFile.c_str());
 	inputHDRImage_.CreateImageView(
@@ -88,7 +88,7 @@ void RendererEquirect2Cube::InitializeHDRImage(VulkanDevice& vkDev, const std::s
 		1.f);
 }
 
-void RendererEquirect2Cube::CreateDescriptorLayout(VulkanDevice& vkDev)
+void PipelineEquirect2Cube::CreateDescriptorLayout(VulkanDevice& vkDev)
 {
 	std::vector<VkDescriptorSetLayoutBinding> bindings;
 
@@ -114,7 +114,7 @@ void RendererEquirect2Cube::CreateDescriptorLayout(VulkanDevice& vkDev)
 	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));
 }
 
-void RendererEquirect2Cube::CreateDescriptorSet(VulkanDevice& vkDev)
+void PipelineEquirect2Cube::CreateDescriptorSet(VulkanDevice& vkDev)
 {
 	const VkDescriptorSetAllocateInfo allocInfo = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
@@ -149,7 +149,7 @@ void RendererEquirect2Cube::CreateDescriptorSet(VulkanDevice& vkDev)
 	);
 }
 
-void RendererEquirect2Cube::CreateOffscreenGraphicsPipeline(
+void PipelineEquirect2Cube::CreateOffscreenGraphicsPipeline(
 	VulkanDevice& vkDev,
 	VkRenderPass renderPass,
 	VkPipelineLayout pipelineLayout,
@@ -227,8 +227,8 @@ void RendererEquirect2Cube::CreateOffscreenGraphicsPipeline(
 	}
 }
 
-// TODO Can be moved to generic function in RendererBase
-void RendererEquirect2Cube::CreateFrameBuffer(
+// TODO Can be moved to generic function in PipelineBase
+void PipelineEquirect2Cube::CreateFrameBuffer(
 	VulkanDevice& vkDev, 
 	std::vector<VkImageView> outputViews)
 {
@@ -249,7 +249,7 @@ void RendererEquirect2Cube::CreateFrameBuffer(
 }
 
 // TODO Move this to VulkanImage
-void RendererEquirect2Cube::CreateCubemapViews(
+void PipelineEquirect2Cube::CreateCubemapViews(
 	VulkanDevice& vkDev, 
 	VulkanImage* cubemap,
 	std::vector<VkImageView>& cubemapViews)
@@ -286,7 +286,7 @@ void RendererEquirect2Cube::CreateCubemapViews(
 	}
 }
 
-void RendererEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanImage* outputEnvMap)
+void PipelineEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanImage* outputEnvMap)
 {
 	// Initialize output cubemap
 	InitializeCubemap(vkDev, outputEnvMap);
@@ -319,7 +319,7 @@ void RendererEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanImage* ou
 		0,
 		nullptr);
 
-	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline_);
+	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_);
 
 	renderPass_.BeginCubemapRenderPass(commandBuffer, cubeFramebuffer_, IBLConfig::InputCubeSideLength);
 

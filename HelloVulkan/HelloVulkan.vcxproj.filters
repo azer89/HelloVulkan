@@ -9,62 +9,68 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
+    <Filter Include="Header Files\Apps">
+      <UniqueIdentifier>{f459fa8e-a54d-43b3-b651-0a38afa90f08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Pipelines">
+      <UniqueIdentifier>{4e37bebc-c029-4e76-95a0-8fece80dc55d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Apps">
+      <UniqueIdentifier>{1554d771-30a0-477e-b8b6-03eaab44910c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Pipelines">
+      <UniqueIdentifier>{3d10604e-ee82-4e52-baab-499d4a08199d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\Cube.vert">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\Mesh.vert">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\Equirect2Cube.frag">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\FullscreenTriangle.vert">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\Cube.frag">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\Mesh.frag">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\PBRHeader.frag">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\BRDFLUT.comp">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\Hammersley.frag">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\CubeFilterDiffuse.frag">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\CubeFilterSpecular.frag">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\Tonemap.frag">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\LightCircle.frag">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\LightCircle.vert">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Header\AppBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\AppPBR.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -78,36 +84,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header\PipelineCreateInfo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\RendererBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\RendererBRDFLUT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\RendererClear.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\RendererCubeFilter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\RendererEquirect2Cube.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\RendererFinish.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\RendererPBR.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\RendererResolveMS.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\RendererSkybox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\RendererTonemap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header\TextureMapper.h">
@@ -143,20 +119,50 @@
     <ClInclude Include="Header\Light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\RendererLight.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Header\Apps\AppBase.h">
+      <Filter>Header Files\Apps</Filter>
     </ClInclude>
-    <ClInclude Include="Header\RendererImGui.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Header\Apps\AppPBR.h">
+      <Filter>Header Files\Apps</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineBase.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineBRDFLUT.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineClear.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineCubeFilter.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineEquirect2Cube.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineFinish.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineImGui.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineLight.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelinePBR.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineResolveMS.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineSkybox.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineTonemap.h">
+      <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\AppBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AppPBR.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -167,36 +173,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\RendererBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\RendererBRDFLUT.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\RendererClear.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\RendererCubeFilter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\RendererEquirect2Cube.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\RendererFinish.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\RendererPBR.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\RendererResolveMS.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\RendererSkybox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\RendererTonemap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\VulkanBuffer.cpp">
@@ -223,14 +199,50 @@
     <ClCompile Include="Source\VulkanUtility.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\RendererLight.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Lights.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\RendererImGui.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\Apps\AppBase.cpp">
+      <Filter>Source Files\Apps</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Apps\AppPBR.cpp">
+      <Filter>Source Files\Apps</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineBase.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineBRDFLUT.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineClear.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineCubeFilter.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineEquirect2Cube.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineFinish.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineImGui.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineLight.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelinePBR.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineResolveMS.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineSkybox.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineTonemap.cpp">
+      <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,16 +1,16 @@
-#ifndef RENDERER_IMGUI
-#define RENDERER_IMGUI
+#ifndef PIPELINE_IMGUI
+#define PIPELINE_IMGUI
 
-#include "RendererBase.h"
+#include "PipelineBase.h"
 
-class RendererImGui final : public RendererBase
+class PipelineImGui final : public PipelineBase
 {
 public:
-	RendererImGui(
+	PipelineImGui(
 		VulkanDevice& vkDev, 
 		VkInstance vulkanInstance,
 		GLFWwindow* glfwWindow);
-	~RendererImGui();
+	~PipelineImGui();
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 };

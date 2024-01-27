@@ -1,4 +1,4 @@
-#include "RendererImGui.h"
+#include "PipelineImGui.h"
 #include "VulkanUtility.h"
 
 #include "imgui.h"
@@ -8,17 +8,17 @@
 // https://github.com/ocornut/imgui/issues/4854
 #include "imgui_impl_volk.h"
 
-RendererImGui::RendererImGui(
+PipelineImGui::PipelineImGui(
 	VulkanDevice& vkDev,
 	VkInstance vulkanInstance,
 	GLFWwindow* glfwWindow) :
-	RendererBase(vkDev, false) // Onscreen
+	PipelineBase(vkDev, PipelineFlags::GraphicsOnScreen) // Onscreen
 {
 	// Create render pass
 	renderPass_.CreateOnScreenColorOnlyRenderPass(vkDev);
 
 	// Create framebuffer
-	framebuffer_.Create(vkDev, renderPass_.GetHandle(), {}, isOffscreen_);
+	framebuffer_.Create(vkDev, renderPass_.GetHandle(), {}, IsOffscreen());
 
 	// Create descriptor pool
 	CreateDescriptorPool(
@@ -67,14 +67,14 @@ RendererImGui::RendererImGui(
 	ImGui_ImplVulkan_Init(&init_info, renderPass_.GetHandle());
 }
 
-RendererImGui::~RendererImGui()
+PipelineImGui::~PipelineImGui()
 {
 	ImGui_ImplVulkan_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 }
 
-void RendererImGui::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
+void PipelineImGui::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
 {
 	ImDrawData* draw_data = ImGui::GetDrawData();
 

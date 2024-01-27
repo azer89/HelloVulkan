@@ -1,9 +1,6 @@
-#include "RendererPBR.h"
+#include "PipelinePBR.h"
 #include "VulkanUtility.h"
 #include "Configs.h"
-
-#include "assimp/scene.h"
-#include "assimp/postprocess.h"
 
 #include <vector>
 #include <array>
@@ -14,7 +11,7 @@ constexpr uint32_t SSBO_COUNT = 1;
 constexpr size_t PBR_MESH_TEXTURE_COUNT = 6; 
 constexpr size_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 
-RendererPBR::RendererPBR(
+PipelinePBR::PipelinePBR(
 	VulkanDevice& vkDev,
 	std::vector<Model*> models,
 	Lights* lights,
@@ -24,7 +21,7 @@ RendererPBR::RendererPBR(
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
-	RendererBase(vkDev, true), // Offscreen
+	PipelineBase(vkDev, PipelineFlags::GraphicsOffScreen), // Offscreen
 	models_(models),
 	lights_(lights),
 	specularCubemap_(specularMap),
@@ -55,7 +52,7 @@ RendererPBR::RendererPBR(
 			offscreenColorImage,
 			depthImage
 		}, 
-		isOffscreen_);
+		IsOffscreen());
 
 	CreateDescriptorPool(
 		vkDev, 
@@ -91,17 +88,17 @@ RendererPBR::RendererPBR(
 			AppConfig::ShaderFolder + "Mesh.vert",
 			AppConfig::ShaderFolder + "Mesh.frag"
 		},
-		&graphicsPipeline_,
+		&pipeline_,
 		true, // hasVertexBuffer
 		multisampleCount // for multisampling
 	);
 }
 
-RendererPBR::~RendererPBR()
+PipelinePBR::~PipelinePBR()
 {
 }
 
-void RendererPBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
+void PipelinePBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
 {
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
 
@@ -144,7 +141,7 @@ void RendererPBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer command
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
+void PipelinePBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 {
 	std::vector<VkDescriptorSetLayoutBinding> bindings;
 
@@ -215,7 +212,7 @@ void RendererPBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));
 }
 
-void RendererPBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh)
+void PipelinePBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh)
 {
 	size_t swapchainLength = vkDev.GetSwapchainImageCount();
 

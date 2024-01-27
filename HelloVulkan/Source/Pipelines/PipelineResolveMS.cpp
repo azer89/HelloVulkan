@@ -1,14 +1,14 @@
-#include "RendererResolveMS.h"
+#include "PipelineResolveMS.h"
 
 /*
 Resolves a multisampled color image to a singlesampled color image
 */
-RendererResolveMS::RendererResolveMS(
+PipelineResolveMS::PipelineResolveMS(
 	VulkanDevice& vkDev,
 	VulkanImage* multiSampledColorImage, // Input
 	VulkanImage* singleSampledColorImage // Output
 ) :
-	RendererBase(vkDev, true), // Offscreen
+	PipelineBase(vkDev, PipelineFlags::GraphicsOffScreen), // Offscreen
 	multiSampledColorImage_(multiSampledColorImage),
 	singleSampledColorImage_(singleSampledColorImage)
 {
@@ -24,14 +24,14 @@ RendererResolveMS::RendererResolveMS(
 			multiSampledColorImage_,
 			singleSampledColorImage_
 		},
-		isOffscreen_);
+		IsOffscreen());
 }
 
-RendererResolveMS::~RendererResolveMS()
+PipelineResolveMS::~PipelineResolveMS()
 {
 }
 
-void RendererResolveMS::FillCommandBuffer(
+void PipelineResolveMS::FillCommandBuffer(
 	VulkanDevice& vkDev,
 	VkCommandBuffer commandBuffer,
 	size_t currentImage)

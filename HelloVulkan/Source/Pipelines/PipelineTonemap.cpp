@@ -1,15 +1,15 @@
-#include "RendererTonemap.h"
+#include "PipelineTonemap.h"
 #include "VulkanUtility.h"
 #include "Configs.h"
 
-RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
+PipelineTonemap::PipelineTonemap(VulkanDevice& vkDev,
 	VulkanImage* singleSampledColorImage) :
-	RendererBase(vkDev, false), // Onscreen renderer
+	PipelineBase(vkDev, PipelineFlags::GraphicsOnScreen),
 	singleSampledColorImage_(singleSampledColorImage)
 {
 	renderPass_.CreateOnScreenColorOnlyRenderPass(vkDev);
 
-	framebuffer_.Create(vkDev, renderPass_.GetHandle(), {}, isOffscreen_);
+	framebuffer_.Create(vkDev, renderPass_.GetHandle(), {}, IsOffscreen());
 
 	CreateDescriptorPool(
 		vkDev,
@@ -31,16 +31,16 @@ RendererTonemap::RendererTonemap(VulkanDevice& vkDev,
 			AppConfig::ShaderFolder + "FullscreenTriangle.vert",
 			AppConfig::ShaderFolder + "Tonemap.frag",
 		},
-		&graphicsPipeline_);
+		&pipeline_);
 }
 
-void RendererTonemap::OnWindowResized(VulkanDevice& vkDev)
+void PipelineTonemap::OnWindowResized(VulkanDevice& vkDev)
 {
-	RendererBase::OnWindowResized(vkDev);
+	PipelineBase::OnWindowResized(vkDev);
 	UpdateDescriptorSets(vkDev);
 }
 
-void RendererTonemap::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
+void PipelineTonemap::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
 {
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));
 
@@ -61,7 +61,7 @@ void RendererTonemap::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer com
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void RendererTonemap::CreateDescriptorLayout(VulkanDevice& vkDev)
+void PipelineTonemap::CreateDescriptorLayout(VulkanDevice& vkDev)
 {
 	uint32_t bindingIndex = 0u;
 
@@ -88,7 +88,7 @@ void RendererTonemap::CreateDescriptorLayout(VulkanDevice& vkDev)
 		&descriptorSetLayout_));
 }
 
-void RendererTonemap::AllocateDescriptorSets(VulkanDevice& vkDev)
+void PipelineTonemap::AllocateDescriptorSets(VulkanDevice& vkDev)
 {
 	auto swapChainImageSize = vkDev.GetSwapchainImageCount();
 
@@ -107,7 +107,7 @@ void RendererTonemap::AllocateDescriptorSets(VulkanDevice& vkDev)
 	VK_CHECK(vkAllocateDescriptorSets(vkDev.GetDevice(), &allocInfo, descriptorSets_.data()));
 }
 
-void RendererTonemap::UpdateDescriptorSets(VulkanDevice& vkDev)
+void PipelineTonemap::UpdateDescriptorSets(VulkanDevice& vkDev)
 {
 	const VkDescriptorImageInfo imageInfo = singleSampledColorImage_->GetDescriptorImageInfo();
 

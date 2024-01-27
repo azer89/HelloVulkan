@@ -1,12 +1,12 @@
-#include "RendererCubeFilter.h"
+#include "PipelineCubeFilter.h"
 #include "PipelineCreateInfo.h"
 #include "VulkanUtility.h"
 #include "VulkanShader.h"
 #include "Configs.h"
 
-RendererCubeFilter::RendererCubeFilter(
+PipelineCubeFilter::PipelineCubeFilter(
 	VulkanDevice& vkDev, VulkanImage* inputCubemap) :
-	RendererBase(vkDev, true) // Offscreen
+	PipelineBase(vkDev, PipelineFlags::GraphicsOffScreen) // Offscreen
 {
 	// Create cube render pass
 	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, IBLConfig::CubeFormat);
@@ -80,7 +80,7 @@ RendererCubeFilter::RendererCubeFilter(
 	);
 }
 
-RendererCubeFilter::~RendererCubeFilter()
+PipelineCubeFilter::~PipelineCubeFilter()
 {
 	vkDestroySampler(device_, inputCubemapSampler_, nullptr);
 
@@ -90,11 +90,11 @@ RendererCubeFilter::~RendererCubeFilter()
 	}
 }
 
-void RendererCubeFilter::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
+void PipelineCubeFilter::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
 {
 }
 
-void RendererCubeFilter::InitializeOutputCubemap(
+void PipelineCubeFilter::InitializeOutputCubemap(
 	VulkanDevice& vkDev, 
 	VulkanImage* outputDiffuseCubemap,
 	uint32_t numMipmap,
@@ -123,7 +123,7 @@ void RendererCubeFilter::InitializeOutputCubemap(
 		numMipmap);
 }
 
-void RendererCubeFilter::CreateDescriptorLayout(VulkanDevice& vkDev)
+void PipelineCubeFilter::CreateDescriptorLayout(VulkanDevice& vkDev)
 {
 	std::vector<VkDescriptorSetLayoutBinding> bindings;
 
@@ -149,7 +149,7 @@ void RendererCubeFilter::CreateDescriptorLayout(VulkanDevice& vkDev)
 	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &descriptorSetLayout_));
 }
 
-void RendererCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanImage* inputCubemap)
+void PipelineCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanImage* inputCubemap)
 {
 	const VkDescriptorSetAllocateInfo allocInfo = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
@@ -189,7 +189,7 @@ void RendererCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanImage* i
 	);
 }
 
-void RendererCubeFilter::CreateOutputCubemapViews(VulkanDevice& vkDev,
+void PipelineCubeFilter::CreateOutputCubemapViews(VulkanDevice& vkDev,
 	VulkanImage* outputCubemap,
 	std::vector<std::vector<VkImageView>>& outputCubemapViews,
 	uint32_t numMip)
@@ -228,7 +228,7 @@ void RendererCubeFilter::CreateOutputCubemapViews(VulkanDevice& vkDev,
 	}
 }
 
-void RendererCubeFilter::CreateOffsreenGraphicsPipeline(
+void PipelineCubeFilter::CreateOffsreenGraphicsPipeline(
 	VulkanDevice& vkDev,
 	VkRenderPass renderPass,
 	VkPipelineLayout pipelineLayout,
@@ -311,8 +311,8 @@ void RendererCubeFilter::CreateOffsreenGraphicsPipeline(
 	}
 }
 
-// TODO Can be moved to generic function in RendererBase
-VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
+// TODO Can be moved to generic function in PipelineBase
+VkFramebuffer PipelineCubeFilter::CreateFrameBuffer(
 	VulkanDevice& vkDev,
 	std::vector<VkImageView> outputViews,
 	uint32_t width,
@@ -335,7 +335,7 @@ VkFramebuffer RendererCubeFilter::CreateFrameBuffer(
 	return frameBuffer;
 }
 
-void RendererCubeFilter::OffscreenRender(VulkanDevice& vkDev,
+void PipelineCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 	VulkanImage* outputCubemap,
 	CubeFilterType filterType)
 {

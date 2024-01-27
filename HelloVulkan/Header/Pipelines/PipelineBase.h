@@ -1,5 +1,5 @@
-#ifndef RENDERER_BASE
-#define RENDERER_BASE
+#ifndef PIPELINE_BASE
+#define PIPELINE_BASE
 
 #include "volk.h"
 
@@ -11,16 +11,23 @@
 
 #include <string>
 
+enum PipelineFlags : uint8_t
+{
+	GraphicsOnScreen = 0x01,
+	GraphicsOffScreen = 0x02,
+	Compute = 0x04,
+};
+
 /*
 This mainly encapsulates a graphics pipeline, framebuffers, and a render pass.
  */
-class RendererBase
+class PipelineBase
 {
 public:
-	explicit RendererBase(
+	explicit PipelineBase(
 		const VulkanDevice& vkDev,
-		bool isOffscreen = false);
-	virtual ~RendererBase();
+		PipelineFlags flags);
+	virtual ~PipelineBase();
 
 	// If the window is resized
 	virtual void OnWindowResized(VulkanDevice& vkDev);
@@ -39,7 +46,8 @@ protected:
 	VkDevice device_ = nullptr;
 
 	// Offscreen rendering
-	bool isOffscreen_;
+	//bool isOffscreen_;
+	PipelineFlags flags_;
 
 	VulkanFramebuffer framebuffer_;
 
@@ -51,12 +59,17 @@ protected:
 	VulkanRenderPass renderPass_;
 
 	VkPipelineLayout pipelineLayout_ = nullptr;
-	VkPipeline graphicsPipeline_ = nullptr;
+	VkPipeline pipeline_ = nullptr;
 
 	// PerFrameUBO
 	std::vector<VulkanBuffer> perFrameUBOs_;
 
 protected:
+	bool IsOffscreen()
+	{
+		return flags_ & PipelineFlags::GraphicsOffScreen;
+	}
+
 	void BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuffer);
 
 	// UBO
@@ -98,6 +111,10 @@ protected:
 		bool useDepth = true,
 		bool useBlending = true,
 		uint32_t numPatchControlPoints = 0);
+
+	void CreateComputePipeline(
+		VkDevice device,
+		VkShaderModule computeShader);
 
 	VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(
 		uint32_t binding,

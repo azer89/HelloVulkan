@@ -1,4 +1,4 @@
-#include "RendererBRDFLUT.h"
+#include "PipelineBRDFLUT.h"
 #include "VulkanShader.h"
 #include "Configs.h"
 
@@ -9,9 +9,9 @@ struct PushConstantsBRDFLUT
 	uint32_t sampleCount;
 };
 
-RendererBRDFLUT::RendererBRDFLUT(
+PipelineBRDFLUT::PipelineBRDFLUT(
 	VulkanDevice& vkDev) :
-	RendererBase(vkDev, true)
+	PipelineBase(vkDev, PipelineFlags::Compute)
 {
 	inBuffer_.CreateSharedBuffer(vkDev, sizeof(float),
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
@@ -33,25 +33,24 @@ RendererBRDFLUT::RendererBRDFLUT(
 	range.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
 
 	CreateComputeDescriptorSetLayout(vkDev.GetDevice());
+	CreateComputeDescriptorSet(vkDev.GetDevice(), descriptorSetLayout_);
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_, ranges);
 	CreateComputePipeline(vkDev.GetDevice(), shader.GetShaderModule());
-	CreateComputeDescriptorSet(vkDev.GetDevice(), descriptorSetLayout_);
 
 	shader.Destroy(vkDev.GetDevice());
 }
 
-RendererBRDFLUT::~RendererBRDFLUT()
+PipelineBRDFLUT::~PipelineBRDFLUT()
 {
 	inBuffer_.Destroy(device_);
 	outBuffer_.Destroy(device_);
-	vkDestroyPipeline(device_, pipeline_, nullptr);
 }
 
-void RendererBRDFLUT::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
+void PipelineBRDFLUT::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
 {
 }
 
-void RendererBRDFLUT::CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT)
+void PipelineBRDFLUT::CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT)
 {
 	std::vector<float> lutData(IBLConfig::LUTBufferSize, 0);
 
@@ -79,7 +78,7 @@ void RendererBRDFLUT::CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT)
 	);
 }
 
-void RendererBRDFLUT::Execute(VulkanDevice& vkDev)
+void PipelineBRDFLUT::Execute(VulkanDevice& vkDev)
 {
 	VkCommandBuffer commandBuffer = vkDev.GetComputeCommandBuffer();
 
@@ -166,7 +165,7 @@ void RendererBRDFLUT::Execute(VulkanDevice& vkDev)
 	VK_CHECK(vkQueueWaitIdle(vkDev.GetComputeQueue()));
 }
 
-void RendererBRDFLUT::CreateComputeDescriptorSetLayout(VkDevice device)
+void PipelineBRDFLUT::CreateComputeDescriptorSetLayout(VkDevice device)
 {
 	VkDescriptorSetLayoutBinding descriptorSetLayoutBindings[2] =
 	{
@@ -190,7 +189,7 @@ void RendererBRDFLUT::CreateComputeDescriptorSetLayout(VkDevice device)
 		&descriptorSetLayout_));
 }
 
-void RendererBRDFLUT::CreateComputeDescriptorSet(VkDevice device, VkDescriptorSetLayout descriptorSetLayout)
+void PipelineBRDFLUT::CreateComputeDescriptorSet(VkDevice device, VkDescriptorSetLayout descriptorSetLayout)
 {
 	// Descriptor pool
 	VkDescriptorPoolSize descriptorPoolSize = { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 2 };
@@ -236,31 +235,4 @@ void RendererBRDFLUT::CreateComputeDescriptorSet(VkDevice device, VkDescriptorSe
 	};
 
 	vkUpdateDescriptorSets(device, 2, writeDescriptorSet, 0, 0);
-}
-
-void RendererBRDFLUT::CreateComputePipeline(
-	VkDevice device,
-	VkShaderModule computeShader)
-{
-	VkComputePipelineCreateInfo computePipelineCreateInfo = {
-		.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.stage = {  // ShaderStageInfo, just like in graphics pipeline, but with a single COMPUTE stage
-			.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-			.pNext = nullptr,
-			.flags = 0,
-			.stage = VK_SHADER_STAGE_COMPUTE_BIT,
-			.module = computeShader,
-			.pName = "main",
-			// we don't use specialization
-			.pSpecializationInfo = nullptr
-		},
-		.layout = pipelineLayout_,
-		.basePipelineHandle = 0,
-		.basePipelineIndex = 0
-	};
-
-	// no caching, single pipeline creation
-	VK_CHECK(vkCreateComputePipelines(device, 0, 1, &computePipelineCreateInfo, nullptr, &pipeline_));
 }

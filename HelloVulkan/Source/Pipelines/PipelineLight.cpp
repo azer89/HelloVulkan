@@ -1,17 +1,17 @@
-#include "RendererLight.h"
+#include "PipelineLight.h"
 #include "VulkanUtility.h"
 
 #include "Configs.h"
 
 #include <array>
 
-RendererLight::RendererLight(
+PipelineLight::PipelineLight(
 	VulkanDevice& vkDev,
 	Lights* lights,
-	VulkanImage* depthImage, // TODO remove depth
+	VulkanImage* depthImage, 
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
-	RendererBase(vkDev, true), // Offscreen rendering
+	PipelineBase(vkDev, PipelineFlags::GraphicsOffScreen), // Offscreen rendering
 	lights_(lights),
 	shouldRender_(true)
 {
@@ -27,7 +27,7 @@ RendererLight::RendererLight(
 			offscreenColorImage,
 			depthImage
 		},
-		isOffscreen_
+		IsOffscreen()
 	);
 
 	CreateDescriptorPool(
@@ -48,18 +48,18 @@ RendererLight::RendererLight(
 			AppConfig::ShaderFolder + "LightCircle.vert",
 			AppConfig::ShaderFolder + "LightCircle.frag",
 		},
-		&graphicsPipeline_,
+		&pipeline_,
 		false, // has no vertex buffer
 		multisampleCount // For multisampling
 		);
 }
 
-RendererLight::~RendererLight()
+PipelineLight::~PipelineLight()
 {
 
 }
 
-void RendererLight::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
+void PipelineLight::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
 {
 	if (!shouldRender_)
 	{
@@ -90,7 +90,7 @@ void RendererLight::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer comma
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void RendererLight::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
+void PipelineLight::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 {
 	const std::array<VkDescriptorSetLayoutBinding, 2> bindings = {
 		DescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT),

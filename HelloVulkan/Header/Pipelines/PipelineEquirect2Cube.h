@@ -1,16 +1,16 @@
-#ifndef RENDERER_EQUIRECT_2_CUBE
-#define RENDERER_EQUIRECT_2_CUBE
+#ifndef PIPELINE_EQUIRECT_2_CUBE
+#define PIPELINE_EQUIRECT_2_CUBE
 
-#include "RendererBase.h"
+#include "PipelineBase.h"
 #include "VulkanImage.h"
 
 #include <string>
 
-class RendererEquirect2Cube final : public RendererBase
+class PipelineEquirect2Cube final : public PipelineBase
 {
 public:
-	RendererEquirect2Cube(VulkanDevice& vkDev, const std::string& hdrFile);
-	~RendererEquirect2Cube();
+	PipelineEquirect2Cube(VulkanDevice& vkDev, const std::string& hdrFile);
+	~PipelineEquirect2Cube();
 
 	void OffscreenRender(VulkanDevice& vkDev, VulkanImage* outputCubemap);
 

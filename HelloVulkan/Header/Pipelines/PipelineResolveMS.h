@@ -1,20 +1,20 @@
-#ifndef RENDERER_RESOLVE_MULTISAMPLING
-#define RENDERER_RESOLVE_MULTISAMPLING
+#ifndef PIPELINE_RESOLVE_MULTISAMPLING
+#define PIPELINE_RESOLVE_MULTISAMPLING
 
-#include "RendererBase.h"
+#include "PipelineBase.h"
 
 /*
 Class that resolves a multi-sampled color image to a single-sampled color image
 */
-class RendererResolveMS final : public RendererBase
+class PipelineResolveMS final : public PipelineBase
 {
 public:
-	RendererResolveMS(
+	PipelineResolveMS(
 		VulkanDevice& vkDev, 
 		VulkanImage* multiSampledColorImage, // Input
 		VulkanImage* singleSampledColorImage // Output
 	);
-	~RendererResolveMS();
+	~PipelineResolveMS();
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 

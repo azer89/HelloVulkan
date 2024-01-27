@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Header\;..\External\stb;..\External\assimp\include;..\External\VS_Projects\assimp\include;..\External\GLFW\include;..\External\GLM;..\External\GLI;..\External\ImGui;..\External\VS_Projects\ImGui;..\External\ImGui\backends;..\External\volk;$(VULKAN_SDK)\Include;$(VULKAN_SDK)\Include\glslang\Include;$(VULKAN_SDK)\Include\glslang\MachineIndependent;$(VULKAN_SDK)\Include\glslang\Public;$(VULKAN_SDK)\Include\glslang\SPIRV;$(VULKAN_SDK)\Include\spirv_cross;$(VULKAN_SDK)\Include\spirv-tools;$(VULKAN_SDK)\Include\spirv-headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Header;Header\Apps;Header\Pipelines;..\External\stb;..\External\assimp\include;..\External\VS_Projects\assimp\include;..\External\GLFW\include;..\External\GLM;..\External\GLI;..\External\ImGui;..\External\VS_Projects\ImGui;..\External\ImGui\backends;..\External\volk;$(VULKAN_SDK)\Include;$(VULKAN_SDK)\Include\glslang\Include;$(VULKAN_SDK)\Include\glslang\MachineIndependent;$(VULKAN_SDK)\Include\glslang\Public;$(VULKAN_SDK)\Include\glslang\SPIRV;$(VULKAN_SDK)\Include\spirv_cross;$(VULKAN_SDK)\Include\spirv-tools;$(VULKAN_SDK)\Include\spirv-headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -122,7 +122,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Header\;..\External\stb;..\External\assimp\include;..\External\VS_Projects\assimp\include;..\External\GLFW\include;..\External\GLM;..\External\GLI;..\External\ImGui;..\External\VS_Projects\ImGui;..\External\ImGui\backends;..\External\volk;$(VULKAN_SDK)\Include;$(VULKAN_SDK)\Include\glslang\Include;$(VULKAN_SDK)\Include\glslang\MachineIndependent;$(VULKAN_SDK)\Include\glslang\Public;$(VULKAN_SDK)\Include\glslang\SPIRV;$(VULKAN_SDK)\Include\spirv_cross;$(VULKAN_SDK)\Include\spirv-tools;$(VULKAN_SDK)\Include\spirv-headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Header;Header\Apps;Header\Pipelines;..\External\stb;..\External\assimp\include;..\External\VS_Projects\assimp\include;..\External\GLFW\include;..\External\GLM;..\External\GLI;..\External\ImGui;..\External\VS_Projects\ImGui;..\External\ImGui\backends;..\External\volk;$(VULKAN_SDK)\Include;$(VULKAN_SDK)\Include\glslang\Include;$(VULKAN_SDK)\Include\glslang\MachineIndependent;$(VULKAN_SDK)\Include\glslang\Public;$(VULKAN_SDK)\Include\glslang\SPIRV;$(VULKAN_SDK)\Include\spirv_cross;$(VULKAN_SDK)\Include\spirv-tools;$(VULKAN_SDK)\Include\spirv-headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -151,26 +151,26 @@
     <None Include="..\Shaders\Tonemap.frag" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Header\AppBase.h" />
-    <ClInclude Include="Header\AppPBR.h" />
+    <ClInclude Include="Header\Apps\AppBase.h" />
+    <ClInclude Include="Header\Apps\AppPBR.h" />
     <ClInclude Include="Header\Camera.h" />
     <ClInclude Include="Header\Configs.h" />
     <ClInclude Include="Header\Light.h" />
     <ClInclude Include="Header\Mesh.h" />
     <ClInclude Include="Header\Model.h" />
     <ClInclude Include="Header\PipelineCreateInfo.h" />
-    <ClInclude Include="Header\RendererBase.h" />
-    <ClInclude Include="Header\RendererBRDFLUT.h" />
-    <ClInclude Include="Header\RendererClear.h" />
-    <ClInclude Include="Header\RendererCubeFilter.h" />
-    <ClInclude Include="Header\RendererEquirect2Cube.h" />
-    <ClInclude Include="Header\RendererFinish.h" />
-    <ClInclude Include="Header\RendererImGui.h" />
-    <ClInclude Include="Header\RendererLight.h" />
-    <ClInclude Include="Header\RendererPBR.h" />
-    <ClInclude Include="Header\RendererResolveMS.h" />
-    <ClInclude Include="Header\RendererSkybox.h" />
-    <ClInclude Include="Header\RendererTonemap.h" />
+    <ClInclude Include="Header\Pipelines\PipelineBase.h" />
+    <ClInclude Include="Header\Pipelines\PipelineBRDFLUT.h" />
+    <ClInclude Include="Header\Pipelines\PipelineClear.h" />
+    <ClInclude Include="Header\Pipelines\PipelineCubeFilter.h" />
+    <ClInclude Include="Header\Pipelines\PipelineEquirect2Cube.h" />
+    <ClInclude Include="Header\Pipelines\PipelineFinish.h" />
+    <ClInclude Include="Header\Pipelines\PipelineImGui.h" />
+    <ClInclude Include="Header\Pipelines\PipelineLight.h" />
+    <ClInclude Include="Header\Pipelines\PipelinePBR.h" />
+    <ClInclude Include="Header\Pipelines\PipelineResolveMS.h" />
+    <ClInclude Include="Header\Pipelines\PipelineSkybox.h" />
+    <ClInclude Include="Header\Pipelines\PipelineTonemap.h" />
     <ClInclude Include="Header\TextureMapper.h" />
     <ClInclude Include="Header\UBO.h" />
     <ClInclude Include="Header\VulkanBuffer.h" />
@@ -183,25 +183,25 @@
     <ClInclude Include="Header\VulkanUtility.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\AppBase.cpp" />
-    <ClCompile Include="Source\AppPBR.cpp" />
+    <ClCompile Include="Source\Apps\AppBase.cpp" />
+    <ClCompile Include="Source\Apps\AppPBR.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\Lights.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
     <ClCompile Include="Source\Model.cpp" />
-    <ClCompile Include="Source\RendererBase.cpp" />
-    <ClCompile Include="Source\RendererBRDFLUT.cpp" />
-    <ClCompile Include="Source\RendererClear.cpp" />
-    <ClCompile Include="Source\RendererCubeFilter.cpp" />
-    <ClCompile Include="Source\RendererEquirect2Cube.cpp" />
-    <ClCompile Include="Source\RendererFinish.cpp" />
-    <ClCompile Include="Source\RendererImGui.cpp" />
-    <ClCompile Include="Source\RendererLight.cpp" />
-    <ClCompile Include="Source\RendererPBR.cpp" />
-    <ClCompile Include="Source\RendererResolveMS.cpp" />
-    <ClCompile Include="Source\RendererSkybox.cpp" />
-    <ClCompile Include="Source\RendererTonemap.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelineBase.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelineBRDFLUT.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelineClear.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelineCubeFilter.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelineEquirect2Cube.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelineFinish.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelineImGui.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelineLight.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelinePBR.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelineResolveMS.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelineSkybox.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelineTonemap.cpp" />
     <ClCompile Include="Source\VulkanBuffer.cpp" />
     <ClCompile Include="Source\VulkanDevice.cpp" />
     <ClCompile Include="Source\VulkanFramebuffer.cpp" />

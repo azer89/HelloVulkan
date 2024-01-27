@@ -1,7 +1,7 @@
-#ifndef RENDERER_PBR
-#define RENDERER_PBR
+#ifndef PIPELINE_PBR
+#define PIPELINE_PBR
 
-#include "RendererBase.h"
+#include "PipelineBase.h"
 #include "VulkanImage.h"
 #include "Model.h"
 #include "Light.h"
@@ -13,10 +13,10 @@ struct PushConstantPBR
 	float maxReflectionLod = 4.f;
 };
 
-class RendererPBR final : public RendererBase
+class PipelinePBR final : public PipelineBase
 {
 public:
-	RendererPBR(VulkanDevice& vkDev,
+	PipelinePBR(VulkanDevice& vkDev,
 		std::vector<Model*> models,
 		Lights* lights,
 		VulkanImage* specularMap,
@@ -25,7 +25,7 @@ public:
 		VulkanImage* depthImage,
 		VulkanImage* offscreenColorImage,
 		uint8_t renderBit = 0u);
-	 ~RendererPBR();
+	 ~PipelinePBR();
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 

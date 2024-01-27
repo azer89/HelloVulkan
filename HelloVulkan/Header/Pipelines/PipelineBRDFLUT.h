@@ -1,17 +1,17 @@
-#ifndef RENDERER_BRDF_LUT
-#define RENDERER_BRDF_LUT
+#ifndef PIPELINE_BRDF_LUT
+#define PIPELINE_BRDF_LUT
 
-#include "RendererBase.h"
+#include "PipelineBase.h"
 #include "VulkanDevice.h"
 #include "VulkanImage.h"
 #include "VulkanBuffer.h"
 #include "VulkanUtility.h"
 
-class RendererBRDFLUT final : RendererBase
+class PipelineBRDFLUT final : PipelineBase
 {
 public:
-	RendererBRDFLUT(VulkanDevice& vkDev);
-	~RendererBRDFLUT();
+	PipelineBRDFLUT(VulkanDevice& vkDev);
+	~PipelineBRDFLUT();
 
 	void CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT);
 
@@ -25,16 +25,10 @@ private:
 
 	VkDescriptorSet descriptorSet_;
 
-	VkPipeline pipeline_;
-
 private:
 	void CreateComputeDescriptorSetLayout(VkDevice device);
 	
 	void CreateComputeDescriptorSet(VkDevice device, VkDescriptorSetLayout descriptorSetLayout);
-
-	void CreateComputePipeline(
-		VkDevice device,
-		VkShaderModule computeShader);
 };
 
 #endif
