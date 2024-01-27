@@ -1,7 +1,7 @@
 #ifndef RENDERER_CLEAR
 #define RENDERER_CLEAR
 
-#include "RendererBase.h"
+#include "PipelineBase.h"
 
 class RendererClear final : public RendererBase
 {

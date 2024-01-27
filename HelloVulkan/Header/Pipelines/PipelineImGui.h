@@ -1,7 +1,7 @@
 #ifndef RENDERER_IMGUI
 #define RENDERER_IMGUI
 
-#include "RendererBase.h"
+#include "PipelineBase.h"
 
 class RendererImGui final : public RendererBase
 {

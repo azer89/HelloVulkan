@@ -1,7 +1,7 @@
 #ifndef RENDERER_PBR
 #define RENDERER_PBR
 
-#include "RendererBase.h"
+#include "PipelineBase.h"
 #include "VulkanImage.h"
 #include "Model.h"
 #include "Light.h"

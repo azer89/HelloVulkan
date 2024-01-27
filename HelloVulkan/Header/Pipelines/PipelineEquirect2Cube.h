@@ -1,7 +1,7 @@
 #ifndef RENDERER_EQUIRECT_2_CUBE
 #define RENDERER_EQUIRECT_2_CUBE
 
-#include "RendererBase.h"
+#include "PipelineBase.h"
 #include "VulkanImage.h"
 
 #include <string>

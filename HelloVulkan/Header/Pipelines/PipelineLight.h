@@ -2,7 +2,7 @@
 #define RENDERER_LIGHT
 
 #include "VulkanDevice.h"
-#include "RendererBase.h"
+#include "PipelineBase.h"
 #include "Light.h"
 
 class RendererLight final : public RendererBase

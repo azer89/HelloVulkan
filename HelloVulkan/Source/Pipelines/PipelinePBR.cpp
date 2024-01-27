@@ -1,9 +1,6 @@
-#include "RendererPBR.h"
+#include "PipelinePBR.h"
 #include "VulkanUtility.h"
 #include "Configs.h"
-
-#include "assimp/scene.h"
-#include "assimp/postprocess.h"
 
 #include <vector>
 #include <array>

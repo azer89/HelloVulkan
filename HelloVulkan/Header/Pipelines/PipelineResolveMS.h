@@ -1,7 +1,7 @@
 #ifndef RENDERER_RESOLVE_MULTISAMPLING
 #define RENDERER_RESOLVE_MULTISAMPLING
 
-#include "RendererBase.h"
+#include "PipelineBase.h"
 
 /*
 Class that resolves a multi-sampled color image to a single-sampled color image

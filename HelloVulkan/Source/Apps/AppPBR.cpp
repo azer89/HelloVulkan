@@ -1,8 +1,8 @@
 #include "AppPBR.h"
 #include "Configs.h"
-#include "RendererEquirect2Cube.h"
-#include "RendererCubeFilter.h"
-#include "RendererBRDFLUT.h"
+#include "PipelineEquirect2Cube.h"
+#include "PipelineCubeFilter.h"
+#include "PipelineBRDFLUT.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 

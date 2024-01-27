@@ -1,7 +1,7 @@
 #ifndef RENDERER_SKYBOX
 #define RENDERER_SKYBOX
 
-#include "RendererBase.h"
+#include "PipelineBase.h"
 #include "VulkanImage.h"
 
 class RendererSkybox final : public RendererBase

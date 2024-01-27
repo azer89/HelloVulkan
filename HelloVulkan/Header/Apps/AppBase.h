@@ -4,7 +4,7 @@
 #include "VulkanInstance.h"
 #include "VulkanDevice.h"
 #include "Camera.h"
-#include "RendererBase.h"
+#include "PipelineBase.h"
 
 #include <memory>
 

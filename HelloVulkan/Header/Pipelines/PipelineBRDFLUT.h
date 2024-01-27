@@ -1,7 +1,7 @@
 #ifndef RENDERER_BRDF_LUT
 #define RENDERER_BRDF_LUT
 
-#include "RendererBase.h"
+#include "PipelineBase.h"
 #include "VulkanDevice.h"
 #include "VulkanImage.h"
 #include "VulkanBuffer.h"

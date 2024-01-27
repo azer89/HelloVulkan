@@ -1,4 +1,4 @@
-#include "RendererEquirect2Cube.h"
+#include "PipelineEquirect2Cube.h"
 #include "PipelineCreateInfo.h"
 #include "VulkanUtility.h"
 #include "VulkanShader.h"

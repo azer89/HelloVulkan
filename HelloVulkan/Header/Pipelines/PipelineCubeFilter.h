@@ -1,7 +1,7 @@
 #ifndef RENDERER_CUBE_FILTER
 #define RENDERER_CUBE_FILTER
 
-#include "RendererBase.h"
+#include "PipelineBase.h"
 #include "VulkanImage.h"
 
 #include <string>

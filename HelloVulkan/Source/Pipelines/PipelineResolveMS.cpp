@@ -1,4 +1,4 @@
-#include "RendererResolveMS.h"
+#include "PipelineResolveMS.h"
 
 /*
 Resolves a multisampled color image to a singlesampled color image

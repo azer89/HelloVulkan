@@ -1,7 +1,7 @@
 #ifndef RENDERER_FINISH
 #define RENDERER_FINISH
 
-#include "RendererBase.h"
+#include "PipelineBase.h"
 
 class RendererFinish final : public RendererBase
 {

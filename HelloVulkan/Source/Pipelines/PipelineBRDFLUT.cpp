@@ -1,4 +1,4 @@
-#include "RendererBRDFLUT.h"
+#include "PipelineBRDFLUT.h"
 #include "VulkanShader.h"
 #include "Configs.h"
 
