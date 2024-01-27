@@ -1,5 +1,5 @@
-#include "VulkanDescriptor.h"
 
+#include "VulkanDescriptor.h"
 #include "VulkanUtility.h"
 
 void VulkanDescriptor::CreatePool(VulkanDevice& vkDev,
@@ -84,48 +84,9 @@ void VulkanDescriptor::CreateSet(
 	const std::vector<DescriptorWrite>& writes,
 	VkDescriptorSet* set)
 {
-	/*const VkDescriptorSetAllocateInfo allocInfo = {
-		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-		.pNext = nullptr,
-		.descriptorPool = pool_,
-		.descriptorSetCount = 1u,
-		.pSetLayouts = &layout_
-	};
-
-	VK_CHECK(vkAllocateDescriptorSets(vkDev.GetDevice(), &allocInfo, set));*/
-
 	AllocateSet(vkDev, set);
 
 	UpdateSet(vkDev, writes, set);
-
-	/*std::vector<VkWriteDescriptorSet> descriptorWrites;
-
-	uint32_t bindIndex = 0;
-
-	for (size_t i = 0; i < writes.size(); ++i)
-	{
-		descriptorWrites.push_back({
-			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-			.pNext = nullptr,
-			.dstSet = *set, // Dereference
-			.dstBinding = bindIndex++,
-			.dstArrayElement = 0,
-			.descriptorCount = 1,
-			.descriptorType = writes[i].type_,
-			.pImageInfo = writes[i].imageInfoPtr_,
-			.pBufferInfo = writes[i].bufferInfoPtr_,
-			.pTexelBufferView = nullptr
-		});
-	}
-
-	vkUpdateDescriptorSets
-	(
-		vkDev.GetDevice(),
-		static_cast<uint32_t>(descriptorWrites.size()),
-		descriptorWrites.data(),
-		0,
-		nullptr
-	);*/
 }
 
 void VulkanDescriptor::AllocateSet(VulkanDevice& vkDev, VkDescriptorSet* set)
