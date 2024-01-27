@@ -183,7 +183,7 @@ void PipelineBRDFLUT::CreateComputeDescriptorSetLayout(VulkanDevice& vkDev)
 	});
 }
 
-void PipelineBRDFLUT::CreateComputeDescriptorSet(VulkanDevice& vkDev/*, VkDescriptorSetLayout descriptorSetLayout*/)
+void PipelineBRDFLUT::CreateComputeDescriptorSet(VulkanDevice& vkDev)
 {
 	// Descriptor pool
 	// TODO Can be moved to constructor
