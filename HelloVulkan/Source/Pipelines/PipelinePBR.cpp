@@ -22,7 +22,6 @@ PipelinePBR::PipelinePBR(
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
 	PipelineBase(vkDev, 
-		//PipelineType::GraphicsOffScreen
 		{
 			.type_ = PipelineType::GraphicsOffScreen,
 			.msaaSamples_ = offscreenColorImage->multisampleCount_,
@@ -39,10 +38,8 @@ PipelinePBR::PipelinePBR(
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
 	
 	// Model UBO
-	uint32_t numMeshes = 0u;
 	for (Model* model : models_)
 	{
-		numMeshes += model->NumMeshes();
 		CreateUniformBuffers(vkDev, model->modelBuffers_, sizeof(ModelUBO));
 	}
 
@@ -58,15 +55,16 @@ PipelinePBR::PipelinePBR(
 		}, 
 		IsOffscreen());
 
-	SetupDescriptor(vkDev, numMeshes);
+	SetupDescriptor(vkDev);
 
 	// Push constants
-	std::vector<VkPushConstantRange> ranges(1u);
-	VkPushConstantRange& range = ranges.front();
-	range.offset = 0u;
-	range.size = sizeof(PushConstantPBR);
-	range.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-
+	std::vector<VkPushConstantRange> ranges =
+	{{
+		.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
+		.offset = 0u,
+		.size = sizeof(PushConstantPBR),
+	}};
+	
 	CreatePipelineLayout(vkDev.GetDevice(), descriptor_.layout_, &pipelineLayout_, ranges);
 
 	CreateGraphicsPipeline(
@@ -77,9 +75,7 @@ PipelinePBR::PipelinePBR(
 			AppConfig::ShaderFolder + "Mesh.vert",
 			AppConfig::ShaderFolder + "Mesh.frag"
 		},
-		&pipeline_//,
-		//true, // hasVertexBuffer
-		//multisampleCount // for multisampling
+		&pipeline_
 	);
 }
 
@@ -130,8 +126,14 @@ void PipelinePBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer command
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelinePBR::SetupDescriptor(VulkanDevice& vkDev, uint32_t numMeshes)
+void PipelinePBR::SetupDescriptor(VulkanDevice& vkDev)
 {
+	uint32_t numMeshes = 0u;
+	for (Model* model : models_)
+	{
+		numMeshes += model->NumMeshes();
+	}
+
 	// Pool
 	descriptor_.CreatePool(
 		vkDev,
