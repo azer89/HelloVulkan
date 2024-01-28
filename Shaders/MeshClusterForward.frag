@@ -130,8 +130,17 @@ float LinearDepth(float z)
 	float zNear = cfUBO.cameraNear;
 	float zFar = cfUBO.cameraFar;
 	return zNear * zFar / (zFar + z * (zNear - zFar));
-
 	//return ((-viewPos.z) - cfUBO.cameraNear) / (cfUBO.cameraFar - cfUBO.cameraNear);
+}
+
+float Attenuation(float d, float r)
+{
+	float f = 2.0;
+	float s = d / r;
+	float s2 = s * s;
+	float nom = pow(1.0 - s2, 2.0);
+	float denom = 1.0 + f * s;
+	return nom / denom;
 }
 
 vec3 Radiance(
@@ -148,7 +157,6 @@ vec3 Radiance(
 	vec3 Lo = vec3(0.0);
 
 	LightData light = inLights.data[lightIndex];
-	light.color *= pc.lightIntensity;
 
 	vec3 L = normalize(light.position.xyz - worldPos); // Incident light vector
 	vec3 H = normalize(V + L); // Halfway vector
@@ -156,8 +164,10 @@ vec3 Radiance(
 	float NoL = max(dot(N, L), 0.0);
 	float HoV = max(dot(H, V), 0.0);
 	float distance = length(light.position.xyz - worldPos);
-	float attenuation = 1.0 / (distance * distance);
-	vec3 radiance = light.color.xyz * attenuation;
+	//float attenuation = 1.0 / pow(distance, 2.0);
+	float attenuation = Attenuation(distance, light.radius);
+	
+	vec3 radiance = light.color.xyz * attenuation * pc.lightIntensity;
 
 	// Cook-Torrance BRDF
 	float D = DistributionGGX(NoH, roughness);

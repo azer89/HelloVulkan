@@ -44,7 +44,7 @@ const int indices[36] = int[36]
 
 void main()
 {
-	const float cubeSize = 20.0;
+	const float cubeSize = 50.0;
 	int idx = indices[gl_VertexIndex];
 	
 	mat4 mvp = frameUBO.cameraProjection * frameUBO.cameraView;

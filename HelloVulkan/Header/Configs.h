@@ -44,9 +44,9 @@ namespace IBLConfig
 
 namespace ClusterForwardConfig
 {
-	constexpr unsigned int sliceCountX = 16;
-	constexpr unsigned int sliceCountY = 9;
-	constexpr unsigned int sliceCountZ = 24;
+	constexpr unsigned int sliceCountX = 64;
+	constexpr unsigned int sliceCountY = 48;
+	constexpr unsigned int sliceCountZ = 50;
 	constexpr unsigned int numClusters = sliceCountX * sliceCountY * sliceCountZ;
 
 	// Note that this also has to be set inside the compute shader
