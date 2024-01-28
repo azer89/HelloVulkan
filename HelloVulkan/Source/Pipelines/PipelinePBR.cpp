@@ -58,24 +58,7 @@ PipelinePBR::PipelinePBR(
 		}, 
 		IsOffscreen());
 
-	descriptor_.CreatePool(
-		vkDev, 
-		{
-			.uboCount_ = UBO_COUNT * static_cast<uint32_t>(models_.size()),
-			.ssboCount_ = SSBO_COUNT,
-			.samplerCount_ = (PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT) * numMeshes,
-			.swapchainCount_ = static_cast<uint32_t>(vkDev.GetSwapchainImageCount()),
-			.setCountPerSwapchain_ = numMeshes,
-		});
-	CreateDescriptorLayout(vkDev);
-
-	for (Model* model : models_)
-	{
-		for (Mesh& mesh : model->meshes_)
-		{
-			CreateDescriptorSet(vkDev, model, mesh);
-		}
-	}
+	SetupDescriptor(vkDev, numMeshes);
 
 	// Push constants
 	std::vector<VkPushConstantRange> ranges(1u);
@@ -147,8 +130,20 @@ void PipelinePBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer command
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelinePBR::CreateDescriptorLayout(VulkanDevice& vkDev)
+void PipelinePBR::SetupDescriptor(VulkanDevice& vkDev, uint32_t numMeshes)
 {
+	// Pool
+	descriptor_.CreatePool(
+		vkDev,
+		{
+			.uboCount_ = UBO_COUNT * static_cast<uint32_t>(models_.size()),
+			.ssboCount_ = SSBO_COUNT,
+			.samplerCount_ = (PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT) * numMeshes,
+			.swapchainCount_ = static_cast<uint32_t>(vkDev.GetSwapchainImageCount()),
+			.setCountPerSwapchain_ = numMeshes,
+		});
+
+	// Layout
 	descriptor_.CreateLayout(vkDev,
 	{
 		{
@@ -167,6 +162,15 @@ void PipelinePBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 			.bindingCount_ = PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT
 		}
 	});
+
+	// Set
+	for (Model* model : models_)
+	{
+		for (Mesh& mesh : model->meshes_)
+		{
+			CreateDescriptorSet(vkDev, model, mesh);
+		}
+	}
 }
 
 // TODO Still quite convoluted
