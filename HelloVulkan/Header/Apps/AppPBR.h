@@ -40,7 +40,6 @@ private:
 	std::unique_ptr<PipelineImGui> imguiPtr_;
 
 	// PBR stuff
-	// TODO change to unique ptrs
 	VulkanImage environmentCubemap_;
 	VulkanImage diffuseCubemap_;
 	VulkanImage specularCubemap_;
