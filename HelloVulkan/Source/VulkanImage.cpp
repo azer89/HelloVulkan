@@ -35,13 +35,13 @@ void VulkanImage::CreateImageResources(
 		height_,
 		VK_IMAGE_LAYOUT_UNDEFINED);
 	CreateImageView(
-		vkDev.GetDevice(),
+		vkDev,
 		VK_FORMAT_R8G8B8A8_UNORM,
 		VK_IMAGE_ASPECT_COLOR_BIT,
 		VK_IMAGE_VIEW_TYPE_2D,
 		layerCount_,
 		mipCount_);
-	CreateDefaultSampler(vkDev.GetDevice(),
+	CreateDefaultSampler(vkDev,
 		0.f, // minLod
 		static_cast<float>(mipCount_)); // maxLod
 }
@@ -101,8 +101,8 @@ void VulkanImage::CreateColorResources(
 {
 	VkFormat format = vkDev.GetSwaphchainImageFormat();
 
-	CreateImage(vkDev.GetDevice(),
-		vkDev.GetPhysicalDevice(),
+	CreateImage(
+		vkDev,
 		width,
 		height,
 		1, // mip
@@ -115,10 +115,10 @@ void VulkanImage::CreateColorResources(
 		outputDiffuseSampleCount);
 
 	CreateImageView(
-		vkDev.GetDevice(),
+		vkDev,
 		format,
 		VK_IMAGE_ASPECT_COLOR_BIT);
-	CreateDefaultSampler(vkDev.GetDevice());
+	CreateDefaultSampler(vkDev);
 }
 
 void VulkanImage::CreateDepthResources(
@@ -129,8 +129,8 @@ void VulkanImage::CreateDepthResources(
 {
 	VkFormat depthFormat = vkDev.GetDepthFormat();
 
-	CreateImage(vkDev.GetDevice(),
-		vkDev.GetPhysicalDevice(),
+	CreateImage(
+		vkDev,
 		width,
 		height,
 		1, // mip
@@ -142,11 +142,13 @@ void VulkanImage::CreateDepthResources(
 		0u,
 		outputDiffuseSampleCount);
 
-	CreateImageView(vkDev.GetDevice(),
+	CreateImageView(
+		vkDev,
 		depthFormat,
 		VK_IMAGE_ASPECT_DEPTH_BIT);
 
-	TransitionImageLayout(vkDev, 
+	TransitionImageLayout(
+		vkDev, 
 		depthFormat, 
 		VK_IMAGE_LAYOUT_UNDEFINED, 
 		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
@@ -163,8 +165,7 @@ void VulkanImage::CreateImageFromData(
 	VkImageCreateFlags flags)
 {
 	CreateImage(
-		vkDev.GetDevice(), 
-		vkDev.GetPhysicalDevice(), 
+		vkDev, 
 		texWidth, 
 		texHeight, 
 		mipmapCount,
@@ -207,8 +208,7 @@ void VulkanImage::CopyBufferToImage(
 }
 
 void VulkanImage::CreateImage(
-	VkDevice device,
-	VkPhysicalDevice physicalDevice,
+	VulkanDevice& vkDev,
 	uint32_t width,
 	uint32_t height,
 	uint32_t mipCount,
@@ -245,24 +245,25 @@ void VulkanImage::CreateImage(
 		.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED
 	};
 
-	VK_CHECK(vkCreateImage(device, &imageInfo, nullptr, &image_));
+	VK_CHECK(vkCreateImage(vkDev.GetDevice(), &imageInfo, nullptr, &image_));
 
 	VkMemoryRequirements memRequirements;
-	vkGetImageMemoryRequirements(device, image_, &memRequirements);
+	vkGetImageMemoryRequirements(vkDev.GetDevice(), image_, &memRequirements);
 
 	const VkMemoryAllocateInfo allocInfo = {
 		.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
 		.pNext = nullptr,
 		.allocationSize = memRequirements.size,
-		.memoryTypeIndex = FindMemoryType(physicalDevice, memRequirements.memoryTypeBits, properties)
+		.memoryTypeIndex = FindMemoryType(vkDev.GetPhysicalDevice(), memRequirements.memoryTypeBits, properties)
 	};
 
-	VK_CHECK(vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory_));
+	VK_CHECK(vkAllocateMemory(vkDev.GetDevice(), &allocInfo, nullptr, &imageMemory_));
 
-	vkBindImageMemory(device, image_, imageMemory_, 0);
+	vkBindImageMemory(vkDev.GetDevice(), image_, imageMemory_, 0);
 }
 
-void VulkanImage::CreateImageView(VkDevice device, 
+void VulkanImage::CreateImageView(
+	VulkanDevice& vkDev, 
 	VkFormat format, 
 	VkImageAspectFlags aspectFlags, 
 	VkImageViewType viewType, 
@@ -294,11 +295,11 @@ void VulkanImage::CreateImageView(VkDevice device,
 		}
 	};
 
-	VK_CHECK(vkCreateImageView(device, &viewInfo, nullptr, &imageView_));
+	VK_CHECK(vkCreateImageView(vkDev.GetDevice(), &viewInfo, nullptr, &imageView_));
 }
 
 void VulkanImage::CreateDefaultSampler(
-	VkDevice device,
+	VulkanDevice& vkDev,
 	float minLod,
 	float maxLod,
 	VkFilter minFilter,
@@ -306,7 +307,7 @@ void VulkanImage::CreateDefaultSampler(
 	VkSamplerAddressMode addressMode)
 {
 	CreateSampler(
-		device,
+		vkDev,
 		defaultImageSampler_,
 		minLod,
 		maxLod,
@@ -317,7 +318,7 @@ void VulkanImage::CreateDefaultSampler(
 }
 
 void VulkanImage::CreateSampler(
-	VkDevice device,
+	VulkanDevice& vkDev,
 	VkSampler& sampler,
 	float minLod,
 	float maxLod,
@@ -346,7 +347,7 @@ void VulkanImage::CreateSampler(
 		.unnormalizedCoordinates = VK_FALSE
 	};
 
-	VK_CHECK(vkCreateSampler(device, &samplerInfo, nullptr, &sampler));
+	VK_CHECK(vkCreateSampler(vkDev.GetDevice(), &samplerInfo, nullptr, &sampler));
 }
 
 uint32_t VulkanImage::FindMemoryType(VkPhysicalDevice device, uint32_t typeFilter, VkMemoryPropertyFlags properties)

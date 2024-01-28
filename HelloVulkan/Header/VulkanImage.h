@@ -68,7 +68,7 @@ public:
 		const char* filename);
 
 	void CreateSampler(
-		VkDevice device,
+		VulkanDevice& vkDev,
 		VkSampler& sampler,
 		float minLod = 0.f,
 		float maxLod = 0.f,
@@ -77,7 +77,7 @@ public:
 		VkSamplerAddressMode addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
 
 	void CreateDefaultSampler(
-		VkDevice device,
+		VulkanDevice& vkDev,
 		float minLod = 0.f,
 		float maxLod = 0.f,
 		VkFilter minFilter = VK_FILTER_LINEAR,
@@ -85,8 +85,7 @@ public:
 		VkSamplerAddressMode addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
 
 	void CreateImage(
-		VkDevice device,
-		VkPhysicalDevice physicalDevice,
+		VulkanDevice& vkDev,
 		uint32_t width,
 		uint32_t height,
 		uint32_t mipCount,
@@ -129,7 +128,8 @@ public:
 		uint32_t height,
 		VkImageLayout currentImageLayout);
 
-	void CreateImageView(VkDevice device,
+	void CreateImageView(
+		VulkanDevice& vkDev,
 		VkFormat format,
 		VkImageAspectFlags aspectFlags,
 		VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_2D,

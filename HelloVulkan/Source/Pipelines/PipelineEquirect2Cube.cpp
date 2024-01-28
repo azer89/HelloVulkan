@@ -48,8 +48,7 @@ void PipelineEquirect2Cube::InitializeCubemap(VulkanDevice& vkDev, VulkanImage* 
 	uint32_t mipmapCount = NumMipMap(IBLConfig::InputCubeSideLength, IBLConfig::InputCubeSideLength);
 
 	cubemap->CreateImage(
-		vkDev.GetDevice(),
-		vkDev.GetPhysicalDevice(),
+		vkDev,
 		IBLConfig::InputCubeSideLength,
 		IBLConfig::InputCubeSideLength,
 		mipmapCount,
@@ -62,7 +61,7 @@ void PipelineEquirect2Cube::InitializeCubemap(VulkanDevice& vkDev, VulkanImage* 
 	);
 
 	cubemap->CreateImageView(
-		vkDev.GetDevice(),
+		vkDev,
 		VK_FORMAT_R32G32B32A32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT,
 		VK_IMAGE_VIEW_TYPE_CUBE,
@@ -74,11 +73,11 @@ void PipelineEquirect2Cube::InitializeHDRImage(VulkanDevice& vkDev, const std::s
 {
 	inputHDRImage_.CreateFromHDR(vkDev, hdrFile.c_str());
 	inputHDRImage_.CreateImageView(
-		vkDev.GetDevice(),
+		vkDev,
 		VK_FORMAT_R32G32B32A32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT);
 	inputHDRImage_.CreateDefaultSampler(
-		vkDev.GetDevice(),
+		vkDev,
 		0.f,
 		1.f);
 }
@@ -310,7 +309,7 @@ void PipelineEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanImage* ou
 	vkDev.EndSingleTimeCommands(commandBuffer);
 
 	// Create a sampler for the output cubemap
-	outputEnvMap->CreateDefaultSampler(vkDev.GetDevice());
+	outputEnvMap->CreateDefaultSampler(vkDev);
 
 	// Destroy image views
 	for (size_t i = 0; i < IBLConfig::LayerCount; i++)

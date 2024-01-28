@@ -60,14 +60,12 @@ void PipelineBRDFLUT::CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT)
 		1, // Layer count
 		VK_FORMAT_R32G32_SFLOAT);
 	outputLUT->CreateImageView(
-		vkDev.GetDevice(),
+		vkDev,
 		VK_FORMAT_R32G32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT
 	);
 
-	outputLUT->CreateDefaultSampler(
-		vkDev.GetDevice()
-	);
+	outputLUT->CreateDefaultSampler(vkDev);
 }
 
 void PipelineBRDFLUT::Execute(VulkanDevice& vkDev)

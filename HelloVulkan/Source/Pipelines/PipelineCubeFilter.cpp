@@ -25,7 +25,7 @@ PipelineCubeFilter::PipelineCubeFilter(
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	);
 	inputCubemap->CreateSampler(
-		vkDev.GetDevice(),
+		vkDev,
 		inputCubemapSampler_,
 		0.f,
 		static_cast<float>(inputNumMipmap)
@@ -96,8 +96,7 @@ void PipelineCubeFilter::InitializeOutputCubemap(
 	uint32_t inputCubeSideLength)
 {
 	outputDiffuseCubemap->CreateImage(
-		vkDev.GetDevice(),
-		vkDev.GetPhysicalDevice(),
+		vkDev,
 		inputCubeSideLength,
 		inputCubeSideLength,
 		numMipmap,
@@ -110,7 +109,7 @@ void PipelineCubeFilter::InitializeOutputCubemap(
 	);
 
 	outputDiffuseCubemap->CreateImageView(
-		vkDev.GetDevice(),
+		vkDev,
 		VK_FORMAT_R32G32B32A32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT,
 		VK_IMAGE_VIEW_TYPE_CUBE,
@@ -411,7 +410,7 @@ void PipelineCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 
 	// Create a sampler for the output cubemap
 	outputCubemap->CreateDefaultSampler(
-		vkDev.GetDevice(),
+		vkDev,
 		0.0f,
 		static_cast<float>(outputMipMapCount));
 }
