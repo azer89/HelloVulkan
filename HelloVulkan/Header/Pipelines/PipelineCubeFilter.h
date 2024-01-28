@@ -41,7 +41,7 @@ private:
 	// Two pipelines for each of diffuse and specular maps
 	std::vector<VkPipeline> graphicsPipelines_;
 
-	void SetupDescriptor(VulkanDevice& vkDev, VulkanImage* inputCubemap);
+	void CreateDescriptor(VulkanDevice& vkDev, VulkanImage* inputCubemap);
 
 	void InitializeOutputCubemap(VulkanDevice& vkDev, 
 		VulkanImage* outputDiffuseCubemap,

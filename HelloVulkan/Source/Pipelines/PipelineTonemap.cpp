@@ -14,19 +14,7 @@ PipelineTonemap::PipelineTonemap(VulkanDevice& vkDev,
 
 	framebuffer_.Create(vkDev, renderPass_.GetHandle(), {}, IsOffscreen());
 
-	descriptor_.CreatePool(
-		vkDev,
-		{
-			.uboCount_ = 0u,
-			.ssboCount_ = 0u,
-			.samplerCount_ = 1u,
-			.swapchainCount_ = static_cast<uint32_t>(vkDev.GetSwapchainImageCount()),
-			.setCountPerSwapchain_ = 1u,
-		});
-
-	CreateDescriptorLayout(vkDev);
-	AllocateDescriptorSets(vkDev);
-	UpdateDescriptorSets(vkDev);
+	CreateDescriptor(vkDev);
 
 	CreatePipelineLayout(vkDev.GetDevice(), descriptor_.layout_, &pipelineLayout_);
 
@@ -67,8 +55,20 @@ void PipelineTonemap::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer com
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelineTonemap::CreateDescriptorLayout(VulkanDevice& vkDev)
+void PipelineTonemap::CreateDescriptor(VulkanDevice& vkDev)
 {
+	// Pool
+	descriptor_.CreatePool(
+		vkDev,
+		{
+			.uboCount_ = 0u,
+			.ssboCount_ = 0u,
+			.samplerCount_ = 1u,
+			.swapchainCount_ = static_cast<uint32_t>(vkDev.GetSwapchainImageCount()),
+			.setCountPerSwapchain_ = 1u,
+		});
+
+	// Layout
 	descriptor_.CreateLayout(vkDev,
 	{
 		{
@@ -77,6 +77,10 @@ void PipelineTonemap::CreateDescriptorLayout(VulkanDevice& vkDev)
 			.bindingCount_ = 1
 		}
 	});
+
+	// Set
+	AllocateDescriptorSets(vkDev);
+	UpdateDescriptorSets(vkDev);
 }
 
 void PipelineTonemap::AllocateDescriptorSets(VulkanDevice& vkDev)

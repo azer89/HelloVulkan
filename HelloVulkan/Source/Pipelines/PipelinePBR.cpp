@@ -55,7 +55,7 @@ PipelinePBR::PipelinePBR(
 		}, 
 		IsOffscreen());
 
-	SetupDescriptor(vkDev);
+	CreateDescriptor(vkDev);
 
 	// Push constants
 	std::vector<VkPushConstantRange> ranges =
@@ -126,7 +126,7 @@ void PipelinePBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer command
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelinePBR::SetupDescriptor(VulkanDevice& vkDev)
+void PipelinePBR::CreateDescriptor(VulkanDevice& vkDev)
 {
 	uint32_t numMeshes = 0u;
 	for (Model* model : models_)

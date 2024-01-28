@@ -34,7 +34,7 @@ PipelineLight::PipelineLight(
 		IsOffscreen()
 	);
 
-	SetupDescriptor(vkDev);
+	CreateDescriptor(vkDev);
 
 	CreatePipelineLayout(vkDev.GetDevice(), descriptor_.layout_, &pipelineLayout_);
 
@@ -84,7 +84,7 @@ void PipelineLight::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer comma
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelineLight::SetupDescriptor(VulkanDevice& vkDev)
+void PipelineLight::CreateDescriptor(VulkanDevice& vkDev)
 {
 	// Pool
 	descriptor_.CreatePool(

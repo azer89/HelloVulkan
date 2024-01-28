@@ -22,7 +22,7 @@ public:
 	void RenderEnable(bool enable) { shouldRender_ = enable; }
 
 private:
-	void SetupDescriptor(VulkanDevice& vkDev);
+	void CreateDescriptor(VulkanDevice& vkDev);
 
 private:
 	Lights* lights_;

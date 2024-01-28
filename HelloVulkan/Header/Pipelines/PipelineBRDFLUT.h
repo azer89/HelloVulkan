@@ -26,7 +26,7 @@ private:
 	VkDescriptorSet descriptorSet_;
 
 private:
-	void SetupDescriptor(VulkanDevice& vkDev);
+	void CreateDescriptor(VulkanDevice& vkDev);
 };
 
 #endif

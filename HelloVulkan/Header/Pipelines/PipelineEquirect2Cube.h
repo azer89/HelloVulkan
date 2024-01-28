@@ -30,7 +30,7 @@ private:
 		VulkanImage* cubemap,
 		std::vector<VkImageView>& cubemapViews);
 
-	void SetupDescriptor(VulkanDevice& vkDev);
+	void CreateDescriptor(VulkanDevice& vkDev);
 
 	void CreateOffscreenGraphicsPipeline(
 		VulkanDevice& vkDev,

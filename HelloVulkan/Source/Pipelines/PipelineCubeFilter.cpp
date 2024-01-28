@@ -31,7 +31,7 @@ PipelineCubeFilter::PipelineCubeFilter(
 		static_cast<float>(inputNumMipmap)
 	);
 
-	SetupDescriptor(vkDev, inputCubemap);
+	CreateDescriptor(vkDev, inputCubemap);
 
 	// Push constants
 	std::vector<VkPushConstantRange> ranges =
@@ -118,7 +118,7 @@ void PipelineCubeFilter::InitializeOutputCubemap(
 		numMipmap);
 }
 
-void PipelineCubeFilter::SetupDescriptor(VulkanDevice& vkDev, VulkanImage* inputCubemap)
+void PipelineCubeFilter::CreateDescriptor(VulkanDevice& vkDev, VulkanImage* inputCubemap)
 {
 	// Pool
 	descriptor_.CreatePool(

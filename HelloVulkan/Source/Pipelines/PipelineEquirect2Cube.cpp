@@ -17,7 +17,7 @@ PipelineEquirect2Cube::PipelineEquirect2Cube(
 	InitializeHDRImage(vkDev, hdrFile);
 	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, IBLConfig::CubeFormat);
 
-	SetupDescriptor(vkDev);
+	CreateDescriptor(vkDev);
 
 	CreatePipelineLayout(vkDev.GetDevice(), descriptor_.layout_, &pipelineLayout_);
 
@@ -83,7 +83,7 @@ void PipelineEquirect2Cube::InitializeHDRImage(VulkanDevice& vkDev, const std::s
 		1.f);
 }
 
-void PipelineEquirect2Cube::SetupDescriptor(VulkanDevice& vkDev)
+void PipelineEquirect2Cube::CreateDescriptor(VulkanDevice& vkDev)
 {
 	// Pool
 	descriptor_.CreatePool(

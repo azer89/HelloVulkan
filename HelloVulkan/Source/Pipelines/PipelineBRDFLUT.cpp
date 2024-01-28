@@ -20,6 +20,7 @@ PipelineBRDFLUT::PipelineBRDFLUT(
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
+	// TODO Put inside CreateComputePipeline
 	std::string shaderFile = AppConfig::ShaderFolder + "BRDFLUT.comp";
 	VulkanShader shader;
 	shader.Create(vkDev.GetDevice(), shaderFile.c_str());
@@ -32,10 +33,11 @@ PipelineBRDFLUT::PipelineBRDFLUT(
 		.size = sizeof(PushConstantsBRDFLUT)
 	}};
 
-	SetupDescriptor(vkDev);
+	CreateDescriptor(vkDev);
 	CreatePipelineLayout(vkDev.GetDevice(), descriptor_.layout_, &pipelineLayout_, ranges);
 	CreateComputePipeline(vkDev.GetDevice(), shader.GetShaderModule());
 
+	// TODO Put inside CreateComputePipeline
 	shader.Destroy(vkDev.GetDevice());
 }
 
@@ -163,7 +165,7 @@ void PipelineBRDFLUT::Execute(VulkanDevice& vkDev)
 	VK_CHECK(vkQueueWaitIdle(vkDev.GetComputeQueue()));
 }
 
-void PipelineBRDFLUT::SetupDescriptor(VulkanDevice& vkDev)
+void PipelineBRDFLUT::CreateDescriptor(VulkanDevice& vkDev)
 {
 	// Pool
 	descriptor_.CreatePool(
