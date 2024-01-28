@@ -11,7 +11,12 @@ PipelineLight::PipelineLight(
 	VulkanImage* depthImage, 
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
-	PipelineBase(vkDev, PipelineFlags::GraphicsOffScreen), // Offscreen rendering
+	PipelineBase(vkDev, 
+		{
+			.flags_ = PipelineFlags::GraphicsOffScreen,
+			.msaaSamples_ = offscreenColorImage->multisampleCount_
+		}
+	), // Offscreen rendering
 	lights_(lights),
 	shouldRender_(true)
 {
@@ -50,9 +55,7 @@ PipelineLight::PipelineLight(
 			AppConfig::ShaderFolder + "LightCircle.vert",
 			AppConfig::ShaderFolder + "LightCircle.frag",
 		},
-		&pipeline_,
-		false, // has no vertex buffer
-		multisampleCount // For multisampling
+		&pipeline_
 		);
 }
 

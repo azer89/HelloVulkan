@@ -9,7 +9,10 @@ PipelineEquirect2Cube::PipelineEquirect2Cube(
 	const std::string& hdrFile) :
 	PipelineBase(
 		vkDev, 
-		PipelineFlags::GraphicsOffScreen)
+		{
+			.flags_ = PipelineFlags::GraphicsOffScreen
+		}
+	)
 {
 	InitializeHDRImage(vkDev, hdrFile);
 	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, IBLConfig::CubeFormat);

@@ -13,7 +13,12 @@ PipelineSkybox::PipelineSkybox(VulkanDevice& vkDev,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
-	PipelineBase(vkDev, PipelineFlags::GraphicsOffScreen),
+	PipelineBase(vkDev,
+		{
+			.flags_ = PipelineFlags::GraphicsOffScreen,
+			.msaaSamples_ = offscreenColorImage->multisampleCount_,
+			.vertexBufferBind_ = false,
+		}),
 	envCubemap_(envMap)
 {
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
@@ -53,9 +58,9 @@ PipelineSkybox::PipelineSkybox(VulkanDevice& vkDev,
 			AppConfig::ShaderFolder + "Cube.vert",
 			AppConfig::ShaderFolder + "Cube.frag",
 		},
-		&pipeline_,
-		false, // has no vertex buffer
-		multisampleCount // For multisampling
+		&pipeline_//,
+		//false, // has no vertex buffer
+		//multisampleCount // For multisampling
 		); 
 }
 

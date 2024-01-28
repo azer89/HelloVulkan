@@ -12,7 +12,11 @@ PipelineImGui::PipelineImGui(
 	VulkanDevice& vkDev,
 	VkInstance vulkanInstance,
 	GLFWwindow* glfwWindow) :
-	PipelineBase(vkDev, PipelineFlags::GraphicsOnScreen) // Onscreen
+	PipelineBase(vkDev, 
+		{
+			.flags_ = PipelineFlags::GraphicsOnScreen
+		}
+	)
 {
 	// Create render pass
 	renderPass_.CreateOnScreenColorOnlyRenderPass(vkDev);

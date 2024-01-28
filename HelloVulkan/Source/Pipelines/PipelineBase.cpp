@@ -10,9 +10,9 @@
 // Constructor
 PipelineBase::PipelineBase(
 	const VulkanDevice& vkDev,
-	PipelineFlags flags) :
+	PipelineConfig config) :
 	device_(vkDev.GetDevice()),
-	flags_(flags)
+	config_(config)
 {
 }
 
@@ -159,13 +159,7 @@ void PipelineBase::CreateGraphicsPipeline(
 	VkRenderPass renderPass,
 	VkPipelineLayout pipelineLayout,
 	const std::vector<std::string>& shaderFiles,
-	VkPipeline* pipeline,
-	bool hasVertexBuffer,
-	VkSampleCountFlagBits msaaSamples,
-	VkPrimitiveTopology topology,
-	bool useDepth,
-	bool useBlending,
-	uint32_t numPatchControlPoints)
+	VkPipeline* pipeline)
 {
 	std::vector<VulkanShader> shaderModules;
 	std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
@@ -189,7 +183,7 @@ void PipelineBase::CreateGraphicsPipeline(
 	std::vector<VkVertexInputAttributeDescription> attributeDescriptions = 
 		VertexData::GetAttributeDescriptions();
 
-	if (hasVertexBuffer)
+	if (config_.vertexBufferBind_)
 	{
 		pInfo.vertexInputInfo.vertexAttributeDescriptionCount = 
 			static_cast<uint32_t>(attributeDescriptions.size());
@@ -201,20 +195,20 @@ void PipelineBase::CreateGraphicsPipeline(
 			bindingDescriptions.data();
 	}
 	
-	pInfo.inputAssembly.topology = topology;
+	pInfo.inputAssembly.topology = config_.topology_;
 
 	pInfo.colorBlendAttachment.srcAlphaBlendFactor = 
-		useBlending ? VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA : VK_BLEND_FACTOR_ONE;
+		config_.useBlending_ ? VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA : VK_BLEND_FACTOR_ONE;
 
-	pInfo.depthStencil.depthTestEnable = static_cast<VkBool32>(useDepth ? VK_TRUE : VK_FALSE);
-	pInfo.depthStencil.depthWriteEnable = static_cast<VkBool32>(useDepth ? VK_TRUE : VK_FALSE);
+	pInfo.depthStencil.depthTestEnable = static_cast<VkBool32>(config_.depthTest_ ? VK_TRUE : VK_FALSE);
+	pInfo.depthStencil.depthWriteEnable = static_cast<VkBool32>(config_.depthWrite_ ? VK_TRUE : VK_FALSE);
 
-	pInfo.tessellationState.patchControlPoints = numPatchControlPoints;
+	pInfo.tessellationState.patchControlPoints = config_.PatchControlPointsCount_;
 
 	// Enable MSAA
-	if (msaaSamples != VK_SAMPLE_COUNT_1_BIT)
+	if (config_.msaaSamples_ != VK_SAMPLE_COUNT_1_BIT)
 	{
-		pInfo.multisampling.rasterizationSamples = msaaSamples;
+		pInfo.multisampling.rasterizationSamples = config_.msaaSamples_;
 		pInfo.multisampling.sampleShadingEnable = VK_TRUE;
 		pInfo.multisampling.minSampleShading = 0.25f;
 	}
@@ -229,11 +223,11 @@ void PipelineBase::CreateGraphicsPipeline(
 		.pStages = shaderStages.data(),
 		.pVertexInputState = &pInfo.vertexInputInfo,
 		.pInputAssemblyState = &pInfo.inputAssembly,
-		.pTessellationState = (topology == VK_PRIMITIVE_TOPOLOGY_PATCH_LIST) ? &pInfo.tessellationState : nullptr,
+		.pTessellationState = (config_.topology_ == VK_PRIMITIVE_TOPOLOGY_PATCH_LIST) ? &pInfo.tessellationState : nullptr,
 		.pViewportState = &pInfo.viewportState,
 		.pRasterizationState = &pInfo.rasterizer,
 		.pMultisampleState = &pInfo.multisampling,
-		.pDepthStencilState = useDepth ? &pInfo.depthStencil : nullptr,
+		.pDepthStencilState = config_.depthTest_ ? &pInfo.depthStencil : nullptr,
 		.pColorBlendState = &pInfo.colorBlending,
 		.pDynamicState = &pInfo.dynamicState,
 		.layout = pipelineLayout,

@@ -4,7 +4,10 @@
 
 PipelineTonemap::PipelineTonemap(VulkanDevice& vkDev,
 	VulkanImage* singleSampledColorImage) :
-	PipelineBase(vkDev, PipelineFlags::GraphicsOnScreen),
+	PipelineBase(vkDev,
+		{
+			.flags_ = PipelineFlags::GraphicsOnScreen
+		}),
 	singleSampledColorImage_(singleSampledColorImage)
 {
 	renderPass_.CreateOnScreenColorOnlyRenderPass(vkDev);

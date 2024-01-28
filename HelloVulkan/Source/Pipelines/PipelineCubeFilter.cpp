@@ -6,7 +6,11 @@
 
 PipelineCubeFilter::PipelineCubeFilter(
 	VulkanDevice& vkDev, VulkanImage* inputCubemap) :
-	PipelineBase(vkDev, PipelineFlags::GraphicsOffScreen) // Offscreen
+	PipelineBase(vkDev, 
+		{
+			.flags_ = PipelineFlags::GraphicsOffScreen
+		}
+	) 
 {
 	// Create cube render pass
 	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, IBLConfig::CubeFormat);

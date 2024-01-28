@@ -4,8 +4,9 @@
 PipelineClear::PipelineClear(VulkanDevice& vkDev) :
 	PipelineBase(
 		vkDev,
-		PipelineFlags::GraphicsOnScreen // Onscreen
-		)
+		{
+		.flags_ = PipelineFlags::GraphicsOnScreen
+		})
 {
 	renderPass_.CreateOnScreenColorOnlyRenderPass(vkDev, RenderPassBit::ColorClear);
 	framebuffer_.Create(vkDev, renderPass_.GetHandle(), {}, IsOffscreen());

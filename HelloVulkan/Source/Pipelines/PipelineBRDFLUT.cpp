@@ -11,7 +11,10 @@ struct PushConstantsBRDFLUT
 
 PipelineBRDFLUT::PipelineBRDFLUT(
 	VulkanDevice& vkDev) :
-	PipelineBase(vkDev, PipelineFlags::Compute)
+	PipelineBase(vkDev, 
+	{
+		.flags_ = PipelineFlags::Compute
+	})
 {
 	outBuffer_.CreateSharedBuffer(vkDev, IBLConfig::LUTBufferSize,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,

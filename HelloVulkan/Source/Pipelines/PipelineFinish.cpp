@@ -4,9 +4,12 @@
 /*
 	Present swapchain image 
 */
-PipelineFinish::PipelineFinish(VulkanDevice& vkDev) : 
-	PipelineBase(vkDev, 
-		PipelineFlags::GraphicsOnScreen) // Onscreen
+PipelineFinish::PipelineFinish(VulkanDevice& vkDev) :
+	PipelineBase(vkDev,
+		{
+			.flags_ = PipelineFlags::GraphicsOnScreen
+		}
+	)
 {
 	renderPass_.CreateOnScreenColorOnlyRenderPass(
 		vkDev, 

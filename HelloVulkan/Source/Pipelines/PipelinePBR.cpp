@@ -21,7 +21,14 @@ PipelinePBR::PipelinePBR(
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
-	PipelineBase(vkDev, PipelineFlags::GraphicsOffScreen), // Offscreen
+	PipelineBase(vkDev, 
+		//PipelineFlags::GraphicsOffScreen
+		{
+			.flags_ = PipelineFlags::GraphicsOffScreen,
+			.msaaSamples_ = offscreenColorImage->multisampleCount_,
+			.vertexBufferBind_ = true,
+		}
+	),
 	models_(models),
 	lights_(lights),
 	specularCubemap_(specularMap),
@@ -90,9 +97,9 @@ PipelinePBR::PipelinePBR(
 			AppConfig::ShaderFolder + "Mesh.vert",
 			AppConfig::ShaderFolder + "Mesh.frag"
 		},
-		&pipeline_,
-		true, // hasVertexBuffer
-		multisampleCount // for multisampling
+		&pipeline_//,
+		//true, // hasVertexBuffer
+		//multisampleCount // for multisampling
 	);
 }
 
