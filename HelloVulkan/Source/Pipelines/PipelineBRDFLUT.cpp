@@ -22,12 +22,12 @@ PipelineBRDFLUT::PipelineBRDFLUT(
 	shader.Create(vkDev.GetDevice(), shaderFile.c_str());
 
 	// Push constants
-	// TODO ranges can be simplified
-	std::vector<VkPushConstantRange> ranges(1u);
-	VkPushConstantRange& range = ranges.front();
-	range.offset = 0u;
-	range.size = sizeof(PushConstantsBRDFLUT);
-	range.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
+	std::vector<VkPushConstantRange> ranges =
+	{{
+		.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT,
+		.offset = 0u,
+		.size = sizeof(PushConstantsBRDFLUT)
+	}};
 
 	CreateComputeDescriptorSetLayout(vkDev);
 	CreateComputeDescriptorSet(vkDev);
