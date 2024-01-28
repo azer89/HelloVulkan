@@ -103,6 +103,12 @@ vec3 DEBUG_COLORS[8] = vec3[](
 	vec3(0, 0.04, 0.04)
 );
 
+vec3 DEBUG_COLORS_2[8] = vec3[](
+   vec3(1, 0, 0), vec3(0, 0, 1), vec3(0, 1, 0), vec3(0, 1, 1),
+   vec3(1, 0, 0), vec3(1, 0, 1), vec3(1, 1, 0), vec3(1, 1, 1)
+);
+
+
 // Tangent-normals to world-space
 vec3 GetNormalFromMap(vec3 tangentNormal, vec3 worldPos, vec3 normal, vec2 texCoord)
 {
@@ -119,22 +125,31 @@ vec3 GetNormalFromMap(vec3 tangentNormal, vec3 worldPos, vec3 normal, vec2 texCo
 	return normalize(TBN * tangentNormal);
 }
 
-float LinearDepth()
+float LinearDepth(float z)
 {
-	/*float depthRange = 2.0 * depthSample - 1.0;
+	float depthRange = 2.0 * z - 1.0;
 	float zNear = cfUBO.cameraNear;
 	float zFar = cfUBO.cameraFar;
 	float linear = 2.0 * zNear * zFar / (zFar + zNear - depthRange * (zFar - zNear));
-	return linear;*/
+	return linear;
 
 	// viewPos
-	return (-viewPos.z - cfUBO.cameraNear) / (cfUBO.cameraFar - cfUBO.cameraNear);
+	//return (-viewPos.z - cfUBO.cameraNear) / (cfUBO.cameraFar - cfUBO.cameraNear);
+
+	//float z_ndc = z * 2.0 - 1.0;
+	//float z_clip = z_ndc / w;
+	//float depth = (z_clip + cfUBO.cameraNear) / (cfUBO.cameraFar + cfUBO.cameraNear);
+
+	//float z = depth * 2.0 - 1.0; // back to NDC 
+	//return (2.0 * near * far) / (far + near - z * (far - near));
+
+	//return depth;
 }
 
 void main()
 {
 	//uint zIndex = uint(max(log2(LinearDepth(gl_FragCoord.z)) * cfUBO.sliceScaling + cfUBO.sliceBias, 0.0));
-	float linDepth = LinearDepth();
+	float linDepth = LinearDepth(gl_FragCoord.z);
 	float zIndexFloat = cfUBO.sliceCountZ * log2(linDepth / cfUBO.cameraNear) / log2(cfUBO.cameraFar / cfUBO.cameraNear);
 	uint zIndex = uint(max(zIndexFloat, 0.0));
 
@@ -259,7 +274,7 @@ void main()
 	//float linDepth = LinearDepth(gl_FragCoord.z);
 	//fragColor = vec4(linDepth, linDepth, linDepth, 1.0);
 
-	//fragColor = vec4(color, 1.0) + vec4(DEBUG_COLORS[uint(mod(float(cluster.x + cluster.y + cluster.z), 8.0))], 0.0);
+	//fragColor = vec4(color, 1.0) + vec4(DEBUG_COLORS_2[uint(mod(float(zIndex), 8.0))], 0.0);
 	//float cLightCount = 1.0 - (float(lightCount) / 50.0);
 	//fragColor = vec4(color, 1.0) + vec4(cLightCount * 0.1, 0.0, 0.0, 0.0);
 }
