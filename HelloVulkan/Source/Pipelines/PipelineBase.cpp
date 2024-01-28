@@ -41,17 +41,12 @@ void PipelineBase::CreateUniformBuffers(
 	buffers.resize(swapChainImageSize);
 	for (size_t i = 0; i < swapChainImageSize; i++)
 	{
-		bool res = buffers[i].CreateBuffer(
-			vkDev.GetDevice(),
-			vkDev.GetPhysicalDevice(),
+		buffers[i].CreateBuffer(
+			vkDev,
 			uniformDataSize,
 			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 		);
-		if (!res)
-		{
-			std::cerr << "Cannot create uniform buffer\n";
-		}
 	}
 }
 

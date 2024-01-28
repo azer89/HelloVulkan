@@ -100,8 +100,7 @@ void Mesh::AllocateVertexBuffer(
 {
 	VulkanBuffer stagingBuffer;
 	stagingBuffer.CreateBuffer(
-		vkDev.GetDevice(),
-		vkDev.GetPhysicalDevice(),
+		vkDev,
 		vertexBufferSize_,
 		VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
@@ -113,8 +112,7 @@ void Mesh::AllocateVertexBuffer(
 	vkUnmapMemory(vkDev.GetDevice(), stagingBuffer.bufferMemory_);
 
 	vertexBuffer_.CreateBuffer(
-		vkDev.GetDevice(),
-		vkDev.GetPhysicalDevice(),
+		vkDev,
 		vertexBufferSize_,
 		VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
@@ -129,8 +127,7 @@ void Mesh::AllocateIndexBuffer(
 {
 	VulkanBuffer stagingBuffer;
 	stagingBuffer.CreateBuffer(
-		vkDev.GetDevice(),
-		vkDev.GetPhysicalDevice(),
+		vkDev,
 		indexBufferSize_,
 		VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
@@ -142,8 +139,7 @@ void Mesh::AllocateIndexBuffer(
 	vkUnmapMemory(vkDev.GetDevice(), stagingBuffer.bufferMemory_);
 
 	indexBuffer_.CreateBuffer(
-		vkDev.GetDevice(),
-		vkDev.GetPhysicalDevice(),
+		vkDev,
 		indexBufferSize_,
 		VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
@@ -161,8 +157,7 @@ size_t Mesh::AllocateSSBOBuffer(
 
 	VulkanBuffer stagingBuffer;
 	stagingBuffer.CreateBuffer(
-		vkDev.GetDevice(),
-		vkDev.GetPhysicalDevice(),
+		vkDev,
 		bufferSize,
 		VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
@@ -175,8 +170,7 @@ size_t Mesh::AllocateSSBOBuffer(
 	vkUnmapMemory(vkDev.GetDevice(), stagingBuffer.bufferMemory_);
 
 	storageBuffer_.CreateBuffer(
-		vkDev.GetDevice(),
-		vkDev.GetPhysicalDevice(),
+		vkDev,
 		bufferSize,
 		VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
