@@ -3,6 +3,7 @@
 layout(location = 0) in vec3 worldPos;
 layout(location = 1) in vec2 texCoord;
 layout(location = 2) in vec3 normal;
+layout(location = 3) in vec3 viewPos;
 
 layout(location = 0) out vec4 fragColor;
 
@@ -118,18 +119,24 @@ vec3 GetNormalFromMap(vec3 tangentNormal, vec3 worldPos, vec3 normal, vec2 texCo
 	return normalize(TBN * tangentNormal);
 }
 
-float LinearDepth(float depthSample)
+float LinearDepth()
 {
-	float depthRange = 2.0 * depthSample - 1.0;
+	/*float depthRange = 2.0 * depthSample - 1.0;
 	float zNear = cfUBO.cameraNear;
 	float zFar = cfUBO.cameraFar;
 	float linear = 2.0 * zNear * zFar / (zFar + zNear - depthRange * (zFar - zNear));
-	return linear;
+	return linear;*/
+
+	// viewPos
+	return (-viewPos.z - cfUBO.cameraNear) / (cfUBO.cameraFar - cfUBO.cameraNear);
 }
 
 void main()
 {
-	uint zIndex = uint(max(log2(LinearDepth(gl_FragCoord.z)) * cfUBO.sliceScaling + cfUBO.sliceBias, 0.0));
+	//uint zIndex = uint(max(log2(LinearDepth(gl_FragCoord.z)) * cfUBO.sliceScaling + cfUBO.sliceBias, 0.0));
+	float linDepth = LinearDepth();
+	float zIndexFloat = cfUBO.sliceCountZ * log2(linDepth / cfUBO.cameraNear) / log2(cfUBO.cameraFar / cfUBO.cameraNear);
+	uint zIndex = uint(max(zIndexFloat, 0.0));
 
 	vec2 tileSize = 
 		vec2(cfUBO.screenSize.x / float(cfUBO.sliceCountX), 
