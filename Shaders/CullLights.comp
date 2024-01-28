@@ -23,9 +23,8 @@ struct LightData
 };
 layout(set = 0, binding = 1) buffer Lights 
 { 
-	LightData data[]; 
-}
-lights;
+	LightData lights[]; 
+};
 
 // SSBO 
 layout(set = 0, binding = 2) buffer AtomicCounter
@@ -93,14 +92,20 @@ float SquaredDistancePointAABB(vec3 point, uint tile)
 	return sqDist;
 }
 
-bool TestSphereAABB(uint light, uint tile)
+bool TestSphereAABB(uint lightIndex, uint tile)
 {
-	float radius = lights.data[light].radius;
-	vec4 posWorld = lights.data[light].position;
+	if (lightIndex >= lights.length())
+	{
+		return false;
+	}
+
+	float lightRadius = lights[lightIndex].radius;
+	float lightRadius2 = pow(lightRadius, 2.0);
+	vec4 posWorld = lights[lightIndex].position;
 	vec4 posView = ubo.cameraView * posWorld;
 	float squaredDistance = SquaredDistancePointAABB(posView.xyz, tile);
 
-	return squaredDistance <= (radius * radius);
+	return squaredDistance < lightRadius2;
 }
 
 void main()
@@ -112,7 +117,7 @@ void main()
 
 	uint visibleLightIndices[MAX_LIGHTS_PER_CLUSTER];
 
-	uint numAllLights = lights.data.length();
+	uint numAllLights = lights.length();
 	
 	uint lightIter = 0;
 	for (uint i = 0; i < numAllLights && lightIter < MAX_LIGHTS_PER_CLUSTER; ++i)
