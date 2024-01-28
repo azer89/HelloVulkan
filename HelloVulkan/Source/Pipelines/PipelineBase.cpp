@@ -206,9 +206,13 @@ void PipelineBase::CreateGraphicsPipeline(
 }
 
 void PipelineBase::CreateComputePipeline(
-	VkDevice device,
-	VkShaderModule computeShader)
+	VulkanDevice& vkDev,
+	const std::string& shaderFile)
+	//VkShaderModule computeShader)
 {
+	VulkanShader shader;
+	shader.Create(vkDev.GetDevice(), shaderFile.c_str());
+
 	VkComputePipelineCreateInfo computePipelineCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
 		.pNext = nullptr,
@@ -218,7 +222,7 @@ void PipelineBase::CreateComputePipeline(
 			.pNext = nullptr,
 			.flags = 0,
 			.stage = VK_SHADER_STAGE_COMPUTE_BIT,
-			.module = computeShader,
+			.module = shader.GetShaderModule(),
 			.pName = "main",
 			.pSpecializationInfo = nullptr
 		},
@@ -227,7 +231,9 @@ void PipelineBase::CreateComputePipeline(
 		.basePipelineIndex = 0
 	};
 
-	VK_CHECK(vkCreateComputePipelines(device, 0, 1, &computePipelineCreateInfo, nullptr, &pipeline_));
+	VK_CHECK(vkCreateComputePipelines(vkDev.GetDevice(), 0, 1, &computePipelineCreateInfo, nullptr, &pipeline_));
+
+	shader.Destroy(vkDev.GetDevice());
 }
 
 void PipelineBase::UpdateUniformBuffer(

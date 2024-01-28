@@ -91,8 +91,9 @@ protected:
 		VkPipeline* pipeline);
 
 	void CreateComputePipeline(
-		VkDevice device,
-		VkShaderModule computeShader);
+		VulkanDevice& vkDev,
+		const std::string& shaderFile);
+		//VkShaderModule computeShader);
 };
 
 #endif
