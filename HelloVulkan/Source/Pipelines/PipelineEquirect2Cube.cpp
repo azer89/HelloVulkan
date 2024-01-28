@@ -17,19 +17,8 @@ PipelineEquirect2Cube::PipelineEquirect2Cube(
 	InitializeHDRImage(vkDev, hdrFile);
 	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, IBLConfig::CubeFormat);
 
-	descriptor_.CreatePool(
-		vkDev,
-		{
-			.uboCount_ = 0u,
-			.ssboCount_ = 0u,
-			.samplerCount_ = 1u,
-			.swapchainCount_ = 1u,
-			.setCountPerSwapchain_ = 1u,
-			.flags_ = 0
-		});
+	SetupDescriptor(vkDev);
 
-	CreateDescriptorLayout(vkDev);
-	CreateDescriptorSet(vkDev);
 	CreatePipelineLayout(vkDev.GetDevice(), descriptor_.layout_, &pipelineLayout_);
 
 	CreateOffscreenGraphicsPipeline(
@@ -94,8 +83,21 @@ void PipelineEquirect2Cube::InitializeHDRImage(VulkanDevice& vkDev, const std::s
 		1.f);
 }
 
-void PipelineEquirect2Cube::CreateDescriptorLayout(VulkanDevice& vkDev)
+void PipelineEquirect2Cube::SetupDescriptor(VulkanDevice& vkDev)
 {
+	// Pool
+	descriptor_.CreatePool(
+		vkDev,
+		{
+			.uboCount_ = 0u,
+			.ssboCount_ = 0u,
+			.samplerCount_ = 1u,
+			.swapchainCount_ = 1u,
+			.setCountPerSwapchain_ = 1u,
+			.flags_ = 0
+		});
+
+	// Layout
 	descriptor_.CreateLayout(vkDev,
 	{
 		{
@@ -104,10 +106,8 @@ void PipelineEquirect2Cube::CreateDescriptorLayout(VulkanDevice& vkDev)
 			.bindingCount_ = 1
 		}
 	});
-}
 
-void PipelineEquirect2Cube::CreateDescriptorSet(VulkanDevice& vkDev)
-{
+	// Set
 	VkDescriptorImageInfo imageInfo = inputHDRImage_.GetDescriptorImageInfo();
 
 	descriptor_.CreateSet(
