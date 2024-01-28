@@ -4,7 +4,7 @@
 layout(location = 0) out vec2 fragOffset;
 layout(location = 1) out vec4 circleColor;
 
-layout(binding = 0) uniform PerFrameUBO
+layout(set = 0, binding = 0) uniform PerFrameUBO
 {
 	mat4 cameraProjection;
 	mat4 cameraView;

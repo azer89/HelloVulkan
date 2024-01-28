@@ -6,7 +6,7 @@ Vertex shader to generate a cube
 
 layout(location = 0) out vec3 direction;
 
-layout(binding = 0) uniform PerFrameUBO
+layout(set = 0, binding = 0) uniform PerFrameUBO
 {
 	mat4 cameraProjection;
 	mat4 cameraView;
@@ -45,7 +45,7 @@ const int indices[36] = int[36]
 void main()
 {
 	// TODO Remove this variable and there's something wrong
-	// with depth culling when depth is exactly 1.0
+	// with culling when depth is exactly 1.0
 	const float cubeSize = 50.0;
 
 	int idx = indices[gl_VertexIndex];

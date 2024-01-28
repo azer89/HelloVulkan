@@ -9,7 +9,7 @@ layout(location = 0) in vec2 texCoord;
 
 layout(location = 0) out vec4 fragColor;
 
-layout(binding = 0) uniform sampler2D colorImage;
+layout(set = 0, binding = 0) uniform sampler2D colorImage;
 
 const float GAMMA = 2.2;
 const float PURE_WHITE = 1.0;

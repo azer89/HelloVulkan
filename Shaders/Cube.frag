@@ -8,7 +8,7 @@ layout(location = 0) in vec3 direction;
 
 layout(location = 0) out vec4 fragColor;
 
-layout(binding = 1) uniform samplerCube cubeMap;
+layout(set = 0, binding = 1) uniform samplerCube cubeMap;
 
 void main()
 {

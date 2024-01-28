@@ -42,12 +42,12 @@ PipelineCubeFilter::PipelineCubeFilter(
 	CreateDescriptorSet(vkDev, inputCubemap);
 
 	// Push constants
-	// TODO Can be simplified
-	std::vector<VkPushConstantRange> ranges(1u);
-	VkPushConstantRange& range = ranges.front();
-	range.offset = 0u;
-	range.size = sizeof(PushConstantCubeFilter);
-	range.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+	std::vector<VkPushConstantRange> ranges =
+	{{
+		.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
+		.offset = 0u,
+		.size = sizeof(PushConstantCubeFilter)
+	}};
 
 	// Pipeline layout
 	CreatePipelineLayout(vkDev.GetDevice(), descriptor_.layout_, &pipelineLayout_, ranges);
