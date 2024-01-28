@@ -127,23 +127,11 @@ vec3 GetNormalFromMap(vec3 tangentNormal, vec3 worldPos, vec3 normal, vec2 texCo
 
 float LinearDepth(float z)
 {
-	float depthRange = 2.0 * z - 1.0;
 	float zNear = cfUBO.cameraNear;
 	float zFar = cfUBO.cameraFar;
-	float linear = 2.0 * zNear * zFar / (zFar + zNear - depthRange * (zFar - zNear));
-	return linear;
+	return zNear * zFar / (zFar + z * (zNear - zFar));
 
-	// viewPos
-	//return (-viewPos.z - cfUBO.cameraNear) / (cfUBO.cameraFar - cfUBO.cameraNear);
-
-	//float z_ndc = z * 2.0 - 1.0;
-	//float z_clip = z_ndc / w;
-	//float depth = (z_clip + cfUBO.cameraNear) / (cfUBO.cameraFar + cfUBO.cameraNear);
-
-	//float z = depth * 2.0 - 1.0; // back to NDC 
-	//return (2.0 * near * far) / (far + near - z * (far - near));
-
-	//return depth;
+	//return ((-viewPos.z) - cfUBO.cameraNear) / (cfUBO.cameraFar - cfUBO.cameraNear);
 }
 
 void main()
@@ -272,7 +260,7 @@ void main()
 	//fragColor = vec4(lightCountColor, lightCountColor, lightCountColor, 1.0);
 
 	//float linDepth = LinearDepth(gl_FragCoord.z);
-	//fragColor = vec4(linDepth, linDepth, linDepth, 1.0);
+	fragColor = vec4(linDepth, linDepth, linDepth, 1.0);
 
 	//fragColor = vec4(color, 1.0) + vec4(DEBUG_COLORS_2[uint(mod(float(zIndex), 8.0))], 0.0);
 	//float cLightCount = 1.0 - (float(lightCount) / 50.0);
