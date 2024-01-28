@@ -83,52 +83,6 @@ void PipelineBase::OnWindowResized(VulkanDevice& vkDev)
 	
 }
 
-void PipelineBase::CreateDescriptorPool(
-	VulkanDevice& vkDev,
-	uint32_t uniformBufferCount,
-	uint32_t storageBufferCount,
-	uint32_t samplerCount,
-	uint32_t setCountPerSwapchain,
-	VkDescriptorPool* descriptorPool,
-	VkDescriptorPoolCreateFlags flags)
-{
-	const uint32_t imageCount = static_cast<uint32_t>(vkDev.GetSwapchainImageCount());
-
-	std::vector<VkDescriptorPoolSize> poolSizes;
-
-	if (uniformBufferCount)
-		poolSizes.push_back(VkDescriptorPoolSize
-			{ 
-				.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 
-				.descriptorCount = imageCount * uniformBufferCount 
-			});
-
-	if (storageBufferCount)
-		poolSizes.push_back(VkDescriptorPoolSize
-			{
-				.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 
-				.descriptorCount = imageCount * storageBufferCount 
-			});
-
-	if (samplerCount)
-		poolSizes.push_back(VkDescriptorPoolSize
-			{
-				.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 
-				.descriptorCount = imageCount * samplerCount 
-			});
-
-	const VkDescriptorPoolCreateInfo poolInfo = {
-		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = flags,
-		.maxSets = static_cast<uint32_t>(imageCount * setCountPerSwapchain),
-		.poolSizeCount = static_cast<uint32_t>(poolSizes.size()),
-		.pPoolSizes = poolSizes.empty() ? nullptr : poolSizes.data()
-	};
-
-	VK_CHECK(vkCreateDescriptorPool(vkDev.GetDevice(), &poolInfo, nullptr, descriptorPool));
-}
-
 void PipelineBase::CreatePipelineLayout(
 	VkDevice device, 
 	VkDescriptorSetLayout dsLayout, 

@@ -40,9 +40,6 @@ public:
 protected:
 	VkDevice device_ = nullptr;
 
-	// Offscreen rendering
-	PipelineType flags_;
-
 	VulkanFramebuffer framebuffer_;
 
 	VulkanDescriptor descriptor_;
@@ -80,15 +77,6 @@ protected:
 		VulkanBuffer& buffer,
 		const void* data,
 		const size_t dataSize);
-
-	void CreateDescriptorPool(
-		VulkanDevice& vkDev,
-		uint32_t uniformBufferCount,
-		uint32_t storageBufferCount,
-		uint32_t samplerCount,
-		uint32_t setCountPerSwapchain,
-		VkDescriptorPool* descriptorPool,
-		VkDescriptorPoolCreateFlags flags = 0);
 
 	void CreatePipelineLayout(VkDevice device,
 		VkDescriptorSetLayout dsLayout, 
