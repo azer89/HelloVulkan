@@ -6,7 +6,7 @@ layout(location = 2) in vec3 normal;
 
 layout(location = 0) out vec4 fragColor;
 
-layout(binding = 0) uniform PerFrameUBO
+layout(set = 0, binding = 0) uniform PerFrameUBO
 {
 	mat4 cameraProjection;
 	mat4 cameraView;
@@ -28,18 +28,18 @@ struct LightData
 	vec4 position;
 	vec4 color;
 };
-layout(binding = 2) readonly buffer Lights { LightData data []; } inLights;
+layout(set = 0, binding = 2) readonly buffer Lights { LightData data []; } inLights;
 
-layout(binding = 3) uniform sampler2D textureAlbedo;
-layout(binding = 4) uniform sampler2D textureNormal;
-layout(binding = 5) uniform sampler2D textureMetalness;
-layout(binding = 6) uniform sampler2D textureRoughness;
-layout(binding = 7) uniform sampler2D textureAO;
-layout(binding = 8) uniform sampler2D textureEmissive;
+layout(set = 0, binding = 3) uniform sampler2D textureAlbedo;
+layout(set = 0, binding = 4) uniform sampler2D textureNormal;
+layout(set = 0, binding = 5) uniform sampler2D textureMetalness;
+layout(set = 0, binding = 6) uniform sampler2D textureRoughness;
+layout(set = 0, binding = 7) uniform sampler2D textureAO;
+layout(set = 0, binding = 8) uniform sampler2D textureEmissive;
 
-layout(binding = 9) uniform samplerCube specularMap;
-layout(binding = 10) uniform samplerCube diffuseMap;
-layout(binding = 11) uniform sampler2D brdfLUT;
+layout(set = 0, binding = 9) uniform samplerCube specularMap;
+layout(set = 0, binding = 10) uniform samplerCube diffuseMap;
+layout(set = 0, binding = 11) uniform sampler2D brdfLUT;
 
 // Include files
 #include <PBRHeader.frag>

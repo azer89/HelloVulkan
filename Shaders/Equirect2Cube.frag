@@ -10,8 +10,6 @@ This shader is based on:
 
 #define PI 3.1415926535897932384626433832795
 
-layout(set = 0, binding = 0) uniform sampler2D envMap;
-
 layout(location = 0) in vec2 texCoord;
 
 layout(location = 0) out vec4 cubeFace0;
@@ -20,6 +18,8 @@ layout(location = 2) out vec4 cubeFace2;
 layout(location = 3) out vec4 cubeFace3;
 layout(location = 4) out vec4 cubeFace4;
 layout(location = 5) out vec4 cubeFace5;
+
+layout(set = 0, binding = 0) uniform sampler2D envMap;
 
 void WriteFace(int face, vec3 colorIn)
 {
