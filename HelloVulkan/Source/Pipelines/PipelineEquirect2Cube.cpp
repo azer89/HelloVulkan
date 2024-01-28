@@ -10,7 +10,7 @@ PipelineEquirect2Cube::PipelineEquirect2Cube(
 	PipelineBase(
 		vkDev, 
 		{
-			.flags_ = PipelineFlags::GraphicsOffScreen
+			.type_ = PipelineType::GraphicsOffScreen
 		}
 	)
 {

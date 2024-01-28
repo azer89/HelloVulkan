@@ -13,7 +13,7 @@ PipelineLight::PipelineLight(
 	uint8_t renderBit) :
 	PipelineBase(vkDev, 
 		{
-			.flags_ = PipelineFlags::GraphicsOffScreen,
+			.type_ = PipelineType::GraphicsOffScreen,
 			.msaaSamples_ = offscreenColorImage->multisampleCount_
 		}
 	), // Offscreen rendering
@@ -22,8 +22,7 @@ PipelineLight::PipelineLight(
 {
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
 
-	VkSampleCountFlagBits multisampleCount = offscreenColorImage->multisampleCount_;
-	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, multisampleCount);
+	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, config_.msaaSamples_);
 
 	framebuffer_.Create(
 		vkDev,

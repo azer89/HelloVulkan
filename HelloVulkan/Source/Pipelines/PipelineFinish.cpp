@@ -7,7 +7,7 @@
 PipelineFinish::PipelineFinish(VulkanDevice& vkDev) :
 	PipelineBase(vkDev,
 		{
-			.flags_ = PipelineFlags::GraphicsOnScreen
+			.type_ = PipelineType::GraphicsOnScreen
 		}
 	)
 {

@@ -3,7 +3,7 @@
 
 #include "volk.h"
 
-enum class PipelineFlags
+enum class PipelineType
 {
 	GraphicsOnScreen = 0,
 	GraphicsOffScreen = 1,
@@ -12,9 +12,9 @@ enum class PipelineFlags
 
 struct PipelineConfig
 {
-	PipelineFlags flags_ = PipelineFlags::GraphicsOnScreen;
+	PipelineType type_ = PipelineType::GraphicsOnScreen;
 	VkSampleCountFlagBits msaaSamples_ = VK_SAMPLE_COUNT_1_BIT;
-	VkPrimitiveTopology topology_ = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST; // Defaults to triangles
+	VkPrimitiveTopology topology_ = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 	uint32_t PatchControlPointsCount_ = 0;
 	bool vertexBufferBind_ = false;
 	bool depthTest_ = true;

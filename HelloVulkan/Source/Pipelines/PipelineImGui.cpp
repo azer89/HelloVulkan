@@ -14,7 +14,7 @@ PipelineImGui::PipelineImGui(
 	GLFWwindow* glfwWindow) :
 	PipelineBase(vkDev, 
 		{
-			.flags_ = PipelineFlags::GraphicsOnScreen
+			.type_ = PipelineType::GraphicsOnScreen
 		}
 	)
 {

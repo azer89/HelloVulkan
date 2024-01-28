@@ -41,7 +41,7 @@ protected:
 	VkDevice device_ = nullptr;
 
 	// Offscreen rendering
-	PipelineFlags flags_;
+	PipelineType flags_;
 
 	VulkanFramebuffer framebuffer_;
 
@@ -61,7 +61,7 @@ protected:
 protected:
 	bool IsOffscreen()
 	{
-		return config_.flags_ == PipelineFlags::GraphicsOffScreen;
+		return config_.type_ == PipelineType::GraphicsOffScreen;
 	}
 
 	void BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuffer);

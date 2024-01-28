@@ -13,7 +13,7 @@ PipelineBRDFLUT::PipelineBRDFLUT(
 	VulkanDevice& vkDev) :
 	PipelineBase(vkDev, 
 	{
-		.flags_ = PipelineFlags::Compute
+		.type_ = PipelineType::Compute
 	})
 {
 	outBuffer_.CreateSharedBuffer(vkDev, IBLConfig::LUTBufferSize,

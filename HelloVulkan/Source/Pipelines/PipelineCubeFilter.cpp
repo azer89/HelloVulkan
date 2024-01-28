@@ -8,7 +8,7 @@ PipelineCubeFilter::PipelineCubeFilter(
 	VulkanDevice& vkDev, VulkanImage* inputCubemap) :
 	PipelineBase(vkDev, 
 		{
-			.flags_ = PipelineFlags::GraphicsOffScreen
+			.type_ = PipelineType::GraphicsOffScreen
 		}
 	) 
 {

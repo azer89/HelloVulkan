@@ -10,7 +10,7 @@ PipelineResolveMS::PipelineResolveMS(
 ) :
 	PipelineBase(vkDev, 
 		{
-			.flags_ = PipelineFlags::GraphicsOffScreen
+			.type_ = PipelineType::GraphicsOffScreen
 		}
 	),
 	multiSampledColorImage_(multiSampledColorImage),

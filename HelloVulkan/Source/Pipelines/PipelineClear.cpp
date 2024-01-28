@@ -5,7 +5,7 @@ PipelineClear::PipelineClear(VulkanDevice& vkDev) :
 	PipelineBase(
 		vkDev,
 		{
-		.flags_ = PipelineFlags::GraphicsOnScreen
+			.type_ = PipelineType::GraphicsOnScreen
 		})
 {
 	renderPass_.CreateOnScreenColorOnlyRenderPass(vkDev, RenderPassBit::ColorClear);

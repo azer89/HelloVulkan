@@ -6,7 +6,7 @@ PipelineTonemap::PipelineTonemap(VulkanDevice& vkDev,
 	VulkanImage* singleSampledColorImage) :
 	PipelineBase(vkDev,
 		{
-			.flags_ = PipelineFlags::GraphicsOnScreen
+			.type_ = PipelineType::GraphicsOnScreen
 		}),
 	singleSampledColorImage_(singleSampledColorImage)
 {

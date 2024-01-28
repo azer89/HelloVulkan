@@ -15,7 +15,7 @@ PipelineSkybox::PipelineSkybox(VulkanDevice& vkDev,
 	uint8_t renderBit) :
 	PipelineBase(vkDev,
 		{
-			.flags_ = PipelineFlags::GraphicsOffScreen,
+			.type_ = PipelineType::GraphicsOffScreen,
 			.msaaSamples_ = offscreenColorImage->multisampleCount_,
 			.vertexBufferBind_ = false,
 		}),
@@ -23,11 +23,8 @@ PipelineSkybox::PipelineSkybox(VulkanDevice& vkDev,
 {
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
 
-	VkSampleCountFlagBits multisampleCount = VK_SAMPLE_COUNT_1_BIT;
-
 	// Note that this pipeline is offscreen rendering
-	multisampleCount = offscreenColorImage->multisampleCount_;
-	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, multisampleCount);
+	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, config_.msaaSamples_);
 	framebuffer_.Create(
 		vkDev,
 		renderPass_.GetHandle(),
@@ -58,9 +55,7 @@ PipelineSkybox::PipelineSkybox(VulkanDevice& vkDev,
 			AppConfig::ShaderFolder + "Cube.vert",
 			AppConfig::ShaderFolder + "Cube.frag",
 		},
-		&pipeline_//,
-		//false, // has no vertex buffer
-		//multisampleCount // For multisampling
+		&pipeline_
 		); 
 }
 

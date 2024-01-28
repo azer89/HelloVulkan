@@ -22,9 +22,9 @@ PipelinePBR::PipelinePBR(
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
 	PipelineBase(vkDev, 
-		//PipelineFlags::GraphicsOffScreen
+		//PipelineType::GraphicsOffScreen
 		{
-			.flags_ = PipelineFlags::GraphicsOffScreen,
+			.type_ = PipelineType::GraphicsOffScreen,
 			.msaaSamples_ = offscreenColorImage->multisampleCount_,
 			.vertexBufferBind_ = true,
 		}
@@ -35,8 +35,6 @@ PipelinePBR::PipelinePBR(
 	diffuseCubemap_(diffuseMap),
 	brdfLUT_(brdfLUT)
 {
-	VkSampleCountFlagBits multisampleCount = VK_SAMPLE_COUNT_1_BIT;
-
 	// Per frame UBO
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
 	
@@ -49,8 +47,7 @@ PipelinePBR::PipelinePBR(
 	}
 
 	// Note that this pipeline is offscreen rendering
-	multisampleCount = offscreenColorImage->multisampleCount_;
-	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, multisampleCount);
+	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, config_.msaaSamples_);
 
 	framebuffer_.Create(
 		vkDev, 
