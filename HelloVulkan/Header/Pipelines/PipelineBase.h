@@ -32,9 +32,9 @@ public:
 		VkCommandBuffer commandBuffer, 
 		size_t currentImage) = 0;
 
-	void SetPerFrameUBO(const VulkanDevice& vkDev, uint32_t imageIndex, PerFrameUBO ubo)
+	void SetPerFrameUBO(VulkanDevice& vkDev, uint32_t imageIndex, PerFrameUBO ubo)
 	{
-		UpdateUniformBuffer(vkDev.GetDevice(), perFrameUBOs_[imageIndex], &ubo, sizeof(PerFrameUBO));
+		UpdateUniformBuffer(vkDev, perFrameUBOs_[imageIndex], &ubo, sizeof(PerFrameUBO));
 	}
 
 protected:
@@ -73,12 +73,12 @@ protected:
 	// UBO
 	// TODO move to VulkanBuffer
 	void UpdateUniformBuffer(
-		VkDevice device,
+		VulkanDevice& vkDev,
 		VulkanBuffer& buffer,
 		const void* data,
 		const size_t dataSize);
 
-	void CreatePipelineLayout(VkDevice device,
+	void CreatePipelineLayout(VulkanDevice& vkDev,
 		VkDescriptorSetLayout dsLayout, 
 		VkPipelineLayout* pipelineLayout,
 		const std::vector<VkPushConstantRange>& pushConstantRanges = {});

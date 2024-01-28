@@ -65,7 +65,7 @@ PipelinePBR::PipelinePBR(
 		.size = sizeof(PushConstantPBR),
 	}};
 	
-	CreatePipelineLayout(vkDev.GetDevice(), descriptor_.layout_, &pipelineLayout_, ranges);
+	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_, ranges);
 
 	CreateGraphicsPipeline(
 		vkDev,

@@ -29,7 +29,7 @@ PipelineBRDFLUT::PipelineBRDFLUT(
 	}};
 
 	CreateDescriptor(vkDev);
-	CreatePipelineLayout(vkDev.GetDevice(), descriptor_.layout_, &pipelineLayout_, ranges);
+	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_, ranges);
 	CreateComputePipeline(vkDev, AppConfig::ShaderFolder + "BRDFLUT.comp");
 }
 

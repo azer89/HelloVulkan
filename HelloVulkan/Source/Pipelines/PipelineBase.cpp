@@ -84,7 +84,7 @@ void PipelineBase::OnWindowResized(VulkanDevice& vkDev)
 }
 
 void PipelineBase::CreatePipelineLayout(
-	VkDevice device, 
+	VulkanDevice& vkDev,
 	VkDescriptorSetLayout dsLayout, 
 	VkPipelineLayout* pipelineLayout,
 	const std::vector<VkPushConstantRange>& pushConstantRanges)
@@ -105,7 +105,7 @@ void PipelineBase::CreatePipelineLayout(
 		pipelineLayoutInfo.pushConstantRangeCount = static_cast<uint32_t>(pushConstantRanges.size());
 	}
 
-	VK_CHECK(vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, pipelineLayout));
+	VK_CHECK(vkCreatePipelineLayout(vkDev.GetDevice(), &pipelineLayoutInfo, nullptr, pipelineLayout));
 }
 
 void PipelineBase::CreateGraphicsPipeline(
@@ -208,7 +208,6 @@ void PipelineBase::CreateGraphicsPipeline(
 void PipelineBase::CreateComputePipeline(
 	VulkanDevice& vkDev,
 	const std::string& shaderFile)
-	//VkShaderModule computeShader)
 {
 	VulkanShader shader;
 	shader.Create(vkDev.GetDevice(), shaderFile.c_str());
@@ -237,7 +236,7 @@ void PipelineBase::CreateComputePipeline(
 }
 
 void PipelineBase::UpdateUniformBuffer(
-	VkDevice device,
+	VulkanDevice& vkDev,
 	VulkanBuffer& buffer,
 	const void* data,
 	const size_t dataSize)
@@ -246,7 +245,7 @@ void PipelineBase::UpdateUniformBuffer(
 
 	void* mappedData = nullptr;
 	vkMapMemory(
-		device, 
+		vkDev.GetDevice(),
 		bufferMemory,
 		0, 
 		dataSize, 
@@ -254,5 +253,5 @@ void PipelineBase::UpdateUniformBuffer(
 		&mappedData);
 	memcpy(mappedData, data, dataSize);
 
-	vkUnmapMemory(device, bufferMemory);
+	vkUnmapMemory(vkDev.GetDevice(), bufferMemory);
 }

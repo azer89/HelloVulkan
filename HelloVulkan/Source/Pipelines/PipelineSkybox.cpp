@@ -37,7 +37,7 @@ PipelineSkybox::PipelineSkybox(VulkanDevice& vkDev,
 
 	CreateDescriptor(vkDev);
 	
-	CreatePipelineLayout(vkDev.GetDevice(), descriptor_.layout_, &pipelineLayout_);
+	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_);
 
 	CreateGraphicsPipeline(vkDev,
 		renderPass_.GetHandle(),

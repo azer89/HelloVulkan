@@ -42,7 +42,7 @@ PipelineCubeFilter::PipelineCubeFilter(
 	}};
 
 	// Pipeline layout
-	CreatePipelineLayout(vkDev.GetDevice(), descriptor_.layout_, &pipelineLayout_, ranges);
+	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_, ranges);
 
 	// Diffuse pipeline
 	graphicsPipelines_.emplace_back(VK_NULL_HANDLE);
