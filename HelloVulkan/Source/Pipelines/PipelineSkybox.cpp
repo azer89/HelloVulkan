@@ -35,16 +35,7 @@ PipelineSkybox::PipelineSkybox(VulkanDevice& vkDev,
 		IsOffscreen()
 	);
 
-	descriptor_.CreatePool(
-		vkDev,
-		{
-			.uboCount_ = 1u,
-			.ssboCount_ = 0u,
-			.samplerCount_ = 1u,
-			.swapchainCount_ = static_cast<uint32_t>(vkDev.GetSwapchainImageCount()),
-			.setCountPerSwapchain_ = 1u,
-		});
-	CreateDescriptorLayoutAndSet(vkDev);
+	CreateDescriptor(vkDev);
 	
 	CreatePipelineLayout(vkDev.GetDevice(), descriptor_.layout_, &pipelineLayout_);
 
@@ -84,8 +75,20 @@ void PipelineSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer comm
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelineSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
+void PipelineSkybox::CreateDescriptor(VulkanDevice& vkDev)
 {
+	// Pool
+	descriptor_.CreatePool(
+		vkDev,
+		{
+			.uboCount_ = 1u,
+			.ssboCount_ = 0u,
+			.samplerCount_ = 1u,
+			.swapchainCount_ = static_cast<uint32_t>(vkDev.GetSwapchainImageCount()),
+			.setCountPerSwapchain_ = 1u,
+		});
+
+	// Layout
 	descriptor_.CreateLayout(vkDev,
 	{
 		{
@@ -100,6 +103,7 @@ void PipelineSkybox::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 		}
 	});
 
+	// Set
 	auto swapChainImageSize = vkDev.GetSwapchainImageCount();
 	descriptorSets_.resize(swapChainImageSize);
 
