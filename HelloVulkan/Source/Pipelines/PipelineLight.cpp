@@ -34,16 +34,7 @@ PipelineLight::PipelineLight(
 		IsOffscreen()
 	);
 
-	descriptor_.CreatePool(
-		vkDev,
-		{
-			.uboCount_ = 1u,
-			.ssboCount_ = 1u,
-			.samplerCount_ = 0u,
-			.swapchainCount_ = static_cast<uint32_t>(vkDev.GetSwapchainImageCount()),
-			.setCountPerSwapchain_ = 1u,
-		});
-	CreateDescriptorLayoutAndSet(vkDev);
+	SetupDescriptor(vkDev);
 
 	CreatePipelineLayout(vkDev.GetDevice(), descriptor_.layout_, &pipelineLayout_);
 
@@ -60,7 +51,6 @@ PipelineLight::PipelineLight(
 
 PipelineLight::~PipelineLight()
 {
-
 }
 
 void PipelineLight::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
@@ -94,8 +84,20 @@ void PipelineLight::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer comma
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelineLight::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
+void PipelineLight::SetupDescriptor(VulkanDevice& vkDev)
 {
+	// Pool
+	descriptor_.CreatePool(
+		vkDev,
+		{
+			.uboCount_ = 1u,
+			.ssboCount_ = 1u,
+			.samplerCount_ = 0u,
+			.swapchainCount_ = static_cast<uint32_t>(vkDev.GetSwapchainImageCount()),
+			.setCountPerSwapchain_ = 1u,
+		});
+
+	// Layout
 	descriptor_.CreateLayout(vkDev,
 	{
 		{
@@ -110,6 +112,7 @@ void PipelineLight::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 		}
 	});
 
+	// Set
 	size_t swapchainLength = vkDev.GetSwapchainImageCount();
 	descriptorSets_.resize(swapchainLength);
 
