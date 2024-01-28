@@ -174,11 +174,6 @@ void PipelineBRDFLUT::CreateComputeDescriptorSetLayout(VulkanDevice& vkDev)
 			.descriptorType_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
 			.shaderFlags_ = VK_SHADER_STAGE_COMPUTE_BIT,
 			.bindingCount_ = 1
-		},
-		{
-			.descriptorType_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-			.shaderFlags_ = VK_SHADER_STAGE_COMPUTE_BIT,
-			.bindingCount_ = 1
 		}
 	});
 }
@@ -191,21 +186,18 @@ void PipelineBRDFLUT::CreateComputeDescriptorSet(VulkanDevice& vkDev)
 		vkDev,
 		{
 			.uboCount_ = 0u,
-			.ssboCount_ = 2u,
+			.ssboCount_ = 1u,
 			.samplerCount_ = 0u,
 			.swapchainCount_ = 1u,
 			.setCountPerSwapchain_ = 1u
 		});
 
 	// Descriptor set
-	// TODO We actually do not need inBuffer
-	VkDescriptorBufferInfo inBufferInfo = { inBuffer_.buffer_, 0, VK_WHOLE_SIZE }; 
 	VkDescriptorBufferInfo outBufferInfo = { outBuffer_.buffer_, 0, VK_WHOLE_SIZE };
 
 	descriptor_.CreateSet(
 		vkDev, 
 		{
-			{.bufferInfoPtr_ = &inBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER },
 			{.bufferInfoPtr_ = &outBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER }
 		},
 		&descriptorSet_);
