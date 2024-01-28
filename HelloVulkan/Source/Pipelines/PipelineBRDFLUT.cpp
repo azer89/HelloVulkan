@@ -13,10 +13,6 @@ PipelineBRDFLUT::PipelineBRDFLUT(
 	VulkanDevice& vkDev) :
 	PipelineBase(vkDev, PipelineFlags::Compute)
 {
-	inBuffer_.CreateSharedBuffer(vkDev, sizeof(float),
-		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
 	outBuffer_.CreateSharedBuffer(vkDev, IBLConfig::LUTBufferSize,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
@@ -43,7 +39,6 @@ PipelineBRDFLUT::PipelineBRDFLUT(
 
 PipelineBRDFLUT::~PipelineBRDFLUT()
 {
-	inBuffer_.Destroy(device_);
 	outBuffer_.Destroy(device_);
 }
 
@@ -57,8 +52,9 @@ void PipelineBRDFLUT::CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT)
 
 	Execute(vkDev);
 
+	// Copy the buffer content to an image
+	// TODO Find a way so that compute shader can write to an image
 	outBuffer_.DownloadBufferData(vkDev, 0, lutData.data(), IBLConfig::LUTBufferSize);
-
 	outputLUT->CreateImageFromData(
 		vkDev,
 		lutData.data(),
@@ -67,7 +63,6 @@ void PipelineBRDFLUT::CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT)
 		1, // Mipmap count
 		1, // Layer count
 		VK_FORMAT_R32G32_SFLOAT);
-
 	outputLUT->CreateImageView(
 		vkDev.GetDevice(),
 		VK_FORMAT_R32G32_SFLOAT,

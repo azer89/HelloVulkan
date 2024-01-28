@@ -78,7 +78,6 @@ protected:
 	bool shouldRecreateSwapchain_;
 
 	// Shared by multiple render passes
-	// TODO change to unique ptrs
 	VulkanImage multiSampledColorImage_;
 	VulkanImage singleSampledColorImage_;
 	VulkanImage depthImage_;

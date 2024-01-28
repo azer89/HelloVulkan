@@ -20,7 +20,7 @@ public:
 	virtual void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 
 private:
-	VulkanBuffer inBuffer_;
+	// This is the lookup table
 	VulkanBuffer outBuffer_;
 
 	VkDescriptorSet descriptorSet_;
