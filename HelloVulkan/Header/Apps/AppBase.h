@@ -24,7 +24,7 @@ protected:
 
 	void CreateSharedImageResources();
 	void OnWindowResized();
-	bool DrawFrame();
+	void DrawFrame();
 
 	// GLFW callbacks
 	void FrameBufferSizeCallback(GLFWwindow* window, int width, int height);

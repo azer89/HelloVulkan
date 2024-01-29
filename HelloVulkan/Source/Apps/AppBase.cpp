@@ -142,7 +142,7 @@ void AppBase::CreateSharedImageResources()
 	singleSampledColorImage_.SetDebugName(vulkanDevice_, "Singlesampled_Color_Image");
 }
 
-bool AppBase::DrawFrame()
+void AppBase::DrawFrame()
 {
 	FrameData& frameData = vulkanDevice_.GetCurrentFrameData();
 
@@ -161,7 +161,7 @@ bool AppBase::DrawFrame()
 	if (result == VK_ERROR_OUT_OF_DATE_KHR)
 	{
 		OnWindowResized();
-		return true;
+		return;
 	}
 
 	vkResetFences(vulkanDevice_.GetDevice(), 1, &(frameData.queueSubmitFence_));
@@ -216,8 +216,6 @@ bool AppBase::DrawFrame()
 
 	// Do this after the end of the draw
 	vulkanDevice_.IncrementFrameIndex();
-
-	return true;
 }
 
 void AppBase::UpdateUI()
