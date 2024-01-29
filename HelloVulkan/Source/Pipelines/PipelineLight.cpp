@@ -14,7 +14,9 @@ PipelineLight::PipelineLight(
 	PipelineBase(vkDev, 
 		{
 			.type_ = PipelineType::GraphicsOffScreen,
-			.msaaSamples_ = offscreenColorImage->multisampleCount_
+			.msaaSamples_ = offscreenColorImage->multisampleCount_,
+			.depthTest_ = true,
+			.depthWrite_ = false // To "blend" the circles
 		}
 	), // Offscreen rendering
 	lights_(lights),

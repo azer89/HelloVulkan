@@ -18,6 +18,8 @@ PipelineSkybox::PipelineSkybox(VulkanDevice& vkDev,
 			.type_ = PipelineType::GraphicsOffScreen,
 			.msaaSamples_ = offscreenColorImage->multisampleCount_,
 			.vertexBufferBind_ = false,
+			.depthTest_ = true,
+			.depthWrite_ = false // Do not write to depth image
 		}),
 	envCubemap_(envMap)
 {
