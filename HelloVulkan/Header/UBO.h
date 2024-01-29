@@ -15,6 +15,7 @@ struct PerFrameUBO
 
 struct ModelUBO
 {
+	alignas(16)
 	glm::mat4 model;
 };
 
