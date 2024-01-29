@@ -13,15 +13,7 @@ enum CameraMovement
 	CameraRight,
 };
 
-// Default camera values
-namespace CameraSettings
-{
-	const float Yaw = -90.0f;
-	const float Pitch = 0.0f;
-	const float Speed = 2.5f;
-	const float Sensitivity = 0.1f;
-	const float Zoom = 45.0f;
-}
+
 
 class Camera
 {
@@ -31,8 +23,8 @@ public:
 		glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f),
 		float screenWidth = AppConfig::InitialScreenWidth,
 		float screenHeight = AppConfig::InitialScreenHeight,
-		float yaw = CameraSettings::Yaw,
-		float pitch = CameraSettings::Pitch);
+		float yaw = CameraConfig::Yaw,
+		float pitch = CameraConfig::Pitch);
 
 	void SetScreenSize(float width, float height);
 
