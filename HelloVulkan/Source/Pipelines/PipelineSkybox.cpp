@@ -21,7 +21,7 @@ PipelineSkybox::PipelineSkybox(VulkanDevice& vkDev,
 		}),
 	envCubemap_(envMap)
 {
-	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(CameraUBO));
+	CreateUniformBuffers(vkDev, cameraUBOBuffers_, sizeof(CameraUBO));
 
 	// Note that this pipeline is offscreen rendering
 	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, config_.msaaSamples_);
@@ -111,7 +111,7 @@ void PipelineSkybox::CreateDescriptor(VulkanDevice& vkDev)
 
 	for (size_t i = 0; i < swapChainImageSize; i++)
 	{
-		VkDescriptorBufferInfo bufferInfo = { perFrameUBOs_[i].buffer_, 0, sizeof(CameraUBO) };
+		VkDescriptorBufferInfo bufferInfo = { cameraUBOBuffers_[i].buffer_, 0, sizeof(CameraUBO) };
 
 		descriptor_.CreateSet(
 			vkDev,

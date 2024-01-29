@@ -19,7 +19,7 @@ PipelineBase::PipelineBase(
 // Destructor
 PipelineBase::~PipelineBase()
 {
-	for (auto uboBuffer : perFrameUBOs_)
+	for (auto uboBuffer : cameraUBOBuffers_)
 	{
 		uboBuffer.Destroy(device_);
 	}

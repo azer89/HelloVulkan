@@ -33,7 +33,7 @@ public:
 	glm::mat4 GetProjectionMatrix() const;
 	glm::mat4 GetViewMatrix() const;
 	glm::vec3 Position() const;
-	CameraUBO GetPerFrameUBO() const;
+	CameraUBO GetCameraUBO() const;
 
 private:
 	glm::mat4 projectionMatrix_;

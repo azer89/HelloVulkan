@@ -179,14 +179,14 @@ void AppPBR::DestroyResources()
 
 void AppPBR::UpdateUBOs(uint32_t imageIndex)
 {
-	CameraUBO ubo = camera_->GetPerFrameUBO();
-	lightPtr_->SetPerFrameUBO(vulkanDevice_, imageIndex, ubo);
-	pbrPtr_->SetPerFrameUBO(vulkanDevice_, imageIndex, ubo);
+	CameraUBO ubo = camera_->GetCameraUBO();
+	lightPtr_->SetCameraUBO(vulkanDevice_, imageIndex, ubo);
+	pbrPtr_->SetCameraUBO(vulkanDevice_, imageIndex, ubo);
 
 	// Remove translation
 	CameraUBO skyboxUbo = ubo;
 	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view));
-	skyboxPtr_->SetPerFrameUBO(vulkanDevice_, imageIndex, skyboxUbo);
+	skyboxPtr_->SetCameraUBO(vulkanDevice_, imageIndex, skyboxUbo);
 
 	// Model UBOs
 	glm::mat4 modelMatrix(1.f);

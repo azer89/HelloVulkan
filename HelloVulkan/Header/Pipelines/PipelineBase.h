@@ -32,15 +32,15 @@ public:
 		VkCommandBuffer commandBuffer, 
 		size_t currentImage) = 0;
 
-	void SetPerFrameUBO(VulkanDevice& vkDev, uint32_t imageIndex, CameraUBO ubo)
+	void SetCameraUBO(VulkanDevice& vkDev, uint32_t imageIndex, CameraUBO ubo)
 	{
-		UpdateUniformBuffer(vkDev, perFrameUBOs_[imageIndex], &ubo, sizeof(CameraUBO));
+		UpdateUniformBuffer(vkDev, cameraUBOBuffers_[imageIndex], &ubo, sizeof(CameraUBO));
 	}
 
 protected:
 	VkDevice device_ = nullptr;
 	PipelineConfig config_;
-	std::vector<VulkanBuffer> perFrameUBOs_;
+	std::vector<VulkanBuffer> cameraUBOBuffers_;
 
 	VulkanFramebuffer framebuffer_;
 	VulkanDescriptor descriptor_;

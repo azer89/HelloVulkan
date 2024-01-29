@@ -9,15 +9,15 @@ layout(location = 1) out vec3 worldPos;
 layout(location = 2) out vec2 texCoord;
 layout(location = 3) out vec3 normal;
 
-layout(set = 0, binding = 0) uniform PerFrameUBO
+layout(set = 0, binding = 0) uniform CameraUBO
 {
-	mat4 cameraProjection;
-	mat4 cameraView;
-	vec4 cameraPosition;
-	float cameraNear;
-	float cameraFar;
+	mat4 projection;
+	mat4 view;
+	vec4 position;
+	float near;
+	float far;
 }
-frameUBO;
+camUBO;
 
 layout(set = 0, binding = 1) uniform ModelUBO
 {
@@ -32,7 +32,7 @@ void main()
 	texCoord = inUV.xy;
 	normal = normalMatrix * inNormal.xyz;
 	worldPos = (modelUBO.model * inPosition).xyz;
-	viewPos = (frameUBO.cameraView * modelUBO.model * inPosition).xyz;
+	viewPos = (camUBO.view * modelUBO.model * inPosition).xyz;
 
-	gl_Position =  frameUBO.cameraProjection * vec4(viewPos, 1.0);
+	gl_Position =  camUBO.projection * vec4(viewPos, 1.0);
 }

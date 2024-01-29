@@ -1,4 +1,4 @@
-# version 460 core
+#version 460 core
 
 layout(location = 0) in vec3 viewPos;
 layout(location = 1) in vec3 worldPos;
@@ -7,15 +7,15 @@ layout(location = 3) in vec3 normal;
 
 layout(location = 0) out vec4 fragColor;
 
-layout(set = 0, binding = 0) uniform PerFrameUBO
+layout(set = 0, binding = 0) uniform CameraUBO
 {
-	mat4 cameraProjection;
-	mat4 cameraView;
-	vec4 cameraPosition;
-	float cameraNear;
-	float cameraFar;
+	mat4 projection;
+	mat4 view;
+	vec4 position;
+	float near;
+	float far;
 }
-frameUBO;
+camUBO;
 
 layout(push_constant) uniform PushConstantPBR
 {
@@ -167,7 +167,7 @@ void main()
 
 	// Input lighting data
 	vec3 N = GetNormalFromMap(tangentNormal, worldPos, normal, texCoord);
-	vec3 V = normalize(frameUBO.cameraPosition.xyz - worldPos);
+	vec3 V = normalize(camUBO.position.xyz - worldPos);
 	float NoV = max(dot(N, V), 0.0);
 
 	// Calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 

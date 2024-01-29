@@ -164,7 +164,7 @@ glm::vec3 Camera::Position() const
 	return position_;
 }
 
-CameraUBO Camera::GetPerFrameUBO() const
+CameraUBO Camera::GetCameraUBO() const
 {
 	return
 	{

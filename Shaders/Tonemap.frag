@@ -11,6 +11,7 @@ layout(location = 0) out vec4 fragColor;
 
 layout(set = 0, binding = 0) uniform sampler2D colorImage;
 
+// TODO Push constants
 const float GAMMA = 2.2;
 const float PURE_WHITE = 1.0;
 
