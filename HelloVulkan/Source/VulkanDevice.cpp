@@ -54,7 +54,7 @@ void VulkanDevice::CreateCompute
 		.queueFamilyIndex = graphicsFamily_
 	};
 
-	VK_CHECK(vkCreateCommandPool(device_, &cpi, nullptr, &commandPool_));
+	VK_CHECK(vkCreateCommandPool(device_, &cpi, nullptr, &graphicsCommandPool_));
 
 	// Frame data
 	frameIndex_ = 0;
@@ -64,7 +64,7 @@ void VulkanDevice::CreateCompute
 		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].nextSwapchainImageSemaphore_)));
 		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].graphicsQueueSemaphore_)));
 		VK_CHECK(CreateFence(&(frameDataArray_[i].queueSubmitFence_)));
-		VK_CHECK(CreateCommandBuffer(commandPool_, &(frameDataArray_[i].commandBuffer_)));
+		VK_CHECK(CreateCommandBuffer(graphicsCommandPool_, &(frameDataArray_[i].commandBuffer_)));
 	}
 
 	{
@@ -78,10 +78,8 @@ void VulkanDevice::CreateCompute
 		};
 		VK_CHECK(vkCreateCommandPool(device_, &cpi1, nullptr, &computeCommandPool_));
 
-		CreateCommandBuffer(computeCommandPool_, &computeCommandBuffer_);
+		//CreateCommandBuffer(computeCommandPool_, &computeCommandBuffer_);
 	}
-
-	useCompute_ = true;
 }
 
 void VulkanDevice::Destroy()
@@ -97,12 +95,8 @@ void VulkanDevice::Destroy()
 	}
 	vkDestroySwapchainKHR(device_, swapchain_, nullptr);
 
-	vkDestroyCommandPool(device_, commandPool_, nullptr);
-
-	if (useCompute_)
-	{
-		vkDestroyCommandPool(device_, computeCommandPool_, nullptr);
-	}
+	vkDestroyCommandPool(device_, graphicsCommandPool_, nullptr);
+	vkDestroyCommandPool(device_, computeCommandPool_, nullptr);
 
 	vkDestroyDevice(device_, nullptr);
 }
@@ -522,10 +516,10 @@ VkFormat VulkanDevice::FindSupportedFormat(
 	throw std::runtime_error("Failed to find supported format\n");
 }
 
-VkCommandBuffer VulkanDevice::BeginSingleTimeCommands()
+VkCommandBuffer VulkanDevice::BeginGraphicsSingleTimeCommand()
 {
 	VkCommandBuffer commandBuffer;
-	CreateCommandBuffer(commandPool_, &commandBuffer);
+	CreateCommandBuffer(graphicsCommandPool_, &commandBuffer);
 
 	constexpr VkCommandBufferBeginInfo beginInfo = {
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -539,7 +533,7 @@ VkCommandBuffer VulkanDevice::BeginSingleTimeCommands()
 	return commandBuffer;
 }
 
-void VulkanDevice::EndSingleTimeCommands(VkCommandBuffer commandBuffer)
+void VulkanDevice::EndGraphicsSingleTimeCommand(VkCommandBuffer commandBuffer)
 {
 	vkEndCommandBuffer(commandBuffer);
 
@@ -558,10 +552,10 @@ void VulkanDevice::EndSingleTimeCommands(VkCommandBuffer commandBuffer)
 	vkQueueSubmit(graphicsQueue_, 1, &submitInfo, VK_NULL_HANDLE);
 	vkQueueWaitIdle(graphicsQueue_);
 
-	vkFreeCommandBuffers(device_, commandPool_, 1, &commandBuffer);
+	vkFreeCommandBuffers(device_, graphicsCommandPool_, 1, &commandBuffer);
 }
 
-VkCommandBuffer VulkanDevice::BeginComputeSingleTimeCommands()
+VkCommandBuffer VulkanDevice::BeginComputeSingleTimeCommand()
 {
 	VkCommandBuffer commandBuffer;
 	CreateCommandBuffer(computeCommandPool_, &commandBuffer);
@@ -577,7 +571,7 @@ VkCommandBuffer VulkanDevice::BeginComputeSingleTimeCommands()
 	return commandBuffer;
 }
 
-void VulkanDevice::EndComputeSingleTimeCommands(VkCommandBuffer commandBuffer)
+void VulkanDevice::EndComputeSingleTimeCommand(VkCommandBuffer commandBuffer)
 {
 	vkEndCommandBuffer(commandBuffer);
 
