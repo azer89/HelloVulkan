@@ -1,9 +1,8 @@
 #version 460 core
 
-layout(location = 0) in vec3 viewPos;
-layout(location = 1) in vec3 worldPos;
-layout(location = 2) in vec2 texCoord;
-layout(location = 3) in vec3 normal;
+layout(location = 0) in vec3 worldPos;
+layout(location = 1) in vec2 texCoord;
+layout(location = 2) in vec3 normal;
 
 layout(location = 0) out vec4 fragColor;
 
@@ -144,6 +143,11 @@ vec3 Ambient(
 	vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
 
 	return (kD * diffuse + specular) * ao;
+}
+
+float LinearDepth(float z)
+{
+	return camUBO.near * camUBO.far / (camUBO.far + z * (camUBO.near - camUBO.far));
 }
 
 void main()
