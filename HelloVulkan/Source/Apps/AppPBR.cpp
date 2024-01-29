@@ -185,7 +185,7 @@ void AppPBR::UpdateUBOs(uint32_t imageIndex)
 
 	// Remove translation
 	CameraUBO skyboxUbo = ubo;
-	skyboxUbo.cameraView = glm::mat4(glm::mat3(skyboxUbo.cameraView));
+	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view));
 	skyboxPtr_->SetPerFrameUBO(vulkanDevice_, imageIndex, skyboxUbo);
 
 	// Model UBOs

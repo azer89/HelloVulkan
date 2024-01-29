@@ -109,8 +109,8 @@ void Camera::UpdateInternal()
 	assert(glm::abs(aspect - std::numeric_limits<float>::epsilon()) > 0.0f);
 
 	float fovy = glm::radians(zoom_);
-	float far = AppConfig::cameraFar;
-	float near = AppConfig::cameraNear;
+	float far = AppConfig::far;
+	float near = AppConfig::near;
 	const float tanHalfFovy = tan(fovy / 2.f);
 
 	projectionMatrix_ = glm::mat4();
@@ -168,10 +168,10 @@ CameraUBO Camera::GetPerFrameUBO() const
 {
 	return
 	{
-		.cameraProjection = projectionMatrix_,
-		.cameraView = viewMatrix_,
-		.cameraPosition = glm::vec4(position_, 1.f),
-		.cameraNear = CameraConfig::Near,
-		.cameraFar = CameraConfig::Far
+		.projection = projectionMatrix_,
+		.view = viewMatrix_,
+		.position = glm::vec4(position_, 1.f),
+		.near = CameraConfig::Near,
+		.far = CameraConfig::Far
 	};
 }

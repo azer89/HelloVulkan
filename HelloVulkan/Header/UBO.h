@@ -7,15 +7,15 @@
 struct CameraUBO
 {
 	alignas(16)
-	glm::mat4 cameraProjection;
+	glm::mat4 projection;
 	alignas(16)
-	glm::mat4 cameraView;
+	glm::mat4 view;
 	alignas(16)
-	glm::vec4 cameraPosition;
+	glm::vec4 position;
 	alignas(4)
-	float cameraNear;
+	float near;
 	alignas(4)
-	float cameraFar;
+	float far;
 };
 
 struct ModelUBO
