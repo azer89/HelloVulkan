@@ -71,12 +71,9 @@ vec3 Radiance(
 	float roughness,
 	float alphaRoughness,
 	float NoV,
-	uint lightIndex)
+	LightData light)
 {
 	vec3 Lo = vec3(0.0);
-
-	LightData light = lights[lightIndex];
-	light.color *= pc.lightIntensity;
 
 	vec3 L = normalize(light.position.xyz - worldPos); // Incident light vector
 	vec3 H = normalize(V + L); // Halfway vector
@@ -85,7 +82,7 @@ vec3 Radiance(
 	float HoV = max(dot(H, V), 0.0);
 	float distance = length(light.position.xyz - worldPos);
 	float attenuation = 1.0 / (distance * distance);
-	vec3 radiance = light.color.xyz * attenuation;
+	vec3 radiance = light.color.xyz * attenuation * pc.lightIntensity;
 
 	// Cook-Torrance BRDF
 	float D = DistributionGGX(NoH, roughness);
@@ -178,6 +175,8 @@ void main()
 	vec3 Lo = vec3(0.0);
 	for (int i = 0; i < lights.length(); ++i)
 	{
+		LightData light = lights[i];
+
 		Lo += Radiance(
 			albedo,
 			N,
@@ -187,7 +186,7 @@ void main()
 			roughness,
 			alphaRoughness,
 			NoV,
-			i);
+			light);
 	}
 
 	vec3 ambient = Ambient(
