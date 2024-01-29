@@ -199,21 +199,21 @@ void AppBase::DrawFrame()
 
 	// Start recording command buffers
 	FillGraphicsCommandBuffer(frameData.commandBuffer_, imageIndex);
-
-	const VkPipelineStageFlags waitStages[] = 
-		{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 	
-	// Compute queue (not used for now)
-	//VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_VERTEX_INPUT_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	// With compute
+	//const VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_VERTEX_INPUT_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 	//std::array<VkSemaphore, 2> waitSemaphores = { frameData.computeSemaphore_, frameData.nextSwapchainImageSemaphore_ };
+	
+	// Without compute
+	const VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	std::array<VkSemaphore, 1> waitSemaphores{ frameData.nextSwapchainImageSemaphore_ };
 
 	const VkSubmitInfo submitInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
 		.pNext = nullptr,
-		.waitSemaphoreCount = 1u,
-		// Wait for the swapchain image to become available
-		.pWaitSemaphores = &(frameData.nextSwapchainImageSemaphore_),
+		.waitSemaphoreCount = waitSemaphores.size(),
+		.pWaitSemaphores = waitSemaphores.data(),
 		.pWaitDstStageMask = waitStages,
 		.commandBufferCount = 1u,
 		.pCommandBuffers = &(frameData.commandBuffer_),
