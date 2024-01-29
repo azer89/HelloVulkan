@@ -178,16 +178,7 @@ void AppBase::DrawFrame()
 	/*{
 		vkResetCommandBuffer(frameData.computeCommandBuffer_, 0);
 
-		VkCommandBufferBeginInfo commandBufferBeginInfo =
-		{
-			VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-		};
-
-		VK_CHECK(vkBeginCommandBuffer(frameData.computeCommandBuffer_, &commandBufferBeginInfo));
-
 		FillComputeCommandBuffer(frameData.computeCommandBuffer_, imageIndex);
-
-		VK_CHECK(vkEndCommandBuffer(frameData.computeCommandBuffer_));
 
 		VkPipelineStageFlags waitStageMask = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
 		VkSubmitInfo computeSubmitInfo =
@@ -260,18 +251,9 @@ void AppBase::UpdateUI()
 	// Empty, must be implemented in a derived class
 }
 
-void  AppBase::FillComputeCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
+void AppBase::FillComputeCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
 {
-	for (auto& pip : computePipelines_)
-	{
-		pip->FillCommandBuffer(vulkanDevice_, commandBuffer, imageIndex);
-	}
-}
-
-// Fill/record command buffer
-void AppBase::FillGraphicsCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
-{
-	const VkCommandBufferBeginInfo beginIndo =
+	const VkCommandBufferBeginInfo beginInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
 		.pNext = nullptr,
@@ -279,7 +261,28 @@ void AppBase::FillGraphicsCommandBuffer(VkCommandBuffer commandBuffer, uint32_t 
 		.pInheritanceInfo = nullptr
 	};
 
-	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginIndo));
+	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
+
+	for (auto& pip : computePipelines_)
+	{
+		pip->FillCommandBuffer(vulkanDevice_, commandBuffer, imageIndex);
+	}
+
+	VK_CHECK(vkEndCommandBuffer(commandBuffer));
+}
+
+// Fill/record command buffer
+void AppBase::FillGraphicsCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
+{
+	const VkCommandBufferBeginInfo beginInfo =
+	{
+		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+		.pNext = nullptr,
+		.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT,
+		.pInheritanceInfo = nullptr
+	};
+
+	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
 
 	// Iterate through all renderers to fill the command buffer
 	for (auto& pip : graphicsPipelines_)
