@@ -21,14 +21,19 @@ a command buffer
 struct FrameData
 {
 	VkSemaphore nextSwapchainImageSemaphore_;
-	VkSemaphore renderSemaphore_;
+	VkSemaphore graphicsQueueSemaphore_;
 	VkFence queueSubmitFence_;
 	VkCommandBuffer commandBuffer_;
+
+	// These two currently not used
+	VkCommandBuffer computeCommandBuffer_;
+	VkSemaphore computeSemaphore_;
 
 	void Destroy(VkDevice device)
 	{
 		vkDestroySemaphore(device, nextSwapchainImageSemaphore_, nullptr);
-		vkDestroySemaphore(device, renderSemaphore_, nullptr);
+		vkDestroySemaphore(device, graphicsQueueSemaphore_, nullptr);
+		vkDestroySemaphore(device, computeSemaphore_, nullptr);
 		vkDestroyFence(device, queueSubmitFence_, nullptr);
 	}
 };
@@ -56,8 +61,11 @@ public:
 		uint32_t width,
 		uint32_t height);
 
-	VkCommandBuffer BeginSingleTimeCommands();
-	void EndSingleTimeCommands(VkCommandBuffer commandBuffer);
+	// TODO These four functions can be simplified/combined
+	VkCommandBuffer BeginGraphicsSingleTimeCommand();
+	void EndGraphicsSingleTimeCommand(VkCommandBuffer commandBuffer);
+	VkCommandBuffer BeginComputeSingleTimeCommand();
+	void EndComputeSingleTimeCommand(VkCommandBuffer commandBuffer);
 
 	// Getters
 	VkDevice GetDevice() const { return device_; }
@@ -70,7 +78,6 @@ public:
 	size_t GetDeviceQueueIndicesSize() const { return deviceQueueIndices_.size(); }
 	const uint32_t* GetDeviceQueueIndicesData() const { return deviceQueueIndices_.data(); }
 	VkSampleCountFlagBits GetMSAASampleCount() const { return msaaSampleCount_; }
-	VkCommandBuffer GetComputeCommandBuffer() const { return computeCommandBuffer_; }
 	VkQueue GetComputeQueue() const { return computeQueue_; }
 	VkFormat GetDepthFormat() const { return depthFormat_; };
 
@@ -139,18 +146,16 @@ private:
 	VkDevice device_;
 	VkPhysicalDevice physicalDevice_;
 
+	// Graphics
 	VkQueue graphicsQueue_;
 	uint32_t graphicsFamily_;
-
 	// Note that all graphics command buffers are created from this command pool below.
 	// So you need to create multiple command pools if you want to use vkResetCommandPool().
-	VkCommandPool commandPool_;
+	VkCommandPool graphicsCommandPool_;
 
-	// This may coincide with graphicsFamily
+	// Compute
 	VkQueue computeQueue_;
 	uint32_t computeFamily_;
-	bool useCompute_ = false;
-	VkCommandBuffer computeCommandBuffer_;
 	VkCommandPool computeCommandPool_;
 
 	std::vector<uint32_t> deviceQueueIndices_;

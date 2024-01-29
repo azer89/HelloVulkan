@@ -41,7 +41,7 @@ void VulkanBuffer::CreateSharedBuffer(
 	VkBufferUsageFlags usage,
 	VkMemoryPropertyFlags properties)
 {
-	uint32_t familyCount = static_cast<uint32_t>(vkDev.GetDeviceQueueIndicesSize());
+	const uint32_t familyCount = static_cast<uint32_t>(vkDev.GetDeviceQueueIndicesSize());
 
 	if (familyCount < 2)
 	{
@@ -86,7 +86,7 @@ void VulkanBuffer::CreateSharedBuffer(
 
 void VulkanBuffer::CopyFrom(VulkanDevice& vkDev, VkBuffer srcBuffer, VkDeviceSize size)
 {
-	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
+	VkCommandBuffer commandBuffer = vkDev.BeginGraphicsSingleTimeCommand();
 
 	const VkBufferCopy copyRegion = {
 		.srcOffset = 0,
@@ -96,7 +96,7 @@ void VulkanBuffer::CopyFrom(VulkanDevice& vkDev, VkBuffer srcBuffer, VkDeviceSiz
 
 	vkCmdCopyBuffer(commandBuffer, srcBuffer, buffer_, 1, &copyRegion);
 
-	vkDev.EndSingleTimeCommands(commandBuffer);
+	vkDev.EndGraphicsSingleTimeCommand(commandBuffer);
 }
 
 void VulkanBuffer::UploadBufferData(

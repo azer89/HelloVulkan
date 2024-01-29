@@ -26,7 +26,7 @@ void AppPBR::Init()
 
 	model_ = std::make_unique<Model>(
 		vulkanDevice_, 
-		AppConfig::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
+		AppConfig::ModelFolder + "Sponza//Sponza.gltf");
 	std::vector<Model*> models = {model_.get()};
 
 	// Create a cubemap from the input HDR
@@ -131,19 +131,23 @@ void AppPBR::InitLights()
 	{
 		{
 			.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f),
-			.color_ = glm::vec4(1.f)
+			.color_ = glm::vec4(1.f),
+			.radius_ = 1.0f
 		},
 		{
 			.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f),
-			.color_ = glm::vec4(1.f)
+			.color_ = glm::vec4(1.f),
+			.radius_ = 1.0f
 		},
 		{
 			.position_ = glm::vec4(-1.5f, 0.7f, -1.5f, 1.f),
-			.color_ = glm::vec4(1.f)
+			.color_ = glm::vec4(1.f),
+			.radius_ = 1.0f
 		},
 		{
 			.position_ = glm::vec4(1.5f, 0.7f, -1.5f, 1.f),
-			.color_ = glm::vec4(1.f)
+			.color_ = glm::vec4(1.f),
+			.radius_ = 1.0f
 		}
 	});
 }
@@ -175,14 +179,14 @@ void AppPBR::DestroyResources()
 
 void AppPBR::UpdateUBOs(uint32_t imageIndex)
 {
-	PerFrameUBO ubo = camera_->GetPerFrameUBO();
-	lightPtr_->SetPerFrameUBO(vulkanDevice_, imageIndex, ubo);
-	pbrPtr_->SetPerFrameUBO(vulkanDevice_, imageIndex, ubo);
+	CameraUBO ubo = camera_->GetCameraUBO();
+	lightPtr_->SetCameraUBO(vulkanDevice_, imageIndex, ubo);
+	pbrPtr_->SetCameraUBO(vulkanDevice_, imageIndex, ubo);
 
 	// Remove translation
-	PerFrameUBO skyboxUbo = ubo;
-	skyboxUbo.cameraView = glm::mat4(glm::mat3(skyboxUbo.cameraView));
-	skyboxPtr_->SetPerFrameUBO(vulkanDevice_, imageIndex, skyboxUbo);
+	CameraUBO skyboxUbo = ubo;
+	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view));
+	skyboxPtr_->SetCameraUBO(vulkanDevice_, imageIndex, skyboxUbo);
 
 	// Model UBOs
 	glm::mat4 modelMatrix(1.f);

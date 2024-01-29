@@ -19,7 +19,7 @@ PipelineBase::PipelineBase(
 // Destructor
 PipelineBase::~PipelineBase()
 {
-	for (auto uboBuffer : perFrameUBOs_)
+	for (auto uboBuffer : cameraUBOBuffers_)
 	{
 		uboBuffer.Destroy(device_);
 	}
@@ -37,7 +37,7 @@ void PipelineBase::CreateUniformBuffers(
 	std::vector<VulkanBuffer>& buffers,
 	size_t uniformDataSize)
 {
-	auto swapChainImageSize = vkDev.GetSwapchainImageCount();
+	const size_t swapChainImageSize = vkDev.GetSwapchainImageCount();
 	buffers.resize(swapChainImageSize);
 	for (size_t i = 0; i < swapChainImageSize; i++)
 	{
@@ -54,12 +54,12 @@ void PipelineBase::BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuff
 {
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_);
 
-	VkViewport viewport =
+	const VkViewport viewport =
 	{
 		.x = 0.0f,
 		.y = 0.0f,
-		.width = (float)vkDev.GetFrameBufferWidth(),
-		.height = (float)vkDev.GetFrameBufferHeight(),
+		.width = static_cast<float>(vkDev.GetFrameBufferWidth()),
+		.height = static_cast<float>(vkDev.GetFrameBufferHeight()),
 		.minDepth = 0.0f,
 		.maxDepth = 1.0f
 	};
@@ -75,7 +75,6 @@ void PipelineBase::OnWindowResized(VulkanDevice& vkDev)
 {
 	framebuffer_.Destroy();
 	framebuffer_.Recreate(vkDev);
-	
 }
 
 void PipelineBase::CreatePipelineLayout(
@@ -94,7 +93,7 @@ void PipelineBase::CreatePipelineLayout(
 		.pPushConstantRanges = nullptr
 	};
 
-	if (pushConstantRanges.size() > 0)
+	if (!pushConstantRanges.empty())
 	{
 		pipelineLayoutInfo.pPushConstantRanges = pushConstantRanges.data();
 		pipelineLayoutInfo.pushConstantRangeCount = static_cast<uint32_t>(pushConstantRanges.size());
@@ -120,16 +119,16 @@ void PipelineBase::CreateGraphicsPipeline(
 	{
 		const char* file = shaderFiles[i].c_str();
 		VK_CHECK(shaderModules[i].Create(vkDev.GetDevice(), file));
-		VkShaderStageFlagBits stage = GetShaderStageFlagBits(file);
+		const VkShaderStageFlagBits stage = GetShaderStageFlagBits(file);
 		shaderStages[i] = shaderModules[i].GetShaderStageInfo(stage, "main");
 	}
 
 	// Pipeline create info
 	PipelineCreateInfo pInfo(vkDev);
 
-	std::vector<VkVertexInputBindingDescription> bindingDescriptions = 
+	const std::vector<VkVertexInputBindingDescription> bindingDescriptions = 
 		VertexData::GetBindingDescriptions();
-	std::vector<VkVertexInputAttributeDescription> attributeDescriptions = 
+	const std::vector<VkVertexInputAttributeDescription> attributeDescriptions = 
 		VertexData::GetAttributeDescriptions();
 
 	if (config_.vertexBufferBind_)
@@ -162,7 +161,7 @@ void PipelineBase::CreateGraphicsPipeline(
 		pInfo.multisampling.minSampleShading = 0.25f;
 	}
 
-	std::vector<VkDynamicState> dynamicStates = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
+	constexpr std::array<VkDynamicState, 2> dynamicStates = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
 	pInfo.dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
 	pInfo.dynamicState.pDynamicStates = dynamicStates.data();
 
@@ -207,7 +206,7 @@ void PipelineBase::CreateComputePipeline(
 	VulkanShader shader;
 	shader.Create(vkDev.GetDevice(), shaderFile.c_str());
 
-	VkComputePipelineCreateInfo computePipelineCreateInfo = {
+	const VkComputePipelineCreateInfo computePipelineCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
@@ -237,7 +236,6 @@ void PipelineBase::UpdateUniformBuffer(
 	const size_t dataSize)
 {
 	VkDeviceMemory bufferMemory = buffer.bufferMemory_;
-
 	void* mappedData = nullptr;
 	vkMapMemory(
 		vkDev.GetDevice(),
@@ -247,6 +245,5 @@ void PipelineBase::UpdateUniformBuffer(
 		0, 
 		&mappedData);
 	memcpy(mappedData, data, dataSize);
-
 	vkUnmapMemory(vkDev.GetDevice(), bufferMemory);
 }

@@ -36,21 +36,6 @@ void Camera::SetScreenSize(float width, float height)
 	UpdateInternal();
 }
 
-glm::mat4 Camera::GetProjectionMatrix()
-{
-	return projectionMatrix_;
-}
-
-glm::mat4 Camera::GetViewMatrix()
-{
-	return viewMatrix_;
-}
-
-glm::vec3 Camera::Position()
-{
-	return position_;
-}
-
 void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime_)
 {
 	float velocity = movementSpeed_ * deltaTime_;
@@ -124,8 +109,8 @@ void Camera::UpdateInternal()
 	assert(glm::abs(aspect - std::numeric_limits<float>::epsilon()) > 0.0f);
 
 	float fovy = glm::radians(zoom_);
-	float far = AppConfig::cameraFar;
-	float near = AppConfig::cameraNear;
+	float far = AppConfig::far;
+	float near = AppConfig::near;
 	const float tanHalfFovy = tan(fovy / 2.f);
 
 	projectionMatrix_ = glm::mat4();
@@ -164,12 +149,29 @@ void Camera::UpdateInternal()
 	viewMatrix_ = glm::lookAt(position_, position_ + front_, up_);
 }
 
-PerFrameUBO Camera::GetPerFrameUBO()
+glm::mat4 Camera::GetProjectionMatrix() const
+{
+	return projectionMatrix_;
+}
+
+glm::mat4 Camera::GetViewMatrix() const
+{
+	return viewMatrix_;
+}
+
+glm::vec3 Camera::Position() const
+{
+	return position_;
+}
+
+CameraUBO Camera::GetCameraUBO() const
 {
 	return
 	{
-		.cameraProjection = projectionMatrix_,
-		.cameraView = viewMatrix_,
-		.cameraPosition = glm::vec4(position_, 1.f)
+		.projection = projectionMatrix_,
+		.view = viewMatrix_,
+		.position = glm::vec4(position_, 1.f),
+		.near = CameraConfig::Near,
+		.far = CameraConfig::Far
 	};
 }

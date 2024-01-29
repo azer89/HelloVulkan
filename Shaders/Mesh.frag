@@ -6,13 +6,15 @@ layout(location = 2) in vec3 normal;
 
 layout(location = 0) out vec4 fragColor;
 
-layout(set = 0, binding = 0) uniform PerFrameUBO
+layout(set = 0, binding = 0) uniform CameraUBO
 {
-	mat4 cameraProjection;
-	mat4 cameraView;
-	vec4 cameraPosition;
+	mat4 projection;
+	mat4 view;
+	vec4 position;
+	float near;
+	float far;
 }
-frameUBO;
+camUBO;
 
 layout(push_constant) uniform PushConstantPBR
 {
@@ -27,8 +29,9 @@ struct LightData
 {
 	vec4 position;
 	vec4 color;
+	float radius;
 };
-layout(set = 0, binding = 2) readonly buffer Lights { LightData data []; } inLights;
+layout(set = 0, binding = 2) readonly buffer Lights { LightData lights []; };
 
 layout(set = 0, binding = 3) uniform sampler2D textureAlbedo;
 layout(set = 0, binding = 4) uniform sampler2D textureNormal;
@@ -70,12 +73,9 @@ vec3 Radiance(
 	float roughness,
 	float alphaRoughness,
 	float NoV,
-	uint lightIndex)
+	LightData light)
 {
 	vec3 Lo = vec3(0.0);
-
-	LightData light = inLights.data[lightIndex];
-	light.color *= pc.lightIntensity;
 
 	vec3 L = normalize(light.position.xyz - worldPos); // Incident light vector
 	vec3 H = normalize(V + L); // Halfway vector
@@ -84,7 +84,7 @@ vec3 Radiance(
 	float HoV = max(dot(H, V), 0.0);
 	float distance = length(light.position.xyz - worldPos);
 	float attenuation = 1.0 / (distance * distance);
-	vec3 radiance = light.color.xyz * attenuation;
+	vec3 radiance = light.color.xyz * attenuation * pc.lightIntensity;
 
 	// Cook-Torrance BRDF
 	float D = DistributionGGX(NoH, roughness);
@@ -145,6 +145,12 @@ vec3 Ambient(
 	return (kD * diffuse + specular) * ao;
 }
 
+// stackoverflow.com/questions/51108596/linearize-depth
+float LinearDepth(float z, float near, float far)
+{
+	return near * far / (far + z * (near - far));
+}
+
 void main()
 {
 	vec4 albedo4 = texture(textureAlbedo, texCoord).rgba;
@@ -166,7 +172,7 @@ void main()
 
 	// Input lighting data
 	vec3 N = GetNormalFromMap(tangentNormal, worldPos, normal, texCoord);
-	vec3 V = normalize(frameUBO.cameraPosition.xyz - worldPos);
+	vec3 V = normalize(camUBO.position.xyz - worldPos);
 	float NoV = max(dot(N, V), 0.0);
 
 	// Calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
@@ -175,8 +181,10 @@ void main()
 	F0 = mix(F0, albedo, metallic);
 
 	vec3 Lo = vec3(0.0);
-	for (int i = 0; i < inLights.data.length(); ++i)
+	for (int i = 0; i < lights.length(); ++i)
 	{
+		LightData light = lights[i];
+
 		Lo += Radiance(
 			albedo,
 			N,
@@ -186,7 +194,7 @@ void main()
 			roughness,
 			alphaRoughness,
 			NoV,
-			i);
+			light);
 	}
 
 	vec3 ambient = Ambient(

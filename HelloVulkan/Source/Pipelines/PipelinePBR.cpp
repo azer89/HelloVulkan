@@ -35,7 +35,7 @@ PipelinePBR::PipelinePBR(
 	brdfLUT_(brdfLUT)
 {
 	// Per frame UBO
-	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
+	CreateUniformBuffers(vkDev, cameraUBOBuffers_, sizeof(CameraUBO));
 	
 	// Model UBO
 	for (Model* model : models_)
@@ -195,7 +195,7 @@ void PipelinePBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 
 	for (size_t i = 0; i < swapchainLength; i++)
 	{
-		VkDescriptorBufferInfo bufferInfo1 = { perFrameUBOs_[i].buffer_, 0, sizeof(PerFrameUBO) };
+		VkDescriptorBufferInfo bufferInfo1 = { cameraUBOBuffers_[i].buffer_, 0, sizeof(CameraUBO) };
 		VkDescriptorBufferInfo bufferInfo2 = { parentModel->modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
 		VkDescriptorBufferInfo bufferInfo3 = { lights_->GetSSBOBuffer(), 0, lights_->GetSSBOSize() };
 

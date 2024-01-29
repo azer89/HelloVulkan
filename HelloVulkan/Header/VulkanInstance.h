@@ -17,8 +17,8 @@ public:
 	void SetupDebugCallbacks();
 	void CreateWindowSurface(GLFWwindow* glfwWindow_);
 
-	VkInstance GetInstance() { return instance_; }
-	VkSurfaceKHR GetSurface() { return surface_; }
+	VkInstance GetInstance() const { return instance_; }
+	VkSurfaceKHR GetSurface() const { return surface_; }
 
 private:
 	VkInstance instance_;

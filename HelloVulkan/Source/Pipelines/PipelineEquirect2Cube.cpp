@@ -265,7 +265,7 @@ void PipelineEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanImage* ou
 
 	CreateFrameBuffer(vkDev, outputViews);
 
-	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
+	VkCommandBuffer commandBuffer = vkDev.BeginGraphicsSingleTimeCommand();
 
 	outputEnvMap->CreateBarrier({
 		.commandBuffer = commandBuffer,
@@ -306,7 +306,7 @@ void PipelineEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanImage* ou
 		.destinationAccess = VK_ACCESS_SHADER_READ_BIT
 	});
 
-	vkDev.EndSingleTimeCommands(commandBuffer);
+	vkDev.EndGraphicsSingleTimeCommand(commandBuffer);
 
 	// Create a sampler for the output cubemap
 	outputEnvMap->CreateDefaultSampler(vkDev);

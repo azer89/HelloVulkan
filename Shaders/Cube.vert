@@ -6,12 +6,14 @@ Vertex shader to generate a cube
 
 layout(location = 0) out vec3 direction;
 
-layout(set = 0, binding = 0) uniform PerFrameUBO
+layout(set = 0, binding = 0) uniform CameraUBO
 {
-	mat4 cameraProjection;
-	mat4 cameraView;
-	vec4 cameraPosition;
-} frameUBO;
+	mat4 projection;
+	mat4 view;
+	vec4 position;
+	float near;
+	float far;
+} camUBO;
 
 const vec3 pos[8] = vec3[8]
 (
@@ -44,13 +46,11 @@ const int indices[36] = int[36]
 
 void main()
 {
-	mat4 mvp = frameUBO.cameraProjection * frameUBO.cameraView;
-
 	int idx = indices[gl_VertexIndex];
 	vec4 pos4 = vec4(pos[idx], 1.0);
 
 	// depthCompareOp should be VK_COMPARE_OP_LESS_OR_EQUAL
-	gl_Position = (mvp * pos4).xyww;
+	gl_Position = (camUBO.projection * camUBO.view * pos4).xyww;
 	
 	direction = pos[idx].xyz;
 }

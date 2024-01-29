@@ -44,6 +44,7 @@ private:
 	Lights* lights_;
 
 	// Image-Based Lighting
+	// TODO Organize these inside a struct
 	VulkanImage* specularCubemap_;
 	VulkanImage* diffuseCubemap_;
 	VulkanImage* brdfLUT_;

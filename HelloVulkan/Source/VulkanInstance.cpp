@@ -13,18 +13,16 @@ void VulkanInstance::Create()
 	};
 
 	// A list of extensions
-	// Thic projects only works on Windows
-	const std::vector<const char*> exts =
+	const std::vector<const char*> extensions =
 	{
 		"VK_KHR_surface",
-		"VK_KHR_win32_surface",
+		"VK_KHR_win32_surface", // This project only works on Windows
 		VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
 		VK_EXT_DEBUG_REPORT_EXTENSION_NAME,
-		/* for indexed textures */
-		VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME
+		VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME // for indexed textures
 	};
 
-	const VkApplicationInfo appinfo =
+	const VkApplicationInfo appInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
 		.pNext = nullptr,
@@ -40,11 +38,11 @@ void VulkanInstance::Create()
 		.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.pApplicationInfo = &appinfo,
+		.pApplicationInfo = &appInfo,
 		.enabledLayerCount = static_cast<uint32_t>(vLayers.size()),
 		.ppEnabledLayerNames = vLayers.data(),
-		.enabledExtensionCount = static_cast<uint32_t>(exts.size()),
-		.ppEnabledExtensionNames = exts.data()
+		.enabledExtensionCount = static_cast<uint32_t>(extensions.size()),
+		.ppEnabledExtensionNames = extensions.data()
 	};
 
 	VK_CHECK(vkCreateInstance(&createInfo, nullptr, &instance_));

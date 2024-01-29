@@ -8,6 +8,7 @@
 #include "glslang_c_interface.h" 
 
 #include <iostream>
+#include <array>
 
 AppBase::AppBase() :
 	shouldRecreateSwapchain_(false)
@@ -23,7 +24,7 @@ AppBase::AppBase() :
 void AppBase::InitVulkan()
 {
 	// Initialize Volk
-	VkResult res = volkInitialize();
+	const VkResult res = volkInitialize();
 	if (res != VK_SUCCESS)
 	{
 		std::cerr << "Volk Cannot be initialized\n";
@@ -55,8 +56,8 @@ void AppBase::InitGLFW()
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-	int w = AppConfig::InitialScreenWidth;
-	int h = AppConfig::InitialScreenHeight;
+	const int w = AppConfig::InitialScreenWidth;
+	const int h = AppConfig::InitialScreenHeight;
 
 	// GLFW window creation
 	windowWidth_ = static_cast<uint32_t>(w);
@@ -173,25 +174,52 @@ void AppBase::DrawFrame()
 	// ImGui
 	UpdateUI();
 
+	// Compute queue (not used for now)
+	/*{
+		vkResetCommandBuffer(frameData.computeCommandBuffer_, 0);
+
+		FillComputeCommandBuffer(frameData.computeCommandBuffer_, imageIndex);
+
+		VkPipelineStageFlags waitStageMask = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+		VkSubmitInfo computeSubmitInfo =
+		{
+			.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+			.pNext = 0,
+			.waitSemaphoreCount = 0,
+			.pWaitSemaphores = nullptr,
+			.pWaitDstStageMask = &waitStageMask,
+			.commandBufferCount = 1,
+			.pCommandBuffers = &(frameData.computeCommandBuffer_),
+			.signalSemaphoreCount = 1,
+			.pSignalSemaphores = &(frameData.computeSemaphore_)
+		};
+
+		VK_CHECK(vkQueueSubmit(vulkanDevice_.GetComputeQueue(), 1, &computeSubmitInfo, VK_NULL_HANDLE));
+	}*/
+
 	// Start recording command buffers
 	FillGraphicsCommandBuffer(frameData.commandBuffer_, imageIndex);
-
-	const VkPipelineStageFlags waitStages[] = 
-		{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	
+	// With compute
+	//const VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_VERTEX_INPUT_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	//std::array<VkSemaphore, 2> waitSemaphores = { frameData.computeSemaphore_, frameData.nextSwapchainImageSemaphore_ };
+	
+	// Without compute
+	const VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	std::array<VkSemaphore, 1> waitSemaphores{ frameData.nextSwapchainImageSemaphore_ };
 
 	const VkSubmitInfo submitInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
 		.pNext = nullptr,
-		.waitSemaphoreCount = 1u,
-		// Wait for the swapchain image to become available
-		.pWaitSemaphores = &(frameData.nextSwapchainImageSemaphore_),
+		.waitSemaphoreCount = waitSemaphores.size(),
+		.pWaitSemaphores = waitSemaphores.data(),
 		.pWaitDstStageMask = waitStages,
 		.commandBufferCount = 1u,
 		.pCommandBuffers = &(frameData.commandBuffer_),
 		.signalSemaphoreCount = 1u,
 		// Wait for rendering to complete
-		.pSignalSemaphores = &(frameData.renderSemaphore_)
+		.pSignalSemaphores = &(frameData.graphicsQueueSemaphore_)
 	};
 
 	VK_CHECK(vkQueueSubmit(vulkanDevice_.GetGraphicsQueue(), 1, &submitInfo, frameData.queueSubmitFence_));
@@ -201,8 +229,8 @@ void AppBase::DrawFrame()
 		.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
 		.pNext = nullptr,
 		.waitSemaphoreCount = 1u,
-		// Wait for rendering to complete
-		.pWaitSemaphores = &(frameData.renderSemaphore_),
+		// Wait for graphics commands to complete
+		.pWaitSemaphores = &(frameData.graphicsQueueSemaphore_),
 		.swapchainCount = 1u,
 		.pSwapchains = vulkanDevice_.GetSwapchainPtr(),
 		.pImageIndices = &imageIndex
@@ -223,10 +251,9 @@ void AppBase::UpdateUI()
 	// Empty, must be implemented in a derived class
 }
 
-// Fill/record command buffer
-void AppBase::FillGraphicsCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
+void AppBase::FillComputeCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
 {
-	const VkCommandBufferBeginInfo beginIndo =
+	const VkCommandBufferBeginInfo beginInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
 		.pNext = nullptr,
@@ -234,7 +261,28 @@ void AppBase::FillGraphicsCommandBuffer(VkCommandBuffer commandBuffer, uint32_t 
 		.pInheritanceInfo = nullptr
 	};
 
-	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginIndo));
+	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
+
+	for (auto& pip : computePipelines_)
+	{
+		pip->FillCommandBuffer(vulkanDevice_, commandBuffer, imageIndex);
+	}
+
+	VK_CHECK(vkEndCommandBuffer(commandBuffer));
+}
+
+// Fill/record command buffer
+void AppBase::FillGraphicsCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
+{
+	const VkCommandBufferBeginInfo beginInfo =
+	{
+		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+		.pNext = nullptr,
+		.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT,
+		.pInheritanceInfo = nullptr
+	};
+
+	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
 
 	// Iterate through all renderers to fill the command buffer
 	for (auto& pip : graphicsPipelines_)
@@ -344,16 +392,16 @@ void AppBase::MouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 		return;
 	}
 
-	float xPos = static_cast<float>(xposIn);
-	float yPos = static_cast<float>(yposIn);
+	const float xPos = static_cast<float>(xposIn);
+	const float yPos = static_cast<float>(yposIn);
 	if (firstMouse_)
 	{
 		lastX_ = xPos;
 		lastY_ = yPos;
 		firstMouse_ = false;
 	}
-	float xOffset = xPos - lastX_;
-	float yOffset = lastY_ - yPos; // reversed since y-coordinates go from bottom to top
+	const float xOffset = xPos - lastX_;
+	const float yOffset = lastY_ - yPos; // reversed since y-coordinates go from bottom to top
 	lastX_ = xPos;
 	lastY_ = yPos;
 	camera_->ProcessMouseMovement(xOffset, yOffset);

@@ -54,7 +54,7 @@ void VulkanDevice::CreateCompute
 		.queueFamilyIndex = graphicsFamily_
 	};
 
-	VK_CHECK(vkCreateCommandPool(device_, &cpi, nullptr, &commandPool_));
+	VK_CHECK(vkCreateCommandPool(device_, &cpi, nullptr, &graphicsCommandPool_));
 
 	// Frame data
 	frameIndex_ = 0;
@@ -62,9 +62,9 @@ void VulkanDevice::CreateCompute
 	for (unsigned int i = 0; i < AppConfig::FrameOverlapCount; ++i)
 	{
 		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].nextSwapchainImageSemaphore_)));
-		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].renderSemaphore_)));
+		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].graphicsQueueSemaphore_)));
 		VK_CHECK(CreateFence(&(frameDataArray_[i].queueSubmitFence_)));
-		VK_CHECK(CreateCommandBuffer(commandPool_, &(frameDataArray_[i].commandBuffer_)));
+		VK_CHECK(CreateCommandBuffer(graphicsCommandPool_, &(frameDataArray_[i].commandBuffer_)));
 	}
 
 	{
@@ -78,10 +78,8 @@ void VulkanDevice::CreateCompute
 		};
 		VK_CHECK(vkCreateCommandPool(device_, &cpi1, nullptr, &computeCommandPool_));
 
-		CreateCommandBuffer(computeCommandPool_, &computeCommandBuffer_);
+		//CreateCommandBuffer(computeCommandPool_, &computeCommandBuffer_);
 	}
-
-	useCompute_ = true;
 }
 
 void VulkanDevice::Destroy()
@@ -97,12 +95,8 @@ void VulkanDevice::Destroy()
 	}
 	vkDestroySwapchainKHR(device_, swapchain_, nullptr);
 
-	vkDestroyCommandPool(device_, commandPool_, nullptr);
-
-	if (useCompute_)
-	{
-		vkDestroyCommandPool(device_, computeCommandPool_, nullptr);
-	}
+	vkDestroyCommandPool(device_, graphicsCommandPool_, nullptr);
+	vkDestroyCommandPool(device_, computeCommandPool_, nullptr);
 
 	vkDestroyDevice(device_, nullptr);
 }
@@ -205,7 +199,7 @@ VkResult VulkanDevice::CreateDeviceWithCompute(
 		return CreateDevice(deviceFeatures, graphicsFamily);
 	}
 
-	const float queuePriorities[2] = { 0.f, 0.f };
+	constexpr float queuePriorities[2] = { 0.f, 0.f };
 	const VkDeviceQueueCreateInfo qciGfx =
 	{
 		.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
@@ -253,7 +247,7 @@ VkResult VulkanDevice::CreateDevice(VkPhysicalDeviceFeatures deviceFeatures, uin
 		VK_KHR_SHADER_DRAW_PARAMETERS_EXTENSION_NAME
 	};
 
-	const float queuePriority = 1.0f;
+	constexpr float queuePriority = 1.0f;
 	const VkDeviceQueueCreateInfo queueCreateInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
@@ -284,10 +278,9 @@ VkResult VulkanDevice::CreateDevice(VkPhysicalDeviceFeatures deviceFeatures, uin
 VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface)
 {
 	swapchainImageFormat_ = VK_FORMAT_B8G8R8A8_UNORM;
-	VkSurfaceFormatKHR surfaceFormat = { swapchainImageFormat_, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
-
-	auto swapchainSupport = QuerySwapchainSupport(surface);
-	auto presentMode = ChooseSwapPresentMode(swapchainSupport.presentModes_);
+	const VkSurfaceFormatKHR surfaceFormat = { swapchainImageFormat_, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
+	const SwapchainSupportDetails swapchainSupport = QuerySwapchainSupport(surface);
+	const VkPresentModeKHR presentMode = ChooseSwapPresentMode(swapchainSupport.presentModes_);
 
 	const VkSwapchainCreateInfoKHR createInfo =
 	{
@@ -442,7 +435,7 @@ VkResult VulkanDevice::CreateSemaphore(VkSemaphore* outSemaphore)
 
 VkResult VulkanDevice::CreateFence(VkFence* fence)
 {
-	VkFenceCreateInfo fenceInfo =
+	const VkFenceCreateInfo fenceInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
 		.flags = VK_FENCE_CREATE_SIGNALED_BIT
@@ -523,12 +516,12 @@ VkFormat VulkanDevice::FindSupportedFormat(
 	throw std::runtime_error("Failed to find supported format\n");
 }
 
-VkCommandBuffer VulkanDevice::BeginSingleTimeCommands()
+VkCommandBuffer VulkanDevice::BeginGraphicsSingleTimeCommand()
 {
 	VkCommandBuffer commandBuffer;
-	CreateCommandBuffer(commandPool_, &commandBuffer);
+	CreateCommandBuffer(graphicsCommandPool_, &commandBuffer);
 
-	const VkCommandBufferBeginInfo beginInfo = {
+	constexpr VkCommandBufferBeginInfo beginInfo = {
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
 		.pNext = nullptr,
 		.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
@@ -540,7 +533,7 @@ VkCommandBuffer VulkanDevice::BeginSingleTimeCommands()
 	return commandBuffer;
 }
 
-void VulkanDevice::EndSingleTimeCommands(VkCommandBuffer commandBuffer)
+void VulkanDevice::EndGraphicsSingleTimeCommand(VkCommandBuffer commandBuffer)
 {
 	vkEndCommandBuffer(commandBuffer);
 
@@ -559,7 +552,44 @@ void VulkanDevice::EndSingleTimeCommands(VkCommandBuffer commandBuffer)
 	vkQueueSubmit(graphicsQueue_, 1, &submitInfo, VK_NULL_HANDLE);
 	vkQueueWaitIdle(graphicsQueue_);
 
-	vkFreeCommandBuffers(device_, commandPool_, 1, &commandBuffer);
+	vkFreeCommandBuffers(device_, graphicsCommandPool_, 1, &commandBuffer);
+}
+
+VkCommandBuffer VulkanDevice::BeginComputeSingleTimeCommand()
+{
+	VkCommandBuffer commandBuffer;
+	CreateCommandBuffer(computeCommandPool_, &commandBuffer);
+
+	constexpr VkCommandBufferBeginInfo beginInfo = {
+		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+		.pNext = nullptr,
+		.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+		.pInheritanceInfo = nullptr
+	};
+
+	vkBeginCommandBuffer(commandBuffer, &beginInfo);
+	return commandBuffer;
+}
+
+void VulkanDevice::EndComputeSingleTimeCommand(VkCommandBuffer commandBuffer)
+{
+	vkEndCommandBuffer(commandBuffer);
+
+	const VkSubmitInfo submitInfo = {
+		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+		.pNext = nullptr,
+		.waitSemaphoreCount = 0,
+		.pWaitSemaphores = nullptr,
+		.pWaitDstStageMask = nullptr,
+		.commandBufferCount = 1,
+		.pCommandBuffers = &commandBuffer,
+		.signalSemaphoreCount = 0,
+		.pSignalSemaphores = nullptr
+	};
+
+	vkQueueSubmit(computeQueue_, 1, &submitInfo, VK_NULL_HANDLE);
+	vkQueueWaitIdle(computeQueue_);
+	vkFreeCommandBuffers(device_, computeCommandPool_, 1, &commandBuffer);
 }
 
 void VulkanDevice::SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name)

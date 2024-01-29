@@ -70,16 +70,7 @@ void PipelineBRDFLUT::CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT)
 
 void PipelineBRDFLUT::Execute(VulkanDevice& vkDev)
 {
-	VkCommandBuffer commandBuffer = vkDev.GetComputeCommandBuffer();
-
-	VkCommandBufferBeginInfo commandBufferBeginInfo = {
-		VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-		0, 
-		VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, 
-		0
-	};
-
-	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo));
+	VkCommandBuffer commandBuffer = vkDev.BeginComputeSingleTimeCommand();
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline_);
 
@@ -134,25 +125,7 @@ void PipelineBRDFLUT::Execute(VulkanDevice& vkDev)
 		0, // imageMemoryBarrierCount
 		nullptr); // pImageMemoryBarriers
 
-	VK_CHECK(vkEndCommandBuffer(commandBuffer));
-
-	VkSubmitInfo submitInfo = {
-		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-		.pNext = 0, 
-		.waitSemaphoreCount = 0, 
-		.pWaitSemaphores = 0, 
-		.pWaitDstStageMask = 0, 
-		.commandBufferCount = 1, // commandBufferCount
-		.pCommandBuffers = &commandBuffer, 
-		.signalSemaphoreCount = 0, 
-		.pSignalSemaphores = 0
-	};
-
-	VK_CHECK(vkQueueSubmit(vkDev.GetComputeQueue(), 1, &submitInfo, 0));
-
-	// Wait for the compute shader completion.
-	// Alternatively we can use a fence.
-	VK_CHECK(vkQueueWaitIdle(vkDev.GetComputeQueue()));
+	vkDev.EndComputeSingleTimeCommand(commandBuffer);
 }
 
 void PipelineBRDFLUT::CreateDescriptor(VulkanDevice& vkDev)

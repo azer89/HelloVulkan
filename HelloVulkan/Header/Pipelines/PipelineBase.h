@@ -32,31 +32,24 @@ public:
 		VkCommandBuffer commandBuffer, 
 		size_t currentImage) = 0;
 
-	void SetPerFrameUBO(VulkanDevice& vkDev, uint32_t imageIndex, PerFrameUBO ubo)
+	void SetCameraUBO(VulkanDevice& vkDev, uint32_t imageIndex, CameraUBO ubo)
 	{
-		UpdateUniformBuffer(vkDev, perFrameUBOs_[imageIndex], &ubo, sizeof(PerFrameUBO));
+		UpdateUniformBuffer(vkDev, cameraUBOBuffers_[imageIndex], &ubo, sizeof(CameraUBO));
 	}
 
 protected:
 	VkDevice device_ = nullptr;
+	PipelineConfig config_;
+	std::vector<VulkanBuffer> cameraUBOBuffers_;
 
 	VulkanFramebuffer framebuffer_;
-
 	VulkanDescriptor descriptor_;
-
-	// Render pass
 	VulkanRenderPass renderPass_;
-
 	VkPipelineLayout pipelineLayout_ = nullptr;
 	VkPipeline pipeline_ = nullptr;
 
-	// PerFrameUBO
-	std::vector<VulkanBuffer> perFrameUBOs_;
-
-	PipelineConfig config_;
-
 protected:
-	bool IsOffscreen()
+	bool IsOffscreen() const
 	{
 		return config_.type_ == PipelineType::GraphicsOffScreen;
 	}
@@ -93,7 +86,6 @@ protected:
 	void CreateComputePipeline(
 		VulkanDevice& vkDev,
 		const std::string& shaderFile);
-		//VkShaderModule computeShader);
 };
 
 #endif

@@ -13,7 +13,7 @@ void VulkanRenderPass::CreateResolveMSRenderPass(
 {
 	renderPassBit_ = renderPassBit;
 
-	VkAttachmentDescription multisampledAttachment =
+	const VkAttachmentDescription multisampledAttachment =
 	{
 		.format = vkDev.GetSwaphchainImageFormat(),
 		.samples = msaaSamples,
@@ -25,12 +25,12 @@ void VulkanRenderPass::CreateResolveMSRenderPass(
 		.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 	};
 
-	const VkAttachmentReference multisampledRef = {
+	constexpr VkAttachmentReference multisampledRef = {
 		.attachment = 0,
 		.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	};
 
-	VkAttachmentDescription singleSampledAttachment = {
+	const VkAttachmentDescription singleSampledAttachment = {
 		.format = vkDev.GetSwaphchainImageFormat(),
 		.samples = VK_SAMPLE_COUNT_1_BIT,
 		.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
@@ -41,7 +41,7 @@ void VulkanRenderPass::CreateResolveMSRenderPass(
 		.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 	};
 
-	const VkAttachmentReference singleSampledRef = {
+	constexpr VkAttachmentReference singleSampledRef = {
 		.attachment = 1,
 		.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	};
@@ -68,7 +68,7 @@ void VulkanRenderPass::CreateResolveMSRenderPass(
 
 	std::array<VkAttachmentDescription, 2> attachments = { multisampledAttachment, singleSampledAttachment };
 
-	VkRenderPassCreateInfo renderPassInfo =
+	const VkRenderPassCreateInfo renderPassInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
 		.attachmentCount = static_cast<uint32_t>(attachments.size()),
@@ -97,9 +97,9 @@ void VulkanRenderPass::CreateOffScreenRenderPass(
 
 	// Transition color attachment to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	// for the next onscreen render pass
-	bool colorShaderReadOnly = renderPassBit_ & RenderPassBit::ColorShaderReadOnly;
+	const bool colorShaderReadOnly = renderPassBit_ & RenderPassBit::ColorShaderReadOnly;
 
-	VkAttachmentDescription colorAttachment = {
+	const VkAttachmentDescription colorAttachment = {
 		.flags = 0,
 		.format = vkDev.GetSwaphchainImageFormat(),
 		.samples = msaaSamples,
@@ -120,12 +120,12 @@ void VulkanRenderPass::CreateOffScreenRenderPass(
 			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	};
 
-	const VkAttachmentReference colorAttachmentRef = {
+	constexpr VkAttachmentReference colorAttachmentRef = {
 		.attachment = 0,
 		.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	};
 
-	VkAttachmentDescription depthAttachment = {
+	const VkAttachmentDescription depthAttachment = {
 		.flags = 0,
 		.format = vkDev.GetDepthFormat(),
 		.samples = msaaSamples,
@@ -141,7 +141,7 @@ void VulkanRenderPass::CreateOffScreenRenderPass(
 		.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 	};
 
-	const VkAttachmentReference depthAttachmentRef = {
+	constexpr VkAttachmentReference depthAttachmentRef = {
 		.attachment = 1,
 		.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 	};
@@ -227,7 +227,7 @@ void VulkanRenderPass::CreateOnScreenRenderPass(
 			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	};
 
-	const VkAttachmentReference colorAttachmentRef = {
+	constexpr VkAttachmentReference colorAttachmentRef = {
 		.attachment = 0,
 		.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	};
@@ -248,7 +248,7 @@ void VulkanRenderPass::CreateOnScreenRenderPass(
 		.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 	};
 
-	const VkAttachmentReference depthAttachmentRef = {
+	constexpr VkAttachmentReference depthAttachmentRef = {
 		.attachment = 1,
 		.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 	};
@@ -264,7 +264,7 @@ void VulkanRenderPass::CreateOnScreenRenderPass(
 		.dependencyFlags = 0
 	};
 
-	const VkSubpassDescription subpass = {
+	VkSubpassDescription subpass = {
 		.flags = 0,
 		.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
 		.inputAttachmentCount = 0,
@@ -323,7 +323,7 @@ void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(
 			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	};
 
-	const VkAttachmentReference colorAttachmentRef = {
+	constexpr VkAttachmentReference colorAttachmentRef = {
 		.attachment = 0,
 		.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	};
@@ -339,7 +339,7 @@ void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(
 		.dependencyFlags = 0
 	};
 
-	const VkSubpassDescription subpass = {
+	VkSubpassDescription subpass = {
 		.flags = 0,
 		.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
 		.inputAttachmentCount = 0,
@@ -376,7 +376,7 @@ void VulkanRenderPass::CreateOffScreenCubemapRenderPass(
 	uint8_t renderPassBit,
 	VkSampleCountFlagBits msaaSamples)
 {
-	const VkImageLayout finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+	constexpr VkImageLayout finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
 	std::vector<VkAttachmentDescription> m_attachments;
 	std::vector<VkAttachmentReference> m_attachmentRefs;
@@ -414,7 +414,7 @@ void VulkanRenderPass::CreateOffScreenCubemapRenderPass(
 		.pColorAttachments = m_attachmentRefs.data(),
 	};
 
-	VkRenderPassCreateInfo createInfo =
+	const VkRenderPassCreateInfo createInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
 		.pNext = nullptr,
@@ -430,8 +430,8 @@ void VulkanRenderPass::CreateOffScreenCubemapRenderPass(
 
 void VulkanRenderPass::CreateBeginInfo(VulkanDevice& vkDev)
 {
-	bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
-	bool clearDepth = renderPassBit_ & RenderPassBit::DepthClear;
+	const bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
+	const bool clearDepth = renderPassBit_ & RenderPassBit::DepthClear;
 
 	if (clearColor)
 	{
@@ -474,7 +474,7 @@ void VulkanRenderPass::BeginCubemapRenderPass(
 {
 	// We don't cache buffer info because this is for one-time rendering
 	const std::vector<VkClearValue> clearValues(6u, { 0.0f, 0.0f, 1.0f, 1.0f });
-	VkRenderPassBeginInfo info =
+	const VkRenderPassBeginInfo info =
 	{
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
 		.pNext = nullptr,

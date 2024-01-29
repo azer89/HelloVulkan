@@ -7,15 +7,15 @@
 
 namespace AppConfig
 {
-	const int InitialScreenWidth = 1600;
-	const int InitialScreenHeight = 1200;
+	constexpr int InitialScreenWidth = 1600;
+	constexpr int InitialScreenHeight = 1200;
 
 	// VK_PRESENT_MODE_FIFO_KHR --> Lock to screen FPS
 	// VK_PRESENT_MODE_MAILBOX_KHR --> Triple buffering
-	const VkPresentModeKHR PresentMode = VK_PRESENT_MODE_FIFO_KHR;
+	constexpr VkPresentModeKHR PresentMode = VK_PRESENT_MODE_FIFO_KHR;
 
 	// Number of overlapping frames when rendering
-	const unsigned int FrameOverlapCount = 2;
+	constexpr unsigned int FrameOverlapCount = 2;
 	
 	const std::string ScreenTitle = "Hello Vulkan";
 	const std::string ShaderFolder = "C://Users//azer//workspace//HelloVulkan//Shaders//";
@@ -25,14 +25,14 @@ namespace AppConfig
 
 namespace CameraConfig
 {
-	const float Yaw = -90.0f;
-	const float Pitch = 0.0f;
-	const float Speed = 2.5f;
-	const float Sensitivity = 0.1f;
-	const float Zoom = 45.0f;
+	constexpr float Yaw = -90.0f;
+	constexpr float Pitch = 0.0f;
+	constexpr float Speed = 2.5f;
+	constexpr float Sensitivity = 0.1f;
+	constexpr float Zoom = 45.0f;
 
-	const float Near = 0.1f;
-	const float Far = 100.0f;
+	constexpr float Near = 0.1f;
+	constexpr float Far = 100.0f;
 }
 
 namespace IBLConfig

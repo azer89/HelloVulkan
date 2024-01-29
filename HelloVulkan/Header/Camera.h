@@ -26,16 +26,14 @@ public:
 		float pitch = CameraConfig::Pitch);
 
 	void SetScreenSize(float width, float height);
-
-	glm::mat4 GetProjectionMatrix();
-	glm::mat4 GetViewMatrix();
-	glm::vec3 Position();
-
 	void ProcessKeyboard(CameraMovement direction, float deltaTime_);
 	void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true);
 	void ProcessMouseScroll(float yoffset);
 
-	PerFrameUBO GetPerFrameUBO();
+	glm::mat4 GetProjectionMatrix() const;
+	glm::mat4 GetViewMatrix() const;
+	glm::vec3 Position() const;
+	CameraUBO GetCameraUBO() const;
 
 private:
 	glm::mat4 projectionMatrix_;

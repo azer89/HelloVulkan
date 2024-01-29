@@ -278,7 +278,7 @@ void PipelineCubeFilter::CreateOffsreenGraphicsPipeline(
 	}
 }
 
-// TODO Can be moved to generic function in PipelineBase
+// TODO Use VulkanFramebuffer
 VkFramebuffer PipelineCubeFilter::CreateFrameBuffer(
 	VulkanDevice& vkDev,
 	std::vector<VkImageView> outputViews,
@@ -320,7 +320,7 @@ void PipelineCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 	std::vector<std::vector<VkImageView>> outputViews;
 	CreateOutputCubemapViews(vkDev, outputCubemap, outputViews, outputMipMapCount);
 
-	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
+	VkCommandBuffer commandBuffer = vkDev.BeginGraphicsSingleTimeCommand();
 
 	vkCmdBindDescriptorSets(
 		commandBuffer,
@@ -391,7 +391,7 @@ void PipelineCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		.destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
 		.destinationAccess = VK_ACCESS_SHADER_READ_BIT });
 
-	vkDev.EndSingleTimeCommands(commandBuffer);
+	vkDev.EndGraphicsSingleTimeCommand(commandBuffer);
 
 	// Destroy frame buffers
 	for (VkFramebuffer& f : usedFrameBuffers)

@@ -9,24 +9,20 @@ PipelineResolveMS::PipelineResolveMS(
 	VulkanImage* singleSampledColorImage // Output
 ) :
 	PipelineBase(vkDev, 
-		{
-			.type_ = PipelineType::GraphicsOffScreen
-		}
-	),
-	multiSampledColorImage_(multiSampledColorImage),
-	singleSampledColorImage_(singleSampledColorImage)
+		{ .type_ = PipelineType::GraphicsOffScreen }
+	)
 {
 	renderPass_.CreateResolveMSRenderPass(
 		vkDev,
 		0u,
-		multiSampledColorImage_->multisampleCount_);
+		multiSampledColorImage->multisampleCount_);
 
 	framebuffer_.Create(
 		vkDev, 
 		renderPass_.GetHandle(),
 		{
-			multiSampledColorImage_,
-			singleSampledColorImage_
+			multiSampledColorImage,
+			singleSampledColorImage
 		},
 		IsOffscreen());
 }
