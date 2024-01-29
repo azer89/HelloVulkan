@@ -278,7 +278,7 @@ void PipelineCubeFilter::CreateOffsreenGraphicsPipeline(
 	}
 }
 
-// TODO Can be moved to generic function in PipelineBase
+// TODO Use VulkanFramebuffer
 VkFramebuffer PipelineCubeFilter::CreateFrameBuffer(
 	VulkanDevice& vkDev,
 	std::vector<VkImageView> outputViews,

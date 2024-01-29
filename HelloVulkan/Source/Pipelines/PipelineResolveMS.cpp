@@ -13,20 +13,18 @@ PipelineResolveMS::PipelineResolveMS(
 			.type_ = PipelineType::GraphicsOffScreen
 		}
 	),
-	multiSampledColorImage_(multiSampledColorImage),
-	singleSampledColorImage_(singleSampledColorImage)
 {
 	renderPass_.CreateResolveMSRenderPass(
 		vkDev,
 		0u,
-		multiSampledColorImage_->multisampleCount_);
+		multiSampledColorImage->multisampleCount_);
 
 	framebuffer_.Create(
 		vkDev, 
 		renderPass_.GetHandle(),
 		{
-			multiSampledColorImage_,
-			singleSampledColorImage_
+			multiSampledColorImage,
+			singleSampledColorImage
 		},
 		IsOffscreen());
 }

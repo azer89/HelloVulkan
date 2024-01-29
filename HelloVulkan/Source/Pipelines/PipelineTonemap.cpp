@@ -8,6 +8,7 @@ PipelineTonemap::PipelineTonemap(VulkanDevice& vkDev,
 		{
 			.type_ = PipelineType::GraphicsOnScreen
 		}),
+	// Need to store a pointer for window resizing
 	singleSampledColorImage_(singleSampledColorImage)
 {
 	renderPass_.CreateOnScreenColorOnlyRenderPass(vkDev);

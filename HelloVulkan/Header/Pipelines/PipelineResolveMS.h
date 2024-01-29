@@ -17,10 +17,6 @@ public:
 	~PipelineResolveMS();
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
-
-private:
-	VulkanImage* multiSampledColorImage_; // Input
-	VulkanImage* singleSampledColorImage_; // Output
 };
 
 #endif
