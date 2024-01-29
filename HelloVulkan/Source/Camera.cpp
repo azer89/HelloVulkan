@@ -163,3 +163,13 @@ void Camera::UpdateInternal()
 
 	viewMatrix_ = glm::lookAt(position_, position_ + front_, up_);
 }
+
+PerFrameUBO Camera::GetPerFrameUBO()
+{
+	return
+	{
+		.cameraProjection = projectionMatrix_,
+		.cameraView = viewMatrix_,
+		.cameraPosition = glm::vec4(position_, 1.f)
+	};
+}

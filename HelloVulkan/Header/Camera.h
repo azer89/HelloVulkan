@@ -4,6 +4,7 @@
 #include "glm/glm.hpp"
 
 #include "Configs.h"
+#include "UBO.h"
 
 enum CameraMovement
 {
@@ -12,8 +13,6 @@ enum CameraMovement
 	CameraLeft,
 	CameraRight,
 };
-
-
 
 class Camera
 {
@@ -35,6 +34,8 @@ public:
 	void ProcessKeyboard(CameraMovement direction, float deltaTime_);
 	void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true);
 	void ProcessMouseScroll(float yoffset);
+
+	PerFrameUBO GetPerFrameUBO();
 
 private:
 	glm::mat4 projectionMatrix_;
