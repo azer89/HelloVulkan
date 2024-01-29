@@ -26,7 +26,7 @@ void AppPBR::Init()
 
 	model_ = std::make_unique<Model>(
 		vulkanDevice_, 
-		AppConfig::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
+		AppConfig::ModelFolder + "Sponza//Sponza.gltf");
 	std::vector<Model*> models = {model_.get()};
 
 	// Create a cubemap from the input HDR

@@ -561,6 +561,43 @@ void VulkanDevice::EndSingleTimeCommands(VkCommandBuffer commandBuffer)
 	vkFreeCommandBuffers(device_, commandPool_, 1, &commandBuffer);
 }
 
+VkCommandBuffer VulkanDevice::BeginComputeSingleTimeCommands()
+{
+	VkCommandBuffer commandBuffer;
+	CreateCommandBuffer(computeCommandPool_, &commandBuffer);
+
+	constexpr VkCommandBufferBeginInfo beginInfo = {
+		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+		.pNext = nullptr,
+		.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+		.pInheritanceInfo = nullptr
+	};
+
+	vkBeginCommandBuffer(commandBuffer, &beginInfo);
+	return commandBuffer;
+}
+
+void VulkanDevice::EndComputeSingleTimeCommands(VkCommandBuffer commandBuffer)
+{
+	vkEndCommandBuffer(commandBuffer);
+
+	const VkSubmitInfo submitInfo = {
+		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+		.pNext = nullptr,
+		.waitSemaphoreCount = 0,
+		.pWaitSemaphores = nullptr,
+		.pWaitDstStageMask = nullptr,
+		.commandBufferCount = 1,
+		.pCommandBuffers = &commandBuffer,
+		.signalSemaphoreCount = 0,
+		.pSignalSemaphores = nullptr
+	};
+
+	vkQueueSubmit(computeQueue_, 1, &submitInfo, VK_NULL_HANDLE);
+	vkQueueWaitIdle(computeQueue_);
+	vkFreeCommandBuffers(device_, computeCommandPool_, 1, &commandBuffer);
+}
+
 void VulkanDevice::SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name)
 {
 	VkDebugUtilsObjectNameInfoEXT nameInfo = {

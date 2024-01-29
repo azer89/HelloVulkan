@@ -61,8 +61,11 @@ public:
 		uint32_t width,
 		uint32_t height);
 
+	// TODO These four functions can be combined
 	VkCommandBuffer BeginSingleTimeCommands();
 	void EndSingleTimeCommands(VkCommandBuffer commandBuffer);
+	VkCommandBuffer BeginComputeSingleTimeCommands();
+	void EndComputeSingleTimeCommands(VkCommandBuffer commandBuffer);
 
 	// Getters
 	VkDevice GetDevice() const { return device_; }
