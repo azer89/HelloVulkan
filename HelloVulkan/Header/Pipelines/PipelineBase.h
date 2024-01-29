@@ -39,24 +39,17 @@ public:
 
 protected:
 	VkDevice device_ = nullptr;
+	PipelineConfig config_;
+	std::vector<VulkanBuffer> perFrameUBOs_;
 
 	VulkanFramebuffer framebuffer_;
-
 	VulkanDescriptor descriptor_;
-
-	// Render pass
 	VulkanRenderPass renderPass_;
-
 	VkPipelineLayout pipelineLayout_ = nullptr;
 	VkPipeline pipeline_ = nullptr;
 
-	// PerFrameUBO
-	std::vector<VulkanBuffer> perFrameUBOs_;
-
-	PipelineConfig config_;
-
 protected:
-	bool IsOffscreen()
+	bool IsOffscreen() const
 	{
 		return config_.type_ == PipelineType::GraphicsOffScreen;
 	}
@@ -93,7 +86,6 @@ protected:
 	void CreateComputePipeline(
 		VulkanDevice& vkDev,
 		const std::string& shaderFile);
-		//VkShaderModule computeShader);
 };
 
 #endif
