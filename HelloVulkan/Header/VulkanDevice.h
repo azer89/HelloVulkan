@@ -25,10 +25,15 @@ struct FrameData
 	VkFence queueSubmitFence_;
 	VkCommandBuffer commandBuffer_;
 
+	// These two currently not used
+	VkCommandBuffer computeCommandBuffer_;
+	VkSemaphore computeSemaphore_;
+
 	void Destroy(VkDevice device)
 	{
 		vkDestroySemaphore(device, nextSwapchainImageSemaphore_, nullptr);
 		vkDestroySemaphore(device, graphicsQueueSemaphore_, nullptr);
+		vkDestroySemaphore(device, computeSemaphore_, nullptr);
 		vkDestroyFence(device, queueSubmitFence_, nullptr);
 	}
 };
