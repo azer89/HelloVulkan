@@ -9,10 +9,8 @@ PipelineResolveMS::PipelineResolveMS(
 	VulkanImage* singleSampledColorImage // Output
 ) :
 	PipelineBase(vkDev, 
-		{
-			.type_ = PipelineType::GraphicsOffScreen
-		}
-	),
+		{ .type_ = PipelineType::GraphicsOffScreen }
+	)
 {
 	renderPass_.CreateResolveMSRenderPass(
 		vkDev,

@@ -15,9 +15,10 @@ struct LightData
 {
 	vec4 position;
 	vec4 color;
+	float radius;
 };
 
-layout(binding = 1) readonly buffer Lights { LightData data []; } inLights;
+layout(binding = 1) readonly buffer Lights { LightData lights []; };
 
 const vec2 OFFSETS[6] = vec2[](
 	vec2(-1.0, -1.0),
@@ -31,7 +32,7 @@ const float RADIUS = 0.1;
 
 void main()
 {
-	LightData light = inLights.data[gl_InstanceIndex];
+	LightData light = lights[gl_InstanceIndex];
 
 	vec3 camRight = vec3(frameUBO.cameraView[0][0], frameUBO.cameraView[1][0], frameUBO.cameraView[2][0]);
 	vec3 camUp = vec3(frameUBO.cameraView[0][1], frameUBO.cameraView[1][1], frameUBO.cameraView[2][1]);

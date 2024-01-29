@@ -191,7 +191,7 @@ void AppBase::DrawFrame()
 		.pCommandBuffers = &(frameData.commandBuffer_),
 		.signalSemaphoreCount = 1u,
 		// Wait for rendering to complete
-		.pSignalSemaphores = &(frameData.renderSemaphore_)
+		.pSignalSemaphores = &(frameData.graphicsQueueSemaphore_)
 	};
 
 	VK_CHECK(vkQueueSubmit(vulkanDevice_.GetGraphicsQueue(), 1, &submitInfo, frameData.queueSubmitFence_));
@@ -201,8 +201,8 @@ void AppBase::DrawFrame()
 		.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
 		.pNext = nullptr,
 		.waitSemaphoreCount = 1u,
-		// Wait for rendering to complete
-		.pWaitSemaphores = &(frameData.renderSemaphore_),
+		// Wait for graphics commands to complete
+		.pWaitSemaphores = &(frameData.graphicsQueueSemaphore_),
 		.swapchainCount = 1u,
 		.pSwapchains = vulkanDevice_.GetSwapchainPtr(),
 		.pImageIndices = &imageIndex

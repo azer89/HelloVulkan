@@ -21,14 +21,14 @@ a command buffer
 struct FrameData
 {
 	VkSemaphore nextSwapchainImageSemaphore_;
-	VkSemaphore renderSemaphore_;
+	VkSemaphore graphicsQueueSemaphore_;
 	VkFence queueSubmitFence_;
 	VkCommandBuffer commandBuffer_;
 
 	void Destroy(VkDevice device)
 	{
 		vkDestroySemaphore(device, nextSwapchainImageSemaphore_, nullptr);
-		vkDestroySemaphore(device, renderSemaphore_, nullptr);
+		vkDestroySemaphore(device, graphicsQueueSemaphore_, nullptr);
 		vkDestroyFence(device, queueSubmitFence_, nullptr);
 	}
 };

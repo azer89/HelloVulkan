@@ -27,8 +27,9 @@ struct LightData
 {
 	vec4 position;
 	vec4 color;
+	float radius;
 };
-layout(set = 0, binding = 2) readonly buffer Lights { LightData data []; } inLights;
+layout(set = 0, binding = 2) readonly buffer Lights { LightData lights []; };
 
 layout(set = 0, binding = 3) uniform sampler2D textureAlbedo;
 layout(set = 0, binding = 4) uniform sampler2D textureNormal;
@@ -74,7 +75,7 @@ vec3 Radiance(
 {
 	vec3 Lo = vec3(0.0);
 
-	LightData light = inLights.data[lightIndex];
+	LightData light = lights[lightIndex];
 	light.color *= pc.lightIntensity;
 
 	vec3 L = normalize(light.position.xyz - worldPos); // Incident light vector
@@ -175,7 +176,7 @@ void main()
 	F0 = mix(F0, albedo, metallic);
 
 	vec3 Lo = vec3(0.0);
-	for (int i = 0; i < inLights.data.length(); ++i)
+	for (int i = 0; i < lights.length(); ++i)
 	{
 		Lo += Radiance(
 			albedo,

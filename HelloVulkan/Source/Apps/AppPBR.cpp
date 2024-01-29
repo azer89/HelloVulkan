@@ -131,19 +131,23 @@ void AppPBR::InitLights()
 	{
 		{
 			.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f),
-			.color_ = glm::vec4(1.f)
+			.color_ = glm::vec4(1.f),
+			.radius_ = 1.0f
 		},
 		{
 			.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f),
-			.color_ = glm::vec4(1.f)
+			.color_ = glm::vec4(1.f),
+			.radius_ = 1.0f
 		},
 		{
 			.position_ = glm::vec4(-1.5f, 0.7f, -1.5f, 1.f),
-			.color_ = glm::vec4(1.f)
+			.color_ = glm::vec4(1.f),
+			.radius_ = 1.0f
 		},
 		{
 			.position_ = glm::vec4(1.5f, 0.7f, -1.5f, 1.f),
-			.color_ = glm::vec4(1.f)
+			.color_ = glm::vec4(1.f),
+			.radius_ = 1.0f
 		}
 	});
 }

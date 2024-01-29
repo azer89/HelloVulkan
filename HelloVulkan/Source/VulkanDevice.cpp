@@ -62,7 +62,7 @@ void VulkanDevice::CreateCompute
 	for (unsigned int i = 0; i < AppConfig::FrameOverlapCount; ++i)
 	{
 		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].nextSwapchainImageSemaphore_)));
-		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].renderSemaphore_)));
+		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].graphicsQueueSemaphore_)));
 		VK_CHECK(CreateFence(&(frameDataArray_[i].queueSubmitFence_)));
 		VK_CHECK(CreateCommandBuffer(commandPool_, &(frameDataArray_[i].commandBuffer_)));
 	}
