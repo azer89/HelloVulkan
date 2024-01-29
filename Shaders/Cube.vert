@@ -44,17 +44,13 @@ const int indices[36] = int[36]
 
 void main()
 {
-	// TODO Remove this variable and there's something wrong
-	// with culling when depth is exactly 1.0
-	const float cubeSize = 50.0;
+	mat4 mvp = frameUBO.cameraProjection * frameUBO.cameraView;
 
 	int idx = indices[gl_VertexIndex];
-	
-	mat4 mvp = frameUBO.cameraProjection * frameUBO.cameraView;
-	vec4 position = vec4(cubeSize * pos[idx], 1.0);
+	vec4 pos4 = vec4(pos[idx], 1.0);
 
-	// TODO Change to xyww
-	gl_Position = (mvp * position);
+	// depthCompareOp should be VK_COMPARE_OP_LESS_OR_EQUAL
+	gl_Position = (mvp * pos4).xyww;
 	
 	direction = pos[idx].xyz;
 }

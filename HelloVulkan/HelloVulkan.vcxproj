@@ -162,6 +162,7 @@
     <ClInclude Include="Header\Pipelines\PipelineBase.h" />
     <ClInclude Include="Header\Pipelines\PipelineBRDFLUT.h" />
     <ClInclude Include="Header\Pipelines\PipelineClear.h" />
+    <ClInclude Include="Header\Pipelines\PipelineConfig.h" />
     <ClInclude Include="Header\Pipelines\PipelineCubeFilter.h" />
     <ClInclude Include="Header\Pipelines\PipelineEquirect2Cube.h" />
     <ClInclude Include="Header\Pipelines\PipelineFinish.h" />

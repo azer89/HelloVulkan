@@ -110,7 +110,7 @@ void AppPBR::Init()
 	finishPtr_ = std::make_unique<PipelineFinish>(vulkanDevice_);
 
 	// Put all renderer pointers to a vector
-	renderers_ =
+	graphicsPipelines_ =
 	{
 		// Must be in order
 		clearPtr_.get(),
@@ -175,29 +175,20 @@ void AppPBR::DestroyResources()
 
 void AppPBR::UpdateUBOs(uint32_t imageIndex)
 {
-	// Per frame UBO
-	PerFrameUBO skyboxUBO
-	{
-		.cameraProjection = camera_->GetProjectionMatrix(),
-		.cameraView = glm::mat4(glm::mat3(camera_->GetViewMatrix())), // Remove translation
-		.cameraPosition = glm::vec4(camera_->Position(), 1.f)
-	};
-	skyboxPtr_->SetPerFrameUBO(vulkanDevice_, imageIndex, skyboxUBO);
-	PerFrameUBO pbrUBO
-	{
-		.cameraProjection = camera_->GetProjectionMatrix(),
-		.cameraView = camera_->GetViewMatrix(),
-		.cameraPosition = glm::vec4(camera_->Position(), 1.f)
-	};
-	lightPtr_->SetPerFrameUBO(vulkanDevice_, imageIndex, pbrUBO);
-	pbrPtr_->SetPerFrameUBO(vulkanDevice_, imageIndex, pbrUBO);
+	PerFrameUBO ubo = camera_->GetPerFrameUBO();
+	lightPtr_->SetPerFrameUBO(vulkanDevice_, imageIndex, ubo);
+	pbrPtr_->SetPerFrameUBO(vulkanDevice_, imageIndex, ubo);
+
+	// Remove translation
+	PerFrameUBO skyboxUbo = ubo;
+	skyboxUbo.cameraView = glm::mat4(glm::mat3(skyboxUbo.cameraView));
+	skyboxPtr_->SetPerFrameUBO(vulkanDevice_, imageIndex, skyboxUbo);
 
 	// Model UBOs
 	glm::mat4 modelMatrix(1.f);
 	modelMatrix = glm::rotate(modelMatrix, modelRotation_, glm::vec3(0.f, 1.f, 0.f));
 	//modelRotation_ += deltaTime_ * 0.1f;
 
-	// 1
 	ModelUBO modelUBO1
 	{
 		.model = modelMatrix
@@ -263,7 +254,6 @@ int AppPBR::MainLoop()
 	vkDeviceWaitIdle(vulkanDevice_.GetDevice());
 
 	DestroyResources();
-
 	Terminate();
 
 	return 0;

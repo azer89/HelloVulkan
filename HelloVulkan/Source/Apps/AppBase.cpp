@@ -142,7 +142,7 @@ void AppBase::CreateSharedImageResources()
 	singleSampledColorImage_.SetDebugName(vulkanDevice_, "Singlesampled_Color_Image");
 }
 
-bool AppBase::DrawFrame()
+void AppBase::DrawFrame()
 {
 	FrameData& frameData = vulkanDevice_.GetCurrentFrameData();
 
@@ -161,7 +161,7 @@ bool AppBase::DrawFrame()
 	if (result == VK_ERROR_OUT_OF_DATE_KHR)
 	{
 		OnWindowResized();
-		return true;
+		return;
 	}
 
 	vkResetFences(vulkanDevice_.GetDevice(), 1, &(frameData.queueSubmitFence_));
@@ -174,7 +174,7 @@ bool AppBase::DrawFrame()
 	UpdateUI();
 
 	// Start recording command buffers
-	FillCommandBuffer(frameData.commandBuffer_, imageIndex);
+	FillGraphicsCommandBuffer(frameData.commandBuffer_, imageIndex);
 
 	const VkPipelineStageFlags waitStages[] = 
 		{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
@@ -216,8 +216,6 @@ bool AppBase::DrawFrame()
 
 	// Do this after the end of the draw
 	vulkanDevice_.IncrementFrameIndex();
-
-	return true;
 }
 
 void AppBase::UpdateUI()
@@ -226,7 +224,7 @@ void AppBase::UpdateUI()
 }
 
 // Fill/record command buffer
-void AppBase::FillCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
+void AppBase::FillGraphicsCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
 {
 	const VkCommandBufferBeginInfo beginIndo =
 	{
@@ -239,9 +237,9 @@ void AppBase::FillCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageInd
 	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginIndo));
 
 	// Iterate through all renderers to fill the command buffer
-	for (auto& r : renderers_)
+	for (auto& pip : graphicsPipelines_)
 	{
-		r->FillCommandBuffer(vulkanDevice_, commandBuffer, imageIndex);
+		pip->FillCommandBuffer(vulkanDevice_, commandBuffer, imageIndex);
 	}
 
 	VK_CHECK(vkEndCommandBuffer(commandBuffer));
@@ -268,9 +266,9 @@ void AppBase::OnWindowResized()
 
 	CreateSharedImageResources();
 
-	for (auto& r : renderers_)
+	for (auto& pip : graphicsPipelines_)
 	{
-		r->OnWindowResized(vulkanDevice_);
+		pip->OnWindowResized(vulkanDevice_);
 	}
 
 	shouldRecreateSwapchain_ = false;

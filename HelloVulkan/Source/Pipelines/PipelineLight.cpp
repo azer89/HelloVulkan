@@ -11,14 +11,18 @@ PipelineLight::PipelineLight(
 	VulkanImage* depthImage, 
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
-	PipelineBase(vkDev, PipelineFlags::GraphicsOffScreen), // Offscreen rendering
+	PipelineBase(vkDev, 
+		{
+			.type_ = PipelineType::GraphicsOffScreen,
+			.msaaSamples_ = offscreenColorImage->multisampleCount_
+		}
+	), // Offscreen rendering
 	lights_(lights),
 	shouldRender_(true)
 {
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
 
-	VkSampleCountFlagBits multisampleCount = offscreenColorImage->multisampleCount_;
-	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, multisampleCount);
+	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, config_.msaaSamples_);
 
 	framebuffer_.Create(
 		vkDev,
@@ -30,18 +34,9 @@ PipelineLight::PipelineLight(
 		IsOffscreen()
 	);
 
-	descriptor_.CreatePool(
-		vkDev,
-		{
-			.uboCount_ = 1u,
-			.ssboCount_ = 1u,
-			.samplerCount_ = 0u,
-			.swapchainCount_ = static_cast<uint32_t>(vkDev.GetSwapchainImageCount()),
-			.setCountPerSwapchain_ = 1u,
-		});
-	CreateDescriptorLayoutAndSet(vkDev);
+	CreateDescriptor(vkDev);
 
-	CreatePipelineLayout(vkDev.GetDevice(), descriptor_.layout_, &pipelineLayout_);
+	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_);
 
 	CreateGraphicsPipeline(vkDev,
 		renderPass_.GetHandle(),
@@ -50,15 +45,12 @@ PipelineLight::PipelineLight(
 			AppConfig::ShaderFolder + "LightCircle.vert",
 			AppConfig::ShaderFolder + "LightCircle.frag",
 		},
-		&pipeline_,
-		false, // has no vertex buffer
-		multisampleCount // For multisampling
+		&pipeline_
 		);
 }
 
 PipelineLight::~PipelineLight()
 {
-
 }
 
 void PipelineLight::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
@@ -92,8 +84,20 @@ void PipelineLight::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer comma
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelineLight::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
+void PipelineLight::CreateDescriptor(VulkanDevice& vkDev)
 {
+	// Pool
+	descriptor_.CreatePool(
+		vkDev,
+		{
+			.uboCount_ = 1u,
+			.ssboCount_ = 1u,
+			.samplerCount_ = 0u,
+			.swapchainCount_ = static_cast<uint32_t>(vkDev.GetSwapchainImageCount()),
+			.setCountPerSwapchain_ = 1u,
+		});
+
+	// Layout
 	descriptor_.CreateLayout(vkDev,
 	{
 		{
@@ -108,6 +112,7 @@ void PipelineLight::CreateDescriptorLayoutAndSet(VulkanDevice& vkDev)
 		}
 	});
 
+	// Set
 	size_t swapchainLength = vkDev.GetSwapchainImageCount();
 	descriptorSets_.resize(swapchainLength);
 

@@ -1,9 +1,8 @@
 #include "VulkanBuffer.h"
 #include "VulkanUtility.h"
 
-bool VulkanBuffer::CreateBuffer(
-	VkDevice device,
-	VkPhysicalDevice physicalDevice,
+void VulkanBuffer::CreateBuffer(
+	VulkanDevice& vkDev,
 	VkDeviceSize size,
 	VkBufferUsageFlags usage,
 	VkMemoryPropertyFlags properties)
@@ -19,23 +18,21 @@ bool VulkanBuffer::CreateBuffer(
 		.pQueueFamilyIndices = nullptr
 	};
 
-	VK_CHECK(vkCreateBuffer(device, &bufferInfo, nullptr, &buffer_));
+	VK_CHECK(vkCreateBuffer(vkDev.GetDevice(), &bufferInfo, nullptr, &buffer_));
 
 	VkMemoryRequirements memRequirements;
-	vkGetBufferMemoryRequirements(device, buffer_, &memRequirements);
+	vkGetBufferMemoryRequirements(vkDev.GetDevice(), buffer_, &memRequirements);
 
 	const VkMemoryAllocateInfo allocInfo = {
 		.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
 		.pNext = nullptr,
 		.allocationSize = memRequirements.size,
-		.memoryTypeIndex = FindMemoryType(physicalDevice, memRequirements.memoryTypeBits, properties)
+		.memoryTypeIndex = FindMemoryType(vkDev.GetPhysicalDevice(), memRequirements.memoryTypeBits, properties)
 	};
 
-	VK_CHECK(vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory_));
+	VK_CHECK(vkAllocateMemory(vkDev.GetDevice(), &allocInfo, nullptr, &bufferMemory_));
 
-	vkBindBufferMemory(device, buffer_, bufferMemory_, 0);
-
-	return true;
+	vkBindBufferMemory(vkDev.GetDevice(), buffer_, bufferMemory_, 0);
 }
 
 void VulkanBuffer::CreateSharedBuffer(
@@ -49,8 +46,7 @@ void VulkanBuffer::CreateSharedBuffer(
 	if (familyCount < 2)
 	{
 		CreateBuffer(
-			vkDev.GetDevice(),
-			vkDev.GetPhysicalDevice(),
+			vkDev,
 			size,
 			usage,
 			properties);

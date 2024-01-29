@@ -17,9 +17,9 @@ Camera::Camera(
 	yaw_(yaw),
 	pitch_(pitch),
 	front_(glm::vec3(0.f)),
-	movementSpeed_(CameraSettings::Speed),
-	mouseSensitivity_(CameraSettings::Sensitivity),
-	zoom_(CameraSettings::Zoom),
+	movementSpeed_(CameraConfig::Speed),
+	mouseSensitivity_(CameraConfig::Sensitivity),
+	zoom_(CameraConfig::Zoom),
 	screenWidth_(screenWidth),
 	screenHeight_(screenHeight)
 {
@@ -135,10 +135,11 @@ void Camera::UpdateInternal()
 	projectionMatrix_[2][2] = far / (far - near);
 	projectionMatrix_[2][3] = 1.f;
 	projectionMatrix_[3][2] = -(far * near) / (far - near);*/
+
 	projectionMatrix_ = glm::perspective(glm::radians(zoom_),
 		static_cast<float>(screenWidth_) / static_cast<float>(screenHeight_),
-		AppConfig::cameraNear,
-		AppConfig::cameraFar);
+		CameraConfig::Near,
+		CameraConfig::Far);
 	projectionMatrix_[1][1] *= -1;
 
 	// View matrix
@@ -161,4 +162,14 @@ void Camera::UpdateInternal()
 	viewMatrix_[3][2] = -glm::dot(w, position_);*/
 
 	viewMatrix_ = glm::lookAt(position_, position_ + front_, up_);
+}
+
+PerFrameUBO Camera::GetPerFrameUBO()
+{
+	return
+	{
+		.cameraProjection = projectionMatrix_,
+		.cameraView = viewMatrix_,
+		.cameraPosition = glm::vec4(position_, 1.f)
+	};
 }

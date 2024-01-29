@@ -6,20 +6,14 @@
 
 PipelineCubeFilter::PipelineCubeFilter(
 	VulkanDevice& vkDev, VulkanImage* inputCubemap) :
-	PipelineBase(vkDev, PipelineFlags::GraphicsOffScreen) // Offscreen
+	PipelineBase(vkDev, 
+		{
+			.type_ = PipelineType::GraphicsOffScreen
+		}
+	) 
 {
 	// Create cube render pass
 	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, IBLConfig::CubeFormat);
-
-	descriptor_.CreatePool(
-		vkDev,
-		{
-			.uboCount_ = 0u,
-			.ssboCount_ = 0u,
-			.samplerCount_ = 1u,
-			.swapchainCount_ = 1u,
-			.setCountPerSwapchain_ = 1u
-		});
 
 	// Input cubemap
 	uint32_t inputNumMipmap = NumMipMap(IBLConfig::InputCubeSideLength, IBLConfig::InputCubeSideLength);
@@ -31,15 +25,13 @@ PipelineCubeFilter::PipelineCubeFilter(
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 	);
 	inputCubemap->CreateSampler(
-		vkDev.GetDevice(),
+		vkDev,
 		inputCubemapSampler_,
 		0.f,
 		static_cast<float>(inputNumMipmap)
 	);
 
-	// Descriptors
-	CreateDescriptorLayout(vkDev);
-	CreateDescriptorSet(vkDev, inputCubemap);
+	CreateDescriptor(vkDev, inputCubemap);
 
 	// Push constants
 	std::vector<VkPushConstantRange> ranges =
@@ -50,7 +42,7 @@ PipelineCubeFilter::PipelineCubeFilter(
 	}};
 
 	// Pipeline layout
-	CreatePipelineLayout(vkDev.GetDevice(), descriptor_.layout_, &pipelineLayout_, ranges);
+	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_, ranges);
 
 	// Diffuse pipeline
 	graphicsPipelines_.emplace_back(VK_NULL_HANDLE);
@@ -104,8 +96,7 @@ void PipelineCubeFilter::InitializeOutputCubemap(
 	uint32_t inputCubeSideLength)
 {
 	outputDiffuseCubemap->CreateImage(
-		vkDev.GetDevice(),
-		vkDev.GetPhysicalDevice(),
+		vkDev,
 		inputCubeSideLength,
 		inputCubeSideLength,
 		numMipmap,
@@ -118,7 +109,7 @@ void PipelineCubeFilter::InitializeOutputCubemap(
 	);
 
 	outputDiffuseCubemap->CreateImageView(
-		vkDev.GetDevice(),
+		vkDev,
 		VK_FORMAT_R32G32B32A32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT,
 		VK_IMAGE_VIEW_TYPE_CUBE,
@@ -126,8 +117,20 @@ void PipelineCubeFilter::InitializeOutputCubemap(
 		numMipmap);
 }
 
-void PipelineCubeFilter::CreateDescriptorLayout(VulkanDevice& vkDev)
+void PipelineCubeFilter::CreateDescriptor(VulkanDevice& vkDev, VulkanImage* inputCubemap)
 {
+	// Pool
+	descriptor_.CreatePool(
+		vkDev,
+		{
+			.uboCount_ = 0u,
+			.ssboCount_ = 0u,
+			.samplerCount_ = 1u,
+			.swapchainCount_ = 1u,
+			.setCountPerSwapchain_ = 1u
+		});
+
+	// Layout
 	descriptor_.CreateLayout(vkDev,
 	{
 		{
@@ -136,10 +139,8 @@ void PipelineCubeFilter::CreateDescriptorLayout(VulkanDevice& vkDev)
 			.bindingCount_ = 1
 		}
 	});
-}
 
-void PipelineCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanImage* inputCubemap)
-{
+	// Set
 	VkDescriptorImageInfo imageInfo =
 	{
 		inputCubemapSampler_, // Local sampler created in the constructor
@@ -148,7 +149,7 @@ void PipelineCubeFilter::CreateDescriptorSet(VulkanDevice& vkDev, VulkanImage* i
 	};
 
 	descriptor_.CreateSet(
-		vkDev, 
+		vkDev,
 		{
 			{.imageInfoPtr_ = &imageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER }
 		},
@@ -409,7 +410,7 @@ void PipelineCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 
 	// Create a sampler for the output cubemap
 	outputCubemap->CreateDefaultSampler(
-		vkDev.GetDevice(),
+		vkDev,
 		0.0f,
 		static_cast<float>(outputMipMapCount));
 }

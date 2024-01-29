@@ -11,15 +11,14 @@ struct PushConstantsBRDFLUT
 
 PipelineBRDFLUT::PipelineBRDFLUT(
 	VulkanDevice& vkDev) :
-	PipelineBase(vkDev, PipelineFlags::Compute)
+	PipelineBase(vkDev, 
+	{
+		.type_ = PipelineType::Compute
+	})
 {
 	outBuffer_.CreateSharedBuffer(vkDev, IBLConfig::LUTBufferSize,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-	std::string shaderFile = AppConfig::ShaderFolder + "BRDFLUT.comp";
-	VulkanShader shader;
-	shader.Create(vkDev.GetDevice(), shaderFile.c_str());
 
 	// Push constants
 	std::vector<VkPushConstantRange> ranges =
@@ -29,12 +28,9 @@ PipelineBRDFLUT::PipelineBRDFLUT(
 		.size = sizeof(PushConstantsBRDFLUT)
 	}};
 
-	CreateComputeDescriptorSetLayout(vkDev);
-	CreateComputeDescriptorSet(vkDev);
-	CreatePipelineLayout(vkDev.GetDevice(), descriptor_.layout_, &pipelineLayout_, ranges);
-	CreateComputePipeline(vkDev.GetDevice(), shader.GetShaderModule());
-
-	shader.Destroy(vkDev.GetDevice());
+	CreateDescriptor(vkDev);
+	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_, ranges);
+	CreateComputePipeline(vkDev, AppConfig::ShaderFolder + "BRDFLUT.comp");
 }
 
 PipelineBRDFLUT::~PipelineBRDFLUT()
@@ -64,14 +60,12 @@ void PipelineBRDFLUT::CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT)
 		1, // Layer count
 		VK_FORMAT_R32G32_SFLOAT);
 	outputLUT->CreateImageView(
-		vkDev.GetDevice(),
+		vkDev,
 		VK_FORMAT_R32G32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT
 	);
 
-	outputLUT->CreateDefaultSampler(
-		vkDev.GetDevice()
-	);
+	outputLUT->CreateDefaultSampler(vkDev);
 }
 
 void PipelineBRDFLUT::Execute(VulkanDevice& vkDev)
@@ -161,22 +155,9 @@ void PipelineBRDFLUT::Execute(VulkanDevice& vkDev)
 	VK_CHECK(vkQueueWaitIdle(vkDev.GetComputeQueue()));
 }
 
-void PipelineBRDFLUT::CreateComputeDescriptorSetLayout(VulkanDevice& vkDev)
+void PipelineBRDFLUT::CreateDescriptor(VulkanDevice& vkDev)
 {
-	descriptor_.CreateLayout(vkDev,
-	{
-		{
-			.descriptorType_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-			.shaderFlags_ = VK_SHADER_STAGE_COMPUTE_BIT,
-			.bindingCount_ = 1
-		}
-	});
-}
-
-void PipelineBRDFLUT::CreateComputeDescriptorSet(VulkanDevice& vkDev)
-{
-	// Descriptor pool
-	// TODO Can be moved to constructor
+	// Pool
 	descriptor_.CreatePool(
 		vkDev,
 		{
@@ -187,11 +168,21 @@ void PipelineBRDFLUT::CreateComputeDescriptorSet(VulkanDevice& vkDev)
 			.setCountPerSwapchain_ = 1u
 		});
 
-	// Descriptor set
+	// Layout
+	descriptor_.CreateLayout(vkDev,
+	{
+		{
+			.descriptorType_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+			.shaderFlags_ = VK_SHADER_STAGE_COMPUTE_BIT,
+			.bindingCount_ = 1
+		}
+	});
+
+	// Set
 	VkDescriptorBufferInfo outBufferInfo = { outBuffer_.buffer_, 0, VK_WHOLE_SIZE };
 
 	descriptor_.CreateSet(
-		vkDev, 
+		vkDev,
 		{
 			{.bufferInfoPtr_ = &outBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER }
 		},

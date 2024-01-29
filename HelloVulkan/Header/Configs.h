@@ -9,8 +9,6 @@ namespace AppConfig
 {
 	const int InitialScreenWidth = 1600;
 	const int InitialScreenHeight = 1200;
-	const float cameraNear = 0.1f;
-	const float cameraFar = 100.0f;
 
 	// VK_PRESENT_MODE_FIFO_KHR --> Lock to screen FPS
 	// VK_PRESENT_MODE_MAILBOX_KHR --> Triple buffering
@@ -24,6 +22,18 @@ namespace AppConfig
 	const std::string ModelFolder = "C://Users//azer//workspace//HelloVulkan//Models//";
 	const std::string TextureFolder = "C://Users//azer//workspace//HelloVulkan//Textures//";
 };
+
+namespace CameraConfig
+{
+	const float Yaw = -90.0f;
+	const float Pitch = 0.0f;
+	const float Speed = 2.5f;
+	const float Sensitivity = 0.1f;
+	const float Zoom = 45.0f;
+
+	const float Near = 0.1f;
+	const float Far = 100.0f;
+}
 
 namespace IBLConfig
 {

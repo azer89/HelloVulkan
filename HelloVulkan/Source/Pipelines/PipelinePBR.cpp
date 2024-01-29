@@ -21,29 +21,30 @@ PipelinePBR::PipelinePBR(
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
-	PipelineBase(vkDev, PipelineFlags::GraphicsOffScreen), // Offscreen
+	PipelineBase(vkDev, 
+		{
+			.type_ = PipelineType::GraphicsOffScreen,
+			.msaaSamples_ = offscreenColorImage->multisampleCount_,
+			.vertexBufferBind_ = true,
+		}
+	),
 	models_(models),
 	lights_(lights),
 	specularCubemap_(specularMap),
 	diffuseCubemap_(diffuseMap),
 	brdfLUT_(brdfLUT)
 {
-	VkSampleCountFlagBits multisampleCount = VK_SAMPLE_COUNT_1_BIT;
-
 	// Per frame UBO
 	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
 	
 	// Model UBO
-	uint32_t numMeshes = 0u;
 	for (Model* model : models_)
 	{
-		numMeshes += model->NumMeshes();
 		CreateUniformBuffers(vkDev, model->modelBuffers_, sizeof(ModelUBO));
 	}
 
 	// Note that this pipeline is offscreen rendering
-	multisampleCount = offscreenColorImage->multisampleCount_;
-	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, multisampleCount);
+	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, config_.msaaSamples_);
 
 	framebuffer_.Create(
 		vkDev, 
@@ -54,33 +55,17 @@ PipelinePBR::PipelinePBR(
 		}, 
 		IsOffscreen());
 
-	descriptor_.CreatePool(
-		vkDev, 
-		{
-			.uboCount_ = UBO_COUNT * static_cast<uint32_t>(models_.size()),
-			.ssboCount_ = SSBO_COUNT,
-			.samplerCount_ = (PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT) * numMeshes,
-			.swapchainCount_ = static_cast<uint32_t>(vkDev.GetSwapchainImageCount()),
-			.setCountPerSwapchain_ = numMeshes,
-		});
-	CreateDescriptorLayout(vkDev);
-
-	for (Model* model : models_)
-	{
-		for (Mesh& mesh : model->meshes_)
-		{
-			CreateDescriptorSet(vkDev, model, mesh);
-		}
-	}
+	CreateDescriptor(vkDev);
 
 	// Push constants
-	std::vector<VkPushConstantRange> ranges(1u);
-	VkPushConstantRange& range = ranges.front();
-	range.offset = 0u;
-	range.size = sizeof(PushConstantPBR);
-	range.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-
-	CreatePipelineLayout(vkDev.GetDevice(), descriptor_.layout_, &pipelineLayout_, ranges);
+	std::vector<VkPushConstantRange> ranges =
+	{{
+		.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
+		.offset = 0u,
+		.size = sizeof(PushConstantPBR),
+	}};
+	
+	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_, ranges);
 
 	CreateGraphicsPipeline(
 		vkDev,
@@ -90,9 +75,7 @@ PipelinePBR::PipelinePBR(
 			AppConfig::ShaderFolder + "Mesh.vert",
 			AppConfig::ShaderFolder + "Mesh.frag"
 		},
-		&pipeline_,
-		true, // hasVertexBuffer
-		multisampleCount // for multisampling
+		&pipeline_
 	);
 }
 
@@ -143,8 +126,26 @@ void PipelinePBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer command
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelinePBR::CreateDescriptorLayout(VulkanDevice& vkDev)
+void PipelinePBR::CreateDescriptor(VulkanDevice& vkDev)
 {
+	uint32_t numMeshes = 0u;
+	for (Model* model : models_)
+	{
+		numMeshes += model->NumMeshes();
+	}
+
+	// Pool
+	descriptor_.CreatePool(
+		vkDev,
+		{
+			.uboCount_ = UBO_COUNT * static_cast<uint32_t>(models_.size()),
+			.ssboCount_ = SSBO_COUNT,
+			.samplerCount_ = (PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT) * numMeshes,
+			.swapchainCount_ = static_cast<uint32_t>(vkDev.GetSwapchainImageCount()),
+			.setCountPerSwapchain_ = numMeshes,
+		});
+
+	// Layout
 	descriptor_.CreateLayout(vkDev,
 	{
 		{
@@ -163,6 +164,15 @@ void PipelinePBR::CreateDescriptorLayout(VulkanDevice& vkDev)
 			.bindingCount_ = PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT
 		}
 	});
+
+	// Set
+	for (Model* model : models_)
+	{
+		for (Mesh& mesh : model->meshes_)
+		{
+			CreateDescriptorSet(vkDev, model, mesh);
+		}
+	}
 }
 
 // TODO Still quite convoluted

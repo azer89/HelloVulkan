@@ -77,8 +77,8 @@ public:
 	// Getters related to swapchain
 	VkSwapchainKHR GetSwapChain() const { return swapchain_; }
 	size_t GetSwapchainImageCount() const { return swapchainImages_.size(); }
-	VkImageView GetSwapchainImageView(unsigned i) const { return swapchainImageViews_[i]; }
 	VkFormat GetSwaphchainImageFormat() const { return swapchainImageFormat_; }
+	VkImageView GetSwapchainImageView(unsigned i) const { return swapchainImageViews_[i]; }
 
 	// Pointer getters
 	VkSwapchainKHR* GetSwapchainPtr() { return &swapchain_; }

@@ -12,7 +12,11 @@ PipelineImGui::PipelineImGui(
 	VulkanDevice& vkDev,
 	VkInstance vulkanInstance,
 	GLFWwindow* glfwWindow) :
-	PipelineBase(vkDev, PipelineFlags::GraphicsOnScreen) // Onscreen
+	PipelineBase(vkDev, 
+		{
+			.type_ = PipelineType::GraphicsOnScreen
+		}
+	)
 {
 	// Create render pass
 	renderPass_.CreateOnScreenColorOnlyRenderPass(vkDev);
@@ -77,10 +81,7 @@ PipelineImGui::~PipelineImGui()
 void PipelineImGui::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
 {
 	ImDrawData* draw_data = ImGui::GetDrawData();
-
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer(currentImage));
-
 	ImGui_ImplVulkan_RenderDrawData(draw_data, commandBuffer);
-
 	vkCmdEndRenderPass(commandBuffer);
 }

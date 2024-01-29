@@ -19,7 +19,7 @@ public:
 	void OnWindowResized(VulkanDevice& vkDev) override;
 
 private:
-	void CreateDescriptorLayout(VulkanDevice& vkDev);
+	void CreateDescriptor(VulkanDevice& vkDev);
 	void AllocateDescriptorSets(VulkanDevice& vkDev);
 	void UpdateDescriptorSets(VulkanDevice& vkDev);
 

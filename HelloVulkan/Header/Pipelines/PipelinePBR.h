@@ -38,7 +38,7 @@ public:
 	std::vector<Model*> models_;
 
 private:
-	void CreateDescriptorLayout(VulkanDevice& vkDev);
+	void CreateDescriptor(VulkanDevice& vkDev);
 	void CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh);
 
 	Lights* lights_;
