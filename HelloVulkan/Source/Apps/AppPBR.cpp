@@ -110,7 +110,7 @@ void AppPBR::Init()
 	finishPtr_ = std::make_unique<PipelineFinish>(vulkanDevice_);
 
 	// Put all renderer pointers to a vector
-	renderers_ =
+	graphicsPipelines_ =
 	{
 		// Must be in order
 		clearPtr_.get(),

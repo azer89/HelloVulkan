@@ -20,7 +20,7 @@ public:
 protected:
 	virtual void UpdateUBOs(uint32_t imageIndex) = 0;
 	virtual void UpdateUI();
-	void FillCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+	void FillGraphicsCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 
 	void CreateSharedImageResources();
 	void OnWindowResized();
@@ -70,7 +70,7 @@ protected:
 	VulkanDevice vulkanDevice_;
 
 	// A list of renderers
-	std::vector<PipelineBase*> renderers_;
+	std::vector<PipelineBase*> graphicsPipelines_;
 
 	// Window size
 	uint32_t windowWidth_;

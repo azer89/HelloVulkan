@@ -174,7 +174,7 @@ void AppBase::DrawFrame()
 	UpdateUI();
 
 	// Start recording command buffers
-	FillCommandBuffer(frameData.commandBuffer_, imageIndex);
+	FillGraphicsCommandBuffer(frameData.commandBuffer_, imageIndex);
 
 	const VkPipelineStageFlags waitStages[] = 
 		{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
@@ -224,7 +224,7 @@ void AppBase::UpdateUI()
 }
 
 // Fill/record command buffer
-void AppBase::FillCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
+void AppBase::FillGraphicsCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
 {
 	const VkCommandBufferBeginInfo beginIndo =
 	{
@@ -237,9 +237,9 @@ void AppBase::FillCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageInd
 	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginIndo));
 
 	// Iterate through all renderers to fill the command buffer
-	for (auto& r : renderers_)
+	for (auto& pip : graphicsPipelines_)
 	{
-		r->FillCommandBuffer(vulkanDevice_, commandBuffer, imageIndex);
+		pip->FillCommandBuffer(vulkanDevice_, commandBuffer, imageIndex);
 	}
 
 	VK_CHECK(vkEndCommandBuffer(commandBuffer));
@@ -266,9 +266,9 @@ void AppBase::OnWindowResized()
 
 	CreateSharedImageResources();
 
-	for (auto& r : renderers_)
+	for (auto& pip : graphicsPipelines_)
 	{
-		r->OnWindowResized(vulkanDevice_);
+		pip->OnWindowResized(vulkanDevice_);
 	}
 
 	shouldRecreateSwapchain_ = false;
