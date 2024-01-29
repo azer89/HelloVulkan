@@ -145,9 +145,9 @@ vec3 Ambient(
 	return (kD * diffuse + specular) * ao;
 }
 
-float LinearDepth(float z)
+float LinearDepth(float z, float near, float far)
 {
-	return camUBO.near * camUBO.far / (camUBO.far + z * (camUBO.near - camUBO.far));
+	return near * far / (far + z * (near - far));
 }
 
 void main()
