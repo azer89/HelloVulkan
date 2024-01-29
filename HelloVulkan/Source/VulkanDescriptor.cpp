@@ -1,4 +1,3 @@
-
 #include "VulkanDescriptor.h"
 #include "VulkanUtility.h"
 

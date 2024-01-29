@@ -3,7 +3,6 @@
 #include "VulkanUtility.h"
 
 #define STB_IMAGE_IMPLEMENTATION
-
 #include "stb_image.h"
 
 int NumMipMap(int w, int h)
@@ -57,7 +56,7 @@ void VulkanImage::CreateFromFile(
 
 	if (!pixels)
 	{
-		std::cerr << "Failed to load " << filename << '\n';
+		std::cerr << "Failed to load image " << filename << '\n';
 	}
 
 	CreateImageFromData(
@@ -377,8 +376,8 @@ void VulkanImage::UpdateImage(
 {
 	uint32_t bytesPerPixel = BytesPerTexFormat(texFormat);
 
-	VkDeviceSize layerSize = texWidth * texHeight * bytesPerPixel;
-	VkDeviceSize imageSize = layerSize * layerCount;
+	const VkDeviceSize layerSize = texWidth * texHeight * bytesPerPixel;
+	const VkDeviceSize imageSize = layerSize * layerCount;
 
 	VulkanBuffer stagingBuffer{};
 
@@ -404,9 +403,7 @@ void VulkanImage::TransitionImageLayout(VulkanDevice& vkDev,
 	uint32_t mipLevels)
 {
 	VkCommandBuffer commandBuffer = vkDev.BeginSingleTimeCommands();
-
 	TransitionImageLayoutCommand(commandBuffer, format, oldLayout, newLayout, layerCount, mipLevels);
-
 	vkDev.EndSingleTimeCommands(commandBuffer);
 }
 

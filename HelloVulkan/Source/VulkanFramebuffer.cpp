@@ -63,8 +63,8 @@ VkFramebuffer VulkanFramebuffer::GetFramebuffer(size_t index) const
 
 void VulkanFramebuffer::Recreate(VulkanDevice& vkDev)
 {
-	size_t swapchainImageCount = offscreen_ ? 0 : 1;
-	size_t attachmentLength = attachmentImages_.size() + swapchainImageCount;
+	const size_t swapchainImageCount = offscreen_ ? 0 : 1;
+	const size_t attachmentLength = attachmentImages_.size() + swapchainImageCount;
 
 	if (attachmentLength <= 0)
 	{

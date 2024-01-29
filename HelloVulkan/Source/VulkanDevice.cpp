@@ -205,7 +205,7 @@ VkResult VulkanDevice::CreateDeviceWithCompute(
 		return CreateDevice(deviceFeatures, graphicsFamily);
 	}
 
-	const float queuePriorities[2] = { 0.f, 0.f };
+	constexpr float queuePriorities[2] = { 0.f, 0.f };
 	const VkDeviceQueueCreateInfo qciGfx =
 	{
 		.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
@@ -253,7 +253,7 @@ VkResult VulkanDevice::CreateDevice(VkPhysicalDeviceFeatures deviceFeatures, uin
 		VK_KHR_SHADER_DRAW_PARAMETERS_EXTENSION_NAME
 	};
 
-	const float queuePriority = 1.0f;
+	constexpr float queuePriority = 1.0f;
 	const VkDeviceQueueCreateInfo queueCreateInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
@@ -284,10 +284,9 @@ VkResult VulkanDevice::CreateDevice(VkPhysicalDeviceFeatures deviceFeatures, uin
 VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface)
 {
 	swapchainImageFormat_ = VK_FORMAT_B8G8R8A8_UNORM;
-	VkSurfaceFormatKHR surfaceFormat = { swapchainImageFormat_, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
-
-	auto swapchainSupport = QuerySwapchainSupport(surface);
-	auto presentMode = ChooseSwapPresentMode(swapchainSupport.presentModes_);
+	const VkSurfaceFormatKHR surfaceFormat = { swapchainImageFormat_, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
+	const SwapchainSupportDetails swapchainSupport = QuerySwapchainSupport(surface);
+	const VkPresentModeKHR presentMode = ChooseSwapPresentMode(swapchainSupport.presentModes_);
 
 	const VkSwapchainCreateInfoKHR createInfo =
 	{
@@ -442,7 +441,7 @@ VkResult VulkanDevice::CreateSemaphore(VkSemaphore* outSemaphore)
 
 VkResult VulkanDevice::CreateFence(VkFence* fence)
 {
-	VkFenceCreateInfo fenceInfo =
+	const VkFenceCreateInfo fenceInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
 		.flags = VK_FENCE_CREATE_SIGNALED_BIT
@@ -528,7 +527,7 @@ VkCommandBuffer VulkanDevice::BeginSingleTimeCommands()
 	VkCommandBuffer commandBuffer;
 	CreateCommandBuffer(commandPool_, &commandBuffer);
 
-	const VkCommandBufferBeginInfo beginInfo = {
+	constexpr VkCommandBufferBeginInfo beginInfo = {
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
 		.pNext = nullptr,
 		.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,

@@ -41,7 +41,7 @@ void VulkanBuffer::CreateSharedBuffer(
 	VkBufferUsageFlags usage,
 	VkMemoryPropertyFlags properties)
 {
-	uint32_t familyCount = static_cast<uint32_t>(vkDev.GetDeviceQueueIndicesSize());
+	const uint32_t familyCount = static_cast<uint32_t>(vkDev.GetDeviceQueueIndicesSize());
 
 	if (familyCount < 2)
 	{
