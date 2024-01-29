@@ -32,9 +32,9 @@ public:
 		VkCommandBuffer commandBuffer, 
 		size_t currentImage) = 0;
 
-	void SetPerFrameUBO(VulkanDevice& vkDev, uint32_t imageIndex, PerFrameUBO ubo)
+	void SetPerFrameUBO(VulkanDevice& vkDev, uint32_t imageIndex, CameraUBO ubo)
 	{
-		UpdateUniformBuffer(vkDev, perFrameUBOs_[imageIndex], &ubo, sizeof(PerFrameUBO));
+		UpdateUniformBuffer(vkDev, perFrameUBOs_[imageIndex], &ubo, sizeof(CameraUBO));
 	}
 
 protected:

@@ -20,7 +20,7 @@ PipelineLight::PipelineLight(
 	lights_(lights),
 	shouldRender_(true)
 {
-	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(PerFrameUBO));
+	CreateUniformBuffers(vkDev, perFrameUBOs_, sizeof(CameraUBO));
 
 	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, config_.msaaSamples_);
 
@@ -118,7 +118,7 @@ void PipelineLight::CreateDescriptor(VulkanDevice& vkDev)
 
 	for (size_t i = 0; i < swapchainLength; ++i)
 	{
-		VkDescriptorBufferInfo bufferInfo1 = {.buffer = perFrameUBOs_[i].buffer_, .offset = 0, .range = sizeof(PerFrameUBO)};
+		VkDescriptorBufferInfo bufferInfo1 = {.buffer = perFrameUBOs_[i].buffer_, .offset = 0, .range = sizeof(CameraUBO)};
 		VkDescriptorBufferInfo bufferInfo2 = {.buffer = lights_->GetSSBOBuffer(), .offset = 0, .range = lights_->GetSSBOSize()};
 
 		descriptor_.CreateSet(

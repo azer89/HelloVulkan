@@ -164,12 +164,14 @@ glm::vec3 Camera::Position() const
 	return position_;
 }
 
-PerFrameUBO Camera::GetPerFrameUBO() const
+CameraUBO Camera::GetPerFrameUBO() const
 {
 	return
 	{
 		.cameraProjection = projectionMatrix_,
 		.cameraView = viewMatrix_,
-		.cameraPosition = glm::vec4(position_, 1.f)
+		.cameraPosition = glm::vec4(position_, 1.f),
+		.cameraNear = CameraConfig::Near,
+		.cameraFar = CameraConfig::Far
 	};
 }

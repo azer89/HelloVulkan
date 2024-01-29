@@ -11,6 +11,8 @@ layout(set = 0, binding = 0) uniform PerFrameUBO
 	mat4 cameraProjection;
 	mat4 cameraView;
 	vec4 cameraPosition;
+	float cameraNear;
+	float cameraFar;
 } frameUBO;
 
 const vec3 pos[8] = vec3[8]
