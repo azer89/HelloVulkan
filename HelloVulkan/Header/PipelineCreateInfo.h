@@ -19,7 +19,7 @@ struct PipelineCreateInfo
 	VkPipelineDynamicStateCreateInfo dynamicState;
 	VkPipelineTessellationStateCreateInfo tessellationState;
 
-	PipelineCreateInfo(VulkanDevice& vkDev) :
+	PipelineCreateInfo(const VulkanDevice& vkDev) :
 		vertexInputInfo({
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
 			.pNext = nullptr,

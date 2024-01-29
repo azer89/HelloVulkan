@@ -23,7 +23,7 @@ AppBase::AppBase() :
 void AppBase::InitVulkan()
 {
 	// Initialize Volk
-	VkResult res = volkInitialize();
+	const VkResult res = volkInitialize();
 	if (res != VK_SUCCESS)
 	{
 		std::cerr << "Volk Cannot be initialized\n";
@@ -55,8 +55,8 @@ void AppBase::InitGLFW()
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-	int w = AppConfig::InitialScreenWidth;
-	int h = AppConfig::InitialScreenHeight;
+	const int w = AppConfig::InitialScreenWidth;
+	const int h = AppConfig::InitialScreenHeight;
 
 	// GLFW window creation
 	windowWidth_ = static_cast<uint32_t>(w);
@@ -344,16 +344,16 @@ void AppBase::MouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 		return;
 	}
 
-	float xPos = static_cast<float>(xposIn);
-	float yPos = static_cast<float>(yposIn);
+	const float xPos = static_cast<float>(xposIn);
+	const float yPos = static_cast<float>(yposIn);
 	if (firstMouse_)
 	{
 		lastX_ = xPos;
 		lastY_ = yPos;
 		firstMouse_ = false;
 	}
-	float xOffset = xPos - lastX_;
-	float yOffset = lastY_ - yPos; // reversed since y-coordinates go from bottom to top
+	const float xOffset = xPos - lastX_;
+	const float yOffset = lastY_ - yPos; // reversed since y-coordinates go from bottom to top
 	lastX_ = xPos;
 	lastY_ = yPos;
 	camera_->ProcessMouseMovement(xOffset, yOffset);

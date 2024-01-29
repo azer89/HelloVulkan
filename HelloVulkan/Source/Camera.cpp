@@ -36,21 +36,6 @@ void Camera::SetScreenSize(float width, float height)
 	UpdateInternal();
 }
 
-glm::mat4 Camera::GetProjectionMatrix()
-{
-	return projectionMatrix_;
-}
-
-glm::mat4 Camera::GetViewMatrix()
-{
-	return viewMatrix_;
-}
-
-glm::vec3 Camera::Position()
-{
-	return position_;
-}
-
 void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime_)
 {
 	float velocity = movementSpeed_ * deltaTime_;
@@ -164,7 +149,22 @@ void Camera::UpdateInternal()
 	viewMatrix_ = glm::lookAt(position_, position_ + front_, up_);
 }
 
-PerFrameUBO Camera::GetPerFrameUBO()
+glm::mat4 Camera::GetProjectionMatrix() const
+{
+	return projectionMatrix_;
+}
+
+glm::mat4 Camera::GetViewMatrix() const
+{
+	return viewMatrix_;
+}
+
+glm::vec3 Camera::Position() const
+{
+	return position_;
+}
+
+PerFrameUBO Camera::GetPerFrameUBO() const
 {
 	return
 	{

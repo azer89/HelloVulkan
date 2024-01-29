@@ -58,7 +58,6 @@ private:
 		VkDescriptorType descriptorType,
 		VkShaderStageFlags stageFlags,
 		uint32_t descriptorCount = 1);
-
 };
 
 #endif

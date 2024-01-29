@@ -6,10 +6,10 @@
 #include "Camera.h"
 #include "PipelineBase.h"
 
-#include <memory>
-
 #define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
+
+#include <memory>
 
 class AppBase
 {
@@ -78,6 +78,7 @@ protected:
 	bool shouldRecreateSwapchain_;
 
 	// Shared by multiple render passes
+	// TODO Maybe group these inside a struct
 	VulkanImage multiSampledColorImage_;
 	VulkanImage singleSampledColorImage_;
 	VulkanImage depthImage_;
