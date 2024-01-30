@@ -88,28 +88,7 @@ public:
 
 	void Setup(VulkanDevice& vkDev);
 
-	// Assimp
-	void Create(VulkanDevice& vkDev, const char* filename);
-
 	void Destroy(VkDevice device);
-
-private:
-	// SSBO, currently not used
-	VulkanBuffer storageBuffer_;
-
-private:
-	void AllocateVertexBuffer(
-		VulkanDevice& vkDev,
-		const void* vertexData);
-
-	void AllocateIndexBuffer(
-		VulkanDevice& vkDev,
-		const void* indexData);
-
-	size_t AllocateBindlessBuffer(
-		VulkanDevice& vkDev,
-		const void* vertexData,
-		const void* indexData);
 };
 
 #endif

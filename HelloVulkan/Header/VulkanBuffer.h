@@ -24,6 +24,21 @@ public:
 		VkBufferUsageFlags usage,
 		VkMemoryPropertyFlags properties);
 
+	void CreateSharedBuffer(
+		VulkanDevice& vkDev,
+		VkDeviceSize size,
+		VkBufferUsageFlags usage,
+		VkMemoryPropertyFlags properties);
+
+	// Buffer with memory property of VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+	void CreateLocalMemoryBuffer
+	(
+		VulkanDevice& vkDev,
+		size_t bufferSize_,
+		const void* bufferData,
+		VkMemoryPropertyFlags flags
+	);
+
 	void CopyFrom(
 		VulkanDevice& vkDev,
 		VkBuffer srcBuffer,
@@ -40,12 +55,6 @@ public:
 		VkDeviceSize deviceOffset,
 		void* outData,
 		const size_t dataSize);
-
-	void CreateSharedBuffer(
-		VulkanDevice& vkDev,
-		VkDeviceSize size,
-		VkBufferUsageFlags usage,
-		VkMemoryPropertyFlags properties);
 
 private:
 	// TODO Possibly move this to VulkanDevice

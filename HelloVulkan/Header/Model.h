@@ -2,7 +2,6 @@
 #define MODEL
 
 #include "Mesh.h"
-
 #include "TextureMapper.h"
 #include "VulkanDevice.h"
 #include "VulkanImage.h"

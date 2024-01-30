@@ -84,6 +84,44 @@ void VulkanBuffer::CreateSharedBuffer(
 	vkBindBufferMemory(vkDev.GetDevice(), buffer_, bufferMemory_, 0);
 }
 
+// Buffer with memory property of VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+void VulkanBuffer::CreateLocalMemoryBuffer
+(
+	VulkanDevice& vkDev,
+	size_t bufferSize_,
+	const void* bufferData,
+	VkMemoryPropertyFlags flags
+)
+{
+	VulkanBuffer stagingBuffer;
+	stagingBuffer.CreateBuffer(
+		vkDev,
+		bufferSize_,
+		VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+	);
+
+	void* data;
+	vkMapMemory(vkDev.GetDevice(), stagingBuffer.bufferMemory_, 0, bufferSize_, 0, &data);
+	memcpy(data, bufferData, bufferSize_);
+	vkUnmapMemory(vkDev.GetDevice(), stagingBuffer.bufferMemory_);
+
+	/*
+	usageFlagBits can be
+		vertex buffer --> VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
+		index buffer --> VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
+		bindless buffer --> VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT
+	*/
+	CreateBuffer(
+		vkDev,
+		bufferSize_,
+		flags,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+	CopyFrom(vkDev, stagingBuffer.buffer_, bufferSize_);
+
+	stagingBuffer.Destroy(vkDev.GetDevice());
+}
+
 void VulkanBuffer::CopyFrom(VulkanDevice& vkDev, VkBuffer srcBuffer, VkDeviceSize size)
 {
 	VkCommandBuffer commandBuffer = vkDev.BeginOneTimeGraphicsCommand();
