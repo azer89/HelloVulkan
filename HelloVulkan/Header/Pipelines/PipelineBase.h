@@ -34,7 +34,7 @@ public:
 
 	void SetCameraUBO(VulkanDevice& vkDev, uint32_t imageIndex, CameraUBO ubo)
 	{
-		UpdateUniformBuffer(vkDev, cameraUBOBuffers_[imageIndex], &ubo, sizeof(CameraUBO));
+		cameraUBOBuffers_[imageIndex].UploadBufferData(vkDev, 0, &ubo, sizeof(CameraUBO));
 	}
 
 protected:
@@ -62,14 +62,6 @@ protected:
 		VulkanDevice& vkDev,
 		std::vector<VulkanBuffer>& buffers,
 		size_t uniformDataSize);
-
-	// UBO
-	// TODO move to VulkanBuffer
-	void UpdateUniformBuffer(
-		VulkanDevice& vkDev,
-		VulkanBuffer& buffer,
-		const void* data,
-		const size_t dataSize);
 
 	void CreatePipelineLayout(VulkanDevice& vkDev,
 		VkDescriptorSetLayout dsLayout, 

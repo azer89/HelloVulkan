@@ -2,7 +2,6 @@
 #define MODEL
 
 #include "Mesh.h"
-
 #include "TextureMapper.h"
 #include "VulkanDevice.h"
 #include "VulkanImage.h"
@@ -44,9 +43,9 @@ public:
 		return static_cast<uint32_t>(meshes_.size());
 	}
 
-	void SetModelUBO(const VulkanDevice& vkDev, uint32_t imageIndex, ModelUBO ubo)
+	void SetModelUBO(VulkanDevice& vkDev, uint32_t imageIndex, ModelUBO ubo)
 	{
-		UpdateUniformBuffer(vkDev.GetDevice(), modelBuffers_[imageIndex], &ubo, sizeof(ModelUBO));
+		modelBuffers_[imageIndex].UploadBufferData(vkDev, 0, &ubo, sizeof(ModelUBO));
 	}
 
 private:
@@ -68,12 +67,6 @@ private:
 		aiMesh* mesh, 
 		const aiScene* scene, 
 		const glm::mat4& transform);
-
-	void UpdateUniformBuffer(
-		VkDevice device,
-		VulkanBuffer& buffer,
-		const void* data,
-		const size_t dataSize);
 };
 
 #endif

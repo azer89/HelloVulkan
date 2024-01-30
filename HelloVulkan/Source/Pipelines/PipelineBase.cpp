@@ -228,22 +228,3 @@ void PipelineBase::CreateComputePipeline(
 
 	shader.Destroy(vkDev.GetDevice());
 }
-
-void PipelineBase::UpdateUniformBuffer(
-	VulkanDevice& vkDev,
-	VulkanBuffer& buffer,
-	const void* data,
-	const size_t dataSize)
-{
-	VkDeviceMemory bufferMemory = buffer.bufferMemory_;
-	void* mappedData = nullptr;
-	vkMapMemory(
-		vkDev.GetDevice(),
-		bufferMemory,
-		0, 
-		dataSize, 
-		0, 
-		&mappedData);
-	memcpy(mappedData, data, dataSize);
-	vkUnmapMemory(vkDev.GetDevice(), bufferMemory);
-}
