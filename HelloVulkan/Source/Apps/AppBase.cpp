@@ -7,6 +7,9 @@
 // Init GLSLang
 #include "glslang_c_interface.h" 
 
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_volk.h"
+
 #include <iostream>
 #include <array>
 
@@ -385,7 +388,7 @@ void AppBase::FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
 
 void AppBase::MouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 {
-	if (!middleMousePressed_)
+	if (!leftMousePressed_)
 	{
 		return;
 	}
@@ -407,13 +410,18 @@ void AppBase::MouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 
 void AppBase::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
-	if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS)
+	if (const auto& io = ImGui::GetIO(); io.WantCaptureMouse)
 	{
-		middleMousePressed_ = true;
+		return;
 	}
-	else if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_RELEASE)
+
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
 	{
-		middleMousePressed_ = false;
+		leftMousePressed_ = true;
+	}
+	else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
+	{
+		leftMousePressed_ = false;
 		firstMouse_ = true;
 	}
 }
