@@ -232,7 +232,7 @@ void main()
 {
 	//uint zIndex = uint(max(log2(LinearDepth(gl_FragCoord.z)) * cfUBO.sliceScaling + cfUBO.sliceBias, 0.0));
 	float linDepth = LinearDepth(gl_FragCoord.z);
-	float zIndexFloat = cfUBO.sliceCountZ * log2(linDepth / cfUBO.cameraNear) / log2(cfUBO.cameraFar / cfUBO.cameraNear);
+	float zIndexFloat = float(cfUBO.sliceCountZ) * log2(linDepth / cfUBO.cameraNear) / log2(cfUBO.cameraFar / cfUBO.cameraNear);
 	uint zIndex = uint(max(zIndexFloat, 0.0));
 
 	vec2 tileSize = 
