@@ -106,7 +106,7 @@ private:
 		VulkanDevice& vkDev,
 		const void* indexData);
 
-	size_t AllocateSSBOBuffer(
+	size_t AllocateBindlessBuffer(
 		VulkanDevice& vkDev,
 		const void* vertexData,
 		const void* indexData);

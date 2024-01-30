@@ -79,7 +79,7 @@ void Mesh::Create(
 	AllocateVertexBuffer(vkDev, vertices.data());
 	AllocateIndexBuffer(vkDev, indices.data());
 
-	AllocateSSBOBuffer(vkDev, vertices.data(), indices.data());
+	AllocateBindlessBuffer(vkDev, vertices.data(), indices.data());
 }
 
 void Mesh::Destroy(VkDevice device)
@@ -142,7 +142,7 @@ void Mesh::AllocateIndexBuffer(
 	stagingBuffer.Destroy(vkDev.GetDevice());
 }
 
-size_t Mesh::AllocateSSBOBuffer(
+size_t Mesh::AllocateBindlessBuffer(
 	VulkanDevice& vkDev,
 	const void* vertexData,
 	const void* indexData)
