@@ -86,12 +86,6 @@ void Mesh::Destroy(VkDevice device)
 {	
 	vertexBuffer_.Destroy(device);
 	indexBuffer_.Destroy(device);
-	//storageBuffer_.Destroy(device);
-
-	/*for (auto buf : modelBuffers_)
-	{
-		buf.Destroy(device);
-	}*/
 }
 
 void Mesh::AllocateVertexBuffer(
@@ -179,25 +173,4 @@ size_t Mesh::AllocateSSBOBuffer(
 	stagingBuffer.Destroy(vkDev.GetDevice());
 
 	return bufferSize;
-}
-
-void Mesh::UpdateUniformBuffer(
-	VkDevice device,
-	VulkanBuffer& buffer,
-	const void* data,
-	const size_t dataSize)
-{
-	VkDeviceMemory bufferMemory = buffer.bufferMemory_;
-
-	void* mappedData = nullptr;
-	vkMapMemory(
-		device,
-		bufferMemory,
-		0,
-		dataSize,
-		0,
-		&mappedData);
-	memcpy(mappedData, data, dataSize);
-
-	vkUnmapMemory(device, bufferMemory);
 }

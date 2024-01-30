@@ -230,24 +230,3 @@ Mesh Model::ProcessMesh(
 
 	return Mesh(vkDev, std::move(vertices), std::move(indices), std::move(textures));
 }
-
-void Model::UpdateUniformBuffer(
-	VkDevice device,
-	VulkanBuffer& buffer,
-	const void* data,
-	const size_t dataSize)
-{
-	VkDeviceMemory bufferMemory = buffer.bufferMemory_;
-
-	void* mappedData = nullptr;
-	vkMapMemory(
-		device,
-		bufferMemory,
-		0,
-		dataSize,
-		0,
-		&mappedData);
-	memcpy(mappedData, data, dataSize);
-
-	vkUnmapMemory(device, bufferMemory);
-}

@@ -110,12 +110,6 @@ private:
 		VulkanDevice& vkDev,
 		const void* vertexData,
 		const void* indexData);
-
-	void UpdateUniformBuffer(
-		VkDevice device,
-		VulkanBuffer& buffer,
-		const void* data,
-		const size_t dataSize);
 };
 
 #endif
