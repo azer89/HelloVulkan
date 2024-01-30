@@ -185,7 +185,7 @@ void VulkanImage::CopyBufferToImage(
 	uint32_t height,
 	uint32_t layerCount)
 {
-	VkCommandBuffer commandBuffer = vkDev.BeginGraphicsSingleTimeCommand();
+	VkCommandBuffer commandBuffer = vkDev.BeginOneTimeGraphicsCommand();
 
 	const VkBufferImageCopy region = {
 		.bufferOffset = 0,
@@ -203,7 +203,7 @@ void VulkanImage::CopyBufferToImage(
 
 	vkCmdCopyBufferToImage(commandBuffer, buffer, image_, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
-	vkDev.EndGraphicsSingleTimeCommand(commandBuffer);
+	vkDev.EndOneTimeGraphicsCommand(commandBuffer);
 }
 
 void VulkanImage::CreateImage(
@@ -402,9 +402,9 @@ void VulkanImage::TransitionImageLayout(VulkanDevice& vkDev,
 	uint32_t layerCount,
 	uint32_t mipLevels)
 {
-	VkCommandBuffer commandBuffer = vkDev.BeginGraphicsSingleTimeCommand();
+	VkCommandBuffer commandBuffer = vkDev.BeginOneTimeGraphicsCommand();
 	TransitionImageLayoutCommand(commandBuffer, format, oldLayout, newLayout, layerCount, mipLevels);
-	vkDev.EndGraphicsSingleTimeCommand(commandBuffer);
+	vkDev.EndOneTimeGraphicsCommand(commandBuffer);
 }
 
 void VulkanImage::TransitionImageLayoutCommand(
@@ -596,7 +596,7 @@ void VulkanImage::GenerateMipmap(
 	VkImageLayout currentImageLayout
 )
 {
-	VkCommandBuffer commandBuffer = vkDev.BeginGraphicsSingleTimeCommand();
+	VkCommandBuffer commandBuffer = vkDev.BeginOneTimeGraphicsCommand();
 
 	VkImageSubresourceRange mipbaseRange{};
 	mipbaseRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -686,7 +686,7 @@ void VulkanImage::GenerateMipmap(
 		.destinationAccess = VK_ACCESS_SHADER_READ_BIT 
 	});
 
-	vkDev.EndGraphicsSingleTimeCommand(commandBuffer);
+	vkDev.EndOneTimeGraphicsCommand(commandBuffer);
 }
 
 void VulkanImage::CreateBarrier(ImageBarrierCreateInfo info)

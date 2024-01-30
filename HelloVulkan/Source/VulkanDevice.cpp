@@ -64,7 +64,7 @@ void VulkanDevice::CreateCompute
 		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].nextSwapchainImageSemaphore_)));
 		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].graphicsQueueSemaphore_)));
 		VK_CHECK(CreateFence(&(frameDataArray_[i].queueSubmitFence_)));
-		VK_CHECK(CreateCommandBuffer(graphicsCommandPool_, &(frameDataArray_[i].commandBuffer_)));
+		VK_CHECK(CreateCommandBuffer(graphicsCommandPool_, &(frameDataArray_[i].graphicsCommandBuffer_)));
 	}
 
 	{
@@ -516,7 +516,7 @@ VkFormat VulkanDevice::FindSupportedFormat(
 	throw std::runtime_error("Failed to find supported format\n");
 }
 
-VkCommandBuffer VulkanDevice::BeginGraphicsSingleTimeCommand()
+VkCommandBuffer VulkanDevice::BeginOneTimeGraphicsCommand()
 {
 	VkCommandBuffer commandBuffer;
 	CreateCommandBuffer(graphicsCommandPool_, &commandBuffer);
@@ -533,7 +533,7 @@ VkCommandBuffer VulkanDevice::BeginGraphicsSingleTimeCommand()
 	return commandBuffer;
 }
 
-void VulkanDevice::EndGraphicsSingleTimeCommand(VkCommandBuffer commandBuffer)
+void VulkanDevice::EndOneTimeGraphicsCommand(VkCommandBuffer commandBuffer)
 {
 	vkEndCommandBuffer(commandBuffer);
 
@@ -555,7 +555,7 @@ void VulkanDevice::EndGraphicsSingleTimeCommand(VkCommandBuffer commandBuffer)
 	vkFreeCommandBuffers(device_, graphicsCommandPool_, 1, &commandBuffer);
 }
 
-VkCommandBuffer VulkanDevice::BeginComputeSingleTimeCommand()
+VkCommandBuffer VulkanDevice::BeginOneTimeComputeCommand()
 {
 	VkCommandBuffer commandBuffer;
 	CreateCommandBuffer(computeCommandPool_, &commandBuffer);
@@ -571,7 +571,7 @@ VkCommandBuffer VulkanDevice::BeginComputeSingleTimeCommand()
 	return commandBuffer;
 }
 
-void VulkanDevice::EndComputeSingleTimeCommand(VkCommandBuffer commandBuffer)
+void VulkanDevice::EndOneTimeComputeCommand(VkCommandBuffer commandBuffer)
 {
 	vkEndCommandBuffer(commandBuffer);
 

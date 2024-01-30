@@ -166,7 +166,7 @@ void AppBase::DrawFrame()
 	}
 
 	vkResetFences(vulkanDevice_.GetDevice(), 1, &(frameData.queueSubmitFence_));
-	vkResetCommandBuffer(frameData.commandBuffer_, 0);
+	vkResetCommandBuffer(frameData.graphicsCommandBuffer_, 0);
 
 	// Send UBOs to shaders
 	UpdateUBOs(imageIndex);
@@ -198,7 +198,7 @@ void AppBase::DrawFrame()
 	}*/
 
 	// Start recording command buffers
-	FillGraphicsCommandBuffer(frameData.commandBuffer_, imageIndex);
+	FillGraphicsCommandBuffer(frameData.graphicsCommandBuffer_, imageIndex);
 	
 	// With compute
 	//const VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_VERTEX_INPUT_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
@@ -216,7 +216,7 @@ void AppBase::DrawFrame()
 		.pWaitSemaphores = waitSemaphores.data(),
 		.pWaitDstStageMask = waitStages,
 		.commandBufferCount = 1u,
-		.pCommandBuffers = &(frameData.commandBuffer_),
+		.pCommandBuffers = &(frameData.graphicsCommandBuffer_),
 		.signalSemaphoreCount = 1u,
 		.pSignalSemaphores = &(frameData.graphicsQueueSemaphore_)
 	};

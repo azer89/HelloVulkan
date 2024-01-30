@@ -15,15 +15,14 @@ struct SwapchainSupportDetails
 };
 
 /*
-Struct containing synchronization objects for every frame draw and also
-a command buffer
+Struct containing objects needed for every frame draw 
 */
 struct FrameData
 {
 	VkSemaphore nextSwapchainImageSemaphore_;
 	VkSemaphore graphicsQueueSemaphore_;
 	VkFence queueSubmitFence_;
-	VkCommandBuffer commandBuffer_;
+	VkCommandBuffer graphicsCommandBuffer_;
 
 	// These two currently not used
 	VkCommandBuffer computeCommandBuffer_;
@@ -62,10 +61,10 @@ public:
 		uint32_t height);
 
 	// TODO These four functions can be simplified/combined
-	VkCommandBuffer BeginGraphicsSingleTimeCommand();
-	void EndGraphicsSingleTimeCommand(VkCommandBuffer commandBuffer);
-	VkCommandBuffer BeginComputeSingleTimeCommand();
-	void EndComputeSingleTimeCommand(VkCommandBuffer commandBuffer);
+	VkCommandBuffer BeginOneTimeGraphicsCommand();
+	void EndOneTimeGraphicsCommand(VkCommandBuffer commandBuffer);
+	VkCommandBuffer BeginOneTimeComputeCommand();
+	void EndOneTimeComputeCommand(VkCommandBuffer commandBuffer);
 
 	// Getters
 	VkDevice GetDevice() const { return device_; }

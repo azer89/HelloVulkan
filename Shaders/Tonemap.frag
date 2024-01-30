@@ -1,4 +1,4 @@
-# version 460 core
+#version 460 core
 
 /*
 [1] https://github.com/Nadrin/PBR/

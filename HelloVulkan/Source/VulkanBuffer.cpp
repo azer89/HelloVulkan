@@ -86,7 +86,7 @@ void VulkanBuffer::CreateSharedBuffer(
 
 void VulkanBuffer::CopyFrom(VulkanDevice& vkDev, VkBuffer srcBuffer, VkDeviceSize size)
 {
-	VkCommandBuffer commandBuffer = vkDev.BeginGraphicsSingleTimeCommand();
+	VkCommandBuffer commandBuffer = vkDev.BeginOneTimeGraphicsCommand();
 
 	const VkBufferCopy copyRegion = {
 		.srcOffset = 0,
@@ -96,7 +96,7 @@ void VulkanBuffer::CopyFrom(VulkanDevice& vkDev, VkBuffer srcBuffer, VkDeviceSiz
 
 	vkCmdCopyBuffer(commandBuffer, srcBuffer, buffer_, 1, &copyRegion);
 
-	vkDev.EndGraphicsSingleTimeCommand(commandBuffer);
+	vkDev.EndOneTimeGraphicsCommand(commandBuffer);
 }
 
 void VulkanBuffer::UploadBufferData(

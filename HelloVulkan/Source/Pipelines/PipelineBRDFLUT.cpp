@@ -70,7 +70,7 @@ void PipelineBRDFLUT::CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT)
 
 void PipelineBRDFLUT::Execute(VulkanDevice& vkDev)
 {
-	VkCommandBuffer commandBuffer = vkDev.BeginComputeSingleTimeCommand();
+	VkCommandBuffer commandBuffer = vkDev.BeginOneTimeComputeCommand();
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline_);
 
@@ -125,7 +125,7 @@ void PipelineBRDFLUT::Execute(VulkanDevice& vkDev)
 		0, // imageMemoryBarrierCount
 		nullptr); // pImageMemoryBarriers
 
-	vkDev.EndComputeSingleTimeCommand(commandBuffer);
+	vkDev.EndOneTimeComputeCommand(commandBuffer);
 }
 
 void PipelineBRDFLUT::CreateDescriptor(VulkanDevice& vkDev)

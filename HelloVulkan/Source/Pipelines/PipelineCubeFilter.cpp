@@ -320,7 +320,7 @@ void PipelineCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 	std::vector<std::vector<VkImageView>> outputViews;
 	CreateOutputCubemapViews(vkDev, outputCubemap, outputViews, outputMipMapCount);
 
-	VkCommandBuffer commandBuffer = vkDev.BeginGraphicsSingleTimeCommand();
+	VkCommandBuffer commandBuffer = vkDev.BeginOneTimeGraphicsCommand();
 
 	vkCmdBindDescriptorSets(
 		commandBuffer,
@@ -391,7 +391,7 @@ void PipelineCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		.destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
 		.destinationAccess = VK_ACCESS_SHADER_READ_BIT });
 
-	vkDev.EndGraphicsSingleTimeCommand(commandBuffer);
+	vkDev.EndOneTimeGraphicsCommand(commandBuffer);
 
 	// Destroy frame buffers
 	for (VkFramebuffer& f : usedFrameBuffers)
