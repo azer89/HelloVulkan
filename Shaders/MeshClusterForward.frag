@@ -155,7 +155,8 @@ vec3 Radiance(
 	float alphaRoughness,
 	float NoV,
 	vec3 lightPosition,
-	vec3 lightColor)
+	vec3 lightColor,
+	float lightRadius)
 {
 	vec3 Lo = vec3(0.0);
 
@@ -166,6 +167,10 @@ vec3 Radiance(
 	float HoV = max(dot(H, V), 0.0);
 	float distance = length(lightPosition - worldPos);
 	float attenuation = 1.0 / pow(distance, pc.attenuationF);
+	if (distance > lightRadius)
+	{
+		attenuation = 0.0;
+	}
 
 	vec3 radiance = lightColor * attenuation * pc.lightIntensity;
 
@@ -283,10 +288,8 @@ void main()
 	// Reflectance equation
 	vec3 Lo = albedo * pc.ambientStrength;
 
-	//for (int i = 0; i < inLights.data.length(); ++i)
 	for (int i = 0; i < lightCount; ++i)
 	{
-		//LightData light = inLights.data[i];
 		uint lightIndex = lightIndices.data[i + lightIndexOffset];
 		LightData light = inLights.data[lightIndex];
 
@@ -300,7 +303,8 @@ void main()
 			alpha,
 			NoV,
 			light.position.xyz,
-			light.color.xyz);
+			light.color.xyz,
+			light.radius);
 	}
 
 	vec3 ambient = Ambient(
