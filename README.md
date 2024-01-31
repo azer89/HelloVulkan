@@ -27,8 +27,9 @@ https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d
 
 ### Clustered Forward Shading
 
-This is a work-in-progress feature. The current unoptimized code uses compute shaders to generate AABB clusters and cull the lights in the scene. 
-Achieving 60-70 FPS is possible with 1000 lights. However, the bottleneck is the light culling shader, 
+This is a work-in-progress feature. 
+The current unoptimized code uses compute shaders to generate AABB clusters and cull the lights in the scene. 
+While 60-70 FPS can be achieved with 1000 lights, the bottleneck is the light culling shader, 
 as each invocation performs collision checks on all lights in a brute-force manner.
 
 <img width="850" alt="vulkan_clustered_01" src="https://github.com/azer89/HelloVulkan/assets/790432/887ff61a-4883-449a-a476-ab4d54dcc39f">
