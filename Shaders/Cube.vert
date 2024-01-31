@@ -44,12 +44,11 @@ const int indices[36] = int[36]
 
 void main()
 {
-	const float cubeSize = 50.0;
 	int idx = indices[gl_VertexIndex];
 	
 	mat4 mvp = frameUBO.cameraProjection * frameUBO.cameraView;
-	vec4 position = vec4(cubeSize * pos[idx], 1.0);
-	gl_Position = mvp * position;
+	vec4 position = vec4(pos[idx], 1.0);
+	gl_Position = (mvp * position).xyww;
 	
 	direction = pos[idx].xyz;
 }
