@@ -174,8 +174,8 @@ void AppPBR::InitLights()
 	constexpr unsigned int NR_LIGHTS = 500;
 	for (unsigned int i = 0; i < NR_LIGHTS; ++i)
 	{
-		float yPos = RandomNumber<float>(0.05f, 1.0f);
-		float radius = RandomNumber<float>(0.0f, 10.0f);
+		float yPos = RandomNumber<float>(0.05f, 10.0f);
+		float radius = RandomNumber<float>(0.0f, 50.0f);
 		float rad = RandomNumber<float>(0.0f, pi2);
 		float xPos = glm::cos(rad);
 
@@ -196,7 +196,7 @@ void AppPBR::InitLights()
 		LightData l;
 		l.color_ = color;
 		l.position_ = position;
-		l.radius_ = 0.5f;
+		l.radius_ = 8.0f;
 
 		lights.push_back(l);
 	}
@@ -285,6 +285,7 @@ void AppPBR::UpdateUBOs(uint32_t imageIndex)
 	// Model UBOs
 	glm::mat4 modelMatrix(1.f);
 	modelMatrix = glm::rotate(modelMatrix, modelRotation_, glm::vec3(0.f, 1.f, 0.f));
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(5.f));
 	//modelRotation_ += deltaTime_ * 0.1f;
 
 	// 1
