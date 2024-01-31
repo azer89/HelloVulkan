@@ -7,8 +7,8 @@
 
 namespace AppConfig
 {
-	const int InitialScreenWidth = 1600;
-	const int InitialScreenHeight = 900;
+	const int InitialScreenWidth = 2000;
+	const int InitialScreenHeight = 1125;
 
 	const float cameraNear = 0.1f;
 	const float cameraFar = 100.0f;
@@ -45,7 +45,7 @@ namespace IBLConfig
 namespace ClusterForwardConfig
 {
 	constexpr unsigned int sliceCountX = 16;
-	constexpr unsigned int sliceCountY = 12;
+	constexpr unsigned int sliceCountY = 9;
 	constexpr unsigned int sliceCountZ = 24;
 	constexpr unsigned int numClusters = sliceCountX * sliceCountY * sliceCountZ;
 

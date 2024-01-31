@@ -298,6 +298,8 @@ void AppPBR::UpdateUBOs(uint32_t imageIndex)
 	cullLightsPtr_->ResetGlobalIndex(vulkanDevice_, imageIndex);
 	cullLightsPtr_->SetClusterForwardUBO(vulkanDevice_, imageIndex, camera_->GetClusterForwardUBO());
 
+	camera_->ProcessMouseMovement(deltaTime_ * 20.0, 0.0);
+
 }
 
 void AppPBR::UpdateUI()
@@ -323,7 +325,7 @@ void AppPBR::UpdateUI()
 	ImGui_ImplVulkan_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-	ImGui::SetNextWindowSize(ImVec2(525, 300));
+	ImGui::SetNextWindowSize(ImVec2(525, 280));
 	ImGui::Begin(AppConfig::ScreenTitle.c_str());
 
 	ImGui::SetWindowFontScale(1.25f);
