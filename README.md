@@ -25,7 +25,7 @@ https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d
 
 <img width="850" alt="freya" src="https://github.com/azer89/HelloVulkan/assets/790432/c3dd2921-b46a-458c-af26-fa49fecc884b">
 
-### Clustered Forward Shading*
+### Clustered Forward Shading
 
 This is a work-in-progress feature. The current unoptimized code uses compute shaders to generate AABB clusters and cull the lights in the scene. 
 Achieving 60-70 FPS is possible with 1000 lights. However, the bottleneck is the light culling shader, 
