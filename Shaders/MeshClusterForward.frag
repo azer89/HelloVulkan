@@ -164,9 +164,15 @@ vec3 Radiance(
 	float NoL = max(dot(N, L), 0.0);
 	float HoV = max(dot(H, V), 0.0);
 	float distance = length(light.position.xyz - worldPos);
-	float attenuation = 1.0 / pow(distance, 2.0);
+	float attenuation = 1.0 / (distance * distance);
 	//float attenuation = Attenuation(distance, light.radius);
-	
+
+	/*float attenuation = 1.0;
+	if (distance > (light.radius * 0.1))
+	{
+		attenuation = 0.0;
+	}*/
+
 	vec3 radiance = light.color.xyz * attenuation * pc.lightIntensity;
 
 	// Cook-Torrance BRDF
@@ -230,10 +236,10 @@ vec3 Ambient(
 
 void main()
 {
-	//uint zIndex = uint(max(log2(LinearDepth(gl_FragCoord.z)) * cfUBO.sliceScaling + cfUBO.sliceBias, 0.0));
-	float linDepth = LinearDepth(gl_FragCoord.z);
-	float zIndexFloat = float(cfUBO.sliceCountZ) * log2(linDepth / cfUBO.cameraNear) / log2(cfUBO.cameraFar / cfUBO.cameraNear);
-	uint zIndex = uint(max(zIndexFloat, 0.0));
+	uint zIndex = uint(max(log2(LinearDepth(gl_FragCoord.z)) * cfUBO.sliceScaling + cfUBO.sliceBias, 0.0));
+	//float linDepth = LinearDepth(gl_FragCoord.z);
+	//float zIndexFloat = float(cfUBO.sliceCountZ) * log2(linDepth / cfUBO.cameraNear) / log2(cfUBO.cameraFar / cfUBO.cameraNear);
+	//uint zIndex = uint(max(zIndexFloat, 0.0));
 
 	vec2 tileSize = 
 		vec2(cfUBO.screenSize.x / float(cfUBO.sliceCountX), 

@@ -19,7 +19,7 @@ namespace CameraSettings
 {
 	const float Yaw = -90.0f;
 	const float Pitch = 0.0f;
-	const float Speed = 2.5f;
+	const float Speed = 10.0f;
 	const float Sensitivity = 0.1f;
 	const float Zoom = 45.0f;
 }
