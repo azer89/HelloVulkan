@@ -12,6 +12,7 @@ layout(push_constant) uniform PushConstantPBR
 	float lightIntensity;
 	float baseReflectivity;
 	float maxReflectionLod;
+	float attenuationF;
 }
 pc;
 
@@ -135,11 +136,11 @@ float LinearDepth(float z)
 
 float Attenuation(float d, float r)
 {
-	float f = 2.0;
+	float f = pc.attenuationF;
 	float s = d / r;
 	float s2 = s * s;
 	float nom = pow(1.0 - s2, 2.0);
-	float denom = 1.0 + f * s;
+	float denom = 1.0 + f * s2;
 	return nom / denom;
 }
 
@@ -164,7 +165,7 @@ vec3 Radiance(
 	float NoL = max(dot(N, L), 0.0);
 	float HoV = max(dot(H, V), 0.0);
 	float distance = length(light.position.xyz - worldPos);
-	float attenuation = 1.0 / (distance * distance);
+	float attenuation = 1.0 / pow(distance, pc.attenuationF);
 	//float attenuation = Attenuation(distance, light.radius);
 
 	/*float attenuation = 1.0;

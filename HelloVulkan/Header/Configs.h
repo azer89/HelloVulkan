@@ -50,7 +50,7 @@ namespace ClusterForwardConfig
 	constexpr unsigned int numClusters = sliceCountX * sliceCountY * sliceCountZ;
 
 	// Note that this also has to be set inside the compute shader
-	constexpr unsigned int maxLightPerCluster = 100;
+	constexpr unsigned int maxLightPerCluster = 200;
 }
 
 #endif

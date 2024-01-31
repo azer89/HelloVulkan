@@ -171,11 +171,11 @@ void AppPBR::InitLights()
 	std::vector<LightData> lights;
 
 	float pi2 = glm::two_pi<float>();
-	constexpr unsigned int NR_LIGHTS = 100000;
+	constexpr unsigned int NR_LIGHTS = 1000;
 	for (unsigned int i = 0; i < NR_LIGHTS; ++i)
 	{
-		float yPos = RandomNumber<float>(-2.f, 10.0f);
-		float radius = RandomNumber<float>(0.0f, 40.0f);
+		float yPos = RandomNumber<float>(-2.f, 20.0f);
+		float radius = RandomNumber<float>(0.0f, 20.0f);
 		float rad = RandomNumber<float>(0.0f, pi2);
 		float xPos = glm::cos(rad);
 
@@ -317,6 +317,7 @@ void AppPBR::UpdateUI()
 	static float lightIntensity = 1.f;
 	static float pbrBaseReflectivity = 0.04f; // F0
 	static float maxReflectivityLod = 4.0f;
+	static float attenuationF = 1.0f;
 
 	ImGui_ImplVulkan_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -328,8 +329,10 @@ void AppPBR::UpdateUI()
 	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));
 	ImGui::Checkbox("Render Lights", &lightRender);
 	ImGui::SliderFloat("Light Intensity", &lightIntensity, 0.1f, 100.f);
+	ImGui::SliderFloat("Light Falloff", &attenuationF, 1.f, 20.f);
 	ImGui::SliderFloat("Base Reflectivity", &pbrBaseReflectivity, 0.01f, 1.f);
 	ImGui::SliderFloat("Max Mipmap Lod", &maxReflectivityLod, 0.1f, cubemapMipmapCount_);
+	
 
 	if (ImGui::Button("Reset Frustum"))
 	{
@@ -343,6 +346,7 @@ void AppPBR::UpdateUI()
 	pbrPtr_->SetLightIntensity(lightIntensity);
 	pbrPtr_->SetBaseReflectivity(pbrBaseReflectivity);
 	pbrPtr_->SetMaxReflectionLod(maxReflectivityLod);
+	pbrPtr_->SetAtenuationF(attenuationF);
 }
 
 void AppPBR::FillComputeCommandBuffer(VkCommandBuffer compCommandBuffer, uint32_t imageIndex)
