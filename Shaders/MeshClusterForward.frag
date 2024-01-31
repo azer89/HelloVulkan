@@ -236,10 +236,10 @@ vec3 Ambient(
 
 void main()
 {
-	uint zIndex = uint(max(log2(LinearDepth(gl_FragCoord.z)) * cfUBO.sliceScaling + cfUBO.sliceBias, 0.0));
-	//float linDepth = LinearDepth(gl_FragCoord.z);
-	//float zIndexFloat = float(cfUBO.sliceCountZ) * log2(linDepth / cfUBO.cameraNear) / log2(cfUBO.cameraFar / cfUBO.cameraNear);
-	//uint zIndex = uint(max(zIndexFloat, 0.0));
+	//uint zIndex = uint(max(log2(LinearDepth(gl_FragCoord.z)) * cfUBO.sliceScaling + cfUBO.sliceBias, 0.0));
+	float linDepth = LinearDepth(gl_FragCoord.z);
+	float zIndexFloat = float(cfUBO.sliceCountZ) * log2(linDepth / cfUBO.cameraNear) / log2(cfUBO.cameraFar / cfUBO.cameraNear);
+	uint zIndex = uint(max(zIndexFloat, 0.0));
 
 	vec2 tileSize = 
 		vec2(cfUBO.screenSize.x / float(cfUBO.sliceCountX), 

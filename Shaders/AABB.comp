@@ -121,9 +121,9 @@ void main()
 	vec3 minAABB = min(min(minNear, minFar), min(maxNear, maxFar));
 	vec3 maxAABB = max(max(minNear, minFar), max(maxNear, maxFar));
 
-	//clusters.data[tileIndex].minPoint = vec4(minAABB, 0.0);
-	//clusters.data[tileIndex].maxPoint = vec4(maxAABB, 0.0);
+	clusters.data[tileIndex].minPoint = vec4(minAABB, 0.0);
+	clusters.data[tileIndex].maxPoint = vec4(maxAABB, 0.0);
 
-	clusters.data[tileIndex].minPoint = vec4(minFar.x, minFar.y, tileNear, 0.0);
-	clusters.data[tileIndex].maxPoint = vec4(maxFar.x, maxFar.y, tileFar, 0.0);
+	//clusters.data[tileIndex].minPoint = vec4(minFar.x, minFar.y, tileNear, 0.0);
+	//clusters.data[tileIndex].maxPoint = vec4(maxFar.x, maxFar.y, tileFar, 0.0);
 }

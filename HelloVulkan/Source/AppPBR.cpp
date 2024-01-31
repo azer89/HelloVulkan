@@ -44,7 +44,7 @@ void AppPBR::Init()
 	// Clustered forward buffers
 	cfBuffers_.CreateBuffers(vulkanDevice_, lights_.GetLightCount());
 
-	std::string hdrFile = AppConfig::TextureFolder + "piazza_bologni_1k.hdr";
+	std::string hdrFile = AppConfig::TextureFolder + "dikhololo_night_4k.hdr";
 
 	model_ = std::make_unique<Model>(
 		vulkanDevice_, 
