@@ -25,12 +25,15 @@ https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d
 
 <img width="850" alt="freya" src="https://github.com/azer89/HelloVulkan/assets/790432/c3dd2921-b46a-458c-af26-fa49fecc884b">
 
-### Clustered Forward Shading *(Work in progress)*
+### Clustered Forward Shading*
 
-I am currently working on a clustered forward rendering technique that can achieve 50-60 FPS while rendering 50,000 lights using a 3060M graphics card.
-The unoptimized code is located in the `ClusteredForward` branch.
+This is a work-in-progress feature. The current unoptimized code uses compute shaders to generate AABB clusters and cull the lights in the scene. 
+Achieving 60-70 FPS is possible with 1000 lights. However, the bottleneck is the light culling shader, 
+as each invocation performs collision checks on all lights in a brute-force manner.
 
-<img width="850" alt="clustered_forward" src="https://github.com/azer89/HelloVulkan/assets/790432/a7a0fe29-0f37-46cf-80bb-752f0dcc5bd0">
+<img width="850" alt="vulkan_clustered_01" src="https://github.com/azer89/HelloVulkan/assets/790432/887ff61a-4883-449a-a476-ab4d54dcc39f">
+<img width="850" alt="vulkan_clustered_02" src="https://github.com/azer89/HelloVulkan/assets/790432/dae33ee8-5df0-4ca0-a7ff-8ddc5a98d6ad">
+
 
 ### Build
 * C++20
