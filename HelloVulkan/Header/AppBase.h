@@ -60,7 +60,7 @@ protected:
 	float lastX_;
 	float lastY_;
 	bool firstMouse_;
-	bool middleMousePressed_;
+	bool leftMousePressed_;
 	bool showImgui_;
 
 	// Timing

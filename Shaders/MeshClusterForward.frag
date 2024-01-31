@@ -153,28 +153,20 @@ vec3 Radiance(
 	float roughness,
 	float alphaRoughness,
 	float NoV,
-	uint lightIndex)
+	vec3 lightPosition,
+	vec3 lightColor)
 {
 	vec3 Lo = vec3(0.0);
 
-	LightData light = inLights.data[lightIndex];
-
-	vec3 L = normalize(light.position.xyz - worldPos); // Incident light vector
+	vec3 L = normalize(lightPosition - worldPos); // Incident light vector
 	vec3 H = normalize(V + L); // Halfway vector
 	float NoH = max(dot(N, H), 0.0);
 	float NoL = max(dot(N, L), 0.0);
 	float HoV = max(dot(H, V), 0.0);
-	float distance = length(light.position.xyz - worldPos);
+	float distance = length(lightPosition - worldPos);
 	float attenuation = 1.0 / pow(distance, pc.attenuationF);
-	//float attenuation = Attenuation(distance, light.radius);
 
-	/*float attenuation = 1.0;
-	if (distance > (light.radius * 0.1))
-	{
-		attenuation = 0.0;
-	}*/
-
-	vec3 radiance = light.color.xyz * attenuation * pc.lightIntensity;
+	vec3 radiance = lightColor * attenuation * pc.lightIntensity;
 
 	// Cook-Torrance BRDF
 	float D = DistributionGGX(NoH, roughness);
@@ -237,10 +229,10 @@ vec3 Ambient(
 
 void main()
 {
-	//uint zIndex = uint(max(log2(LinearDepth(gl_FragCoord.z)) * cfUBO.sliceScaling + cfUBO.sliceBias, 0.0));
-	float linDepth = LinearDepth(gl_FragCoord.z);
-	float zIndexFloat = float(cfUBO.sliceCountZ) * log2(linDepth / cfUBO.cameraNear) / log2(cfUBO.cameraFar / cfUBO.cameraNear);
-	uint zIndex = uint(max(zIndexFloat, 0.0));
+	uint zIndex = uint(max(log2(LinearDepth(gl_FragCoord.z)) * cfUBO.sliceScaling + cfUBO.sliceBias, 0.0));
+	//float linDepth = LinearDepth(gl_FragCoord.z);
+	//float zIndexFloat = float(cfUBO.sliceCountZ) * log2(linDepth / cfUBO.cameraNear) / log2(cfUBO.cameraFar / cfUBO.cameraNear);
+	//uint zIndex = uint(max(zIndexFloat, 0.0));
 
 	vec2 tileSize = 
 		vec2(cfUBO.screenSize.x / float(cfUBO.sliceCountX), 
@@ -295,6 +287,7 @@ void main()
 	{
 		//LightData light = inLights.data[i];
 		uint lightIndex = lightIndices.data[i + lightIndexOffset];
+		LightData light = inLights.data[lightIndex];
 
 		Lo += Radiance(
 			albedo,
@@ -305,7 +298,8 @@ void main()
 			roughness,
 			alpha,
 			NoV,
-			lightIndex);
+			light.position.xyz,
+			light.color.xyz);
 	}
 
 	vec3 ambient = Ambient(

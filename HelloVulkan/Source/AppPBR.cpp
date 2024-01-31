@@ -196,7 +196,7 @@ void AppPBR::InitLights()
 		LightData l;
 		l.color_ = color;
 		l.position_ = position;
-		l.radius_ = 128.0f;
+		l.radius_ = 4.0f;
 
 		lights.push_back(l);
 	}
