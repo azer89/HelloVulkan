@@ -37,12 +37,6 @@ It's still a simplified implementation. The light culling part is obviously the 
 
 https://github.com/azer89/HelloVulkan/assets/790432/b1b3ff16-e1dc-4514-9688-789771531165
 
-
-This is a work-in-progress feature. 
-The current unoptimized code uses compute shaders to generate AABB clusters and cull the lights in the scene. 
-While 60-70 FPS can be achieved with 1000 lights, the bottleneck is the light culling shader, 
-as each invocation performs collision checks on all lights in a brute-force manner.
-
 <img width="850" alt="vulkan_clustered_01" src="https://github.com/azer89/HelloVulkan/assets/790432/887ff61a-4883-449a-a476-ab4d54dcc39f">
 <img width="850" alt="vulkan_clustered_02" src="https://github.com/azer89/HelloVulkan/assets/790432/dae33ee8-5df0-4ca0-a7ff-8ddc5a98d6ad">
 
