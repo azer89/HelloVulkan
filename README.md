@@ -31,7 +31,7 @@ I finally implemented "Clustered Forward Shading" algorithm into my Vulkan engin
 
 The first step is to subdivide the view frustum into clusters.
 
-The next step is light culling: for each cluster, I calculate the intersecting lights. This way, I can remove lights that are too far from the view frustum, leading to reduced light iteration inside the final fragment shader.
+The next step is light culling: for each cluster, I calculate the intersecting lights. This way, I can remove lights that are too far from a fragment, leading to reduced light iteration inside the final fragment shader.
 
 It's still a simplified implementation. The light culling part is obviously the bottleneck since each compute shader invocation performs intersection test in a brute-force manner. 🥵
 
