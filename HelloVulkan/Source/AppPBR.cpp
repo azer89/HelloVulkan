@@ -175,7 +175,7 @@ void AppPBR::InitLights()
 	for (unsigned int i = 0; i < NR_LIGHTS; ++i)
 	{
 		float yPos = RandomNumber<float>(-2.f, 20.0f);
-		float radius = RandomNumber<float>(0.0f, 20.0f);
+		float radius = RandomNumber<float>(0.0f, 50.0f);
 		float rad = RandomNumber<float>(0.0f, pi2);
 		float xPos = glm::cos(rad);
 
@@ -196,7 +196,7 @@ void AppPBR::InitLights()
 		LightData l;
 		l.color_ = color;
 		l.position_ = position;
-		l.radius_ = 4.0f;
+		l.radius_ = 8.0f;
 
 		lights.push_back(l);
 	}
@@ -318,11 +318,12 @@ void AppPBR::UpdateUI()
 	static float pbrBaseReflectivity = 0.04f; // F0
 	static float maxReflectivityLod = 4.0f;
 	static float attenuationF = 1.0f;
+	static float ambientStrength = 0.01f;
 
 	ImGui_ImplVulkan_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-	ImGui::SetNextWindowSize(ImVec2(525, 200));
+	ImGui::SetNextWindowSize(ImVec2(525, 300));
 	ImGui::Begin(AppConfig::ScreenTitle.c_str());
 
 	ImGui::SetWindowFontScale(1.25f);
@@ -330,6 +331,7 @@ void AppPBR::UpdateUI()
 	ImGui::Checkbox("Render Lights", &lightRender);
 	ImGui::SliderFloat("Light Intensity", &lightIntensity, 0.1f, 100.f);
 	ImGui::SliderFloat("Light Falloff", &attenuationF, 1.f, 20.f);
+	ImGui::SliderFloat("Ambient Strength", &ambientStrength, 0.0f, 1.0f);
 	ImGui::SliderFloat("Base Reflectivity", &pbrBaseReflectivity, 0.01f, 1.f);
 	ImGui::SliderFloat("Max Mipmap Lod", &maxReflectivityLod, 0.1f, cubemapMipmapCount_);
 	
@@ -347,6 +349,7 @@ void AppPBR::UpdateUI()
 	pbrPtr_->SetBaseReflectivity(pbrBaseReflectivity);
 	pbrPtr_->SetMaxReflectionLod(maxReflectivityLod);
 	pbrPtr_->SetAtenuationF(attenuationF);
+	pbrPtr_->SetAmbientStrength(ambientStrength);
 }
 
 void AppPBR::FillComputeCommandBuffer(VkCommandBuffer compCommandBuffer, uint32_t imageIndex)

@@ -15,7 +15,7 @@ namespace AppConfig
 
 	// VK_PRESENT_MODE_FIFO_KHR --> Lock to screen FPS
 	// VK_PRESENT_MODE_MAILBOX_KHR --> Triple buffering
-	const VkPresentModeKHR PresentMode = VK_PRESENT_MODE_FIFO_KHR;
+	const VkPresentModeKHR PresentMode = VK_PRESENT_MODE_MAILBOX_KHR;
 
 	// Number of overlapping frames when rendering
 	const unsigned int FrameOverlapCount = 2;

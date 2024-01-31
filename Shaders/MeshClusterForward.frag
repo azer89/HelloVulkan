@@ -13,6 +13,7 @@ layout(push_constant) uniform PushConstantPBR
 	float baseReflectivity;
 	float maxReflectionLod;
 	float attenuationF;
+	float ambientStrength;
 }
 pc;
 
@@ -72,7 +73,7 @@ struct AABB
 	vec4 minPoint;
 	vec4 maxPoint;
 };
-layout(set = 0, binding = 6) buffer Clusters
+layout(set = 0, binding = 6) readonly buffer Clusters
 {
 	AABB data [];
 }
@@ -280,7 +281,7 @@ void main()
 	F0 = mix(F0, albedo, metallic);
 
 	// Reflectance equation
-	vec3 Lo = vec3(0.0);
+	vec3 Lo = albedo * pc.ambientStrength;
 
 	//for (int i = 0; i < inLights.data.length(); ++i)
 	for (int i = 0; i < lightCount; ++i)

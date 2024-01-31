@@ -8,7 +8,7 @@ struct AABB
 	vec4 minPoint;
 	vec4 maxPoint;
 };
-layout(set = 0, binding = 0) buffer Clusters
+layout(set = 0, binding = 0) readonly buffer Clusters
 {
 	AABB data[];
 }

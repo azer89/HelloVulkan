@@ -13,6 +13,7 @@ struct PushConstantPBR
 	float baseReflectivity = 0.04f;
 	float maxReflectionLod = 4.f;
 	float attenuationF = 1.f;
+	float ambientStrength = 1.0f;
 };
 
 class RendererPBR final : public RendererBase
@@ -36,6 +37,7 @@ public:
 	void SetBaseReflectivity(float baseReflectivity) { pc_.baseReflectivity = baseReflectivity; }
 	void SetMaxReflectionLod(float maxLod) { pc_.maxReflectionLod = maxLod; }
 	void SetAtenuationF(float f) { pc_.attenuationF = f; }
+	void SetAmbientStrength(float f) { pc_.ambientStrength = f; }
 
 	void SeClusterForwardUBO(const VulkanDevice& vkDev, uint32_t imageIndex, ClusterForwardUBO ubo)
 	{
