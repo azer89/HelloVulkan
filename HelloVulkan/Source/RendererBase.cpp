@@ -79,6 +79,8 @@ void RendererBase::BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuff
 
 void RendererBase::OnWindowResized(VulkanDevice& vkDev)
 {
+	// TODO Skip if compute pipeline
+
 	framebuffer_.Destroy();
 	framebuffer_.Recreate(vkDev);
 	

@@ -10,7 +10,7 @@
 #include "ClusterForwardBuffers.h"
 #include "UBO.h"
 
-class RendererCullLights final : RendererBase
+class RendererCullLights final : public RendererBase
 {
 public:
 	RendererCullLights(VulkanDevice& vkDev, Lights* lights, ClusterForwardBuffers* cfBuffers);
@@ -29,6 +29,11 @@ public:
 	void SetClusterForwardUBO(const VulkanDevice& vkDev, size_t currentImage, ClusterForwardUBO ubo)
 	{
 		UpdateUniformBuffer(vkDev.GetDevice(), cfUBOBuffers_[currentImage], &ubo, sizeof(ClusterForwardUBO));
+	}
+
+	void OnWindowResized(VulkanDevice& vkDev) override
+	{
+		// Not used
 	}
 
 private:

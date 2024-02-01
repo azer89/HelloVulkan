@@ -6,15 +6,16 @@
 
 #include <vector>
 
+// TODO Rename to ClusterForwardResources
 struct ClusterForwardBuffers
 {
 public:
+	// TODO Make multiple buffers and dirty flags
 	VulkanBuffer aabbBuffer_;
 
-	//VulkanBuffer globalIndexCountBuffer_;
-	//VulkanBuffer lightCellsBuffer_;
-	//VulkanBuffer lightIndicesBuffer_;
+	// TODO Add ubo struct
 
+	// TODO reduce the array light into AppConfig::FrameOverlapCount
 	std::vector<VulkanBuffer> globalIndexCountBuffers_;
 	std::vector<VulkanBuffer> lightCellsBuffers_;
 	std::vector<VulkanBuffer> lightIndicesBuffers_;
