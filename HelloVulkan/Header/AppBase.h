@@ -71,8 +71,8 @@ protected:
 	VulkanInstance vulkanInstance_;
 	VulkanDevice vulkanDevice_;
 
-	// A list of renderers
-	std::vector<RendererBase*> renderers_;
+	std::vector<RendererBase*> graphicsPipelines_;
+	std::vector<RendererBase*> computePipelines_;
 
 	// Window size
 	uint32_t windowWidth_;

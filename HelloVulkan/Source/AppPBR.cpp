@@ -3,7 +3,6 @@
 #include "RendererEquirect2Cube.h"
 #include "RendererCubeFilter.h"
 #include "RendererBRDFLUT.h"
-#include "RendererAABB.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 
@@ -29,7 +28,8 @@ inline T RandomNumber(T min, T max)
 }
 
 AppPBR::AppPBR() :
-	modelRotation_(0.f)
+	modelRotation_(0.f)//,
+	//calculateAABB_(true)
 {
 }
 
@@ -84,12 +84,6 @@ void AppPBR::Init()
 		RendererBRDFLUT brdfLUTCompute(vulkanDevice_);
 		brdfLUTCompute.CreateLUT(vulkanDevice_, &brdfLut_);
 		brdfLut_.SetDebugName(vulkanDevice_, "BRDF_LUT");
-	}
-
-	{
-		RendererAABB aabbCompute(vulkanDevice_);
-		ClusterForwardUBO ubo = camera_->GetClusterForwardUBO();
-		aabbCompute.CreateClusters(vulkanDevice_, ubo, &(cfBuffers_.aabbBuffer_));
 	}
 
 	// Renderers
@@ -147,7 +141,7 @@ void AppPBR::Init()
 	finishPtr_ = std::make_unique<RendererFinish>(vulkanDevice_);
 
 	// Put all renderer pointers to a vector
-	renderers_ =
+	graphicsPipelines_ =
 	{
 		// Must be in order
 		clearPtr_.get(),
@@ -163,7 +157,19 @@ void AppPBR::Init()
 	};
 
 	// Compute
+	/* {
+		RendererAABB aabbCompute(vulkanDevice_);
+		ClusterForwardUBO ubo = camera_->GetClusterForwardUBO();
+		aabbCompute.CreateClusters(vulkanDevice_, ubo, &(cfBuffers_.aabbBuffer_));
+	}*/
+	aabbPtr_ = std::make_unique<RendererAABB>(vulkanDevice_, &cfBuffers_, camera_.get());
 	cullLightsPtr_ = std::make_unique<RendererCullLights>(vulkanDevice_, &lights_, &cfBuffers_);
+	computePipelines_ =
+	{
+		// Must be in order
+		aabbPtr_.get(),
+		cullLightsPtr_.get(),
+	};
 }
 
 void AppPBR::InitLights()
@@ -230,6 +236,7 @@ void AppPBR::DestroyResources()
 	resolveMSPtr_.reset();
 	tonemapPtr_.reset();
 	imguiPtr_.reset();
+	aabbPtr_.reset();
 	cullLightsPtr_.reset();
 	aabbDebugPtr_.reset();
 }
@@ -307,7 +314,7 @@ void AppPBR::UpdateUI()
 	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));
 	ImGui::Checkbox("Render Lights", &lightRender);
 	ImGui::SliderFloat("Light Intensity", &lightIntensity, 0.1f, 100.f);
-	ImGui::SliderFloat("Light Falloff", &attenuationF, 1.f, 20.f);
+	ImGui::SliderFloat("Light Falloff", &attenuationF, 0.01f, 10.f);
 	ImGui::SliderFloat("Ambient Strength", &ambientStrength, 0.0f, 1.0f);
 	ImGui::SliderFloat("Base Reflectivity", &pbrBaseReflectivity, 0.01f, 1.f);
 	ImGui::SliderFloat("Max Mipmap Lod", &maxReflectivityLod, 0.1f, cubemapMipmapCount_);
@@ -331,6 +338,12 @@ void AppPBR::UpdateUI()
 
 void AppPBR::FillComputeCommandBuffer(VkCommandBuffer compCommandBuffer, uint32_t imageIndex)
 {
+	/*if (calculateAABB_)
+	{
+		aabbPtr_->CreateClusters(vulkanDevice_);
+		calculateAABB_ = false;
+	}*/
+	aabbPtr_->FillCommandBuffer(vulkanDevice_, compCommandBuffer, imageIndex);
 	cullLightsPtr_->FillComputeCommandBuffer(vulkanDevice_, compCommandBuffer, imageIndex);
 }
 

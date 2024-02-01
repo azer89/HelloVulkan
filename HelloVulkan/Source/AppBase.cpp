@@ -284,7 +284,7 @@ void AppBase::FillCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageInd
 	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginIndo));
 
 	// Iterate through all renderers to fill the command buffer
-	for (auto& r : renderers_)
+	for (auto& r : graphicsPipelines_)
 	{
 		r->FillCommandBuffer(vulkanDevice_, commandBuffer, imageIndex);
 	}
@@ -313,7 +313,12 @@ void AppBase::OnWindowResized()
 
 	CreateSharedImageResources();
 
-	for (auto& r : renderers_)
+	for (auto& r : graphicsPipelines_)
+	{
+		r->OnWindowResized(vulkanDevice_);
+	}
+
+	for (auto& r : computePipelines_)
 	{
 		r->OnWindowResized(vulkanDevice_);
 	}

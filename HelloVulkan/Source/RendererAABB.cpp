@@ -3,9 +3,16 @@
 #include "RendererAABB.h"
 #include "Configs.h"
 
+#include <iostream> 
+
 RendererAABB::RendererAABB(
-	VulkanDevice& vkDev) :
-	RendererBase(vkDev, true)
+	VulkanDevice& vkDev,
+	ClusterForwardBuffers* cfBuffers,
+	Camera* camera) :
+	RendererBase(vkDev, true),
+	cfBuffers_(cfBuffers),
+	camera_(camera),
+	isDirty_(true)
 {
 	// Create UBO Buffer
 	cfUBOBuffer_.CreateBuffer(
@@ -19,7 +26,9 @@ RendererAABB::RendererAABB(
 	VulkanShader shader;
 	shader.Create(vkDev.GetDevice(), shaderFile.c_str());
 
-	CreateComputeDescriptorSetLayout(vkDev.GetDevice());
+	CreateDescriptorPool(vkDev.GetDevice());
+	CreateDescriptorLayout(vkDev.GetDevice());
+	AllocateDescriptorSet(vkDev.GetDevice());
 	CreatePipelineLayout(vkDev.GetDevice(), descriptorSetLayout_, &pipelineLayout_);
 	CreateComputePipeline(vkDev.GetDevice(), shader.GetShaderModule());
 
@@ -32,25 +41,27 @@ RendererAABB::~RendererAABB()
 	vkDestroyPipeline(device_, pipeline_, nullptr);
 }
 
-void RendererAABB::CreateClusters(VulkanDevice& vkDev, const ClusterForwardUBO& ubo, VulkanBuffer* aabbBuffer)
+void RendererAABB::CreateClusters(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
-	CreateComputeDescriptorSet(vkDev.GetDevice(), aabbBuffer);
+	ClusterForwardUBO ubo = camera_->GetClusterForwardUBO();
+	std::cout << ubo.screenSize.x << ", " << ubo.screenSize.y << "\n";
+	UpdateDescriptorSet(vkDev.GetDevice(), &(cfBuffers_->aabbBuffer_));
 	UpdateUniformBuffer(vkDev.GetDevice(), cfUBOBuffer_, &ubo, sizeof(ClusterForwardUBO));
-	Execute(vkDev, aabbBuffer);
+	Execute(vkDev, commandBuffer);
 }
 
-void RendererAABB::Execute(VulkanDevice& vkDev, VulkanBuffer* aabbBuffer)
+void RendererAABB::Execute(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
-	VkCommandBuffer commandBuffer = vkDev.GetComputeCommandBuffer();
+	//VkCommandBuffer commandBuffer = vkDev.GetComputeCommandBuffer();
 
-	VkCommandBufferBeginInfo commandBufferBeginInfo = {
+	/*VkCommandBufferBeginInfo commandBufferBeginInfo = {
 		VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
 		0,
 		VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
 		0
 	};
 
-	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo));
+	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo));*/
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline_);
 
@@ -77,7 +88,7 @@ void RendererAABB::Execute(VulkanDevice& vkDev, VulkanBuffer* aabbBuffer)
 		.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
 		.srcQueueFamilyIndex = vkDev.GetComputeFamily(),
 		.dstQueueFamilyIndex = vkDev.GetGraphicsFamily(),
-		.buffer = aabbBuffer->buffer_,
+		.buffer = cfBuffers_->aabbBuffer_.buffer_,
 		.offset = 0,
 		.size = VK_WHOLE_SIZE };
 	vkCmdPipelineBarrier(commandBuffer, 
@@ -90,7 +101,7 @@ void RendererAABB::Execute(VulkanDevice& vkDev, VulkanBuffer* aabbBuffer)
 		&barrierInfo,
 		0, nullptr);
 
-	VK_CHECK(vkEndCommandBuffer(commandBuffer));
+	/*VK_CHECK(vkEndCommandBuffer(commandBuffer));
 
 	VkSubmitInfo submitInfo = {
 		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
@@ -108,15 +119,21 @@ void RendererAABB::Execute(VulkanDevice& vkDev, VulkanBuffer* aabbBuffer)
 
 	// Wait for the compute shader completion.
 	// Alternatively we can use a fence.
-	VK_CHECK(vkQueueWaitIdle(vkDev.GetComputeQueue()));
+	VK_CHECK(vkQueueWaitIdle(vkDev.GetComputeQueue()));*/
 }
 
 void RendererAABB::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
 {
-	// Empty
+	if (!isDirty_)
+	{
+		return;
+	}
+
+	CreateClusters(vkDev, commandBuffer);
+	isDirty_ = false;
 }
 
-void RendererAABB::CreateComputeDescriptorSetLayout(VkDevice device)
+void RendererAABB::CreateDescriptorLayout(VkDevice device)
 {
 	VkDescriptorSetLayoutBinding descriptorSetLayoutBindings[2] =
 	{
@@ -142,7 +159,7 @@ void RendererAABB::CreateComputeDescriptorSetLayout(VkDevice device)
 		&descriptorSetLayout_));
 }
 
-void RendererAABB::CreateComputeDescriptorSet(VkDevice device, VulkanBuffer* aabbBuffer)
+void RendererAABB::CreateDescriptorPool(VkDevice device)
 {
 	// Descriptor pool
 	std::vector<VkDescriptorPoolSize> poolSizes =
@@ -169,7 +186,10 @@ void RendererAABB::CreateComputeDescriptorSet(VkDevice device, VulkanBuffer* aab
 
 	// Descriptor pool
 	VK_CHECK(vkCreateDescriptorPool(device, &poolInfo, nullptr, &descriptorPool_));
+}
 
+void RendererAABB::AllocateDescriptorSet(VkDevice device)
+{
 	// Descriptor set
 	VkDescriptorSetAllocateInfo descriptorSetAllocateInfo = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
@@ -181,7 +201,10 @@ void RendererAABB::CreateComputeDescriptorSet(VkDevice device, VulkanBuffer* aab
 
 	// Descriptor set
 	VK_CHECK(vkAllocateDescriptorSets(device, &descriptorSetAllocateInfo, &computeDescriptorSet_));
+}
 
+void RendererAABB::UpdateDescriptorSet(VkDevice device, VulkanBuffer* aabbBuffer)
+{
 	// Finally, update descriptor set with concrete buffer pointers
 	VkDescriptorBufferInfo aabbBufferInfo = { aabbBuffer->buffer_, 0, VK_WHOLE_SIZE };
 	VkDescriptorBufferInfo uboBufferInfo = { cfUBOBuffer_.buffer_, 0, sizeof(ClusterForwardUBO) };

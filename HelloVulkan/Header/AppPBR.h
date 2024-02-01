@@ -12,6 +12,7 @@
 #include "RendererImGui.h"
 #include "RendererCullLights.h"
 #include "RendererAABBDebug.h"
+#include "RendererAABB.h"
 #include "VulkanImage.h"
 #include "Light.h"
 #include "Model.h"
@@ -43,10 +44,12 @@ private:
 	std::unique_ptr<RendererLight> lightPtr_;
 	std::unique_ptr<RendererImGui> imguiPtr_;
 	std::unique_ptr<RendererCullLights> cullLightsPtr_;
+	std::unique_ptr<RendererAABB> aabbPtr_;
 	std::unique_ptr<RendererAABBDebug> aabbDebugPtr_;
 
 	// Buffers for Clustered Forward
 	ClusterForwardBuffers cfBuffers_;
+	//bool calculateAABB_;
 
 	// PBR stuff
 	// TODO change to unique ptrs

@@ -6,29 +6,48 @@
 #include "VulkanImage.h"
 #include "VulkanBuffer.h"
 #include "VulkanUtility.h"
+#include "ClusterForwardBuffers.h"
+#include "Camera.h"
 #include "UBO.h"
 
-class RendererAABB final : RendererBase
+class RendererAABB final : public RendererBase
 {
 public:
-	RendererAABB(VulkanDevice& vkDev);
+	RendererAABB(VulkanDevice& vkDev, ClusterForwardBuffers* cfBuffers, Camera* camera);
 	~RendererAABB();
-
-	void CreateClusters(VulkanDevice& vkDev, const ClusterForwardUBO& ubo, VulkanBuffer* aabbBuffer);
 
 	virtual void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
 
+	//void UpdateCFUBO(const ClusterForwardUBO& ubo)
+	//{
+	//	cfUbo_ = ubo;
+	//}
+
+	void OnWindowResized(VulkanDevice& vkDev) override
+	{
+		//CreateClusters(vkDev);
+		isDirty_ = true;
+	}
+
 private:
+	bool isDirty_;
+	ClusterForwardBuffers* cfBuffers_;
+	Camera* camera_;
+
 	VulkanBuffer cfUBOBuffer_;
+	//ClusterForwardUBO cfUbo_;
 	VkDescriptorSet computeDescriptorSet_;
 	VkPipeline pipeline_;
 
 private:
-	void Execute(VulkanDevice& vkDev, VulkanBuffer* aabbBuffer);
+	void CreateClusters(VulkanDevice& vkDev, VkCommandBuffer commandBuffer);
+	void Execute(VulkanDevice& vkDev, VkCommandBuffer commandBuffer);
 
-	void CreateComputeDescriptorSetLayout(VkDevice device);
+	void CreateDescriptorPool(VkDevice device);
+	void CreateDescriptorLayout(VkDevice device);
 
-	void CreateComputeDescriptorSet(VkDevice device, VulkanBuffer* aabbBuffer);
+	void AllocateDescriptorSet(VkDevice device);
+	void UpdateDescriptorSet(VkDevice device, VulkanBuffer* aabbBuffer);
 
 	void CreateComputePipeline(
 		VkDevice device,

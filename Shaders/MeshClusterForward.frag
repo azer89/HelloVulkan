@@ -166,11 +166,12 @@ vec3 Radiance(
 	float NoL = max(dot(N, L), 0.0);
 	float HoV = max(dot(H, V), 0.0);
 	float distance = length(lightPosition - worldPos);
-	float attenuation = 1.0 / pow(distance, pc.attenuationF);
+	/*float attenuation = 1.0 / pow(distance, pc.attenuationF);
 	if (distance > lightRadius)
 	{
 		attenuation = 0.0;
-	}
+	}*/
+	float attenuation = max(1.0 - (distance /lightRadius), 0.0) / pow(distance, pc.attenuationF);
 
 	vec3 radiance = lightColor * attenuation * pc.lightIntensity;
 
