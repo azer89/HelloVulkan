@@ -170,8 +170,6 @@ CameraUBO Camera::GetCameraUBO() const
 	{
 		.projection = projectionMatrix_,
 		.view = viewMatrix_,
-		.position = glm::vec4(position_, 1.f),
-		.near = CameraConfig::Near,
-		.far = CameraConfig::Far
+		.position = glm::vec4(position_, 1.f)
 	};
 }

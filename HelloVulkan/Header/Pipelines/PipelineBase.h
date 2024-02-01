@@ -15,6 +15,7 @@
 
 /*
 This mainly encapsulates a graphics pipeline, framebuffers, and a render pass.
+Note that a pipeline can be either graphics or compute.
  */
 class PipelineBase
 {
