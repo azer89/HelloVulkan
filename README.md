@@ -28,7 +28,7 @@ https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d
 
 ### Clustered Forward Shading
 
-I finally implemented "Clustered Forward Shading" algorithm into my Vulkan engine. It's based on a tutorial written by [Angel Ortiz](https://www.aortiz.me/2018/12/21/CG.html). So far, it can render a scene with 1000 lights at 60-80 FPS using a 3060M graphics card.
+I finally implemented "Clustered Forward Shading" algorithm into my Vulkan engine. It's based on a tutorial written by [Angel Ortiz](https://www.aortiz.me/2018/12/21/CG.html). So far, it can render a scene with 1000 point lights at 90-100 FPS using a 3060M graphics card.
 
 The first step is to subdivide the view frustum into clusters.
 
