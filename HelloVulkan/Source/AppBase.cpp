@@ -333,7 +333,7 @@ void AppBase::InitIMGUI()
 
 void AppBase::InitCamera()
 {
-	camera_ = std::make_unique<Camera>(glm::vec3(0.0f, 4.0f, 4.0f));
+	camera_ = std::make_unique<Camera>(glm::vec3(0.0f, 6.0f, 18.0f));
 	lastX_ = static_cast<float>(windowWidth_) / 2.0f;
 	lastY_ = static_cast<float>(windowHeight_) / 2.0f;
 	firstMouse_ = true;

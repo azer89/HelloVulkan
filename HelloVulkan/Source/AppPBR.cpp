@@ -28,7 +28,8 @@ inline T RandomNumber(T min, T max)
 }
 
 AppPBR::AppPBR() :
-	modelRotation_(0.f)//,
+	modelRotation_(0.f),
+	rotateCamera_(false)
 	//calculateAABB_(true)
 {
 }
@@ -280,7 +281,10 @@ void AppPBR::UpdateUBOs(uint32_t imageIndex)
 	cullLightsPtr_->ResetGlobalIndex(vulkanDevice_, imageIndex);
 	cullLightsPtr_->SetClusterForwardUBO(vulkanDevice_, imageIndex, camera_->GetClusterForwardUBO());
 
-	camera_->ProcessMouseMovement(deltaTime_ * 20.0, 0.0);
+	if (rotateCamera_)
+	{
+		camera_->ProcessMouseMovement(deltaTime_ * 30.0, 0.0);
+	}
 
 }
 
@@ -297,6 +301,7 @@ void AppPBR::UpdateUI()
 		return;
 	}
 
+	static bool rotateCamera = false;
 	static bool lightRender = true;
 	static float lightIntensity = 1.f;
 	static float pbrBaseReflectivity = 0.04f; // F0
@@ -312,6 +317,7 @@ void AppPBR::UpdateUI()
 
 	ImGui::SetWindowFontScale(1.25f);
 	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));
+	ImGui::Checkbox("Rotate Camera", &rotateCamera);
 	ImGui::Checkbox("Render Lights", &lightRender);
 	ImGui::SliderFloat("Light Intensity", &lightIntensity, 0.1f, 100.f);
 	ImGui::SliderFloat("Light Falloff", &attenuationF, 0.01f, 10.f);
@@ -334,6 +340,7 @@ void AppPBR::UpdateUI()
 	pbrPtr_->SetMaxReflectionLod(maxReflectivityLod);
 	pbrPtr_->SetAtenuationF(attenuationF);
 	pbrPtr_->SetAmbientStrength(ambientStrength);
+	rotateCamera_ = rotateCamera;
 }
 
 void AppPBR::FillComputeCommandBuffer(VkCommandBuffer compCommandBuffer, uint32_t imageIndex)

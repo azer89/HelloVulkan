@@ -59,6 +59,7 @@ private:
 	VulkanImage brdfLut_;
 	float cubemapMipmapCount_;
 
+	bool rotateCamera_;
 	float modelRotation_;
 	std::unique_ptr<Model> model_;
 
