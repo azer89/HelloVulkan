@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="..\Shaders\AABBGenerator.comp" />
     <None Include="..\Shaders\BRDFLUT.comp" />
     <None Include="..\Shaders\CubeFilterDiffuse.frag" />
     <None Include="..\Shaders\CubeFilterSpecular.frag" />

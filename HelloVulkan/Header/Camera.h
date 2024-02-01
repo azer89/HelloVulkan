@@ -34,9 +34,11 @@ public:
 	glm::mat4 GetViewMatrix() const;
 	glm::vec3 Position() const;
 	CameraUBO GetCameraUBO() const;
+	ClusterForwardUBO GetClusterForwardUBO() const;
 
 private:
 	glm::mat4 projectionMatrix_;
+	glm::mat4 inverseProjectionMatrix_;
 	glm::mat4 viewMatrix_;
 
 	glm::vec3 position_;

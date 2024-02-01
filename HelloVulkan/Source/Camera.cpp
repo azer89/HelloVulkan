@@ -126,6 +126,7 @@ void Camera::UpdateInternal()
 		CameraConfig::Near,
 		CameraConfig::Far);
 	projectionMatrix_[1][1] *= -1;
+	inverseProjectionMatrix_ = glm::inverse(projectionMatrix_);
 
 	// View matrix
 	/*const glm::vec3 w = front_;
@@ -171,5 +172,26 @@ CameraUBO Camera::GetCameraUBO() const
 		.projection = projectionMatrix_,
 		.view = viewMatrix_,
 		.position = glm::vec4(position_, 1.f)
+	};
+}
+
+ClusterForwardUBO Camera::GetClusterForwardUBO() const
+{
+	float zFloat = static_cast<float>(ClusterForwardConfig::sliceCountZ);
+	float log2FarDivNear = glm::log2(CameraConfig::Far / CameraConfig::Near);
+	float log2Near = glm::log2(CameraConfig::Near);
+
+	return
+	{
+		.cameraInverseProjection = inverseProjectionMatrix_,
+		.cameraView = viewMatrix_,
+		.screenSize = glm::vec2(screenWidth_, screenHeight_),
+		.sliceScaling = zFloat / log2FarDivNear,
+		.sliceBias = -(zFloat * log2Near / log2FarDivNear),
+		.cameraNear = CameraConfig::Near,
+		.cameraFar = CameraConfig::Far,
+		.sliceCountX = ClusterForwardConfig::sliceCountX,
+		.sliceCountY = ClusterForwardConfig::sliceCountY,
+		.sliceCountZ = ClusterForwardConfig::sliceCountZ
 	};
 }
