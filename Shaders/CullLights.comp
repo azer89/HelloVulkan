@@ -67,7 +67,7 @@ layout(set = 0, binding = 5) uniform ClusterForwardUBO
 }
 ubo;
 
-#define MAX_LIGHTS_PER_CLUSTER 150
+#define MAX_LIGHTS_PER_CLUSTER 50
 
 float SquaredDistancePointAABB(vec3 point, uint tile)
 {

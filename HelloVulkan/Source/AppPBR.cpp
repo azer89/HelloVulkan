@@ -196,37 +196,12 @@ void AppPBR::InitLights()
 		LightData l;
 		l.color_ = color;
 		l.position_ = position;
-		l.radius_ = 6.0f;
+		l.radius_ = RandomNumber<float>(2.0f, 6.0f);
 
 		lights.push_back(l);
 	}
 
 	lights_.AddLights(vulkanDevice_, lights);
-
-	// Lights (SSBO)
-	/*lights_.AddLights(vulkanDevice_,
-	{
-		{
-			.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f),
-			.color_ = glm::vec4(1.f),
-			.radius_ = 8.f
-		},
-		{
-			.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f),
-			.color_ = glm::vec4(1.f),
-			.radius_ = 8.f
-		},
-		{
-			.position_ = glm::vec4(-1.5f, 0.7f, -1.5f, 1.f),
-			.color_ = glm::vec4(1.f),
-			.radius_ = 8.f
-		},
-		{
-			.position_ = glm::vec4(1.5f, 0.7f, -1.5f, 1.f),
-			.color_ = glm::vec4(1.f),
-			.radius_ = 8.f,
-		}
-	});*/
 }
 
 void AppPBR::DestroyResources()

@@ -109,14 +109,14 @@ void main()
 		pow(ubo.cameraFar / ubo.cameraNear, float(gl_WorkGroupID.z + 1) / ubo.sliceCountZ);
 
 	// Intersection points
-	/*vec3 minNear = RayIntersectZPlane(minVS, tileNear);
+	vec3 minNear = RayIntersectZPlane(minVS, tileNear);
 	vec3 minFar = RayIntersectZPlane(minVS, tileFar);
 	vec3 maxNear = RayIntersectZPlane(maxVS, tileNear);
-	vec3 maxFar = RayIntersectZPlane(maxVS, tileFar);*/
-	vec3 minNear = LineIntersectionToZPlane(eyePos, minVS, tileNear);
+	vec3 maxFar = RayIntersectZPlane(maxVS, tileFar);
+	/*vec3 minNear = LineIntersectionToZPlane(eyePos, minVS, tileNear);
 	vec3 minFar = LineIntersectionToZPlane(eyePos, minVS, tileFar);
 	vec3 maxNear = LineIntersectionToZPlane(eyePos, maxVS, tileNear);
-	vec3 maxFar = LineIntersectionToZPlane(eyePos, maxVS, tileFar);
+	vec3 maxFar = LineIntersectionToZPlane(eyePos, maxVS, tileFar);*/
 
 	vec3 minAABB = min(min(minNear, minFar), min(maxNear, maxFar));
 	vec3 maxAABB = max(max(minNear, minFar), max(maxNear, maxFar));
