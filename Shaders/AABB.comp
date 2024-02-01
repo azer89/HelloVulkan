@@ -62,7 +62,7 @@ vec3 LineIntersectionToZPlane(vec3 A, vec3 B, float zDistance)
 	vec3 ab = B - A;
 
 	// The intersection length for the line and the plane
-	// https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-plane-and-ray-disk-intersection.html
+	// scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-plane-and-ray-disk-intersection.html
 	float t = (zDistance - dot(normal, A)) / dot(normal, ab);
 
 	// The actual xyz position of the point along the line
