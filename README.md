@@ -38,8 +38,7 @@ The next step is light culling: for each cluster, I calculate the intersecting l
 The light culling part is obviously the bottleneck since each compute shader invocation performs intersection test in a brute-force manner. 
 However, I reckon this implementation is better than naive deferred shading and they are so many ways to improve the performance even further.
 
-https://github.com/azer89/HelloVulkan/assets/790432/ed63997d-812d-48c1-a5d0-d1e59416e46f
-
+https://github.com/azer89/HelloVulkan/assets/790432/66b9a30a-d187-495a-9879-8eb11a497087
 
 ### Build
 * C++20
