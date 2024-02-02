@@ -2,6 +2,8 @@
 
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
+#define MAX_LIGHTS_PER_CLUSTER 150
+
 // SSBO (input)
 struct AABB
 {
@@ -64,8 +66,6 @@ layout(set = 0, binding = 5) uniform ClusterForwardUBO
 }
 ubo;
 
-#define MAX_LIGHTS_PER_CLUSTER 150
-
 float SquaredDistancePointAABB(vec3 point, uint tile)
 {
 	AABB currentCell = clusters[tile];
@@ -95,7 +95,6 @@ bool TestSphereAABB(uint lightIndex, uint tile)
 	vec4 posWorld = lights[lightIndex].position;
 	vec4 posView = ubo.cameraView * posWorld;
 	float squaredDistance = SquaredDistancePointAABB(posView.xyz, tile);
-
 	return squaredDistance < (lightRadius * lightRadius);
 }
 
