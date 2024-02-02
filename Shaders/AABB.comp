@@ -2,16 +2,12 @@
 
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
-// SSBO
-struct AABB
-{
-	vec4 minPoint;
-	vec4 maxPoint;
-};
+#include <ClusterForwardHeader.comp>
+
 layout(set = 0, binding = 0) buffer Clusters
 {
-	AABB data[];
-} clusters;
+	AABB clusters[];
+};
 
 // UBO
 layout(set = 0, binding = 1) uniform ClusterForwardUBO
@@ -113,17 +109,10 @@ void main()
 	vec3 minFar = RayIntersectZPlane(minVS, tileFar);
 	vec3 maxNear = RayIntersectZPlane(maxVS, tileNear);
 	vec3 maxFar = RayIntersectZPlane(maxVS, tileFar);
-	/*vec3 minNear = LineIntersectionToZPlane(eyePos, minVS, tileNear);
-	vec3 minFar = LineIntersectionToZPlane(eyePos, minVS, tileFar);
-	vec3 maxNear = LineIntersectionToZPlane(eyePos, maxVS, tileNear);
-	vec3 maxFar = LineIntersectionToZPlane(eyePos, maxVS, tileFar);*/
 
 	vec3 minAABB = min(min(minNear, minFar), min(maxNear, maxFar));
 	vec3 maxAABB = max(max(minNear, minFar), max(maxNear, maxFar));
 
-	clusters.data[tileIndex].minPoint = vec4(minAABB, 0.0);
-	clusters.data[tileIndex].maxPoint = vec4(maxAABB, 0.0);
-
-	//clusters.data[tileIndex].minPoint = vec4(minFar.x, minFar.y, tileNear, 0.0);
-	//clusters.data[tileIndex].maxPoint = vec4(maxFar.x, maxFar.y, tileFar, 0.0);
+	clusters[tileIndex].minPoint = vec4(minAABB, 0.0);
+	clusters[tileIndex].maxPoint = vec4(maxAABB, 0.0);
 }

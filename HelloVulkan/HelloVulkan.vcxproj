@@ -139,6 +139,7 @@
     <None Include="..\Shaders\AABBRender.frag" />
     <None Include="..\Shaders\AABBRender.vert" />
     <None Include="..\Shaders\BRDFLUT.comp" />
+    <None Include="..\Shaders\ClusterForwardHeader.comp" />
     <None Include="..\Shaders\CubeFilterDiffuse.frag" />
     <None Include="..\Shaders\CubeFilterSpecular.frag" />
     <None Include="..\Shaders\CullLightsBatch.comp" />

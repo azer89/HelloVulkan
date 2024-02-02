@@ -2,24 +2,19 @@
 
 layout(local_size_x = 16, local_size_y = 9, local_size_z = 4) in;
 
+#include <ClusterForwardHeader.comp>
+
+#define MAX_LIGHTS_PER_CLUSTER 150
+
+shared LightData sharedLights[16 * 9 * 4];
+
 // SSBO (input)
-struct AABB
-{
-	vec4 minPoint;
-	vec4 maxPoint;
-};
 layout(set = 0, binding = 0) readonly buffer Clusters
 {
 	AABB clusters[];
 };
 
 // SSBO (input)
-struct LightData
-{
-	vec4 position;
-	vec4 color;
-	float radius;
-};
 layout(set = 0, binding = 1) buffer Lights 
 { 
 	LightData lights[]; 
@@ -32,11 +27,6 @@ layout(set = 0, binding = 2) buffer AtomicCounter
 };
 
 // SSBO (output)
-struct LightCell
-{
-	uint offset;
-	uint count;
-};
 layout(set = 0, binding = 3) buffer LightCells
 {
 	LightCell lightCells[];
@@ -63,11 +53,6 @@ layout(set = 0, binding = 5) uniform ClusterForwardUBO
 	uint sliceCountZ;
 }
 ubo;
-
-//Shared variables 
-shared LightData sharedLights[16 * 9 * 4];
-
-#define MAX_LIGHTS_PER_CLUSTER 150
 
 float SquaredDistancePointAABB(vec3 point, uint tile)
 {

@@ -75,6 +75,9 @@
     <None Include="..\Shaders\CullLightsBatch.comp">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\Shaders\ClusterForwardHeader.comp">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\AppBase.h">
