@@ -42,7 +42,7 @@
     <None Include="..\Shaders\Cube.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\Mesh.frag">
+    <None Include="..\Shaders\PBR.frag">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\PBRHeader.frag">
@@ -70,6 +70,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\AABBGenerator.comp">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\LightCulling.comp">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\LightCullingBatch.comp">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

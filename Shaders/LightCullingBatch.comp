@@ -1,0 +1,151 @@
+#version 460 core
+
+layout(local_size_x = 16, local_size_y = 9, local_size_z = 4) in;
+
+// SSBO (input)
+struct AABB
+{
+	vec4 minPoint;
+	vec4 maxPoint;
+};
+layout(set = 0, binding = 0) readonly buffer Clusters
+{
+	AABB data[];
+}
+clusters;
+
+// SSBO (input)
+struct LightData
+{
+	vec4 position;
+	vec4 color;
+	float radius;
+};
+layout(set = 0, binding = 1) buffer Lights 
+{ 
+	LightData lights[]; 
+};
+
+// SSBO 
+layout(set = 0, binding = 2) buffer AtomicCounter
+{
+	uint globalIndex;
+};
+
+// SSBO (output)
+struct LightCell
+{
+	uint offset;
+	uint count;
+};
+layout(set = 0, binding = 3) buffer LightCells
+{
+	LightCell data[];
+}
+lightCells;
+
+// SSBO (output)
+layout(set = 0, binding = 4) buffer LightIndices
+{
+	uint data[];
+}
+lightIndices;
+
+// UBO
+layout(set = 0, binding = 5) uniform ClusterForwardUBO
+{
+	mat4 cameraInverseProjection;
+	mat4 cameraView;
+	vec2 screenSize;
+	float sliceScaling;
+	float sliceBias;
+	float cameraNear;
+	float cameraFar;
+	uint sliceCountX;
+	uint sliceCountY;
+	uint sliceCountZ;
+}
+ubo;
+
+//Shared variables 
+shared LightData sharedLights[16 * 9 * 4];
+
+#define MAX_LIGHTS_PER_CLUSTER 150
+
+float SquaredDistancePointAABB(vec3 point, uint tile)
+{
+	AABB currentCell = clusters.data[tile];
+
+	float sqDist = 0.0;
+	for (uint i = 0; i < 3; ++i)
+	{
+		float v = point[i];
+		if (v < currentCell.minPoint[i])
+		{
+			float diff = currentCell.minPoint[i] - v;
+			sqDist += (diff * diff);
+		}
+		else if (v > currentCell.maxPoint[i])
+		{
+			float diff = currentCell.maxPoint[i] - v;
+			sqDist += (diff * diff);
+		}
+	}
+
+	return sqDist;
+}
+
+bool TestSphereAABB(uint lightIndex, uint tile)
+{
+	float lightRadius = sharedLights[lightIndex].radius;
+	float lightRadius2 = pow(lightRadius, 2.0);
+	vec4 posWorld = sharedLights[lightIndex].position;
+	vec4 posView = ubo.cameraView * posWorld;
+	float squaredDistance = SquaredDistancePointAABB(posView.xyz, tile);
+
+	return squaredDistance < lightRadius2;
+}
+
+void main()
+{
+	uint threadCount = gl_WorkGroupSize.x * gl_WorkGroupSize.y * gl_WorkGroupSize.z;
+	uint lightCount = lights.length();
+	uint numBatches = (lightCount + threadCount - 1) / threadCount;
+
+	uint tileIndex = gl_LocalInvocationIndex +
+		gl_WorkGroupSize.x * gl_WorkGroupSize.y * gl_WorkGroupSize.z * gl_WorkGroupID.z;
+
+	uint lightIter = 0;
+	uint visibleLightIndices[MAX_LIGHTS_PER_CLUSTER];
+
+	for (uint batch = 0; batch < numBatches; ++batch)
+	{
+		uint lightIndex = batch * threadCount + gl_LocalInvocationIndex;
+		if (lightIndex < lightCount)
+		{
+			sharedLights[gl_LocalInvocationIndex] = lights[lightIndex];
+		}
+		barrier();
+
+		for (uint i = 0; i < threadCount; ++i)
+		{
+			if (TestSphereAABB(i, tileIndex))
+			{
+				visibleLightIndices[lightIter] = batch * threadCount + i;
+				lightIter++;
+			}
+		}
+	}
+
+	barrier();
+
+	uint offset = atomicAdd(globalIndex, lightIter);
+
+	for (uint i = 0; i < lightIter; ++i)
+	{
+		lightIndices.data[offset + i] = visibleLightIndices[i];
+	}
+
+	lightCells.data[tileIndex].offset = offset;
+	lightCells.data[tileIndex].count  = lightIter;
+}
