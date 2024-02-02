@@ -15,7 +15,6 @@ A real-time rendering engine using Vulkan.
 * Multisample anti-aliasing (MSAA).
 * Automatic runtime compilation from GLSL to SPIR-V.
 * A simple abstraction layer that supports a sequence of render passes.
-* Simple synchronization between compute queue and graphics queue.
 * Minor features: Skybox, instancing with SSBOs, ImGui, UBOs, and push constants.
   
 https://github.com/azer89/HelloVulkan/assets/790432/8b0562ed-ab72-4e93-9ce9-31c61c0e986a
