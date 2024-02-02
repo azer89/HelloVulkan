@@ -177,36 +177,9 @@ void AppBase::DrawFrame()
 	// ImGui
 	UpdateUI();
 
-	// Compute queue (not used for now)
-	/*{
-		vkResetCommandBuffer(frameData.computeCommandBuffer_, 0);
-
-		FillComputeCommandBuffer(frameData.computeCommandBuffer_, imageIndex);
-
-		VkPipelineStageFlags waitStageMask = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
-		VkSubmitInfo computeSubmitInfo =
-		{
-			.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-			.pNext = 0,
-			.waitSemaphoreCount = 0,
-			.pWaitSemaphores = nullptr,
-			.pWaitDstStageMask = &waitStageMask,
-			.commandBufferCount = 1,
-			.pCommandBuffers = &(frameData.computeCommandBuffer_),
-			.signalSemaphoreCount = 1,
-			.pSignalSemaphores = &(frameData.computeSemaphore_)
-		};
-
-		VK_CHECK(vkQueueSubmit(vulkanDevice_.GetComputeQueue(), 1, &computeSubmitInfo, VK_NULL_HANDLE));
-	}*/
-
 	// Start recording command buffers
-	FillGraphicsCommandBuffer(frameData.graphicsCommandBuffer_, imageIndex);
-	
-	// With compute
-	//const VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_VERTEX_INPUT_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-	//std::array<VkSemaphore, 2> waitSemaphores = { frameData.computeSemaphore_, frameData.nextSwapchainImageSemaphore_ };
-	
+	FillCommandBuffer(frameData.graphicsCommandBuffer_, imageIndex);
+
 	// Without compute
 	const VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 	std::array<VkSemaphore, 1> waitSemaphores{ frameData.nextSwapchainImageSemaphore_ };
@@ -252,28 +225,8 @@ void AppBase::UpdateUI()
 	// Empty, must be implemented in a derived class
 }
 
-void AppBase::FillComputeCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
-{
-	const VkCommandBufferBeginInfo beginInfo =
-	{
-		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-		.pNext = nullptr,
-		.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT,
-		.pInheritanceInfo = nullptr
-	};
-
-	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
-
-	for (auto& pip : computePipelines_)
-	{
-		pip->FillCommandBuffer(vulkanDevice_, commandBuffer, imageIndex);
-	}
-
-	VK_CHECK(vkEndCommandBuffer(commandBuffer));
-}
-
 // Fill/record command buffer
-void AppBase::FillGraphicsCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
+void AppBase::FillCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
 {
 	const VkCommandBufferBeginInfo beginInfo =
 	{
@@ -285,8 +238,8 @@ void AppBase::FillGraphicsCommandBuffer(VkCommandBuffer commandBuffer, uint32_t 
 
 	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
 
-	// Iterate through all renderers to fill the command buffer
-	for (auto& pip : graphicsPipelines_)
+	// Iterate through all pipelines to fill the command buffer
+	for (auto& pip : pipelines_)
 	{
 		pip->FillCommandBuffer(vulkanDevice_, commandBuffer, imageIndex);
 	}
@@ -315,7 +268,7 @@ void AppBase::OnWindowResized()
 
 	CreateSharedImageResources();
 
-	for (auto& pip : graphicsPipelines_)
+	for (auto& pip : pipelines_)
 	{
 		pip->OnWindowResized(vulkanDevice_);
 	}
