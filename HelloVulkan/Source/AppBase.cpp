@@ -170,7 +170,7 @@ bool AppBase::DrawFrame()
 
 	vkResetFences(vulkanDevice_.GetDevice(), 1, &(frameData.queueSubmitFence_));
 	vkResetCommandBuffer(frameData.commandBuffer_, 0);
-	vkResetCommandBuffer(frameData.compCommandBuffer_, 0);
+	//vkResetCommandBuffer(frameData.compCommandBuffer_, 0);
 
 	// Send UBOs to shaders
 	UpdateUBOs(imageIndex);
@@ -179,7 +179,7 @@ bool AppBase::DrawFrame()
 	UpdateUI();
 
 	// Compute
-	{
+	/* {
 		vkResetCommandBuffer(frameData.compCommandBuffer_, 0);
 
 		VkCommandBufferBeginInfo commandBufferBeginInfo = 
@@ -208,25 +208,28 @@ bool AppBase::DrawFrame()
 		};
 		
 		VK_CHECK(vkQueueSubmit(vulkanDevice_.GetComputeQueue(), 1, &computeSubmitInfo, VK_NULL_HANDLE));
-	}
+	}*/
 
 	// Start recording command buffers
+	//FillComputeCommandBuffer(frameData.commandBuffer_, imageIndex);
 	FillCommandBuffer(frameData.commandBuffer_, imageIndex);
 
-	//const VkPipelineStageFlags waitStages[] = 
-	//	{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-	VkPipelineStageFlags graphicsWaitStageMasks[] = { VK_PIPELINE_STAGE_VERTEX_INPUT_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-	std::array<VkSemaphore, 2> waitSemaphores = { frameData.computeSemaphore_, frameData.nextSwapchainImageSemaphore_ };
+	const VkPipelineStageFlags waitStages[] = 
+		{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	//VkPipelineStageFlags graphicsWaitStageMasks[] = { VK_PIPELINE_STAGE_VERTEX_INPUT_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	//std::array<VkSemaphore, 2> waitSemaphores = { frameData.computeSemaphore_, frameData.nextSwapchainImageSemaphore_ };
 
 	const VkSubmitInfo submitInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
 		.pNext = nullptr,
-		.waitSemaphoreCount = 2u,
+		//.waitSemaphoreCount = 2u,
+		.waitSemaphoreCount = 1u,
 		// Wait for the swapchain image to become available
-		//.pWaitSemaphores = &(frameData.nextSwapchainImageSemaphore_),
-		.pWaitSemaphores = waitSemaphores.data(),
-		.pWaitDstStageMask = graphicsWaitStageMasks,
+		.pWaitSemaphores = &(frameData.nextSwapchainImageSemaphore_),
+		//.pWaitSemaphores = waitSemaphores.data(),
+		//.pWaitDstStageMask = graphicsWaitStageMasks,
+		.pWaitDstStageMask = waitStages,
 		.commandBufferCount = 1u,
 		.pCommandBuffers = &(frameData.commandBuffer_),
 		.signalSemaphoreCount = 1u,
@@ -282,6 +285,9 @@ void AppBase::FillCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageInd
 	};
 
 	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginIndo));
+
+	// Iterate through all renderers to fill the command buffer
+	FillComputeCommandBuffer(commandBuffer, imageIndex);
 
 	// Iterate through all renderers to fill the command buffer
 	for (auto& r : graphicsPipelines_)
