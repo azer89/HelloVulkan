@@ -27,14 +27,13 @@ https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d
 
 ### Clustered Forward Shading
 
-I finally implemented "Clustered Forward Shading" into this Vulkan engine. It's based on an article by [Angel Ortiz](https://www.aortiz.me/2018/12/21/CG.html). 
-So far, it can render a scene with 1000+ point lights at 90-100 FPS using a 3060M graphics card.
+I finally implemented "Clustered Forward Shading" which is based on an article by [Angel Ortiz](https://www.aortiz.me/2018/12/21/CG.html). 
 
-The first step is to subdivide the view frustum into clusters.
+The current implementation consists of two steps. The first step involves subdividing the view frustum into clusters.
+The next step is light culling, where we calculate lights intersecting with clusters. This step removes lights that are too far from a fragment, leading to reduced light iteration inside the final fragment shader.
 
-The next step is light culling: for each cluster, I calculate the intersecting lights. This way, I can remove lights that are too far from a fragment, leading to reduced light iteration inside the final fragment shader.
-
-The light culling part is obviously the bottleneck since each compute shader invocation performs intersection test in a brute-force manner. 
+Although I haven't done a proper testing, a scene with 1000+ point lights can be rendered at 60-100 FPS using a 3060M graphics card.
+If there are too many lights concentrated inside the view frustum, the frame rate will drop regardless.
 
 https://github.com/azer89/HelloVulkan/assets/790432/66b9a30a-d187-495a-9879-8eb11a497087
 
