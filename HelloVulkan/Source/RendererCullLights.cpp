@@ -14,7 +14,7 @@ RendererCullLights::RendererCullLights(VulkanDevice& vkDev, Lights* lights, Clus
 	// Per frame UBO
 	CreateUniformBuffers(vkDev, cfUBOBuffers_, sizeof(ClusterForwardUBO));
 
-	std::string shaderFile = AppConfig::ShaderFolder + "CullLights.comp";
+	std::string shaderFile = AppConfig::ShaderFolder + "CullLightsBatch.comp";
 	VulkanShader shader;
 	shader.Create(vkDev.GetDevice(), shaderFile.c_str());
 
@@ -62,15 +62,15 @@ void RendererCullLights::FillComputeCommandBuffer(VulkanDevice& vkDev, VkCommand
 		0); // pDynamicOffsets
 
 	// Tell the GPU to do some compute
-	vkCmdDispatch(commandBuffer,
-		static_cast<uint32_t>(ClusterForwardConfig::sliceCountX), // groupCountX
-		static_cast<uint32_t>(ClusterForwardConfig::sliceCountY), // groupCountY
-		static_cast<uint32_t>(ClusterForwardConfig::sliceCountZ)); // groupCountZ
-	
 	//vkCmdDispatch(commandBuffer,
-	//	1, // groupCountX
-	//	1, // groupCountY
-	//	6); // groupCountZ
+	//	static_cast<uint32_t>(ClusterForwardConfig::sliceCountX), // groupCountX
+	//	static_cast<uint32_t>(ClusterForwardConfig::sliceCountY), // groupCountY
+	//	static_cast<uint32_t>(ClusterForwardConfig::sliceCountZ)); // groupCountZ
+	
+	vkCmdDispatch(commandBuffer,
+		1, // groupCountX
+		1, // groupCountY
+		6); // groupCountZ
 
 	VkBufferMemoryBarrier lightGridBarrier =
 	{

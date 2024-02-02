@@ -97,11 +97,6 @@ float SquaredDistancePointAABB(vec3 point, uint tile)
 
 bool TestSphereAABB(uint lightIndex, uint tile)
 {
-	//if (lightIndex >= lights.length())
-	//{
-	//	return false;
-	//}
-
 	float lightRadius = sharedLights[lightIndex].radius;
 	float lightRadius2 = pow(lightRadius, 2.0);
 	vec4 posWorld = sharedLights[lightIndex].position;
@@ -144,9 +139,11 @@ void main()
 	for (uint batch = 0; batch < numBatches; ++batch)
 	{
 		uint lightIndex = batch * threadCount + gl_LocalInvocationIndex;
-		lightIndex = min(lightIndex, lightCount);
-		sharedLights[gl_LocalInvocationIndex] = lights[lightIndex];
-
+		//lightIndex = min(lightIndex, lightCount);
+		if (lightIndex < lightCount)
+		{
+			sharedLights[gl_LocalInvocationIndex] = lights[lightIndex];
+		}
 		barrier();
 
 		for (uint i = 0; i < threadCount; ++i)
