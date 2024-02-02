@@ -10,9 +10,8 @@ struct AABB
 };
 layout(set = 0, binding = 0) readonly buffer Clusters
 {
-	AABB data[];
-}
-clusters;
+	AABB clusters[];
+};
 
 // SSBO (input)
 struct LightData
@@ -40,16 +39,14 @@ struct LightCell
 };
 layout(set = 0, binding = 3) buffer LightCells
 {
-	LightCell data[];
-}
-lightCells;
+	LightCell lightCells[];
+};
 
 // SSBO (output)
 layout(set = 0, binding = 4) buffer LightIndices
 {
-	uint data[];
-}
-lightIndices;
+	uint lightIndices[];
+};
 
 // UBO
 layout(set = 0, binding = 5) uniform ClusterForwardUBO
@@ -74,7 +71,7 @@ shared LightData sharedLights[16 * 9 * 4];
 
 float SquaredDistancePointAABB(vec3 point, uint tile)
 {
-	AABB currentCell = clusters.data[tile];
+	AABB currentCell = clusters[tile];
 
 	float sqDist = 0.0;
 	for (uint i = 0; i < 3; ++i)
@@ -98,34 +95,15 @@ float SquaredDistancePointAABB(vec3 point, uint tile)
 bool TestSphereAABB(uint lightIndex, uint tile)
 {
 	float lightRadius = sharedLights[lightIndex].radius;
-	float lightRadius2 = pow(lightRadius, 2.0);
 	vec4 posWorld = sharedLights[lightIndex].position;
 	vec4 posView = ubo.cameraView * posWorld;
 	float squaredDistance = SquaredDistancePointAABB(posView.xyz, tile);
 
-	return squaredDistance < lightRadius2;
+	return squaredDistance < (lightRadius * lightRadius);
 }
 
 void main()
 {
-	/*uint tileIndex =
-		gl_WorkGroupID.x +
-		gl_WorkGroupID.y * gl_NumWorkGroups.x +
-		gl_WorkGroupID.z * gl_NumWorkGroups.x * gl_NumWorkGroups.y;
-
-	uint visibleLightIndices[MAX_LIGHTS_PER_CLUSTER];
-
-	uint numAllLights = lights.length();
-	
-	uint lightIter = 0;
-	for (uint i = 0; i < numAllLights && lightIter < MAX_LIGHTS_PER_CLUSTER; ++i)
-	{
-		if (TestSphereAABB(i, tileIndex))
-		{
-			visibleLightIndices[lightIter++] = i;
-		}
-	}
-	*/
 	uint threadCount = gl_WorkGroupSize.x * gl_WorkGroupSize.y * gl_WorkGroupSize.z;
 	uint lightCount = lights.length();
 	uint numBatches = (lightCount + threadCount - 1) / threadCount;
@@ -139,7 +117,6 @@ void main()
 	for (uint batch = 0; batch < numBatches; ++batch)
 	{
 		uint lightIndex = batch * threadCount + gl_LocalInvocationIndex;
-		//lightIndex = min(lightIndex, lightCount);
 		if (lightIndex < lightCount)
 		{
 			sharedLights[gl_LocalInvocationIndex] = lights[lightIndex];
@@ -162,9 +139,9 @@ void main()
 
 	for (uint i = 0; i < lightIter; ++i)
 	{
-		lightIndices.data[offset + i] = visibleLightIndices[i];
+		lightIndices[offset + i] = visibleLightIndices[i];
 	}
 
-	lightCells.data[tileIndex].offset = offset;
-	lightCells.data[tileIndex].count  = lightIter;
+	lightCells[tileIndex].offset = offset;
+	lightCells[tileIndex].count  = lightIter;
 }
