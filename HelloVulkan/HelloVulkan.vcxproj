@@ -141,6 +141,7 @@
     <None Include="..\Shaders\BRDFLUT.comp" />
     <None Include="..\Shaders\CubeFilterDiffuse.frag" />
     <None Include="..\Shaders\CubeFilterSpecular.frag" />
+    <None Include="..\Shaders\CullLightsBatch.comp" />
     <None Include="..\Shaders\Hammersley.frag" />
     <None Include="..\Shaders\LightCircle.frag" />
     <None Include="..\Shaders\LightCircle.vert" />

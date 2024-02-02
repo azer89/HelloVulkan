@@ -1,6 +1,6 @@
 #version 460 core
 
-layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+layout(local_size_x = 16, local_size_y = 9, local_size_z = 4) in;
 
 // SSBO (input)
 struct AABB
@@ -67,6 +67,9 @@ layout(set = 0, binding = 5) uniform ClusterForwardUBO
 }
 ubo;
 
+//Shared variables 
+shared LightData sharedLights[16 * 9 * 4];
+
 #define MAX_LIGHTS_PER_CLUSTER 150
 
 float SquaredDistancePointAABB(vec3 point, uint tile)
@@ -94,9 +97,14 @@ float SquaredDistancePointAABB(vec3 point, uint tile)
 
 bool TestSphereAABB(uint lightIndex, uint tile)
 {
-	float lightRadius = lights[lightIndex].radius;
+	//if (lightIndex >= lights.length())
+	//{
+	//	return false;
+	//}
+
+	float lightRadius = sharedLights[lightIndex].radius;
 	float lightRadius2 = pow(lightRadius, 2.0);
-	vec4 posWorld = lights[lightIndex].position;
+	vec4 posWorld = sharedLights[lightIndex].position;
 	vec4 posView = ubo.cameraView * posWorld;
 	float squaredDistance = SquaredDistancePointAABB(posView.xyz, tile);
 
@@ -105,7 +113,7 @@ bool TestSphereAABB(uint lightIndex, uint tile)
 
 void main()
 {
-	uint tileIndex =
+	/*uint tileIndex =
 		gl_WorkGroupID.x +
 		gl_WorkGroupID.y * gl_NumWorkGroups.x +
 		gl_WorkGroupID.z * gl_NumWorkGroups.x * gl_NumWorkGroups.y;
@@ -122,6 +130,36 @@ void main()
 			visibleLightIndices[lightIter++] = i;
 		}
 	}
+	*/
+	uint threadCount = gl_WorkGroupSize.x * gl_WorkGroupSize.y * gl_WorkGroupSize.z;
+	uint lightCount = lights.length();
+	uint numBatches = (lightCount + threadCount - 1) / threadCount;
+
+	uint tileIndex = gl_LocalInvocationIndex +
+		gl_WorkGroupSize.x * gl_WorkGroupSize.y * gl_WorkGroupSize.z * gl_WorkGroupID.z;
+
+	uint lightIter = 0;
+	uint visibleLightIndices[MAX_LIGHTS_PER_CLUSTER];
+
+	for (uint batch = 0; batch < numBatches; ++batch)
+	{
+		uint lightIndex = batch * threadCount + gl_LocalInvocationIndex;
+		lightIndex = min(lightIndex, lightCount);
+		sharedLights[gl_LocalInvocationIndex] = lights[lightIndex];
+
+		barrier();
+
+		for (uint i = 0; i < threadCount; ++i)
+		{
+			if (TestSphereAABB(i, tileIndex))
+			{
+				visibleLightIndices[lightIter] = batch * threadCount + i;
+				lightIter++;
+			}
+		}
+	}
+
+	barrier();
 
 	uint offset = atomicAdd(globalIndex, lightIter);
 

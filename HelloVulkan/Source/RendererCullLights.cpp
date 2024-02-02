@@ -66,6 +66,11 @@ void RendererCullLights::FillComputeCommandBuffer(VulkanDevice& vkDev, VkCommand
 		static_cast<uint32_t>(ClusterForwardConfig::sliceCountX), // groupCountX
 		static_cast<uint32_t>(ClusterForwardConfig::sliceCountY), // groupCountY
 		static_cast<uint32_t>(ClusterForwardConfig::sliceCountZ)); // groupCountZ
+	
+	//vkCmdDispatch(commandBuffer,
+	//	1, // groupCountX
+	//	1, // groupCountY
+	//	6); // groupCountZ
 
 	VkBufferMemoryBarrier lightGridBarrier =
 	{
