@@ -36,7 +36,6 @@ The first step is to subdivide the view frustum into clusters.
 The next step is light culling: for each cluster, I calculate the intersecting lights. This way, I can remove lights that are too far from a fragment, leading to reduced light iteration inside the final fragment shader.
 
 The light culling part is obviously the bottleneck since each compute shader invocation performs intersection test in a brute-force manner. 
-However, I reckon this implementation is better than naive deferred shading and they are so many ways to improve the performance even further.
 
 https://github.com/azer89/HelloVulkan/assets/790432/66b9a30a-d187-495a-9879-8eb11a497087
 
