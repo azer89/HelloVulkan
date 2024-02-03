@@ -330,6 +330,17 @@ uint32_t VulkanDevice::GetSwapchainImageCount(const VkSurfaceCapabilitiesKHR& ca
 	return imageCountExceeded ? capabilities_.maxImageCount : imageCount;
 }
 
+VkResult VulkanDevice::GetNextSwapchainImage(VkSemaphore nextSwapchainImageSemaphore)
+{
+	return vkAcquireNextImageKHR(
+		device_,
+		swapchain_,
+		0,
+		// Wait for the swapchain image to become available
+		nextSwapchainImageSemaphore,
+		VK_NULL_HANDLE,
+		&currentSwapchainImageIndex_);
+}
 
 size_t VulkanDevice::CreateSwapchainImages()
 {

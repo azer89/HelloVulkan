@@ -159,6 +159,7 @@
     <ClInclude Include="Header\Apps\AppBase.h" />
     <ClInclude Include="Header\Apps\AppPBR.h" />
     <ClInclude Include="Header\Camera.h" />
+    <ClInclude Include="Header\ClusterForwardBuffers.h" />
     <ClInclude Include="Header\Configs.h" />
     <ClInclude Include="Header\Light.h" />
     <ClInclude Include="Header\Mesh.h" />
@@ -193,6 +194,7 @@
     <ClCompile Include="Source\Apps\AppBase.cpp" />
     <ClCompile Include="Source\Apps\AppPBR.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
+    <ClCompile Include="Source\ClusterForwardBuffers.cpp" />
     <ClCompile Include="Source\Lights.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />

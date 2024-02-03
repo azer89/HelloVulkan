@@ -182,6 +182,9 @@
     <ClInclude Include="Header\Pipelines\PipelineConfig.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
+    <ClInclude Include="Header\ClusterForwardBuffers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">
@@ -266,6 +269,9 @@
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
     <ClCompile Include="Source\VulkanDescriptor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ClusterForwardBuffers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

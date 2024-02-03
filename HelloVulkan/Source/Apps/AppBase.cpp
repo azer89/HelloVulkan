@@ -152,38 +152,31 @@ void AppBase::DrawFrame()
 
 	vkWaitForFences(vulkanDevice_.GetDevice(), 1, &(frameData.queueSubmitFence_), VK_TRUE, UINT64_MAX);
 
-	uint32_t imageIndex = 0;
-	VkResult result = vkAcquireNextImageKHR(
-		vulkanDevice_.GetDevice(), 
-		vulkanDevice_.GetSwapChain(), 
-		0, 
-		// Wait for the swapchain image to become available
-		frameData.nextSwapchainImageSemaphore_,
-		VK_NULL_HANDLE, 
-		&imageIndex);
-
+	VkResult result = vulkanDevice_.GetNextSwapchainImage(frameData.nextSwapchainImageSemaphore_);
 	if (result == VK_ERROR_OUT_OF_DATE_KHR)
 	{
 		OnWindowResized();
 		return;
 	}
+	uint32_t swapchainImageIndex = vulkanDevice_.GetCurrentSwapchainImageIndex();
 
 	vkResetFences(vulkanDevice_.GetDevice(), 1, &(frameData.queueSubmitFence_));
 	vkResetCommandBuffer(frameData.graphicsCommandBuffer_, 0);
 
 	// Send UBOs to shaders
-	UpdateUBOs(imageIndex);
+	UpdateUBOs(swapchainImageIndex);
 
 	// ImGui
 	UpdateUI();
 
 	// Start recording command buffers
-	FillCommandBuffer(frameData.graphicsCommandBuffer_, imageIndex);
+	FillCommandBuffer(frameData.graphicsCommandBuffer_, swapchainImageIndex);
 
-	// Without compute
 	const VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 	std::array<VkSemaphore, 1> waitSemaphores{ frameData.nextSwapchainImageSemaphore_ };
 
+	// Submit Queue
+	// TODO Put code below as a function in VulkanDevice
 	const VkSubmitInfo submitInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
@@ -196,9 +189,10 @@ void AppBase::DrawFrame()
 		.signalSemaphoreCount = 1u,
 		.pSignalSemaphores = &(frameData.graphicsQueueSemaphore_)
 	};
-
 	VK_CHECK(vkQueueSubmit(vulkanDevice_.GetGraphicsQueue(), 1, &submitInfo, frameData.queueSubmitFence_));
 
+	// Present
+	// TODO Put code below as a function in VulkanDevice
 	const VkPresentInfoKHR presentInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
@@ -207,9 +201,8 @@ void AppBase::DrawFrame()
 		.pWaitSemaphores = &(frameData.graphicsQueueSemaphore_),
 		.swapchainCount = 1u,
 		.pSwapchains = vulkanDevice_.GetSwapchainPtr(),
-		.pImageIndices = &imageIndex
+		.pImageIndices = &swapchainImageIndex
 	};
-
 	result = vkQueuePresentKHR(vulkanDevice_.GetGraphicsQueue(), &presentInfo);
 	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || shouldRecreateSwapchain_)
 	{
