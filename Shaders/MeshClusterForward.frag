@@ -179,6 +179,25 @@ float LinearDepth(float z, float near, float far)
 
 void main()
 {
+	uint zIndex = uint(max(log2(LinearDepth(gl_FragCoord.z)) * cfUBO.sliceScaling + cfUBO.sliceBias, 0.0));
+
+	vec2 tileSize =
+		vec2(cfUBO.screenSize.x / float(cfUBO.sliceCountX),
+			 cfUBO.screenSize.y / float(cfUBO.sliceCountY));
+
+	uvec3 cluster = uvec3(
+		gl_FragCoord.x / tileSize.x,
+		gl_FragCoord.y / tileSize.y,
+		zIndex);
+
+	uint clusterIdx =
+		cluster.x +
+		cluster.y * cfUBO.sliceCountX +
+		cluster.z * cfUBO.sliceCountX * cfUBO.sliceCountY;
+
+	uint lightCount = lightCells.data[clusterIdx].count;
+	uint lightIndexOffset = lightCells.data[clusterIdx].offset;
+
 	vec4 albedo4 = texture(textureAlbedo, texCoord).rgba;
 
 	if (albedo4.a < 0.5)
@@ -210,9 +229,10 @@ void main()
 	//vec3 Lo = vec3(0.0); // Original code
 	vec3 Lo =  albedo * pc.albedoMultipler;
 
-	for (int i = 0; i < lights.length(); ++i)
+	for (int i = 0; i < lightCount; ++i)
 	{
-		LightData light = lights[i];
+		uint lightIndex = lightIndices.data[i + lightIndexOffset];
+		LightData light = inLights.data[lightIndex];
 
 		Lo += Radiance(
 			albedo,
