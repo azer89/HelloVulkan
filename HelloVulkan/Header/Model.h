@@ -43,9 +43,10 @@ public:
 		return static_cast<uint32_t>(meshes_.size());
 	}
 
-	void SetModelUBO(VulkanDevice& vkDev, uint32_t imageIndex, ModelUBO ubo)
+	void SetModelUBO(VulkanDevice& vkDev, ModelUBO ubo)
 	{
-		modelBuffers_[imageIndex].UploadBufferData(vkDev, 0, &ubo, sizeof(ModelUBO));
+		uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
+		modelBuffers_[swapchainImageIndex].UploadBufferData(vkDev, 0, &ubo, sizeof(ModelUBO));
 	}
 
 private:

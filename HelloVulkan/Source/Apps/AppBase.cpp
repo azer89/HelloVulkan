@@ -164,7 +164,7 @@ void AppBase::DrawFrame()
 	vkResetCommandBuffer(frameData.graphicsCommandBuffer_, 0);
 
 	// Send UBOs to shaders
-	UpdateUBOs(swapchainImageIndex);
+	UpdateUBOs();
 
 	// ImGui
 	UpdateUI();

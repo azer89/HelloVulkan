@@ -22,7 +22,7 @@ class AppPBR final : AppBase
 public:
 	AppPBR();
 	int MainLoop() override;
-	void UpdateUBOs(uint32_t imageIndex) override;
+	void UpdateUBOs() override;
 	void UpdateUI() override;
 
 	void Init();

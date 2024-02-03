@@ -177,16 +177,16 @@ void AppPBR::DestroyResources()
 	imguiPtr_.reset();
 }
 
-void AppPBR::UpdateUBOs(uint32_t imageIndex)
+void AppPBR::UpdateUBOs()
 {
 	CameraUBO ubo = camera_->GetCameraUBO();
-	lightPtr_->SetCameraUBO(vulkanDevice_, imageIndex, ubo);
-	pbrPtr_->SetCameraUBO(vulkanDevice_, imageIndex, ubo);
+	lightPtr_->SetCameraUBO(vulkanDevice_, ubo);
+	pbrPtr_->SetCameraUBO(vulkanDevice_, ubo);
 
 	// Remove translation
 	CameraUBO skyboxUbo = ubo;
 	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view));
-	skyboxPtr_->SetCameraUBO(vulkanDevice_, imageIndex, skyboxUbo);
+	skyboxPtr_->SetCameraUBO(vulkanDevice_, skyboxUbo);
 
 	// Model UBOs
 	glm::mat4 modelMatrix(1.f);
@@ -197,7 +197,7 @@ void AppPBR::UpdateUBOs(uint32_t imageIndex)
 	{
 		.model = modelMatrix
 	};
-	model_->SetModelUBO(vulkanDevice_, imageIndex, modelUBO1);
+	model_->SetModelUBO(vulkanDevice_, modelUBO1);
 }
 
 void AppPBR::UpdateUI()
