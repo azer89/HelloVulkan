@@ -4,6 +4,9 @@
 Fragment shader for PBR+IBL, naive forward shading (non clustered)
 */
 
+// Include files
+#include <PBRHeader.frag>
+#include <Hammersley.frag>
 #include <ClusterForwardHeader.comp>
 
 layout(location = 0) in vec3 worldPos;
@@ -43,10 +46,6 @@ layout(set = 0, binding = 8) uniform sampler2D textureEmissive;
 layout(set = 0, binding = 9) uniform samplerCube specularMap;
 layout(set = 0, binding = 10) uniform samplerCube diffuseMap;
 layout(set = 0, binding = 11) uniform sampler2D brdfLUT;
-
-// Include files
-#include <PBRHeader.frag>
-#include <Hammersley.frag>
 
 // Tangent-normals to world-space
 vec3 GetNormalFromMap(vec3 tangentNormal, vec3 worldPos, vec3 normal, vec2 texCoord)
