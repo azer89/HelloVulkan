@@ -17,7 +17,7 @@ public:
 	);
 	~PipelineLight();
 
-	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
+	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
 
 	void RenderEnable(bool enable) { shouldRender_ = enable; }
 

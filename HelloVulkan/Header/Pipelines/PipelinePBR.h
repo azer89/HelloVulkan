@@ -29,7 +29,7 @@ public:
 		uint8_t renderBit = 0u);
 	 ~PipelinePBR();
 
-	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
+	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
 
 	void SetLightIntensity(float intensity) { pc_.lightIntensity = intensity; }
 	void SetBaseReflectivity(float baseReflectivity) { pc_.baseReflectivity = baseReflectivity; }

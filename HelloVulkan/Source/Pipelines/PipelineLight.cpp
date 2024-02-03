@@ -55,34 +55,31 @@ PipelineLight::~PipelineLight()
 {
 }
 
-void PipelineLight::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
+void PipelineLight::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
 	if (!shouldRender_)
 	{
 		return;
 	}
 
+	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
-
 	BindPipeline(vkDev, commandBuffer);
-
 	vkCmdBindDescriptorSets(
 		commandBuffer,
 		VK_PIPELINE_BIND_POINT_GRAPHICS,
 		pipelineLayout_,
 		0,
 		1,
-		&descriptorSets_[currentImage],
+		&descriptorSets_[swapchainImageIndex],
 		0,
 		nullptr);
-
 	vkCmdDraw(
 		commandBuffer, 
 		6, // Draw a quad
 		lights_->GetLightCount(), 
 		0, 
 		0);
-
 	vkCmdEndRenderPass(commandBuffer);
 }
 

@@ -39,7 +39,7 @@ PipelineEquirect2Cube::~PipelineEquirect2Cube()
 	vkDestroyFramebuffer(device_, cubeFramebuffer_, nullptr);
 }
 
-void PipelineEquirect2Cube::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
+void PipelineEquirect2Cube::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
 }
 

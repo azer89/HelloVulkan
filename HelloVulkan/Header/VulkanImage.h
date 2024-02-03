@@ -147,6 +147,8 @@ public:
 
 	void CreateBarrier(ImageBarrierCreateInfo info, VkImageSubresourceRange subresourceRange);
 
+	// TODO Use Facebook IGL
+	// github.com/facebook/igl/blob/ac5b27bf6339b022e58d682b590dcf5f00ea2ee8/src/igl/vulkan/VulkanImage.cpp#L638
 	void TransitionImageLayout(VulkanDevice& vkDev,
 		VkFormat format,
 		VkImageLayout oldLayout,

@@ -170,13 +170,13 @@ void AppBase::DrawFrame()
 	UpdateUI();
 
 	// Start recording command buffers
-	FillCommandBuffer(frameData.graphicsCommandBuffer_, swapchainImageIndex);
+	FillCommandBuffer(frameData.graphicsCommandBuffer_);
 
 	const VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 	std::array<VkSemaphore, 1> waitSemaphores{ frameData.nextSwapchainImageSemaphore_ };
 
 	// Submit Queue
-	// TODO Put code below as a function in VulkanDevice
+	// TODO Set code below as a function in VulkanDevice
 	const VkSubmitInfo submitInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
@@ -192,7 +192,7 @@ void AppBase::DrawFrame()
 	VK_CHECK(vkQueueSubmit(vulkanDevice_.GetGraphicsQueue(), 1, &submitInfo, frameData.queueSubmitFence_));
 
 	// Present
-	// TODO Put code below as a function in VulkanDevice
+	// TODO Set code below as a function in VulkanDevice
 	const VkPresentInfoKHR presentInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
@@ -219,7 +219,7 @@ void AppBase::UpdateUI()
 }
 
 // Fill/record command buffer
-void AppBase::FillCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
+void AppBase::FillCommandBuffer(VkCommandBuffer commandBuffer)
 {
 	const VkCommandBufferBeginInfo beginInfo =
 	{
@@ -234,7 +234,7 @@ void AppBase::FillCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageInd
 	// Iterate through all pipelines to fill the command buffer
 	for (auto& pip : pipelines_)
 	{
-		pip->FillCommandBuffer(vulkanDevice_, commandBuffer, imageIndex);
+		pip->FillCommandBuffer(vulkanDevice_, commandBuffer);
 	}
 
 	VK_CHECK(vkEndCommandBuffer(commandBuffer));

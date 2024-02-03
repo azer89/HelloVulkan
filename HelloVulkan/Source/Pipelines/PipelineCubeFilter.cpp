@@ -85,7 +85,7 @@ PipelineCubeFilter::~PipelineCubeFilter()
 	}
 }
 
-void PipelineCubeFilter::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
+void PipelineCubeFilter::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
 }
 

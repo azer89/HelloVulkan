@@ -20,7 +20,7 @@ public:
 protected:
 	virtual void UpdateUBOs(uint32_t imageIndex) = 0;
 	virtual void UpdateUI();
-	void FillCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+	void FillCommandBuffer(VkCommandBuffer commandBuffer);
 
 	void CreateSharedImageResources();
 	void OnWindowResized();

@@ -33,8 +33,7 @@ PipelineResolveMS::~PipelineResolveMS()
 
 void PipelineResolveMS::FillCommandBuffer(
 	VulkanDevice& vkDev,
-	VkCommandBuffer commandBuffer,
-	size_t currentImage)
+	VkCommandBuffer commandBuffer)
 {
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
 	vkCmdEndRenderPass(commandBuffer);

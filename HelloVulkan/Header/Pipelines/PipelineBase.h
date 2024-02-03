@@ -30,8 +30,7 @@ public:
 
 	virtual void FillCommandBuffer(
 		VulkanDevice& vkDev, 
-		VkCommandBuffer commandBuffer, 
-		size_t currentImage) = 0;
+		VkCommandBuffer commandBuffer) = 0;
 
 	void SetCameraUBO(VulkanDevice& vkDev, uint32_t imageIndex, CameraUBO ubo)
 	{
