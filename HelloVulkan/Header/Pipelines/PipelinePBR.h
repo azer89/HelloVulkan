@@ -11,6 +11,8 @@ struct PushConstantPBR
 	float lightIntensity = 1.f;
 	float baseReflectivity = 0.04f;
 	float maxReflectionLod = 4.f;
+	float lightFalloff; // Small --> slower falloff, Big --> faster falloff
+	float albedoMultipler; // Show albedo color if the scene is too dark, default value should be zero
 };
 
 class PipelinePBR final : public PipelineBase
@@ -32,6 +34,12 @@ public:
 	void SetLightIntensity(float intensity) { pc_.lightIntensity = intensity; }
 	void SetBaseReflectivity(float baseReflectivity) { pc_.baseReflectivity = baseReflectivity; }
 	void SetMaxReflectionLod(float maxLod) { pc_.maxReflectionLod = maxLod; }
+	void SetLightFalloff(float lightFalloff) { pc_.lightFalloff = lightFalloff; }
+	void SetAlbedoMultipler(float albedoMultipler) { pc_.albedoMultipler = albedoMultipler; }
+	/*
+	float lightFalloff;
+	float albedoMultipler;
+	*/
 
 public:
 	// TODO change this to private

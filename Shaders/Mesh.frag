@@ -23,6 +23,8 @@ layout(push_constant) uniform PushConstantPBR
 	float lightIntensity;
 	float baseReflectivity;
 	float maxReflectionLod;
+	float lightFalloff; // Small --> slower falloff, Big --> faster falloff
+	float albedoMultipler; // Show albedo color if the scene is too dark, default value should be zero
 }
 pc;
 
@@ -85,7 +87,16 @@ vec3 Radiance(
 	float NoL = max(dot(N, L), 0.0);
 	float HoV = max(dot(H, V), 0.0);
 	float distance = length(light.position.xyz - worldPos);
-	float attenuation = 1.0 / (distance * distance);
+
+	// Physically correct attenuation
+	//float attenuation = 1.0 / (distance * distance);
+
+	// Hacky attenuation for clustered forward
+	float attenuation = max(1.0 - (distance / light.radius), 0.0) / pow(distance, pc.lightFalloff);
+
+	// Also, several attenuation formulas are proposed by Nikita Lisitsa:
+	// lisyarus.github.io/blog/graphics/2022/07/30/point-light-attenuation.html
+
 	vec3 radiance = light.color.xyz * attenuation * pc.lightIntensity;
 
 	// Cook-Torrance BRDF
@@ -182,7 +193,10 @@ void main()
 	vec3 F0 = vec3(pc.baseReflectivity);
 	F0 = mix(F0, albedo, metallic);
 
-	vec3 Lo = vec3(0.0);
+	// A little bit hacky
+	//vec3 Lo = vec3(0.0); // Original code
+	vec3 Lo =  albedo * pc.albedoMultipler;
+
 	for (int i = 0; i < lights.length(); ++i)
 	{
 		LightData light = lights[i];

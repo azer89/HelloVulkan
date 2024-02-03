@@ -132,22 +132,22 @@ void AppPBR::InitLights()
 		{
 			.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f),
 			.color_ = glm::vec4(1.f),
-			.radius_ = 1.0f
+			.radius_ = 10.0f
 		},
 		{
 			.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f),
 			.color_ = glm::vec4(1.f),
-			.radius_ = 1.0f
+			.radius_ = 10.0f
 		},
 		{
 			.position_ = glm::vec4(-1.5f, 0.7f, -1.5f, 1.f),
 			.color_ = glm::vec4(1.f),
-			.radius_ = 1.0f
+			.radius_ = 10.0f
 		},
 		{
 			.position_ = glm::vec4(1.5f, 0.7f, -1.5f, 1.f),
 			.color_ = glm::vec4(1.f),
-			.radius_ = 1.0f
+			.radius_ = 10.0f
 		}
 	});
 }
@@ -217,16 +217,20 @@ void AppPBR::UpdateUI()
 	static float lightIntensity = 1.f;
 	static float pbrBaseReflectivity = 0.04f; // F0
 	static float maxReflectivityLod = 4.0f;
+	static float lightFalloff = 1.0f;
+	static float albedoMultipler = 0.0f;
 
 	ImGui_ImplVulkan_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-	ImGui::SetNextWindowSize(ImVec2(525, 200));
+	ImGui::SetNextWindowSize(ImVec2(525, 250));
 	ImGui::Begin(AppConfig::ScreenTitle.c_str());
 
 	ImGui::SetWindowFontScale(1.25f);
 	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));
 	ImGui::Checkbox("Render Lights", &lightRender);
+	ImGui::SliderFloat("Light Falloff", &lightFalloff, 0.01f, 5.f);
+	ImGui::SliderFloat("Albedo Multiplier", &albedoMultipler, 0.0f, 1.0f);
 	ImGui::SliderFloat("Light Intensity", &lightIntensity, 0.1f, 100.f);
 	ImGui::SliderFloat("Base Reflectivity", &pbrBaseReflectivity, 0.01f, 1.f);
 	ImGui::SliderFloat("Max Mipmap Lod", &maxReflectivityLod, 0.1f, cubemapMipmapCount_);
@@ -238,6 +242,8 @@ void AppPBR::UpdateUI()
 	pbrPtr_->SetLightIntensity(lightIntensity);
 	pbrPtr_->SetBaseReflectivity(pbrBaseReflectivity);
 	pbrPtr_->SetMaxReflectionLod(maxReflectivityLod);
+	pbrPtr_->SetLightFalloff(lightFalloff);
+	pbrPtr_->SetAlbedoMultipler(albedoMultipler);
 }
 
 // This is called from main.cpp
