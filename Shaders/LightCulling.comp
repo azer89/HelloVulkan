@@ -1,27 +1,24 @@
 #version 460 core
 
+/*
+Based on www.aortiz.me/2018/12/21/CG.html
+
+Brute force version of light culling for clustered forward shading.
+*/
+
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+
+#include <ClusterForwardHeader.comp>
 
 #define MAX_LIGHTS_PER_CLUSTER 150
 
 // SSBO (input)
-struct AABB
-{
-	vec4 minPoint;
-	vec4 maxPoint;
-};
 layout(set = 0, binding = 0) readonly buffer Clusters
 {
 	AABB clusters[];
 };
 
 // SSBO (input)
-struct LightData
-{
-	vec4 position;
-	vec4 color;
-	float radius;
-};
 layout(set = 0, binding = 1) buffer Lights 
 { 
 	LightData lights[]; 
@@ -34,11 +31,6 @@ layout(set = 0, binding = 2) buffer AtomicCounter
 };
 
 // SSBO (output)
-struct LightCell
-{
-	uint offset;
-	uint count;
-};
 layout(set = 0, binding = 3) buffer LightCells
 {
 	LightCell lightCells[];
@@ -95,6 +87,7 @@ bool TestSphereAABB(uint lightIndex, uint tile)
 	vec4 posWorld = lights[lightIndex].position;
 	vec4 posView = ubo.cameraView * posWorld;
 	float squaredDistance = SquaredDistancePointAABB(posView.xyz, tile);
+
 	return squaredDistance < (lightRadius * lightRadius);
 }
 
@@ -110,6 +103,7 @@ void main()
 	uint numAllLights = lights.length();
 	
 	uint lightIter = 0;
+	// This brute force iteration is pretty slow
 	for (uint i = 0; i < numAllLights && lightIter < MAX_LIGHTS_PER_CLUSTER; ++i)
 	{
 		if (TestSphereAABB(i, tileIndex))

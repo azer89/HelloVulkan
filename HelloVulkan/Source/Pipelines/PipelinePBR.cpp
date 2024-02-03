@@ -73,7 +73,7 @@ PipelinePBR::PipelinePBR(
 		pipelineLayout_,
 		{
 			AppConfig::ShaderFolder + "Mesh.vert",
-			AppConfig::ShaderFolder + "PBR.frag"
+			AppConfig::ShaderFolder + "Mesh.frag"
 		},
 		&pipeline_
 	);

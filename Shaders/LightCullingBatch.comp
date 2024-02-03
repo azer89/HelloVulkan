@@ -1,5 +1,13 @@
 #version 460 core
 
+/*
+Based on www.aortiz.me/2018/12/21/CG.html
+
+
+Batched version of light culling for clustered forward shading.
+This should be a wee bit faster than the brute force version.
+*/
+
 layout(local_size_x = 16, local_size_y = 9, local_size_z = 4) in;
 
 #define MAX_LIGHTS_PER_CLUSTER 150
@@ -115,10 +123,14 @@ void main()
 	for (uint batch = 0; batch < numBatches; ++batch)
 	{
 		uint lightIndex = batch * threadCount + gl_LocalInvocationIndex;
+
+		// This if statement prevents index out of bound
+		// TODO Look for a better alternative
 		if (lightIndex < lightCount)
 		{
 			sharedLights[gl_LocalInvocationIndex] = lights[lightIndex];
 		}
+
 		barrier();
 
 		for (uint i = 0; i < threadCount; ++i)
