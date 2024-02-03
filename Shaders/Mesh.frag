@@ -1,22 +1,16 @@
 #version 460 core
 
 /*
-Fragment shader for PBR+IBL, naive forward shading
+Fragment shader for PBR+IBL, naive forward shading (non clustered)
 */
+
+#include <ClusterForwardHeader.comp>
 
 layout(location = 0) in vec3 worldPos;
 layout(location = 1) in vec2 texCoord;
 layout(location = 2) in vec3 normal;
 
 layout(location = 0) out vec4 fragColor;
-
-layout(set = 0, binding = 0) uniform CameraUBO
-{
-	mat4 projection;
-	mat4 view;
-	vec4 position;
-}
-camUBO;
 
 layout(push_constant) uniform PushConstantPBR
 {
@@ -28,13 +22,15 @@ layout(push_constant) uniform PushConstantPBR
 }
 pc;
 
-// SSBO
-struct LightData
+layout(set = 0, binding = 0) uniform CameraUBO
 {
+	mat4 projection;
+	mat4 view;
 	vec4 position;
-	vec4 color;
-	float radius;
-};
+}
+camUBO;
+
+// SSBO
 layout(set = 0, binding = 2) readonly buffer Lights { LightData lights []; };
 
 layout(set = 0, binding = 3) uniform sampler2D textureAlbedo;
