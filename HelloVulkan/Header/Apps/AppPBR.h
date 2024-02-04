@@ -6,6 +6,7 @@
 #include "PipelineClear.h"
 #include "PipelineFinish.h"
 #include "PipelinePBR.h"
+#include "PipelinePBRClusterForward.h"
 #include "PipelineTonemap.h"
 #include "PipelineResolveMS.h"
 #include "PipelineLight.h"
@@ -32,7 +33,7 @@ public:
 private:
 	std::unique_ptr<PipelineClear> clearPtr_;
 	std::unique_ptr<PipelineSkybox> skyboxPtr_;
-	std::unique_ptr<PipelinePBR> pbrPtr_;
+	std::unique_ptr<PipelinePBRClusterForward> pbrPtr_;
 	std::unique_ptr<PipelineTonemap> tonemapPtr_;
 	std::unique_ptr<PipelineFinish> finishPtr_;
 	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;

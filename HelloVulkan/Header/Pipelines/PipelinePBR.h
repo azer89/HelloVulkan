@@ -36,7 +36,7 @@ public:
 	// TODO change this to private
 	std::vector<Model*> models_;
 
-private:
+protected:
 	// These three functions can be overridden by a derived class
 	virtual void CreatePBRPipeline(VulkanDevice& vkDev);
 	virtual void CreateDescriptor(VulkanDevice& vkDev);

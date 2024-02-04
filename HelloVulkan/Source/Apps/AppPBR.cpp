@@ -80,7 +80,7 @@ void AppPBR::Init()
 		RenderPassBit::DepthClear
 	);
 	// This draws meshes with PBR+IBL
-	pbrPtr_ = std::make_unique<PipelinePBR>(
+	pbrPtr_ = std::make_unique<PipelinePBRClusterForward>(
 		vulkanDevice_,
 		models,
 		&lights_,
