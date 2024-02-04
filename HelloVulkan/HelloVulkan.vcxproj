@@ -165,6 +165,7 @@
     <ClInclude Include="Header\Mesh.h" />
     <ClInclude Include="Header\Model.h" />
     <ClInclude Include="Header\PipelineCreateInfo.h" />
+    <ClInclude Include="Header\Pipelines\PipelineAABBGenerator.h" />
     <ClInclude Include="Header\Pipelines\PipelineBase.h" />
     <ClInclude Include="Header\Pipelines\PipelineBRDFLUT.h" />
     <ClInclude Include="Header\Pipelines\PipelineClear.h" />
@@ -174,10 +175,13 @@
     <ClInclude Include="Header\Pipelines\PipelineFinish.h" />
     <ClInclude Include="Header\Pipelines\PipelineImGui.h" />
     <ClInclude Include="Header\Pipelines\PipelineLight.h" />
+    <ClInclude Include="Header\Pipelines\PipelineLightCulling.h" />
     <ClInclude Include="Header\Pipelines\PipelinePBR.h" />
+    <ClInclude Include="Header\Pipelines\PipelinePBRClusterForward.h" />
     <ClInclude Include="Header\Pipelines\PipelineResolveMS.h" />
     <ClInclude Include="Header\Pipelines\PipelineSkybox.h" />
     <ClInclude Include="Header\Pipelines\PipelineTonemap.h" />
+    <ClInclude Include="Header\PushConstants.h" />
     <ClInclude Include="Header\TextureMapper.h" />
     <ClInclude Include="Header\UBO.h" />
     <ClInclude Include="Header\VulkanBuffer.h" />
@@ -199,6 +203,7 @@
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
     <ClCompile Include="Source\Model.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelineAABBGenerator.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineBase.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineBRDFLUT.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineClear.cpp" />
@@ -207,7 +212,9 @@
     <ClCompile Include="Source\Pipelines\PipelineFinish.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineImGui.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineLight.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelineLightCulling.cpp" />
     <ClCompile Include="Source\Pipelines\PipelinePBR.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelinePBRClusterForward.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineResolveMS.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineSkybox.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineTonemap.cpp" />
