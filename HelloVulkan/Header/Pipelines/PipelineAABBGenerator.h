@@ -9,29 +9,26 @@
 class PipelineAABBGenerator final : public PipelineBase
 {
 public:
-	PipelineAABBGenerator(VulkanDevice& vkDev, ClusterForwardBuffers* cfBuffers, Camera* camera);
+	PipelineAABBGenerator(VulkanDevice& vkDev, ClusterForwardBuffers* cfBuffers);
 	~PipelineAABBGenerator();
+
+	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
+
+	void SetClusterForwardUBO(VulkanDevice& vkDev, ClusterForwardUBO ubo)
+	{
+		size_t currentImage = vkDev.GetCurrentSwapchainImageIndex();
+		cfUBOBuffers_[currentImage].UploadBufferData(vkDev, 0, &ubo, sizeof(ClusterForwardUBO));
+	}
 
 private:
 	ClusterForwardBuffers* cfBuffers_;
-	Camera* camera_;
 
-	VulkanBuffer cfUBOBuffer_;
-	VkDescriptorSet computeDescriptorSet_;
-	VkPipeline pipeline_;
+	std::vector<VulkanBuffer> cfUBOBuffers_;
+	std::vector<VkDescriptorSet> descriptorSets_;
 
 private:
-	void Execute(VulkanDevice& vkDev, VkCommandBuffer commandBuffer);
-
-	void CreateDescriptorPool(VkDevice device);
-	void CreateDescriptorLayout(VkDevice device);
-
-	void AllocateDescriptorSet(VkDevice device);
-	void UpdateDescriptorSet(VkDevice device, VulkanBuffer* aabbBuffer);
-
-	void CreateComputePipeline(
-		VkDevice device,
-		VkShaderModule computeShader);
+	void Execute(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, uint32_t swapchainImageIndex);
+	void CreateDescriptor(VulkanDevice& vkDev);
 };
 
 #endif

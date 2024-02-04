@@ -604,3 +604,18 @@ void VulkanDevice::SetVkObjectName(void* objectHandle, VkObjectType objType, con
 	};
 	VK_CHECK(vkSetDebugUtilsObjectNameEXT(device_, &nameInfo));
 }
+
+FrameData& VulkanDevice::GetCurrentFrameData() 
+{ 
+	return frameDataArray_[frameIndex_]; 
+}
+
+void VulkanDevice::IncrementFrameIndex() 
+{ 
+	frameIndex_ = (frameIndex_ + 1u) % AppConfig::FrameOverlapCount; 
+}
+
+uint32_t VulkanDevice::GetFrameIndex() const 
+{ 
+	return frameIndex_; 
+}
