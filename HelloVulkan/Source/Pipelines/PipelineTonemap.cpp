@@ -35,12 +35,11 @@ void PipelineTonemap::OnWindowResized(VulkanDevice& vkDev)
 	UpdateDescriptorSets(vkDev);
 }
 
-void PipelineTonemap::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
+void PipelineTonemap::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
+	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));
-
 	BindPipeline(vkDev, commandBuffer);
-	
 	vkCmdBindDescriptorSets(
 		commandBuffer,
 		VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -50,9 +49,7 @@ void PipelineTonemap::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer com
 		&descriptorSets_[swapchainImageIndex],
 		0,
 		nullptr);
-
 	vkCmdDraw(commandBuffer, 3, 1, 0, 0);
-
 	vkCmdEndRenderPass(commandBuffer);
 }
 

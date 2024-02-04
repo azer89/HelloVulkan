@@ -6,17 +6,10 @@ Based on www.aortiz.me/2018/12/21/CG.html
 
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
+#include <ClusteredForward//ClusterForwardHeader.comp>
+
 // SSBO
-struct AABB
-{
-	vec4 minPoint;
-	vec4 maxPoint;
-};
-layout(set = 0, binding = 0) buffer Clusters
-{
-	AABB data [];
-}
-clusters;
+layout(set = 0, binding = 0) buffer Clusters { AABB data []; } clusters;
 
 // UBO
 layout(set = 0, binding = 1) uniform ClusterForwardUBO

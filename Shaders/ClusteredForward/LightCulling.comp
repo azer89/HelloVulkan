@@ -8,7 +8,7 @@ Brute force version of light culling for clustered forward shading.
 
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
-#include <ClusterForwardHeader.comp>
+#include <ClusteredForward//ClusterForwardHeader.comp>
 
 #define MAX_LIGHTS_PER_CLUSTER 150
 
@@ -101,9 +101,8 @@ void main()
 	uint visibleLightIndices[MAX_LIGHTS_PER_CLUSTER];
 
 	uint numAllLights = lights.length();
-	
+
 	uint lightIter = 0;
-	// This brute force iteration is pretty slow
 	for (uint i = 0; i < numAllLights && lightIter < MAX_LIGHTS_PER_CLUSTER; ++i)
 	{
 		if (TestSphereAABB(i, tileIndex))

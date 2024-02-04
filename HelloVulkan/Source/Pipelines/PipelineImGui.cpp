@@ -78,10 +78,11 @@ PipelineImGui::~PipelineImGui()
 	ImGui::DestroyContext();
 }
 
-void PipelineImGui::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
+void PipelineImGui::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
+	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
 	ImDrawData* draw_data = ImGui::GetDrawData();
-	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer(currentImage));
+	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));
 	ImGui_ImplVulkan_RenderDrawData(draw_data, commandBuffer);
 	vkCmdEndRenderPass(commandBuffer);
 }

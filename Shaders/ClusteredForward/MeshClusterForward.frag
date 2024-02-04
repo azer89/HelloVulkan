@@ -1,14 +1,29 @@
 #version 460 core
 
 /*
-Fragment shader for PBR+IBL, clustered forward shading
+Fragment shader for PBR+IBL, naive forward shading (non clustered)
 */
+
+// Include files
+#include <PBRHeader.frag>
+#include <Hammersley.frag>
+#include <ClusteredForward//ClusterForwardHeader.comp>
 
 layout(location = 0) in vec3 worldPos;
 layout(location = 1) in vec2 texCoord;
 layout(location = 2) in vec3 normal;
 
 layout(location = 0) out vec4 fragColor;
+
+layout(push_constant) uniform PushConstantPBR
+{
+	float lightIntensity;
+	float baseReflectivity;
+	float maxReflectionLod;
+	float lightFalloff; // Small --> slower falloff, Big --> faster falloff
+	float albedoMultipler; // Show albedo color if the scene is too dark, default value should be zero
+}
+pc;
 
 layout(set = 0, binding = 0) uniform CameraUBO
 {
@@ -18,37 +33,42 @@ layout(set = 0, binding = 0) uniform CameraUBO
 }
 camUBO;
 
-layout(push_constant) uniform PushConstantPBR
+layout(set = 0, binding = 2) uniform ClusterForwardUBO
 {
-	float lightIntensity;
-	float baseReflectivity;
-	float maxReflectionLod;
+	mat4 cameraInverseProjection;
+	mat4 cameraView;
+	vec2 screenSize;
+	float sliceScaling;
+	float sliceBias;
+	float cameraNear;
+	float cameraFar;
+	uint sliceCountX;
+	uint sliceCountY;
+	uint sliceCountZ;
 }
-pc;
+cfUBO;
 
-// SSBO
-struct LightData
-{
-	vec4 position;
-	vec4 color;
-	float radius;
-};
-layout(set = 0, binding = 2) readonly buffer Lights { LightData lights []; };
+// TODO Simplify these
+layout(set = 0, binding = 3) readonly buffer Lights { LightData lights []; };
+layout(set = 0, binding = 4) buffer LightCells { LightCell data []; } lightCells;
+layout(set = 0, binding = 5) buffer LightIndices{ uint data []; } lightIndices;
+layout(set = 0, binding = 6) readonly buffer Clusters { AABB data []; } clusters;
 
-layout(set = 0, binding = 3) uniform sampler2D textureAlbedo;
-layout(set = 0, binding = 4) uniform sampler2D textureNormal;
-layout(set = 0, binding = 5) uniform sampler2D textureMetalness;
-layout(set = 0, binding = 6) uniform sampler2D textureRoughness;
-layout(set = 0, binding = 7) uniform sampler2D textureAO;
-layout(set = 0, binding = 8) uniform sampler2D textureEmissive;
+layout(set = 0, binding = 7) uniform sampler2D textureAlbedo;
+layout(set = 0, binding = 8) uniform sampler2D textureNormal;
+layout(set = 0, binding = 9) uniform sampler2D textureMetalness;
+layout(set = 0, binding = 10) uniform sampler2D textureRoughness;
+layout(set = 0, binding = 11) uniform sampler2D textureAO;
+layout(set = 0, binding = 12) uniform sampler2D textureEmissive;
 
-layout(set = 0, binding = 9) uniform samplerCube specularMap;
-layout(set = 0, binding = 10) uniform samplerCube diffuseMap;
-layout(set = 0, binding = 11) uniform sampler2D brdfLUT;
+layout(set = 0, binding = 13) uniform samplerCube specularMap;
+layout(set = 0, binding = 14) uniform samplerCube diffuseMap;
+layout(set = 0, binding = 15) uniform sampler2D brdfLUT;
 
-// Include files
-#include <PBRHeader.frag>
-#include <Hammersley.frag>
+vec3 DEBUG_COLORS[8] = vec3[](
+	vec3(1, 0, 0), vec3(0, 0, 1), vec3(0, 1, 0), vec3(0, 1, 1),
+	vec3(1, 0, 0), vec3(1, 0, 1), vec3(1, 1, 0), vec3(1, 1, 1)
+);
 
 // Tangent-normals to world-space
 vec3 GetNormalFromMap(vec3 tangentNormal, vec3 worldPos, vec3 normal, vec2 texCoord)
@@ -85,7 +105,16 @@ vec3 Radiance(
 	float NoL = max(dot(N, L), 0.0);
 	float HoV = max(dot(H, V), 0.0);
 	float distance = length(light.position.xyz - worldPos);
-	float attenuation = 1.0 / (distance * distance);
+
+	// Physically correct attenuation
+	//float attenuation = 1.0 / (distance * distance);
+
+	// Hacky attenuation for clustered forward
+	float attenuation = max(1.0 - (distance / light.radius), 0.0) / pow(distance, pc.lightFalloff);
+
+	// Also, several attenuation formulas are proposed by Nikita Lisitsa:
+	// lisyarus.github.io/blog/graphics/2022/07/30/point-light-attenuation.html
+
 	vec3 radiance = light.color.xyz * attenuation * pc.lightIntensity;
 
 	// Cook-Torrance BRDF
@@ -155,6 +184,26 @@ float LinearDepth(float z, float near, float far)
 
 void main()
 {
+	float linDepth = LinearDepth(gl_FragCoord.z, cfUBO.cameraNear, cfUBO.cameraFar);
+	uint zIndex = uint(max(log2(linDepth) * cfUBO.sliceScaling + cfUBO.sliceBias, 0.0));
+
+	vec2 tileSize =
+		vec2(cfUBO.screenSize.x / float(cfUBO.sliceCountX),
+			 cfUBO.screenSize.y / float(cfUBO.sliceCountY));
+
+	uvec3 cluster = uvec3(
+		gl_FragCoord.x / tileSize.x,
+		gl_FragCoord.y / tileSize.y,
+		zIndex);
+
+	uint clusterIdx =
+		cluster.x +
+		cluster.y * cfUBO.sliceCountX +
+		cluster.z * cfUBO.sliceCountX * cfUBO.sliceCountY;
+
+	uint lightCount = lightCells.data[clusterIdx].count;
+	uint lightIndexOffset = lightCells.data[clusterIdx].offset;
+
 	vec4 albedo4 = texture(textureAlbedo, texCoord).rgba;
 
 	if (albedo4.a < 0.5)
@@ -182,10 +231,14 @@ void main()
 	vec3 F0 = vec3(pc.baseReflectivity);
 	F0 = mix(F0, albedo, metallic);
 
-	vec3 Lo = vec3(0.0);
-	for (int i = 0; i < lights.length(); ++i)
+	// A little bit hacky
+	//vec3 Lo = vec3(0.0); // Original code
+	vec3 Lo =  albedo * pc.albedoMultipler;
+
+	for(int i = 0; i < lightCount; ++i)
 	{
-		LightData light = lights[i];
+		uint lightIndex = lightIndices.data[i + lightIndexOffset];
+		LightData light = lights[lightIndex];
 
 		Lo += Radiance(
 			albedo,

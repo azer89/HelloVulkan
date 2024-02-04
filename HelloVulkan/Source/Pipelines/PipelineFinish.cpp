@@ -19,8 +19,9 @@ PipelineFinish::PipelineFinish(VulkanDevice& vkDev) :
 	framebuffer_.Create(vkDev, renderPass_.GetHandle(), {}, IsOffscreen());
 }
 
-void PipelineFinish::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
+void PipelineFinish::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
+	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));
 	vkCmdEndRenderPass(commandBuffer);
 }

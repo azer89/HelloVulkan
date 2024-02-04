@@ -18,13 +18,15 @@ public:
 	virtual int MainLoop() = 0; 
 
 protected:
-	virtual void UpdateUBOs(uint32_t imageIndex) = 0;
+	virtual void UpdateUBOs() = 0;
 	virtual void UpdateUI();
-	void FillCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
-
-	void CreateSharedImageResources();
+	void FillCommandBuffer(VkCommandBuffer commandBuffer);
+	
 	void OnWindowResized();
 	void DrawFrame();
+
+	// TODO Implement this inside the derived classes
+	void CreateSharedImageResources();
 
 	// GLFW callbacks
 	void FrameBufferSizeCallback(GLFWwindow* window, int width, int height);
@@ -78,7 +80,9 @@ protected:
 	bool shouldRecreateSwapchain_;
 
 	// Shared by multiple render passes
-	// TODO Maybe group these inside a struct
+	// TODO:
+	// [1] Maybe group these inside a struct
+	// [2] Implement these inside the derived classes
 	VulkanImage multiSampledColorImage_;
 	VulkanImage singleSampledColorImage_;
 	VulkanImage depthImage_;

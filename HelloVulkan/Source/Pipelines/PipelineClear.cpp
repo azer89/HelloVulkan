@@ -16,8 +16,9 @@ PipelineClear::~PipelineClear()
 {
 }
 
-void PipelineClear::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
+void PipelineClear::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
+	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));
 	vkCmdEndRenderPass(commandBuffer);
 }

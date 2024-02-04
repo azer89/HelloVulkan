@@ -54,6 +54,7 @@ public:
 		VulkanInstance& instance,
 		uint32_t width,
 		uint32_t height);
+	VkResult GetNextSwapchainImage(VkSemaphore nextSwapchainImageSemaphore);
 
 	// TODO These four functions can be simplified/combined
 	VkCommandBuffer BeginOneTimeGraphicsCommand();
@@ -80,6 +81,7 @@ public:
 	size_t GetSwapchainImageCount() const { return swapchainImages_.size(); }
 	VkFormat GetSwaphchainImageFormat() const { return swapchainImageFormat_; }
 	VkImageView GetSwapchainImageView(unsigned i) const { return swapchainImageViews_[i]; }
+	uint32_t GetCurrentSwapchainImageIndex() { return currentSwapchainImageIndex_; }
 
 	// Pointer getters
 	VkSwapchainKHR* GetSwapchainPtr() { return &swapchain_; }
@@ -87,6 +89,7 @@ public:
 	// Sync objects and render command buffer
 	FrameData& GetCurrentFrameData();
 	void IncrementFrameIndex();
+	uint32_t GetFrameIndex() const;
 
 	// For debugging purpose
 	void SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name);
@@ -127,10 +130,10 @@ private:
 
 private:
 	VkSwapchainKHR swapchain_;
-	// A queue of rendered images waiting to be presented to the screen
 	std::vector<VkImage> swapchainImages_;
 	std::vector<VkImageView> swapchainImageViews_;
 	VkFormat swapchainImageFormat_;
+	uint32_t currentSwapchainImageIndex_; // Current image index
 
 	uint32_t framebufferWidth_;
 	uint32_t framebufferHeight_;
@@ -154,7 +157,7 @@ private:
 
 	std::vector<uint32_t> deviceQueueIndices_;
 
-	int frameIndex_;
+	uint32_t frameIndex_;
 	std::vector<FrameData> frameDataArray_;
 };
 

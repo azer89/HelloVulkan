@@ -30,12 +30,12 @@ public:
 
 	virtual void FillCommandBuffer(
 		VulkanDevice& vkDev, 
-		VkCommandBuffer commandBuffer, 
-		size_t currentImage) = 0;
+		VkCommandBuffer commandBuffer) = 0;
 
-	void SetCameraUBO(VulkanDevice& vkDev, uint32_t imageIndex, CameraUBO ubo)
+	void SetCameraUBO(VulkanDevice& vkDev, CameraUBO ubo)
 	{
-		cameraUBOBuffers_[imageIndex].UploadBufferData(vkDev, 0, &ubo, sizeof(CameraUBO));
+		uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
+		cameraUBOBuffers_[swapchainImageIndex].UploadBufferData(vkDev, 0, &ubo, sizeof(CameraUBO));
 	}
 
 protected:

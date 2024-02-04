@@ -56,12 +56,11 @@ PipelineSkybox::~PipelineSkybox()
 {
 }
 
-void PipelineSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t swapchainImageIndex)
+void PipelineSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
+	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
-
 	BindPipeline(vkDev, commandBuffer);
-
 	vkCmdBindDescriptorSets(
 		commandBuffer, 
 		VK_PIPELINE_BIND_POINT_GRAPHICS, 
@@ -71,9 +70,7 @@ void PipelineSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer comm
 		&descriptorSets_[swapchainImageIndex], 
 		0, 
 		nullptr);
-
 	vkCmdDraw(commandBuffer, 36, 1, 0, 0);
-
 	vkCmdEndRenderPass(commandBuffer);
 }
 

@@ -25,6 +25,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Shaders\ClusteredForward">
+      <UniqueIdentifier>{20cd7c14-216f-4f3a-841a-5875546ac38f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\Cube.vert">
@@ -66,23 +69,23 @@
     <None Include="..\Shaders\LightCircle.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\AABBGenerator.comp">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\LightCulling.comp">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\LightCullingBatch.comp">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\ClusterForwardHeader.comp">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\Shaders\Mesh.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\MeshClusterForward.frag">
-      <Filter>Shaders</Filter>
+    <None Include="..\Shaders\ClusteredForward\AABBGenerator.comp">
+      <Filter>Shaders\ClusteredForward</Filter>
+    </None>
+    <None Include="..\Shaders\ClusteredForward\ClusterForwardHeader.comp">
+      <Filter>Shaders\ClusteredForward</Filter>
+    </None>
+    <None Include="..\Shaders\ClusteredForward\MeshClusterForward.frag">
+      <Filter>Shaders\ClusteredForward</Filter>
+    </None>
+    <None Include="..\Shaders\ClusteredForward\LightCulling.comp">
+      <Filter>Shaders\ClusteredForward</Filter>
+    </None>
+    <None Include="..\Shaders\ClusteredForward\LightCullingBatch.comp">
+      <Filter>Shaders\ClusteredForward</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -182,6 +185,21 @@
     <ClInclude Include="Header\Pipelines\PipelineConfig.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
+    <ClInclude Include="Header\ClusterForwardBuffers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineAABBGenerator.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineLightCulling.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelinePBRClusterForward.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\PushConstants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">
@@ -267,6 +285,18 @@
     </ClCompile>
     <ClCompile Include="Source\VulkanDescriptor.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ClusterForwardBuffers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineLightCulling.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineAABBGenerator.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelinePBRClusterForward.cpp">
+      <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

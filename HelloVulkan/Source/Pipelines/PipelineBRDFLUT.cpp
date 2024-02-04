@@ -1,13 +1,7 @@
+#include "PushConstants.h"
 #include "PipelineBRDFLUT.h"
 #include "VulkanShader.h"
 #include "Configs.h"
-
-struct PushConstantsBRDFLUT
-{
-	uint32_t width;
-	uint32_t height;
-	uint32_t sampleCount;
-};
 
 PipelineBRDFLUT::PipelineBRDFLUT(
 	VulkanDevice& vkDev) :
@@ -38,7 +32,7 @@ PipelineBRDFLUT::~PipelineBRDFLUT()
 	outBuffer_.Destroy(device_);
 }
 
-void PipelineBRDFLUT::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage)
+void PipelineBRDFLUT::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
 }
 

@@ -1,14 +1,28 @@
 #version 460 core
 
 /*
-Fragment shader for PBR+IBL, naive forward shading
+Fragment shader for PBR+IBL, naive forward shading (non clustered)
 */
+
+// Include files
+#include <PBRHeader.frag>
+#include <Hammersley.frag>
 
 layout(location = 0) in vec3 worldPos;
 layout(location = 1) in vec2 texCoord;
 layout(location = 2) in vec3 normal;
 
 layout(location = 0) out vec4 fragColor;
+
+layout(push_constant) uniform PushConstantPBR
+{
+	float lightIntensity;
+	float baseReflectivity;
+	float maxReflectionLod;
+	float lightFalloff; // Small --> slower falloff, Big --> faster falloff
+	float albedoMultipler; // Show albedo color if the scene is too dark, default value should be zero
+}
+pc;
 
 layout(set = 0, binding = 0) uniform CameraUBO
 {
@@ -17,14 +31,6 @@ layout(set = 0, binding = 0) uniform CameraUBO
 	vec4 position;
 }
 camUBO;
-
-layout(push_constant) uniform PushConstantPBR
-{
-	float lightIntensity;
-	float baseReflectivity;
-	float maxReflectionLod;
-}
-pc;
 
 // SSBO
 struct LightData
@@ -45,10 +51,6 @@ layout(set = 0, binding = 8) uniform sampler2D textureEmissive;
 layout(set = 0, binding = 9) uniform samplerCube specularMap;
 layout(set = 0, binding = 10) uniform samplerCube diffuseMap;
 layout(set = 0, binding = 11) uniform sampler2D brdfLUT;
-
-// Include files
-#include <PBRHeader.frag>
-#include <Hammersley.frag>
 
 // Tangent-normals to world-space
 vec3 GetNormalFromMap(vec3 tangentNormal, vec3 worldPos, vec3 normal, vec2 texCoord)
@@ -85,7 +87,13 @@ vec3 Radiance(
 	float NoL = max(dot(N, L), 0.0);
 	float HoV = max(dot(H, V), 0.0);
 	float distance = length(light.position.xyz - worldPos);
-	float attenuation = 1.0 / (distance * distance);
+
+	// Physically correct attenuation
+	//float attenuation = 1.0 / (distance * distance);
+
+	// Hacky attenuation
+	float attenuation = 1.0 / pow(distance, pc.lightFalloff);
+
 	vec3 radiance = light.color.xyz * attenuation * pc.lightIntensity;
 
 	// Cook-Torrance BRDF
@@ -182,7 +190,10 @@ void main()
 	vec3 F0 = vec3(pc.baseReflectivity);
 	F0 = mix(F0, albedo, metallic);
 
-	vec3 Lo = vec3(0.0);
+	// A little bit hacky
+	//vec3 Lo = vec3(0.0); // Original code
+	vec3 Lo =  albedo * pc.albedoMultipler;
+
 	for (int i = 0; i < lights.length(); ++i)
 	{
 		LightData light = lights[i];

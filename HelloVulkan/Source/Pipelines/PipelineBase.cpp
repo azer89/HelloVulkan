@@ -37,7 +37,7 @@ void PipelineBase::CreateUniformBuffers(
 	std::vector<VulkanBuffer>& buffers,
 	size_t uniformDataSize)
 {
-	const size_t swapChainImageSize = vkDev.GetSwapchainImageCount();
+	const size_t swapChainImageSize = vkDev.GetSwapchainImageCount(); // TODO Set this as a parameter
 	buffers.resize(swapChainImageSize);
 	for (size_t i = 0; i < swapChainImageSize; i++)
 	{
@@ -73,6 +73,12 @@ void PipelineBase::BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuff
 
 void PipelineBase::OnWindowResized(VulkanDevice& vkDev)
 {
+	// If this is compute pipeline, no need to recreate framebuffer
+	if (config_.type_ == PipelineType::Compute)
+	{
+		return;
+	}
+
 	framebuffer_.Destroy();
 	framebuffer_.Recreate(vkDev);
 }

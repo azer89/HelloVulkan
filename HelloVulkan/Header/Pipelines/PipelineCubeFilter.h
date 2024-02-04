@@ -3,6 +3,7 @@
 
 #include "PipelineBase.h"
 #include "VulkanImage.h"
+#include "PushConstants.h"
 
 #include <string>
 
@@ -15,12 +16,6 @@ enum class CubeFilterType : unsigned int
 	Specular = 1, 
 };
 
-struct PushConstantCubeFilter
-{
-	float roughness = 0.f;
-	uint32_t outputDiffuseSampleCount = 1u;
-};
-
 class PipelineCubeFilter final : public PipelineBase
 {
 public:
@@ -31,7 +26,7 @@ public:
 		VulkanImage* outputCubemap,
 		CubeFilterType filterType);
 
-	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
+	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
 
 private:
 

@@ -1,28 +1,26 @@
-#ifndef PIPELINE_PBR
-#define PIPELINE_PBR
+#ifndef PIPELINE_PBR_CLUSTER_FORWARD
+#define PIPELINE_PBR_CLUSTER_FORWARD
 
-#include "PipelineBase.h"
-#include "VulkanImage.h"
-#include "PushConstants.h"
-#include "Model.h"
-#include "Light.h"
+#include "PipelinePBR.h"
+#include "ClusterForwardBuffers.h"
 
 /*
-Render meshes using PBR materials, naive forward renderer
+Render meshes using PBR materials, clustered forward renderer
 */
-class PipelinePBR final : public PipelineBase
+class PipelinePBRClusterForward final : public PipelineBase
 {
 public:
-	PipelinePBR(VulkanDevice& vkDev,
+	PipelinePBRClusterForward(VulkanDevice& vkDev,
 		std::vector<Model*> models,
 		Lights* lights,
+		ClusterForwardBuffers* cfBuffers,
 		VulkanImage* specularMap,
 		VulkanImage* diffuseMap,
 		VulkanImage* brdfLUT,
 		VulkanImage* depthImage,
 		VulkanImage* offscreenColorImage,
 		uint8_t renderBit = 0u);
-	 ~PipelinePBR();
+	~PipelinePBRClusterForward();
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
 
@@ -32,13 +30,19 @@ public:
 	void SetLightFalloff(float lightFalloff) { pc_.lightFalloff = lightFalloff; }
 	void SetAlbedoMultiplier(float albedoMultipler) { pc_.albedoMultipler = albedoMultipler; }
 
+	void SetClusterForwardUBO(VulkanDevice& vkDev, ClusterForwardUBO ubo)
+	{
+		size_t currentImage = vkDev.GetCurrentSwapchainImageIndex();
+		cfUBOBuffers_[currentImage].UploadBufferData(vkDev, 0, &ubo, sizeof(ClusterForwardUBO));
+	}
+
 public:
 	// TODO change this to private
 	std::vector<Model*> models_;
 
 private:
-	void CreateDescriptor(VulkanDevice& vkDev);
-	void CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh);
+	ClusterForwardBuffers* cfBuffers_;
+	std::vector<VulkanBuffer> cfUBOBuffers_;
 
 	Lights* lights_;
 
@@ -49,6 +53,10 @@ private:
 	VulkanImage* brdfLUT_;
 
 	PushConstantPBR pc_;
+
+private:
+	void CreateDescriptor(VulkanDevice& vkDev);
+	void CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh);
 };
 
 #endif

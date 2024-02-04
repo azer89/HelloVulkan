@@ -1,70 +1,70 @@
-#include "PipelinePBR.h"
-#include "VulkanUtility.h"
+#include "PipelinePBRClusterForward.h"
 #include "Configs.h"
 
-#include <vector>
-#include <array>
-
 // Constants
-constexpr uint32_t UBO_COUNT = 2;
-constexpr uint32_t SSBO_COUNT = 1;
+constexpr uint32_t UBO_COUNT = 3;
+constexpr uint32_t SSBO_COUNT = 4;
 constexpr uint32_t PBR_MESH_TEXTURE_COUNT = 6;
 constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 
-PipelinePBR::PipelinePBR(
+PipelinePBRClusterForward::PipelinePBRClusterForward(
 	VulkanDevice& vkDev,
 	std::vector<Model*> models,
 	Lights* lights,
+	ClusterForwardBuffers* cfBuffers,
 	VulkanImage* specularMap,
 	VulkanImage* diffuseMap,
 	VulkanImage* brdfLUT,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
-	PipelineBase(vkDev, 
+	PipelineBase(vkDev,
 		{
 			.type_ = PipelineType::GraphicsOffScreen,
 			.msaaSamples_ = offscreenColorImage->multisampleCount_,
 			.vertexBufferBind_ = true,
-		}
-	),
+		}),
 	models_(models),
 	lights_(lights),
+	cfBuffers_(cfBuffers),
 	specularCubemap_(specularMap),
 	diffuseCubemap_(diffuseMap),
 	brdfLUT_(brdfLUT)
 {
 	// Per frame UBO
 	CreateUniformBuffers(vkDev, cameraUBOBuffers_, sizeof(CameraUBO));
-	
+
 	// Model UBO
 	for (Model* model : models_)
 	{
 		CreateUniformBuffers(vkDev, model->modelBuffers_, sizeof(ModelUBO));
 	}
 
+	// Cluster forward UBO
+	CreateUniformBuffers(vkDev, cfUBOBuffers_, sizeof(ClusterForwardUBO));
+
 	// Note that this pipeline is offscreen rendering
 	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, config_.msaaSamples_);
 
 	framebuffer_.Create(
-		vkDev, 
-		renderPass_.GetHandle(), 
+		vkDev,
+		renderPass_.GetHandle(),
 		{
 			offscreenColorImage,
 			depthImage
-		}, 
+		},
 		IsOffscreen());
 
 	CreateDescriptor(vkDev);
 
 	// Push constants
 	std::vector<VkPushConstantRange> ranges =
-	{{
+	{ {
 		.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
 		.offset = 0u,
 		.size = sizeof(PushConstantPBR),
-	}};
-	
+	} };
+
 	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_, ranges);
 
 	CreateGraphicsPipeline(
@@ -73,17 +73,21 @@ PipelinePBR::PipelinePBR(
 		pipelineLayout_,
 		{
 			AppConfig::ShaderFolder + "Mesh.vert",
-			AppConfig::ShaderFolder + "Mesh.frag"
+			AppConfig::ShaderFolder + "ClusteredForward/MeshClusterForward.frag"
 		},
 		&pipeline_
 	);
 }
 
-PipelinePBR::~PipelinePBR()
+PipelinePBRClusterForward::~PipelinePBRClusterForward()
 {
+	for (auto uboBuffer : cfUBOBuffers_)
+	{
+		uboBuffer.Destroy(device_);
+	}
 }
 
-void PipelinePBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
+void PipelinePBRClusterForward::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
 	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
@@ -123,11 +127,11 @@ void PipelinePBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer command
 			vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBufferSize_ / (sizeof(unsigned int))), 1, 0, 0, 0);
 		}
 	}
-	
+
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelinePBR::CreateDescriptor(VulkanDevice& vkDev)
+void PipelinePBRClusterForward::CreateDescriptor(VulkanDevice& vkDev)
 {
 	uint32_t numMeshes = 0u;
 	for (Model* model : models_)
@@ -148,23 +152,23 @@ void PipelinePBR::CreateDescriptor(VulkanDevice& vkDev)
 
 	// Layout
 	descriptor_.CreateLayout(vkDev,
-	{
 		{
-			.descriptorType_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-			.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-			.bindingCount_ = 2
-		},
-		{
-			.descriptorType_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-			.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-			.bindingCount_ = 1
-		},
-		{
-			.descriptorType_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
-			.bindingCount_ = PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT
-		}
-	});
+			{
+				.descriptorType_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+				.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+				.bindingCount_ = 3
+			},
+			{
+				.descriptorType_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+				.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+				.bindingCount_ = 4
+			},
+			{
+				.descriptorType_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+				.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
+				.bindingCount_ = PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT
+			}
+		});
 
 	// Set
 	for (Model* model : models_)
@@ -176,8 +180,7 @@ void PipelinePBR::CreateDescriptor(VulkanDevice& vkDev)
 	}
 }
 
-// TODO Still quite convoluted
-void PipelinePBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh)
+void PipelinePBRClusterForward::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh)
 {
 	VkDescriptorImageInfo specularImageInfo = specularCubemap_->GetDescriptorImageInfo();
 	VkDescriptorImageInfo diffuseImageInfo = diffuseCubemap_->GetDescriptorImageInfo();
@@ -198,13 +201,21 @@ void PipelinePBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 	{
 		VkDescriptorBufferInfo bufferInfo1 = { cameraUBOBuffers_[i].buffer_, 0, sizeof(CameraUBO) };
 		VkDescriptorBufferInfo bufferInfo2 = { parentModel->modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
-		VkDescriptorBufferInfo bufferInfo3 = { lights_->GetSSBOBuffer(), 0, lights_->GetSSBOSize() };
+		VkDescriptorBufferInfo bufferInfo3 = { cfUBOBuffers_[i].buffer_, 0, sizeof(ClusterForwardUBO) };
+		VkDescriptorBufferInfo bufferInfo4 = { lights_->GetSSBOBuffer(), 0, lights_->GetSSBOSize() };
+		VkDescriptorBufferInfo bufferInfo5 = { cfBuffers_->lightCellsBuffers_[i].buffer_, 0, VK_WHOLE_SIZE };
+		VkDescriptorBufferInfo bufferInfo6 = { cfBuffers_->lightIndicesBuffers_[i].buffer_, 0, VK_WHOLE_SIZE };
+		VkDescriptorBufferInfo bufferInfo7 = { cfBuffers_->aabbBuffers_[i].buffer_, 0, VK_WHOLE_SIZE};
 
 		std::vector<DescriptorWrite> writes;
 
 		writes.push_back({ .bufferInfoPtr_ = &bufferInfo1, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
 		writes.push_back({ .bufferInfoPtr_ = &bufferInfo2, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
-		writes.push_back({ .bufferInfoPtr_ = &bufferInfo3, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
+		writes.push_back({ .bufferInfoPtr_ = &bufferInfo3, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
+		writes.push_back({ .bufferInfoPtr_ = &bufferInfo4, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
+		writes.push_back({ .bufferInfoPtr_ = &bufferInfo5, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
+		writes.push_back({ .bufferInfoPtr_ = &bufferInfo6, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
+		writes.push_back({ .bufferInfoPtr_ = &bufferInfo7, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
 		for (size_t i = 0; i < meshTextureInfos.size(); ++i)
 		{
 			writes.push_back({ .imageInfoPtr_ = &meshTextureInfos[i], .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });

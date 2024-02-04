@@ -3,35 +3,25 @@
 /*
 Based on www.aortiz.me/2018/12/21/CG.html
 
-
 Batched version of light culling for clustered forward shading.
 This should be a wee bit faster than the brute force version.
 */
 
 layout(local_size_x = 16, local_size_y = 9, local_size_z = 4) in;
 
+#include <ClusteredForward//ClusterForwardHeader.comp>
+
 #define MAX_LIGHTS_PER_CLUSTER 150
 
 shared LightData sharedLights[16 * 9 * 4] ;
 
-// SSBO (input)
-struct AABB
-{
-	vec4 minPoint;
-	vec4 maxPoint;
-};
+// SSBO
 layout(set = 0, binding = 0) readonly buffer Clusters
 {
 	AABB clusters[];
 };
 
-// SSBO (input)
-struct LightData
-{
-	vec4 position;
-	vec4 color;
-	float radius;
-};
+// SSBO
 layout(set = 0, binding = 1) buffer Lights 
 { 
 	LightData lights[]; 
@@ -43,12 +33,7 @@ layout(set = 0, binding = 2) buffer AtomicCounter
 	uint globalIndex;
 };
 
-// SSBO (output)
-struct LightCell
-{
-	uint offset;
-	uint count;
-};
+// SSBO
 layout(set = 0, binding = 3) buffer LightCells
 {
 	LightCell lightCells[];

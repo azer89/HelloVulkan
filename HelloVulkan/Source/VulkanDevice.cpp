@@ -330,6 +330,17 @@ uint32_t VulkanDevice::GetSwapchainImageCount(const VkSurfaceCapabilitiesKHR& ca
 	return imageCountExceeded ? capabilities_.maxImageCount : imageCount;
 }
 
+VkResult VulkanDevice::GetNextSwapchainImage(VkSemaphore nextSwapchainImageSemaphore)
+{
+	return vkAcquireNextImageKHR(
+		device_,
+		swapchain_,
+		0,
+		// Wait for the swapchain image to become available
+		nextSwapchainImageSemaphore,
+		VK_NULL_HANDLE,
+		&currentSwapchainImageIndex_);
+}
 
 size_t VulkanDevice::CreateSwapchainImages()
 {
@@ -455,16 +466,6 @@ VkResult VulkanDevice::CreateCommandBuffer(VkCommandPool pool, VkCommandBuffer* 
 	};
 
 	return vkAllocateCommandBuffers(device_, &allocInfo, commandBuffer);
-}
-
-FrameData& VulkanDevice::GetCurrentFrameData()
-{
-	return frameDataArray_[frameIndex_];
-}
-
-void VulkanDevice::IncrementFrameIndex()
-{
-	frameIndex_ = (frameIndex_ + 1) % 2;
 }
 
 bool VulkanDevice::IsDeviceSuitable(VkPhysicalDevice d)
@@ -602,4 +603,19 @@ void VulkanDevice::SetVkObjectName(void* objectHandle, VkObjectType objType, con
 		.pObjectName = name
 	};
 	VK_CHECK(vkSetDebugUtilsObjectNameEXT(device_, &nameInfo));
+}
+
+FrameData& VulkanDevice::GetCurrentFrameData() 
+{ 
+	return frameDataArray_[frameIndex_]; 
+}
+
+void VulkanDevice::IncrementFrameIndex() 
+{ 
+	frameIndex_ = (frameIndex_ + 1u) % AppConfig::FrameOverlapCount; 
+}
+
+uint32_t VulkanDevice::GetFrameIndex() const 
+{ 
+	return frameIndex_; 
 }

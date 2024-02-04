@@ -15,7 +15,7 @@ public:
 	);
 	~PipelineSkybox();
 
-	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, size_t currentImage) override;
+	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
 
 private:
 	VulkanImage* envCubemap_;

@@ -21,6 +21,9 @@ void AppPBR::Init()
 
 	// Initialize lights
 	InitLights();
+	
+	// Disable clustered forward
+	//cfBuffers_.CreateBuffers(vulkanDevice_, lights_.GetLightCount());
 
 	std::string hdrFile = AppConfig::TextureFolder + "piazza_bologni_1k.hdr";
 
@@ -79,7 +82,19 @@ void AppPBR::Init()
 		RenderPassBit::ColorClear | 
 		RenderPassBit::DepthClear
 	);
-	// This draws meshes with PBR+IBL
+	// Disable clustered forward
+	//aabbPtr_ = std::make_unique<PipelineAABBGenerator>(vulkanDevice_, &cfBuffers_);
+	//lightCullPtr_ = std::make_unique<PipelineLightCulling>(vulkanDevice_, &lights_, &cfBuffers_);
+	/*pbrPtr_ = std::make_unique<PipelinePBRClusterForward>(
+		vulkanDevice_,
+		models,
+		&lights_,
+		&cfBuffers_,
+		&specularCubemap_,
+		&diffuseCubemap_,
+		&brdfLut_,
+		&depthImage_,
+		&multiSampledColorImage_);*/
 	pbrPtr_ = std::make_unique<PipelinePBR>(
 		vulkanDevice_,
 		models,
@@ -115,6 +130,9 @@ void AppPBR::Init()
 		// Must be in order
 		clearPtr_.get(),
 		skyboxPtr_.get(),
+		// Disable clustered forward
+		//aabbPtr_.get(),
+		//lightCullPtr_.get(),
 		pbrPtr_.get(),
 		lightPtr_.get(),
 		resolveMSPtr_.get(),
@@ -126,28 +144,64 @@ void AppPBR::Init()
 
 void AppPBR::InitLights()
 {
+	// Testing for clustered forward
+	/*std::vector<LightData> lights;
+
+	float pi2 = glm::two_pi<float>();
+	constexpr unsigned int NR_LIGHTS = 1000;
+	for (unsigned int i = 0; i < NR_LIGHTS; ++i)
+	{
+		float yPos = Utility::RandomNumber<float>(-2.f, 10.0f);
+		float radius = Utility::RandomNumber<float>(0.0f, 10.0f);
+		float rad = Utility::RandomNumber<float>(0.0f, pi2);
+		float xPos = glm::cos(rad);
+
+		glm::vec4 position(
+			glm::cos(rad) * radius,
+			yPos,
+			glm::sin(rad) * radius,
+			1.f
+		);
+
+		glm::vec4 color(
+			Utility::RandomNumber<float>(0.0f, 1.0f),
+			Utility::RandomNumber<float>(0.0f, 1.0f),
+			Utility::RandomNumber<float>(0.0f, 1.0f),
+			1.f
+		);
+
+		LightData l;
+		l.color_ = color;
+		l.position_ = position;
+		l.radius_ = Utility::RandomNumber<float>(0.5f, 2.0f);
+
+		lights.push_back(l);
+	}
+
+	lights_.AddLights(vulkanDevice_, lights);*/
+
 	// Lights (SSBO)
 	lights_.AddLights(vulkanDevice_,
 	{
 		{
 			.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f),
 			.color_ = glm::vec4(1.f),
-			.radius_ = 1.0f
+			.radius_ = 10.0f
 		},
 		{
 			.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f),
 			.color_ = glm::vec4(1.f),
-			.radius_ = 1.0f
+			.radius_ = 10.0f
 		},
 		{
 			.position_ = glm::vec4(-1.5f, 0.7f, -1.5f, 1.f),
 			.color_ = glm::vec4(1.f),
-			.radius_ = 1.0f
+			.radius_ = 10.0f
 		},
 		{
 			.position_ = glm::vec4(1.5f, 0.7f, -1.5f, 1.f),
 			.color_ = glm::vec4(1.f),
-			.radius_ = 1.0f
+			.radius_ = 10.0f
 		}
 	});
 }
@@ -166,10 +220,15 @@ void AppPBR::DestroyResources()
 	// Lights
 	lights_.Destroy();
 
+	cfBuffers_.Destroy(vulkanDevice_.GetDevice());
+
 	// Destroy renderers
 	clearPtr_.reset();
 	finishPtr_.reset();
 	skyboxPtr_.reset();
+	// Disable clustered forward
+	//aabbPtr_.reset();
+	//lightCullPtr_.reset();
 	pbrPtr_.reset();
 	lightPtr_.reset();
 	resolveMSPtr_.reset();
@@ -177,16 +236,16 @@ void AppPBR::DestroyResources()
 	imguiPtr_.reset();
 }
 
-void AppPBR::UpdateUBOs(uint32_t imageIndex)
+void AppPBR::UpdateUBOs()
 {
 	CameraUBO ubo = camera_->GetCameraUBO();
-	lightPtr_->SetCameraUBO(vulkanDevice_, imageIndex, ubo);
-	pbrPtr_->SetCameraUBO(vulkanDevice_, imageIndex, ubo);
+	lightPtr_->SetCameraUBO(vulkanDevice_, ubo);
+	pbrPtr_->SetCameraUBO(vulkanDevice_, ubo);
 
 	// Remove translation
 	CameraUBO skyboxUbo = ubo;
 	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view));
-	skyboxPtr_->SetCameraUBO(vulkanDevice_, imageIndex, skyboxUbo);
+	skyboxPtr_->SetCameraUBO(vulkanDevice_, skyboxUbo);
 
 	// Model UBOs
 	glm::mat4 modelMatrix(1.f);
@@ -197,7 +256,14 @@ void AppPBR::UpdateUBOs(uint32_t imageIndex)
 	{
 		.model = modelMatrix
 	};
-	model_->SetModelUBO(vulkanDevice_, imageIndex, modelUBO1);
+	model_->SetModelUBO(vulkanDevice_, modelUBO1);
+
+	// Disable clustered forward
+	/*ClusterForwardUBO cfUBO = camera_->GetClusterForwardUBO();
+	aabbPtr_->SetClusterForwardUBO(vulkanDevice_, cfUBO);
+	lightCullPtr_->ResetGlobalIndex(vulkanDevice_);
+	lightCullPtr_->SetClusterForwardUBO(vulkanDevice_, cfUBO);
+	pbrPtr_->SetClusterForwardUBO(vulkanDevice_, cfUBO);*/
 }
 
 void AppPBR::UpdateUI()
@@ -217,17 +283,21 @@ void AppPBR::UpdateUI()
 	static float lightIntensity = 1.f;
 	static float pbrBaseReflectivity = 0.04f; // F0
 	static float maxReflectivityLod = 4.0f;
+	static float lightFalloff = 1.0f;
+	static float albedoMultipler = 0.0f;
 
 	ImGui_ImplVulkan_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-	ImGui::SetNextWindowSize(ImVec2(525, 200));
+	ImGui::SetNextWindowSize(ImVec2(525, 250));
 	ImGui::Begin(AppConfig::ScreenTitle.c_str());
 
 	ImGui::SetWindowFontScale(1.25f);
 	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));
 	ImGui::Checkbox("Render Lights", &lightRender);
+	ImGui::SliderFloat("Light Falloff", &lightFalloff, 0.01f, 5.f);
 	ImGui::SliderFloat("Light Intensity", &lightIntensity, 0.1f, 100.f);
+	ImGui::SliderFloat("Albedo Multiplier", &albedoMultipler, 0.0f, 1.0f);
 	ImGui::SliderFloat("Base Reflectivity", &pbrBaseReflectivity, 0.01f, 1.f);
 	ImGui::SliderFloat("Max Mipmap Lod", &maxReflectivityLod, 0.1f, cubemapMipmapCount_);
 
@@ -238,6 +308,8 @@ void AppPBR::UpdateUI()
 	pbrPtr_->SetLightIntensity(lightIntensity);
 	pbrPtr_->SetBaseReflectivity(pbrBaseReflectivity);
 	pbrPtr_->SetMaxReflectionLod(maxReflectivityLod);
+	pbrPtr_->SetLightFalloff(lightFalloff);
+	pbrPtr_->SetAlbedoMultiplier(albedoMultipler);
 }
 
 // This is called from main.cpp
