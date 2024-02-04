@@ -49,7 +49,7 @@ layout(set = 0, binding = 2) uniform ClusterForwardUBO
 cfUBO;
 
 // TODO Simplify these
-layout(set = 0, binding = 2) readonly buffer Lights { LightData lights []; };
+layout(set = 0, binding = 3) readonly buffer Lights { LightData lights []; };
 layout(set = 0, binding = 4) buffer LightCells { LightCell data []; } lightCells;
 layout(set = 0, binding = 5) buffer LightIndices{ uint data []; } lightIndices;
 layout(set = 0, binding = 6) readonly buffer Clusters { AABB data []; } clusters;
@@ -179,7 +179,8 @@ float LinearDepth(float z, float near, float far)
 
 void main()
 {
-	uint zIndex = uint(max(log2(LinearDepth(gl_FragCoord.z)) * cfUBO.sliceScaling + cfUBO.sliceBias, 0.0));
+	float linDepth = LinearDepth(gl_FragCoord.z, cfUBO.cameraNear, cfUBO.cameraFar);
+	uint zIndex = uint(max(log2(linDepth) * cfUBO.sliceScaling + cfUBO.sliceBias, 0.0));
 
 	vec2 tileSize =
 		vec2(cfUBO.screenSize.x / float(cfUBO.sliceCountX),
@@ -232,7 +233,7 @@ void main()
 	for (int i = 0; i < lightCount; ++i)
 	{
 		uint lightIndex = lightIndices.data[i + lightIndexOffset];
-		LightData light = inLights.data[lightIndex];
+		LightData light = lights[lightIndex];
 
 		Lo += Radiance(
 			albedo,

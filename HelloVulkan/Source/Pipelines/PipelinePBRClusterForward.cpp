@@ -18,32 +18,55 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
+	PipelineBase(vkDev,
+		{
+			.type_ = PipelineType::GraphicsOffScreen,
+			.msaaSamples_ = offscreenColorImage->multisampleCount_,
+			.vertexBufferBind_ = true,
+		}),
+	models_(models),
+	lights_(lights),
 	cfBuffers_(cfBuffers),
-
-	// Call the parent constructor
-	PipelinePBR(
-		vkDev,
-		models,
-		lights,
-		specularMap,
-		diffuseMap,
-		brdfLUT,
-		depthImage,
-		offscreenColorImage,
-		renderBit
-	)
+	specularCubemap_(specularMap),
+	diffuseCubemap_(diffuseMap),
+	brdfLUT_(brdfLUT)
 {
-}
+	// Per frame UBO
+	CreateUniformBuffers(vkDev, cameraUBOBuffers_, sizeof(CameraUBO));
 
-// Override
-void PipelinePBRClusterForward::InitExtraResources(VulkanDevice& vkDev)
-{
+	// Model UBO
+	for (Model* model : models_)
+	{
+		CreateUniformBuffers(vkDev, model->modelBuffers_, sizeof(ModelUBO));
+	}
+
+	// Cluster forward UBO
 	CreateUniformBuffers(vkDev, cfUBOBuffers_, sizeof(ClusterForwardUBO));
-}
 
-// Override
-void PipelinePBRClusterForward::CreatePBRPipeline(VulkanDevice& vkDev)
-{
+	// Note that this pipeline is offscreen rendering
+	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, config_.msaaSamples_);
+
+	framebuffer_.Create(
+		vkDev,
+		renderPass_.GetHandle(),
+		{
+			offscreenColorImage,
+			depthImage
+		},
+		IsOffscreen());
+
+	CreateDescriptor(vkDev);
+
+	// Push constants
+	std::vector<VkPushConstantRange> ranges =
+	{ {
+		.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
+		.offset = 0u,
+		.size = sizeof(PushConstantPBR),
+	} };
+
+	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_, ranges);
+
 	CreateGraphicsPipeline(
 		vkDev,
 		renderPass_.GetHandle(),
@@ -56,7 +79,58 @@ void PipelinePBRClusterForward::CreatePBRPipeline(VulkanDevice& vkDev)
 	);
 }
 
-// Override
+PipelinePBRClusterForward::~PipelinePBRClusterForward()
+{
+	for (auto uboBuffer : cfUBOBuffers_)
+	{
+		uboBuffer.Destroy(device_);
+	}
+}
+
+void PipelinePBRClusterForward::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
+{
+	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
+	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
+
+	BindPipeline(vkDev, commandBuffer);
+
+	vkCmdPushConstants(
+		commandBuffer,
+		pipelineLayout_,
+		VK_SHADER_STAGE_FRAGMENT_BIT,
+		0,
+		sizeof(PushConstantPBR), &pc_);
+
+	for (Model* model : models_)
+	{
+		for (Mesh& mesh : model->meshes_)
+		{
+			vkCmdBindDescriptorSets(
+				commandBuffer,
+				VK_PIPELINE_BIND_POINT_GRAPHICS,
+				pipelineLayout_,
+				0,
+				1,
+				&mesh.descriptorSets_[swapchainImageIndex],
+				0,
+				nullptr);
+
+			// Bind vertex buffer
+			VkBuffer buffers[] = { mesh.vertexBuffer_.buffer_ };
+			VkDeviceSize offsets[] = { 0 };
+			vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
+
+			// Bind index buffer
+			vkCmdBindIndexBuffer(commandBuffer, mesh.indexBuffer_.buffer_, 0, VK_INDEX_TYPE_UINT32);
+
+			// Draw
+			vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBufferSize_ / (sizeof(unsigned int))), 1, 0, 0, 0);
+		}
+	}
+
+	vkCmdEndRenderPass(commandBuffer);
+}
+
 void PipelinePBRClusterForward::CreateDescriptor(VulkanDevice& vkDev)
 {
 	uint32_t numMeshes = 0u;
@@ -106,7 +180,6 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanDevice& vkDev)
 	}
 }
 
-// Override
 void PipelinePBRClusterForward::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh)
 {
 	VkDescriptorImageInfo specularImageInfo = specularCubemap_->GetDescriptorImageInfo();

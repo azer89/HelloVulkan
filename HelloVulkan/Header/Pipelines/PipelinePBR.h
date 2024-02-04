@@ -10,7 +10,7 @@
 /*
 Render meshes using PBR materials, naive forward renderer
 */
-class PipelinePBR : public PipelineBase
+class PipelinePBR final : public PipelineBase
 {
 public:
 	PipelinePBR(VulkanDevice& vkDev,
@@ -36,11 +36,9 @@ public:
 	// TODO change this to private
 	std::vector<Model*> models_;
 
-protected:
-	// These three functions can be overridden by a derived class
-	virtual void CreatePBRPipeline(VulkanDevice& vkDev);
-	virtual void CreateDescriptor(VulkanDevice& vkDev);
-	virtual void CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh);
+private:
+	void CreateDescriptor(VulkanDevice& vkDev);
+	void CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh);
 
 	Lights* lights_;
 
