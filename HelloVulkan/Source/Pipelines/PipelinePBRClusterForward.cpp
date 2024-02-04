@@ -73,7 +73,7 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 		pipelineLayout_,
 		{
 			AppConfig::ShaderFolder + "Mesh.vert",
-			AppConfig::ShaderFolder + "MeshClusterForward.frag"
+			AppConfig::ShaderFolder + "ClusteredForward/MeshClusterForward.frag"
 		},
 		&pipeline_
 	);

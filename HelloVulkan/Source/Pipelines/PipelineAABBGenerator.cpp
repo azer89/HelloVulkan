@@ -15,7 +15,7 @@ PipelineAABBGenerator::PipelineAABBGenerator(
 	CreateUniformBuffers(vkDev, cfUBOBuffers_, sizeof(ClusterForwardUBO));
 	CreateDescriptor(vkDev);
 	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_);
-	CreateComputePipeline(vkDev, AppConfig::ShaderFolder + "AABBGenerator.comp");
+	CreateComputePipeline(vkDev, AppConfig::ShaderFolder + "ClusteredForward/AABBGenerator.comp");
 }
 
 PipelineAABBGenerator::~PipelineAABBGenerator()

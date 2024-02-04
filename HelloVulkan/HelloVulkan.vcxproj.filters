@@ -66,22 +66,22 @@
     <None Include="..\Shaders\LightCircle.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\AABBGenerator.comp">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\LightCulling.comp">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\LightCullingBatch.comp">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\ClusterForwardHeader.comp">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\Shaders\Mesh.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\MeshClusterForward.frag">
+    <None Include="..\Shaders\ClusteredForward\AABBGenerator.comp">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\ClusteredForward\ClusterForwardHeader.comp">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\ClusteredForward\LightCulling.comp">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\ClusteredForward\LightCullingBatch.comp">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\ClusteredForward\MeshClusterForward.frag">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

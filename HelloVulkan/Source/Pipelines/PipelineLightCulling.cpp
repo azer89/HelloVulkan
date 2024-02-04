@@ -17,7 +17,7 @@ PipelineLightCulling::PipelineLightCulling(
 	CreateUniformBuffers(vkDev, cfUBOBuffers_, sizeof(ClusterForwardUBO));
 	CreateDescriptor(vkDev);
 	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_);
-	CreateComputePipeline(vkDev, AppConfig::ShaderFolder + "LightCulling.comp");
+	CreateComputePipeline(vkDev, AppConfig::ShaderFolder + "ClusteredForward/LightCulling.comp");
 }
 
 PipelineLightCulling::~PipelineLightCulling()

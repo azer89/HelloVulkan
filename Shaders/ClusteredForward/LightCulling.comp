@@ -3,35 +3,22 @@
 /*
 Based on www.aortiz.me/2018/12/21/CG.html
 
-
-Batched version of light culling for clustered forward shading.
-This should be a wee bit faster than the brute force version.
+Brute force version of light culling for clustered forward shading.
 */
 
-layout(local_size_x = 16, local_size_y = 9, local_size_z = 4) in;
+layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+
+#include <ClusteredForward//ClusterForwardHeader.comp>
 
 #define MAX_LIGHTS_PER_CLUSTER 150
 
-shared LightData sharedLights[16 * 9 * 4] ;
-
 // SSBO (input)
-struct AABB
-{
-	vec4 minPoint;
-	vec4 maxPoint;
-};
 layout(set = 0, binding = 0) readonly buffer Clusters
 {
 	AABB clusters[];
 };
 
 // SSBO (input)
-struct LightData
-{
-	vec4 position;
-	vec4 color;
-	float radius;
-};
 layout(set = 0, binding = 1) buffer Lights 
 { 
 	LightData lights[]; 
@@ -44,11 +31,6 @@ layout(set = 0, binding = 2) buffer AtomicCounter
 };
 
 // SSBO (output)
-struct LightCell
-{
-	uint offset;
-	uint count;
-};
 layout(set = 0, binding = 3) buffer LightCells
 {
 	LightCell lightCells[];
@@ -101,49 +83,33 @@ float SquaredDistancePointAABB(vec3 point, uint tile)
 
 bool TestSphereAABB(uint lightIndex, uint tile)
 {
-	float lightRadius = sharedLights[lightIndex].radius;
-	vec4 posWorld = sharedLights[lightIndex].position;
+	float lightRadius = lights[lightIndex].radius;
+	vec4 posWorld = lights[lightIndex].position;
 	vec4 posView = ubo.cameraView * posWorld;
 	float squaredDistance = SquaredDistancePointAABB(posView.xyz, tile);
+
 	return squaredDistance < (lightRadius * lightRadius);
 }
 
 void main()
 {
-	uint threadCount = gl_WorkGroupSize.x * gl_WorkGroupSize.y * gl_WorkGroupSize.z;
-	uint lightCount = lights.length();
-	uint numBatches = (lightCount + threadCount - 1) / threadCount;
+	uint tileIndex =
+		gl_WorkGroupID.x +
+		gl_WorkGroupID.y * gl_NumWorkGroups.x +
+		gl_WorkGroupID.z * gl_NumWorkGroups.x * gl_NumWorkGroups.y;
 
-	uint tileIndex = gl_LocalInvocationIndex +
-		gl_WorkGroupSize.x * gl_WorkGroupSize.y * gl_WorkGroupSize.z * gl_WorkGroupID.z;
-
-	uint lightIter = 0;
 	uint visibleLightIndices[MAX_LIGHTS_PER_CLUSTER];
 
-	for (uint batch = 0; batch < numBatches; ++batch)
+	uint numAllLights = lights.length();
+
+	uint lightIter = 0;
+	for (uint i = 0; i < numAllLights && lightIter < MAX_LIGHTS_PER_CLUSTER; ++i)
 	{
-		uint lightIndex = batch * threadCount + gl_LocalInvocationIndex;
-
-		// This if statement prevents index out of bound
-		// TODO Look for a better alternative
-		if (lightIndex < lightCount)
+		if (TestSphereAABB(i, tileIndex))
 		{
-			sharedLights[gl_LocalInvocationIndex] = lights[lightIndex];
-		}
-
-		barrier();
-
-		for (uint i = 0; i < threadCount; ++i)
-		{
-			if (TestSphereAABB(i, tileIndex))
-			{
-				visibleLightIndices[lightIter] = batch * threadCount + i;
-				lightIter++;
-			}
+			visibleLightIndices[lightIter++] = i;
 		}
 	}
-
-	barrier();
 
 	uint offset = atomicAdd(globalIndex, lightIter);
 

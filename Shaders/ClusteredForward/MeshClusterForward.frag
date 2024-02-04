@@ -7,7 +7,7 @@ Fragment shader for PBR+IBL, naive forward shading (non clustered)
 // Include files
 #include <PBRHeader.frag>
 #include <Hammersley.frag>
-#include <ClusterForwardHeader.comp>
+#include <ClusteredForward//ClusterForwardHeader.comp>
 
 layout(location = 0) in vec3 worldPos;
 layout(location = 1) in vec2 texCoord;
