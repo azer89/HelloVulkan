@@ -89,6 +89,7 @@ void AppPBR::Init()
 		vulkanDevice_,
 		models,
 		&lights_,
+		&cfBuffers_,
 		&specularCubemap_,
 		&diffuseCubemap_,
 		&brdfLut_,

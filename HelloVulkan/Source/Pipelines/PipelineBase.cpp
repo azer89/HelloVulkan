@@ -37,7 +37,7 @@ void PipelineBase::CreateUniformBuffers(
 	std::vector<VulkanBuffer>& buffers,
 	size_t uniformDataSize)
 {
-	const size_t swapChainImageSize = vkDev.GetSwapchainImageCount();
+	const size_t swapChainImageSize = vkDev.GetSwapchainImageCount(); // TODO Set this as a parameter
 	buffers.resize(swapChainImageSize);
 	for (size_t i = 0; i < swapChainImageSize; i++)
 	{

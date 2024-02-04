@@ -2,8 +2,8 @@
 #include "Configs.h"
 
 // Constants
-constexpr uint32_t UBO_COUNT = 2;
-constexpr uint32_t SSBO_COUNT = 1;
+constexpr uint32_t UBO_COUNT = 3;
+constexpr uint32_t SSBO_COUNT = 4;
 constexpr uint32_t PBR_MESH_TEXTURE_COUNT = 6;
 constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 
@@ -11,12 +11,14 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 	VulkanDevice& vkDev,
 	std::vector<Model*> models,
 	Lights* lights,
+	ClusterForwardBuffers* cfBuffers,
 	VulkanImage* specularMap,
 	VulkanImage* diffuseMap,
 	VulkanImage* brdfLUT,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
+	cfBuffers_(cfBuffers),
 
 	// Call the parent constructor
 	PipelinePBR(
@@ -33,6 +35,13 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 {
 }
 
+// Override
+void PipelinePBRClusterForward::InitExtraResources(VulkanDevice& vkDev)
+{
+	CreateUniformBuffers(vkDev, cfUBOBuffers_, sizeof(ClusterForwardUBO));
+}
+
+// Override
 void PipelinePBRClusterForward::CreatePBRPipeline(VulkanDevice& vkDev)
 {
 	CreateGraphicsPipeline(
@@ -41,12 +50,13 @@ void PipelinePBRClusterForward::CreatePBRPipeline(VulkanDevice& vkDev)
 		pipelineLayout_,
 		{
 			AppConfig::ShaderFolder + "Mesh.vert",
-			AppConfig::ShaderFolder + "Mesh.frag"
+			AppConfig::ShaderFolder + "MeshClusterForward.frag"
 		},
 		&pipeline_
 	);
 }
 
+// Override
 void PipelinePBRClusterForward::CreateDescriptor(VulkanDevice& vkDev)
 {
 	uint32_t numMeshes = 0u;
@@ -72,12 +82,12 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanDevice& vkDev)
 			{
 				.descriptorType_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-				.bindingCount_ = 2
+				.bindingCount_ = 3
 			},
 			{
 				.descriptorType_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
 				.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-				.bindingCount_ = 1
+				.bindingCount_ = 4
 			},
 			{
 				.descriptorType_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -96,6 +106,7 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanDevice& vkDev)
 	}
 }
 
+// Override
 void PipelinePBRClusterForward::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh)
 {
 	VkDescriptorImageInfo specularImageInfo = specularCubemap_->GetDescriptorImageInfo();
@@ -117,13 +128,21 @@ void PipelinePBRClusterForward::CreateDescriptorSet(VulkanDevice& vkDev, Model* 
 	{
 		VkDescriptorBufferInfo bufferInfo1 = { cameraUBOBuffers_[i].buffer_, 0, sizeof(CameraUBO) };
 		VkDescriptorBufferInfo bufferInfo2 = { parentModel->modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
-		VkDescriptorBufferInfo bufferInfo3 = { lights_->GetSSBOBuffer(), 0, lights_->GetSSBOSize() };
+		VkDescriptorBufferInfo bufferInfo3 = { cfUBOBuffers_[i].buffer_, 0, sizeof(ClusterForwardUBO) };
+		VkDescriptorBufferInfo bufferInfo4 = { lights_->GetSSBOBuffer(), 0, lights_->GetSSBOSize() };
+		VkDescriptorBufferInfo bufferInfo5 = { cfBuffers_->lightCellsBuffers_[i].buffer_, 0, VK_WHOLE_SIZE };
+		VkDescriptorBufferInfo bufferInfo6 = { cfBuffers_->lightIndicesBuffers_[i].buffer_, 0, VK_WHOLE_SIZE };
+		VkDescriptorBufferInfo bufferInfo7 = { cfBuffers_->aabbBuffers_[i].buffer_, 0, VK_WHOLE_SIZE};
 
 		std::vector<DescriptorWrite> writes;
 
 		writes.push_back({ .bufferInfoPtr_ = &bufferInfo1, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
 		writes.push_back({ .bufferInfoPtr_ = &bufferInfo2, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
-		writes.push_back({ .bufferInfoPtr_ = &bufferInfo3, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
+		writes.push_back({ .bufferInfoPtr_ = &bufferInfo3, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
+		writes.push_back({ .bufferInfoPtr_ = &bufferInfo4, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
+		writes.push_back({ .bufferInfoPtr_ = &bufferInfo5, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
+		writes.push_back({ .bufferInfoPtr_ = &bufferInfo6, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
+		writes.push_back({ .bufferInfoPtr_ = &bufferInfo7, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
 		for (size_t i = 0; i < meshTextureInfos.size(); ++i)
 		{
 			writes.push_back({ .imageInfoPtr_ = &meshTextureInfos[i], .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
