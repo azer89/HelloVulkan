@@ -241,7 +241,7 @@ void main()
 	//vec3 Lo = vec3(0.0); // Original code
 	vec3 Lo =  albedo * pc.albedoMultipler;
 
-	for (int i = 0; i < lightCount; ++i)
+	for(int i = 0; i < lightCount; ++i)
 	{
 		uint lightIndex = lightIndices.data[i + lightIndexOffset];
 		LightData light = lights[lightIndex];
@@ -272,6 +272,8 @@ void main()
 
 	fragColor = vec4(color, 1.0);
 
+	float lightCountF = float(lightCount) / 20.0;
+	fragColor = vec4(0.0, lightCountF, 0.0, 1.0);
 	//fragColor = vec4(linDepth, linDepth, linDepth, 1.0);
 	//fragColor = vec4(DEBUG_COLORS[uint(mod(float(cluster.x + cluster.y + cluster.z), 8.0))], 1.0);
 }
