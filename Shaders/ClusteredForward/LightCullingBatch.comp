@@ -3,7 +3,6 @@
 /*
 Based on www.aortiz.me/2018/12/21/CG.html
 
-
 Batched version of light culling for clustered forward shading.
 This should be a wee bit faster than the brute force version.
 */

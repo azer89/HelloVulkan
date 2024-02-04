@@ -6,6 +6,9 @@
 #include "ClusterForwardBuffers.h"
 #include "Light.h"
 
+/*
+Clustered Forward
+*/
 class PipelineLightCulling final : public PipelineBase
 {
 public:

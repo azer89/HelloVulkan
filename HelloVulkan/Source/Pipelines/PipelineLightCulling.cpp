@@ -17,7 +17,11 @@ PipelineLightCulling::PipelineLightCulling(
 	CreateUniformBuffers(vkDev, cfUBOBuffers_, sizeof(ClusterForwardUBO));
 	CreateDescriptor(vkDev);
 	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_);
-	CreateComputePipeline(vkDev, AppConfig::ShaderFolder + "ClusteredForward/LightCulling.comp");
+
+	std::string shaderFile = AppConfig::ShaderFolder + "ClusteredForward/LightCulling.comp";
+	//std::string shaderFile = AppConfig::ShaderFolder + "ClusteredForward/LightCullingBatch.comp";
+
+	CreateComputePipeline(vkDev, shaderFile);
 }
 
 PipelineLightCulling::~PipelineLightCulling()
@@ -30,9 +34,7 @@ PipelineLightCulling::~PipelineLightCulling()
 
 void PipelineLightCulling::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
-	//uint32_t zeroValue = 0u;
 	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
-	//cfBuffers_->globalIndexCountBuffers_[swapchainImageIndex].UploadBufferData(vkDev, 0, &zeroValue, sizeof(uint32_t));
 	Execute(vkDev, commandBuffer, swapchainImageIndex);
 }
 
@@ -54,6 +56,12 @@ void PipelineLightCulling::Execute(VulkanDevice& vkDev, VkCommandBuffer commandB
 		static_cast<uint32_t>(ClusterForwardConfig::sliceCountX), // groupCountX
 		static_cast<uint32_t>(ClusterForwardConfig::sliceCountY), // groupCountY
 		static_cast<uint32_t>(ClusterForwardConfig::sliceCountZ)); // groupCountZ
+	
+	// Batched version
+	/*vkCmdDispatch(commandBuffer,
+		1,
+		1,
+		6);*/
 
 	VkBufferMemoryBarrier lightGridBarrier =
 	{

@@ -6,6 +6,9 @@
 #include "ClusterForwardBuffers.h"
 #include "Camera.h"
 
+/*
+Clustered Forward
+*/
 class PipelineAABBGenerator final : public PipelineBase
 {
 public:
