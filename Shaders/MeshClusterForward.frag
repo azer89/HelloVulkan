@@ -110,16 +110,10 @@ vec3 Radiance(
 	//float attenuation = 1.0 / (distance * distance);
 
 	// Hacky attenuation for clustered forward
-	//float attenuation = max(1.0 - (distance / light.radius), 0.0) / pow(distance, pc.lightFalloff);
+	float attenuation = max(1.0 - (distance / light.radius), 0.0) / pow(distance, pc.lightFalloff);
 
 	// Also, several attenuation formulas are proposed by Nikita Lisitsa:
 	// lisyarus.github.io/blog/graphics/2022/07/30/point-light-attenuation.html
-
-	float attenuation = 1.0 / (distance * distance);
-	if (distance > light.radius)
-	{
-		attenuation = 0.0;
-	}
 
 	vec3 radiance = light.color.xyz * attenuation * pc.lightIntensity;
 
@@ -271,9 +265,4 @@ void main()
 	vec3 color = ambient + emissive + Lo;
 
 	fragColor = vec4(color, 1.0);
-
-	//float lightCountF = float(lightCount) / 20.0;
-	//fragColor = vec4(0.0, lightCountF, 0.0, 1.0);
-	//fragColor = vec4(linDepth, linDepth, linDepth, 1.0);
-	//fragColor = vec4(DEBUG_COLORS[uint(mod(float(cluster.x + cluster.y + cluster.z), 8.0))], 1.0);
 }
