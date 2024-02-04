@@ -22,6 +22,9 @@ void AppPBR::Init()
 	// Initialize lights
 	InitLights();
 
+	// Buffers for clustered forward shading
+	cfBuffers_.CreateBuffers(vulkanDevice_, lights_.GetLightCount());
+
 	std::string hdrFile = AppConfig::TextureFolder + "piazza_bologni_1k.hdr";
 
 	model_ = std::make_unique<Model>(
@@ -79,6 +82,8 @@ void AppPBR::Init()
 		RenderPassBit::ColorClear | 
 		RenderPassBit::DepthClear
 	);
+	aabbPtr_ = std::make_unique<PipelineAABBGenerator>(vulkanDevice_, &cfBuffers_);
+	lightCullPtr_ = std::make_unique<PipelineLightCulling>(vulkanDevice_, &lights_, &cfBuffers_);
 	// This draws meshes with PBR+IBL
 	pbrPtr_ = std::make_unique<PipelinePBRClusterForward>(
 		vulkanDevice_,
@@ -115,6 +120,8 @@ void AppPBR::Init()
 		// Must be in order
 		clearPtr_.get(),
 		skyboxPtr_.get(),
+		aabbPtr_.get(),
+		lightCullPtr_.get(),
 		pbrPtr_.get(),
 		lightPtr_.get(),
 		resolveMSPtr_.get(),
@@ -166,6 +173,8 @@ void AppPBR::DestroyResources()
 	// Lights
 	lights_.Destroy();
 
+	cfBuffers_.Destroy(vulkanDevice_.GetDevice());
+
 	// Destroy renderers
 	clearPtr_.reset();
 	finishPtr_.reset();
@@ -175,6 +184,8 @@ void AppPBR::DestroyResources()
 	resolveMSPtr_.reset();
 	tonemapPtr_.reset();
 	imguiPtr_.reset();
+	aabbPtr_.reset();
+	lightCullPtr_.reset();
 }
 
 void AppPBR::UpdateUBOs()
@@ -198,6 +209,11 @@ void AppPBR::UpdateUBOs()
 		.model = modelMatrix
 	};
 	model_->SetModelUBO(vulkanDevice_, modelUBO1);
+
+	// Clustered forward
+	ClusterForwardUBO cfUBO = camera_->GetClusterForwardUBO();
+	aabbPtr_->SetClusterForwardUBO(vulkanDevice_, cfUBO);
+	lightCullPtr_->SetClusterForwardUBO(vulkanDevice_, cfUBO);
 }
 
 void AppPBR::UpdateUI()

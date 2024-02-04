@@ -1,4 +1,7 @@
 #include "PipelineAABBGenerator.h"
+#include "Configs.h"
+
+#include <iostream>
 
 PipelineAABBGenerator::PipelineAABBGenerator(
 	VulkanDevice& vkDev, 
@@ -23,6 +26,11 @@ PipelineAABBGenerator::~PipelineAABBGenerator()
 	}
 }
 
+void PipelineAABBGenerator::OnWindowResized(VulkanDevice& vkDev)
+{
+	cfBuffers_->SetAABBDirty();
+}
+
 void PipelineAABBGenerator::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
 	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
@@ -32,6 +40,8 @@ void PipelineAABBGenerator::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuff
 	}
 
 	Execute(vkDev, commandBuffer, swapchainImageIndex);
+
+	cfBuffers_->SetAABBClean(swapchainImageIndex);
 }
 
 void PipelineAABBGenerator::Execute(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, uint32_t swapchainImageIndex)
@@ -105,7 +115,7 @@ void PipelineAABBGenerator::CreateDescriptor(VulkanDevice& vkDev)
 	});
 
 	// Set
-	// Note that we don't use swapchain image count
+	descriptorSets_.resize(imageCount);
 	for (size_t i = 0; i < imageCount; ++i)
 	{
 		VkDescriptorBufferInfo bufferInfo1 = { cfBuffers_->aabbBuffers_[i].buffer_, 0, VK_WHOLE_SIZE};

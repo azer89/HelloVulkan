@@ -13,6 +13,7 @@ public:
 	~PipelineAABBGenerator();
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
+	void OnWindowResized(VulkanDevice& vkDev) override;
 
 	void SetClusterForwardUBO(VulkanDevice& vkDev, ClusterForwardUBO ubo)
 	{

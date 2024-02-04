@@ -7,10 +7,13 @@
 #include "PipelineFinish.h"
 #include "PipelinePBR.h"
 #include "PipelinePBRClusterForward.h"
+#include "PipelineAABBGenerator.h"
+#include "PipelineLightCulling.h"
 #include "PipelineTonemap.h"
 #include "PipelineResolveMS.h"
 #include "PipelineLight.h"
 #include "PipelineImGui.h"
+#include "ClusterForwardBuffers.h"
 #include "VulkanImage.h"
 #include "Light.h"
 #include "Model.h"
@@ -39,6 +42,8 @@ private:
 	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;
 	std::unique_ptr<PipelineLight> lightPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
+	std::unique_ptr<PipelineAABBGenerator> aabbPtr_;
+	std::unique_ptr<PipelineLightCulling> lightCullPtr_;
 
 	// PBR stuff
 	VulkanImage environmentCubemap_;
@@ -51,6 +56,7 @@ private:
 	std::unique_ptr<Model> model_;
 
 	Lights lights_;
+	ClusterForwardBuffers cfBuffers_; // Buffers for clustered forward shading
 };
 
 #endif
