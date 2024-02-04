@@ -30,7 +30,7 @@ https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d
 I finally implemented "Clustered Forward Shading" which is based on an article by [Angel Ortiz](https://www.aortiz.me/2018/12/21/CG.html). 
 
 The current implementation consists of two steps. The first step involves subdividing the view frustum into clusters.
-The next step is light culling, where we calculate lights intersecting with clusters. This step removes lights that are too far from a fragment, leading to reduced light iteration inside the final fragment shader.
+The next step is light culling, where we calculate lights that intersect the clusters. This step removes lights that are too far from a fragment, leading to reduced light iteration inside the final fragment shader.
 
 Although I haven't done a proper testing, a scene with 1000+ point lights can be rendered at 60-100 FPS using a 3060M graphics card.
 If there are too many lights concentrated inside the view frustum, the frame rate will drop regardless.
