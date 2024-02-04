@@ -7,7 +7,6 @@ Fragment shader for PBR+IBL, naive forward shading (non clustered)
 // Include files
 #include <PBRHeader.frag>
 #include <Hammersley.frag>
-#include <ClusterForwardHeader.comp>
 
 layout(location = 0) in vec3 worldPos;
 layout(location = 1) in vec2 texCoord;
@@ -92,11 +91,8 @@ vec3 Radiance(
 	// Physically correct attenuation
 	//float attenuation = 1.0 / (distance * distance);
 
-	// Hacky attenuation for clustered forward
-	float attenuation = max(1.0 - (distance / light.radius), 0.0) / pow(distance, pc.lightFalloff);
-
-	// Also, several attenuation formulas are proposed by Nikita Lisitsa:
-	// lisyarus.github.io/blog/graphics/2022/07/30/point-light-attenuation.html
+	// Hacky attenuation
+	float attenuation = 1.0 / pow(distance, pc.lightFalloff);
 
 	vec3 radiance = light.color.xyz * attenuation * pc.lightIntensity;
 
