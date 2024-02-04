@@ -22,14 +22,14 @@ void AppPBR::Init()
 	// Initialize lights
 	InitLights();
 	
-	// Disable clustered forward
+	// Clustered forward is disabled
 	//cfBuffers_.CreateBuffers(vulkanDevice_, lights_.GetLightCount());
 
 	std::string hdrFile = AppConfig::TextureFolder + "piazza_bologni_1k.hdr";
 
 	model_ = std::make_unique<Model>(
 		vulkanDevice_, 
-		AppConfig::ModelFolder + "Sponza//Sponza.gltf");
+		AppConfig::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
 	std::vector<Model*> models = {model_.get()};
 
 	// Create a cubemap from the input HDR
@@ -82,7 +82,7 @@ void AppPBR::Init()
 		RenderPassBit::ColorClear | 
 		RenderPassBit::DepthClear
 	);
-	// Disable clustered forward
+	// Clustered forward is disabled
 	//aabbPtr_ = std::make_unique<PipelineAABBGenerator>(vulkanDevice_, &cfBuffers_);
 	//lightCullPtr_ = std::make_unique<PipelineLightCulling>(vulkanDevice_, &lights_, &cfBuffers_);
 	/*pbrPtr_ = std::make_unique<PipelinePBRClusterForward>(
@@ -104,7 +104,7 @@ void AppPBR::Init()
 		&brdfLut_,
 		&depthImage_,
 		&multiSampledColorImage_);
-	lightPtr_ = std::make_unique<PipelineLight>(
+	lightPtr_ = std::make_unique<PipelineLightRender>(
 		vulkanDevice_,
 		&lights_,
 		&depthImage_,
@@ -130,7 +130,7 @@ void AppPBR::Init()
 		// Must be in order
 		clearPtr_.get(),
 		skyboxPtr_.get(),
-		// Disable clustered forward
+		// Clustered forward is disabled
 		//aabbPtr_.get(),
 		//lightCullPtr_.get(),
 		pbrPtr_.get(),
@@ -220,13 +220,14 @@ void AppPBR::DestroyResources()
 	// Lights
 	lights_.Destroy();
 
-	cfBuffers_.Destroy(vulkanDevice_.GetDevice());
+	// Clustered forward is disabled
+	//cfBuffers_.Destroy(vulkanDevice_.GetDevice());
 
 	// Destroy renderers
 	clearPtr_.reset();
 	finishPtr_.reset();
 	skyboxPtr_.reset();
-	// Disable clustered forward
+	// Clustered forward is disabled
 	//aabbPtr_.reset();
 	//lightCullPtr_.reset();
 	pbrPtr_.reset();
@@ -258,7 +259,7 @@ void AppPBR::UpdateUBOs()
 	};
 	model_->SetModelUBO(vulkanDevice_, modelUBO1);
 
-	// Disable clustered forward
+	// Clustered forward is disabled
 	/*ClusterForwardUBO cfUBO = camera_->GetClusterForwardUBO();
 	aabbPtr_->SetClusterForwardUBO(vulkanDevice_, cfUBO);
 	lightCullPtr_->ResetGlobalIndex(vulkanDevice_);

@@ -65,11 +65,6 @@ layout(set = 0, binding = 13) uniform samplerCube specularMap;
 layout(set = 0, binding = 14) uniform samplerCube diffuseMap;
 layout(set = 0, binding = 15) uniform sampler2D brdfLUT;
 
-vec3 DEBUG_COLORS[8] = vec3[](
-	vec3(1, 0, 0), vec3(0, 0, 1), vec3(0, 1, 0), vec3(0, 1, 1),
-	vec3(1, 0, 0), vec3(1, 0, 1), vec3(1, 1, 0), vec3(1, 1, 1)
-);
-
 // Tangent-normals to world-space
 vec3 GetNormalFromMap(vec3 tangentNormal, vec3 worldPos, vec3 normal, vec2 texCoord)
 {
@@ -184,6 +179,7 @@ float LinearDepth(float z, float near, float far)
 
 void main()
 {
+	// Must use GLM_FORCE_DEPTH_ZERO_TO_ONE, or the code below will fail
 	float linDepth = LinearDepth(gl_FragCoord.z, cfUBO.cameraNear, cfUBO.cameraFar);
 	uint zIndex = uint(max(log2(linDepth) * cfUBO.sliceScaling + cfUBO.sliceBias, 0.0));
 

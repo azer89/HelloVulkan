@@ -2,22 +2,27 @@
 #define APP_PBR
 
 #include "AppBase.h"
-#include "PipelineSkybox.h"
-#include "PipelineClear.h"
-#include "PipelineFinish.h"
-#include "PipelinePBR.h"
-#include "PipelinePBRClusterForward.h"
-#include "PipelineAABBGenerator.h"
-#include "PipelineLightCulling.h"
-#include "PipelineTonemap.h"
-#include "PipelineResolveMS.h"
-#include "PipelineLight.h"
-#include "PipelineImGui.h"
-#include "ClusterForwardBuffers.h"
 #include "VulkanImage.h"
 #include "Light.h"
 #include "Model.h"
 
+// Pipelines
+#include "PipelineSkybox.h"
+#include "PipelineClear.h"
+#include "PipelineFinish.h"
+#include "PipelinePBR.h"
+#include "PipelineTonemap.h"
+#include "PipelineResolveMS.h"
+#include "PipelineLightRender.h"
+#include "PipelineImGui.h"
+
+// Clustered forward
+#include "PipelinePBRClusterForward.h"
+#include "PipelineAABBGenerator.h"
+#include "PipelineLightCulling.h"
+#include "ClusterForwardBuffers.h"
+
+// STL
 #include <vector>
 #include <memory>
 
@@ -36,16 +41,22 @@ public:
 private:
 	std::unique_ptr<PipelineClear> clearPtr_;
 	std::unique_ptr<PipelineSkybox> skyboxPtr_;
-	//std::unique_ptr<PipelinePBRClusterForward> pbrPtr_; // Disable by default
+	
 	std::unique_ptr<PipelinePBR> pbrPtr_;
 	std::unique_ptr<PipelineTonemap> tonemapPtr_;
 	std::unique_ptr<PipelineFinish> finishPtr_;
 	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;
-	std::unique_ptr<PipelineLight> lightPtr_;
+	std::unique_ptr<PipelineLightRender> lightPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
+
+	// Clustered forward is disabled
+	/*
+	std::unique_ptr<PipelinePBRClusterForward> pbrPtr_;
 	std::unique_ptr<PipelineAABBGenerator> aabbPtr_;
 	std::unique_ptr<PipelineLightCulling> lightCullPtr_;
-
+	ClusterForwardBuffers cfBuffers_; // Buffers for clustered forward shading
+	*/
+	
 	// PBR stuff
 	VulkanImage environmentCubemap_;
 	VulkanImage diffuseCubemap_;
@@ -57,7 +68,6 @@ private:
 	std::unique_ptr<Model> model_;
 
 	Lights lights_;
-	ClusterForwardBuffers cfBuffers_; // Buffers for clustered forward shading
 };
 
 #endif

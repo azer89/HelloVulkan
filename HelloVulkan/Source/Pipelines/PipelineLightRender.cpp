@@ -1,11 +1,11 @@
-#include "PipelineLight.h"
+#include "PipelineLightRender.h"
 #include "VulkanUtility.h"
 
 #include "Configs.h"
 
 #include <array>
 
-PipelineLight::PipelineLight(
+PipelineLightRender::PipelineLightRender(
 	VulkanDevice& vkDev,
 	Lights* lights,
 	VulkanImage* depthImage, 
@@ -51,11 +51,11 @@ PipelineLight::PipelineLight(
 		);
 }
 
-PipelineLight::~PipelineLight()
+PipelineLightRender::~PipelineLightRender()
 {
 }
 
-void PipelineLight::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
+void PipelineLightRender::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
 	if (!shouldRender_)
 	{
@@ -83,7 +83,7 @@ void PipelineLight::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer comma
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelineLight::CreateDescriptor(VulkanDevice& vkDev)
+void PipelineLightRender::CreateDescriptor(VulkanDevice& vkDev)
 {
 	// Pool
 	descriptor_.CreatePool(
