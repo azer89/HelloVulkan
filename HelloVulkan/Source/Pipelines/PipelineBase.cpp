@@ -73,6 +73,12 @@ void PipelineBase::BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuff
 
 void PipelineBase::OnWindowResized(VulkanDevice& vkDev)
 {
+	// If this is compute pipeline, no need to recreate framebuffer
+	if (config_.type_ == PipelineType::Compute)
+	{
+		return;
+	}
+
 	framebuffer_.Destroy();
 	framebuffer_.Recreate(vkDev);
 }

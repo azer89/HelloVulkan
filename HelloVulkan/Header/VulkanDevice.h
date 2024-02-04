@@ -87,8 +87,9 @@ public:
 	VkSwapchainKHR* GetSwapchainPtr() { return &swapchain_; }
 
 	// Sync objects and render command buffer
-	FrameData& GetCurrentFrameData();
-	void IncrementFrameIndex();
+	FrameData& GetCurrentFrameData() { return frameDataArray_[frameIndex_]; }
+	void IncrementFrameIndex() { frameIndex_ = (frameIndex_ + 1u) % AppConfig::FrameOverlapCount; }
+	uint32_t GetFrameIndex() const { return frameIndex_; }
 
 	// For debugging purpose
 	void SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name);
@@ -156,7 +157,7 @@ private:
 
 	std::vector<uint32_t> deviceQueueIndices_;
 
-	int frameIndex_;
+	uint32_t frameIndex_;
 	std::vector<FrameData> frameDataArray_;
 };
 

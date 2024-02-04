@@ -6,9 +6,7 @@
 #include "VulkanDevice.h"
 #include "VulkanBuffer.h"
 
-/*
-A single light
-*/
+// A single light
 struct LightData
 {
 	alignas(16)
@@ -19,9 +17,25 @@ struct LightData
 	float radius_ = 1.0f;
 };
 
-/*
-A collection of lights, including SSBO
-*/
+// Clustered forward
+struct AABB
+{
+	alignas(16)
+	glm::vec4 minPoint;
+	alignas(16)
+	glm::vec4 maxPoint;
+};
+
+// Clustered forward
+struct LightCell
+{
+	alignas(4)
+	unsigned int offset;
+	alignas(4)
+	unsigned int count;
+};
+
+// A collection of lights, including SSBO
 class Lights
 {
 public:

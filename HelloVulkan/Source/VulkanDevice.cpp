@@ -468,16 +468,6 @@ VkResult VulkanDevice::CreateCommandBuffer(VkCommandPool pool, VkCommandBuffer* 
 	return vkAllocateCommandBuffers(device_, &allocInfo, commandBuffer);
 }
 
-FrameData& VulkanDevice::GetCurrentFrameData()
-{
-	return frameDataArray_[frameIndex_];
-}
-
-void VulkanDevice::IncrementFrameIndex()
-{
-	frameIndex_ = (frameIndex_ + 1) % 2;
-}
-
 bool VulkanDevice::IsDeviceSuitable(VkPhysicalDevice d)
 {
 	VkPhysicalDeviceProperties deviceProperties;
