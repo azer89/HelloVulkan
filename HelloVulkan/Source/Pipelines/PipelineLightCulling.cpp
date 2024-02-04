@@ -30,15 +30,9 @@ PipelineLightCulling::~PipelineLightCulling()
 
 void PipelineLightCulling::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
-	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
-	if (!cfBuffers_->IsAABBDirty(swapchainImageIndex))
-	{
-		return;
-	}
-
 	uint32_t zeroValue = 0u;
+	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
 	cfBuffers_->globalIndexCountBuffers_[swapchainImageIndex].UploadBufferData(vkDev, 0, &zeroValue, sizeof(uint32_t));
-
 	Execute(vkDev, commandBuffer, swapchainImageIndex);
 }
 

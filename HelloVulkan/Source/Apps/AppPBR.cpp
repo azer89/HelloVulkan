@@ -134,8 +134,43 @@ void AppPBR::Init()
 
 void AppPBR::InitLights()
 {
+	std::vector<LightData> lights;
+
+	float pi2 = glm::two_pi<float>();
+	constexpr unsigned int NR_LIGHTS = 1000;
+	for (unsigned int i = 0; i < NR_LIGHTS; ++i)
+	{
+		float yPos = Utility::RandomNumber<float>(0.f, 20.0f);
+		float radius = Utility::RandomNumber<float>(0.0f, 20.0f);
+		float rad = Utility::RandomNumber<float>(0.0f, pi2);
+		float xPos = glm::cos(rad);
+
+		glm::vec4 position(
+			glm::cos(rad) * radius,
+			yPos,
+			glm::sin(rad) * radius,
+			1.f
+		);
+
+		glm::vec4 color(
+			Utility::RandomNumber<float>(0.0f, 1.0f),
+			Utility::RandomNumber<float>(0.0f, 1.0f),
+			Utility::RandomNumber<float>(0.0f, 1.0f),
+			1.f
+		);
+
+		LightData l;
+		l.color_ = color;
+		l.position_ = position;
+		l.radius_ = Utility::RandomNumber<float>(0.5f, 2.0f);
+
+		lights.push_back(l);
+	}
+
+	lights_.AddLights(vulkanDevice_, lights);
+
 	// Lights (SSBO)
-	lights_.AddLights(vulkanDevice_,
+	/*lights_.AddLights(vulkanDevice_,
 	{
 		{
 			.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f),
@@ -157,7 +192,7 @@ void AppPBR::InitLights()
 			.color_ = glm::vec4(1.f),
 			.radius_ = 10.0f
 		}
-	});
+	});*/
 }
 
 void AppPBR::DestroyResources()
@@ -247,8 +282,8 @@ void AppPBR::UpdateUI()
 	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));
 	ImGui::Checkbox("Render Lights", &lightRender);
 	ImGui::SliderFloat("Light Falloff", &lightFalloff, 0.01f, 5.f);
-	ImGui::SliderFloat("Albedo Multiplier", &albedoMultipler, 0.0f, 1.0f);
 	ImGui::SliderFloat("Light Intensity", &lightIntensity, 0.1f, 100.f);
+	ImGui::SliderFloat("Albedo Multiplier", &albedoMultipler, 0.0f, 1.0f);
 	ImGui::SliderFloat("Base Reflectivity", &pbrBaseReflectivity, 0.01f, 1.f);
 	ImGui::SliderFloat("Max Mipmap Lod", &maxReflectivityLod, 0.1f, cubemapMipmapCount_);
 
