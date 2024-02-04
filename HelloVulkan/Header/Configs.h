@@ -7,8 +7,8 @@
 
 namespace AppConfig
 {
-	constexpr int InitialScreenWidth = 1600;
-	constexpr int InitialScreenHeight = 1200;
+	constexpr int InitialScreenWidth = 2000;
+	constexpr int InitialScreenHeight = 1125;
 
 	// VK_PRESENT_MODE_FIFO_KHR --> Lock to screen FPS
 	// VK_PRESENT_MODE_MAILBOX_KHR --> Triple buffering
@@ -27,7 +27,7 @@ namespace CameraConfig
 {
 	constexpr float Yaw = -90.0f;
 	constexpr float Pitch = 0.0f;
-	constexpr float Speed = 2.5f;
+	constexpr float Speed = 10.f;
 	constexpr float Sensitivity = 0.1f;
 	constexpr float Zoom = 45.0f;
 

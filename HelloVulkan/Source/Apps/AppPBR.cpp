@@ -140,8 +140,8 @@ void AppPBR::InitLights()
 	constexpr unsigned int NR_LIGHTS = 1000;
 	for (unsigned int i = 0; i < NR_LIGHTS; ++i)
 	{
-		float yPos = Utility::RandomNumber<float>(0.f, 20.0f);
-		float radius = Utility::RandomNumber<float>(0.0f, 20.0f);
+		float yPos = Utility::RandomNumber<float>(-2.f, 20.0f);
+		float radius = Utility::RandomNumber<float>(0.0f, 50.0f);
 		float rad = Utility::RandomNumber<float>(0.0f, pi2);
 		float xPos = glm::cos(rad);
 
@@ -162,7 +162,7 @@ void AppPBR::InitLights()
 		LightData l;
 		l.color_ = color;
 		l.position_ = position;
-		l.radius_ = Utility::RandomNumber<float>(0.5f, 2.0f);
+		l.radius_ = Utility::RandomNumber<float>(2.f, 6.0f);
 
 		lights.push_back(l);
 	}
@@ -238,6 +238,7 @@ void AppPBR::UpdateUBOs()
 	// Model UBOs
 	glm::mat4 modelMatrix(1.f);
 	modelMatrix = glm::rotate(modelMatrix, modelRotation_, glm::vec3(0.f, 1.f, 0.f));
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(4.f));
 	//modelRotation_ += deltaTime_ * 0.1f;
 
 	ModelUBO modelUBO1
@@ -249,7 +250,9 @@ void AppPBR::UpdateUBOs()
 	// Clustered forward
 	ClusterForwardUBO cfUBO = camera_->GetClusterForwardUBO();
 	aabbPtr_->SetClusterForwardUBO(vulkanDevice_, cfUBO);
+	lightCullPtr_->ResetGlobalIndex(vulkanDevice_);
 	lightCullPtr_->SetClusterForwardUBO(vulkanDevice_, cfUBO);
+	pbrPtr_->SetClusterForwardUBO(vulkanDevice_, cfUBO);
 }
 
 void AppPBR::UpdateUI()

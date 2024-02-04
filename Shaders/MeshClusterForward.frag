@@ -65,6 +65,11 @@ layout(set = 0, binding = 13) uniform samplerCube specularMap;
 layout(set = 0, binding = 14) uniform samplerCube diffuseMap;
 layout(set = 0, binding = 15) uniform sampler2D brdfLUT;
 
+vec3 DEBUG_COLORS[8] = vec3[](
+	vec3(1, 0, 0), vec3(0, 0, 1), vec3(0, 1, 0), vec3(0, 1, 1),
+	vec3(1, 0, 0), vec3(1, 0, 1), vec3(1, 1, 0), vec3(1, 1, 1)
+);
+
 // Tangent-normals to world-space
 vec3 GetNormalFromMap(vec3 tangentNormal, vec3 worldPos, vec3 normal, vec2 texCoord)
 {
@@ -105,10 +110,16 @@ vec3 Radiance(
 	//float attenuation = 1.0 / (distance * distance);
 
 	// Hacky attenuation for clustered forward
-	float attenuation = max(1.0 - (distance / light.radius), 0.0) / pow(distance, pc.lightFalloff);
+	//float attenuation = max(1.0 - (distance / light.radius), 0.0) / pow(distance, pc.lightFalloff);
 
 	// Also, several attenuation formulas are proposed by Nikita Lisitsa:
 	// lisyarus.github.io/blog/graphics/2022/07/30/point-light-attenuation.html
+
+	float attenuation = 1.0 / (distance * distance);
+	if (distance > light.radius)
+	{
+		attenuation = 0.0;
+	}
 
 	vec3 radiance = light.color.xyz * attenuation * pc.lightIntensity;
 
@@ -260,4 +271,7 @@ void main()
 	vec3 color = ambient + emissive + Lo;
 
 	fragColor = vec4(color, 1.0);
+
+	//fragColor = vec4(linDepth, linDepth, linDepth, 1.0);
+	//fragColor = vec4(DEBUG_COLORS[uint(mod(float(cluster.x + cluster.y + cluster.z), 8.0))], 1.0);
 }

@@ -14,6 +14,13 @@ public:
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
 
+	void ResetGlobalIndex(VulkanDevice& vkDev)
+	{
+		uint32_t zeroValue = 0u;
+		uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
+		cfBuffers_->globalIndexCountBuffers_[swapchainImageIndex].UploadBufferData(vkDev, 0, &zeroValue, sizeof(uint32_t));
+	}
+
 	void SetClusterForwardUBO(VulkanDevice& vkDev, ClusterForwardUBO ubo)
 	{
 		size_t currentImage = vkDev.GetCurrentSwapchainImageIndex();
