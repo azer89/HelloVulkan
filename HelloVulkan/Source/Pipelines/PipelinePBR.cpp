@@ -67,6 +67,15 @@ PipelinePBR::PipelinePBR(
 	
 	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_, ranges);
 
+	CreatePBRPipeline(vkDev);
+}
+
+PipelinePBR::~PipelinePBR()
+{
+}
+
+void PipelinePBR::CreatePBRPipeline(VulkanDevice& vkDev)
+{
 	CreateGraphicsPipeline(
 		vkDev,
 		renderPass_.GetHandle(),
@@ -77,10 +86,6 @@ PipelinePBR::PipelinePBR(
 		},
 		&pipeline_
 	);
-}
-
-PipelinePBR::~PipelinePBR()
-{
 }
 
 void PipelinePBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)

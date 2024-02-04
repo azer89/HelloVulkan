@@ -37,8 +37,10 @@ public:
 	std::vector<Model*> models_;
 
 private:
-	void CreateDescriptor(VulkanDevice& vkDev);
-	void CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh);
+	// These three functions can be overridden by a derived class
+	virtual void CreatePBRPipeline(VulkanDevice& vkDev);
+	virtual void CreateDescriptor(VulkanDevice& vkDev);
+	virtual void CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh);
 
 	Lights* lights_;
 
