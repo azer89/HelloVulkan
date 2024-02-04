@@ -21,9 +21,8 @@ void AppPBR::Init()
 
 	// Initialize lights
 	InitLights();
-
-	// Buffers for clustered forward shading
-	// Disable for now
+	
+	// Disable clustered forward
 	//cfBuffers_.CreateBuffers(vulkanDevice_, lights_.GetLightCount());
 
 	std::string hdrFile = AppConfig::TextureFolder + "piazza_bologni_1k.hdr";
@@ -131,6 +130,7 @@ void AppPBR::Init()
 		// Must be in order
 		clearPtr_.get(),
 		skyboxPtr_.get(),
+		// Disable clustered forward
 		//aabbPtr_.get(),
 		//lightCullPtr_.get(),
 		pbrPtr_.get(),
@@ -144,6 +144,7 @@ void AppPBR::Init()
 
 void AppPBR::InitLights()
 {
+	// Testing for clustered forward
 	/*std::vector<LightData> lights;
 
 	float pi2 = glm::two_pi<float>();
@@ -225,6 +226,7 @@ void AppPBR::DestroyResources()
 	clearPtr_.reset();
 	finishPtr_.reset();
 	skyboxPtr_.reset();
+	// Disable clustered forward
 	//aabbPtr_.reset();
 	//lightCullPtr_.reset();
 	pbrPtr_.reset();
@@ -256,12 +258,12 @@ void AppPBR::UpdateUBOs()
 	};
 	model_->SetModelUBO(vulkanDevice_, modelUBO1);
 
-	// Clustered forward
-	//ClusterForwardUBO cfUBO = camera_->GetClusterForwardUBO();
-	//aabbPtr_->SetClusterForwardUBO(vulkanDevice_, cfUBO);
-	//lightCullPtr_->ResetGlobalIndex(vulkanDevice_);
-	//lightCullPtr_->SetClusterForwardUBO(vulkanDevice_, cfUBO);
-	//pbrPtr_->SetClusterForwardUBO(vulkanDevice_, cfUBO);
+	// Disable clustered forward
+	/*ClusterForwardUBO cfUBO = camera_->GetClusterForwardUBO();
+	aabbPtr_->SetClusterForwardUBO(vulkanDevice_, cfUBO);
+	lightCullPtr_->ResetGlobalIndex(vulkanDevice_);
+	lightCullPtr_->SetClusterForwardUBO(vulkanDevice_, cfUBO);
+	pbrPtr_->SetClusterForwardUBO(vulkanDevice_, cfUBO);*/
 }
 
 void AppPBR::UpdateUI()
@@ -307,7 +309,7 @@ void AppPBR::UpdateUI()
 	pbrPtr_->SetBaseReflectivity(pbrBaseReflectivity);
 	pbrPtr_->SetMaxReflectionLod(maxReflectivityLod);
 	pbrPtr_->SetLightFalloff(lightFalloff);
-	pbrPtr_->SetAlbedoMultipler(albedoMultipler);
+	pbrPtr_->SetAlbedoMultiplier(albedoMultipler);
 }
 
 // This is called from main.cpp

@@ -20,7 +20,7 @@ public:
 
 	void SetClusterForwardUBO(VulkanDevice& vkDev, ClusterForwardUBO ubo)
 	{
-		size_t currentImage = vkDev.GetCurrentSwapchainImageIndex();
+		const size_t currentImage = vkDev.GetCurrentSwapchainImageIndex();
 		cfUBOBuffers_[currentImage].UploadBufferData(vkDev, 0, &ubo, sizeof(ClusterForwardUBO));
 	}
 

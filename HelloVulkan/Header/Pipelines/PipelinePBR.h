@@ -30,7 +30,7 @@ public:
 	void SetBaseReflectivity(float baseReflectivity) { pc_.baseReflectivity = baseReflectivity; }
 	void SetMaxReflectionLod(float maxLod) { pc_.maxReflectionLod = maxLod; }
 	void SetLightFalloff(float lightFalloff) { pc_.lightFalloff = lightFalloff; }
-	void SetAlbedoMultipler(float albedoMultipler) { pc_.albedoMultipler = albedoMultipler; }
+	void SetAlbedoMultiplier(float albedoMultipler) { pc_.albedoMultipler = albedoMultipler; }
 
 public:
 	// TODO change this to private
