@@ -162,7 +162,7 @@ void AppPBR::InitLights()
 		LightData l;
 		l.color_ = color;
 		l.position_ = position;
-		l.radius_ = Utility::RandomNumber<float>(2.f, 6.0f);
+		l.radius_ = Utility::RandomNumber<float>(2.0f, 6.0f);
 
 		lights.push_back(l);
 	}

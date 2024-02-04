@@ -101,9 +101,8 @@ void main()
 	uint visibleLightIndices[MAX_LIGHTS_PER_CLUSTER];
 
 	uint numAllLights = lights.length();
-	
+
 	uint lightIter = 0;
-	// This brute force iteration is pretty slow
 	for (uint i = 0; i < numAllLights && lightIter < MAX_LIGHTS_PER_CLUSTER; ++i)
 	{
 		if (TestSphereAABB(i, tileIndex))
