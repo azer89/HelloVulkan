@@ -24,11 +24,7 @@ public:
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
 
-	void SetLightIntensity(float intensity) { pc_.lightIntensity = intensity; }
-	void SetBaseReflectivity(float baseReflectivity) { pc_.baseReflectivity = baseReflectivity; }
-	void SetMaxReflectionLod(float maxLod) { pc_.maxReflectionLod = maxLod; }
-	void SetLightFalloff(float lightFalloff) { pc_.lightFalloff = lightFalloff; }
-	void SetAlbedoMultiplier(float albedoMultipler) { pc_.albedoMultipler = albedoMultipler; }
+	void SetPBRPushConstants(const PushConstantPBR& pbrPC) { pc_ = pbrPC; };
 
 	void SetClusterForwardUBO(VulkanDevice& vkDev, ClusterForwardUBO ubo)
 	{

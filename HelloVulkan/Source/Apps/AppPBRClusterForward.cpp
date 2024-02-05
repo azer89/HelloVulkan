@@ -1,8 +1,9 @@
 #include "AppPBRClusterForward.h"
-#include "Configs.h"
 #include "PipelineEquirect2Cube.h"
 #include "PipelineCubeFilter.h"
 #include "PipelineBRDFLUT.h"
+#include "Configs.h"
+#include "PushConstants.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 
@@ -235,33 +236,24 @@ void AppPBRClusterForward::UpdateUI()
 	}
 
 	static bool lightRender = true;
-	static float lightIntensity = 1.f;
-	static float pbrBaseReflectivity = 0.04f; // F0
-	static float maxReflectivityLod = 4.0f;
-	static float lightFalloff = 1.0f;
-	static float albedoMultipler = 0.0f;
+	static PushConstantPBR pbrPC;
 
 	ImGui::SetNextWindowSize(ImVec2(525, 250));
 	ImGui::Begin(AppConfig::ScreenTitle.c_str());
-
 	ImGui::SetWindowFontScale(1.25f);
 	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));
 	ImGui::Checkbox("Render Lights", &lightRender);
-	ImGui::SliderFloat("Light Falloff", &lightFalloff, 0.01f, 5.f);
-	ImGui::SliderFloat("Light Intensity", &lightIntensity, 0.1f, 100.f);
-	ImGui::SliderFloat("Albedo Multiplier", &albedoMultipler, 0.0f, 1.0f);
-	ImGui::SliderFloat("Base Reflectivity", &pbrBaseReflectivity, 0.01f, 1.f);
-	ImGui::SliderFloat("Max Mipmap Lod", &maxReflectivityLod, 0.1f, cubemapMipmapCount_);
+	ImGui::SliderFloat("Light Falloff", &pbrPC.albedoMultipler, 0.01f, 5.f);
+	ImGui::SliderFloat("Light Intensity", &pbrPC.lightIntensity, 0.1f, 100.f);
+	ImGui::SliderFloat("Albedo Multiplier", &pbrPC.albedoMultipler, 0.0f, 1.0f);
+	ImGui::SliderFloat("Base Reflectivity", &pbrPC.baseReflectivity, 0.01f, 1.f);
+	ImGui::SliderFloat("Max Mipmap Lod", &pbrPC.maxReflectionLod, 0.1f, cubemapMipmapCount_);
 
 	imguiPtr_->EndImGui();
 
 	// TODO Set as a struct
 	lightPtr_->RenderEnable(lightRender);
-	pbrPtr_->SetLightIntensity(lightIntensity);
-	pbrPtr_->SetBaseReflectivity(pbrBaseReflectivity);
-	pbrPtr_->SetMaxReflectionLod(maxReflectivityLod);
-	pbrPtr_->SetLightFalloff(lightFalloff);
-	pbrPtr_->SetAlbedoMultiplier(albedoMultipler);
+	pbrPtr_->SetPBRPushConstants(pbrPC);
 }
 
 // This is called from main.cpp
