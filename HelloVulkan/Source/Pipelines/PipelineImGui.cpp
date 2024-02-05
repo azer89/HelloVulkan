@@ -1,5 +1,6 @@
 #include "PipelineImGui.h"
 #include "VulkanUtility.h"
+#include "Configs.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -24,7 +25,7 @@ PipelineImGui::PipelineImGui(
 	// Create framebuffer
 	framebuffer_.Create(vkDev, renderPass_.GetHandle(), {}, IsOffscreen());
 
-	uint32_t imageCount = static_cast<uint32_t>(vkDev.GetSwapchainImageCount());
+	uint32_t imageCount = AppConfig::FrameOverlapCount;
 	descriptor_.CreatePool(
 		vkDev,
 		{
