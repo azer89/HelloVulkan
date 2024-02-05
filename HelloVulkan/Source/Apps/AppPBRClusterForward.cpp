@@ -243,7 +243,7 @@ void AppPBRClusterForward::UpdateUI()
 	ImGui::SetWindowFontScale(1.25f);
 	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));
 	ImGui::Checkbox("Render Lights", &lightRender);
-	ImGui::SliderFloat("Light Falloff", &pbrPC.albedoMultipler, 0.01f, 5.f);
+	ImGui::SliderFloat("Light Falloff", &pbrPC.lightFalloff, 0.01f, 5.f);
 	ImGui::SliderFloat("Light Intensity", &pbrPC.lightIntensity, 0.1f, 100.f);
 	ImGui::SliderFloat("Albedo Multiplier", &pbrPC.albedoMultipler, 0.0f, 1.0f);
 	ImGui::SliderFloat("Base Reflectivity", &pbrPC.baseReflectivity, 0.01f, 1.f);
@@ -251,7 +251,6 @@ void AppPBRClusterForward::UpdateUI()
 
 	imguiPtr_->EndImGui();
 
-	// TODO Set as a struct
 	lightPtr_->RenderEnable(lightRender);
 	pbrPtr_->SetPBRPushConstants(pbrPC);
 }

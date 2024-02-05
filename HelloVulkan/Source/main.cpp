@@ -4,8 +4,9 @@
 // Entry point
 int main()
 {
-	//AppPBR app;
-	AppPBRClusterForward app;
+	AppPBR app;
+	//AppPBRClusterForward app;
+	
 	auto returnValue = app.MainLoop();
 	return returnValue;
 }
