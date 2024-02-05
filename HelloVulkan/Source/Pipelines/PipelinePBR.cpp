@@ -35,12 +35,12 @@ PipelinePBR::PipelinePBR(
 	brdfLUT_(brdfLUT)
 {
 	// Per frame UBO
-	CreateMultipleUniformBuffers(vkDev, cameraUBOBuffers_, sizeof(CameraUBO), vkDev.GetSwapchainImageCount());
+	CreateMultipleUniformBuffers(vkDev, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
 	
 	// Model UBO
 	for (Model* model : models_)
 	{
-		CreateMultipleUniformBuffers(vkDev, model->modelBuffers_, sizeof(ModelUBO), vkDev.GetSwapchainImageCount());
+		CreateMultipleUniformBuffers(vkDev, model->modelBuffers_, sizeof(ModelUBO), AppConfig::FrameOverlapCount);
 	}
 
 	// Note that this pipeline is offscreen rendering
@@ -85,7 +85,7 @@ PipelinePBR::~PipelinePBR()
 
 void PipelinePBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
-	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
+	uint32_t frameIndex = vkDev.GetFrameIndex();
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
 
 	BindPipeline(vkDev, commandBuffer);
@@ -107,7 +107,7 @@ void PipelinePBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer command
 				pipelineLayout_,
 				0,
 				1,
-				&mesh.descriptorSets_[swapchainImageIndex],
+				&mesh.descriptorSets_[frameIndex],
 				0,
 				nullptr);
 
@@ -142,8 +142,8 @@ void PipelinePBR::CreateDescriptor(VulkanDevice& vkDev)
 			.uboCount_ = UBO_COUNT * static_cast<uint32_t>(models_.size()),
 			.ssboCount_ = SSBO_COUNT,
 			.samplerCount_ = (PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT) * numMeshes,
-			.swapchainCount_ = static_cast<uint32_t>(vkDev.GetSwapchainImageCount()),
-			.setCountPerSwapchain_ = numMeshes,
+			.frameCount_ = AppConfig::FrameOverlapCount,
+			.setCountPerFrame_ = numMeshes,
 		});
 
 	// Layout
@@ -191,10 +191,10 @@ void PipelinePBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 		meshTextureInfos[index] = elem.second->GetDescriptorImageInfo();
 	}
 
-	size_t swapchainLength = vkDev.GetSwapchainImageCount();
-	mesh.descriptorSets_.resize(swapchainLength);
+	size_t frameCount = AppConfig::FrameOverlapCount;
+	mesh.descriptorSets_.resize(frameCount);
 
-	for (size_t i = 0; i < swapchainLength; i++)
+	for (size_t i = 0; i < frameCount; i++)
 	{
 		VkDescriptorBufferInfo bufferInfo1 = { cameraUBOBuffers_[i].buffer_, 0, sizeof(CameraUBO) };
 		VkDescriptorBufferInfo bufferInfo2 = { parentModel->modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };

@@ -34,8 +34,8 @@ public:
 
 	void SetCameraUBO(VulkanDevice& vkDev, CameraUBO ubo)
 	{
-		uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
-		cameraUBOBuffers_[swapchainImageIndex].UploadBufferData(vkDev, 0, &ubo, sizeof(CameraUBO));
+		uint32_t frameIndex = vkDev.GetFrameIndex();
+		cameraUBOBuffers_[frameIndex].UploadBufferData(vkDev, 0, &ubo, sizeof(CameraUBO));
 	}
 
 protected:

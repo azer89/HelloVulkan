@@ -37,6 +37,7 @@ void PipelineTonemap::OnWindowResized(VulkanDevice& vkDev)
 
 void PipelineTonemap::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
+	uint32_t frameIndex = vkDev.GetFrameIndex();
 	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));
 	BindPipeline(vkDev, commandBuffer);
@@ -46,7 +47,7 @@ void PipelineTonemap::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer com
 		pipelineLayout_,
 		0,
 		1,
-		&descriptorSets_[swapchainImageIndex],
+		&descriptorSets_[frameIndex],
 		0,
 		nullptr);
 	vkCmdDraw(commandBuffer, 3, 1, 0, 0);
@@ -62,8 +63,8 @@ void PipelineTonemap::CreateDescriptor(VulkanDevice& vkDev)
 			.uboCount_ = 0u,
 			.ssboCount_ = 0u,
 			.samplerCount_ = 1u,
-			.swapchainCount_ = static_cast<uint32_t>(vkDev.GetSwapchainImageCount()),
-			.setCountPerSwapchain_ = 1u,
+			.frameCount_ = AppConfig::FrameOverlapCount,
+			.setCountPerFrame_ = 1u,
 		});
 
 	// Layout
@@ -83,10 +84,10 @@ void PipelineTonemap::CreateDescriptor(VulkanDevice& vkDev)
 
 void PipelineTonemap::AllocateDescriptorSets(VulkanDevice& vkDev)
 {
-	auto swapChainImageSize = vkDev.GetSwapchainImageCount();
-	descriptorSets_.resize(swapChainImageSize);
+	auto frameCount = AppConfig::FrameOverlapCount;
+	descriptorSets_.resize(frameCount);
 
-	for (size_t i = 0; i < swapChainImageSize; i++)
+	for (size_t i = 0; i < frameCount; i++)
 	{
 		descriptor_.AllocateSet(vkDev, &(descriptorSets_[i]));
 	}
@@ -96,8 +97,8 @@ void PipelineTonemap::UpdateDescriptorSets(VulkanDevice& vkDev)
 {
 	VkDescriptorImageInfo imageInfo = singleSampledColorImage_->GetDescriptorImageInfo();
 
-	auto swapChainImageSize = vkDev.GetSwapchainImageCount();
-	for (size_t i = 0; i < swapChainImageSize; ++i)
+	auto frameCount = AppConfig::FrameOverlapCount;
+	for (size_t i = 0; i < frameCount; ++i)
 	{
 		descriptor_.UpdateSet(
 			vkDev,

@@ -126,8 +126,8 @@ void PipelineCubeFilter::CreateDescriptor(VulkanDevice& vkDev, VulkanImage* inpu
 			.uboCount_ = 0u,
 			.ssboCount_ = 0u,
 			.samplerCount_ = 1u,
-			.swapchainCount_ = 1u,
-			.setCountPerSwapchain_ = 1u
+			.frameCount_ = 1u,
+			.setCountPerFrame_ = 1u
 		});
 
 	// Layout

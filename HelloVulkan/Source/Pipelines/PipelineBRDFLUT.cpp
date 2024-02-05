@@ -131,8 +131,8 @@ void PipelineBRDFLUT::CreateDescriptor(VulkanDevice& vkDev)
 			.uboCount_ = 0u,
 			.ssboCount_ = 1u,
 			.samplerCount_ = 0u,
-			.swapchainCount_ = 1u,
-			.setCountPerSwapchain_ = 1u
+			.frameCount_ = 1u,
+			.setCountPerFrame_ = 1u
 		});
 
 	// Layout

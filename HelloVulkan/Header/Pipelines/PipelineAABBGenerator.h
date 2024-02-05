@@ -20,8 +20,8 @@ public:
 
 	void SetClusterForwardUBO(VulkanDevice& vkDev, ClusterForwardUBO ubo)
 	{
-		const size_t currentImage = vkDev.GetCurrentSwapchainImageIndex();
-		cfUBOBuffers_[currentImage].UploadBufferData(vkDev, 0, &ubo, sizeof(ClusterForwardUBO));
+		const size_t frameIndex = vkDev.GetFrameIndex();
+		cfUBOBuffers_[frameIndex].UploadBufferData(vkDev, 0, &ubo, sizeof(ClusterForwardUBO));
 	}
 
 private:
@@ -31,7 +31,7 @@ private:
 	std::vector<VkDescriptorSet> descriptorSets_;
 
 private:
-	void Execute(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, uint32_t swapchainImageIndex);
+	void Execute(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, uint32_t frameIndex);
 	void CreateDescriptor(VulkanDevice& vkDev);
 };
 

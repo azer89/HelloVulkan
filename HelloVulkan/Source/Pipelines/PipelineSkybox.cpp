@@ -23,7 +23,7 @@ PipelineSkybox::PipelineSkybox(VulkanDevice& vkDev,
 		}),
 	envCubemap_(envMap)
 {
-	CreateMultipleUniformBuffers(vkDev, cameraUBOBuffers_, sizeof(CameraUBO), vkDev.GetSwapchainImageCount());
+	CreateMultipleUniformBuffers(vkDev, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
 
 	// Note that this pipeline is offscreen rendering
 	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, config_.msaaSamples_);
@@ -58,7 +58,7 @@ PipelineSkybox::~PipelineSkybox()
 
 void PipelineSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
-	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
+	uint32_t frameIndex = vkDev.GetFrameIndex();
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
 	BindPipeline(vkDev, commandBuffer);
 	vkCmdBindDescriptorSets(
@@ -67,7 +67,7 @@ void PipelineSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer comm
 		pipelineLayout_, 
 		0, 
 		1, 
-		&descriptorSets_[swapchainImageIndex], 
+		&descriptorSets_[frameIndex],
 		0, 
 		nullptr);
 	vkCmdDraw(commandBuffer, 36, 1, 0, 0);
@@ -83,8 +83,8 @@ void PipelineSkybox::CreateDescriptor(VulkanDevice& vkDev)
 			.uboCount_ = 1u,
 			.ssboCount_ = 0u,
 			.samplerCount_ = 1u,
-			.swapchainCount_ = static_cast<uint32_t>(vkDev.GetSwapchainImageCount()),
-			.setCountPerSwapchain_ = 1u,
+			.frameCount_ = AppConfig::FrameOverlapCount,
+			.setCountPerFrame_ = 1u,
 		});
 
 	// Layout
@@ -103,12 +103,12 @@ void PipelineSkybox::CreateDescriptor(VulkanDevice& vkDev)
 	});
 
 	// Set
-	auto swapChainImageSize = vkDev.GetSwapchainImageCount();
-	descriptorSets_.resize(swapChainImageSize);
+	auto frameCount = AppConfig::FrameOverlapCount;
+	descriptorSets_.resize(frameCount);
 
 	VkDescriptorImageInfo imageInfo = envCubemap_->GetDescriptorImageInfo();
 
-	for (size_t i = 0; i < swapChainImageSize; i++)
+	for (size_t i = 0; i < frameCount; i++)
 	{
 		VkDescriptorBufferInfo bufferInfo = { cameraUBOBuffers_[i].buffer_, 0, sizeof(CameraUBO) };
 
