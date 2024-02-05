@@ -32,7 +32,7 @@ The current implementation consists of two steps. The first step involves subdiv
 The next step is light culling, where we calculate lights that intersect the clusters. This step removes lights that are too far from a fragment, leading to reduced light iteration inside the final fragment shader.
 
 Although I haven't done a proper testing, a Sponza scene with 1000+ point lights can be rendered at 60-100 FPS using a 3060M graphics card.
-Also, if there are too many lights end up inside the view frustum, especially when you zoom out, the frame rate will drop regardless, duh!
+Also, if too many lights end up inside the view frustum, especially when you zoom out, the frame rate will drop regardless, duh!
 
 https://github.com/azer89/HelloVulkan/assets/790432/66b9a30a-d187-495a-9879-8eb11a497087
 
