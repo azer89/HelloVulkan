@@ -63,8 +63,8 @@ void PipelineTonemap::CreateDescriptor(VulkanDevice& vkDev)
 			.uboCount_ = 0u,
 			.ssboCount_ = 0u,
 			.samplerCount_ = 1u,
-			.swapchainCount_ = AppConfig::FrameOverlapCount,
-			.setCountPerSwapchain_ = 1u,
+			.frameCount_ = AppConfig::FrameOverlapCount,
+			.setCountPerFrame_ = 1u,
 		});
 
 	// Layout

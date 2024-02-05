@@ -142,8 +142,8 @@ void PipelinePBR::CreateDescriptor(VulkanDevice& vkDev)
 			.uboCount_ = UBO_COUNT * static_cast<uint32_t>(models_.size()),
 			.ssboCount_ = SSBO_COUNT,
 			.samplerCount_ = (PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT) * numMeshes,
-			.swapchainCount_ = AppConfig::FrameOverlapCount,
-			.setCountPerSwapchain_ = numMeshes,
+			.frameCount_ = AppConfig::FrameOverlapCount,
+			.setCountPerFrame_ = numMeshes,
 		});
 
 	// Layout

@@ -95,8 +95,8 @@ void PipelineAABBGenerator::CreateDescriptor(VulkanDevice& vkDev)
 			.uboCount_ = 1u,
 			.ssboCount_ = 1u,
 			.samplerCount_ = 0u,
-			.swapchainCount_ = imageCount,
-			.setCountPerSwapchain_ = 1u
+			.frameCount_ = imageCount,
+			.setCountPerFrame_ = 1u
 		});
 
 	// Layout

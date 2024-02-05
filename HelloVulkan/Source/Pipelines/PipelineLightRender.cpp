@@ -92,8 +92,8 @@ void PipelineLightRender::CreateDescriptor(VulkanDevice& vkDev)
 			.uboCount_ = 1u,
 			.ssboCount_ = 1u,
 			.samplerCount_ = 0u,
-			.swapchainCount_ = AppConfig::FrameOverlapCount,
-			.setCountPerSwapchain_ = 1u,
+			.frameCount_ = AppConfig::FrameOverlapCount,
+			.setCountPerFrame_ = 1u,
 		});
 
 	// Layout

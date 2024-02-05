@@ -32,8 +32,8 @@ PipelineImGui::PipelineImGui(
 			.uboCount_ = 0u,
 			.ssboCount_ = 0u,
 			.samplerCount_ = 1u,
-			.swapchainCount_ = imageCount,
-			.setCountPerSwapchain_ = 1u,
+			.frameCount_ = imageCount,
+			.setCountPerFrame_ = 1u,
 			.flags_ = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT
 		});
 	

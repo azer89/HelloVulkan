@@ -118,8 +118,8 @@ void PipelineLightCulling::CreateDescriptor(VulkanDevice& vkDev)
 			.uboCount_ = 5u,
 			.ssboCount_ = 1u,
 			.samplerCount_ = 0u,
-			.swapchainCount_ = imageCount,
-			.setCountPerSwapchain_ = 1u
+			.frameCount_ = imageCount,
+			.setCountPerFrame_ = 1u
 		});
 
 	// Layout

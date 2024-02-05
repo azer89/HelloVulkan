@@ -11,7 +11,7 @@ void VulkanDescriptor::CreatePool(VulkanDevice& vkDev,
 		poolSizes.push_back(VkDescriptorPoolSize
 			{
 				.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.descriptorCount = createInfo.swapchainCount_ * createInfo.uboCount_
+				.descriptorCount = createInfo.frameCount_ * createInfo.uboCount_
 			});
 	}
 
@@ -20,7 +20,7 @@ void VulkanDescriptor::CreatePool(VulkanDevice& vkDev,
 		poolSizes.push_back(VkDescriptorPoolSize
 			{
 				.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-				.descriptorCount = createInfo.swapchainCount_ * createInfo.ssboCount_
+				.descriptorCount = createInfo.frameCount_ * createInfo.ssboCount_
 			});
 	}
 
@@ -29,7 +29,7 @@ void VulkanDescriptor::CreatePool(VulkanDevice& vkDev,
 		poolSizes.push_back(VkDescriptorPoolSize
 			{
 				.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-				.descriptorCount = createInfo.swapchainCount_ * createInfo.samplerCount_
+				.descriptorCount = createInfo.frameCount_ * createInfo.samplerCount_
 			});
 	}
 
@@ -37,7 +37,7 @@ void VulkanDescriptor::CreatePool(VulkanDevice& vkDev,
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = createInfo.flags_,
-		.maxSets = static_cast<uint32_t>(createInfo.swapchainCount_ * createInfo.setCountPerSwapchain_),
+		.maxSets = static_cast<uint32_t>(createInfo.frameCount_ * createInfo.setCountPerFrame_),
 		.poolSizeCount = static_cast<uint32_t>(poolSizes.size()),
 		.pPoolSizes = poolSizes.data()
 	};
