@@ -23,7 +23,7 @@ PipelineSkybox::PipelineSkybox(VulkanDevice& vkDev,
 		}),
 	envCubemap_(envMap)
 {
-	CreateUniformBuffers(vkDev, cameraUBOBuffers_, sizeof(CameraUBO));
+	CreateMultipleUniformBuffers(vkDev, cameraUBOBuffers_, sizeof(CameraUBO), vkDev.GetSwapchainImageCount());
 
 	// Note that this pipeline is offscreen rendering
 	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, config_.msaaSamples_);

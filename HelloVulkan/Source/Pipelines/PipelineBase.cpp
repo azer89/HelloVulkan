@@ -32,18 +32,18 @@ PipelineBase::~PipelineBase()
 	vkDestroyPipeline(device_, pipeline_, nullptr);
 }
 
-void PipelineBase::CreateUniformBuffers(
+void PipelineBase::CreateMultipleUniformBuffers(
 	VulkanDevice& vkDev,
 	std::vector<VulkanBuffer>& buffers,
-	size_t uniformDataSize)
+	uint32_t dataSize,
+	size_t bufferCount)
 {
-	const size_t swapChainImageSize = vkDev.GetSwapchainImageCount(); // TODO Set this as a parameter
-	buffers.resize(swapChainImageSize);
-	for (size_t i = 0; i < swapChainImageSize; i++)
+	buffers.resize(bufferCount);
+	for (size_t i = 0; i < bufferCount; i++)
 	{
 		buffers[i].CreateBuffer(
 			vkDev,
-			uniformDataSize,
+			dataSize,
 			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 		);

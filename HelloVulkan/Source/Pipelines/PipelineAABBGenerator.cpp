@@ -12,7 +12,7 @@ PipelineAABBGenerator::PipelineAABBGenerator(
 	}),
 	cfBuffers_(cfBuffers)
 {
-	CreateUniformBuffers(vkDev, cfUBOBuffers_, sizeof(ClusterForwardUBO));
+	CreateMultipleUniformBuffers(vkDev, cfUBOBuffers_, sizeof(ClusterForwardUBO), vkDev.GetSwapchainImageCount());
 	CreateDescriptor(vkDev);
 	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_);
 	CreateComputePipeline(vkDev, AppConfig::ShaderFolder + "ClusteredForward/AABBGenerator.comp");

@@ -22,7 +22,7 @@ PipelineLightRender::PipelineLightRender(
 	lights_(lights),
 	shouldRender_(true)
 {
-	CreateUniformBuffers(vkDev, cameraUBOBuffers_, sizeof(CameraUBO));
+	CreateMultipleUniformBuffers(vkDev, cameraUBOBuffers_, sizeof(CameraUBO), vkDev.GetSwapchainImageCount());
 
 	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, config_.msaaSamples_);
 

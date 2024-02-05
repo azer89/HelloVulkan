@@ -59,10 +59,11 @@ protected:
 
 	// UBO
 	// TODO move to VulkanBuffer
-	void CreateUniformBuffers(
+	void CreateMultipleUniformBuffers(
 		VulkanDevice& vkDev,
 		std::vector<VulkanBuffer>& buffers,
-		size_t uniformDataSize);
+		uint32_t dataSize,
+		size_t bufferCount);
 
 	void CreatePipelineLayout(VulkanDevice& vkDev,
 		VkDescriptorSetLayout dsLayout, 
