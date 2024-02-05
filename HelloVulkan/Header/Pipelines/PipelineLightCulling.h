@@ -20,14 +20,14 @@ public:
 	void ResetGlobalIndex(VulkanDevice& vkDev)
 	{
 		uint32_t zeroValue = 0u;
-		uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
-		cfBuffers_->globalIndexCountBuffers_[swapchainImageIndex].UploadBufferData(vkDev, 0, &zeroValue, sizeof(uint32_t));
+		uint32_t frameIndex = vkDev.GetFrameIndex();
+		cfBuffers_->globalIndexCountBuffers_[frameIndex].UploadBufferData(vkDev, 0, &zeroValue, sizeof(uint32_t));
 	}
 
 	void SetClusterForwardUBO(VulkanDevice& vkDev, ClusterForwardUBO ubo)
 	{
-		size_t currentImage = vkDev.GetCurrentSwapchainImageIndex();
-		cfUBOBuffers_[currentImage].UploadBufferData(vkDev, 0, &ubo, sizeof(ClusterForwardUBO));
+		size_t frameIndex = vkDev.GetFrameIndex();
+		cfUBOBuffers_[frameIndex].UploadBufferData(vkDev, 0, &ubo, sizeof(ClusterForwardUBO));
 	}
 
 private:
@@ -38,7 +38,7 @@ private:
 	std::vector<VkDescriptorSet> descriptorSets_;
 
 private:
-	void Execute(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, uint32_t swapchainImageIndex);
+	void Execute(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, uint32_t frameIndex);
 	void CreateDescriptor(VulkanDevice& vkDev);
 };
 

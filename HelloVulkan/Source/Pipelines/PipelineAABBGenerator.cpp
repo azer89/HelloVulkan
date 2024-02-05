@@ -12,7 +12,7 @@ PipelineAABBGenerator::PipelineAABBGenerator(
 	}),
 	cfBuffers_(cfBuffers)
 {
-	CreateMultipleUniformBuffers(vkDev, cfUBOBuffers_, sizeof(ClusterForwardUBO), vkDev.GetSwapchainImageCount());
+	CreateMultipleUniformBuffers(vkDev, cfUBOBuffers_, sizeof(ClusterForwardUBO), AppConfig::FrameOverlapCount);
 	CreateDescriptor(vkDev);
 	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_);
 	CreateComputePipeline(vkDev, AppConfig::ShaderFolder + "ClusteredForward/AABBGenerator.comp");
@@ -33,18 +33,18 @@ void PipelineAABBGenerator::OnWindowResized(VulkanDevice& vkDev)
 
 void PipelineAABBGenerator::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
-	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
-	if (!cfBuffers_->IsAABBDirty(swapchainImageIndex))
+	uint32_t frameIndex = vkDev.GetFrameIndex();
+	if (!cfBuffers_->IsAABBDirty(frameIndex))
 	{
 		return;
 	}
 
-	Execute(vkDev, commandBuffer, swapchainImageIndex);
+	Execute(vkDev, commandBuffer, frameIndex);
 
-	cfBuffers_->SetAABBClean(swapchainImageIndex);
+	cfBuffers_->SetAABBClean(frameIndex);
 }
 
-void PipelineAABBGenerator::Execute(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, uint32_t swapchainImageIndex)
+void PipelineAABBGenerator::Execute(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, uint32_t frameIndex)
 {
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline_);
 
@@ -54,7 +54,7 @@ void PipelineAABBGenerator::Execute(VulkanDevice& vkDev, VkCommandBuffer command
 		pipelineLayout_,
 		0, // firstSet
 		1, // descriptorSetCount
-		&descriptorSets_[swapchainImageIndex],
+		&descriptorSets_[frameIndex],
 		0, // dynamicOffsetCount
 		0); // pDynamicOffsets
 
@@ -70,7 +70,7 @@ void PipelineAABBGenerator::Execute(VulkanDevice& vkDev, VkCommandBuffer command
 		.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
 		.srcQueueFamilyIndex = vkDev.GetComputeFamily(),
 		.dstQueueFamilyIndex = vkDev.GetGraphicsFamily(),
-		.buffer = cfBuffers_->aabbBuffers_[swapchainImageIndex].buffer_,
+		.buffer = cfBuffers_->aabbBuffers_[frameIndex].buffer_,
 		.offset = 0,
 		.size = VK_WHOLE_SIZE };
 	vkCmdPipelineBarrier(commandBuffer,
@@ -86,7 +86,7 @@ void PipelineAABBGenerator::Execute(VulkanDevice& vkDev, VkCommandBuffer command
 
 void PipelineAABBGenerator::CreateDescriptor(VulkanDevice& vkDev)
 {
-	uint32_t imageCount = static_cast<uint32_t>(vkDev.GetSwapchainImageCount());
+	uint32_t imageCount = AppConfig::FrameOverlapCount;
 
 	// Pool
 	descriptor_.CreatePool(

@@ -14,7 +14,7 @@ PipelineLightCulling::PipelineLightCulling(
 	lights_(lights),
 	cfBuffers_(cfBuffers)
 {
-	CreateMultipleUniformBuffers(vkDev, cfUBOBuffers_, sizeof(ClusterForwardUBO), vkDev.GetSwapchainImageCount());
+	CreateMultipleUniformBuffers(vkDev, cfUBOBuffers_, sizeof(ClusterForwardUBO), AppConfig::FrameOverlapCount);
 	CreateDescriptor(vkDev);
 	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_);
 
@@ -34,11 +34,11 @@ PipelineLightCulling::~PipelineLightCulling()
 
 void PipelineLightCulling::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
-	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
-	Execute(vkDev, commandBuffer, swapchainImageIndex);
+	uint32_t frameIndex = vkDev.GetFrameIndex();
+	Execute(vkDev, commandBuffer, frameIndex);
 }
 
-void PipelineLightCulling::Execute(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, uint32_t swapchainImageIndex)
+void PipelineLightCulling::Execute(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, uint32_t frameIndex)
 {
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline_);
 
@@ -48,7 +48,7 @@ void PipelineLightCulling::Execute(VulkanDevice& vkDev, VkCommandBuffer commandB
 		pipelineLayout_,
 		0, // firstSet
 		1, // descriptorSetCount
-		&descriptorSets_[swapchainImageIndex],
+		&descriptorSets_[frameIndex],
 		0, // dynamicOffsetCount
 		0); // pDynamicOffsets
 
@@ -71,7 +71,7 @@ void PipelineLightCulling::Execute(VulkanDevice& vkDev, VkCommandBuffer commandB
 		.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
 		.srcQueueFamilyIndex = vkDev.GetComputeFamily(),
 		.dstQueueFamilyIndex = vkDev.GetGraphicsFamily(),
-		.buffer = cfBuffers_->lightCellsBuffers_[swapchainImageIndex].buffer_,
+		.buffer = cfBuffers_->lightCellsBuffers_[frameIndex].buffer_,
 		.offset = 0,
 		.size = VK_WHOLE_SIZE
 	};
@@ -84,7 +84,7 @@ void PipelineLightCulling::Execute(VulkanDevice& vkDev, VkCommandBuffer commandB
 		.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
 		.srcQueueFamilyIndex = vkDev.GetComputeFamily(),
 		.dstQueueFamilyIndex = vkDev.GetGraphicsFamily(),
-		.buffer = cfBuffers_->lightIndicesBuffers_[swapchainImageIndex].buffer_,
+		.buffer = cfBuffers_->lightIndicesBuffers_[frameIndex].buffer_,
 		.offset = 0,
 		.size = VK_WHOLE_SIZE,
 	};
@@ -109,7 +109,7 @@ void PipelineLightCulling::Execute(VulkanDevice& vkDev, VkCommandBuffer commandB
 
 void PipelineLightCulling::CreateDescriptor(VulkanDevice& vkDev)
 {
-	uint32_t imageCount = static_cast<uint32_t>(vkDev.GetSwapchainImageCount());
+	uint32_t imageCount = static_cast<uint32_t>(AppConfig::FrameOverlapCount);
 
 	// Pool
 	descriptor_.CreatePool(

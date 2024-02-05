@@ -14,7 +14,7 @@ void ClusterForwardBuffers::SetAABBDirty()
 void ClusterForwardBuffers::CreateBuffers(VulkanDevice& vkDev, uint32_t lightCount)
 {
 	// TODO Find a way to reduce duplicate
-	uint32_t bufferCount = vkDev.GetSwapchainImageCount();
+	uint32_t bufferCount = AppConfig::FrameOverlapCount;
 
 	// AABB
 	uint32_t aabbBufferSize = ClusterForwardConfig::numClusters * sizeof(AABB);

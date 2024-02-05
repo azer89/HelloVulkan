@@ -22,7 +22,7 @@ PipelineLightRender::PipelineLightRender(
 	lights_(lights),
 	shouldRender_(true)
 {
-	CreateMultipleUniformBuffers(vkDev, cameraUBOBuffers_, sizeof(CameraUBO), vkDev.GetSwapchainImageCount());
+	CreateMultipleUniformBuffers(vkDev, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
 
 	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, config_.msaaSamples_);
 
@@ -62,7 +62,7 @@ void PipelineLightRender::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer
 		return;
 	}
 
-	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
+	uint32_t frameIndex = vkDev.GetFrameIndex();
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
 	BindPipeline(vkDev, commandBuffer);
 	vkCmdBindDescriptorSets(
@@ -71,7 +71,7 @@ void PipelineLightRender::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer
 		pipelineLayout_,
 		0,
 		1,
-		&descriptorSets_[swapchainImageIndex],
+		&descriptorSets_[frameIndex],
 		0,
 		nullptr);
 	vkCmdDraw(
@@ -92,7 +92,7 @@ void PipelineLightRender::CreateDescriptor(VulkanDevice& vkDev)
 			.uboCount_ = 1u,
 			.ssboCount_ = 1u,
 			.samplerCount_ = 0u,
-			.swapchainCount_ = static_cast<uint32_t>(vkDev.GetSwapchainImageCount()),
+			.swapchainCount_ = AppConfig::FrameOverlapCount,
 			.setCountPerSwapchain_ = 1u,
 		});
 
@@ -112,10 +112,10 @@ void PipelineLightRender::CreateDescriptor(VulkanDevice& vkDev)
 	});
 
 	// Set
-	size_t swapchainLength = vkDev.GetSwapchainImageCount();
-	descriptorSets_.resize(swapchainLength);
+	size_t frameCount = AppConfig::FrameOverlapCount;
+	descriptorSets_.resize(frameCount);
 
-	for (size_t i = 0; i < swapchainLength; ++i)
+	for (size_t i = 0; i < frameCount; ++i)
 	{
 		VkDescriptorBufferInfo bufferInfo1 = {.buffer = cameraUBOBuffers_[i].buffer_, .offset = 0, .range = sizeof(CameraUBO)};
 		VkDescriptorBufferInfo bufferInfo2 = {.buffer = lights_->GetSSBOBuffer(), .offset = 0, .range = lights_->GetSSBOSize()};

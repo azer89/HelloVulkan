@@ -32,16 +32,16 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 	brdfLUT_(brdfLUT)
 {
 	// Per frame UBO
-	CreateMultipleUniformBuffers(vkDev, cameraUBOBuffers_, sizeof(CameraUBO), vkDev.GetSwapchainImageCount());
+	CreateMultipleUniformBuffers(vkDev, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
 
 	// Model UBO
 	for (Model* model : models_)
 	{
-		CreateMultipleUniformBuffers(vkDev, model->modelBuffers_, sizeof(ModelUBO), vkDev.GetSwapchainImageCount());
+		CreateMultipleUniformBuffers(vkDev, model->modelBuffers_, sizeof(ModelUBO), AppConfig::FrameOverlapCount);
 	}
 
 	// Cluster forward UBO
-	CreateMultipleUniformBuffers(vkDev, cfUBOBuffers_, sizeof(ClusterForwardUBO), vkDev.GetSwapchainImageCount());
+	CreateMultipleUniformBuffers(vkDev, cfUBOBuffers_, sizeof(ClusterForwardUBO), AppConfig::FrameOverlapCount);
 
 	// Note that this pipeline is offscreen rendering
 	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, config_.msaaSamples_);
@@ -89,7 +89,7 @@ PipelinePBRClusterForward::~PipelinePBRClusterForward()
 
 void PipelinePBRClusterForward::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
-	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
+	uint32_t frameIndex = vkDev.GetFrameIndex();
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
 
 	BindPipeline(vkDev, commandBuffer);
@@ -111,7 +111,7 @@ void PipelinePBRClusterForward::FillCommandBuffer(VulkanDevice& vkDev, VkCommand
 				pipelineLayout_,
 				0,
 				1,
-				&mesh.descriptorSets_[swapchainImageIndex],
+				&mesh.descriptorSets_[frameIndex],
 				0,
 				nullptr);
 
@@ -146,7 +146,7 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanDevice& vkDev)
 			.uboCount_ = UBO_COUNT * static_cast<uint32_t>(models_.size()),
 			.ssboCount_ = SSBO_COUNT,
 			.samplerCount_ = (PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT) * numMeshes,
-			.swapchainCount_ = static_cast<uint32_t>(vkDev.GetSwapchainImageCount()),
+			.swapchainCount_ = AppConfig::FrameOverlapCount,
 			.setCountPerSwapchain_ = numMeshes,
 		});
 
@@ -194,10 +194,10 @@ void PipelinePBRClusterForward::CreateDescriptorSet(VulkanDevice& vkDev, Model* 
 		meshTextureInfos[index] = elem.second->GetDescriptorImageInfo();
 	}
 
-	size_t swapchainLength = vkDev.GetSwapchainImageCount();
-	mesh.descriptorSets_.resize(swapchainLength);
+	size_t frameCount = AppConfig::FrameOverlapCount;
+	mesh.descriptorSets_.resize(frameCount);
 
-	for (size_t i = 0; i < swapchainLength; i++)
+	for (size_t i = 0; i < frameCount; i++)
 	{
 		VkDescriptorBufferInfo bufferInfo1 = { cameraUBOBuffers_[i].buffer_, 0, sizeof(CameraUBO) };
 		VkDescriptorBufferInfo bufferInfo2 = { parentModel->modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };

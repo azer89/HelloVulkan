@@ -26,8 +26,8 @@ struct DescriptorPoolCreateInfo
 	uint32_t uboCount_ = 0;
 	uint32_t ssboCount_ = 0;
 	uint32_t samplerCount_ = 0;
-	uint32_t swapchainCount_ = 0;
-	uint32_t setCountPerSwapchain_ = 0;
+	uint32_t swapchainCount_ = 0; // TODO Rename to frameCount_
+	uint32_t setCountPerSwapchain_ = 0; // TODO Rename to setCountPerFrame_
 	VkDescriptorPoolCreateFlags flags_ = 0;
 };
 

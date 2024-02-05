@@ -43,10 +43,11 @@ public:
 		return static_cast<uint32_t>(meshes_.size());
 	}
 
+	// TODO Probably move the buffers to pipelines
 	void SetModelUBO(VulkanDevice& vkDev, ModelUBO ubo)
 	{
-		uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
-		modelBuffers_[swapchainImageIndex].UploadBufferData(vkDev, 0, &ubo, sizeof(ModelUBO));
+		uint32_t frameIndex = vkDev.GetFrameIndex();
+		modelBuffers_[frameIndex].UploadBufferData(vkDev, 0, &ubo, sizeof(ModelUBO));
 	}
 
 private:
