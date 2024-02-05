@@ -37,7 +37,7 @@ protected:
 
 	// Init functions
 	void InitVulkan();
-	void InitIMGUI();
+	void InitImGui();
 	void InitGLSLang();
 	void InitGLFW();
 	void InitCamera();

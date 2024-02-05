@@ -19,7 +19,7 @@ AppBase::AppBase() :
 	InitGLFW();
 	InitGLSLang();
 	InitVulkan();
-	InitIMGUI();
+	InitImGui();
 	InitCamera();
 	InitTiming();
 }
@@ -269,7 +269,7 @@ void AppBase::OnWindowResized()
 	shouldRecreateSwapchain_ = false;
 }
 
-void AppBase::InitIMGUI()
+void AppBase::InitImGui()
 {
 	showImgui_ = true;
 }
