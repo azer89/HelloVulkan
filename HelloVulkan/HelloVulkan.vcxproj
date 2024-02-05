@@ -158,6 +158,7 @@
   <ItemGroup>
     <ClInclude Include="Header\Apps\AppBase.h" />
     <ClInclude Include="Header\Apps\AppPBR.h" />
+    <ClInclude Include="Header\Apps\AppPBRClusterForward.h" />
     <ClInclude Include="Header\Camera.h" />
     <ClInclude Include="Header\ClusterForwardBuffers.h" />
     <ClInclude Include="Header\Configs.h" />
@@ -197,6 +198,7 @@
   <ItemGroup>
     <ClCompile Include="Source\Apps\AppBase.cpp" />
     <ClCompile Include="Source\Apps\AppPBR.cpp" />
+    <ClCompile Include="Source\Apps\AppPBRClusterForward.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\ClusterForwardBuffers.cpp" />
     <ClCompile Include="Source\Lights.cpp" />

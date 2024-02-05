@@ -200,6 +200,9 @@
     <ClInclude Include="Header\PushConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Apps\AppPBRClusterForward.h">
+      <Filter>Header Files\Apps</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">
@@ -297,6 +300,9 @@
     </ClCompile>
     <ClCompile Include="Source\Pipelines\PipelinePBRClusterForward.cpp">
       <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Apps\AppPBRClusterForward.cpp">
+      <Filter>Source Files\Apps</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

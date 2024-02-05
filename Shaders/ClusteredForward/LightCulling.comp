@@ -21,7 +21,7 @@ layout(set = 0, binding = 0) readonly buffer Clusters
 };
 
 // SSBO (input)
-layout(set = 0, binding = 1) buffer Lights 
+layout(set = 0, binding = 1) readonly buffer Lights 
 { 
 	LightData lights[]; 
 };
