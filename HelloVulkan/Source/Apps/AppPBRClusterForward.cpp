@@ -198,11 +198,12 @@ void AppPBRClusterForward::DestroyResources()
 
 void AppPBRClusterForward::UpdateUBOs()
 {
+	// Camera UBO
 	CameraUBO ubo = camera_->GetCameraUBO();
 	lightPtr_->SetCameraUBO(vulkanDevice_, ubo);
 	pbrPtr_->SetCameraUBO(vulkanDevice_, ubo);
 
-	// Remove translation
+	// Remove translation for skybox
 	CameraUBO skyboxUbo = ubo;
 	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view));
 	skyboxPtr_->SetCameraUBO(vulkanDevice_, skyboxUbo);
@@ -214,6 +215,7 @@ void AppPBRClusterForward::UpdateUBOs()
 	};
 	model_->SetModelUBO(vulkanDevice_, modelUBO1);
 
+	// Clustered forward
 	ClusterForwardUBO cfUBO = camera_->GetClusterForwardUBO();
 	aabbPtr_->SetClusterForwardUBO(vulkanDevice_, cfUBO);
 	lightCullPtr_->ResetGlobalIndex(vulkanDevice_);
@@ -223,13 +225,11 @@ void AppPBRClusterForward::UpdateUBOs()
 
 void AppPBRClusterForward::UpdateUI()
 {
+	imguiPtr_->StartImGui();
+
 	if (!showImgui_)
 	{
-		ImGui_ImplVulkan_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-		ImGui::End();
-		ImGui::Render();
+		imguiPtr_->EndImGui();
 
 		return;
 	}
@@ -241,9 +241,6 @@ void AppPBRClusterForward::UpdateUI()
 	static float lightFalloff = 1.0f;
 	static float albedoMultipler = 0.0f;
 
-	ImGui_ImplVulkan_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
 	ImGui::SetNextWindowSize(ImVec2(525, 250));
 	ImGui::Begin(AppConfig::ScreenTitle.c_str());
 
@@ -256,9 +253,9 @@ void AppPBRClusterForward::UpdateUI()
 	ImGui::SliderFloat("Base Reflectivity", &pbrBaseReflectivity, 0.01f, 1.f);
 	ImGui::SliderFloat("Max Mipmap Lod", &maxReflectivityLod, 0.1f, cubemapMipmapCount_);
 
-	ImGui::End();
-	ImGui::Render();
+	imguiPtr_->EndImGui();
 
+	// TODO Set as a struct
 	lightPtr_->RenderEnable(lightRender);
 	pbrPtr_->SetLightIntensity(lightIntensity);
 	pbrPtr_->SetBaseReflectivity(pbrBaseReflectivity);
