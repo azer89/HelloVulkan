@@ -14,7 +14,7 @@ PipelineLightCulling::PipelineLightCulling(
 	lights_(lights),
 	cfBuffers_(cfBuffers)
 {
-	CreateUniformBuffers(vkDev, cfUBOBuffers_, sizeof(ClusterForwardUBO));
+	CreateMultipleUniformBuffers(vkDev, cfUBOBuffers_, sizeof(ClusterForwardUBO), vkDev.GetSwapchainImageCount());
 	CreateDescriptor(vkDev);
 	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_);
 

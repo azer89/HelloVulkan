@@ -12,6 +12,9 @@ public:
 		GLFWwindow* glfwWindow);
 	~PipelineImGui();
 
+	void StartImGui();
+	void EndImGui();
+
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
 };
 

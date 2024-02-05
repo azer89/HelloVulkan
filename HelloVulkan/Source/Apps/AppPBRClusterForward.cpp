@@ -1,20 +1,20 @@
-#include "AppPBR.h"
-#include "Configs.h"
+#include "AppPBRClusterForward.h"
 #include "PipelineEquirect2Cube.h"
 #include "PipelineCubeFilter.h"
 #include "PipelineBRDFLUT.h"
+#include "Configs.h"
+#include "PushConstants.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_volk.h"
 
-AppPBR::AppPBR() :
-	modelRotation_(0.f)
+AppPBRClusterForward::AppPBRClusterForward() 
 {
 }
 
-void AppPBR::Init()
+void AppPBRClusterForward::Init()
 {
 	// Initialize attachments
 	CreateSharedImageResources();
@@ -22,11 +22,13 @@ void AppPBR::Init()
 	// Initialize lights
 	InitLights();
 
-	std::string hdrFile = AppConfig::TextureFolder + "piazza_bologni_1k.hdr";
+	cfBuffers_.CreateBuffers(vulkanDevice_, lights_.GetLightCount());
+
+	std::string hdrFile = AppConfig::TextureFolder + "dikhololo_night_4k.hdr";
 
 	model_ = std::make_unique<Model>(
 		vulkanDevice_, 
-		AppConfig::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
+		AppConfig::ModelFolder + "Sponza//Sponza.gltf");
 	std::vector<Model*> models = {model_.get()};
 
 	// Create a cubemap from the input HDR
@@ -79,10 +81,13 @@ void AppPBR::Init()
 		RenderPassBit::ColorClear | 
 		RenderPassBit::DepthClear
 	);
-	pbrPtr_ = std::make_unique<PipelinePBR>(
+	aabbPtr_ = std::make_unique<PipelineAABBGenerator>(vulkanDevice_, &cfBuffers_);
+	lightCullPtr_ = std::make_unique<PipelineLightCulling>(vulkanDevice_, &lights_, &cfBuffers_);
+	pbrPtr_ = std::make_unique<PipelinePBRClusterForward>(
 		vulkanDevice_,
 		models,
 		&lights_,
+		&cfBuffers_,
 		&specularCubemap_,
 		&diffuseCubemap_,
 		&brdfLut_,
@@ -114,6 +119,8 @@ void AppPBR::Init()
 		// Must be in order
 		clearPtr_.get(),
 		skyboxPtr_.get(),
+		aabbPtr_.get(),
+		lightCullPtr_.get(),
 		pbrPtr_.get(),
 		lightPtr_.get(),
 		resolveMSPtr_.get(),
@@ -123,35 +130,45 @@ void AppPBR::Init()
 	};
 }
 
-void AppPBR::InitLights()
+void AppPBRClusterForward::InitLights()
 {
-	// Lights (SSBO)
-	lights_.AddLights(vulkanDevice_,
+	std::vector<LightData> lights;
+
+	float pi2 = glm::two_pi<float>();
+	constexpr unsigned int NR_LIGHTS = 1000;
+	for (unsigned int i = 0; i < NR_LIGHTS; ++i)
 	{
-		{
-			.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f),
-			.color_ = glm::vec4(1.f),
-			.radius_ = 10.0f
-		},
-		{
-			.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f),
-			.color_ = glm::vec4(1.f),
-			.radius_ = 10.0f
-		},
-		{
-			.position_ = glm::vec4(-1.5f, 0.7f, -1.5f, 1.f),
-			.color_ = glm::vec4(1.f),
-			.radius_ = 10.0f
-		},
-		{
-			.position_ = glm::vec4(1.5f, 0.7f, -1.5f, 1.f),
-			.color_ = glm::vec4(1.f),
-			.radius_ = 10.0f
-		}
-	});
+		float yPos = Utility::RandomNumber<float>(-2.f, 10.0f);
+		float radius = Utility::RandomNumber<float>(0.0f, 10.0f);
+		float rad = Utility::RandomNumber<float>(0.0f, pi2);
+		float xPos = glm::cos(rad);
+
+		glm::vec4 position(
+			glm::cos(rad) * radius,
+			yPos,
+			glm::sin(rad) * radius,
+			1.f
+		);
+
+		glm::vec4 color(
+			Utility::RandomNumber<float>(0.0f, 1.0f),
+			Utility::RandomNumber<float>(0.0f, 1.0f),
+			Utility::RandomNumber<float>(0.0f, 1.0f),
+			1.f
+		);
+
+		LightData l;
+		l.color_ = color;
+		l.position_ = position;
+		l.radius_ = Utility::RandomNumber<float>(0.5f, 2.0f);
+
+		lights.push_back(l);
+	}
+
+	lights_.AddLights(vulkanDevice_, lights);
 }
 
-void AppPBR::DestroyResources()
+void AppPBRClusterForward::DestroyResources()
 {
 	// Destroy images
 	environmentCubemap_.Destroy(vulkanDevice_.GetDevice());
@@ -165,10 +182,14 @@ void AppPBR::DestroyResources()
 	// Lights
 	lights_.Destroy();
 
+	cfBuffers_.Destroy(vulkanDevice_.GetDevice());
+
 	// Destroy renderers
 	clearPtr_.reset();
 	finishPtr_.reset();
 	skyboxPtr_.reset();
+	aabbPtr_.reset();
+	lightCullPtr_.reset();
 	pbrPtr_.reset();
 	lightPtr_.reset();
 	resolveMSPtr_.reset();
@@ -176,30 +197,34 @@ void AppPBR::DestroyResources()
 	imguiPtr_.reset();
 }
 
-void AppPBR::UpdateUBOs()
+void AppPBRClusterForward::UpdateUBOs()
 {
+	// Camera UBO
 	CameraUBO ubo = camera_->GetCameraUBO();
 	lightPtr_->SetCameraUBO(vulkanDevice_, ubo);
 	pbrPtr_->SetCameraUBO(vulkanDevice_, ubo);
 
-	// Remove translation
+	// Remove translation for skybox
 	CameraUBO skyboxUbo = ubo;
 	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view));
 	skyboxPtr_->SetCameraUBO(vulkanDevice_, skyboxUbo);
 
 	// Model UBOs
-	glm::mat4 modelMatrix(1.f);
-	modelMatrix = glm::rotate(modelMatrix, modelRotation_, glm::vec3(0.f, 1.f, 0.f));
-	//modelRotation_ += deltaTime_ * 0.1f;
-
 	ModelUBO modelUBO1
 	{
-		.model = modelMatrix
+		.model = glm::mat4(1.0)
 	};
 	model_->SetModelUBO(vulkanDevice_, modelUBO1);
+
+	// Clustered forward
+	ClusterForwardUBO cfUBO = camera_->GetClusterForwardUBO();
+	aabbPtr_->SetClusterForwardUBO(vulkanDevice_, cfUBO);
+	lightCullPtr_->ResetGlobalIndex(vulkanDevice_);
+	lightCullPtr_->SetClusterForwardUBO(vulkanDevice_, cfUBO);
+	pbrPtr_->SetClusterForwardUBO(vulkanDevice_, cfUBO);
 }
 
-void AppPBR::UpdateUI()
+void AppPBRClusterForward::UpdateUI()
 {
 	imguiPtr_->StartImGui();
 
@@ -231,7 +256,7 @@ void AppPBR::UpdateUI()
 }
 
 // This is called from main.cpp
-int AppPBR::MainLoop()
+int AppPBRClusterForward::MainLoop()
 {
 	Init();
 

@@ -164,7 +164,7 @@
     <ClInclude Include="Header\Pipelines\PipelineImGui.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Pipelines\PipelineLight.h">
+    <ClInclude Include="Header\Pipelines\PipelineLightRender.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
     <ClInclude Include="Header\Pipelines\PipelinePBR.h">
@@ -199,6 +199,9 @@
     </ClInclude>
     <ClInclude Include="Header\PushConstants.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Apps\AppPBRClusterForward.h">
+      <Filter>Header Files\Apps</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -268,7 +271,7 @@
     <ClCompile Include="Source\Pipelines\PipelineImGui.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Pipelines\PipelineLight.cpp">
+    <ClCompile Include="Source\Pipelines\PipelineLightRender.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
     <ClCompile Include="Source\Pipelines\PipelinePBR.cpp">
@@ -297,6 +300,9 @@
     </ClCompile>
     <ClCompile Include="Source\Pipelines\PipelinePBRClusterForward.cpp">
       <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Apps\AppPBRClusterForward.cpp">
+      <Filter>Source Files\Apps</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

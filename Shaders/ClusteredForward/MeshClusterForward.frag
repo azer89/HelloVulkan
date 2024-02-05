@@ -48,10 +48,9 @@ layout(set = 0, binding = 2) uniform ClusterForwardUBO
 }
 cfUBO;
 
-// TODO Simplify these
 layout(set = 0, binding = 3) readonly buffer Lights { LightData lights []; };
-layout(set = 0, binding = 4) buffer LightCells { LightCell data []; } lightCells;
-layout(set = 0, binding = 5) buffer LightIndices{ uint data []; } lightIndices;
+layout(set = 0, binding = 4) readonly buffer LightCells { LightCell lightCells []; };
+layout(set = 0, binding = 5) readonly buffer LightIndices { uint lightIndices []; };
 layout(set = 0, binding = 6) readonly buffer Clusters { AABB data []; } clusters;
 
 layout(set = 0, binding = 7) uniform sampler2D textureAlbedo;
@@ -64,11 +63,6 @@ layout(set = 0, binding = 12) uniform sampler2D textureEmissive;
 layout(set = 0, binding = 13) uniform samplerCube specularMap;
 layout(set = 0, binding = 14) uniform samplerCube diffuseMap;
 layout(set = 0, binding = 15) uniform sampler2D brdfLUT;
-
-vec3 DEBUG_COLORS[8] = vec3[](
-	vec3(1, 0, 0), vec3(0, 0, 1), vec3(0, 1, 0), vec3(0, 1, 1),
-	vec3(1, 0, 0), vec3(1, 0, 1), vec3(1, 1, 0), vec3(1, 1, 1)
-);
 
 // Tangent-normals to world-space
 vec3 GetNormalFromMap(vec3 tangentNormal, vec3 worldPos, vec3 normal, vec2 texCoord)
@@ -184,26 +178,25 @@ float LinearDepth(float z, float near, float far)
 
 void main()
 {
+	// Clustered Forward
+	// Must use GLM_FORCE_DEPTH_ZERO_TO_ONE preprocessor, or the code below will fail
 	float linDepth = LinearDepth(gl_FragCoord.z, cfUBO.cameraNear, cfUBO.cameraFar);
 	uint zIndex = uint(max(log2(linDepth) * cfUBO.sliceScaling + cfUBO.sliceBias, 0.0));
-
 	vec2 tileSize =
 		vec2(cfUBO.screenSize.x / float(cfUBO.sliceCountX),
 			 cfUBO.screenSize.y / float(cfUBO.sliceCountY));
-
 	uvec3 cluster = uvec3(
 		gl_FragCoord.x / tileSize.x,
 		gl_FragCoord.y / tileSize.y,
 		zIndex);
-
 	uint clusterIdx =
 		cluster.x +
 		cluster.y * cfUBO.sliceCountX +
 		cluster.z * cfUBO.sliceCountX * cfUBO.sliceCountY;
+	uint lightCount = lightCells[clusterIdx].count;
+	uint lightIndexOffset = lightCells[clusterIdx].offset;
 
-	uint lightCount = lightCells.data[clusterIdx].count;
-	uint lightIndexOffset = lightCells.data[clusterIdx].offset;
-
+	// PBR + IBL
 	vec4 albedo4 = texture(textureAlbedo, texCoord).rgba;
 
 	if (albedo4.a < 0.5)
@@ -211,7 +204,7 @@ void main()
 		discard;
 	}
 
-	// Material properties
+	// PBR + IBL, Material properties
 	vec3 albedo = pow(albedo4.rgb, vec3(2.2)); 
 	vec3 emissive = texture(textureEmissive, texCoord).rgb;
 	float metallic = texture(textureMetalness, texCoord).b;
@@ -237,7 +230,7 @@ void main()
 
 	for(int i = 0; i < lightCount; ++i)
 	{
-		uint lightIndex = lightIndices.data[i + lightIndexOffset];
+		uint lightIndex = lightIndices[i + lightIndexOffset];
 		LightData light = lights[lightIndex];
 
 		Lo += Radiance(

@@ -35,12 +35,12 @@ PipelinePBR::PipelinePBR(
 	brdfLUT_(brdfLUT)
 {
 	// Per frame UBO
-	CreateUniformBuffers(vkDev, cameraUBOBuffers_, sizeof(CameraUBO));
+	CreateMultipleUniformBuffers(vkDev, cameraUBOBuffers_, sizeof(CameraUBO), vkDev.GetSwapchainImageCount());
 	
 	// Model UBO
 	for (Model* model : models_)
 	{
-		CreateUniformBuffers(vkDev, model->modelBuffers_, sizeof(ModelUBO));
+		CreateMultipleUniformBuffers(vkDev, model->modelBuffers_, sizeof(ModelUBO), vkDev.GetSwapchainImageCount());
 	}
 
 	// Note that this pipeline is offscreen rendering
