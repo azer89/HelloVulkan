@@ -5,16 +5,15 @@ A real-time rendering engine using Vulkan.
 ### Features
 * Clustered Forward Shading, no more deferred!
 * Physically-Based Rendering (PBR) with Cook-Torrance BRDF.
-* Image-Based Lighting.
-* Offscreen rendering to generate:
+* Image-Based Lighting (IBL) with offscreen pipelines to generate:
     * A cubemap from an equirectangular HDR image.
     * Specular and diffuse cubemaps.
     * Compute shader to generate BRDF lookup table.
 * Reinhard tonemap postprocessing.
-* Mesh loading and rendering.
+* glTF Mesh loading and rendering.
 * Multisample anti-aliasing (MSAA).
 * Automatic runtime compilation from GLSL to SPIR-V.
-* A simple abstraction layer that supports a sequence of render passes.
+* A simple abstraction layer that supports a sequence of graphics/compute pipelines.
 * Minor features: Skybox, instancing with SSBOs, ImGui, UBOs, and push constants.
   
 https://github.com/azer89/HelloVulkan/assets/790432/8b0562ed-ab72-4e93-9ce9-31c61c0e986a
@@ -27,13 +26,13 @@ https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d
 
 ### Clustered Forward Shading
 
-I finally implemented "Clustered Forward Shading" which is based on an article by [Angel Ortiz](https://www.aortiz.me/2018/12/21/CG.html). 
+I finally implemented "Clustered Forward Shading" which is based on an article by Angel Ortiz. 
 
 The current implementation consists of two steps. The first step involves subdividing the view frustum into clusters.
 The next step is light culling, where we calculate lights that intersect the clusters. This step removes lights that are too far from a fragment, leading to reduced light iteration inside the final fragment shader.
 
-Although I haven't done a proper testing, a scene with 1000+ point lights can be rendered at 60-100 FPS using a 3060M graphics card.
-If there are too many lights concentrated inside the view frustum, the frame rate will drop regardless.
+Although I haven't done a proper testing, a Sponza scene with 1000+ point lights can be rendered at 60-100 FPS using a 3060M graphics card.
+Also, if there are too many lights end up inside the view frustum, especially when you zoom out, the frame rate will drop regardless, duh!
 
 https://github.com/azer89/HelloVulkan/assets/790432/66b9a30a-d187-495a-9879-8eb11a497087
 
@@ -46,10 +45,10 @@ https://github.com/azer89/HelloVulkan/assets/790432/66b9a30a-d187-495a-9879-8eb1
 ### Credit
 Technical Resources:
 * [learnopengl.com PBR](https://learnopengl.com/PBR/Theory)
-* [Khronos glTF PBR](https://github.com/SaschaWillems/Vulkan-glTF-PBR)
-* [Khronos IBL Sampler](https://github.com/KhronosGroup/glTF-IBL-Sampler)
 * [Epic Games PBR Notes](https://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf)
 * [3D Graphics Rendering Cookbook](https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook)
+* [Angel Ortiz - Clustered Shading](https://www.aortiz.me/2018/12/21/CG.html)
+* A lot of [internet resources](https://github.com/azer89/VulkanResources)
 
 Assets:
 * [Tachikoma](https://sketchfab.com/3d-models/tachikoma-7ec03deb78de4a1b908d2bc736ff0f15)
