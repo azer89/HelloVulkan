@@ -2,6 +2,7 @@
 #define VULKAN_BUFFER
 
 #include "volk.h"
+#include "vk_mem_alloc.h"
 
 #include "VulkanDevice.h"
 
@@ -10,6 +11,7 @@ class VulkanBuffer
 public:
 	VkBuffer buffer_;
 	VkDeviceMemory bufferMemory_;
+	VmaAllocation vmaAllocation_;
 
 public:
 	void Destroy(VkDevice device)
@@ -19,12 +21,6 @@ public:
 	}
 
 	void CreateBuffer(
-		VulkanDevice& vkDev,
-		VkDeviceSize size,
-		VkBufferUsageFlags usage,
-		VkMemoryPropertyFlags properties);
-
-	void CreateSharedBuffer(
 		VulkanDevice& vkDev,
 		VkDeviceSize size,
 		VkBufferUsageFlags usage,

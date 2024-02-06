@@ -38,19 +38,19 @@ void ClusterForwardBuffers::CreateBuffers(VulkanDevice& vkDev, uint32_t lightCou
 
 	for (uint32_t i = 0; i < bufferCount; ++i)
 	{
-		aabbBuffers_[i].CreateSharedBuffer(vkDev, aabbBufferSize,
+		aabbBuffers_[i].CreateBuffer(vkDev, aabbBufferSize,
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-		globalIndexCountBuffers_[i].CreateSharedBuffer(vkDev, sizeof(uint32_t),
+		globalIndexCountBuffers_[i].CreateBuffer(vkDev, sizeof(uint32_t),
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-		lightCellsBuffers_[i].CreateSharedBuffer(vkDev, lightCellsBufferSize,
+		lightCellsBuffers_[i].CreateBuffer(vkDev, lightCellsBufferSize,
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-		lightIndicesBuffers_[i].CreateSharedBuffer(vkDev, lightIndicesBufferSize,
+		lightIndicesBuffers_[i].CreateBuffer(vkDev, lightIndicesBufferSize,
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 	}

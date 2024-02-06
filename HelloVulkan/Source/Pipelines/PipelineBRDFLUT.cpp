@@ -10,7 +10,7 @@ PipelineBRDFLUT::PipelineBRDFLUT(
 		.type_ = PipelineType::Compute
 	})
 {
-	outBuffer_.CreateSharedBuffer(vkDev, IBLConfig::LUTBufferSize,
+	outBuffer_.CreateBuffer(vkDev, IBLConfig::LUTBufferSize,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
