@@ -4,6 +4,7 @@
 #include "VulkanInstance.h"
 
 #include "volk.h"
+#include "vk_mem_alloc.h"
 
 #include <vector>
 
@@ -91,6 +92,9 @@ public:
 	void IncrementFrameIndex();
 	uint32_t GetFrameIndex() const;
 
+	// VMA
+	VmaAllocator GetVMAAllocator() { return vmaAllocator_; }
+
 	// For debugging purpose
 	void SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name);
 
@@ -128,6 +132,8 @@ private:
 		VkImageTiling tiling,
 		VkFormatFeatureFlags features);
 
+	void AllocateVMA(VulkanInstance& instance);
+
 private:
 	VkSwapchainKHR swapchain_;
 	std::vector<VkImage> swapchainImages_;
@@ -159,6 +165,8 @@ private:
 
 	uint32_t frameIndex_;
 	std::vector<FrameData> frameDataArray_;
+
+	VmaAllocator vmaAllocator_;
 };
 
 #endif
