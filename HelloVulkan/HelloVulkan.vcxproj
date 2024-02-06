@@ -110,8 +110,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;glfw3_mt.lib;glfw3dll.lib;assimp-vc143-mtd.lib;volk.lib;ImGui.lib;VulkanMemoryAllocator.lib;GenericCodeGend.lib;glslangd.lib;glslang-default-resource-limitsd.lib;MachineIndependentd.lib;SPIRVd.lib;SPIRV-Toolsd.lib;SPIRV-Tools-optd.lib;OSDependentd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\External\VS_Projects\ImGui\x64\$(Configuration);..\External\VS_Projects\VulkanMemoryAllocator\x64\$(Configuration);..\External\VS_Projects\assimp\lib\$(Configuration);..\External\GLFW\lib-vc2022\;..\External\VS_Projects\volk\$(Configuration);$(VULKAN_SDK)\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;glfw3_mt.lib;glfw3dll.lib;assimp-vc143-mtd.lib;volk.lib;ImGui.lib;GenericCodeGend.lib;glslangd.lib;glslang-default-resource-limitsd.lib;MachineIndependentd.lib;SPIRVd.lib;SPIRV-Toolsd.lib;SPIRV-Tools-optd.lib;OSDependentd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\External\VS_Projects\ImGui\x64\$(Configuration);..\External\VS_Projects\assimp\lib\$(Configuration);..\External\GLFW\lib-vc2022\;..\External\VS_Projects\volk\$(Configuration);$(VULKAN_SDK)\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -130,8 +130,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;glfw3_mt.lib;glfw3dll.lib;assimp-vc143-mt.lib;volk.lib;ImGui.lib;VulkanMemoryAllocator.lib;GenericCodeGen.lib;glslang.lib;glslang-default-resource-limits.lib;MachineIndependent.lib;SPIRV.lib;SPIRV-Tools.lib;SPIRV-Tools-opt.lib;OSDependent.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\External\VS_Projects\ImGui\x64\$(Configuration);..\External\VS_Projects\VulkanMemoryAllocator\x64\$(Configuration);..\External\VS_Projects\assimp\lib\$(Configuration);..\External\GLFW\lib-vc2022\;..\External\VS_Projects\volk\$(Configuration);$(VULKAN_SDK)\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;glfw3_mt.lib;glfw3dll.lib;assimp-vc143-mt.lib;volk.lib;ImGui.lib;GenericCodeGen.lib;glslang.lib;glslang-default-resource-limits.lib;MachineIndependent.lib;SPIRV.lib;SPIRV-Tools.lib;SPIRV-Tools-opt.lib;OSDependent.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\External\VS_Projects\ImGui\x64\$(Configuration);..\External\VS_Projects\assimp\lib\$(Configuration);..\External\GLFW\lib-vc2022\;..\External\VS_Projects\volk\$(Configuration);$(VULKAN_SDK)\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
