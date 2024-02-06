@@ -2,6 +2,7 @@
 #define VULKAN_IMAGE
 
 #include "volk.h"
+#include "vk_mem_alloc.h"
 
 #include "VulkanDevice.h"
 
@@ -24,7 +25,8 @@ class VulkanImage
 {
 public:
 	VkImage image_;
-	VkDeviceMemory imageMemory_;
+	VmaAllocation vmaAllocation_;
+	VmaAllocator vmaAllocator_;
 	VkImageView imageView_;
 
 	// A reusable sampler which can be accessed by multiple Renderers
@@ -38,10 +40,10 @@ public:
 	VkSampleCountFlagBits multisampleCount_;
 
 public:
-
 	VulkanImage() :
 		image_(nullptr),
-		imageMemory_(nullptr),
+		vmaAllocation_(nullptr),
+		vmaAllocator_(nullptr),
 		imageView_(nullptr),
 		defaultImageSampler_(nullptr),
 		width_(0),
@@ -93,7 +95,8 @@ public:
 		VkFormat format,
 		VkImageTiling tiling,
 		VkImageUsageFlags usage,
-		VkMemoryPropertyFlags properties,
+		VmaMemoryUsage memoryUsage,
+		//VkMemoryPropertyFlags properties,
 		VkImageCreateFlags flags = 0,
 		VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
 
@@ -182,12 +185,6 @@ private:
 	bool HasStencilComponent(VkFormat format);
 
 	uint32_t BytesPerTexFormat(VkFormat fmt);
-
-	// TODO Possibly move this to VulkanDevice
-	uint32_t FindMemoryType(
-		VkPhysicalDevice device,
-		uint32_t typeFilter,
-		VkMemoryPropertyFlags properties);
 };
 
 #endif

@@ -17,10 +17,14 @@ int NumMipMap(int w, int h)
 
 void VulkanImage::Destroy(VkDevice device)
 {
-	vkDestroyImageView(device, imageView_, nullptr);
-	vkDestroyImage(device, image_, nullptr);
-	vkFreeMemory(device, imageMemory_, nullptr);
+	if (vmaAllocator_ == nullptr)
+	{
+		return;
+	}
+
 	vkDestroySampler(device, defaultImageSampler_, nullptr);
+	vkDestroyImageView(device, imageView_, nullptr);
+	vmaDestroyImage(vmaAllocator_, image_, vmaAllocation_);
 }
 
 void VulkanImage::CreateImageResources(
@@ -109,7 +113,7 @@ void VulkanImage::CreateColorResources(
 		format,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
+		VMA_MEMORY_USAGE_GPU_ONLY,
 		0u,
 		outputDiffuseSampleCount);
 
@@ -137,7 +141,7 @@ void VulkanImage::CreateDepthResources(
 		depthFormat,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		VMA_MEMORY_USAGE_GPU_ONLY,
 		0u,
 		outputDiffuseSampleCount);
 
@@ -172,7 +176,7 @@ void VulkanImage::CreateImageFromData(
 		texFormat, 
 		VK_IMAGE_TILING_OPTIMAL, 
 		VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
+		VMA_MEMORY_USAGE_GPU_ONLY,
 		flags);
 
 	UpdateImage(vkDev, texWidth, texHeight, texFormat, layerCount, imageData);
@@ -215,7 +219,7 @@ void VulkanImage::CreateImage(
 	VkFormat format,
 	VkImageTiling tiling,
 	VkImageUsageFlags usage,
-	VkMemoryPropertyFlags properties,
+	VmaMemoryUsage memoryUsage,
 	VkImageCreateFlags flags,
 	VkSampleCountFlagBits outputDiffuseSampleCount)
 {
@@ -244,21 +248,19 @@ void VulkanImage::CreateImage(
 		.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED
 	};
 
-	VK_CHECK(vkCreateImage(vkDev.GetDevice(), &imageInfo, nullptr, &image_));
-
-	VkMemoryRequirements memRequirements;
-	vkGetImageMemoryRequirements(vkDev.GetDevice(), image_, &memRequirements);
-
-	const VkMemoryAllocateInfo allocInfo = {
-		.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-		.pNext = nullptr,
-		.allocationSize = memRequirements.size,
-		.memoryTypeIndex = FindMemoryType(vkDev.GetPhysicalDevice(), memRequirements.memoryTypeBits, properties)
+	VmaAllocationCreateInfo allocinfo = {
+		.usage = VMA_MEMORY_USAGE_GPU_ONLY,
+		.requiredFlags = VkMemoryPropertyFlags(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT),
 	};
 
-	VK_CHECK(vkAllocateMemory(vkDev.GetDevice(), &allocInfo, nullptr, &imageMemory_));
-
-	vkBindImageMemory(vkDev.GetDevice(), image_, imageMemory_, 0);
+	vmaAllocator_ = vkDev.GetVMAAllocator();
+	VK_CHECK(vmaCreateImage(
+		vmaAllocator_,
+		&imageInfo, 
+		&allocinfo, 
+		&image_, 
+		&vmaAllocation_, 
+		nullptr));
 }
 
 void VulkanImage::CreateImageView(
@@ -347,22 +349,6 @@ void VulkanImage::CreateSampler(
 	};
 
 	VK_CHECK(vkCreateSampler(vkDev.GetDevice(), &samplerInfo, nullptr, &sampler));
-}
-
-uint32_t VulkanImage::FindMemoryType(VkPhysicalDevice device, uint32_t typeFilter, VkMemoryPropertyFlags properties)
-{
-	VkPhysicalDeviceMemoryProperties memProperties;
-	vkGetPhysicalDeviceMemoryProperties(device, &memProperties);
-
-	for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++)
-	{
-		if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties)
-		{
-			return i;
-		}
-	}
-
-	return 0xFFFFFFFF;
 }
 
 void VulkanImage::UpdateImage(
