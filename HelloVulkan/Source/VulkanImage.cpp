@@ -218,7 +218,7 @@ void VulkanImage::CreateImage(
 	uint32_t layerCount,
 	VkFormat format,
 	VkImageTiling tiling,
-	VkImageUsageFlags usage,
+	VkImageUsageFlags imageUsage,
 	VmaMemoryUsage memoryUsage,
 	VkImageCreateFlags flags,
 	VkSampleCountFlagBits outputDiffuseSampleCount)
@@ -241,7 +241,7 @@ void VulkanImage::CreateImage(
 		.arrayLayers = layerCount_,
 		.samples = outputDiffuseSampleCount,
 		.tiling = tiling,
-		.usage = usage,
+		.usage = imageUsage,
 		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
 		.queueFamilyIndexCount = 0,
 		.pQueueFamilyIndices = nullptr,

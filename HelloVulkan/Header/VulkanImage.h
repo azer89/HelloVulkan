@@ -94,9 +94,8 @@ public:
 		uint32_t layerCount,
 		VkFormat format,
 		VkImageTiling tiling,
-		VkImageUsageFlags usage,
+		VkImageUsageFlags imageUsage,
 		VmaMemoryUsage memoryUsage,
-		//VkMemoryPropertyFlags properties,
 		VkImageCreateFlags flags = 0,
 		VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
 
