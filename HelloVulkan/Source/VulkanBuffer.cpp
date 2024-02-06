@@ -6,7 +6,7 @@
 void VulkanBuffer::CreateBuffer(
 	VulkanDevice& vkDev,
 	VkDeviceSize size,
-	VkBufferUsageFlags usage,
+	VkBufferUsageFlags bufferUsage,
 	VmaMemoryUsage memoryUsage,
 	VmaAllocationCreateFlags flags)
 {
@@ -15,7 +15,7 @@ void VulkanBuffer::CreateBuffer(
 		.pNext = nullptr,
 		.flags = 0,
 		.size = size,
-		.usage = usage,
+		.usage = bufferUsage,
 		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
 		.queueFamilyIndexCount = 0,
 		.pQueueFamilyIndices = nullptr

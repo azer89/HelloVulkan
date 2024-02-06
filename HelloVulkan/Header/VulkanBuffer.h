@@ -23,7 +23,7 @@ public:
 	void CreateBuffer(
 		VulkanDevice& vkDev,
 		VkDeviceSize size,
-		VkBufferUsageFlags usage,
+		VkBufferUsageFlags bufferUsage,
 		VmaMemoryUsage memoryUsage,
 		VmaAllocationCreateFlags flags = VMA_ALLOCATION_CREATE_MAPPED_BIT);
 
