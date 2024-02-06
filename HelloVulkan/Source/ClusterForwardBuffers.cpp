@@ -40,7 +40,7 @@ void ClusterForwardBuffers::CreateBuffers(VulkanDevice& vkDev, uint32_t lightCou
 	{
 		aabbBuffers_[i].CreateBuffer(vkDev, aabbBufferSize,
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-			VMA_MEMORY_USAGE_CPU_TO_GPU);
+			VMA_MEMORY_USAGE_GPU_ONLY);
 
 		globalIndexCountBuffers_[i].CreateBuffer(vkDev, sizeof(uint32_t),
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
@@ -48,11 +48,11 @@ void ClusterForwardBuffers::CreateBuffers(VulkanDevice& vkDev, uint32_t lightCou
 
 		lightCellsBuffers_[i].CreateBuffer(vkDev, lightCellsBufferSize,
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-			VMA_MEMORY_USAGE_CPU_TO_GPU);
+			VMA_MEMORY_USAGE_GPU_ONLY);
 
 		lightIndicesBuffers_[i].CreateBuffer(vkDev, lightIndicesBufferSize,
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-			VMA_MEMORY_USAGE_CPU_TO_GPU);
+			VMA_MEMORY_USAGE_GPU_ONLY);
 	}
 }
 
