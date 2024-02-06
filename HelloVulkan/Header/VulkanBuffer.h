@@ -27,8 +27,7 @@ public:
 		VmaMemoryUsage memoryUsage,
 		VmaAllocationCreateFlags flags = VMA_ALLOCATION_CREATE_MAPPED_BIT);
 
-	// Buffer with memory property of VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
-	void CreateLocalMemoryBuffer
+	void CreateGPUOnlyBuffer
 	(
 		VulkanDevice& vkDev,
 		size_t bufferSize_,

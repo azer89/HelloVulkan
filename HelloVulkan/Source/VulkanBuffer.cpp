@@ -36,8 +36,7 @@ void VulkanBuffer::CreateBuffer(
 		&vmaInfo_));
 }
 
-// TODO Maybe rename to CreateGPUOnlyBuffer
-void VulkanBuffer::CreateLocalMemoryBuffer
+void VulkanBuffer::CreateGPUOnlyBuffer
 (
 	VulkanDevice& vkDev,
 	size_t bufferSize_,

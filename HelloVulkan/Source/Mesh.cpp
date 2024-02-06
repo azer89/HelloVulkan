@@ -33,7 +33,7 @@ Mesh::Mesh(VulkanDevice& vkDev,
 void Mesh::Setup(VulkanDevice& vkDev)
 {
 	vertexBufferSize_ = sizeof(VertexData) * vertices_.size();
-	vertexBuffer_.CreateLocalMemoryBuffer(
+	vertexBuffer_.CreateGPUOnlyBuffer(
 		vkDev, 
 		vertexBufferSize_, 
 		vertices_.data(), 
@@ -41,7 +41,7 @@ void Mesh::Setup(VulkanDevice& vkDev)
 	);
 
 	indexBufferSize_ = sizeof(unsigned int) * indices_.size();
-	indexBuffer_.CreateLocalMemoryBuffer(
+	indexBuffer_.CreateGPUOnlyBuffer(
 		vkDev, 
 		indexBufferSize_, 
 		indices_.data(), 
