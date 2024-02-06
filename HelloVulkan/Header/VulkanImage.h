@@ -25,10 +25,10 @@ class VulkanImage
 {
 public:
 	VkImage image_;
+	VkImageView imageView_;
 	VmaAllocation vmaAllocation_;
 	VmaAllocator vmaAllocator_;
-	VkImageView imageView_;
-
+	
 	// A reusable sampler which can be accessed by multiple Renderers
 	VkSampler defaultImageSampler_;
 
