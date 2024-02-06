@@ -27,10 +27,10 @@ void VulkanInstance::Create()
 		.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
 		.pNext = nullptr,
 		.pApplicationName = AppConfig::ScreenTitle.c_str(),
-		.applicationVersion = VK_MAKE_VERSION(1, 0, 0),
-		.pEngineName = "No Engine",
-		.engineVersion = VK_MAKE_VERSION(1, 0, 0),
-		.apiVersion = VK_API_VERSION_1_1
+		.applicationVersion = VK_MAKE_VERSION(1, 3, 0),
+		.pEngineName = "Hello Engine",
+		.engineVersion = VK_MAKE_VERSION(1, 3, 0),
+		.apiVersion = VK_API_VERSION_1_3
 	};
 
 	const VkInstanceCreateInfo createInfo =
