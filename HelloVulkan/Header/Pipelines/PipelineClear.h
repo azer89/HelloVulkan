@@ -3,6 +3,9 @@
 
 #include "PipelineBase.h"
 
+/*
+Clear a swapchain image
+*/
 class PipelineClear final : public PipelineBase
 {
 public:

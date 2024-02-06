@@ -6,7 +6,7 @@
 #include "Light.h"
 
 /*
-Render a light source, mostly for debugging purpose
+Render a light source for debugging purpose
 */
 class PipelineLightRender final : public PipelineBase
 {

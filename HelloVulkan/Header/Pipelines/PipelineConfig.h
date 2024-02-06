@@ -3,11 +3,11 @@
 
 #include "volk.h"
 
-enum class PipelineType
+enum class PipelineType : uint8_t
 {
-	GraphicsOnScreen = 0,
-	GraphicsOffScreen = 1,
-	Compute = 2,
+	GraphicsOnScreen = 0u,
+	GraphicsOffScreen = 1u,
+	Compute = 2u,
 };
 
 struct PipelineConfig

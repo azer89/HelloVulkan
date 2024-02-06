@@ -82,7 +82,7 @@ protected:
 	// Shared by multiple render passes
 	// TODO:
 	// [1] Maybe group these inside a struct
-	// [2] Implement these inside the derived classes
+	// [2] Move these inside the derived classes
 	VulkanImage multiSampledColorImage_;
 	VulkanImage singleSampledColorImage_;
 	VulkanImage depthImage_;

@@ -6,6 +6,7 @@
 #include "Configs.h"
 #include "UBO.h"
 
+// TODO convert this to enum class
 enum CameraMovement
 {
 	CameraForward,

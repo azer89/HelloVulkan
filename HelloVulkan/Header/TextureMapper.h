@@ -5,7 +5,7 @@
 
 #include <unordered_map>
 
-enum class TextureType : uint32_t
+enum class TextureType : uint8_t
 {
 	NONE = 0u,
 	ALBEDO = 1u,

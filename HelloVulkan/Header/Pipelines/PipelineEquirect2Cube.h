@@ -6,6 +6,9 @@
 
 #include <string>
 
+/*
+Offscreen pipeline to generate a cubemap from an HDR image
+*/
 class PipelineEquirect2Cube final : public PipelineBase
 {
 public:

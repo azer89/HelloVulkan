@@ -5,7 +5,7 @@
 #include "VulkanImage.h"
 
 /*
-This applies tonemap to a color image and transfers image to a swapchain image
+This applies tonemap to a color image and transfers it to a swapchain image
 */
 class PipelineTonemap final : public PipelineBase
 {

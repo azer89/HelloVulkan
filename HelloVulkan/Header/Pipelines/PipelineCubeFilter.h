@@ -7,15 +7,19 @@
 
 #include <string>
 
-enum class CubeFilterType : unsigned int
+enum class CubeFilterType : uint8_t
 {
 	// Iradiance / diffuse map
-	Diffuse = 0,
+	Diffuse = 0u,
 
 	// Prefilter / specular map (mipmapped)
-	Specular = 1, 
+	Specular = 1u, 
 };
 
+/*
+Offscreen pipeline to create specular map and diffuse map.
+This class actually has two graphics pipelines.
+*/
 class PipelineCubeFilter final : public PipelineBase
 {
 public:
