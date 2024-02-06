@@ -21,7 +21,6 @@ void VulkanBuffer::CreateBuffer(
 		.pQueueFamilyIndices = nullptr
 	};
 
-	// VMA_ALLOCATION_CREATE_MAPPED_BIT
 	VmaAllocationCreateInfo vmaAllocInfo = {
 		.flags = flags,
 		.usage = memoryUsage,
@@ -35,27 +34,9 @@ void VulkanBuffer::CreateBuffer(
 		&buffer_, 
 		&vmaAllocation_,
 		&vmaInfo_));
-
-	std::cout << "create buffer\n";
-
-	/*VK_CHECK(vkCreateBuffer(vkDev.GetDevice(), &bufferInfo, nullptr, &buffer_));
-
-	VkMemoryRequirements memRequirements;
-	vkGetBufferMemoryRequirements(vkDev.GetDevice(), buffer_, &memRequirements);
-
-	const VkMemoryAllocateInfo allocInfo = {
-		.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-		.pNext = nullptr,
-		.allocationSize = memRequirements.size,
-		.memoryTypeIndex = FindMemoryType(vkDev.GetPhysicalDevice(), memRequirements.memoryTypeBits, properties)
-	};
-
-	VK_CHECK(vkAllocateMemory(vkDev.GetDevice(), &allocInfo, nullptr, &bufferMemory_));
-
-	vkBindBufferMemory(vkDev.GetDevice(), buffer_, bufferMemory_, 0);*/
 }
 
-// Buffer with memory property of VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+// TODO Maybe rename to CreateGPUOnlyBuffer
 void VulkanBuffer::CreateLocalMemoryBuffer
 (
 	VulkanDevice& vkDev,
@@ -77,12 +58,6 @@ void VulkanBuffer::CreateLocalMemoryBuffer
 	memcpy(data, bufferData, bufferSize_);
 	vmaUnmapMemory(stagingBuffer.vmaAllocator_, stagingBuffer.vmaAllocation_);
 
-	/*
-	usageFlagBits can be
-		vertex buffer --> VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
-		index buffer --> VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
-		bindless buffer --> VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT
-	*/
 	CreateBuffer(
 		vkDev,
 		bufferSize_,
@@ -129,23 +104,4 @@ void VulkanBuffer::DownloadBufferData(VulkanDevice& vkDev,
 	vmaMapMemory(vmaAllocator_, vmaAllocation_, &mappedData);
 	memcpy(outData, mappedData, dataSize);
 	vmaUnmapMemory(vmaAllocator_, vmaAllocation_);
-}
-
-uint32_t VulkanBuffer::FindMemoryType(
-	VkPhysicalDevice device,
-	uint32_t typeFilter,
-	VkMemoryPropertyFlags properties)
-{
-	VkPhysicalDeviceMemoryProperties memProperties;
-	vkGetPhysicalDeviceMemoryProperties(device, &memProperties);
-
-	for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++)
-	{
-		if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties)
-		{
-			return i;
-		}
-	}
-
-	return 0xFFFFFFFF;
 }
