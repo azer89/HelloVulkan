@@ -1,11 +1,14 @@
 #include "VulkanBuffer.h"
 #include "VulkanUtility.h"
 
+#include <iostream>
+
 void VulkanBuffer::CreateBuffer(
 	VulkanDevice& vkDev,
 	VkDeviceSize size,
 	VkBufferUsageFlags usage,
-	VkMemoryPropertyFlags properties)
+	VmaMemoryUsage memoryUsage,
+	VmaAllocationCreateFlags flags)
 {
 	const VkBufferCreateInfo bufferInfo = {
 		.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
@@ -18,7 +21,24 @@ void VulkanBuffer::CreateBuffer(
 		.pQueueFamilyIndices = nullptr
 	};
 
-	VK_CHECK(vkCreateBuffer(vkDev.GetDevice(), &bufferInfo, nullptr, &buffer_));
+	// VMA_ALLOCATION_CREATE_MAPPED_BIT
+	VmaAllocationCreateInfo vmaAllocInfo = {
+		.flags = flags,
+		.usage = memoryUsage,
+	};
+
+	vmaAllocator_ = vkDev.GetVMAAllocator();
+	VK_CHECK(vmaCreateBuffer(
+		vmaAllocator_,
+		&bufferInfo, 
+		&vmaAllocInfo, 
+		&buffer_, 
+		&vmaAllocation_,
+		&vmaInfo_));
+
+	std::cout << "create buffer\n";
+
+	/*VK_CHECK(vkCreateBuffer(vkDev.GetDevice(), &bufferInfo, nullptr, &buffer_));
 
 	VkMemoryRequirements memRequirements;
 	vkGetBufferMemoryRequirements(vkDev.GetDevice(), buffer_, &memRequirements);
@@ -32,7 +52,7 @@ void VulkanBuffer::CreateBuffer(
 
 	VK_CHECK(vkAllocateMemory(vkDev.GetDevice(), &allocInfo, nullptr, &bufferMemory_));
 
-	vkBindBufferMemory(vkDev.GetDevice(), buffer_, bufferMemory_, 0);
+	vkBindBufferMemory(vkDev.GetDevice(), buffer_, bufferMemory_, 0);*/
 }
 
 // Buffer with memory property of VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
@@ -49,13 +69,13 @@ void VulkanBuffer::CreateLocalMemoryBuffer
 		vkDev,
 		bufferSize_,
 		VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+		VMA_MEMORY_USAGE_CPU_ONLY
 	);
 
 	void* data;
-	vkMapMemory(vkDev.GetDevice(), stagingBuffer.bufferMemory_, 0, bufferSize_, 0, &data);
+	vmaMapMemory(stagingBuffer.vmaAllocator_, stagingBuffer.vmaAllocation_,  &data);
 	memcpy(data, bufferData, bufferSize_);
-	vkUnmapMemory(vkDev.GetDevice(), stagingBuffer.bufferMemory_);
+	vmaUnmapMemory(stagingBuffer.vmaAllocator_, stagingBuffer.vmaAllocation_);
 
 	/*
 	usageFlagBits can be
@@ -67,10 +87,10 @@ void VulkanBuffer::CreateLocalMemoryBuffer
 		vkDev,
 		bufferSize_,
 		flags,
-		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+		VMA_MEMORY_USAGE_GPU_ONLY);
 	CopyFrom(vkDev, stagingBuffer.buffer_, bufferSize_);
 
-	stagingBuffer.Destroy(vkDev.GetDevice());
+	stagingBuffer.Destroy();
 }
 
 void VulkanBuffer::CopyFrom(VulkanDevice& vkDev, VkBuffer srcBuffer, VkDeviceSize size)
@@ -95,9 +115,9 @@ void VulkanBuffer::UploadBufferData(
 	const size_t dataSize)
 {
 	void* mappedData = nullptr;
-	vkMapMemory(vkDev.GetDevice(), bufferMemory_, deviceOffset, dataSize, 0, &mappedData);
+	vmaMapMemory(vmaAllocator_, vmaAllocation_, &mappedData);
 	memcpy(mappedData, data, dataSize);
-	vkUnmapMemory(vkDev.GetDevice(), bufferMemory_);
+	vmaUnmapMemory(vmaAllocator_, vmaAllocation_);
 }
 
 void VulkanBuffer::DownloadBufferData(VulkanDevice& vkDev,
@@ -106,9 +126,9 @@ void VulkanBuffer::DownloadBufferData(VulkanDevice& vkDev,
 	const size_t dataSize)
 {
 	void* mappedData = nullptr;
-	vkMapMemory(vkDev.GetDevice(), bufferMemory_, deviceOffset, dataSize, 0, &mappedData);
+	vmaMapMemory(vmaAllocator_, vmaAllocation_, &mappedData);
 	memcpy(outData, mappedData, dataSize);
-	vkUnmapMemory(vkDev.GetDevice(), bufferMemory_);
+	vmaUnmapMemory(vmaAllocator_, vmaAllocation_);
 }
 
 uint32_t VulkanBuffer::FindMemoryType(

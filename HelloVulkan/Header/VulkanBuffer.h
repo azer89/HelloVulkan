@@ -10,21 +10,22 @@ class VulkanBuffer
 {
 public:
 	VkBuffer buffer_;
-	VkDeviceMemory bufferMemory_;
+	VmaAllocator vmaAllocator_;
 	VmaAllocation vmaAllocation_;
+	VmaAllocationInfo vmaInfo_;
 
 public:
-	void Destroy(VkDevice device)
+	void Destroy()
 	{
-		vkDestroyBuffer(device, buffer_, nullptr);
-		vkFreeMemory(device, bufferMemory_, nullptr);
+		vmaDestroyBuffer(vmaAllocator_, buffer_, vmaAllocation_);
 	}
 
 	void CreateBuffer(
 		VulkanDevice& vkDev,
 		VkDeviceSize size,
 		VkBufferUsageFlags usage,
-		VkMemoryPropertyFlags properties);
+		VmaMemoryUsage memoryUsage,
+		VmaAllocationCreateFlags flags = VMA_ALLOCATION_CREATE_MAPPED_BIT);
 
 	// Buffer with memory property of VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
 	void CreateLocalMemoryBuffer

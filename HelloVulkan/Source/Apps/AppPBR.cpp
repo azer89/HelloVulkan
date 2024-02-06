@@ -16,11 +16,13 @@ AppPBR::AppPBR() :
 
 void AppPBR::Init()
 {
-	// Initialize attachments
-	CreateSharedImageResources();
+	
 
 	// Initialize lights
 	InitLights();
+
+	// Initialize attachments
+	CreateSharedImageResources();
 
 	std::string hdrFile = AppConfig::TextureFolder + "piazza_bologni_1k.hdr";
 

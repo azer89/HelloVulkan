@@ -40,19 +40,19 @@ void ClusterForwardBuffers::CreateBuffers(VulkanDevice& vkDev, uint32_t lightCou
 	{
 		aabbBuffers_[i].CreateBuffer(vkDev, aabbBufferSize,
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+			VMA_MEMORY_USAGE_CPU_TO_GPU);
 
 		globalIndexCountBuffers_[i].CreateBuffer(vkDev, sizeof(uint32_t),
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+			VMA_MEMORY_USAGE_CPU_TO_GPU);
 
 		lightCellsBuffers_[i].CreateBuffer(vkDev, lightCellsBufferSize,
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+			VMA_MEMORY_USAGE_CPU_TO_GPU);
 
 		lightIndicesBuffers_[i].CreateBuffer(vkDev, lightIndicesBufferSize,
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+			VMA_MEMORY_USAGE_CPU_TO_GPU);
 	}
 }
 
@@ -60,21 +60,21 @@ void ClusterForwardBuffers::Destroy(VkDevice device)
 {
 	for (VulkanBuffer& buffer : aabbBuffers_)
 	{
-		buffer.Destroy(device);
+		buffer.Destroy();
 	}
 
 	for (VulkanBuffer& buffer : globalIndexCountBuffers_)
 	{
-		buffer.Destroy(device);
+		buffer.Destroy();
 	}
 
 	for (VulkanBuffer& buffer : lightCellsBuffers_)
 	{
-		buffer.Destroy(device);
+		buffer.Destroy();
 	}
 
 	for (VulkanBuffer& buffer : lightIndicesBuffers_)
 	{
-		buffer.Destroy(device);
+		buffer.Destroy();
 	}
 }

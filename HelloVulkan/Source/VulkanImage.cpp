@@ -385,14 +385,14 @@ void VulkanImage::UpdateImage(
 		vkDev,
 		imageSize,
 		VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+		VMA_MEMORY_USAGE_CPU_ONLY);
 
 	stagingBuffer.UploadBufferData(vkDev, 0, imageData, imageSize);
 	TransitionImageLayout(vkDev, texFormat, sourceImageLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, layerCount);
 	CopyBufferToImage(vkDev, stagingBuffer.buffer_, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight), layerCount);
 	TransitionImageLayout(vkDev, texFormat, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, layerCount);
 
-	stagingBuffer.Destroy(vkDev.GetDevice());
+	stagingBuffer.Destroy();
 }
 
 void VulkanImage::TransitionImageLayout(VulkanDevice& vkDev,

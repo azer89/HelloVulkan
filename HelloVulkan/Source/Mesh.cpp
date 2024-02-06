@@ -51,6 +51,6 @@ void Mesh::Setup(VulkanDevice& vkDev)
 
 void Mesh::Destroy(VkDevice device)
 {	
-	vertexBuffer_.Destroy(device);
-	indexBuffer_.Destroy(device);
+	vertexBuffer_.Destroy();
+	indexBuffer_.Destroy();
 }
