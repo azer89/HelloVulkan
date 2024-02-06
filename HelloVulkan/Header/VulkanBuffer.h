@@ -25,10 +25,9 @@ public:
 		VkDeviceSize size,
 		VkBufferUsageFlags bufferUsage,
 		VmaMemoryUsage memoryUsage,
-		VmaAllocationCreateFlags flags = VMA_ALLOCATION_CREATE_MAPPED_BIT);
+		VmaAllocationCreateFlags flags = VMA_ALLOCATION_CREATE_MAPPED_BIT); // Not sure about this default value
 
-	void CreateGPUOnlyBuffer
-	(
+	void CreateGPUOnlyBuffer(
 		VulkanDevice& vkDev,
 		size_t bufferSize_,
 		const void* bufferData,

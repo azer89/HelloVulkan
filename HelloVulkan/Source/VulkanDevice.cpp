@@ -631,6 +631,7 @@ uint32_t VulkanDevice::GetFrameIndex() const
 
 void VulkanDevice::AllocateVMA(VulkanInstance& instance)
 {
+	// Need this because we use Volk
 	VmaVulkanFunctions vulkanFunctions =
 	{
 		.vkGetInstanceProcAddr = vkGetInstanceProcAddr,
