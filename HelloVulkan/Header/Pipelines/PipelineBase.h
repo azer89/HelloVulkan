@@ -16,8 +16,8 @@
 /*
 This mainly encapsulates a graphics pipeline, framebuffers, and a render pass.
 A pipeline can be either
-	* Onscreen graphics (draw to an image)
-	* Offscreen graphics (draw to a swapchain image)
+	* Offscreen graphics (draw to an image)
+	* Onscreen graphics (draw to a swapchain image)
 	* Compute
  */
 class PipelineBase
