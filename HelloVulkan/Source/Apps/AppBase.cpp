@@ -181,7 +181,7 @@ void AppBase::DrawFrame()
 	{
 		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
 		.pNext = nullptr,
-		.waitSemaphoreCount = waitSemaphores.size(),
+		.waitSemaphoreCount = static_cast<uint32_t>(waitSemaphores.size()),
 		.pWaitSemaphores = waitSemaphores.data(),
 		.pWaitDstStageMask = waitStages,
 		.commandBufferCount = 1u,
@@ -396,21 +396,21 @@ void AppBase::ProcessInput()
 
 	if (glfwGetKey(glfwWindow_, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		camera_->ProcessKeyboard(CameraForward, deltaTime_);
+		camera_->ProcessKeyboard(CameraMovement::Forward, deltaTime_);
 	}
 
 	if (glfwGetKey(glfwWindow_, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		camera_->ProcessKeyboard(CameraBackward, deltaTime_);
+		camera_->ProcessKeyboard(CameraMovement::Backward, deltaTime_);
 	}
 
 	if (glfwGetKey(glfwWindow_, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		camera_->ProcessKeyboard(CameraLeft, deltaTime_);
+		camera_->ProcessKeyboard(CameraMovement::Left, deltaTime_);
 	}
 
 	if (glfwGetKey(glfwWindow_, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		camera_->ProcessKeyboard(CameraRight, deltaTime_);
+		camera_->ProcessKeyboard(CameraMovement::Right, deltaTime_);
 	}
 }

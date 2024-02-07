@@ -2,6 +2,7 @@
 
 /*
 Fragment shader to filter a cubemap into a diffuse (irradiance) cubemap
+
 This shader is based on 
 [1] https://learnopengl.com/
 [2] https://github.com/SaschaWillems/Vulkan-glTF-PBR

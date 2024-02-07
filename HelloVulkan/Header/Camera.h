@@ -6,12 +6,13 @@
 #include "Configs.h"
 #include "UBO.h"
 
-enum CameraMovement
+// TODO convert this to enum class
+enum class CameraMovement : uint8_t
 {
-	CameraForward,
-	CameraBackward,
-	CameraLeft,
-	CameraRight,
+	Forward = 0u,
+	Backward = 1u,
+	Left = 2u,
+	Right = 3u,
 };
 
 class Camera

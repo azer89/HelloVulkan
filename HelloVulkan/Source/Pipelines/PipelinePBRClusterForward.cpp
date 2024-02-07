@@ -83,7 +83,7 @@ PipelinePBRClusterForward::~PipelinePBRClusterForward()
 {
 	for (auto uboBuffer : cfUBOBuffers_)
 	{
-		uboBuffer.Destroy(device_);
+		uboBuffer.Destroy();
 	}
 }
 

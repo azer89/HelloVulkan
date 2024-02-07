@@ -16,11 +16,13 @@ AppPBR::AppPBR() :
 
 void AppPBR::Init()
 {
-	// Initialize attachments
-	CreateSharedImageResources();
+	
 
 	// Initialize lights
 	InitLights();
+
+	// Initialize attachments
+	CreateSharedImageResources();
 
 	std::string hdrFile = AppConfig::TextureFolder + "piazza_bologni_1k.hdr";
 
@@ -54,7 +56,7 @@ void AppPBR::Init()
 		diffuseCubemap_.SetDebugName(vulkanDevice_, "Diffuse_Cubemap");
 		specularCubemap_.SetDebugName(vulkanDevice_, "Specular_Cubemap");
 
-		cubemapMipmapCount_ = NumMipMap(IBLConfig::InputCubeSideLength, IBLConfig::InputCubeSideLength);
+		cubemapMipmapCount_ = static_cast<float>(NumMipMap(IBLConfig::InputCubeSideLength, IBLConfig::InputCubeSideLength));
 	}
 	
 	// BRDF look up table

@@ -7,6 +7,9 @@
 #include "VulkanBuffer.h"
 #include "VulkanUtility.h"
 
+/*
+Compute pipeline to generate lookup table
+*/
 class PipelineBRDFLUT final : PipelineBase
 {
 public:

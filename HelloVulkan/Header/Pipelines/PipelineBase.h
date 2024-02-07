@@ -15,7 +15,10 @@
 
 /*
 This mainly encapsulates a graphics pipeline, framebuffers, and a render pass.
-Note that a pipeline can be either graphics or compute.
+A pipeline can be either
+	* Onscreen graphics (draw to an image)
+	* Offscreen graphics (draw to a swapchain image)
+	* Compute
  */
 class PipelineBase
 {
@@ -28,6 +31,7 @@ public:
 	// If the window is resized
 	virtual void OnWindowResized(VulkanDevice& vkDev);
 
+	// TODO Maybe rename to RecordCommandBuffer
 	virtual void FillCommandBuffer(
 		VulkanDevice& vkDev, 
 		VkCommandBuffer commandBuffer) = 0;
@@ -58,7 +62,6 @@ protected:
 	void BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuffer);
 
 	// UBO
-	// TODO move to VulkanBuffer
 	void CreateMultipleUniformBuffers(
 		VulkanDevice& vkDev,
 		std::vector<VulkanBuffer>& buffers,

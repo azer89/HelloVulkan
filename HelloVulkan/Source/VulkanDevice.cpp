@@ -2,6 +2,10 @@
 #include "VulkanUtility.h"
 #include "Configs.h"
 
+#define VMA_IMPLEMENTATION
+#define VMA_STATIC_VULKAN_FUNCTIONS 0
+#include "vk_mem_alloc.h"
+
 void VulkanDevice::CreateCompute
 (
 	VulkanInstance& instance,
@@ -59,7 +63,7 @@ void VulkanDevice::CreateCompute
 	// Frame data
 	frameIndex_ = 0;
 	frameDataArray_ = std::vector<FrameData>(AppConfig::FrameOverlapCount);
-	for (unsigned int i = 0; i < AppConfig::FrameOverlapCount; ++i)
+	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
 	{
 		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].nextSwapchainImageSemaphore_)));
 		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].graphicsQueueSemaphore_)));
@@ -80,11 +84,14 @@ void VulkanDevice::CreateCompute
 
 		//CreateCommandBuffer(computeCommandPool_, &computeCommandBuffer_);
 	}
+
+	// VMA
+	AllocateVMA(instance);
 }
 
 void VulkanDevice::Destroy()
 {
-	for (unsigned int i = 0; i < AppConfig::FrameOverlapCount; ++i)
+	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
 	{
 		frameDataArray_[i].Destroy(device_);
 	}
@@ -97,6 +104,8 @@ void VulkanDevice::Destroy()
 
 	vkDestroyCommandPool(device_, graphicsCommandPool_, nullptr);
 	vkDestroyCommandPool(device_, computeCommandPool_, nullptr);
+
+	vmaDestroyAllocator(vmaAllocator_);
 
 	vkDestroyDevice(device_, nullptr);
 }
@@ -350,7 +359,7 @@ size_t VulkanDevice::CreateSwapchainImages()
 	swapchainImageViews_.resize(imageCount);
 	VK_CHECK(vkGetSwapchainImagesKHR(device_, swapchain_, &imageCount, swapchainImages_.data()));
 
-	for (unsigned i = 0; i < imageCount; i++)
+	for (uint32_t i = 0; i < imageCount; i++)
 	{
 		if (!CreateSwapChainImageView(i, swapchainImageFormat_, VK_IMAGE_ASPECT_COLOR_BIT))
 		{
@@ -361,7 +370,7 @@ size_t VulkanDevice::CreateSwapchainImages()
 }
 
 bool VulkanDevice::CreateSwapChainImageView(
-	unsigned imageIndex,
+	size_t imageIndex,
 	VkFormat format,
 	VkImageAspectFlags aspectFlags)
 {
@@ -595,7 +604,7 @@ void VulkanDevice::EndOneTimeComputeCommand(VkCommandBuffer commandBuffer)
 
 void VulkanDevice::SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name)
 {
-	VkDebugUtilsObjectNameInfoEXT nameInfo = {
+	const VkDebugUtilsObjectNameInfoEXT nameInfo = {
 		.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT,
 		.pNext = nullptr,
 		.objectType = objType,
@@ -618,4 +627,24 @@ void VulkanDevice::IncrementFrameIndex()
 uint32_t VulkanDevice::GetFrameIndex() const 
 { 
 	return frameIndex_; 
+}
+
+void VulkanDevice::AllocateVMA(VulkanInstance& instance)
+{
+	// Need this because we use Volk
+	const VmaVulkanFunctions vulkanFunctions =
+	{
+		.vkGetInstanceProcAddr = vkGetInstanceProcAddr,
+		.vkGetDeviceProcAddr = vkGetDeviceProcAddr,
+	};
+
+	const VmaAllocatorCreateInfo allocatorInfo =
+	{
+		.physicalDevice = physicalDevice_,
+		.device = device_,
+		.pVulkanFunctions = (const VmaVulkanFunctions*)&vulkanFunctions,
+		.instance = instance.GetInstance(),
+	};
+	
+	vmaCreateAllocator(&allocatorInfo, &vmaAllocator_);
 }

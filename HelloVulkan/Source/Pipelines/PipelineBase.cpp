@@ -21,7 +21,7 @@ PipelineBase::~PipelineBase()
 {
 	for (auto uboBuffer : cameraUBOBuffers_)
 	{
-		uboBuffer.Destroy(device_);
+		uboBuffer.Destroy();
 	}
 
 	framebuffer_.Destroy();
@@ -45,7 +45,7 @@ void PipelineBase::CreateMultipleUniformBuffers(
 			vkDev,
 			dataSize,
 			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+			VMA_MEMORY_USAGE_CPU_TO_GPU
 		);
 	}
 }

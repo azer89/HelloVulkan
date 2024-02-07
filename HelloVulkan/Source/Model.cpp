@@ -36,7 +36,7 @@ Model::~Model()
 
 	for (auto buffer : modelBuffers_)
 	{
-		buffer.Destroy(device_);
+		buffer.Destroy();
 	}
 
 	// C++20 feature

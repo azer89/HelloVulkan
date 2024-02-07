@@ -1,91 +1,42 @@
 #include "VulkanBuffer.h"
 #include "VulkanUtility.h"
 
+#include <iostream>
+
 void VulkanBuffer::CreateBuffer(
 	VulkanDevice& vkDev,
 	VkDeviceSize size,
-	VkBufferUsageFlags usage,
-	VkMemoryPropertyFlags properties)
+	VkBufferUsageFlags bufferUsage,
+	VmaMemoryUsage memoryUsage,
+	VmaAllocationCreateFlags flags)
 {
 	const VkBufferCreateInfo bufferInfo = {
 		.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
 		.size = size,
-		.usage = usage,
+		.usage = bufferUsage,
 		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
 		.queueFamilyIndexCount = 0,
 		.pQueueFamilyIndices = nullptr
 	};
 
-	VK_CHECK(vkCreateBuffer(vkDev.GetDevice(), &bufferInfo, nullptr, &buffer_));
-
-	VkMemoryRequirements memRequirements;
-	vkGetBufferMemoryRequirements(vkDev.GetDevice(), buffer_, &memRequirements);
-
-	const VkMemoryAllocateInfo allocInfo = {
-		.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-		.pNext = nullptr,
-		.allocationSize = memRequirements.size,
-		.memoryTypeIndex = FindMemoryType(vkDev.GetPhysicalDevice(), memRequirements.memoryTypeBits, properties)
+	VmaAllocationCreateInfo vmaAllocInfo = {
+		.flags = flags,
+		.usage = memoryUsage,
 	};
 
-	VK_CHECK(vkAllocateMemory(vkDev.GetDevice(), &allocInfo, nullptr, &bufferMemory_));
-
-	vkBindBufferMemory(vkDev.GetDevice(), buffer_, bufferMemory_, 0);
+	vmaAllocator_ = vkDev.GetVMAAllocator();
+	VK_CHECK(vmaCreateBuffer(
+		vmaAllocator_,
+		&bufferInfo, 
+		&vmaAllocInfo, 
+		&buffer_, 
+		&vmaAllocation_,
+		&vmaInfo_));
 }
 
-void VulkanBuffer::CreateSharedBuffer(
-	VulkanDevice& vkDev,
-	VkDeviceSize size,
-	VkBufferUsageFlags usage,
-	VkMemoryPropertyFlags properties)
-{
-	const uint32_t familyCount = static_cast<uint32_t>(vkDev.GetDeviceQueueIndicesSize());
-
-	if (familyCount < 2)
-	{
-		CreateBuffer(
-			vkDev,
-			size,
-			usage,
-			properties);
-		return;
-	}
-	const VkBufferCreateInfo bufferInfo = {
-		.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.size = size,
-		.usage = usage,
-		.sharingMode = (familyCount > 1) ? VK_SHARING_MODE_CONCURRENT : VK_SHARING_MODE_EXCLUSIVE,
-		.queueFamilyIndexCount = static_cast<uint32_t>(vkDev.GetDeviceQueueIndicesSize()),
-		.pQueueFamilyIndices = (familyCount > 1) ? vkDev.GetDeviceQueueIndicesData() : nullptr
-	};
-
-	VK_CHECK(vkCreateBuffer(vkDev.GetDevice(), &bufferInfo, nullptr, &buffer_));
-
-	VkMemoryRequirements memRequirements;
-	vkGetBufferMemoryRequirements(vkDev.GetDevice(), buffer_, &memRequirements);
-
-	const VkMemoryAllocateInfo allocInfo = {
-		.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-		.pNext = nullptr,
-		.allocationSize = memRequirements.size,
-		.memoryTypeIndex =
-			FindMemoryType(
-				vkDev.GetPhysicalDevice(),
-				memRequirements.memoryTypeBits,
-				properties)
-	};
-
-	VK_CHECK(vkAllocateMemory(vkDev.GetDevice(), &allocInfo, nullptr, &bufferMemory_));
-
-	vkBindBufferMemory(vkDev.GetDevice(), buffer_, bufferMemory_, 0);
-}
-
-// Buffer with memory property of VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
-void VulkanBuffer::CreateLocalMemoryBuffer
+void VulkanBuffer::CreateGPUOnlyBuffer
 (
 	VulkanDevice& vkDev,
 	size_t bufferSize_,
@@ -98,28 +49,22 @@ void VulkanBuffer::CreateLocalMemoryBuffer
 		vkDev,
 		bufferSize_,
 		VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+		VMA_MEMORY_USAGE_CPU_ONLY
 	);
 
 	void* data;
-	vkMapMemory(vkDev.GetDevice(), stagingBuffer.bufferMemory_, 0, bufferSize_, 0, &data);
+	vmaMapMemory(stagingBuffer.vmaAllocator_, stagingBuffer.vmaAllocation_,  &data);
 	memcpy(data, bufferData, bufferSize_);
-	vkUnmapMemory(vkDev.GetDevice(), stagingBuffer.bufferMemory_);
+	vmaUnmapMemory(stagingBuffer.vmaAllocator_, stagingBuffer.vmaAllocation_);
 
-	/*
-	usageFlagBits can be
-		vertex buffer --> VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
-		index buffer --> VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
-		bindless buffer --> VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT
-	*/
 	CreateBuffer(
 		vkDev,
 		bufferSize_,
 		flags,
-		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+		VMA_MEMORY_USAGE_GPU_ONLY);
 	CopyFrom(vkDev, stagingBuffer.buffer_, bufferSize_);
 
-	stagingBuffer.Destroy(vkDev.GetDevice());
+	stagingBuffer.Destroy();
 }
 
 void VulkanBuffer::CopyFrom(VulkanDevice& vkDev, VkBuffer srcBuffer, VkDeviceSize size)
@@ -144,9 +89,9 @@ void VulkanBuffer::UploadBufferData(
 	const size_t dataSize)
 {
 	void* mappedData = nullptr;
-	vkMapMemory(vkDev.GetDevice(), bufferMemory_, deviceOffset, dataSize, 0, &mappedData);
+	vmaMapMemory(vmaAllocator_, vmaAllocation_, &mappedData);
 	memcpy(mappedData, data, dataSize);
-	vkUnmapMemory(vkDev.GetDevice(), bufferMemory_);
+	vmaUnmapMemory(vmaAllocator_, vmaAllocation_);
 }
 
 void VulkanBuffer::DownloadBufferData(VulkanDevice& vkDev,
@@ -155,26 +100,7 @@ void VulkanBuffer::DownloadBufferData(VulkanDevice& vkDev,
 	const size_t dataSize)
 {
 	void* mappedData = nullptr;
-	vkMapMemory(vkDev.GetDevice(), bufferMemory_, deviceOffset, dataSize, 0, &mappedData);
+	vmaMapMemory(vmaAllocator_, vmaAllocation_, &mappedData);
 	memcpy(outData, mappedData, dataSize);
-	vkUnmapMemory(vkDev.GetDevice(), bufferMemory_);
-}
-
-uint32_t VulkanBuffer::FindMemoryType(
-	VkPhysicalDevice device,
-	uint32_t typeFilter,
-	VkMemoryPropertyFlags properties)
-{
-	VkPhysicalDeviceMemoryProperties memProperties;
-	vkGetPhysicalDeviceMemoryProperties(device, &memProperties);
-
-	for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++)
-	{
-		if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties)
-		{
-			return i;
-		}
-	}
-
-	return 0xFFFFFFFF;
+	vmaUnmapMemory(vmaAllocator_, vmaAllocation_);
 }

@@ -56,7 +56,7 @@ void AppPBRClusterForward::Init()
 		diffuseCubemap_.SetDebugName(vulkanDevice_, "Diffuse_Cubemap");
 		specularCubemap_.SetDebugName(vulkanDevice_, "Specular_Cubemap");
 
-		cubemapMipmapCount_ = NumMipMap(IBLConfig::InputCubeSideLength, IBLConfig::InputCubeSideLength);
+		cubemapMipmapCount_ = static_cast<float>(NumMipMap(IBLConfig::InputCubeSideLength, IBLConfig::InputCubeSideLength));
 	}
 	
 	// BRDF look up table
@@ -135,8 +135,8 @@ void AppPBRClusterForward::InitLights()
 	std::vector<LightData> lights;
 
 	float pi2 = glm::two_pi<float>();
-	constexpr unsigned int NR_LIGHTS = 1000;
-	for (unsigned int i = 0; i < NR_LIGHTS; ++i)
+	constexpr uint32_t NR_LIGHTS = 1000;
+	for (uint32_t i = 0; i < NR_LIGHTS; ++i)
 	{
 		float yPos = Utility::RandomNumber<float>(-2.f, 10.0f);
 		float radius = Utility::RandomNumber<float>(0.0f, 10.0f);

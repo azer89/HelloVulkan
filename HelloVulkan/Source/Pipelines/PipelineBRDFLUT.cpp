@@ -10,9 +10,11 @@ PipelineBRDFLUT::PipelineBRDFLUT(
 		.type_ = PipelineType::Compute
 	})
 {
-	outBuffer_.CreateSharedBuffer(vkDev, IBLConfig::LUTBufferSize,
+	outBuffer_.CreateBuffer(vkDev, 
+		IBLConfig::LUTBufferSize,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+		VMA_MEMORY_USAGE_AUTO,
+		VMA_ALLOCATION_CREATE_HOST_ACCESS_RANDOM_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT);
 
 	// Push constants
 	std::vector<VkPushConstantRange> ranges =
@@ -29,7 +31,7 @@ PipelineBRDFLUT::PipelineBRDFLUT(
 
 PipelineBRDFLUT::~PipelineBRDFLUT()
 {
-	outBuffer_.Destroy(device_);
+	outBuffer_.Destroy();
 }
 
 void PipelineBRDFLUT::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)

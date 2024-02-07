@@ -22,7 +22,7 @@ public:
 
 	void Create(VulkanDevice& vkDev,
 		VkRenderPass renderPass,
-		const std::vector<VulkanImage*> attachmentImage,
+		const std::vector<VulkanImage*>& attachmentImage,
 		bool offscreen);
 
 	void Destroy();

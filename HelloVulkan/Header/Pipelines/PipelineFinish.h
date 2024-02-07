@@ -3,6 +3,9 @@
 
 #include "PipelineBase.h"
 
+/*
+Pipeline to present a swapchain image
+*/
 class PipelineFinish final : public PipelineBase
 {
 public:

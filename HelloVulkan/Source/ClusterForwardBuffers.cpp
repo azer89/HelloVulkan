@@ -13,11 +13,10 @@ void ClusterForwardBuffers::SetAABBDirty()
 
 void ClusterForwardBuffers::CreateBuffers(VulkanDevice& vkDev, uint32_t lightCount)
 {
-	// TODO Find a way to reduce duplicate
-	uint32_t bufferCount = AppConfig::FrameOverlapCount;
+	constexpr uint32_t bufferCount = AppConfig::FrameOverlapCount;
 
 	// AABB
-	uint32_t aabbBufferSize = ClusterForwardConfig::numClusters * sizeof(AABB);
+	constexpr uint32_t aabbBufferSize = ClusterForwardConfig::numClusters * sizeof(AABB);
 	aabbBuffers_.resize(bufferCount);
 	aabbDirtyFlags_.resize(bufferCount);
 	SetAABBDirty();
@@ -26,11 +25,11 @@ void ClusterForwardBuffers::CreateBuffers(VulkanDevice& vkDev, uint32_t lightCou
 	globalIndexCountBuffers_.resize(bufferCount);
 
 	// LightCell
-	uint32_t lightCellsBufferSize = ClusterForwardConfig::numClusters * sizeof(LightCell);
+	constexpr uint32_t lightCellsBufferSize = ClusterForwardConfig::numClusters * sizeof(LightCell);
 	lightCellsBuffers_.resize(bufferCount);
 
 	// Light Indices
-	uint32_t lightIndicesBufferSize =
+	constexpr uint32_t lightIndicesBufferSize =
 		ClusterForwardConfig::maxLightPerCluster *
 		ClusterForwardConfig::numClusters *
 		sizeof(uint32_t);
@@ -38,21 +37,24 @@ void ClusterForwardBuffers::CreateBuffers(VulkanDevice& vkDev, uint32_t lightCou
 
 	for (uint32_t i = 0; i < bufferCount; ++i)
 	{
-		aabbBuffers_[i].CreateSharedBuffer(vkDev, aabbBufferSize,
+		aabbBuffers_[i].CreateBuffer(vkDev, aabbBufferSize,
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+			VMA_MEMORY_USAGE_GPU_ONLY,
+			0);
 
-		globalIndexCountBuffers_[i].CreateSharedBuffer(vkDev, sizeof(uint32_t),
+		globalIndexCountBuffers_[i].CreateBuffer(vkDev, sizeof(uint32_t),
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+			VMA_MEMORY_USAGE_CPU_TO_GPU);
 
-		lightCellsBuffers_[i].CreateSharedBuffer(vkDev, lightCellsBufferSize,
+		lightCellsBuffers_[i].CreateBuffer(vkDev, lightCellsBufferSize,
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+			VMA_MEMORY_USAGE_GPU_ONLY,
+			0);
 
-		lightIndicesBuffers_[i].CreateSharedBuffer(vkDev, lightIndicesBufferSize,
+		lightIndicesBuffers_[i].CreateBuffer(vkDev, lightIndicesBufferSize,
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+			VMA_MEMORY_USAGE_GPU_ONLY,
+			0);
 	}
 }
 
@@ -60,21 +62,21 @@ void ClusterForwardBuffers::Destroy(VkDevice device)
 {
 	for (VulkanBuffer& buffer : aabbBuffers_)
 	{
-		buffer.Destroy(device);
+		buffer.Destroy();
 	}
 
 	for (VulkanBuffer& buffer : globalIndexCountBuffers_)
 	{
-		buffer.Destroy(device);
+		buffer.Destroy();
 	}
 
 	for (VulkanBuffer& buffer : lightCellsBuffers_)
 	{
-		buffer.Destroy(device);
+		buffer.Destroy();
 	}
 
 	for (VulkanBuffer& buffer : lightIndicesBuffers_)
 	{
-		buffer.Destroy(device);
+		buffer.Destroy();
 	}
 }

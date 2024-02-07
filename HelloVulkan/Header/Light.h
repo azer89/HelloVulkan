@@ -30,9 +30,9 @@ struct AABB
 struct LightCell
 {
 	alignas(4)
-	unsigned int offset;
+	uint32_t offset;
 	alignas(4)
-	unsigned int count;
+	uint32_t count;
 };
 
 // A collection of lights, including SSBO
