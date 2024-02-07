@@ -23,7 +23,7 @@ public:
 	virtual void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
 
 private:
-	// This is the lookup table
+	// This is the lookup table which has to be transferred to an image
 	VulkanBuffer outBuffer_;
 
 	VkDescriptorSet descriptorSet_;

@@ -10,6 +10,7 @@ This shader is based on
 
 layout(location = 0) in vec2 texCoord;
 
+// Multiple render targets
 layout(location = 0) out vec4 cubeFace0;
 layout(location = 1) out vec4 cubeFace1;
 layout(location = 2) out vec4 cubeFace2;

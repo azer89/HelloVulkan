@@ -203,29 +203,29 @@ Mesh Model::ProcessMesh(
 	}
 	// Replace missing PBR textures with black texture
 	// TODO Use a loop instead of multiple IFs
-	if (!textures.contains(TextureType::ALBEDO))
+	if (!textures.contains(TextureType::Albedo))
 	{
-		textures[TextureType::ALBEDO] = &textureMap_[blackTextureFilePath_];
+		textures[TextureType::Albedo] = &textureMap_[blackTextureFilePath_];
 	}
-	if (!textures.contains(TextureType::NORMAL))
+	if (!textures.contains(TextureType::Normal))
 	{
-		textures[TextureType::NORMAL] = &textureMap_[blackTextureFilePath_];
+		textures[TextureType::Normal] = &textureMap_[blackTextureFilePath_];
 	}
-	if (!textures.contains(TextureType::METALNESS))
+	if (!textures.contains(TextureType::Metalness))
 	{
-		textures[TextureType::METALNESS] = &textureMap_[blackTextureFilePath_];
+		textures[TextureType::Metalness] = &textureMap_[blackTextureFilePath_];
 	}
-	if (!textures.contains(TextureType::ROUGHNESS))
+	if (!textures.contains(TextureType::Roughness))
 	{
-		textures[TextureType::ROUGHNESS] = &textureMap_[blackTextureFilePath_];
+		textures[TextureType::Roughness] = &textureMap_[blackTextureFilePath_];
 	}
-	if (!textures.contains(TextureType::AO))
+	if (!textures.contains(TextureType::AmbientOcclusion))
 	{
-		textures[TextureType::AO] = &textureMap_[blackTextureFilePath_];
+		textures[TextureType::AmbientOcclusion] = &textureMap_[blackTextureFilePath_];
 	}
-	if (!textures.contains(TextureType::EMISSIVE))
+	if (!textures.contains(TextureType::Emissive))
 	{
-		textures[TextureType::EMISSIVE] = &textureMap_[blackTextureFilePath_];
+		textures[TextureType::Emissive] = &textureMap_[blackTextureFilePath_];
 	}
 
 	return Mesh(vkDev, std::move(vertices), std::move(indices), std::move(textures));

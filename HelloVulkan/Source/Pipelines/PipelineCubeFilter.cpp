@@ -2,6 +2,7 @@
 #include "PipelineCreateInfo.h"
 #include "VulkanUtility.h"
 #include "VulkanShader.h"
+#include "VulkanFramebuffer.h"
 #include "Configs.h"
 
 PipelineCubeFilter::PipelineCubeFilter(
@@ -276,30 +277,6 @@ void PipelineCubeFilter::CreateOffsreenGraphicsPipeline(
 	}
 }
 
-// TODO Use VulkanFramebuffer
-VkFramebuffer PipelineCubeFilter::CreateFrameBuffer(
-	VulkanDevice& vkDev,
-	std::vector<VkImageView> outputViews,
-	uint32_t width,
-	uint32_t height)
-{
-	VkFramebufferCreateInfo info =
-	{
-		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0u,
-		.renderPass = renderPass_.GetHandle(),
-		.attachmentCount = static_cast<uint32_t>(outputViews.size()),
-		.pAttachments = outputViews.data(),
-		.width = width,
-		.height = height,
-		.layers = 1u
-	};
-	VkFramebuffer frameBuffer;
-	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &info, nullptr, &frameBuffer));
-	return frameBuffer;
-}
-
 void PipelineCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 	VulkanImage* outputCubemap,
 	CubeFilterType filterType)
@@ -318,6 +295,15 @@ void PipelineCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 	std::vector<std::vector<VkImageView>> outputViews;
 	CreateOutputCubemapViews(vkDev, outputCubemap, outputViews, outputMipMapCount);
 
+	// Framebuffers
+	std::vector<VulkanFramebuffer> mipFramebuffers(outputMipMapCount);
+	for (uint32_t i = 0; i < outputMipMapCount; ++i)
+	{
+		uint32_t targetSize = outputSideLength >> i;
+		mipFramebuffers[i].Create(vkDev, renderPass_.GetHandle(), outputViews[i], targetSize, targetSize);
+	}
+
+	// Get command buffers
 	VkCommandBuffer commandBuffer = vkDev.BeginOneTimeGraphicsCommand();
 
 	vkCmdBindDescriptorSets(
@@ -335,14 +321,9 @@ void PipelineCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
-	std::vector<VkFramebuffer> usedFrameBuffers;
-
 	for (int i = static_cast<int>(outputMipMapCount - 1u); i >= 0; --i)
 	{
 		uint32_t targetSize = outputSideLength >> i;
-
-		VkFramebuffer frameBuffer = CreateFrameBuffer(vkDev, outputViews[i], targetSize, targetSize);
-		usedFrameBuffers.push_back(frameBuffer);
 
 		VkImageSubresourceRange  subresourceRange =
 		{ VK_IMAGE_ASPECT_COLOR_BIT, static_cast<uint32_t>(i), 1u, 0u, 6u };
@@ -357,22 +338,23 @@ void PipelineCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 			.destinationAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT },
 			subresourceRange);
 
-		PushConstantCubeFilter values{};
-		values.roughness = filterType == CubeFilterType::Diffuse || outputMipMapCount == 1 ?
-			0.f :
-			static_cast<float>(i) / static_cast<float>(outputMipMapCount - 1);
-		values.outputDiffuseSampleCount = IBLConfig::OutputDiffuseSampleCount;
-
+		PushConstantCubeFilter pc =
+		{
+			.roughness = filterType == CubeFilterType::Diffuse || outputMipMapCount == 1 ?
+				0.f :
+				static_cast<float>(i) / static_cast<float>(outputMipMapCount - 1),
+			.outputDiffuseSampleCount = IBLConfig::OutputDiffuseSampleCount
+		};
 		vkCmdPushConstants(
 			commandBuffer,
 			pipelineLayout_,
 			VK_SHADER_STAGE_FRAGMENT_BIT,
 			0,
-			sizeof(PushConstantCubeFilter), &values);
+			sizeof(PushConstantCubeFilter), &pc);
 
 		const std::vector<VkClearValue> clearValues(6u, { 0.0f, 0.0f, 1.0f, 1.0f });
 
-		renderPass_.BeginCubemapRenderPass(commandBuffer, frameBuffer, targetSize);
+		renderPass_.BeginCubemapRenderPass(commandBuffer, mipFramebuffers[i].GetFramebuffer(), targetSize);
 
 		vkCmdDraw(commandBuffer, 3, 1u, 0, 0);
 
@@ -392,9 +374,9 @@ void PipelineCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 	vkDev.EndOneTimeGraphicsCommand(commandBuffer);
 
 	// Destroy frame buffers
-	for (VkFramebuffer& f : usedFrameBuffers)
+	for (auto& f : mipFramebuffers)
 	{
-		vkDestroyFramebuffer(vkDev.GetDevice(), f, nullptr);
+		f.Destroy();
 	}
 
 	// Destroy image views

@@ -20,10 +20,19 @@ public:
 	{
 	}
 
+	// Can be recreated
 	void Create(VulkanDevice& vkDev,
 		VkRenderPass renderPass,
 		const std::vector<VulkanImage*>& attachmentImage,
 		bool offscreen);
+
+	// Cannot be recreated
+	void Create(
+		VulkanDevice& vkDev,
+		VkRenderPass renderPass,
+		const std::vector<VkImageView>& attachments,
+		uint32_t width,
+		uint32_t height);
 
 	void Destroy();
 

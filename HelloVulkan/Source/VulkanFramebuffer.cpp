@@ -17,9 +17,6 @@ void VulkanFramebuffer::Create(VulkanDevice& vkDev,
 		std::cerr << "Need at least one image attachment to create a framebuffer\n";
 	}
 
-	uint32_t w = vkDev.GetFrameBufferWidth();
-	uint32_t h = vkDev.GetFrameBufferHeight();
-
 	// Create info
 	framebufferInfo_ = {
 		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
@@ -27,14 +24,40 @@ void VulkanFramebuffer::Create(VulkanDevice& vkDev,
 		.flags = 0,
 		.renderPass = renderPass,
 		// Need to set these four in Recreate()
-		//.attachmentCount =,
-		//.pAttachments =,
-		//.width = w,
-		//.height = h,
+		/*.attachmentCount =,
+		.pAttachments =,
+		.width = w,
+		.height = h,*/
 		.layers = 1
 	};
 
+	// Create framebuffer in this function
 	Recreate(vkDev);
+}
+
+void VulkanFramebuffer::Create(
+	VulkanDevice& vkDev,
+	VkRenderPass renderPass,
+	const std::vector<VkImageView>& attachments,
+	uint32_t width,
+	uint32_t height)
+{
+	device_ = vkDev.GetDevice();
+
+	framebufferInfo_ =
+	{
+		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0u,
+		.renderPass = renderPass,
+		.attachmentCount = static_cast<uint32_t>(attachments.size()),
+		.pAttachments = attachments.data(),
+		.width = width,
+		.height = height,
+		.layers = 1u
+	};
+	framebuffers_.resize(1);
+	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo_, nullptr, &framebuffers_[0]));
 }
 
 void VulkanFramebuffer::Destroy()
