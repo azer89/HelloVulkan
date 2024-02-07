@@ -17,9 +17,6 @@ void VulkanFramebuffer::Create(VulkanDevice& vkDev,
 		std::cerr << "Need at least one image attachment to create a framebuffer\n";
 	}
 
-	uint32_t w = vkDev.GetFrameBufferWidth();
-	uint32_t h = vkDev.GetFrameBufferHeight();
-
 	// Create info
 	framebufferInfo_ = {
 		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
@@ -27,10 +24,10 @@ void VulkanFramebuffer::Create(VulkanDevice& vkDev,
 		.flags = 0,
 		.renderPass = renderPass,
 		// Need to set these four in Recreate()
-		//.attachmentCount =,
-		//.pAttachments =,
-		//.width = w,
-		//.height = h,
+		/*.attachmentCount =,
+		.pAttachments =,
+		.width = w,
+		.height = h,*/
 		.layers = 1
 	};
 

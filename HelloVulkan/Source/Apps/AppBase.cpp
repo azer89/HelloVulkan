@@ -34,9 +34,10 @@ void AppBase::InitVulkan()
 	}
 
 	// Multisampling / MSAA
-	VkPhysicalDeviceFeatures features = {};
-	features.sampleRateShading = VK_TRUE;
-	features.samplerAnisotropy = VK_TRUE;
+	constexpr VkPhysicalDeviceFeatures features = {
+		.sampleRateShading = VK_TRUE,
+		.samplerAnisotropy = VK_TRUE,
+	};
 
 	// Initialize Vulkan instance
 	vulkanInstance_.Create();
@@ -59,8 +60,8 @@ void AppBase::InitGLFW()
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-	const int w = AppConfig::InitialScreenWidth;
-	const int h = AppConfig::InitialScreenHeight;
+	constexpr int w = AppConfig::InitialScreenWidth;
+	constexpr int h = AppConfig::InitialScreenHeight;
 
 	// GLFW window creation
 	windowWidth_ = static_cast<uint32_t>(w);
@@ -172,7 +173,7 @@ void AppBase::DrawFrame()
 	// Start recording command buffers
 	FillCommandBuffer(frameData.graphicsCommandBuffer_);
 
-	const VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	constexpr VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 	std::array<VkSemaphore, 1> waitSemaphores{ frameData.nextSwapchainImageSemaphore_ };
 
 	// Submit Queue
@@ -221,7 +222,7 @@ void AppBase::UpdateUI()
 // Fill/record command buffer
 void AppBase::FillCommandBuffer(VkCommandBuffer commandBuffer)
 {
-	const VkCommandBufferBeginInfo beginInfo =
+	constexpr VkCommandBufferBeginInfo beginInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
 		.pNext = nullptr,
@@ -232,7 +233,7 @@ void AppBase::FillCommandBuffer(VkCommandBuffer commandBuffer)
 	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
 
 	// Iterate through all pipelines to fill the command buffer
-	for (auto& pip : pipelines_)
+	for (const auto& pip : pipelines_)
 	{
 		pip->FillCommandBuffer(vulkanDevice_, commandBuffer);
 	}
@@ -261,7 +262,7 @@ void AppBase::OnWindowResized()
 
 	CreateSharedImageResources();
 
-	for (auto& pip : pipelines_)
+	for (const auto& pip : pipelines_)
 	{
 		pip->OnWindowResized(vulkanDevice_);
 	}
@@ -291,7 +292,7 @@ void AppBase::InitTiming()
 void AppBase::ProcessTiming()
 {
 	// Per-frame time
-	float currentFrame = static_cast<float>(glfwGetTime());
+	const float currentFrame = static_cast<float>(glfwGetTime());
 	deltaTime_ = currentFrame - lastFrame_;
 	lastFrame_ = currentFrame;
 }

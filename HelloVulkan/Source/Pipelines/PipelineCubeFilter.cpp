@@ -341,6 +341,7 @@ void PipelineCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 	{
 		uint32_t targetSize = outputSideLength >> i;
 
+		// TODO Creating framebuffers here is a bit weird
 		VkFramebuffer frameBuffer = CreateFrameBuffer(vkDev, outputViews[i], targetSize, targetSize);
 		usedFrameBuffers.push_back(frameBuffer);
 
@@ -357,18 +358,19 @@ void PipelineCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 			.destinationAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT },
 			subresourceRange);
 
-		PushConstantCubeFilter values{};
-		values.roughness = filterType == CubeFilterType::Diffuse || outputMipMapCount == 1 ?
-			0.f :
-			static_cast<float>(i) / static_cast<float>(outputMipMapCount - 1);
-		values.outputDiffuseSampleCount = IBLConfig::OutputDiffuseSampleCount;
-
+		PushConstantCubeFilter pc =
+		{
+			.roughness = filterType == CubeFilterType::Diffuse || outputMipMapCount == 1 ?
+				0.f :
+				static_cast<float>(i) / static_cast<float>(outputMipMapCount - 1),
+			.outputDiffuseSampleCount = IBLConfig::OutputDiffuseSampleCount
+		};
 		vkCmdPushConstants(
 			commandBuffer,
 			pipelineLayout_,
 			VK_SHADER_STAGE_FRAGMENT_BIT,
 			0,
-			sizeof(PushConstantCubeFilter), &values);
+			sizeof(PushConstantCubeFilter), &pc);
 
 		const std::vector<VkClearValue> clearValues(6u, { 0.0f, 0.0f, 1.0f, 1.0f });
 
