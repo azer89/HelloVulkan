@@ -63,7 +63,7 @@ void VulkanDevice::CreateCompute
 	// Frame data
 	frameIndex_ = 0;
 	frameDataArray_ = std::vector<FrameData>(AppConfig::FrameOverlapCount);
-	for (unsigned int i = 0; i < AppConfig::FrameOverlapCount; ++i)
+	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
 	{
 		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].nextSwapchainImageSemaphore_)));
 		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].graphicsQueueSemaphore_)));
@@ -91,7 +91,7 @@ void VulkanDevice::CreateCompute
 
 void VulkanDevice::Destroy()
 {
-	for (unsigned int i = 0; i < AppConfig::FrameOverlapCount; ++i)
+	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
 	{
 		frameDataArray_[i].Destroy(device_);
 	}
@@ -359,7 +359,7 @@ size_t VulkanDevice::CreateSwapchainImages()
 	swapchainImageViews_.resize(imageCount);
 	VK_CHECK(vkGetSwapchainImagesKHR(device_, swapchain_, &imageCount, swapchainImages_.data()));
 
-	for (unsigned i = 0; i < imageCount; i++)
+	for (uint32_t i = 0; i < imageCount; i++)
 	{
 		if (!CreateSwapChainImageView(i, swapchainImageFormat_, VK_IMAGE_ASPECT_COLOR_BIT))
 		{
@@ -370,7 +370,7 @@ size_t VulkanDevice::CreateSwapchainImages()
 }
 
 bool VulkanDevice::CreateSwapChainImageView(
-	unsigned imageIndex,
+	size_t imageIndex,
 	VkFormat format,
 	VkImageAspectFlags aspectFlags)
 {
@@ -604,7 +604,7 @@ void VulkanDevice::EndOneTimeComputeCommand(VkCommandBuffer commandBuffer)
 
 void VulkanDevice::SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name)
 {
-	VkDebugUtilsObjectNameInfoEXT nameInfo = {
+	const VkDebugUtilsObjectNameInfoEXT nameInfo = {
 		.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT,
 		.pNext = nullptr,
 		.objectType = objType,
@@ -632,13 +632,13 @@ uint32_t VulkanDevice::GetFrameIndex() const
 void VulkanDevice::AllocateVMA(VulkanInstance& instance)
 {
 	// Need this because we use Volk
-	VmaVulkanFunctions vulkanFunctions =
+	const VmaVulkanFunctions vulkanFunctions =
 	{
 		.vkGetInstanceProcAddr = vkGetInstanceProcAddr,
 		.vkGetDeviceProcAddr = vkGetDeviceProcAddr,
 	};
 
-	VmaAllocatorCreateInfo allocatorInfo =
+	const VmaAllocatorCreateInfo allocatorInfo =
 	{
 		.physicalDevice = physicalDevice_,
 		.device = device_,

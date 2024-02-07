@@ -36,11 +36,11 @@ struct ClusterForwardUBO
 	alignas(4)
 	float cameraFar;
 	alignas(4)
-	unsigned int sliceCountX;
+	uint32_t sliceCountX;
 	alignas(4)
-	unsigned int sliceCountY;
+	uint32_t sliceCountY;
 	alignas(4)
-	unsigned int sliceCountZ;
+	uint32_t sliceCountZ;
 };
 
 #endif

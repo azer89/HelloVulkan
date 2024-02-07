@@ -101,7 +101,7 @@ void PipelineLightCulling::Execute(VulkanDevice& vkDev, VkCommandBuffer commandB
 		0,
 		0,
 		nullptr,
-		barriers.size(),
+		static_cast<uint32_t>(barriers.size()),
 		barriers.data(),
 		0,
 		nullptr);

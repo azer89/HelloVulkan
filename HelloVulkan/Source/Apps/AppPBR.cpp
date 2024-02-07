@@ -56,7 +56,7 @@ void AppPBR::Init()
 		diffuseCubemap_.SetDebugName(vulkanDevice_, "Diffuse_Cubemap");
 		specularCubemap_.SetDebugName(vulkanDevice_, "Specular_Cubemap");
 
-		cubemapMipmapCount_ = NumMipMap(IBLConfig::InputCubeSideLength, IBLConfig::InputCubeSideLength);
+		cubemapMipmapCount_ = static_cast<float>(NumMipMap(IBLConfig::InputCubeSideLength, IBLConfig::InputCubeSideLength));
 	}
 	
 	// BRDF look up table

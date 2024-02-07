@@ -58,7 +58,7 @@ public:
 		uint32_t height);
 	VkResult GetNextSwapchainImage(VkSemaphore nextSwapchainImageSemaphore);
 
-	// TODO These four functions can be simplified/combined
+	// TODO Maybe these four functions can be simplified/combined
 	VkCommandBuffer BeginOneTimeGraphicsCommand();
 	void EndOneTimeGraphicsCommand(VkCommandBuffer commandBuffer);
 	VkCommandBuffer BeginOneTimeComputeCommand();
@@ -77,13 +77,14 @@ public:
 	VkSampleCountFlagBits GetMSAASampleCount() const { return msaaSampleCount_; }
 	VkQueue GetComputeQueue() const { return computeQueue_; }
 	VkFormat GetDepthFormat() const { return depthFormat_; };
+	VmaAllocator GetVMAAllocator() const { return vmaAllocator_; }
 
 	// Getters related to swapchain
 	VkSwapchainKHR GetSwapChain() const { return swapchain_; }
 	size_t GetSwapchainImageCount() const { return swapchainImages_.size(); }
 	VkFormat GetSwaphchainImageFormat() const { return swapchainImageFormat_; }
-	VkImageView GetSwapchainImageView(unsigned i) const { return swapchainImageViews_[i]; }
-	uint32_t GetCurrentSwapchainImageIndex() { return currentSwapchainImageIndex_; }
+	VkImageView GetSwapchainImageView(size_t i) const { return swapchainImageViews_[i]; }
+	uint32_t GetCurrentSwapchainImageIndex() const { return currentSwapchainImageIndex_; }
 
 	// Pointer getters
 	VkSwapchainKHR* GetSwapchainPtr() { return &swapchain_; }
@@ -92,9 +93,6 @@ public:
 	FrameData& GetCurrentFrameData();
 	void IncrementFrameIndex();
 	uint32_t GetFrameIndex() const;
-
-	// VMA
-	VmaAllocator GetVMAAllocator() { return vmaAllocator_; }
 
 	// For debugging purpose
 	void SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name);
@@ -116,7 +114,7 @@ private:
 	VkResult CreateSwapchain(VkSurfaceKHR surface);
 	size_t CreateSwapchainImages();
 	bool CreateSwapChainImageView(
-		unsigned imageIndex,
+		size_t imageIndex,
 		VkFormat format, 
 		VkImageAspectFlags aspectFlags);
 	SwapchainSupportDetails QuerySwapchainSupport(VkSurfaceKHR surface);
@@ -142,6 +140,7 @@ private:
 	VkFormat swapchainImageFormat_;
 	uint32_t currentSwapchainImageIndex_; // Current image index
 
+	// TODO Rename to imageWidth_ and imageHeight_
 	uint32_t framebufferWidth_;
 	uint32_t framebufferHeight_;
 	VkFormat depthFormat_;

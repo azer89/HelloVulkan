@@ -181,7 +181,7 @@ void AppBase::DrawFrame()
 	{
 		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
 		.pNext = nullptr,
-		.waitSemaphoreCount = waitSemaphores.size(),
+		.waitSemaphoreCount = static_cast<uint32_t>(waitSemaphores.size()),
 		.pWaitSemaphores = waitSemaphores.data(),
 		.pWaitDstStageMask = waitStages,
 		.commandBufferCount = 1u,

@@ -3,16 +3,16 @@
 
 void VulkanFramebuffer::Create(VulkanDevice& vkDev,
 	VkRenderPass renderPass,
-	const std::vector<VulkanImage*> attachmentImages,
+	const std::vector<VulkanImage*>& attachmentImages,
 	bool offscreen)
 {
 	offscreen_ = offscreen;
 	device_ = vkDev.GetDevice();
 	attachmentImages_ = attachmentImages;
-	framebufferCount_ = offscreen_ ? 1 : vkDev.GetSwapchainImageCount();
+	framebufferCount_ = offscreen_ ? 1u : static_cast<uint32_t>(vkDev.GetSwapchainImageCount());
 	framebuffers_.resize(framebufferCount_);
 
-	if (offscreen_ && attachmentImages_.size() == 0)
+	if (offscreen_ && attachmentImages_.empty())
 	{
 		std::cerr << "Need at least one image attachment to create a framebuffer\n";
 	}
@@ -54,7 +54,7 @@ VkFramebuffer VulkanFramebuffer::GetFramebuffer() const
 
 VkFramebuffer VulkanFramebuffer::GetFramebuffer(size_t index) const
 {
-	if (index >= 0 && index < framebuffers_.size())
+	if (index < framebuffers_.size())
 	{
 		return framebuffers_[index];
 	}

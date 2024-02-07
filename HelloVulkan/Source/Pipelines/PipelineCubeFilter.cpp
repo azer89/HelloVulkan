@@ -220,10 +220,8 @@ void PipelineCubeFilter::CreateOffsreenGraphicsPipeline(
 
 	// Pipeline create info
 	PipelineCreateInfo pInfo(vkDev);
-
-	pInfo.viewport.width = viewportWidth;
-	pInfo.viewport.height = viewportHeight;
-
+	pInfo.viewport.width = static_cast<float>(viewportWidth);
+	pInfo.viewport.height = static_cast<float>(viewportHeight);
 	pInfo.scissor.extent = { viewportWidth, viewportHeight };
 
 	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
@@ -333,7 +331,7 @@ void PipelineCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 		nullptr);
 
 	// Select pipeline
-	VkPipeline pipeline = graphicsPipelines_[static_cast<unsigned int>(filterType)];
+	VkPipeline pipeline = graphicsPipelines_[static_cast<uint8_t>(filterType)];
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 

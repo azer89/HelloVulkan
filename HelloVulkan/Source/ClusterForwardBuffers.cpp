@@ -13,10 +13,10 @@ void ClusterForwardBuffers::SetAABBDirty()
 
 void ClusterForwardBuffers::CreateBuffers(VulkanDevice& vkDev, uint32_t lightCount)
 {
-	uint32_t bufferCount = AppConfig::FrameOverlapCount;
+	constexpr uint32_t bufferCount = AppConfig::FrameOverlapCount;
 
 	// AABB
-	uint32_t aabbBufferSize = ClusterForwardConfig::numClusters * sizeof(AABB);
+	constexpr uint32_t aabbBufferSize = ClusterForwardConfig::numClusters * sizeof(AABB);
 	aabbBuffers_.resize(bufferCount);
 	aabbDirtyFlags_.resize(bufferCount);
 	SetAABBDirty();
@@ -25,11 +25,11 @@ void ClusterForwardBuffers::CreateBuffers(VulkanDevice& vkDev, uint32_t lightCou
 	globalIndexCountBuffers_.resize(bufferCount);
 
 	// LightCell
-	uint32_t lightCellsBufferSize = ClusterForwardConfig::numClusters * sizeof(LightCell);
+	constexpr uint32_t lightCellsBufferSize = ClusterForwardConfig::numClusters * sizeof(LightCell);
 	lightCellsBuffers_.resize(bufferCount);
 
 	// Light Indices
-	uint32_t lightIndicesBufferSize =
+	constexpr uint32_t lightIndicesBufferSize =
 		ClusterForwardConfig::maxLightPerCluster *
 		ClusterForwardConfig::numClusters *
 		sizeof(uint32_t);

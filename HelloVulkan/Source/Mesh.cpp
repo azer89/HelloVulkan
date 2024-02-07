@@ -4,8 +4,6 @@
 #include "assimp/postprocess.h"
 #include "assimp/cimport.h"
 
-#include <iostream>
-
 // Constructor
 Mesh::Mesh(VulkanDevice& vkDev,
 	std::vector<VertexData>&& _vertices,

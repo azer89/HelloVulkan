@@ -42,9 +42,9 @@ public:
 public:
 	VulkanImage() :
 		image_(nullptr),
+		imageView_(nullptr),
 		vmaAllocation_(nullptr),
 		vmaAllocator_(nullptr),
-		imageView_(nullptr),
 		defaultImageSampler_(nullptr),
 		width_(0),
 		height_(0),
