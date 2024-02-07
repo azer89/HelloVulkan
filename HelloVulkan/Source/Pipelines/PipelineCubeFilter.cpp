@@ -277,30 +277,6 @@ void PipelineCubeFilter::CreateOffsreenGraphicsPipeline(
 	}
 }
 
-// TODO Use VulkanFramebuffer
-/*VkFramebuffer PipelineCubeFilter::CreateFrameBuffer(
-	VulkanDevice& vkDev,
-	std::vector<VkImageView> outputViews,
-	uint32_t width,
-	uint32_t height)
-{
-	VkFramebufferCreateInfo info =
-	{
-		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0u,
-		.renderPass = renderPass_.GetHandle(),
-		.attachmentCount = static_cast<uint32_t>(outputViews.size()),
-		.pAttachments = outputViews.data(),
-		.width = width,
-		.height = height,
-		.layers = 1u
-	};
-	VkFramebuffer frameBuffer;
-	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &info, nullptr, &frameBuffer));
-	return frameBuffer;
-}*/
-
 void PipelineCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 	VulkanImage* outputCubemap,
 	CubeFilterType filterType)
@@ -345,15 +321,9 @@ void PipelineCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
-	//std::vector<VkFramebuffer> usedFrameBuffers;
-
 	for (int i = static_cast<int>(outputMipMapCount - 1u); i >= 0; --i)
 	{
 		uint32_t targetSize = outputSideLength >> i;
-
-		// TODO Creating framebuffers here is a bit weird
-		//VkFramebuffer frameBuffer = CreateFrameBuffer(vkDev, outputViews[i], targetSize, targetSize);
-		//usedFrameBuffers.push_back(frameBuffer);
 
 		VkImageSubresourceRange  subresourceRange =
 		{ VK_IMAGE_ASPECT_COLOR_BIT, static_cast<uint32_t>(i), 1u, 0u, 6u };
@@ -404,10 +374,6 @@ void PipelineCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 	vkDev.EndOneTimeGraphicsCommand(commandBuffer);
 
 	// Destroy frame buffers
-	//for (VkFramebuffer& f : usedFrameBuffers)
-	//{
-	//	vkDestroyFramebuffer(vkDev.GetDevice(), f, nullptr);
-	//}
 	for (auto& f : mipFramebuffers)
 	{
 		f.Destroy();
