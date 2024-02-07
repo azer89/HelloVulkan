@@ -7,13 +7,13 @@
 
 enum class TextureType : uint8_t
 {
-	NONE = 0u,
-	ALBEDO = 1u,
-	NORMAL = 2u,
-	METALNESS = 3u,
-	ROUGHNESS = 4u,
-	AO = 5u,
-	EMISSIVE = 6u,
+	None = 0u,
+	Albedo = 1u,
+	Normal = 2u,
+	Metalness = 3u,
+	Roughness = 4u,
+	AmbientOcclusion = 5u,
+	Emissive = 6u,
 };
 
 // Mapping from ASSIMP textures to PBR textures
@@ -25,7 +25,7 @@ namespace TextureMapper
 	// This vector is a priority list
 	static std::vector<aiTextureType> aiTTypeSearchOrder =
 	{
-		// Diffuse
+		// Albedo
 		aiTextureType_DIFFUSE,
 
 		// Metalness
@@ -39,7 +39,7 @@ namespace TextureMapper
 		aiTextureType_DIFFUSE_ROUGHNESS,
 		aiTextureType_SHININESS,
 
-		// AO
+		// AmbientOcclusion
 		aiTextureType_AMBIENT_OCCLUSION,
 		aiTextureType_LIGHTMAP,
 
@@ -49,33 +49,33 @@ namespace TextureMapper
 
 	static std::unordered_map<aiTextureType, TextureType> assimpTextureToTextureType =
 	{
-		// Diffuse
-		{aiTextureType_DIFFUSE, TextureType::ALBEDO},
+		// Albedo
+		{aiTextureType_DIFFUSE, TextureType::Albedo},
 
 		// Specular
-		{aiTextureType_SPECULAR, TextureType::METALNESS},
-		{aiTextureType_METALNESS, TextureType::METALNESS},
+		{aiTextureType_SPECULAR, TextureType::Metalness},
+		{aiTextureType_METALNESS, TextureType::Metalness},
 
 		// Normal
-		{aiTextureType_NORMALS, TextureType::NORMAL},
+		{aiTextureType_NORMALS, TextureType::Normal},
 
 		// Roughness shininess
-		{aiTextureType_DIFFUSE_ROUGHNESS, TextureType::ROUGHNESS},
-		{aiTextureType_SHININESS, TextureType::ROUGHNESS},
+		{aiTextureType_DIFFUSE_ROUGHNESS, TextureType::Roughness},
+		{aiTextureType_SHININESS, TextureType::Roughness},
 
-		// AO
-		{aiTextureType_AMBIENT_OCCLUSION, TextureType::AO},
-		{aiTextureType_LIGHTMAP, TextureType::AO},
+		// Ambient Occlusion
+		{aiTextureType_AMBIENT_OCCLUSION, TextureType::AmbientOcclusion},
+		{aiTextureType_LIGHTMAP, TextureType::AmbientOcclusion},
 
 		// Emissive
-		{aiTextureType_EMISSIVE, TextureType::EMISSIVE}
+		{aiTextureType_EMISSIVE, TextureType::Emissive}
 	};
 
 	static TextureType GetTextureType(aiTextureType aiTType)
 	{
 		if (!TextureMapper::assimpTextureToTextureType.contains(aiTType))
 		{
-			return TextureType::NONE;
+			return TextureType::None;
 		}
 		return TextureMapper::assimpTextureToTextureType[aiTType];
 	}
