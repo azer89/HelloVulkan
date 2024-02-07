@@ -62,11 +62,11 @@ private:
 		VkPipeline* pipeline);
 
 	// TODO Use VulkanFramebuffer
-	VkFramebuffer CreateFrameBuffer(
+	/*VkFramebuffer CreateFrameBuffer(
 		VulkanDevice& vkDev,
 		std::vector<VkImageView> outputViews,
 		uint32_t width,
-		uint32_t height);
+		uint32_t height);*/
 };
 
 #endif
