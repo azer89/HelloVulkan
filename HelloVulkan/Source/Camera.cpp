@@ -39,19 +39,19 @@ void Camera::SetScreenSize(float width, float height)
 void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime_)
 {
 	float velocity = movementSpeed_ * deltaTime_;
-	if (direction == CameraForward)
+	if (direction == CameraMovement::Forward)
 	{
 		position_ += front_ * velocity;
 	}
-	else if (direction == CameraBackward)
+	else if (direction == CameraMovement::Backward)
 	{
 		position_ -= front_ * velocity;
 	}
-	else if (direction == CameraLeft)
+	else if (direction == CameraMovement::Left)
 	{
 		position_ -= right_ * velocity;
 	}
-	else if (direction == CameraRight)
+	else if (direction == CameraMovement::Right)
 	{
 		position_ += right_ * velocity;
 	}
