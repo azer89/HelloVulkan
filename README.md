@@ -5,15 +5,15 @@ A real-time rendering engine using Vulkan.
 ### Features
 * Clustered Forward Shading, no more deferred!
 * Physically-Based Rendering (PBR) with Cook-Torrance BRDF.
-* Image-Based Lighting (IBL) with offscreen pipelines to generate:
+* Image-Based Lighting (IBL) with offscreen pipelines that generate:
     * A cubemap from an equirectangular HDR image.
     * Specular and diffuse cubemaps.
     * Compute shader to generate BRDF lookup table.
 * Reinhard tonemap postprocessing.
-* glTF Mesh loading and rendering.
+* glTF mesh/texture loading and rendering.
 * Multisample anti-aliasing (MSAA).
 * Automatic runtime compilation from GLSL to SPIR-V.
-* A simple abstraction layer that supports a sequence of graphics/compute pipelines.
+* A a lightweight abstraction layer that encapsulates Vulkan API for rapid prototyping/development.
 * Minor features: Skybox, instancing with SSBOs, ImGui, UBOs, and push constants.
   
 https://github.com/azer89/HelloVulkan/assets/790432/8b0562ed-ab72-4e93-9ce9-31c61c0e986a
@@ -31,8 +31,8 @@ I finally implemented "Clustered Forward Shading" which is based on an article b
 The current implementation consists of two steps. The first step involves subdividing the view frustum into clusters.
 The next step is light culling, where we calculate lights that intersect the clusters. This step removes lights that are too far from a fragment, leading to reduced light iteration inside the final fragment shader.
 
-Although I haven't done a proper testing, a Sponza scene with 1000+ point lights can be rendered at 60-100 FPS using a 3060M graphics card.
-Also, if too many lights end up inside the view frustum, especially when you zoom out, the frame rate will drop regardless, duh!
+Although I haven't done a proper evaluation, a Sponza scene with 1000+ point lights can be rendered around 60-100 FPS, tested using a 3060M graphics card.
+If too many lights end up inside the view frustum, especially when you zoom out, the frame rate will drop regardless, but still much faster than a naive forward shading.
 
 https://github.com/azer89/HelloVulkan/assets/790432/66b9a30a-d187-495a-9879-8eb11a497087
 
