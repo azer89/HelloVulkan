@@ -34,10 +34,10 @@ void AppBase::InitVulkan()
 	}
 
 	// Multisampling / MSAA
-	constexpr VkPhysicalDeviceFeatures features = {
-		.sampleRateShading = VK_TRUE,
-		.samplerAnisotropy = VK_TRUE,
-	};
+	//constexpr VkPhysicalDeviceFeatures features = {
+	//	.sampleRateShading = VK_TRUE,
+	//	.samplerAnisotropy = VK_TRUE,
+	//};
 
 	// Initialize Vulkan instance
 	vulkanInstance_.Create();
@@ -45,6 +45,7 @@ void AppBase::InitVulkan()
 	vulkanInstance_.CreateWindowSurface(glfwWindow_);
 	vulkanDevice_.Create(vulkanInstance_,
 		{
+			.supportRaytracing_ = true,
 			.supportMSAA_ = true
 		});
 }

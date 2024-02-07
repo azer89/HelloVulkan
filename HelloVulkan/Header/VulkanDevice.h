@@ -33,9 +33,9 @@ struct FrameData
 	}
 };
 
-// This struct is used to enable extensions
 struct ContextConfig
 {
+	bool supportRaytracing_;
 	bool supportMSAA_;
 };
 
@@ -51,7 +51,10 @@ public:
 
 	void Create(
 		VulkanInstance& instance,
-		ContextConfig config);
+		ContextConfig config
+	);
+
+	void CheckSurfaceSupport(VulkanInstance& instance);
 
 	void Destroy();
 
@@ -82,12 +85,19 @@ public:
 	VkFormat GetDepthFormat() const { return depthFormat_; };
 	VmaAllocator GetVMAAllocator() const { return vmaAllocator_; }
 
+	// Raytracing getters
+	VkPhysicalDeviceRayTracingPipelinePropertiesKHR GetRayTracingPipelineProperties() { return rayTracingPipelineProperties_; }
+	VkPhysicalDeviceAccelerationStructureFeaturesKHR GetAccelerationStructureFeatures() { accelerationStructureFeatures_; }
+
 	// Getters related to swapchain
 	VkSwapchainKHR GetSwapChain() const { return swapchain_; }
 	size_t GetSwapchainImageCount() const { return swapchainImages_.size(); }
 	VkFormat GetSwapchainImageFormat() const { return swapchainImageFormat_; }
+	VkImage GetSwapchainImage(size_t i) const { return swapchainImages_[i]; }
 	VkImageView GetSwapchainImageView(size_t i) const { return swapchainImageViews_[i]; }
 	uint32_t GetCurrentSwapchainImageIndex() const { return currentSwapchainImageIndex_; }
+
+	uint32_t GetMemoryType(uint32_t typeBits, VkMemoryPropertyFlags properties, VkBool32* memTypeFound = nullptr) const;
 
 	// Pointer getters
 	VkSwapchainKHR* GetSwapchainPtr() { return &swapchain_; }
@@ -107,12 +117,6 @@ private:
 	bool IsDeviceSuitable(VkPhysicalDevice d);
 	VkSampleCountFlagBits GetMaxUsableSampleCount(VkPhysicalDevice d);
 
-	void GetQueues();
-	void AllocateFrameInFlightData();
-	void AllocateVMA(VulkanInstance& instance);
-	void CheckSurfaceSupport(VulkanInstance& instance);
-	VkResult CreateCommandPool(uint32_t family, VkCommandPool* pool);
-
 	// Swapchain
 	VkResult CreateSwapchain(VkSurfaceKHR surface);
 	size_t CreateSwapchainImages();
@@ -127,6 +131,14 @@ private:
 	VkResult CreateSemaphore(VkSemaphore* outSemaphore);
 	VkResult CreateFence(VkFence* fence);
 	VkResult CreateCommandBuffer(VkCommandPool pool, VkCommandBuffer* commandBuffer);
+	VkResult CreateCommandPool(uint32_t family, VkCommandPool* pool);
+
+	void GetQueues();
+	void AllocateFrameInFlightData();
+	void AllocateVMA(VulkanInstance& instance);
+
+	void GetRaytracingPropertiesAndFeatures();
+	void GetEnabledRaytracingFeatures();
 
 	VkFormat FindDepthFormat();
 	VkFormat FindSupportedFormat(
@@ -135,8 +147,6 @@ private:
 		VkFormatFeatureFlags features);
 
 private:
-	ContextConfig config_;
-
 	VkSwapchainKHR swapchain_;
 	std::vector<VkImage> swapchainImages_;
 	std::vector<VkImageView> swapchainImageViews_;
@@ -151,6 +161,7 @@ private:
 
 	VkDevice device_;
 	VkPhysicalDevice physicalDevice_;
+	VkPhysicalDeviceMemoryProperties memoryProperties_;
 
 	// Graphics
 	VkQueue graphicsQueue_;
@@ -170,6 +181,19 @@ private:
 	std::vector<FrameData> frameDataArray_;
 
 	VmaAllocator vmaAllocator_;
+
+	ContextConfig config_;
+
+	// Raytracing
+	VkPhysicalDeviceRayTracingPipelinePropertiesKHR rayTracingPipelineProperties_{};
+	VkPhysicalDeviceAccelerationStructureFeaturesKHR accelerationStructureFeatures_{};
+
+	VkPhysicalDeviceBufferDeviceAddressFeatures enabledBufferDeviceAddresFeatures_{};
+	VkPhysicalDeviceRayTracingPipelineFeaturesKHR enabledRayTracingPipelineFeatures_{};
+	VkPhysicalDeviceAccelerationStructureFeaturesKHR enabledAccelerationStructureFeatures_{};
+
+	//pNext structure for passing extension structures to device creation* /
+	void* pNextChain_ = nullptr;
 };
 
 #endif

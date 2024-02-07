@@ -16,8 +16,6 @@ AppPBR::AppPBR() :
 
 void AppPBR::Init()
 {
-	
-
 	// Initialize lights
 	InitLights();
 

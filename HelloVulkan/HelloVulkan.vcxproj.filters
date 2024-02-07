@@ -28,6 +28,9 @@
     <Filter Include="Shaders\ClusteredForward">
       <UniqueIdentifier>{20cd7c14-216f-4f3a-841a-5875546ac38f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\SimpleRaytracing">
+      <UniqueIdentifier>{cf84cfb1-6675-4214-b93b-2033515180c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\Cube.vert">
@@ -86,6 +89,15 @@
     </None>
     <None Include="..\Shaders\ClusteredForward\LightCullingBatch.comp">
       <Filter>Shaders\ClusteredForward</Filter>
+    </None>
+    <None Include="..\Shaders\SimpleRaytracing\ClosestHit.rchit">
+      <Filter>Shaders\SimpleRaytracing</Filter>
+    </None>
+    <None Include="..\Shaders\SimpleRaytracing\Miss.rmiss">
+      <Filter>Shaders\SimpleRaytracing</Filter>
+    </None>
+    <None Include="..\Shaders\SimpleRaytracing\RayGen.rgen">
+      <Filter>Shaders\SimpleRaytracing</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -203,6 +215,15 @@
     <ClInclude Include="Header\Apps\AppPBRClusterForward.h">
       <Filter>Header Files\Apps</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Apps\AppSimpleRaytracing.h">
+      <Filter>Header Files\Apps</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineSimpleRaytracing.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\RaytracingStructs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">
@@ -303,6 +324,12 @@
     </ClCompile>
     <ClCompile Include="Source\Apps\AppPBRClusterForward.cpp">
       <Filter>Source Files\Apps</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Apps\AppSimpleRaytracing.cpp">
+      <Filter>Source Files\Apps</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineSimpleRaytracing.cpp">
+      <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

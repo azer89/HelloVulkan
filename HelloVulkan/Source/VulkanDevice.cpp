@@ -6,21 +6,24 @@
 #define VMA_STATIC_VULKAN_FUNCTIONS 0
 #include "vk_mem_alloc.h"
 
-void VulkanDevice::Create(
-	VulkanInstance& instance,
-	ContextConfig config)
+void VulkanDevice::Create(VulkanInstance& instance, ContextConfig config/*VkPhysicalDeviceFeatures deviceFeatures*/)
 {
 	config_ = config;
 	framebufferWidth_ = AppConfig::InitialScreenWidth;
 	framebufferHeight_ = AppConfig::InitialScreenHeight;
 
+	GetEnabledRaytracingFeatures();
+
 	VK_CHECK(CreatePhysicalDevice(instance.GetInstance()));
+
 	graphicsFamily_ = FindQueueFamilies(VK_QUEUE_GRAPHICS_BIT);
 	computeFamily_ = FindQueueFamilies(VK_QUEUE_COMPUTE_BIT);
 	VK_CHECK(CreateDevice());
 
+	GetRaytracingPropertiesAndFeatures();
+	
 	GetQueues();
-
+	
 	CheckSurfaceSupport(instance);
 
 	// Swapchain
@@ -36,6 +39,97 @@ void VulkanDevice::Create(
 
 	// VMA
 	AllocateVMA(instance);
+}
+
+void VulkanDevice::GetQueues()
+{
+	deviceQueueIndices_.push_back(graphicsFamily_);
+	if (graphicsFamily_ != computeFamily_)
+	{
+		deviceQueueIndices_.push_back(computeFamily_);
+	}
+
+	vkGetDeviceQueue(device_, graphicsFamily_, 0, &graphicsQueue_);
+	if (graphicsQueue_ == nullptr) { std::cerr << "Cannot get graphics queue\n"; }
+
+	vkGetDeviceQueue(device_, computeFamily_, 0, &computeQueue_);
+	if (computeQueue_ == nullptr) { std::cerr << "Cannot get compute queue\n"; }
+}
+
+void VulkanDevice::AllocateFrameInFlightData()
+{
+	// Frame in flight
+	frameIndex_ = 0;
+	frameDataArray_ = std::vector<FrameData>(AppConfig::FrameOverlapCount);
+	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
+	{
+		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].nextSwapchainImageSemaphore_)));
+		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].graphicsQueueSemaphore_)));
+		VK_CHECK(CreateFence(&(frameDataArray_[i].queueSubmitFence_)));
+		VK_CHECK(CreateCommandBuffer(graphicsCommandPool_, &(frameDataArray_[i].graphicsCommandBuffer_)));
+	}
+}
+
+void VulkanDevice::CheckSurfaceSupport(VulkanInstance& instance)
+{
+	VkBool32 presentSupported = 0;
+	vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice_, graphicsFamily_, instance.GetSurface(), &presentSupported);
+	if (!presentSupported) { std::cerr << "Cannot get surface support KHR\n"; }
+}
+
+void VulkanDevice::GetRaytracingPropertiesAndFeatures()
+{
+	if (config_.supportRaytracing_)
+	{
+		// Properties
+		rayTracingPipelineProperties_.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR;
+		VkPhysicalDeviceProperties2 deviceProperties2 =
+		{
+			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2,
+			.pNext = &rayTracingPipelineProperties_
+		};
+		vkGetPhysicalDeviceProperties2(physicalDevice_, &deviceProperties2);
+
+		// Features
+		accelerationStructureFeatures_.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
+		VkPhysicalDeviceFeatures2 deviceFeatures2 =
+		{
+			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2,
+			.pNext = &accelerationStructureFeatures_
+		};
+		vkGetPhysicalDeviceFeatures2(physicalDevice_, &deviceFeatures2);
+	}
+}
+
+void VulkanDevice::GetEnabledRaytracingFeatures()
+{
+	pNextChain_ = nullptr;
+
+	if (config_.supportRaytracing_)
+	{
+		// Enable features required for ray tracing using feature chaining via pNext		
+		enabledBufferDeviceAddresFeatures_ =
+		{
+			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES,
+			.bufferDeviceAddress = VK_TRUE
+		};
+
+		enabledRayTracingPipelineFeatures_ =
+		{
+			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR,
+			.pNext = &enabledBufferDeviceAddresFeatures_,
+			.rayTracingPipeline = VK_TRUE,
+		};
+
+		enabledAccelerationStructureFeatures_ =
+		{
+			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR,
+			.pNext = &enabledRayTracingPipelineFeatures_,
+			.accelerationStructure = VK_TRUE,
+		};
+
+		pNextChain_ = &enabledAccelerationStructureFeatures_;
+	}
 }
 
 void VulkanDevice::Destroy()
@@ -57,81 +151,6 @@ void VulkanDevice::Destroy()
 	vmaDestroyAllocator(vmaAllocator_);
 
 	vkDestroyDevice(device_, nullptr);
-}
-
-void VulkanDevice::GetQueues()
-{
-	deviceQueueIndices_.push_back(graphicsFamily_);
-	if (graphicsFamily_ != computeFamily_)
-	{
-		deviceQueueIndices_.push_back(computeFamily_);
-	}
-
-	vkGetDeviceQueue(device_, graphicsFamily_, 0, &graphicsQueue_);
-	if (graphicsQueue_ == nullptr)
-	{
-		std::cerr << "Cannot get graphics queue\n";
-	}
-
-	vkGetDeviceQueue(device_, computeFamily_, 0, &computeQueue_);
-	if (computeQueue_ == nullptr)
-	{
-		std::cerr << "Cannot get compute queue\n";
-	}
-}
-
-void VulkanDevice::AllocateFrameInFlightData()
-{
-	// Frame data
-	frameIndex_ = 0;
-	frameDataArray_ = std::vector<FrameData>(AppConfig::FrameOverlapCount);
-	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
-	{
-		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].nextSwapchainImageSemaphore_)));
-		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].graphicsQueueSemaphore_)));
-		VK_CHECK(CreateFence(&(frameDataArray_[i].queueSubmitFence_)));
-		VK_CHECK(CreateCommandBuffer(graphicsCommandPool_, &(frameDataArray_[i].graphicsCommandBuffer_)));
-	}
-}
-
-void VulkanDevice::AllocateVMA(VulkanInstance& instance)
-{
-	// Need this because we use Volk
-	const VmaVulkanFunctions vulkanFunctions =
-	{
-		.vkGetInstanceProcAddr = vkGetInstanceProcAddr,
-		.vkGetDeviceProcAddr = vkGetDeviceProcAddr,
-	};
-
-	const VmaAllocatorCreateInfo allocatorInfo =
-	{
-		.physicalDevice = physicalDevice_,
-		.device = device_,
-		.pVulkanFunctions = (const VmaVulkanFunctions*)&vulkanFunctions,
-		.instance = instance.GetInstance(),
-	};
-
-	vmaCreateAllocator(&allocatorInfo, &vmaAllocator_);
-}
-
-void VulkanDevice::CheckSurfaceSupport(VulkanInstance& instance)
-{
-	VkBool32 presentSupported = 0;
-	vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice_, graphicsFamily_, instance.GetSurface(), &presentSupported);
-	if (!presentSupported) { std::cerr << "Cannot get surface support KHR\n"; }
-}
-
-VkResult VulkanDevice::CreateCommandPool(uint32_t family, VkCommandPool* pool)
-{
-	const VkCommandPoolCreateInfo cpi =
-	{
-		.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
-		.queueFamilyIndex = family
-	};
-
-	return vkCreateCommandPool(device_, &cpi, nullptr, pool);
 }
 
 VkSampleCountFlagBits VulkanDevice::GetMaxUsableSampleCount(VkPhysicalDevice d)
@@ -191,6 +210,8 @@ VkResult VulkanDevice::CreatePhysicalDevice(VkInstance instance)
 			physicalDevice_ = d;
 			msaaSampleCount_ = GetMaxUsableSampleCount(physicalDevice_);
 			depthFormat_ = FindDepthFormat();
+			// Memory properties are used regularly for creating all kinds of buffers
+			vkGetPhysicalDeviceMemoryProperties(physicalDevice_, &memoryProperties_);
 			return VK_SUCCESS;
 		}
 	}
@@ -225,6 +246,20 @@ VkResult VulkanDevice::CreateDevice()
 		VK_KHR_SWAPCHAIN_EXTENSION_NAME
 	};
 
+	if (config_.supportRaytracing_)
+	{
+		extensions.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);
+		extensions.push_back(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME);
+		// Required by VK_KHR_acceleration_structure
+		extensions.push_back(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME);
+		extensions.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);
+		extensions.push_back(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
+		// Required for VK_KHR_ray_tracing_pipeline
+		extensions.push_back(VK_KHR_SPIRV_1_4_EXTENSION_NAME);
+		// Required by VK_KHR_spirv_1_4
+		extensions.push_back(VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME);
+	}
+
 	VkPhysicalDeviceFeatures deviceFeatures = {};
 	if (config_.supportMSAA_)
 	{
@@ -235,7 +270,7 @@ VkResult VulkanDevice::CreateDevice()
 	const bool sameFamily = graphicsFamily_ == computeFamily_;
 	const float priorityOne = 1.f;
 	const float priorityZero = 0.f;
-
+	
 	std::vector<VkDeviceQueueCreateInfo> queueInfoArray;
 	const VkDeviceQueueCreateInfo graphicsQueueInfo =
 	{
@@ -276,6 +311,17 @@ VkResult VulkanDevice::CreateDevice()
 		.ppEnabledExtensionNames = extensions.data(),
 		.pEnabledFeatures = &deviceFeatures
 	};
+
+	// Chaining
+	VkPhysicalDeviceFeatures2 phyDevFeatures2{};
+	if (pNextChain_)
+	{
+		phyDevFeatures2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+		phyDevFeatures2.features = deviceFeatures;
+		phyDevFeatures2.pNext = pNextChain_;
+		devCreateInfo.pEnabledFeatures = nullptr;
+		devCreateInfo.pNext = &phyDevFeatures2;
+	}
 
 	return vkCreateDevice(physicalDevice_, &devCreateInfo, nullptr, &device_);
 }
@@ -460,6 +506,19 @@ VkResult VulkanDevice::CreateFence(VkFence* fence)
 	return vkCreateFence(device_, &fenceInfo, nullptr, fence);
 }
 
+VkResult VulkanDevice::CreateCommandPool(uint32_t family, VkCommandPool* pool)
+{
+	const VkCommandPoolCreateInfo cpi =
+	{
+		.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
+		.queueFamilyIndex = family
+	};
+
+	return vkCreateCommandPool(device_, &cpi, nullptr, pool);
+}
+
 VkResult VulkanDevice::CreateCommandBuffer(VkCommandPool pool, VkCommandBuffer* commandBuffer)
 {
 	const VkCommandBufferAllocateInfo allocInfo = {
@@ -520,6 +579,35 @@ VkFormat VulkanDevice::FindSupportedFormat(
 	}
 
 	throw std::runtime_error("Failed to find supported format\n");
+}
+
+uint32_t VulkanDevice::GetMemoryType(uint32_t typeBits, VkMemoryPropertyFlags properties, VkBool32* memTypeFound) const
+{
+	for (uint32_t i = 0; i < memoryProperties_.memoryTypeCount; i++)
+	{
+		if ((typeBits & 1) == 1)
+		{
+			if ((memoryProperties_.memoryTypes[i].propertyFlags & properties) == properties)
+			{
+				if (memTypeFound)
+				{
+					*memTypeFound = true;
+				}
+				return i;
+			}
+		}
+		typeBits >>= 1;
+	}
+
+	if (memTypeFound)
+	{
+		*memTypeFound = false;
+		return 0;
+	}
+	else
+	{
+		throw std::runtime_error("Could not find a matching memory type");
+	}
 }
 
 VkCommandBuffer VulkanDevice::BeginOneTimeGraphicsCommand()
@@ -623,4 +711,26 @@ void VulkanDevice::IncrementFrameIndex()
 uint32_t VulkanDevice::GetFrameIndex() const 
 { 
 	return frameIndex_; 
+}
+
+void VulkanDevice::AllocateVMA(VulkanInstance& instance)
+{
+	// Need this because we use Volk
+	const VmaVulkanFunctions vulkanFunctions =
+	{
+		.vkGetInstanceProcAddr = vkGetInstanceProcAddr,
+		.vkGetDeviceProcAddr = vkGetDeviceProcAddr,
+	};
+
+	const VmaAllocatorCreateInfo allocatorInfo =
+	{
+		// TODO remove flag if raytracing is not used
+		.flags = VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT,
+		.physicalDevice = physicalDevice_,
+		.device = device_,
+		.pVulkanFunctions = (const VmaVulkanFunctions*)&vulkanFunctions,
+		.instance = instance.GetInstance(),
+	};
+	
+	vmaCreateAllocator(&allocatorInfo, &vmaAllocator_);
 }
