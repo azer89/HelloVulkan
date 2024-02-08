@@ -48,7 +48,7 @@ Technical Resources:
 * [Epic Games PBR Notes](https://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf)
 * [3D Graphics Rendering Cookbook](https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook)
 * [Angel Ortiz - Clustered Shading](https://www.aortiz.me/2018/12/21/CG.html)
-* A lot of [internet resources](https://github.com/azer89/VulkanResources)
+* [Tons of online resources](https://github.com/azer89/VulkanResources)
 
 Assets:
 * [Tachikoma](https://sketchfab.com/3d-models/tachikoma-7ec03deb78de4a1b908d2bc736ff0f15)
