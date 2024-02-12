@@ -31,7 +31,7 @@ I finally implemented "Clustered Forward Shading" which is based on an article b
 The current implementation consists of two steps. The first step involves subdividing the view frustum into clusters.
 The next step is light culling, where we calculate lights that intersect the clusters. This step removes lights that are too far from a fragment, leading to reduced light iteration inside the final fragment shader.
 
-Although I haven't done a proper evaluation, a Sponza scene with 1000+ point lights can be rendered around 60-100 FPS, tested using a 3060M graphics card.
+Although I haven't done a proper evaluation, a Sponza scene with 1000+ point lights can be rendered around 60-100 FPS, tested using a 3070M graphics card.
 If too many lights end up inside the view frustum, especially when you zoom out, the frame rate will drop regardless, but still much faster than a naive forward shading.
 
 https://github.com/azer89/HelloVulkan/assets/790432/66b9a30a-d187-495a-9879-8eb11a497087
