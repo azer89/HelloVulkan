@@ -48,12 +48,9 @@ public:
 	VulkanDevice() = default;
 	~VulkanDevice() = default;
 
-	void CreateCompute(
+	void Create(
 		VulkanInstance& instance,
-		uint32_t width, 
-		uint32_t height, 
-		VkPhysicalDeviceFeatures deviceFeatures
-	);
+		ContextConfig config);
 
 	void Destroy();
 
@@ -105,13 +102,7 @@ public:
 private:
 	VkResult CreatePhysicalDevice(VkInstance instance);
 	uint32_t FindQueueFamilies(VkQueueFlags desiredFlags);
-	VkResult CreateDeviceWithCompute(
-		VkPhysicalDeviceFeatures deviceFeatures, 
-		uint32_t graphicsFamily, 
-		uint32_t computeFamily);
-	VkResult CreateDevice(
-		VkPhysicalDeviceFeatures deviceFeatures, 
-		uint32_t graphicsFamily);
+	VkResult CreateDevice();
 	bool IsDeviceSuitable(VkPhysicalDevice d);
 	VkSampleCountFlagBits GetMaxUsableSampleCount(VkPhysicalDevice d);
 
@@ -143,6 +134,8 @@ private:
 		VkFormatFeatureFlags features);
 
 private:
+	ContextConfig config_;
+
 	VkSwapchainKHR swapchain_;
 	std::vector<VkImage> swapchainImages_;
 	std::vector<VkImageView> swapchainImageViews_;

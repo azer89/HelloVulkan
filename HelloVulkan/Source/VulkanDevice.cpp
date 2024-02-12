@@ -6,21 +6,18 @@
 #define VMA_STATIC_VULKAN_FUNCTIONS 0
 #include "vk_mem_alloc.h"
 
-void VulkanDevice::CreateCompute
-(
+void VulkanDevice::Create(
 	VulkanInstance& instance,
-	uint32_t width,
-	uint32_t height,
-	VkPhysicalDeviceFeatures deviceFeatures
-)
+	ContextConfig config)
 {
-	framebufferWidth_ = width;
-	framebufferHeight_ = height;
+	config_ = config;
+	framebufferWidth_ = AppConfig::InitialScreenWidth;
+	framebufferHeight_ = AppConfig::InitialScreenHeight;
 
 	VK_CHECK(CreatePhysicalDevice(instance.GetInstance()));
 	graphicsFamily_ = FindQueueFamilies(VK_QUEUE_GRAPHICS_BIT);
 	computeFamily_ = FindQueueFamilies(VK_QUEUE_COMPUTE_BIT);
-	VK_CHECK(CreateDeviceWithCompute(deviceFeatures, graphicsFamily_, computeFamily_));
+	VK_CHECK(CreateDevice());
 
 	GetQueues();
 
@@ -220,51 +217,59 @@ uint32_t VulkanDevice::FindQueueFamilies(VkQueueFlags desiredFlags)
 	return 0;
 }
 
-VkResult VulkanDevice::CreateDeviceWithCompute(
-	VkPhysicalDeviceFeatures deviceFeatures, 
-	uint32_t graphicsFamily, 
-	uint32_t computeFamily)
+VkResult VulkanDevice::CreateDevice()
 {
-	const std::vector<const char*> extensions =
+	// Add raytracing extensions here
+	std::vector<const char*> extensions =
 	{
 		VK_KHR_SWAPCHAIN_EXTENSION_NAME
 	};
 
-	if (graphicsFamily == computeFamily)
+	VkPhysicalDeviceFeatures deviceFeatures = {};
+	if (config_.supportMSAA_)
 	{
-		return CreateDevice(deviceFeatures, graphicsFamily);
+		deviceFeatures.sampleRateShading = VK_TRUE;
+		deviceFeatures.samplerAnisotropy = VK_TRUE;
 	}
 
-	constexpr float queuePriorities[2] = { 0.f, 0.f };
-	const VkDeviceQueueCreateInfo qciGfx =
+	const bool sameFamily = graphicsFamily_ == computeFamily_;
+	const float priorityOne = 1.f;
+	const float priorityZero = 0.f;
+
+	std::vector<VkDeviceQueueCreateInfo> queueInfoArray;
+	const VkDeviceQueueCreateInfo graphicsQueueInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.queueFamilyIndex = graphicsFamily,
+		.queueFamilyIndex = graphicsFamily_,
 		.queueCount = 1,
-		.pQueuePriorities = &queuePriorities[0]
+		.pQueuePriorities = sameFamily ? &priorityOne : &priorityZero
 	};
 
-	const VkDeviceQueueCreateInfo qciComp =
+	queueInfoArray.push_back(graphicsQueueInfo);
+
+	if (!sameFamily)
 	{
-		.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.queueFamilyIndex = computeFamily,
-		.queueCount = 1,
-		.pQueuePriorities = &queuePriorities[1]
-	};
+		const VkDeviceQueueCreateInfo computeQueueInfo =
+		{
+			.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+			.pNext = nullptr,
+			.flags = 0,
+			.queueFamilyIndex = computeFamily_,
+			.queueCount = 1,
+			.pQueuePriorities = &priorityZero
+		};
+		queueInfoArray.push_back(computeQueueInfo);
+	}
 
-	const VkDeviceQueueCreateInfo qci[2] = { qciGfx, qciComp };
-
-	const VkDeviceCreateInfo ci =
+	VkDeviceCreateInfo devCreateInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.queueCreateInfoCount = 2,
-		.pQueueCreateInfos = qci,
+		.queueCreateInfoCount = static_cast<uint32_t>(queueInfoArray.size()),
+		.pQueueCreateInfos = queueInfoArray.data(),
 		.enabledLayerCount = 0,
 		.ppEnabledLayerNames = nullptr,
 		.enabledExtensionCount = static_cast<uint32_t>(extensions.size()),
@@ -272,43 +277,7 @@ VkResult VulkanDevice::CreateDeviceWithCompute(
 		.pEnabledFeatures = &deviceFeatures
 	};
 
-	return vkCreateDevice(physicalDevice_, &ci, nullptr, &device_);
-}
-
-VkResult VulkanDevice::CreateDevice(VkPhysicalDeviceFeatures deviceFeatures, uint32_t graphicsFamily)
-{
-	const std::vector<const char*> extensions =
-	{
-		VK_KHR_SWAPCHAIN_EXTENSION_NAME,
-		VK_KHR_SHADER_DRAW_PARAMETERS_EXTENSION_NAME
-	};
-
-	constexpr float queuePriority = 1.0f;
-	const VkDeviceQueueCreateInfo queueCreateInfo =
-	{
-		.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.queueFamilyIndex = graphicsFamily,
-		.queueCount = 1,
-		.pQueuePriorities = &queuePriority
-	};
-
-	const VkDeviceCreateInfo deviceCreateInfo =
-	{
-		.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.queueCreateInfoCount = 1,
-		.pQueueCreateInfos = &queueCreateInfo,
-		.enabledLayerCount = 0,
-		.ppEnabledLayerNames = nullptr,
-		.enabledExtensionCount = static_cast<uint32_t>(extensions.size()),
-		.ppEnabledExtensionNames = extensions.data(),
-		.pEnabledFeatures = &deviceFeatures
-	};
-
-	return vkCreateDevice(physicalDevice_, &deviceCreateInfo, nullptr, &device_);
+	return vkCreateDevice(physicalDevice_, &devCreateInfo, nullptr, &device_);
 }
 
 VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface)
