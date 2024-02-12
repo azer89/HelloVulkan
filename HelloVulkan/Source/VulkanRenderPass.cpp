@@ -15,7 +15,7 @@ void VulkanRenderPass::CreateResolveMSRenderPass(
 
 	const VkAttachmentDescription multisampledAttachment =
 	{
-		.format = vkDev.GetSwaphchainImageFormat(),
+		.format = vkDev.GetSwapchainImageFormat(),
 		.samples = msaaSamples,
 		.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD, // Just load
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
@@ -31,7 +31,7 @@ void VulkanRenderPass::CreateResolveMSRenderPass(
 	};
 
 	const VkAttachmentDescription singleSampledAttachment = {
-		.format = vkDev.GetSwaphchainImageFormat(),
+		.format = vkDev.GetSwapchainImageFormat(),
 		.samples = VK_SAMPLE_COUNT_1_BIT,
 		.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
@@ -101,7 +101,7 @@ void VulkanRenderPass::CreateOffScreenRenderPass(
 
 	const VkAttachmentDescription colorAttachment = {
 		.flags = 0,
-		.format = vkDev.GetSwaphchainImageFormat(),
+		.format = vkDev.GetSwapchainImageFormat(),
 		.samples = msaaSamples,
 		.loadOp =
 			clearColor ?
@@ -213,7 +213,7 @@ void VulkanRenderPass::CreateOnScreenRenderPass(
 	
 	const VkAttachmentDescription colorAttachment = {
 		.flags = 0,
-		.format = vkDev.GetSwaphchainImageFormat(),
+		.format = vkDev.GetSwapchainImageFormat(),
 		.samples = msaaSamples,
 		.loadOp = clearColor ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
@@ -309,7 +309,7 @@ void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(
 
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,
-		.format = vkDev.GetSwaphchainImageFormat(),
+		.format = vkDev.GetSwapchainImageFormat(),
 		.samples = msaaSamples,
 		.loadOp = clearColor ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,

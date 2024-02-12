@@ -66,7 +66,7 @@ PipelineImGui::PipelineImGui(
 		.MinImageCount = imageCount,
 		.ImageCount = imageCount,
 		.MSAASamples = VK_SAMPLE_COUNT_1_BIT,
-		.ColorAttachmentFormat = vkDev.GetSwaphchainImageFormat(),
+		.ColorAttachmentFormat = vkDev.GetSwapchainImageFormat(),
 	};
 	
 	ImGui_ImplVulkan_Init(&init_info, renderPass_.GetHandle());
