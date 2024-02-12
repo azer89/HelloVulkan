@@ -22,68 +22,20 @@ void VulkanDevice::CreateCompute
 	computeFamily_ = FindQueueFamilies(VK_QUEUE_COMPUTE_BIT);
 	VK_CHECK(CreateDeviceWithCompute(deviceFeatures, graphicsFamily_, computeFamily_));
 
-	deviceQueueIndices_.push_back(graphicsFamily_);
-	if (graphicsFamily_ != computeFamily_)
-	{
-		deviceQueueIndices_.push_back(computeFamily_);
-	}
+	GetQueues();
 
-	vkGetDeviceQueue(device_, graphicsFamily_, 0, &graphicsQueue_);
-	if (graphicsQueue_ == nullptr)
-	{
-		std::cerr << "Cannot get graphics queue\n";
-	}
-
-	vkGetDeviceQueue(device_, computeFamily_, 0, &computeQueue_);
-	if (computeQueue_ == nullptr)
-	{
-		std::cerr << "Cannot get compute queue\n";
-	}
-
-	VkBool32 presentSupported = 0;
-	vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice_, graphicsFamily_, instance.GetSurface(), &presentSupported);
-	if (!presentSupported)
-	{
-		std::cerr << "Cannot get surface support KHR\n";
-	}
+	CheckSurfaceSupport(instance);
 
 	// Swapchain
 	VK_CHECK(CreateSwapchain(instance.GetSurface()));
-	const size_t imageCount = CreateSwapchainImages();
+	CreateSwapchainImages();
 
-	const VkCommandPoolCreateInfo cpi =
-	{
-		.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-		.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
-		.queueFamilyIndex = graphicsFamily_
-	};
+	// Command pools
+	VK_CHECK(CreateCommandPool(graphicsFamily_, &graphicsCommandPool_));
+	VK_CHECK(CreateCommandPool(computeFamily_, &computeCommandPool_));
 
-	VK_CHECK(vkCreateCommandPool(device_, &cpi, nullptr, &graphicsCommandPool_));
-
-	// Frame data
-	frameIndex_ = 0;
-	frameDataArray_ = std::vector<FrameData>(AppConfig::FrameOverlapCount);
-	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
-	{
-		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].nextSwapchainImageSemaphore_)));
-		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].graphicsQueueSemaphore_)));
-		VK_CHECK(CreateFence(&(frameDataArray_[i].queueSubmitFence_)));
-		VK_CHECK(CreateCommandBuffer(graphicsCommandPool_, &(frameDataArray_[i].graphicsCommandBuffer_)));
-	}
-
-	{
-		// Create compute command pool
-		const VkCommandPoolCreateInfo cpi1 =
-		{
-			.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-			.pNext = nullptr,
-			.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, // Allow command from this pool buffers to be reset
-			.queueFamilyIndex = computeFamily_
-		};
-		VK_CHECK(vkCreateCommandPool(device_, &cpi1, nullptr, &computeCommandPool_));
-
-		//CreateCommandBuffer(computeCommandPool_, &computeCommandBuffer_);
-	}
+	// Frame in flight
+	AllocateFrameInFlightData();
 
 	// VMA
 	AllocateVMA(instance);
@@ -108,6 +60,81 @@ void VulkanDevice::Destroy()
 	vmaDestroyAllocator(vmaAllocator_);
 
 	vkDestroyDevice(device_, nullptr);
+}
+
+void VulkanDevice::GetQueues()
+{
+	deviceQueueIndices_.push_back(graphicsFamily_);
+	if (graphicsFamily_ != computeFamily_)
+	{
+		deviceQueueIndices_.push_back(computeFamily_);
+	}
+
+	vkGetDeviceQueue(device_, graphicsFamily_, 0, &graphicsQueue_);
+	if (graphicsQueue_ == nullptr)
+	{
+		std::cerr << "Cannot get graphics queue\n";
+	}
+
+	vkGetDeviceQueue(device_, computeFamily_, 0, &computeQueue_);
+	if (computeQueue_ == nullptr)
+	{
+		std::cerr << "Cannot get compute queue\n";
+	}
+}
+
+void VulkanDevice::AllocateFrameInFlightData()
+{
+	// Frame data
+	frameIndex_ = 0;
+	frameDataArray_ = std::vector<FrameData>(AppConfig::FrameOverlapCount);
+	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
+	{
+		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].nextSwapchainImageSemaphore_)));
+		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].graphicsQueueSemaphore_)));
+		VK_CHECK(CreateFence(&(frameDataArray_[i].queueSubmitFence_)));
+		VK_CHECK(CreateCommandBuffer(graphicsCommandPool_, &(frameDataArray_[i].graphicsCommandBuffer_)));
+	}
+}
+
+void VulkanDevice::AllocateVMA(VulkanInstance& instance)
+{
+	// Need this because we use Volk
+	const VmaVulkanFunctions vulkanFunctions =
+	{
+		.vkGetInstanceProcAddr = vkGetInstanceProcAddr,
+		.vkGetDeviceProcAddr = vkGetDeviceProcAddr,
+	};
+
+	const VmaAllocatorCreateInfo allocatorInfo =
+	{
+		.physicalDevice = physicalDevice_,
+		.device = device_,
+		.pVulkanFunctions = (const VmaVulkanFunctions*)&vulkanFunctions,
+		.instance = instance.GetInstance(),
+	};
+
+	vmaCreateAllocator(&allocatorInfo, &vmaAllocator_);
+}
+
+void VulkanDevice::CheckSurfaceSupport(VulkanInstance& instance)
+{
+	VkBool32 presentSupported = 0;
+	vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice_, graphicsFamily_, instance.GetSurface(), &presentSupported);
+	if (!presentSupported) { std::cerr << "Cannot get surface support KHR\n"; }
+}
+
+VkResult VulkanDevice::CreateCommandPool(uint32_t family, VkCommandPool* pool)
+{
+	const VkCommandPoolCreateInfo cpi =
+	{
+		.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
+		.queueFamilyIndex = family
+	};
+
+	return vkCreateCommandPool(device_, &cpi, nullptr, pool);
 }
 
 VkSampleCountFlagBits VulkanDevice::GetMaxUsableSampleCount(VkPhysicalDevice d)
@@ -627,24 +654,4 @@ void VulkanDevice::IncrementFrameIndex()
 uint32_t VulkanDevice::GetFrameIndex() const 
 { 
 	return frameIndex_; 
-}
-
-void VulkanDevice::AllocateVMA(VulkanInstance& instance)
-{
-	// Need this because we use Volk
-	const VmaVulkanFunctions vulkanFunctions =
-	{
-		.vkGetInstanceProcAddr = vkGetInstanceProcAddr,
-		.vkGetDeviceProcAddr = vkGetDeviceProcAddr,
-	};
-
-	const VmaAllocatorCreateInfo allocatorInfo =
-	{
-		.physicalDevice = physicalDevice_,
-		.device = device_,
-		.pVulkanFunctions = (const VmaVulkanFunctions*)&vulkanFunctions,
-		.instance = instance.GetInstance(),
-	};
-	
-	vmaCreateAllocator(&allocatorInfo, &vmaAllocator_);
 }

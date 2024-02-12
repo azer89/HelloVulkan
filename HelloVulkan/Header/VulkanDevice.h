@@ -33,6 +33,11 @@ struct FrameData
 	}
 };
 
+struct ContextConfig
+{
+	bool supportMSAA_;
+};
+
 /*
 Class that encapsulate a Vulkan device, the swapchain, and a VMA allocator.
 Maybe this should be renamed to VulkanContext.
@@ -110,6 +115,12 @@ private:
 	bool IsDeviceSuitable(VkPhysicalDevice d);
 	VkSampleCountFlagBits GetMaxUsableSampleCount(VkPhysicalDevice d);
 
+	void GetQueues();
+	void AllocateFrameInFlightData();
+	void AllocateVMA(VulkanInstance& instance);
+	void CheckSurfaceSupport(VulkanInstance& instance);
+	VkResult CreateCommandPool(uint32_t family, VkCommandPool* pool);
+
 	// Swapchain
 	VkResult CreateSwapchain(VkSurfaceKHR surface);
 	size_t CreateSwapchainImages();
@@ -130,8 +141,6 @@ private:
 		const std::vector<VkFormat>& candidates,
 		VkImageTiling tiling,
 		VkFormatFeatureFlags features);
-
-	void AllocateVMA(VulkanInstance& instance);
 
 private:
 	VkSwapchainKHR swapchain_;
