@@ -120,9 +120,9 @@ size_t VulkanShader::CompileShader(glslang_stage_t stage, const char* shaderSour
 		.language = GLSLANG_SOURCE_GLSL,
 		.stage = stage,
 		.client = GLSLANG_CLIENT_VULKAN,
-		.client_version = GLSLANG_TARGET_VULKAN_1_1,
+		.client_version = GLSLANG_TARGET_VULKAN_1_3,
 		.target_language = GLSLANG_TARGET_SPV,
-		.target_language_version = GLSLANG_TARGET_SPV_1_3,
+		.target_language_version = GLSLANG_TARGET_SPV_1_5,
 		.code = shaderSource,
 		.default_version = 100,
 		.default_profile = GLSLANG_NO_PROFILE,
@@ -229,6 +229,12 @@ VkShaderStageFlagBits GLSLangShaderStageToVulkan(glslang_stage_t sh)
 		return VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
 	case GLSLANG_STAGE_COMPUTE:
 		return VK_SHADER_STAGE_COMPUTE_BIT;
+	case GLSLANG_STAGE_CLOSESTHIT:
+		return VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR;
+	case GLSLANG_STAGE_MISS:
+		return VK_SHADER_STAGE_MISS_BIT_KHR;
+	case GLSLANG_STAGE_RAYGEN:
+		return VK_SHADER_STAGE_RAYGEN_BIT_KHR;
 	}
 
 	return VK_SHADER_STAGE_VERTEX_BIT;
@@ -244,13 +250,25 @@ glslang_stage_t GLSLangShaderStageFromFileName(const char* fileName)
 	{
 		return GLSLANG_STAGE_FRAGMENT;
 	}
-	if (EndsWith(fileName, ".geom"))
-	{
-		return GLSLANG_STAGE_GEOMETRY;
-	}
 	if (EndsWith(fileName, ".comp"))
 	{
 		return GLSLANG_STAGE_COMPUTE;
+	}
+	if (EndsWith(fileName, ".rchit"))
+	{
+		return GLSLANG_STAGE_CLOSESTHIT;
+	}
+	if (EndsWith(fileName, ".rmiss"))
+	{
+		return GLSLANG_STAGE_MISS;
+	}
+	if (EndsWith(fileName, ".rgen"))
+	{
+		return GLSLANG_STAGE_RAYGEN;
+	}
+	if (EndsWith(fileName, ".geom"))
+	{
+		return GLSLANG_STAGE_GEOMETRY;
 	}
 	if (EndsWith(fileName, ".tesc"))
 	{
