@@ -389,12 +389,13 @@ void VulkanImage::TransitionImageLayout(VulkanDevice& vkDev,
 	uint32_t mipLevels)
 {
 	VkCommandBuffer commandBuffer = vkDev.BeginOneTimeGraphicsCommand();
-	TransitionImageLayoutCommand(commandBuffer, format, oldLayout, newLayout, layerCount, mipLevels);
+	TransitionImageLayoutCommand(commandBuffer, image_, format, oldLayout, newLayout, layerCount, mipLevels);
 	vkDev.EndOneTimeGraphicsCommand(commandBuffer);
 }
 
 void VulkanImage::TransitionImageLayoutCommand(
 	VkCommandBuffer commandBuffer,
+	VkImage image,
 	VkFormat format,
 	VkImageLayout oldLayout,
 	VkImageLayout newLayout,
@@ -410,7 +411,7 @@ void VulkanImage::TransitionImageLayoutCommand(
 		.newLayout = newLayout,
 		.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
 		.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-		.image = image_,
+		.image = image,
 		.subresourceRange = VkImageSubresourceRange {
 			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
 			.baseMipLevel = 0,
@@ -420,8 +421,8 @@ void VulkanImage::TransitionImageLayoutCommand(
 		}
 	};
 
-	VkPipelineStageFlags sourceStage;
-	VkPipelineStageFlags destinationStage;
+	VkPipelineStageFlags sourceStage = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
+	VkPipelineStageFlags destinationStage = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
 
 	if (newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL ||
 		(format == VK_FORMAT_D16_UNORM) ||
@@ -471,7 +472,7 @@ void VulkanImage::TransitionImageLayoutCommand(
 		sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 		destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
 	}
-	/* Convert back from read-only to updateable */
+	// Convert back from read-only to updateable
 	else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL && 
 		newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
 	{
@@ -481,7 +482,7 @@ void VulkanImage::TransitionImageLayoutCommand(
 		sourceStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
 		destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
 	}
-	/* Convert from updateable texture to shader read-only */
+	// Convert from updateable texture to shader read-only
 	else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && 
 		newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
 	{
@@ -491,7 +492,7 @@ void VulkanImage::TransitionImageLayoutCommand(
 		sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
 		destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
 	}
-	/* Convert depth texture from undefined state to depth-stencil buffer */
+	// Convert depth texture from undefined state to depth-stencil buffer
 	else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && 
 		newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
 	{
@@ -503,22 +504,22 @@ void VulkanImage::TransitionImageLayoutCommand(
 		destinationStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
 	}
 
-	/* Wait for render pass to complete */
+	// Wait for render pass to complete
 	else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL && 
 		newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
 	{
 		barrier.srcAccessMask = 0; // VK_ACCESS_SHADER_READ_BIT;
 		barrier.dstAccessMask = 0;
 		/*
-				sourceStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-		///		destinationStage = VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT;
-				destinationStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+			sourceStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+			// destinationStage = VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT;
+			destinationStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 		*/
 		sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 		destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
 	}
 
-	/* Convert back from read-only to color attachment */
+	// Convert back from read-only to color attachment
 	else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL && 
 		newLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
 	{
@@ -528,7 +529,7 @@ void VulkanImage::TransitionImageLayoutCommand(
 		sourceStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
 		destinationStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 	}
-	/* Convert from updateable texture to shader read-only */
+	// Convert from updateable texture to shader read-only
 	else if (oldLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL && 
 		newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
 	{
@@ -539,7 +540,7 @@ void VulkanImage::TransitionImageLayoutCommand(
 		destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
 	}
 
-	/* Convert back from read-only to depth attachment */
+	// Convert back from read-only to depth attachment
 	else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL && 
 		newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
 	{
@@ -549,7 +550,7 @@ void VulkanImage::TransitionImageLayoutCommand(
 		sourceStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
 		destinationStage = VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
 	}
-	/* Convert from updateable depth texture to shader read-only */
+	// Convert from updateable depth texture to shader read-only
 	else if (oldLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL && 
 		newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
 	{
