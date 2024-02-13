@@ -560,6 +560,7 @@ void PipelineSimpleRaytracing::CreateTLAS(VulkanDevice& vkDev)
 		sizeof(VkAccelerationStructureInstanceKHR),
 		VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
 		VMA_MEMORY_USAGE_CPU_TO_GPU);
+	instancesBuffer.UploadBufferData(vkDev, 0, &instance, sizeof(VkAccelerationStructureInstanceKHR));
 
 	VkDeviceOrHostAddressConstKHR instanceDataDeviceAddress =
 	{
