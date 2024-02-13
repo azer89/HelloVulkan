@@ -33,6 +33,7 @@ struct FrameData
 	}
 };
 
+// This struct is used to enable extensions
 struct ContextConfig
 {
 	bool supportMSAA_;
