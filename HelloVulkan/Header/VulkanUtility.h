@@ -27,6 +27,7 @@ void CHECK(bool check, const char* fileName, int lineNumber);
 #define BL_CHECK(value) CHECK(value, __FILE__, __LINE__);
 #endif
 
+// This is used in VulkanInstance::SetupDebugCallbacks()
 static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugCallback(
 	VkDebugUtilsMessageSeverityFlagBitsEXT Severity,
 	VkDebugUtilsMessageTypeFlagsEXT Type,
@@ -34,10 +35,11 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugCallback(
 	void* UserData
 )
 {
-	printf("Validation layer: %s\n\n", CallbackData->pMessage);
+	std::cerr << "VulkanDebugCallback: " << CallbackData->pMessage << "\n\n";
 	return VK_FALSE;
 }
 
+// This is used in VulkanInstance::SetupDebugCallbacks()
 static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugReportCallback
 (
 	VkDebugReportFlagsEXT      flags,
@@ -57,7 +59,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugReportCallback
 		return VK_FALSE;
 	}
 
-	std::cerr << "Debug callback (" << pLayerPrefix << "): " << pMessage << "\n\n";
+	std::cerr << "VulkanDebugReportCallback (" << pLayerPrefix << "): " << pMessage << "\n\n";
 	return VK_FALSE;
 }
 
