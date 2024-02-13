@@ -43,10 +43,10 @@ void AppBase::InitVulkan()
 	vulkanInstance_.Create();
 	vulkanInstance_.SetupDebugCallbacks();
 	vulkanInstance_.CreateWindowSurface(glfwWindow_);
-	vulkanDevice_.CreateCompute(vulkanInstance_,
-		static_cast<uint32_t>(windowWidth_),
-		static_cast<uint32_t>(windowHeight_),
-		features);
+	vulkanDevice_.Create(vulkanInstance_,
+		{
+			.supportMSAA_ = true
+		});
 }
 
 void AppBase::InitGLSLang()

@@ -102,7 +102,7 @@ void VulkanImage::CreateColorResources(
 	uint32_t height,
 	VkSampleCountFlagBits outputDiffuseSampleCount)
 {
-	VkFormat format = vkDev.GetSwaphchainImageFormat();
+	VkFormat format = vkDev.GetSwapchainImageFormat();
 
 	CreateImage(
 		vkDev,

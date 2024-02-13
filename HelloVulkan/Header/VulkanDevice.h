@@ -33,6 +33,12 @@ struct FrameData
 	}
 };
 
+// This struct is used to enable extensions
+struct ContextConfig
+{
+	bool supportMSAA_;
+};
+
 /*
 Class that encapsulate a Vulkan device, the swapchain, and a VMA allocator.
 Maybe this should be renamed to VulkanContext.
@@ -43,12 +49,9 @@ public:
 	VulkanDevice() = default;
 	~VulkanDevice() = default;
 
-	void CreateCompute(
+	void Create(
 		VulkanInstance& instance,
-		uint32_t width, 
-		uint32_t height, 
-		VkPhysicalDeviceFeatures deviceFeatures
-	);
+		ContextConfig config);
 
 	void Destroy();
 
@@ -82,7 +85,7 @@ public:
 	// Getters related to swapchain
 	VkSwapchainKHR GetSwapChain() const { return swapchain_; }
 	size_t GetSwapchainImageCount() const { return swapchainImages_.size(); }
-	VkFormat GetSwaphchainImageFormat() const { return swapchainImageFormat_; }
+	VkFormat GetSwapchainImageFormat() const { return swapchainImageFormat_; }
 	VkImageView GetSwapchainImageView(size_t i) const { return swapchainImageViews_[i]; }
 	uint32_t GetCurrentSwapchainImageIndex() const { return currentSwapchainImageIndex_; }
 
@@ -100,15 +103,15 @@ public:
 private:
 	VkResult CreatePhysicalDevice(VkInstance instance);
 	uint32_t FindQueueFamilies(VkQueueFlags desiredFlags);
-	VkResult CreateDeviceWithCompute(
-		VkPhysicalDeviceFeatures deviceFeatures, 
-		uint32_t graphicsFamily, 
-		uint32_t computeFamily);
-	VkResult CreateDevice(
-		VkPhysicalDeviceFeatures deviceFeatures, 
-		uint32_t graphicsFamily);
+	VkResult CreateDevice();
 	bool IsDeviceSuitable(VkPhysicalDevice d);
 	VkSampleCountFlagBits GetMaxUsableSampleCount(VkPhysicalDevice d);
+
+	void GetQueues();
+	void AllocateFrameInFlightData();
+	void AllocateVMA(VulkanInstance& instance);
+	void CheckSurfaceSupport(VulkanInstance& instance);
+	VkResult CreateCommandPool(uint32_t family, VkCommandPool* pool);
 
 	// Swapchain
 	VkResult CreateSwapchain(VkSurfaceKHR surface);
@@ -131,9 +134,9 @@ private:
 		VkImageTiling tiling,
 		VkFormatFeatureFlags features);
 
-	void AllocateVMA(VulkanInstance& instance);
-
 private:
+	ContextConfig config_;
+
 	VkSwapchainKHR swapchain_;
 	std::vector<VkImage> swapchainImages_;
 	std::vector<VkImageView> swapchainImageViews_;
