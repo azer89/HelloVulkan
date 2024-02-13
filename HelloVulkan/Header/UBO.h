@@ -13,6 +13,14 @@ struct CameraUBO
 	glm::vec4 position;
 };
 
+struct RaytracingCameraUBO
+{
+	alignas(16)
+	glm::mat4 projectionInverse;
+	alignas(16)
+	glm::mat4 viewInverse;
+};
+
 struct ModelUBO
 {
 	alignas(16)

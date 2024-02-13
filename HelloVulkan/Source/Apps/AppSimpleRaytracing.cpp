@@ -30,7 +30,7 @@ void AppSimpleRaytracing::Init()
 
 void AppSimpleRaytracing::UpdateUBOs()
 {
-	rtxPtr_->SetUBOTemp(vulkanDevice_, camera_->GetCameraUBO());
+	rtxPtr_->SetRaytracingCameraUBO(vulkanDevice_, camera_->GetRaytracingCameraUBO());
 }
 
 void AppSimpleRaytracing::UpdateUI()
@@ -60,6 +60,11 @@ void AppSimpleRaytracing::DestroyResources()
 
 int AppSimpleRaytracing::MainLoop()
 {
+	InitVulkan({
+		.supportRaytracing_ = true,
+		.supportMSAA_ = true
+		});
+
 	Init();
 
 	// Main loop

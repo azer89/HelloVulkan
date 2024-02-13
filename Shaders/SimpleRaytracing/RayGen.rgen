@@ -7,7 +7,6 @@ layout(binding = 2, set = 0) uniform CameraProperties
 {
 	mat4 projInverse;
 	mat4 viewInverse;
-	vec4 position;
 }
 cam;
 

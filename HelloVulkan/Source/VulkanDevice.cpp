@@ -6,7 +6,7 @@
 #define VMA_STATIC_VULKAN_FUNCTIONS 0
 #include "vk_mem_alloc.h"
 
-void VulkanDevice::Create(VulkanInstance& instance, ContextConfig config/*VkPhysicalDeviceFeatures deviceFeatures*/)
+void VulkanDevice::Create(VulkanInstance& instance, ContextConfig config)
 {
 	config_ = config;
 	framebufferWidth_ = AppConfig::InitialScreenWidth;
@@ -41,6 +41,27 @@ void VulkanDevice::Create(VulkanInstance& instance, ContextConfig config/*VkPhys
 	AllocateVMA(instance);
 }
 
+void VulkanDevice::Destroy()
+{
+	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
+	{
+		frameDataArray_[i].Destroy(device_);
+	}
+
+	for (size_t i = 0; i < swapchainImages_.size(); i++)
+	{
+		vkDestroyImageView(device_, swapchainImageViews_[i], nullptr);
+	}
+	vkDestroySwapchainKHR(device_, swapchain_, nullptr);
+
+	vkDestroyCommandPool(device_, graphicsCommandPool_, nullptr);
+	vkDestroyCommandPool(device_, computeCommandPool_, nullptr);
+
+	vmaDestroyAllocator(vmaAllocator_);
+
+	vkDestroyDevice(device_, nullptr);
+}
+
 void VulkanDevice::GetQueues()
 {
 	deviceQueueIndices_.push_back(graphicsFamily_);
@@ -70,11 +91,45 @@ void VulkanDevice::AllocateFrameInFlightData()
 	}
 }
 
+void VulkanDevice::AllocateVMA(VulkanInstance& instance)
+{
+	// Need this because we use Volk
+	const VmaVulkanFunctions vulkanFunctions =
+	{
+		.vkGetInstanceProcAddr = vkGetInstanceProcAddr,
+		.vkGetDeviceProcAddr = vkGetDeviceProcAddr,
+	};
+
+	const VmaAllocatorCreateInfo allocatorInfo =
+	{
+		.flags = config_.supportRaytracing_ ? VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT : 0u,
+		.physicalDevice = physicalDevice_,
+		.device = device_,
+		.pVulkanFunctions = (const VmaVulkanFunctions*)&vulkanFunctions,
+		.instance = instance.GetInstance(),
+	};
+
+	vmaCreateAllocator(&allocatorInfo, &vmaAllocator_);
+}
+
 void VulkanDevice::CheckSurfaceSupport(VulkanInstance& instance)
 {
 	VkBool32 presentSupported = 0;
 	vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice_, graphicsFamily_, instance.GetSurface(), &presentSupported);
 	if (!presentSupported) { std::cerr << "Cannot get surface support KHR\n"; }
+}
+
+VkResult VulkanDevice::CreateCommandPool(uint32_t family, VkCommandPool* pool)
+{
+	const VkCommandPoolCreateInfo cpi =
+	{
+		.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
+		.queueFamilyIndex = family
+	};
+
+	return vkCreateCommandPool(device_, &cpi, nullptr, pool);
 }
 
 void VulkanDevice::GetRaytracingPropertiesAndFeatures()
@@ -130,27 +185,6 @@ void VulkanDevice::GetEnabledRaytracingFeatures()
 
 		pNextChain_ = &enabledAccelerationStructureFeatures_;
 	}
-}
-
-void VulkanDevice::Destroy()
-{
-	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
-	{
-		frameDataArray_[i].Destroy(device_);
-	}
-
-	for (size_t i = 0; i < swapchainImages_.size(); i++)
-	{
-		vkDestroyImageView(device_, swapchainImageViews_[i], nullptr);
-	}
-	vkDestroySwapchainKHR(device_, swapchain_, nullptr);
-
-	vkDestroyCommandPool(device_, graphicsCommandPool_, nullptr);
-	vkDestroyCommandPool(device_, computeCommandPool_, nullptr);
-
-	vmaDestroyAllocator(vmaAllocator_);
-
-	vkDestroyDevice(device_, nullptr);
 }
 
 VkSampleCountFlagBits VulkanDevice::GetMaxUsableSampleCount(VkPhysicalDevice d)
@@ -328,6 +362,7 @@ VkResult VulkanDevice::CreateDevice()
 
 VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface)
 {
+	// TODO We manually select a swapchain format
 	swapchainImageFormat_ = VK_FORMAT_B8G8R8A8_UNORM;
 	const VkSurfaceFormatKHR surfaceFormat = { swapchainImageFormat_, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
 	const SwapchainSupportDetails swapchainSupport = QuerySwapchainSupport(surface);
@@ -506,19 +541,6 @@ VkResult VulkanDevice::CreateFence(VkFence* fence)
 	return vkCreateFence(device_, &fenceInfo, nullptr, fence);
 }
 
-VkResult VulkanDevice::CreateCommandPool(uint32_t family, VkCommandPool* pool)
-{
-	const VkCommandPoolCreateInfo cpi =
-	{
-		.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
-		.queueFamilyIndex = family
-	};
-
-	return vkCreateCommandPool(device_, &cpi, nullptr, pool);
-}
-
 VkResult VulkanDevice::CreateCommandBuffer(VkCommandPool pool, VkCommandBuffer* commandBuffer)
 {
 	const VkCommandBufferAllocateInfo allocInfo = {
@@ -581,6 +603,7 @@ VkFormat VulkanDevice::FindSupportedFormat(
 	throw std::runtime_error("Failed to find supported format\n");
 }
 
+// TODO Delete this if you use VMA
 uint32_t VulkanDevice::GetMemoryType(uint32_t typeBits, VkMemoryPropertyFlags properties, VkBool32* memTypeFound) const
 {
 	for (uint32_t i = 0; i < memoryProperties_.memoryTypeCount; i++)
@@ -711,26 +734,4 @@ void VulkanDevice::IncrementFrameIndex()
 uint32_t VulkanDevice::GetFrameIndex() const 
 { 
 	return frameIndex_; 
-}
-
-void VulkanDevice::AllocateVMA(VulkanInstance& instance)
-{
-	// Need this because we use Volk
-	const VmaVulkanFunctions vulkanFunctions =
-	{
-		.vkGetInstanceProcAddr = vkGetInstanceProcAddr,
-		.vkGetDeviceProcAddr = vkGetDeviceProcAddr,
-	};
-
-	const VmaAllocatorCreateInfo allocatorInfo =
-	{
-		// TODO remove flag if raytracing is not used
-		.flags = VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT,
-		.physicalDevice = physicalDevice_,
-		.device = device_,
-		.pVulkanFunctions = (const VmaVulkanFunctions*)&vulkanFunctions,
-		.instance = instance.GetInstance(),
-	};
-	
-	vmaCreateAllocator(&allocatorInfo, &vmaAllocator_);
 }

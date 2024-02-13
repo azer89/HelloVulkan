@@ -233,6 +233,10 @@ void AppPBR::UpdateUI()
 // This is called from main.cpp
 int AppPBR::MainLoop()
 {
+	InitVulkan({
+		.supportRaytracing_ = false,
+		.supportMSAA_ = true
+	});
 	Init();
 
 	// Main loop

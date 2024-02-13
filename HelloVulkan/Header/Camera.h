@@ -36,6 +36,7 @@ public:
 	glm::vec3 Position() const;
 	CameraUBO GetCameraUBO() const;
 	ClusterForwardUBO GetClusterForwardUBO() const;
+	RaytracingCameraUBO GetRaytracingCameraUBO() const;
 
 private:
 	glm::mat4 projectionMatrix_;

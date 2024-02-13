@@ -36,7 +36,7 @@ protected:
 	void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 	// Init functions
-	void InitVulkan();
+	void InitVulkan(ContextConfig config);
 	void InitImGui();
 	void InitGLSLang();
 	void InitGLFW();

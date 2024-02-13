@@ -141,6 +141,15 @@ CameraUBO Camera::GetCameraUBO() const
 	};
 }
 
+RaytracingCameraUBO Camera::GetRaytracingCameraUBO() const
+{
+	return
+	{
+		.projectionInverse = glm::inverse(projectionMatrix_),
+		.viewInverse = glm::inverse(viewMatrix_),
+	};
+}
+
 ClusterForwardUBO Camera::GetClusterForwardUBO() const
 {
 	float zFloat = static_cast<float>(ClusterForwardConfig::sliceCountZ);
