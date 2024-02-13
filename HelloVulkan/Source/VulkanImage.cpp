@@ -511,9 +511,9 @@ void VulkanImage::TransitionImageLayoutCommand(
 		barrier.srcAccessMask = 0; // VK_ACCESS_SHADER_READ_BIT;
 		barrier.dstAccessMask = 0;
 		/*
-				sourceStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-		///		destinationStage = VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT;
-				destinationStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+			sourceStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+			// destinationStage = VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT;
+			destinationStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 		*/
 		sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 		destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
