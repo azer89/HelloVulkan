@@ -158,7 +158,10 @@ public:
 		uint32_t layerCount = 1,
 		uint32_t mipLevels = 1);
 
-	void TransitionImageLayoutCommand(VkCommandBuffer commandBuffer,
+	// This is a public static function because it might be called to
+	// transition a VkImage that is not wrapped in VulkanImage, for example, swapchain images
+	static void TransitionImageLayoutCommand(VkCommandBuffer commandBuffer,
+		VkImage image,
 		VkFormat format,
 		VkImageLayout oldLayout,
 		VkImageLayout newLayout,
@@ -181,7 +184,7 @@ private:
 		const void* imageData,
 		VkImageLayout sourceImageLayout = VK_IMAGE_LAYOUT_UNDEFINED);
 
-	bool HasStencilComponent(VkFormat format);
+	static bool HasStencilComponent(VkFormat format);
 
 	uint32_t BytesPerTexFormat(VkFormat fmt);
 };

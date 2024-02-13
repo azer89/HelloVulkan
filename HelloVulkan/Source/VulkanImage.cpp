@@ -389,12 +389,13 @@ void VulkanImage::TransitionImageLayout(VulkanDevice& vkDev,
 	uint32_t mipLevels)
 {
 	VkCommandBuffer commandBuffer = vkDev.BeginOneTimeGraphicsCommand();
-	TransitionImageLayoutCommand(commandBuffer, format, oldLayout, newLayout, layerCount, mipLevels);
+	TransitionImageLayoutCommand(commandBuffer, image_, format, oldLayout, newLayout, layerCount, mipLevels);
 	vkDev.EndOneTimeGraphicsCommand(commandBuffer);
 }
 
 void VulkanImage::TransitionImageLayoutCommand(
 	VkCommandBuffer commandBuffer,
+	VkImage image,
 	VkFormat format,
 	VkImageLayout oldLayout,
 	VkImageLayout newLayout,
@@ -410,7 +411,7 @@ void VulkanImage::TransitionImageLayoutCommand(
 		.newLayout = newLayout,
 		.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
 		.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-		.image = image_,
+		.image = image,
 		.subresourceRange = VkImageSubresourceRange {
 			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
 			.baseMipLevel = 0,
