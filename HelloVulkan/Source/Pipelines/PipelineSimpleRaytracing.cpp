@@ -24,8 +24,8 @@ PipelineSimpleRaytracing::PipelineSimpleRaytracing(VulkanDevice& vkDev) :
 PipelineSimpleRaytracing::~PipelineSimpleRaytracing()
 {
 	storageImage_.Destroy();
-	blas_.Destroy(device_);
-	tlas_.Destroy(device_);
+	blas_.Destroy();
+	tlas_.Destroy();
 	vertexBuffer_.Destroy();
 	indexBuffer_.Destroy();
 	transformBuffer_.Destroy();

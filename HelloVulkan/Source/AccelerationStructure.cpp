@@ -17,6 +17,7 @@ void AccelerationStructure::Create(
 		.usage = VMA_MEMORY_USAGE_GPU_ONLY,
 	};
 
+	device_ = vkDev.GetDevice();
 	vmaAllocator_ = vkDev.GetVMAAllocator();
 	VK_CHECK(vmaCreateBuffer(
 		vmaAllocator_,
@@ -27,8 +28,15 @@ void AccelerationStructure::Create(
 		&vmaInfo_));
 }
 
-void AccelerationStructure::Destroy(VkDevice device)
+void AccelerationStructure::Destroy()
 {
-	vmaDestroyBuffer(vmaAllocator_, buffer_, vmaAllocation_);
-	vkDestroyAccelerationStructureKHR(device, handle_, nullptr);
+	if (vmaAllocation_)
+	{
+		vmaDestroyBuffer(vmaAllocator_, buffer_, vmaAllocation_);
+	}
+
+	if (handle_)
+	{
+		vkDestroyAccelerationStructureKHR(device_, handle_, nullptr);
+	}
 }
