@@ -24,7 +24,7 @@ public:
 
 	VkResult Create(VkDevice device, const char* fileName);
 
-	void Destroy(VkDevice device);
+	void Destroy();
 
 	VkPipelineShaderStageCreateInfo GetShaderStageInfo(
 		VkShaderStageFlagBits shaderStage,
@@ -33,6 +33,7 @@ public:
 private:
 	std::vector<unsigned int> spirv_;
 	VkShaderModule shaderModule_ = nullptr;
+	VkDevice device_ = nullptr;
 
 private:
 	size_t CompileShaderFile(const char* file);

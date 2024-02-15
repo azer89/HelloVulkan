@@ -53,7 +53,7 @@ void ClusterForwardBuffers::CreateBuffers(VulkanDevice& vkDev, uint32_t lightCou
 	}
 }
 
-void ClusterForwardBuffers::Destroy(VkDevice device)
+void ClusterForwardBuffers::Destroy()
 {
 	for (VulkanBuffer& buffer : aabbBuffers_)
 	{

@@ -61,7 +61,7 @@ public:
 		VkFramebuffer framebuffer,
 		uint32_t cubeSideLength);
 
-	void Destroy(VkDevice vkDev);
+	void Destroy();
 
 	VkRenderPass GetHandle() { return handle_;}
 
@@ -69,6 +69,7 @@ private:
 	void CreateBeginInfo(VulkanDevice& device);
 
 private:
+	VkDevice device_;
 	VkRenderPass handle_;
 	uint8_t renderPassBit_;
 

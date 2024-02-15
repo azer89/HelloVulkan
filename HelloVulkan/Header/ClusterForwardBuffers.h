@@ -26,7 +26,7 @@ public:
 	void SetAABBDirty();
 	bool IsAABBDirty(uint32_t frameIndex) { return aabbDirtyFlags_[frameIndex] == AABBFlag::Dirty; }
 	void SetAABBClean(uint32_t frameIndex) { aabbDirtyFlags_[frameIndex] = AABBFlag::Clean; }
-	void Destroy(VkDevice device);
+	void Destroy();
 };
 
 #endif

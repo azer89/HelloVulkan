@@ -54,7 +54,7 @@ public:
 
 	void UpdateSet(VulkanDevice& vkDev, const std::vector<DescriptorWrite>& writes, VkDescriptorSet* set);
 
-	void Destroy(VkDevice device);
+	void Destroy();
 
 public:
 	VkDescriptorPool pool_ = nullptr;
@@ -66,6 +66,9 @@ private:
 		VkDescriptorType descriptorType,
 		VkShaderStageFlags stageFlags,
 		uint32_t descriptorCount = 1);
+
+private:
+	VkDevice device_ = nullptr;
 };
 
 #endif

@@ -23,9 +23,9 @@ PipelineSimpleRaytracing::PipelineSimpleRaytracing(VulkanDevice& vkDev) :
 
 PipelineSimpleRaytracing::~PipelineSimpleRaytracing()
 {
-	storageImage_.Destroy(device_);
-	blas_.Destroy(device_);
-	tlas_.Destroy(device_);
+	storageImage_.Destroy();
+	blas_.Destroy();
+	tlas_.Destroy();
 	vertexBuffer_.Destroy();
 	indexBuffer_.Destroy();
 	transformBuffer_.Destroy();
@@ -134,7 +134,7 @@ void PipelineSimpleRaytracing::FillCommandBuffer(VulkanDevice& vkDev, VkCommandB
 
 void PipelineSimpleRaytracing::OnWindowResized(VulkanDevice& vkDev)
 {
-	storageImage_.Destroy(vkDev.GetDevice());
+	storageImage_.Destroy();
 	CreateStorageImage(vkDev);
 	UpdateDescriptor(vkDev);
 }
@@ -323,7 +323,7 @@ void PipelineSimpleRaytracing::CreateRayTracingPipeline(VulkanDevice& vkDev)
 
 	for (VulkanShader& s : shaderModules)
 	{
-		s.Destroy(vkDev.GetDevice());
+		s.Destroy();
 	}
 }
 

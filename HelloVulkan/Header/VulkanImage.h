@@ -24,11 +24,14 @@ class VulkanImage
 public:
 	VkImage image_;
 	VkImageView imageView_;
-	VmaAllocation vmaAllocation_;
-	VmaAllocator vmaAllocator_;
-	
+	VmaAllocation vmaAllocation_ ;
+
 	// A reusable sampler which can be accessed by multiple Renderers
 	VkSampler defaultImageSampler_;
+
+	// Cached for Destroy()
+	VkDevice device_;
+	VmaAllocator vmaAllocator_;
 
 	uint32_t width_;
 	uint32_t height_;
@@ -43,6 +46,7 @@ public:
 		imageView_(nullptr),
 		vmaAllocation_(nullptr),
 		vmaAllocator_(nullptr),
+		device_(nullptr),
 		defaultImageSampler_(nullptr),
 		width_(0),
 		height_(0),
@@ -53,7 +57,7 @@ public:
 	{
 	}
 
-	void Destroy(VkDevice device);
+	void Destroy();
 
 	void CreateFromFile(
 		VulkanDevice& vkDev,

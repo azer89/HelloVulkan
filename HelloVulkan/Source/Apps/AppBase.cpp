@@ -104,9 +104,9 @@ void AppBase::InitGLFW()
 
 void AppBase::CreateSharedImageResources()
 {
-	depthImage_.Destroy(vulkanDevice_.GetDevice());
-	multiSampledColorImage_.Destroy(vulkanDevice_.GetDevice());
-	singleSampledColorImage_.Destroy(vulkanDevice_.GetDevice());
+	depthImage_.Destroy();
+	multiSampledColorImage_.Destroy();
+	singleSampledColorImage_.Destroy();
 
 	const VkSampleCountFlagBits msaaSamples = vulkanDevice_.GetMSAASampleCount();
 	const uint32_t width = vulkanDevice_.GetFrameBufferWidth();
@@ -302,9 +302,9 @@ void AppBase::Terminate()
 	glfwDestroyWindow(glfwWindow_);
 	glfwTerminate();
 
-	depthImage_.Destroy(vulkanDevice_.GetDevice());
-	multiSampledColorImage_.Destroy(vulkanDevice_.GetDevice());
-	singleSampledColorImage_.Destroy(vulkanDevice_.GetDevice());
+	depthImage_.Destroy();
+	multiSampledColorImage_.Destroy();
+	singleSampledColorImage_.Destroy();
 
 	vulkanDevice_.Destroy();
 	vulkanInstance_.Destroy();

@@ -45,6 +45,8 @@ public:
 protected:
 	VkDevice device_ = nullptr;
 	PipelineConfig config_;
+
+	// Keep this as a vector because it can be empty when not used
 	std::vector<VulkanBuffer> cameraUBOBuffers_;
 
 	VulkanFramebuffer framebuffer_;

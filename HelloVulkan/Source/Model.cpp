@@ -31,7 +31,7 @@ Model::~Model()
 {
 	for (Mesh& mesh : meshes_)
 	{
-		mesh.Destroy(device_);
+		mesh.Destroy();
 	}
 
 	for (auto buffer : modelBuffers_)
@@ -42,7 +42,7 @@ Model::~Model()
 	// C++20 feature
 	for (VulkanImage& tex : std::views::values(textureMap_))
 	{
-		tex.Destroy(device_);
+		tex.Destroy();
 	}
 }
 

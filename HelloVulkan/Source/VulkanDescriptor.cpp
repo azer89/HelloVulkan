@@ -4,6 +4,8 @@
 void VulkanDescriptor::CreatePool(VulkanDevice& vkDev,
 	DescriptorPoolCreateInfo createInfo)
 {
+	device_ = vkDev.GetDevice();
+
 	std::vector<VkDescriptorPoolSize> poolSizes;
 
 	if (createInfo.uboCount_)
@@ -151,10 +153,17 @@ void VulkanDescriptor::UpdateSet(VulkanDevice& vkDev, const std::vector<Descript
 	);
 }
 
-void VulkanDescriptor::Destroy(VkDevice device)
+void VulkanDescriptor::Destroy()
 {
-	vkDestroyDescriptorSetLayout(device, layout_, nullptr);
-	vkDestroyDescriptorPool(device, pool_, nullptr);
+	if (layout_)
+	{
+		vkDestroyDescriptorSetLayout(device_, layout_, nullptr);
+	}
+
+	if (pool_)
+	{
+		vkDestroyDescriptorPool(device_, pool_, nullptr);
+	}
 }
 
 VkDescriptorSetLayoutBinding VulkanDescriptor::DescriptorSetLayoutBinding(
