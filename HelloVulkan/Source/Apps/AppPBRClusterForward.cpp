@@ -138,9 +138,9 @@ void AppPBRClusterForward::InitLights()
 	constexpr uint32_t NR_LIGHTS = 1000;
 	for (uint32_t i = 0; i < NR_LIGHTS; ++i)
 	{
-		float yPos = Utility::RandomNumber<float>(-2.f, 10.0f);
-		float radius = Utility::RandomNumber<float>(0.0f, 10.0f);
-		float rad = Utility::RandomNumber<float>(0.0f, pi2);
+		float yPos = Utility::RandomNumber(-2.f, 10.0f);
+		float radius = Utility::RandomNumber(0.0f, 10.0f);
+		float rad = Utility::RandomNumber(0.0f, pi2);
 		float xPos = glm::cos(rad);
 
 		glm::vec4 position(
@@ -151,16 +151,16 @@ void AppPBRClusterForward::InitLights()
 		);
 
 		glm::vec4 color(
-			Utility::RandomNumber<float>(0.0f, 1.0f),
-			Utility::RandomNumber<float>(0.0f, 1.0f),
-			Utility::RandomNumber<float>(0.0f, 1.0f),
+			Utility::RandomNumber(0.0f, 1.0f),
+			Utility::RandomNumber(0.0f, 1.0f),
+			Utility::RandomNumber(0.0f, 1.0f),
 			1.f
 		);
 
 		LightData l;
 		l.color_ = color;
 		l.position_ = position;
-		l.radius_ = Utility::RandomNumber<float>(0.5f, 2.0f);
+		l.radius_ = Utility::RandomNumber(0.5f, 2.0f);
 
 		lights.push_back(l);
 	}

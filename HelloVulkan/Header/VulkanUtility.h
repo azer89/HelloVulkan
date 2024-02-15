@@ -65,20 +65,27 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugReportCallback
 
 namespace Utility
 {
-	template <typename T>
-	inline T RandomNumber()
+	inline float RandomNumber()
 	{
-		static std::uniform_real_distribution<T> distribution(0.0, 1.0);
+		static std::uniform_real_distribution<float> distribution(0.0, 1.0);
 		static std::random_device rd;
 		static std::mt19937 generator(rd());
 		return distribution(generator);
 	}
 
-	// Returns a random real in [min,max)
-	template <typename T>
-	inline T RandomNumber(T min, T max)
+	inline float RandomNumber(float min, float max)
 	{
-		return min + (max - min) * RandomNumber<T>();
+		return min + (max - min) * RandomNumber();
+	}
+
+	inline uint32_t AlignedSize(uint32_t value, uint32_t alignment)
+	{
+		return (value + alignment - 1) & ~(alignment - 1);
+	}
+
+	inline size_t AlignedSize(size_t value, size_t alignment)
+	{
+		return (value + alignment - 1) & ~(alignment - 1);
 	}
 }
 
