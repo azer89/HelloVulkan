@@ -92,8 +92,8 @@ public:
 	VmaAllocator GetVMAAllocator() const { return vmaAllocator_; }
 
 	// Raytracing getters
-	VkPhysicalDeviceRayTracingPipelinePropertiesKHR GetRayTracingPipelineProperties() { return rayTracingPipelineProperties_; }
-	VkPhysicalDeviceAccelerationStructureFeaturesKHR GetAccelerationStructureFeatures() { accelerationStructureFeatures_; }
+	VkPhysicalDeviceRayTracingPipelinePropertiesKHR GetRayTracingPipelineProperties() { return rtPipelineProperties_; }
+	VkPhysicalDeviceAccelerationStructureFeaturesKHR GetAccelerationStructureFeatures() { rtASFeatures_; }
 
 	// Getters related to swapchain
 	VkSwapchainKHR GetSwapChain() const { return swapchain_; }
@@ -157,7 +157,6 @@ private:
 	VkFormat swapchainImageFormat_;
 	uint32_t currentSwapchainImageIndex_; // Current image index
 
-	// TODO Rename to imageWidth_ and imageHeight_
 	uint32_t framebufferWidth_;
 	uint32_t framebufferHeight_;
 	VkFormat depthFormat_;
@@ -189,12 +188,12 @@ private:
 	ContextConfig config_;
 
 	// Raytracing
-	VkPhysicalDeviceRayTracingPipelinePropertiesKHR rayTracingPipelineProperties_{};
-	VkPhysicalDeviceAccelerationStructureFeaturesKHR accelerationStructureFeatures_{};
+	VkPhysicalDeviceRayTracingPipelinePropertiesKHR rtPipelineProperties_;
+	VkPhysicalDeviceAccelerationStructureFeaturesKHR rtASFeatures_;
 
-	VkPhysicalDeviceBufferDeviceAddressFeatures enabledBufferDeviceAddresFeatures_{};
-	VkPhysicalDeviceRayTracingPipelineFeaturesKHR enabledRayTracingPipelineFeatures_{};
-	VkPhysicalDeviceAccelerationStructureFeaturesKHR enabledAccelerationStructureFeatures_{};
+	VkPhysicalDeviceBufferDeviceAddressFeatures rtDevAddressEnabledFeatures_;
+	VkPhysicalDeviceRayTracingPipelineFeaturesKHR rtPipelineEnabledFeatures_;
+	VkPhysicalDeviceAccelerationStructureFeaturesKHR rtASEnabledFeatures;
 
 	// pNext structure for passing extension structures to device creation
 	void* pNextChain_ = nullptr;

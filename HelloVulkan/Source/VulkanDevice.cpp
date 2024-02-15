@@ -125,20 +125,20 @@ void VulkanDevice::GetRaytracingPropertiesAndFeatures()
 	if (config_.supportRaytracing_)
 	{
 		// Properties
-		rayTracingPipelineProperties_.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR;
+		rtPipelineProperties_.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR;
 		VkPhysicalDeviceProperties2 deviceProperties2 =
 		{
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2,
-			.pNext = &rayTracingPipelineProperties_
+			.pNext = &rtPipelineProperties_
 		};
 		vkGetPhysicalDeviceProperties2(physicalDevice_, &deviceProperties2);
 
 		// Features
-		accelerationStructureFeatures_.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
+		rtASFeatures_.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
 		VkPhysicalDeviceFeatures2 deviceFeatures2 =
 		{
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2,
-			.pNext = &accelerationStructureFeatures_
+			.pNext = &rtASFeatures_
 		};
 		vkGetPhysicalDeviceFeatures2(physicalDevice_, &deviceFeatures2);
 	}
@@ -151,27 +151,27 @@ void VulkanDevice::GetEnabledRaytracingFeatures()
 	if (config_.supportRaytracing_)
 	{
 		// Enable features required for ray tracing using feature chaining via pNext		
-		enabledBufferDeviceAddresFeatures_ =
+		rtDevAddressEnabledFeatures_ =
 		{
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES,
 			.bufferDeviceAddress = VK_TRUE
 		};
 
-		enabledRayTracingPipelineFeatures_ =
+		rtPipelineEnabledFeatures_ =
 		{
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR,
-			.pNext = &enabledBufferDeviceAddresFeatures_,
+			.pNext = &rtDevAddressEnabledFeatures_,
 			.rayTracingPipeline = VK_TRUE,
 		};
 
-		enabledAccelerationStructureFeatures_ =
+		rtASEnabledFeatures =
 		{
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR,
-			.pNext = &enabledRayTracingPipelineFeatures_,
+			.pNext = &rtPipelineEnabledFeatures_,
 			.accelerationStructure = VK_TRUE,
 		};
 
-		pNextChain_ = &enabledAccelerationStructureFeatures_;
+		pNextChain_ = &rtASEnabledFeatures;
 	}
 }
 
