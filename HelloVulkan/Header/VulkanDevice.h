@@ -37,8 +37,12 @@ struct FrameData
 
 struct ContextConfig
 {
-	bool supportRaytracing_;
-	bool supportMSAA_;
+	bool supportRaytracing_ = false;
+	
+	// This can be disabled but validation layer will complain a little bit
+	bool supportMSAA_ = true;
+
+	// TODO Set validation layer as optional
 };
 
 /*
@@ -194,7 +198,7 @@ private:
 	VkPhysicalDeviceRayTracingPipelineFeaturesKHR enabledRayTracingPipelineFeatures_{};
 	VkPhysicalDeviceAccelerationStructureFeaturesKHR enabledAccelerationStructureFeatures_{};
 
-	//pNext structure for passing extension structures to device creation* /
+	// pNext structure for passing extension structures to device creation
 	void* pNextChain_ = nullptr;
 };
 

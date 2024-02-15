@@ -101,7 +101,9 @@ void VulkanDevice::AllocateVMA(VulkanInstance& instance)
 
 	const VmaAllocatorCreateInfo allocatorInfo =
 	{
+		// Only activate buffer address if raytracing is on
 		.flags = config_.supportRaytracing_ ? VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT : 0u,
+		
 		.physicalDevice = physicalDevice_,
 		.device = device_,
 		.pVulkanFunctions = (const VmaVulkanFunctions*)&vulkanFunctions,
@@ -235,13 +237,13 @@ VkResult VulkanDevice::CreatePhysicalDevice(VkInstance instance)
 	std::vector<VkPhysicalDevice> devices(deviceCount);
 	VK_CHECK_RET(vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data()));
 
-	msaaSampleCount_ = VK_SAMPLE_COUNT_1_BIT; // Default
+	//msaaSampleCount_ = VK_SAMPLE_COUNT_1_BIT; // Default
 	for (const auto& d : devices)
 	{
 		if (IsDeviceSuitable(d))
 		{
 			physicalDevice_ = d;
-			msaaSampleCount_ = GetMaxUsableSampleCount(physicalDevice_);
+			msaaSampleCount_ = config_.supportMSAA_ ? GetMaxUsableSampleCount(physicalDevice_) : VK_SAMPLE_COUNT_1_BIT;
 			depthFormat_ = FindDepthFormat();
 			// Memory properties are used regularly for creating all kinds of buffers
 			vkGetPhysicalDeviceMemoryProperties(physicalDevice_, &memoryProperties_);
