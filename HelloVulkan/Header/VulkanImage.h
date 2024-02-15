@@ -8,8 +8,6 @@
 
 #include <string>
 
-int NumMipMap(int w, int h);
-
 struct ImageBarrierCreateInfo
 {
 	VkCommandBuffer commandBuffer;

@@ -1,5 +1,6 @@
 #include "AppPBR.h"
 #include "Configs.h"
+#include "VulkanUtility.h"
 #include "PipelineEquirect2Cube.h"
 #include "PipelineCubeFilter.h"
 #include "PipelineBRDFLUT.h"
@@ -54,7 +55,7 @@ void AppPBR::Init()
 		diffuseCubemap_.SetDebugName(vulkanDevice_, "Diffuse_Cubemap");
 		specularCubemap_.SetDebugName(vulkanDevice_, "Specular_Cubemap");
 
-		cubemapMipmapCount_ = static_cast<float>(NumMipMap(IBLConfig::InputCubeSideLength, IBLConfig::InputCubeSideLength));
+		cubemapMipmapCount_ = static_cast<float>(Utility::NumMipMap(IBLConfig::InputCubeSideLength, IBLConfig::InputCubeSideLength));
 	}
 	
 	// BRDF look up table

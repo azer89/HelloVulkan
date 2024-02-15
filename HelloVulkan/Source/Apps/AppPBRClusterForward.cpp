@@ -4,6 +4,7 @@
 #include "PipelineBRDFLUT.h"
 #include "Configs.h"
 #include "PushConstants.h"
+#include "VulkanUtility.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 
@@ -56,7 +57,7 @@ void AppPBRClusterForward::Init()
 		diffuseCubemap_.SetDebugName(vulkanDevice_, "Diffuse_Cubemap");
 		specularCubemap_.SetDebugName(vulkanDevice_, "Specular_Cubemap");
 
-		cubemapMipmapCount_ = static_cast<float>(NumMipMap(IBLConfig::InputCubeSideLength, IBLConfig::InputCubeSideLength));
+		cubemapMipmapCount_ = static_cast<float>(Utility::NumMipMap(IBLConfig::InputCubeSideLength, IBLConfig::InputCubeSideLength));
 	}
 	
 	// BRDF look up table
