@@ -14,6 +14,7 @@ public:
 
 	void StartImGui();
 	void EndImGui();
+	void DrawEmptyImGui();
 
 	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
 };

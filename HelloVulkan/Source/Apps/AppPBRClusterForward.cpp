@@ -4,6 +4,7 @@
 #include "PipelineBRDFLUT.h"
 #include "Configs.h"
 #include "PushConstants.h"
+#include "VulkanUtility.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 
@@ -56,7 +57,7 @@ void AppPBRClusterForward::Init()
 		diffuseCubemap_.SetDebugName(vulkanDevice_, "Diffuse_Cubemap");
 		specularCubemap_.SetDebugName(vulkanDevice_, "Specular_Cubemap");
 
-		cubemapMipmapCount_ = static_cast<float>(NumMipMap(IBLConfig::InputCubeSideLength, IBLConfig::InputCubeSideLength));
+		cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 	}
 	
 	// BRDF look up table
@@ -138,9 +139,9 @@ void AppPBRClusterForward::InitLights()
 	constexpr uint32_t NR_LIGHTS = 1000;
 	for (uint32_t i = 0; i < NR_LIGHTS; ++i)
 	{
-		float yPos = Utility::RandomNumber<float>(-2.f, 10.0f);
-		float radius = Utility::RandomNumber<float>(0.0f, 10.0f);
-		float rad = Utility::RandomNumber<float>(0.0f, pi2);
+		float yPos = Utility::RandomNumber(-2.f, 10.0f);
+		float radius = Utility::RandomNumber(0.0f, 10.0f);
+		float rad = Utility::RandomNumber(0.0f, pi2);
 		float xPos = glm::cos(rad);
 
 		glm::vec4 position(
@@ -151,16 +152,16 @@ void AppPBRClusterForward::InitLights()
 		);
 
 		glm::vec4 color(
-			Utility::RandomNumber<float>(0.0f, 1.0f),
-			Utility::RandomNumber<float>(0.0f, 1.0f),
-			Utility::RandomNumber<float>(0.0f, 1.0f),
+			Utility::RandomNumber(0.0f, 1.0f),
+			Utility::RandomNumber(0.0f, 1.0f),
+			Utility::RandomNumber(0.0f, 1.0f),
 			1.f
 		);
 
 		LightData l;
 		l.color_ = color;
 		l.position_ = position;
-		l.radius_ = Utility::RandomNumber<float>(0.5f, 2.0f);
+		l.radius_ = Utility::RandomNumber(0.5f, 2.0f);
 
 		lights.push_back(l);
 	}
@@ -226,17 +227,16 @@ void AppPBRClusterForward::UpdateUBOs()
 
 void AppPBRClusterForward::UpdateUI()
 {
-	imguiPtr_->StartImGui();
-
 	if (!showImgui_)
 	{
-		imguiPtr_->EndImGui();
-
+		imguiPtr_->DrawEmptyImGui();
 		return;
 	}
 
 	static bool lightRender = true;
 	static PushConstantPBR pbrPC;
+
+	imguiPtr_->StartImGui();
 
 	ImGui::SetNextWindowSize(ImVec2(525, 250));
 	ImGui::Begin(AppConfig::ScreenTitle.c_str());

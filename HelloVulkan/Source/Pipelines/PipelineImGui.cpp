@@ -92,6 +92,14 @@ void PipelineImGui::EndImGui()
 	ImGui::Render();
 }
 
+void PipelineImGui::DrawEmptyImGui()
+{
+	ImGui_ImplVulkan_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+	ImGui::Render();
+}
+
 void PipelineImGui::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
 {
 	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();

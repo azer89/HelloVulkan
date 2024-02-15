@@ -35,13 +35,13 @@ void AppSimpleRaytracing::UpdateUBOs()
 
 void AppSimpleRaytracing::UpdateUI()
 {
-	imguiPtr_->StartImGui();
-
 	if (!showImgui_)
 	{
-		imguiPtr_->EndImGui();
+		imguiPtr_->DrawEmptyImGui();
 		return;
 	}
+
+	imguiPtr_->StartImGui();
 
 	ImGui::SetNextWindowSize(ImVec2(525, 250));
 	ImGui::Begin("Raytracing");

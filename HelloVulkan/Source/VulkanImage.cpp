@@ -5,16 +5,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-int NumMipMap(int w, int h)
-{
-	int levels = 1;
-	while ((w | h) >> levels)
-	{
-		levels += 1;
-	}
-	return levels;
-}
-
 void VulkanImage::Destroy(VkDevice device)
 {
 	if (vmaAllocator_ == nullptr)
@@ -68,7 +58,7 @@ void VulkanImage::CreateFromFile(
 		pixels,
 		texWidth,
 		texHeight,
-		NumMipMap(texWidth, texHeight),
+		Utility::MipMapCount(texWidth, texHeight),
 		1, // layerCount
 		VK_FORMAT_R8G8B8A8_UNORM);
 
@@ -89,7 +79,7 @@ void VulkanImage::CreateFromHDR(
 		pixels,
 		texWidth,
 		texHeight,
-		NumMipMap(texWidth, texHeight),
+		Utility::MipMapCount(texWidth, texHeight),
 		1,
 		VK_FORMAT_R32G32B32A32_SFLOAT);
 

@@ -17,7 +17,7 @@ PipelineCubeFilter::PipelineCubeFilter(
 	renderPass_.CreateOffScreenCubemapRenderPass(vkDev, IBLConfig::CubeFormat);
 
 	// Input cubemap
-	uint32_t inputNumMipmap = NumMipMap(IBLConfig::InputCubeSideLength, IBLConfig::InputCubeSideLength);
+	uint32_t inputNumMipmap = Utility::MipMapCount(IBLConfig::InputCubeSideLength);
 	inputCubemap->GenerateMipmap(
 		vkDev,
 		inputNumMipmap,
@@ -283,7 +283,7 @@ void PipelineCubeFilter::OffscreenRender(VulkanDevice& vkDev,
 {
 	uint32_t outputMipMapCount = filterType == CubeFilterType::Diffuse ?
 		1u :
-		NumMipMap(IBLConfig::OutputSpecularSideLength, IBLConfig::OutputSpecularSideLength);
+		Utility::MipMapCount(IBLConfig::OutputSpecularSideLength);
 
 	uint32_t outputSideLength = filterType == CubeFilterType::Diffuse ?
 		IBLConfig::OutputDiffuseSideLength :

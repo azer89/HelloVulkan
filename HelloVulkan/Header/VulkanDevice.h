@@ -37,8 +37,12 @@ struct FrameData
 
 struct ContextConfig
 {
-	bool supportRaytracing_;
-	bool supportMSAA_;
+	bool supportRaytracing_ = false;
+	
+	// This can be disabled but validation layer will complain a little bit
+	bool supportMSAA_ = true;
+
+	// TODO Set validation layer as optional
 };
 
 /*
@@ -88,8 +92,8 @@ public:
 	VmaAllocator GetVMAAllocator() const { return vmaAllocator_; }
 
 	// Raytracing getters
-	VkPhysicalDeviceRayTracingPipelinePropertiesKHR GetRayTracingPipelineProperties() { return rayTracingPipelineProperties_; }
-	VkPhysicalDeviceAccelerationStructureFeaturesKHR GetAccelerationStructureFeatures() { accelerationStructureFeatures_; }
+	VkPhysicalDeviceRayTracingPipelinePropertiesKHR GetRayTracingPipelineProperties() { return rtPipelineProperties_; }
+	VkPhysicalDeviceAccelerationStructureFeaturesKHR GetAccelerationStructureFeatures() { rtASFeatures_; }
 
 	// Getters related to swapchain
 	VkSwapchainKHR GetSwapChain() const { return swapchain_; }
@@ -98,8 +102,6 @@ public:
 	VkImage GetSwapchainImage(size_t i) const { return swapchainImages_[i]; }
 	VkImageView GetSwapchainImageView(size_t i) const { return swapchainImageViews_[i]; }
 	uint32_t GetCurrentSwapchainImageIndex() const { return currentSwapchainImageIndex_; }
-
-	uint32_t GetMemoryType(uint32_t typeBits, VkMemoryPropertyFlags properties, VkBool32* memTypeFound = nullptr) const;
 
 	// Pointer getters
 	VkSwapchainKHR* GetSwapchainPtr() { return &swapchain_; }
@@ -155,7 +157,6 @@ private:
 	VkFormat swapchainImageFormat_;
 	uint32_t currentSwapchainImageIndex_; // Current image index
 
-	// TODO Rename to imageWidth_ and imageHeight_
 	uint32_t framebufferWidth_;
 	uint32_t framebufferHeight_;
 	VkFormat depthFormat_;
@@ -187,14 +188,14 @@ private:
 	ContextConfig config_;
 
 	// Raytracing
-	VkPhysicalDeviceRayTracingPipelinePropertiesKHR rayTracingPipelineProperties_{};
-	VkPhysicalDeviceAccelerationStructureFeaturesKHR accelerationStructureFeatures_{};
+	VkPhysicalDeviceRayTracingPipelinePropertiesKHR rtPipelineProperties_;
+	VkPhysicalDeviceAccelerationStructureFeaturesKHR rtASFeatures_;
 
-	VkPhysicalDeviceBufferDeviceAddressFeatures enabledBufferDeviceAddresFeatures_{};
-	VkPhysicalDeviceRayTracingPipelineFeaturesKHR enabledRayTracingPipelineFeatures_{};
-	VkPhysicalDeviceAccelerationStructureFeaturesKHR enabledAccelerationStructureFeatures_{};
+	VkPhysicalDeviceBufferDeviceAddressFeatures rtDevAddressEnabledFeatures_;
+	VkPhysicalDeviceRayTracingPipelineFeaturesKHR rtPipelineEnabledFeatures_;
+	VkPhysicalDeviceAccelerationStructureFeaturesKHR rtASEnabledFeatures;
 
-	//pNext structure for passing extension structures to device creation* /
+	// pNext structure for passing extension structures to device creation
 	void* pNextChain_ = nullptr;
 };
 

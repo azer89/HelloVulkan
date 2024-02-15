@@ -3,16 +3,6 @@
 #include "VulkanUtility.h"
 #include "Configs.h"
 
-uint32_t AlignedSize(uint32_t value, uint32_t alignment)
-{
-	return (value + alignment - 1) & ~(alignment - 1);
-}
-
-size_t AlignedSize(size_t value, size_t alignment)
-{
-	return (value + alignment - 1) & ~(alignment - 1);
-}
-
 PipelineSimpleRaytracing::PipelineSimpleRaytracing(VulkanDevice& vkDev) :
 	PipelineBase(
 		vkDev,
@@ -48,7 +38,7 @@ void PipelineSimpleRaytracing::FillCommandBuffer(VulkanDevice& vkDev, VkCommandB
 {
 	VkPhysicalDeviceRayTracingPipelinePropertiesKHR properties = vkDev.GetRayTracingPipelineProperties();
 
-	const uint32_t handleSizeAligned = AlignedSize(properties.shaderGroupHandleSize, properties.shaderGroupHandleAlignment);
+	const uint32_t handleSizeAligned = Utility::AlignedSize(properties.shaderGroupHandleSize, properties.shaderGroupHandleAlignment);
 
 	VkStridedDeviceAddressRegionKHR raygenShaderSbtEntry =
 	{
@@ -624,7 +614,7 @@ void PipelineSimpleRaytracing::CreateShaderBindingTable(VulkanDevice& vkDev)
 	VkPhysicalDeviceRayTracingPipelinePropertiesKHR properties = vkDev.GetRayTracingPipelineProperties();
 
 	const uint32_t handleSize = properties.shaderGroupHandleSize;
-	const uint32_t handleSizeAligned = AlignedSize(properties.shaderGroupHandleSize, properties.shaderGroupHandleAlignment);
+	const uint32_t handleSizeAligned = Utility::AlignedSize(properties.shaderGroupHandleSize, properties.shaderGroupHandleAlignment);
 	const uint32_t groupCount = static_cast<uint32_t>(shaderGroups_.size());
 	const uint32_t sbtSize = groupCount * handleSizeAligned;
 
