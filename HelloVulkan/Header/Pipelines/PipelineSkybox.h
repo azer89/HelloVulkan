@@ -3,6 +3,9 @@
 
 #include "PipelineBase.h"
 #include "VulkanImage.h"
+#include "Configs.h"
+
+#include <array>
 
 class PipelineSkybox final : public PipelineBase
 {
@@ -20,7 +23,7 @@ public:
 private:
 	VulkanImage* envCubemap_;
 
-	std::vector<VkDescriptorSet> descriptorSets_;
+	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;
 
 	void CreateDescriptor(VulkanDevice& vkDev);
 };

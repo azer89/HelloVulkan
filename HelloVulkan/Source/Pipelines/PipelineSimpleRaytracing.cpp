@@ -184,7 +184,6 @@ void PipelineSimpleRaytracing::CreateDescriptor(VulkanDevice& vkDev)
 
 	// Allocate descriptor sets
 	auto frameCount = AppConfig::FrameOverlapCount;
-	descriptorSets_.resize(frameCount);
 	for (size_t i = 0; i < frameCount; i++)
 	{
 		descriptor_.AllocateSet(vkDev, &(descriptorSets_[i]));

@@ -4,6 +4,7 @@
 #include "VulkanDevice.h"
 #include "PipelineBase.h"
 #include "Light.h"
+#include "Configs.h"
 
 /*
 Render a light source for debugging purpose
@@ -29,7 +30,7 @@ private:
 
 private:
 	Lights* lights_;
-	std::vector<VkDescriptorSet> descriptorSets_;
+	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;
 	bool shouldRender_;
 };
 

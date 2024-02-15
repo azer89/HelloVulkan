@@ -138,7 +138,6 @@ void PipelineLightCulling::CreateDescriptor(VulkanDevice& vkDev)
 		});
 
 	// Set
-	descriptorSets_.resize(imageCount);
 	for (size_t i = 0; i < imageCount; ++i)
 	{
 		VkDescriptorBufferInfo bufferInfo1 = { cfBuffers_->aabbBuffers_[i].buffer_, 0, VK_WHOLE_SIZE };

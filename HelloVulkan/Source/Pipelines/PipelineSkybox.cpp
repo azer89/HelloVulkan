@@ -104,7 +104,6 @@ void PipelineSkybox::CreateDescriptor(VulkanDevice& vkDev)
 
 	// Set
 	auto frameCount = AppConfig::FrameOverlapCount;
-	descriptorSets_.resize(frameCount);
 
 	VkDescriptorImageInfo imageInfo = envCubemap_->GetDescriptorImageInfo();
 

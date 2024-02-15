@@ -3,6 +3,9 @@
 
 #include "PipelineBase.h"
 #include "VulkanImage.h"
+#include "Configs.h"
+
+#include <array>
 
 /*
 This applies tonemap to a color image and transfers it to a swapchain image
@@ -26,7 +29,7 @@ private:
 private:
 	VulkanImage* singleSampledColorImage_;
 
-	std::vector<VkDescriptorSet> descriptorSets_;
+	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;
 };
 
 #endif

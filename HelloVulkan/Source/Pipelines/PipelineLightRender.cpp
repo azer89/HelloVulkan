@@ -113,7 +113,6 @@ void PipelineLightRender::CreateDescriptor(VulkanDevice& vkDev)
 
 	// Set
 	size_t frameCount = AppConfig::FrameOverlapCount;
-	descriptorSets_.resize(frameCount);
 
 	for (size_t i = 0; i < frameCount; ++i)
 	{

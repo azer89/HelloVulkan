@@ -85,7 +85,6 @@ void PipelineTonemap::CreateDescriptor(VulkanDevice& vkDev)
 void PipelineTonemap::AllocateDescriptorSets(VulkanDevice& vkDev)
 {
 	auto frameCount = AppConfig::FrameOverlapCount;
-	descriptorSets_.resize(frameCount);
 
 	for (size_t i = 0; i < frameCount; i++)
 	{

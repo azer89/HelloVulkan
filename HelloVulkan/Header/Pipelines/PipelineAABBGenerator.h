@@ -5,6 +5,9 @@
 #include "VulkanDevice.h"
 #include "ClusterForwardBuffers.h"
 #include "Camera.h"
+#include "Configs.h"
+
+#include <array>
 
 /*
 Clustered Forward
@@ -28,7 +31,7 @@ private:
 	ClusterForwardBuffers* cfBuffers_;
 
 	std::vector<VulkanBuffer> cfUBOBuffers_;
-	std::vector<VkDescriptorSet> descriptorSets_;
+	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;
 
 private:
 	void Execute(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, uint32_t frameIndex);

@@ -5,6 +5,9 @@
 #include "AccelerationStructure.h"
 #include "VulkanBuffer.h"
 #include "VulkanImage.h"
+#include "Configs.h"
+
+#include <array>
 
 class PipelineSimpleRaytracing final : public PipelineBase
 {
@@ -39,7 +42,7 @@ private:
 
 private:
 	VulkanImage storageImage_;
-	std::vector<VkDescriptorSet> descriptorSets_;
+	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;
 
 	// Acceleration structures
 	AccelerationStructure blas_;
