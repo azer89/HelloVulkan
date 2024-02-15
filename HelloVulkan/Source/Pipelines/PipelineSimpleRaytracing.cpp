@@ -353,7 +353,6 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanDevice& vkDev)
 
 	// Setup indices
 	std::vector<uint32_t> indices = { 0, 1, 2 };
-	indexCount_ = static_cast<uint32_t>(indices.size());
 
 	// Setup identity transform matrix
 	VkTransformMatrixKHR transformMatrix = {

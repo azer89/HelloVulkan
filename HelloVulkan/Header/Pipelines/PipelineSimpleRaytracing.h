@@ -39,15 +39,13 @@ private:
 
 private:
 	VulkanImage storageImage_;
-
-	AccelerationStructure blas_;
-	AccelerationStructure tlas_;
-
 	std::vector<VkDescriptorSet> descriptorSets_;
 
+	// Acceleration structures
+	AccelerationStructure blas_;
+	AccelerationStructure tlas_;
 	VulkanBuffer vertexBuffer_;
 	VulkanBuffer indexBuffer_;
-	uint32_t indexCount_;
 	VulkanBuffer transformBuffer_;
 
 	// Shader related
