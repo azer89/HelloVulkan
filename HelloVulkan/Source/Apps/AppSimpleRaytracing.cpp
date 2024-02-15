@@ -13,10 +13,10 @@ void AppSimpleRaytracing::Init()
 {
 	// Initialize attachments
 	CreateSharedImageResources();
-	clearPtr_ = std::make_unique<PipelineClear>(vulkanDevice_);
-	rtxPtr_ = std::make_unique<PipelineSimpleRaytracing>(vulkanDevice_);
-	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanDevice_, vulkanInstance_.GetInstance(), glfwWindow_);
-	finishPtr_ = std::make_unique<PipelineFinish>(vulkanDevice_);
+	clearPtr_ = std::make_unique<PipelineClear>(vulkanContext_);
+	rtxPtr_ = std::make_unique<PipelineSimpleRaytracing>(vulkanContext_);
+	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
+	finishPtr_ = std::make_unique<PipelineFinish>(vulkanContext_);
 
 	pipelines_ =
 	{
@@ -30,7 +30,7 @@ void AppSimpleRaytracing::Init()
 
 void AppSimpleRaytracing::UpdateUBOs()
 {
-	rtxPtr_->SetRaytracingCameraUBO(vulkanDevice_, camera_->GetRaytracingCameraUBO());
+	rtxPtr_->SetRaytracingCameraUBO(vulkanContext_, camera_->GetRaytracingCameraUBO());
 }
 
 void AppSimpleRaytracing::UpdateUI()
@@ -77,7 +77,7 @@ int AppSimpleRaytracing::MainLoop()
 	}
 
 	// Wait until everything is finished
-	vkDeviceWaitIdle(vulkanDevice_.GetDevice());
+	vkDeviceWaitIdle(vulkanContext_.GetDevice());
 
 	DestroyResources();
 	Terminate();

@@ -69,7 +69,7 @@ protected:
 
 	// Vulkan
 	VulkanInstance vulkanInstance_;
-	VulkanContext vulkanDevice_;
+	VulkanContext vulkanContext_;
 
 	// A list of pipelines (graphics and compute)
 	std::vector<PipelineBase*> pipelines_;

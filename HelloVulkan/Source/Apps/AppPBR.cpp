@@ -26,52 +26,52 @@ void AppPBR::Init()
 	std::string hdrFile = AppConfig::TextureFolder + "piazza_bologni_1k.hdr";
 
 	model_ = std::make_unique<Model>(
-		vulkanDevice_, 
+		vulkanContext_, 
 		AppConfig::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
 	std::vector<Model*> models = {model_.get()};
 
 	// Create a cubemap from the input HDR
 	{
 		PipelineEquirect2Cube e2c(
-			vulkanDevice_,
+			vulkanContext_,
 			hdrFile);
-		e2c.OffscreenRender(vulkanDevice_,
+		e2c.OffscreenRender(vulkanContext_,
 			&environmentCubemap_); // Output
-		environmentCubemap_.SetDebugName(vulkanDevice_, "Environment_Cubemap");
+		environmentCubemap_.SetDebugName(vulkanContext_, "Environment_Cubemap");
 	}
 
 	// Cube filtering
 	{
-		PipelineCubeFilter cubeFilter(vulkanDevice_, &environmentCubemap_);
+		PipelineCubeFilter cubeFilter(vulkanContext_, &environmentCubemap_);
 		// Diffuse
-		cubeFilter.OffscreenRender(vulkanDevice_,
+		cubeFilter.OffscreenRender(vulkanContext_,
 			&diffuseCubemap_,
 			CubeFilterType::Diffuse);
 		// Specular
-		cubeFilter.OffscreenRender(vulkanDevice_,
+		cubeFilter.OffscreenRender(vulkanContext_,
 			&specularCubemap_,
 			CubeFilterType::Specular);
 
-		diffuseCubemap_.SetDebugName(vulkanDevice_, "Diffuse_Cubemap");
-		specularCubemap_.SetDebugName(vulkanDevice_, "Specular_Cubemap");
+		diffuseCubemap_.SetDebugName(vulkanContext_, "Diffuse_Cubemap");
+		specularCubemap_.SetDebugName(vulkanContext_, "Specular_Cubemap");
 
 		cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 	}
 	
 	// BRDF look up table
 	{
-		PipelineBRDFLUT brdfLUTCompute(vulkanDevice_);
-		brdfLUTCompute.CreateLUT(vulkanDevice_, &brdfLut_);
-		brdfLut_.SetDebugName(vulkanDevice_, "BRDF_LUT");
+		PipelineBRDFLUT brdfLUTCompute(vulkanContext_);
+		brdfLUTCompute.CreateLUT(vulkanContext_, &brdfLut_);
+		brdfLut_.SetDebugName(vulkanContext_, "BRDF_LUT");
 	}
 
 	// Renderers
 	// This is responsible to clear swapchain image
 	clearPtr_ = std::make_unique<PipelineClear>(
-		vulkanDevice_);
+		vulkanContext_);
 	// This draws a cube
 	skyboxPtr_ = std::make_unique<PipelineSkybox>(
-		vulkanDevice_,
+		vulkanContext_,
 		&environmentCubemap_,
 		&depthImage_,
 		&multiSampledColorImage_,
@@ -81,7 +81,7 @@ void AppPBR::Init()
 		RenderPassBit::DepthClear
 	);
 	pbrPtr_ = std::make_unique<PipelinePBR>(
-		vulkanDevice_,
+		vulkanContext_,
 		models,
 		&lights_,
 		&specularCubemap_,
@@ -90,24 +90,24 @@ void AppPBR::Init()
 		&depthImage_,
 		&multiSampledColorImage_);
 	lightPtr_ = std::make_unique<PipelineLightRender>(
-		vulkanDevice_,
+		vulkanContext_,
 		&lights_,
 		&depthImage_,
 		&multiSampledColorImage_
 	);
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
 	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(
-		vulkanDevice_, &multiSampledColorImage_, &singleSampledColorImage_);
+		vulkanContext_, &multiSampledColorImage_, &singleSampledColorImage_);
 	// This is on-screen render pass that transfers 
 	// singleSampledColorImage_ to swapchain image
 	tonemapPtr_ = std::make_unique<PipelineTonemap>(
-		vulkanDevice_,
+		vulkanContext_,
 		&singleSampledColorImage_
 	);
 	// ImGui here
-	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanDevice_, vulkanInstance_.GetInstance(), glfwWindow_);
+	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
-	finishPtr_ = std::make_unique<PipelineFinish>(vulkanDevice_);
+	finishPtr_ = std::make_unique<PipelineFinish>(vulkanContext_);
 
 	// Put all renderer pointers to a vector
 	pipelines_ =
@@ -127,7 +127,7 @@ void AppPBR::Init()
 void AppPBR::InitLights()
 {
 	// Lights (SSBO)
-	lights_.AddLights(vulkanDevice_,
+	lights_.AddLights(vulkanContext_,
 	{
 		{
 			.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f),
@@ -180,13 +180,13 @@ void AppPBR::DestroyResources()
 void AppPBR::UpdateUBOs()
 {
 	CameraUBO ubo = camera_->GetCameraUBO();
-	lightPtr_->SetCameraUBO(vulkanDevice_, ubo);
-	pbrPtr_->SetCameraUBO(vulkanDevice_, ubo);
+	lightPtr_->SetCameraUBO(vulkanContext_, ubo);
+	pbrPtr_->SetCameraUBO(vulkanContext_, ubo);
 
 	// Remove translation
 	CameraUBO skyboxUbo = ubo;
 	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view));
-	skyboxPtr_->SetCameraUBO(vulkanDevice_, skyboxUbo);
+	skyboxPtr_->SetCameraUBO(vulkanContext_, skyboxUbo);
 
 	// Model UBOs
 	glm::mat4 modelMatrix(1.f);
@@ -197,7 +197,7 @@ void AppPBR::UpdateUBOs()
 	{
 		.model = modelMatrix
 	};
-	model_->SetModelUBO(vulkanDevice_, modelUBO1);
+	model_->SetModelUBO(vulkanContext_, modelUBO1);
 }
 
 void AppPBR::UpdateUI()
@@ -249,7 +249,7 @@ int AppPBR::MainLoop()
 	}
 
 	// Wait until everything is finished
-	vkDeviceWaitIdle(vulkanDevice_.GetDevice());
+	vkDeviceWaitIdle(vulkanContext_.GetDevice());
 
 	DestroyResources();
 	Terminate();
