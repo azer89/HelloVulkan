@@ -17,23 +17,18 @@ void ClusterForwardBuffers::CreateBuffers(VulkanDevice& vkDev, uint32_t lightCou
 
 	// AABB
 	constexpr uint32_t aabbBufferSize = ClusterForwardConfig::numClusters * sizeof(AABB);
-	aabbBuffers_.resize(bufferCount);
-	aabbDirtyFlags_.resize(bufferCount);
 	SetAABBDirty();
 
 	// Global Index Count
-	globalIndexCountBuffers_.resize(bufferCount);
 
 	// LightCell
 	constexpr uint32_t lightCellsBufferSize = ClusterForwardConfig::numClusters * sizeof(LightCell);
-	lightCellsBuffers_.resize(bufferCount);
 
 	// Light Indices
 	constexpr uint32_t lightIndicesBufferSize =
 		ClusterForwardConfig::maxLightPerCluster *
 		ClusterForwardConfig::numClusters *
 		sizeof(uint32_t);
-	lightIndicesBuffers_.resize(bufferCount);
 
 	for (uint32_t i = 0; i < bufferCount; ++i)
 	{

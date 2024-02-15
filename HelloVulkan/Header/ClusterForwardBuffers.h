@@ -3,8 +3,9 @@
 
 #include "VulkanDevice.h"
 #include "VulkanBuffer.h"
+#include "Configs.h"
 
-#include <vector>
+#include <array>
 
 enum class AABBFlag : uint8_t
 {
@@ -15,11 +16,11 @@ enum class AABBFlag : uint8_t
 struct ClusterForwardBuffers
 {
 public:
-	std::vector<AABBFlag> aabbDirtyFlags_;
-	std::vector<VulkanBuffer> aabbBuffers_;
-	std::vector<VulkanBuffer> globalIndexCountBuffers_;
-	std::vector<VulkanBuffer> lightCellsBuffers_;
-	std::vector<VulkanBuffer> lightIndicesBuffers_;
+	std::array<AABBFlag, AppConfig::FrameOverlapCount> aabbDirtyFlags_;
+	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> aabbBuffers_;
+	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> globalIndexCountBuffers_;
+	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> lightCellsBuffers_;
+	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> lightIndicesBuffers_;
 
 	void CreateBuffers(VulkanDevice& vkDev, uint32_t lightCount);
 	void SetAABBDirty();
