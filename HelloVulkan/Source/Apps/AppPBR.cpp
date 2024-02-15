@@ -155,10 +155,10 @@ void AppPBR::InitLights()
 void AppPBR::DestroyResources()
 {
 	// Destroy images
-	environmentCubemap_.Destroy(vulkanDevice_.GetDevice());
-	diffuseCubemap_.Destroy(vulkanDevice_.GetDevice());
-	specularCubemap_.Destroy(vulkanDevice_.GetDevice());
-	brdfLut_.Destroy(vulkanDevice_.GetDevice());
+	environmentCubemap_.Destroy();
+	diffuseCubemap_.Destroy();
+	specularCubemap_.Destroy();
+	brdfLut_.Destroy();
 
 	// Destroy meshes
 	model_.reset();

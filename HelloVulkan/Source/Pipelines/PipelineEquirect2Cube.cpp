@@ -35,7 +35,7 @@ PipelineEquirect2Cube::PipelineEquirect2Cube(
 
 PipelineEquirect2Cube::~PipelineEquirect2Cube()
 {
-	inputHDRImage_.Destroy(device_);
+	inputHDRImage_.Destroy();
 	vkDestroyFramebuffer(device_, cubeFramebuffer_, nullptr);
 }
 

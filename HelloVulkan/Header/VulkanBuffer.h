@@ -9,9 +9,9 @@
 class VulkanBuffer
 {
 public:
-	VkBuffer buffer_;
-	VmaAllocator vmaAllocator_;
-	VmaAllocation vmaAllocation_;
+	VkBuffer buffer_ = nullptr;
+	VmaAllocator vmaAllocator_ = nullptr;
+	VmaAllocation vmaAllocation_ = nullptr;
 	VmaAllocationInfo vmaInfo_;
 
 	// Only used for raytracing
@@ -20,6 +20,11 @@ public:
 public:
 	void Destroy()
 	{
+		if (vmaAllocation_ == nullptr)
+		{
+			return;
+		}
+
 		vmaDestroyBuffer(vmaAllocator_, buffer_, vmaAllocation_);
 	}
 

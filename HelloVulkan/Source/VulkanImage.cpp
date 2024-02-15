@@ -5,16 +5,22 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-void VulkanImage::Destroy(VkDevice device)
+void VulkanImage::Destroy()
 {
-	if (vmaAllocator_ == nullptr)
+	if (defaultImageSampler_)
 	{
-		return;
+		vkDestroySampler(device_, defaultImageSampler_, nullptr);
 	}
 
-	vkDestroySampler(device, defaultImageSampler_, nullptr);
-	vkDestroyImageView(device, imageView_, nullptr);
-	vmaDestroyImage(vmaAllocator_, image_, vmaAllocation_);
+	if (imageView_)
+	{
+		vkDestroyImageView(device_, imageView_, nullptr);
+	}
+
+	if (vmaAllocation_)
+	{
+		vmaDestroyImage(vmaAllocator_, image_, vmaAllocation_);
+	}
 }
 
 void VulkanImage::CreateImageResources(
@@ -243,7 +249,9 @@ void VulkanImage::CreateImage(
 		.requiredFlags = VkMemoryPropertyFlags(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT),
 	};
 
+	device_ = vkDev.GetDevice();
 	vmaAllocator_ = vkDev.GetVMAAllocator();
+
 	VK_CHECK(vmaCreateImage(
 		vmaAllocator_,
 		&imageInfo, 

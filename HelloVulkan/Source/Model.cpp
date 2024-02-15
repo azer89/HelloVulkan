@@ -42,7 +42,7 @@ Model::~Model()
 	// C++20 feature
 	for (VulkanImage& tex : std::views::values(textureMap_))
 	{
-		tex.Destroy(device_);
+		tex.Destroy();
 	}
 }
 
