@@ -45,7 +45,7 @@ void PipelineEquirect2Cube::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuff
 
 void PipelineEquirect2Cube::InitializeCubemap(VulkanDevice& vkDev, VulkanImage* cubemap)
 {
-	uint32_t mipmapCount = Utility::NumMipMap(IBLConfig::InputCubeSideLength, IBLConfig::InputCubeSideLength);
+	uint32_t mipmapCount = Utility::MipMapCount(IBLConfig::InputCubeSideLength);
 
 	cubemap->CreateImage(
 		vkDev,

@@ -88,10 +88,20 @@ namespace Utility
 		return (value + alignment - 1) & ~(alignment - 1);
 	}
 
-	inline int NumMipMap(int w, int h)
+	inline int MipMapCount(int w, int h)
 	{
 		int levels = 1;
 		while ((w | h) >> levels)
+		{
+			levels += 1;
+		}
+		return levels;
+	}
+
+	inline int MipMapCount(int size)
+	{
+		int levels = 1;
+		while (size >> levels)
 		{
 			levels += 1;
 		}

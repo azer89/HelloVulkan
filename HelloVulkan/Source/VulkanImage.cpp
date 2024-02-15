@@ -58,7 +58,7 @@ void VulkanImage::CreateFromFile(
 		pixels,
 		texWidth,
 		texHeight,
-		Utility::NumMipMap(texWidth, texHeight),
+		Utility::MipMapCount(texWidth, texHeight),
 		1, // layerCount
 		VK_FORMAT_R8G8B8A8_UNORM);
 
@@ -79,7 +79,7 @@ void VulkanImage::CreateFromHDR(
 		pixels,
 		texWidth,
 		texHeight,
-		Utility::NumMipMap(texWidth, texHeight),
+		Utility::MipMapCount(texWidth, texHeight),
 		1,
 		VK_FORMAT_R32G32B32A32_SFLOAT);
 
