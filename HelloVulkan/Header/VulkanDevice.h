@@ -2,11 +2,13 @@
 #define VULKAN_DEVICE
 
 #include "VulkanInstance.h"
+#include "Configs.h"
 
 #include "volk.h"
 #include "vk_mem_alloc.h"
 
 #include <vector>
+#include <array>
 
 struct SwapchainSupportDetails
 {
@@ -178,7 +180,7 @@ private:
 	std::vector<uint32_t> deviceQueueIndices_;
 
 	uint32_t frameIndex_;
-	std::vector<FrameData> frameDataArray_;
+	std::array<FrameData, AppConfig::FrameOverlapCount> frameDataArray_;
 
 	VmaAllocator vmaAllocator_;
 
