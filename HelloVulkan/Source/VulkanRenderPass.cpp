@@ -11,6 +11,7 @@ void VulkanRenderPass::CreateResolveMSRenderPass(
 	VkSampleCountFlagBits msaaSamples
 )
 {
+	device_ = vkDev.GetDevice();
 	renderPassBit_ = renderPassBit;
 
 	const VkAttachmentDescription multisampledAttachment =
@@ -90,6 +91,7 @@ void VulkanRenderPass::CreateOffScreenRenderPass(
 	uint8_t renderPassBit,
 	VkSampleCountFlagBits msaaSamples)
 {
+	device_ = vkDev.GetDevice();
 	renderPassBit_ = renderPassBit;
 
 	const bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
@@ -205,6 +207,7 @@ void VulkanRenderPass::CreateOnScreenRenderPass(
 	uint8_t renderPassBit,
 	VkSampleCountFlagBits msaaSamples)
 {
+	device_ = vkDev.GetDevice();
 	renderPassBit_ = renderPassBit;
 
 	const bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
@@ -302,6 +305,7 @@ void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(
 	uint8_t renderPassBit,
 	VkSampleCountFlagBits msaaSamples)
 {
+	device_ = vkDev.GetDevice();
 	renderPassBit_ = renderPassBit;
 
 	const bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
@@ -376,6 +380,8 @@ void VulkanRenderPass::CreateOffScreenCubemapRenderPass(
 	uint8_t renderPassBit,
 	VkSampleCountFlagBits msaaSamples)
 {
+	device_ = vkDev.GetDevice();
+
 	constexpr VkImageLayout finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
 	std::vector<VkAttachmentDescription> m_attachments;
@@ -488,7 +494,10 @@ void VulkanRenderPass::BeginCubemapRenderPass(
 	vkCmdBeginRenderPass(commandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
 }
 
-void VulkanRenderPass::Destroy(VkDevice device)
+void VulkanRenderPass::Destroy()
 {
-	vkDestroyRenderPass(device, handle_, nullptr);
+	if (handle_)
+	{
+		vkDestroyRenderPass(device_, handle_, nullptr);
+	}
 }
