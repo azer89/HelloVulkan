@@ -103,8 +103,6 @@ public:
 	VkImageView GetSwapchainImageView(size_t i) const { return swapchainImageViews_[i]; }
 	uint32_t GetCurrentSwapchainImageIndex() const { return currentSwapchainImageIndex_; }
 
-	uint32_t GetMemoryType(uint32_t typeBits, VkMemoryPropertyFlags properties, VkBool32* memTypeFound = nullptr) const;
-
 	// Pointer getters
 	VkSwapchainKHR* GetSwapchainPtr() { return &swapchain_; }
 

@@ -77,19 +77,6 @@ void VulkanDevice::GetQueues()
 	if (computeQueue_ == nullptr) { std::cerr << "Cannot get compute queue\n"; }
 }
 
-void VulkanDevice::AllocateFrameInFlightData()
-{
-	// Frame in flight
-	frameIndex_ = 0;
-	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
-	{
-		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].nextSwapchainImageSemaphore_)));
-		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].graphicsQueueSemaphore_)));
-		VK_CHECK(CreateFence(&(frameDataArray_[i].queueSubmitFence_)));
-		VK_CHECK(CreateCommandBuffer(graphicsCommandPool_, &(frameDataArray_[i].graphicsCommandBuffer_)));
-	}
-}
-
 void VulkanDevice::AllocateVMA(VulkanInstance& instance)
 {
 	// Need this because we use Volk
@@ -193,32 +180,16 @@ VkSampleCountFlagBits VulkanDevice::GetMaxUsableSampleCount(VkPhysicalDevice d)
 	VkPhysicalDeviceProperties physicalDeviceProperties;
 	vkGetPhysicalDeviceProperties(d, &physicalDeviceProperties);
 
-	VkSampleCountFlags counts = physicalDeviceProperties.limits.framebufferColorSampleCounts &
+	VkSampleCountFlags counts = 
+		physicalDeviceProperties.limits.framebufferColorSampleCounts &
 		physicalDeviceProperties.limits.framebufferDepthSampleCounts;
-	if (counts & VK_SAMPLE_COUNT_64_BIT)
-	{
-		return VK_SAMPLE_COUNT_64_BIT;
-	}
-	if (counts & VK_SAMPLE_COUNT_32_BIT)
-	{
-		return VK_SAMPLE_COUNT_32_BIT;
-	}
-	if (counts & VK_SAMPLE_COUNT_16_BIT)
-	{
-		return VK_SAMPLE_COUNT_16_BIT;
-	}
-	if (counts & VK_SAMPLE_COUNT_8_BIT)
-	{
-		return VK_SAMPLE_COUNT_8_BIT;
-	}
-	if (counts & VK_SAMPLE_COUNT_4_BIT)
-	{
-		return VK_SAMPLE_COUNT_4_BIT;
-	}
-	if (counts & VK_SAMPLE_COUNT_2_BIT)
-	{
-		return VK_SAMPLE_COUNT_2_BIT;
-	}
+	
+	if (counts & VK_SAMPLE_COUNT_64_BIT) { return VK_SAMPLE_COUNT_64_BIT; }
+	if (counts & VK_SAMPLE_COUNT_32_BIT) { return VK_SAMPLE_COUNT_32_BIT; }
+	if (counts & VK_SAMPLE_COUNT_16_BIT) { return VK_SAMPLE_COUNT_16_BIT; }
+	if (counts & VK_SAMPLE_COUNT_8_BIT) { return VK_SAMPLE_COUNT_8_BIT; }
+	if (counts & VK_SAMPLE_COUNT_4_BIT) { return VK_SAMPLE_COUNT_4_BIT; }
+	if (counts & VK_SAMPLE_COUNT_2_BIT) { return VK_SAMPLE_COUNT_2_BIT; }
 
 	return VK_SAMPLE_COUNT_1_BIT;
 }
@@ -254,25 +225,6 @@ VkResult VulkanDevice::CreatePhysicalDevice(VkInstance instance)
 	return VK_ERROR_INITIALIZATION_FAILED;
 }
 
-uint32_t VulkanDevice::FindQueueFamilies(VkQueueFlags desiredFlags)
-{
-	uint32_t familyCount = 0;
-	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice_, &familyCount, nullptr);
-
-	std::vector<VkQueueFamilyProperties> families(familyCount);
-	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice_, &familyCount, families.data());
-
-	for (uint32_t i = 0; i != families.size(); i++)
-	{
-		if (families[i].queueCount > 0 && families[i].queueFlags & desiredFlags)
-		{
-			return i;
-		}
-	}
-
-	return 0;
-}
-
 VkResult VulkanDevice::CreateDevice()
 {
 	// Add raytracing extensions here
@@ -305,7 +257,7 @@ VkResult VulkanDevice::CreateDevice()
 	const bool sameFamily = graphicsFamily_ == computeFamily_;
 	const float priorityOne = 1.f;
 	const float priorityZero = 0.f;
-	
+
 	std::vector<VkDeviceQueueCreateInfo> queueInfoArray;
 	const VkDeviceQueueCreateInfo graphicsQueueInfo =
 	{
@@ -359,6 +311,25 @@ VkResult VulkanDevice::CreateDevice()
 	}
 
 	return vkCreateDevice(physicalDevice_, &devCreateInfo, nullptr, &device_);
+}
+
+uint32_t VulkanDevice::FindQueueFamilies(VkQueueFlags desiredFlags)
+{
+	uint32_t familyCount = 0;
+	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice_, &familyCount, nullptr);
+
+	std::vector<VkQueueFamilyProperties> families(familyCount);
+	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice_, &familyCount, families.data());
+
+	for (uint32_t i = 0; i != families.size(); i++)
+	{
+		if (families[i].queueCount > 0 && families[i].queueFlags & desiredFlags)
+		{
+			return i;
+		}
+	}
+
+	return 0;
 }
 
 VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface)
@@ -572,68 +543,6 @@ bool VulkanDevice::IsDeviceSuitable(VkPhysicalDevice d)
 	return isGPU && deviceFeatures.geometryShader;
 }
 
-VkFormat VulkanDevice::FindDepthFormat()
-{
-	return FindSupportedFormat(
-		{ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
-		VK_IMAGE_TILING_OPTIMAL,
-		VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT
-	);
-}
-
-VkFormat VulkanDevice::FindSupportedFormat(
-	const std::vector<VkFormat>& candidates,
-	VkImageTiling tiling,
-	VkFormatFeatureFlags features)
-{
-	for (VkFormat format : candidates)
-	{
-		VkFormatProperties props;
-		vkGetPhysicalDeviceFormatProperties(physicalDevice_, format, &props);
-
-		if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features)
-		{
-			return format;
-		}
-		else if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features)
-		{
-			return format;
-		}
-	}
-
-	throw std::runtime_error("Failed to find supported format\n");
-}
-
-// TODO Delete this if you use VMA
-uint32_t VulkanDevice::GetMemoryType(uint32_t typeBits, VkMemoryPropertyFlags properties, VkBool32* memTypeFound) const
-{
-	for (uint32_t i = 0; i < memoryProperties_.memoryTypeCount; i++)
-	{
-		if ((typeBits & 1) == 1)
-		{
-			if ((memoryProperties_.memoryTypes[i].propertyFlags & properties) == properties)
-			{
-				if (memTypeFound)
-				{
-					*memTypeFound = true;
-				}
-				return i;
-			}
-		}
-		typeBits >>= 1;
-	}
-
-	if (memTypeFound)
-	{
-		*memTypeFound = false;
-		return 0;
-	}
-	else
-	{
-		throw std::runtime_error("Could not find a matching memory type");
-	}
-}
-
 VkCommandBuffer VulkanDevice::BeginOneTimeGraphicsCommand()
 {
 	VkCommandBuffer commandBuffer;
@@ -710,16 +619,18 @@ void VulkanDevice::EndOneTimeComputeCommand(VkCommandBuffer commandBuffer)
 	vkFreeCommandBuffers(device_, computeCommandPool_, 1, &commandBuffer);
 }
 
-void VulkanDevice::SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name)
+void VulkanDevice::AllocateFrameInFlightData()
 {
-	const VkDebugUtilsObjectNameInfoEXT nameInfo = {
-		.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT,
-		.pNext = nullptr,
-		.objectType = objType,
-		.objectHandle = reinterpret_cast<uint64_t>(objectHandle),
-		.pObjectName = name
-	};
-	VK_CHECK(vkSetDebugUtilsObjectNameEXT(device_, &nameInfo));
+	// Frame in flight
+	frameIndex_ = 0;
+	frameDataArray_ = std::vector<FrameData>(AppConfig::FrameOverlapCount);
+	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
+	{
+		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].nextSwapchainImageSemaphore_)));
+		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].graphicsQueueSemaphore_)));
+		VK_CHECK(CreateFence(&(frameDataArray_[i].queueSubmitFence_)));
+		VK_CHECK(CreateCommandBuffer(graphicsCommandPool_, &(frameDataArray_[i].graphicsCommandBuffer_)));
+	}
 }
 
 FrameData& VulkanDevice::GetCurrentFrameData() 
@@ -735,4 +646,48 @@ void VulkanDevice::IncrementFrameIndex()
 uint32_t VulkanDevice::GetFrameIndex() const 
 { 
 	return frameIndex_; 
+}
+
+VkFormat VulkanDevice::FindDepthFormat()
+{
+	return FindSupportedFormat(
+		{ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
+		VK_IMAGE_TILING_OPTIMAL,
+		VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT
+	);
+}
+
+VkFormat VulkanDevice::FindSupportedFormat(
+	const std::vector<VkFormat>& candidates,
+	VkImageTiling tiling,
+	VkFormatFeatureFlags features)
+{
+	for (VkFormat format : candidates)
+	{
+		VkFormatProperties props;
+		vkGetPhysicalDeviceFormatProperties(physicalDevice_, format, &props);
+
+		if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features)
+		{
+			return format;
+		}
+		else if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features)
+		{
+			return format;
+		}
+	}
+
+	throw std::runtime_error("Failed to find supported format\n");
+}
+
+void VulkanDevice::SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name)
+{
+	const VkDebugUtilsObjectNameInfoEXT nameInfo = {
+		.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT,
+		.pNext = nullptr,
+		.objectType = objType,
+		.objectHandle = reinterpret_cast<uint64_t>(objectHandle),
+		.pObjectName = name
+	};
+	VK_CHECK(vkSetDebugUtilsObjectNameEXT(device_, &nameInfo));
 }
