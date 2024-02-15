@@ -623,7 +623,6 @@ void VulkanDevice::AllocateFrameInFlightData()
 {
 	// Frame in flight
 	frameIndex_ = 0;
-	frameDataArray_ = std::vector<FrameData>(AppConfig::FrameOverlapCount);
 	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
 	{
 		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].nextSwapchainImageSemaphore_)));
