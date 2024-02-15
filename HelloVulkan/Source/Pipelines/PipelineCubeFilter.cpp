@@ -273,7 +273,7 @@ void PipelineCubeFilter::CreateOffsreenGraphicsPipeline(
 
 	for (auto s : shaderModules)
 	{
-		s.Destroy(vkDev.GetDevice());
+		s.Destroy();
 	}
 }
 

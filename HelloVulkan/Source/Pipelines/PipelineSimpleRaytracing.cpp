@@ -323,7 +323,7 @@ void PipelineSimpleRaytracing::CreateRayTracingPipeline(VulkanDevice& vkDev)
 
 	for (VulkanShader& s : shaderModules)
 	{
-		s.Destroy(vkDev.GetDevice());
+		s.Destroy();
 	}
 }
 

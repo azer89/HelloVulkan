@@ -191,7 +191,7 @@ void PipelineEquirect2Cube::CreateOffscreenGraphicsPipeline(
 
 	for (auto s : shaderModules)
 	{
-		s.Destroy(vkDev.GetDevice());
+		s.Destroy();
 	}
 }
 

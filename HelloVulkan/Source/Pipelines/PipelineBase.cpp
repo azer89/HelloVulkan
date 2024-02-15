@@ -201,7 +201,7 @@ void PipelineBase::CreateGraphicsPipeline(
 
 	for (VulkanShader& s : shaderModules)
 	{
-		s.Destroy(vkDev.GetDevice());
+		s.Destroy();
 	}
 }
 
@@ -232,5 +232,5 @@ void PipelineBase::CreateComputePipeline(
 
 	VK_CHECK(vkCreateComputePipelines(vkDev.GetDevice(), 0, 1, &computePipelineCreateInfo, nullptr, &pipeline_));
 
-	shader.Destroy(vkDev.GetDevice());
+	shader.Destroy();
 }

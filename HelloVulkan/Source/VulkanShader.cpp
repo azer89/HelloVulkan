@@ -28,12 +28,17 @@ VkResult VulkanShader::Create(VkDevice device, const char* fileName)
 		.pCode = spirv_.data(),
 	};
 
+	device_ = device;
+
 	return vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule_);
 }
 
-void VulkanShader::Destroy(VkDevice device)
+void VulkanShader::Destroy()
 {
-	vkDestroyShaderModule(device, shaderModule_, nullptr);
+	if (shaderModule_)
+	{
+		vkDestroyShaderModule(device_, shaderModule_, nullptr);
+	}
 }
 
 VkPipelineShaderStageCreateInfo VulkanShader::GetShaderStageInfo(
