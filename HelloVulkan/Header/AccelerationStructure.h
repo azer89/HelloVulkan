@@ -4,6 +4,7 @@
 #include "VulkanBuffer.h"
 #include "vk_mem_alloc.h"
 
+// For TLAS and BLAS
 class AccelerationStructure
 {
 public:

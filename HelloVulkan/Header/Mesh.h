@@ -83,7 +83,7 @@ public:
 		const std::vector<unsigned int>& indices,
 		const std::unordered_map<TextureType, VulkanImage*>& textures);
 
-	// Textures
+	// TODO Implement this function
 	//void AddTexture(VulkanDevice& vkDev, const char* fileName, uint32_t bindIndex);
 
 	void Setup(VulkanDevice& vkDev);
