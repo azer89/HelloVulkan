@@ -10,7 +10,7 @@ Render meshes using PBR materials, clustered forward renderer
 class PipelinePBRClusterForward final : public PipelineBase
 {
 public:
-	PipelinePBRClusterForward(VulkanDevice& vkDev,
+	PipelinePBRClusterForward(VulkanContext& vkDev,
 		std::vector<Model*> models,
 		Lights* lights,
 		ClusterForwardBuffers* cfBuffers,
@@ -22,11 +22,11 @@ public:
 		uint8_t renderBit = 0u);
 	~PipelinePBRClusterForward();
 
-	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
+	void FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer) override;
 
 	void SetPBRPushConstants(const PushConstantPBR& pbrPC) { pc_ = pbrPC; };
 
-	void SetClusterForwardUBO(VulkanDevice& vkDev, ClusterForwardUBO ubo)
+	void SetClusterForwardUBO(VulkanContext& vkDev, ClusterForwardUBO ubo)
 	{
 		size_t frameIndex = vkDev.GetFrameIndex();
 		cfUBOBuffers_[frameIndex].UploadBufferData(vkDev, 0, &ubo, sizeof(ClusterForwardUBO));
@@ -51,8 +51,8 @@ private:
 	PushConstantPBR pc_;
 
 private:
-	void CreateDescriptor(VulkanDevice& vkDev);
-	void CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh);
+	void CreateDescriptor(VulkanContext& vkDev);
+	void CreateDescriptorSet(VulkanContext& vkDev, Model* parentModel, Mesh& mesh);
 };
 
 #endif

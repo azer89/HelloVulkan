@@ -15,13 +15,13 @@ Clustered Forward
 class PipelineAABBGenerator final : public PipelineBase
 {
 public:
-	PipelineAABBGenerator(VulkanDevice& vkDev, ClusterForwardBuffers* cfBuffers);
+	PipelineAABBGenerator(VulkanContext& vkDev, ClusterForwardBuffers* cfBuffers);
 	~PipelineAABBGenerator();
 
-	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
-	void OnWindowResized(VulkanDevice& vkDev) override;
+	void FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer) override;
+	void OnWindowResized(VulkanContext& vkDev) override;
 
-	void SetClusterForwardUBO(VulkanDevice& vkDev, ClusterForwardUBO ubo)
+	void SetClusterForwardUBO(VulkanContext& vkDev, ClusterForwardUBO ubo)
 	{
 		const size_t frameIndex = vkDev.GetFrameIndex();
 		cfUBOBuffers_[frameIndex].UploadBufferData(vkDev, 0, &ubo, sizeof(ClusterForwardUBO));
@@ -34,8 +34,8 @@ private:
 	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;
 
 private:
-	void Execute(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, uint32_t frameIndex);
-	void CreateDescriptor(VulkanDevice& vkDev);
+	void Execute(VulkanContext& vkDev, VkCommandBuffer commandBuffer, uint32_t frameIndex);
+	void CreateDescriptor(VulkanContext& vkDev);
 };
 
 #endif

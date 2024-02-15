@@ -3,7 +3,7 @@
 #include "VulkanUtility.h"
 #include "Configs.h"
 
-PipelineSimpleRaytracing::PipelineSimpleRaytracing(VulkanDevice& vkDev) :
+PipelineSimpleRaytracing::PipelineSimpleRaytracing(VulkanContext& vkDev) :
 	PipelineBase(
 		vkDev,
 		{
@@ -34,7 +34,7 @@ PipelineSimpleRaytracing::~PipelineSimpleRaytracing()
 	hitShaderBindingTable_.Destroy();
 }
 
-void PipelineSimpleRaytracing::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
+void PipelineSimpleRaytracing::FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer)
 {
 	VkPhysicalDeviceRayTracingPipelinePropertiesKHR properties = vkDev.GetRayTracingPipelineProperties();
 
@@ -132,14 +132,14 @@ void PipelineSimpleRaytracing::FillCommandBuffer(VulkanDevice& vkDev, VkCommandB
 		VK_IMAGE_LAYOUT_GENERAL);
 }
 
-void PipelineSimpleRaytracing::OnWindowResized(VulkanDevice& vkDev)
+void PipelineSimpleRaytracing::OnWindowResized(VulkanContext& vkDev)
 {
 	storageImage_.Destroy();
 	CreateStorageImage(vkDev);
 	UpdateDescriptor(vkDev);
 }
 
-void PipelineSimpleRaytracing::CreateDescriptor(VulkanDevice& vkDev)
+void PipelineSimpleRaytracing::CreateDescriptor(VulkanContext& vkDev)
 {
 	// Pool
 	descriptor_.CreatePool(
@@ -183,7 +183,7 @@ void PipelineSimpleRaytracing::CreateDescriptor(VulkanDevice& vkDev)
 	UpdateDescriptor(vkDev);
 }
 
-void PipelineSimpleRaytracing::UpdateDescriptor(VulkanDevice& vkDev)
+void PipelineSimpleRaytracing::UpdateDescriptor(VulkanContext& vkDev)
 {
 	// Sets
 	auto frameCount = AppConfig::FrameOverlapCount;
@@ -216,7 +216,7 @@ void PipelineSimpleRaytracing::UpdateDescriptor(VulkanDevice& vkDev)
 	}
 }
 
-void PipelineSimpleRaytracing::CreateStorageImage(VulkanDevice& vkDev)
+void PipelineSimpleRaytracing::CreateStorageImage(VulkanContext& vkDev)
 {
 	storageImage_.CreateImage(
 		vkDev,
@@ -244,7 +244,7 @@ void PipelineSimpleRaytracing::CreateStorageImage(VulkanDevice& vkDev)
 		VK_IMAGE_LAYOUT_GENERAL);
 }
 
-void PipelineSimpleRaytracing::CreateRayTracingPipeline(VulkanDevice& vkDev)
+void PipelineSimpleRaytracing::CreateRayTracingPipeline(VulkanContext& vkDev)
 {
 	// Pipeline layout
 	const VkPipelineLayoutCreateInfo pipelineLayoutCI =
@@ -327,7 +327,7 @@ void PipelineSimpleRaytracing::CreateRayTracingPipeline(VulkanDevice& vkDev)
 	}
 }
 
-void PipelineSimpleRaytracing::CreateBLAS(VulkanDevice& vkDev)
+void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& vkDev)
 {
 	// Setup vertices for a single triangle
 	struct Vertex
@@ -481,7 +481,7 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanDevice& vkDev)
 	scratchBuffer.Destroy();
 }
 
-void PipelineSimpleRaytracing::CreateTLAS(VulkanDevice& vkDev)
+void PipelineSimpleRaytracing::CreateTLAS(VulkanContext& vkDev)
 {
 	VkTransformMatrixKHR transformMatrix = {
 		1.0f, 0.0f, 0.0f, 0.0f,
@@ -609,7 +609,7 @@ void PipelineSimpleRaytracing::CreateTLAS(VulkanDevice& vkDev)
 	instancesBuffer.Destroy();
 }
 
-void PipelineSimpleRaytracing::CreateShaderBindingTable(VulkanDevice& vkDev)
+void PipelineSimpleRaytracing::CreateShaderBindingTable(VulkanContext& vkDev)
 {
 	VkPhysicalDeviceRayTracingPipelinePropertiesKHR properties = vkDev.GetRayTracingPipelineProperties();
 

@@ -6,7 +6,7 @@
 
 // Resolve multi-sampled image to single-sampled image
 void VulkanRenderPass::CreateResolveMSRenderPass(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	uint8_t renderPassBit,
 	VkSampleCountFlagBits msaaSamples
 )
@@ -87,7 +87,7 @@ void VulkanRenderPass::CreateResolveMSRenderPass(
 }
 
 void VulkanRenderPass::CreateOffScreenRenderPass(
-	VulkanDevice& vkDev, 
+	VulkanContext& vkDev, 
 	uint8_t renderPassBit,
 	VkSampleCountFlagBits msaaSamples)
 {
@@ -203,7 +203,7 @@ void VulkanRenderPass::CreateOffScreenRenderPass(
 }
 
 void VulkanRenderPass::CreateOnScreenRenderPass(
-	VulkanDevice& vkDev, 
+	VulkanContext& vkDev, 
 	uint8_t renderPassBit,
 	VkSampleCountFlagBits msaaSamples)
 {
@@ -301,7 +301,7 @@ void VulkanRenderPass::CreateOnScreenRenderPass(
 }
 
 void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	uint8_t renderPassBit,
 	VkSampleCountFlagBits msaaSamples)
 {
@@ -375,7 +375,7 @@ void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(
 }
 
 void VulkanRenderPass::CreateOffScreenCubemapRenderPass(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	VkFormat cubeFormat,
 	uint8_t renderPassBit,
 	VkSampleCountFlagBits msaaSamples)
@@ -434,7 +434,7 @@ void VulkanRenderPass::CreateOffScreenCubemapRenderPass(
 	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &createInfo, nullptr, &handle_));
 }
 
-void VulkanRenderPass::CreateBeginInfo(VulkanDevice& vkDev)
+void VulkanRenderPass::CreateBeginInfo(VulkanContext& vkDev)
 {
 	const bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
 	const bool clearDepth = renderPassBit_ & RenderPassBit::DepthClear;
@@ -461,7 +461,7 @@ void VulkanRenderPass::CreateBeginInfo(VulkanDevice& vkDev)
 }
 
 void VulkanRenderPass::BeginRenderPass(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	VkCommandBuffer commandBuffer, 
 	VkFramebuffer framebuffer)
 {

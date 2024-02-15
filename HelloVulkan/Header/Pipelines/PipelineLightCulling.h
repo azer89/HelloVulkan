@@ -15,19 +15,19 @@ Clustered Forward
 class PipelineLightCulling final : public PipelineBase
 {
 public:
-	PipelineLightCulling(VulkanDevice& vkDev, Lights* lights, ClusterForwardBuffers* cfBuffers);
+	PipelineLightCulling(VulkanContext& vkDev, Lights* lights, ClusterForwardBuffers* cfBuffers);
 	~PipelineLightCulling();
 
-	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
+	void FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer) override;
 
-	void ResetGlobalIndex(VulkanDevice& vkDev)
+	void ResetGlobalIndex(VulkanContext& vkDev)
 	{
 		uint32_t zeroValue = 0u;
 		uint32_t frameIndex = vkDev.GetFrameIndex();
 		cfBuffers_->globalIndexCountBuffers_[frameIndex].UploadBufferData(vkDev, 0, &zeroValue, sizeof(uint32_t));
 	}
 
-	void SetClusterForwardUBO(VulkanDevice& vkDev, ClusterForwardUBO ubo)
+	void SetClusterForwardUBO(VulkanContext& vkDev, ClusterForwardUBO ubo)
 	{
 		size_t frameIndex = vkDev.GetFrameIndex();
 		cfUBOBuffers_[frameIndex].UploadBufferData(vkDev, 0, &ubo, sizeof(ClusterForwardUBO));
@@ -41,8 +41,8 @@ private:
 	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;
 
 private:
-	void Execute(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, uint32_t frameIndex);
-	void CreateDescriptor(VulkanDevice& vkDev);
+	void Execute(VulkanContext& vkDev, VkCommandBuffer commandBuffer, uint32_t frameIndex);
+	void CreateDescriptor(VulkanContext& vkDev);
 };
 
 #endif

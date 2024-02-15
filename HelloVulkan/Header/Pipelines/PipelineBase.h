@@ -24,19 +24,19 @@ class PipelineBase
 {
 public:
 	explicit PipelineBase(
-		const VulkanDevice& vkDev,
+		const VulkanContext& vkDev,
 		PipelineConfig config);
 	virtual ~PipelineBase();
 
 	// If the window is resized
-	virtual void OnWindowResized(VulkanDevice& vkDev);
+	virtual void OnWindowResized(VulkanContext& vkDev);
 
 	// TODO Maybe rename to RecordCommandBuffer
 	virtual void FillCommandBuffer(
-		VulkanDevice& vkDev, 
+		VulkanContext& vkDev, 
 		VkCommandBuffer commandBuffer) = 0;
 
-	void SetCameraUBO(VulkanDevice& vkDev, CameraUBO ubo)
+	void SetCameraUBO(VulkanContext& vkDev, CameraUBO ubo)
 	{
 		uint32_t frameIndex = vkDev.GetFrameIndex();
 		cameraUBOBuffers_[frameIndex].UploadBufferData(vkDev, 0, &ubo, sizeof(CameraUBO));
@@ -61,29 +61,29 @@ protected:
 		return config_.type_ == PipelineType::GraphicsOffScreen;
 	}
 
-	void BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuffer);
+	void BindPipeline(VulkanContext& vkDev, VkCommandBuffer commandBuffer);
 
 	// UBO
 	void CreateMultipleUniformBuffers(
-		VulkanDevice& vkDev,
+		VulkanContext& vkDev,
 		std::vector<VulkanBuffer>& buffers,
 		uint32_t dataSize,
 		size_t bufferCount);
 
-	void CreatePipelineLayout(VulkanDevice& vkDev,
+	void CreatePipelineLayout(VulkanContext& vkDev,
 		VkDescriptorSetLayout dsLayout, 
 		VkPipelineLayout* pipelineLayout,
 		const std::vector<VkPushConstantRange>& pushConstantRanges = {});
 
 	void CreateGraphicsPipeline(
-		VulkanDevice& vkDev,
+		VulkanContext& vkDev,
 		VkRenderPass renderPass, 
 		VkPipelineLayout pipelineLayout,
 		const std::vector<std::string>& shaderFiles,
 		VkPipeline* pipeline);
 
 	void CreateComputePipeline(
-		VulkanDevice& vkDev,
+		VulkanContext& vkDev,
 		const std::string& shaderFile);
 };
 

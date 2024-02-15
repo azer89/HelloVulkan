@@ -4,7 +4,7 @@
 #include <iostream>
 
 PipelineAABBGenerator::PipelineAABBGenerator(
-	VulkanDevice& vkDev, 
+	VulkanContext& vkDev, 
 	ClusterForwardBuffers* cfBuffers) :
 	PipelineBase(vkDev,
 	{
@@ -26,12 +26,12 @@ PipelineAABBGenerator::~PipelineAABBGenerator()
 	}
 }
 
-void PipelineAABBGenerator::OnWindowResized(VulkanDevice& vkDev)
+void PipelineAABBGenerator::OnWindowResized(VulkanContext& vkDev)
 {
 	cfBuffers_->SetAABBDirty();
 }
 
-void PipelineAABBGenerator::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
+void PipelineAABBGenerator::FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer)
 {
 	uint32_t frameIndex = vkDev.GetFrameIndex();
 	if (!cfBuffers_->IsAABBDirty(frameIndex))
@@ -44,7 +44,7 @@ void PipelineAABBGenerator::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuff
 	cfBuffers_->SetAABBClean(frameIndex);
 }
 
-void PipelineAABBGenerator::Execute(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, uint32_t frameIndex)
+void PipelineAABBGenerator::Execute(VulkanContext& vkDev, VkCommandBuffer commandBuffer, uint32_t frameIndex)
 {
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline_);
 
@@ -84,7 +84,7 @@ void PipelineAABBGenerator::Execute(VulkanDevice& vkDev, VkCommandBuffer command
 		0, nullptr);
 }
 
-void PipelineAABBGenerator::CreateDescriptor(VulkanDevice& vkDev)
+void PipelineAABBGenerator::CreateDescriptor(VulkanContext& vkDev)
 {
 	uint32_t imageCount = AppConfig::FrameOverlapCount;
 

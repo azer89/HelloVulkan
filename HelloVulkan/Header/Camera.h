@@ -1,6 +1,7 @@
 #ifndef CAMERA
 #define CAMERA
 
+// WARNING Need to set GLM_FORCE_DEPTH_ZERO_TO_ONE in the vcxproj config
 #include "glm/glm.hpp"
 
 #include "Configs.h"

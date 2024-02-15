@@ -37,38 +37,38 @@ public:
 	}
 
 	void CreateBuffer(
-		VulkanDevice& vkDev,
+		VulkanContext& vkDev,
 		VkDeviceSize size,
 		VkBufferUsageFlags bufferUsage,
 		VmaMemoryUsage memoryUsage,
 		VmaAllocationCreateFlags flags = VMA_ALLOCATION_CREATE_MAPPED_BIT); // Not sure want to keep this default value
 
-	void CreateBufferWithShaderDeviceAddress(VulkanDevice& vkDev,
+	void CreateBufferWithShaderDeviceAddress(VulkanContext& vkDev,
 		VkDeviceSize size,
 		VkBufferUsageFlags bufferUsage,
 		VmaMemoryUsage memoryUsage,
 		VmaAllocationCreateFlags flags = VMA_ALLOCATION_CREATE_MAPPED_BIT); // Not sure want to keep this default value
 
 	void CreateGPUOnlyBuffer(
-		VulkanDevice& vkDev,
+		VulkanContext& vkDev,
 		size_t bufferSize_,
 		const void* bufferData,
 		VkMemoryPropertyFlags flags
 	);
 
 	void CopyFrom(
-		VulkanDevice& vkDev,
+		VulkanContext& vkDev,
 		VkBuffer srcBuffer,
 		VkDeviceSize size);
 
 	void UploadBufferData(
-		VulkanDevice& vkDev,
+		VulkanContext& vkDev,
 		VkDeviceSize deviceOffset,
 		const void* data,
 		const size_t dataSize);
 
 	void DownloadBufferData(
-		VulkanDevice& vkDev,
+		VulkanContext& vkDev,
 		VkDeviceSize deviceOffset,
 		void* outData,
 		const size_t dataSize);

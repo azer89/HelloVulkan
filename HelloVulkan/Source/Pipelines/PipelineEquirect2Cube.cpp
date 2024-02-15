@@ -5,7 +5,7 @@
 #include "Configs.h"
 
 PipelineEquirect2Cube::PipelineEquirect2Cube(
-	VulkanDevice& vkDev, 
+	VulkanContext& vkDev, 
 	const std::string& hdrFile) :
 	PipelineBase(
 		vkDev, 
@@ -39,11 +39,11 @@ PipelineEquirect2Cube::~PipelineEquirect2Cube()
 	vkDestroyFramebuffer(device_, cubeFramebuffer_, nullptr);
 }
 
-void PipelineEquirect2Cube::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
+void PipelineEquirect2Cube::FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer)
 {
 }
 
-void PipelineEquirect2Cube::InitializeCubemap(VulkanDevice& vkDev, VulkanImage* cubemap)
+void PipelineEquirect2Cube::InitializeCubemap(VulkanContext& vkDev, VulkanImage* cubemap)
 {
 	uint32_t mipmapCount = Utility::MipMapCount(IBLConfig::InputCubeSideLength);
 
@@ -69,7 +69,7 @@ void PipelineEquirect2Cube::InitializeCubemap(VulkanDevice& vkDev, VulkanImage* 
 		mipmapCount);
 }
 
-void PipelineEquirect2Cube::InitializeHDRImage(VulkanDevice& vkDev, const std::string& hdrFile)
+void PipelineEquirect2Cube::InitializeHDRImage(VulkanContext& vkDev, const std::string& hdrFile)
 {
 	inputHDRImage_.CreateFromHDR(vkDev, hdrFile.c_str());
 	inputHDRImage_.CreateImageView(
@@ -82,7 +82,7 @@ void PipelineEquirect2Cube::InitializeHDRImage(VulkanDevice& vkDev, const std::s
 		1.f);
 }
 
-void PipelineEquirect2Cube::CreateDescriptor(VulkanDevice& vkDev)
+void PipelineEquirect2Cube::CreateDescriptor(VulkanContext& vkDev)
 {
 	// Pool
 	descriptor_.CreatePool(
@@ -118,7 +118,7 @@ void PipelineEquirect2Cube::CreateDescriptor(VulkanDevice& vkDev)
 }
 
 void PipelineEquirect2Cube::CreateOffscreenGraphicsPipeline(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	VkRenderPass renderPass,
 	VkPipelineLayout pipelineLayout,
 	const std::vector<std::string>& shaderFiles,
@@ -197,7 +197,7 @@ void PipelineEquirect2Cube::CreateOffscreenGraphicsPipeline(
 
 // TODO Can be moved to generic function in PipelineBase
 void PipelineEquirect2Cube::CreateFrameBuffer(
-	VulkanDevice& vkDev, 
+	VulkanContext& vkDev, 
 	std::vector<VkImageView> outputViews)
 {
 	VkFramebufferCreateInfo info =
@@ -218,7 +218,7 @@ void PipelineEquirect2Cube::CreateFrameBuffer(
 
 // TODO Move this to VulkanImage
 void PipelineEquirect2Cube::CreateCubemapViews(
-	VulkanDevice& vkDev, 
+	VulkanContext& vkDev, 
 	VulkanImage* cubemap,
 	std::vector<VkImageView>& cubemapViews)
 {
@@ -254,7 +254,7 @@ void PipelineEquirect2Cube::CreateCubemapViews(
 	}
 }
 
-void PipelineEquirect2Cube::OffscreenRender(VulkanDevice& vkDev, VulkanImage* outputEnvMap)
+void PipelineEquirect2Cube::OffscreenRender(VulkanContext& vkDev, VulkanImage* outputEnvMap)
 {
 	// Initialize output cubemap
 	InitializeCubemap(vkDev, outputEnvMap);

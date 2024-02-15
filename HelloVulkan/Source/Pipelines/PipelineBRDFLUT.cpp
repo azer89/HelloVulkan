@@ -4,7 +4,7 @@
 #include "Configs.h"
 
 PipelineBRDFLUT::PipelineBRDFLUT(
-	VulkanDevice& vkDev) :
+	VulkanContext& vkDev) :
 	PipelineBase(vkDev, 
 	{
 		.type_ = PipelineType::Compute
@@ -34,11 +34,11 @@ PipelineBRDFLUT::~PipelineBRDFLUT()
 	outBuffer_.Destroy();
 }
 
-void PipelineBRDFLUT::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
+void PipelineBRDFLUT::FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer)
 {
 }
 
-void PipelineBRDFLUT::CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT)
+void PipelineBRDFLUT::CreateLUT(VulkanContext& vkDev, VulkanImage* outputLUT)
 {
 	std::vector<float> lutData(IBLConfig::LUTBufferSize, 0);
 
@@ -64,7 +64,7 @@ void PipelineBRDFLUT::CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT)
 	outputLUT->CreateDefaultSampler(vkDev);
 }
 
-void PipelineBRDFLUT::Execute(VulkanDevice& vkDev)
+void PipelineBRDFLUT::Execute(VulkanContext& vkDev)
 {
 	VkCommandBuffer commandBuffer = vkDev.BeginOneTimeComputeCommand();
 
@@ -124,7 +124,7 @@ void PipelineBRDFLUT::Execute(VulkanDevice& vkDev)
 	vkDev.EndOneTimeComputeCommand(commandBuffer);
 }
 
-void PipelineBRDFLUT::CreateDescriptor(VulkanDevice& vkDev)
+void PipelineBRDFLUT::CreateDescriptor(VulkanContext& vkDev)
 {
 	// Pool
 	descriptor_.CreatePool(

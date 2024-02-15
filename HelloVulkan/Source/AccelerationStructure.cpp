@@ -2,7 +2,7 @@
 #include "VulkanUtility.h"
 
 void AccelerationStructure::Create(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	VkAccelerationStructureBuildSizesInfoKHR buildSizeInfo)
 {
 	VkBufferCreateInfo bufferInfo =

@@ -44,7 +44,7 @@ public:
 
 	void Destroy();
 
-	void AddLights(VulkanDevice& vkDev, const std::vector<LightData>& lights);
+	void AddLights(VulkanContext& vkDev, const std::vector<LightData>& lights);
 
 	VkBuffer GetSSBOBuffer() const { return storageBuffer_.buffer_; }
 	size_t GetSSBOSize() const { return storageBufferSize_;  }

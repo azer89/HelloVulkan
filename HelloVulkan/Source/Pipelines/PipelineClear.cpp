@@ -1,7 +1,7 @@
 #include "PipelineClear.h"
 #include "VulkanUtility.h"
 
-PipelineClear::PipelineClear(VulkanDevice& vkDev) :
+PipelineClear::PipelineClear(VulkanContext& vkDev) :
 	PipelineBase(
 		vkDev,
 		{
@@ -16,7 +16,7 @@ PipelineClear::~PipelineClear()
 {
 }
 
-void PipelineClear::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
+void PipelineClear::FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer)
 {
 	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));

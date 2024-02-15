@@ -2,7 +2,7 @@
 #include "VulkanUtility.h"
 #include "Configs.h"
 
-PipelineTonemap::PipelineTonemap(VulkanDevice& vkDev,
+PipelineTonemap::PipelineTonemap(VulkanContext& vkDev,
 	VulkanImage* singleSampledColorImage) :
 	PipelineBase(vkDev,
 		{
@@ -29,13 +29,13 @@ PipelineTonemap::PipelineTonemap(VulkanDevice& vkDev,
 		&pipeline_);
 }
 
-void PipelineTonemap::OnWindowResized(VulkanDevice& vkDev)
+void PipelineTonemap::OnWindowResized(VulkanContext& vkDev)
 {
 	PipelineBase::OnWindowResized(vkDev);
 	UpdateDescriptorSets(vkDev);
 }
 
-void PipelineTonemap::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
+void PipelineTonemap::FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer)
 {
 	uint32_t frameIndex = vkDev.GetFrameIndex();
 	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
@@ -54,7 +54,7 @@ void PipelineTonemap::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer com
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelineTonemap::CreateDescriptor(VulkanDevice& vkDev)
+void PipelineTonemap::CreateDescriptor(VulkanContext& vkDev)
 {
 	// Pool
 	descriptor_.CreatePool(
@@ -82,7 +82,7 @@ void PipelineTonemap::CreateDescriptor(VulkanDevice& vkDev)
 	UpdateDescriptorSets(vkDev);
 }
 
-void PipelineTonemap::AllocateDescriptorSets(VulkanDevice& vkDev)
+void PipelineTonemap::AllocateDescriptorSets(VulkanContext& vkDev)
 {
 	auto frameCount = AppConfig::FrameOverlapCount;
 
@@ -92,7 +92,7 @@ void PipelineTonemap::AllocateDescriptorSets(VulkanDevice& vkDev)
 	}
 }
 
-void PipelineTonemap::UpdateDescriptorSets(VulkanDevice& vkDev)
+void PipelineTonemap::UpdateDescriptorSets(VulkanContext& vkDev)
 {
 	VkDescriptorImageInfo imageInfo = singleSampledColorImage_->GetDescriptorImageInfo();
 

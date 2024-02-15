@@ -11,13 +11,13 @@ class PipelineResolveMS final : public PipelineBase
 {
 public:
 	PipelineResolveMS(
-		VulkanDevice& vkDev, 
+		VulkanContext& vkDev, 
 		VulkanImage* multiSampledColorImage, // Input
 		VulkanImage* singleSampledColorImage // Output
 	);
 	~PipelineResolveMS();
 
-	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
+	void FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer) override;
 };
 
 #endif

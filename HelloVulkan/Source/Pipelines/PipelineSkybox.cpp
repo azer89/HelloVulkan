@@ -8,7 +8,7 @@
 #include <cmath>
 #include <array>
 
-PipelineSkybox::PipelineSkybox(VulkanDevice& vkDev, 
+PipelineSkybox::PipelineSkybox(VulkanContext& vkDev, 
 	VulkanImage* envMap,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
@@ -56,7 +56,7 @@ PipelineSkybox::~PipelineSkybox()
 {
 }
 
-void PipelineSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
+void PipelineSkybox::FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer)
 {
 	uint32_t frameIndex = vkDev.GetFrameIndex();
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
@@ -74,7 +74,7 @@ void PipelineSkybox::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer comm
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelineSkybox::CreateDescriptor(VulkanDevice& vkDev)
+void PipelineSkybox::CreateDescriptor(VulkanContext& vkDev)
 {
 	// Pool
 	descriptor_.CreatePool(

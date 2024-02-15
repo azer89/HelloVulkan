@@ -4,7 +4,7 @@
 #include <iostream>
 
 void VulkanBuffer::CreateBuffer(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	VkDeviceSize size,
 	VkBufferUsageFlags bufferUsage,
 	VmaMemoryUsage memoryUsage,
@@ -36,7 +36,7 @@ void VulkanBuffer::CreateBuffer(
 		&vmaInfo_));
 }
 
-void VulkanBuffer::CreateBufferWithShaderDeviceAddress(VulkanDevice& vkDev,
+void VulkanBuffer::CreateBufferWithShaderDeviceAddress(VulkanContext& vkDev,
 	VkDeviceSize size,
 	VkBufferUsageFlags bufferUsage,
 	VmaMemoryUsage memoryUsage,
@@ -59,7 +59,7 @@ void VulkanBuffer::CreateBufferWithShaderDeviceAddress(VulkanDevice& vkDev,
 
 void VulkanBuffer::CreateGPUOnlyBuffer
 (
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	size_t bufferSize_,
 	const void* bufferData,
 	VkMemoryPropertyFlags flags
@@ -88,7 +88,7 @@ void VulkanBuffer::CreateGPUOnlyBuffer
 	stagingBuffer.Destroy();
 }
 
-void VulkanBuffer::CopyFrom(VulkanDevice& vkDev, VkBuffer srcBuffer, VkDeviceSize size)
+void VulkanBuffer::CopyFrom(VulkanContext& vkDev, VkBuffer srcBuffer, VkDeviceSize size)
 {
 	VkCommandBuffer commandBuffer = vkDev.BeginOneTimeGraphicsCommand();
 
@@ -104,7 +104,7 @@ void VulkanBuffer::CopyFrom(VulkanDevice& vkDev, VkBuffer srcBuffer, VkDeviceSiz
 }
 
 void VulkanBuffer::UploadBufferData(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	VkDeviceSize deviceOffset,
 	const void* data,
 	const size_t dataSize)
@@ -115,7 +115,7 @@ void VulkanBuffer::UploadBufferData(
 	vmaUnmapMemory(vmaAllocator_, vmaAllocation_);
 }
 
-void VulkanBuffer::DownloadBufferData(VulkanDevice& vkDev,
+void VulkanBuffer::DownloadBufferData(VulkanContext& vkDev,
 	VkDeviceSize deviceOffset,
 	void* outData,
 	const size_t dataSize)

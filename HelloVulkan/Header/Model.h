@@ -31,7 +31,7 @@ public:
 
 public:
 	// Constructor, expects a filepath to a 3D model.
-	Model(VulkanDevice& vkDev, const std::string& path);
+	Model(VulkanContext& vkDev, const std::string& path);
 
 	// Destructor
 	~Model();
@@ -44,7 +44,7 @@ public:
 	}
 
 	// TODO Probably move the buffers to pipelines
-	void SetModelUBO(VulkanDevice& vkDev, ModelUBO ubo)
+	void SetModelUBO(VulkanContext& vkDev, ModelUBO ubo)
 	{
 		uint32_t frameIndex = vkDev.GetFrameIndex();
 		modelBuffers_[frameIndex].UploadBufferData(vkDev, 0, &ubo, sizeof(ModelUBO));
@@ -54,18 +54,18 @@ private:
 	// Loads a model with supported ASSIMP extensions from file and 
 	// stores the resulting meshes in the meshes vector.
 	void LoadModel(
-		VulkanDevice& vkDev, 
+		VulkanContext& vkDev, 
 		std::string const& path);
 
 	// Processes a node in a recursive fashion. 
 	void ProcessNode(
-		VulkanDevice& vkDev, 
+		VulkanContext& vkDev, 
 		aiNode* node, 
 		const aiScene* scene, 
 		const glm::mat4& parentTransform);
 
 	Mesh ProcessMesh(
-		VulkanDevice& vkDev, 
+		VulkanContext& vkDev, 
 		aiMesh* mesh, 
 		const aiScene* scene, 
 		const glm::mat4& transform);

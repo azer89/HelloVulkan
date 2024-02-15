@@ -24,7 +24,7 @@ void VulkanImage::Destroy()
 }
 
 void VulkanImage::CreateImageResources(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	const char* filename)
 {
 	CreateFromFile(vkDev, filename);
@@ -46,7 +46,7 @@ void VulkanImage::CreateImageResources(
 }
 
 void VulkanImage::CreateFromFile(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	const char* filename)
 {
 	stbi_set_flip_vertically_on_load(false);
@@ -72,7 +72,7 @@ void VulkanImage::CreateFromFile(
 }
 
 void VulkanImage::CreateFromHDR(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	const char* filename)
 {
 	stbi_set_flip_vertically_on_load(true);
@@ -93,7 +93,7 @@ void VulkanImage::CreateFromHDR(
 }
 
 void VulkanImage::CreateColorResources(
-	VulkanDevice& vkDev, 
+	VulkanContext& vkDev, 
 	uint32_t width, 
 	uint32_t height,
 	VkSampleCountFlagBits outputDiffuseSampleCount)
@@ -121,7 +121,7 @@ void VulkanImage::CreateColorResources(
 }
 
 void VulkanImage::CreateDepthResources(
-	VulkanDevice& vkDev, 
+	VulkanContext& vkDev, 
 	uint32_t width, 
 	uint32_t height,
 	VkSampleCountFlagBits outputDiffuseSampleCount)
@@ -154,7 +154,7 @@ void VulkanImage::CreateDepthResources(
 }
 
 void VulkanImage::CreateImageFromData(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	void* imageData,
 	uint32_t texWidth,
 	uint32_t texHeight,
@@ -179,7 +179,7 @@ void VulkanImage::CreateImageFromData(
 }
 
 void VulkanImage::CopyBufferToImage(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	VkBuffer buffer,
 	uint32_t width,
 	uint32_t height,
@@ -207,7 +207,7 @@ void VulkanImage::CopyBufferToImage(
 }
 
 void VulkanImage::CreateImage(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	uint32_t width,
 	uint32_t height,
 	uint32_t mipCount,
@@ -262,7 +262,7 @@ void VulkanImage::CreateImage(
 }
 
 void VulkanImage::CreateImageView(
-	VulkanDevice& vkDev, 
+	VulkanContext& vkDev, 
 	VkFormat format, 
 	VkImageAspectFlags aspectFlags, 
 	VkImageViewType viewType, 
@@ -298,7 +298,7 @@ void VulkanImage::CreateImageView(
 }
 
 void VulkanImage::CreateDefaultSampler(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	float minLod,
 	float maxLod,
 	VkFilter minFilter,
@@ -317,7 +317,7 @@ void VulkanImage::CreateDefaultSampler(
 }
 
 void VulkanImage::CreateSampler(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	VkSampler& sampler,
 	float minLod,
 	float maxLod,
@@ -350,7 +350,7 @@ void VulkanImage::CreateSampler(
 }
 
 void VulkanImage::UpdateImage(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	uint32_t texWidth,
 	uint32_t texHeight,
 	VkFormat texFormat,
@@ -379,7 +379,7 @@ void VulkanImage::UpdateImage(
 	stagingBuffer.Destroy();
 }
 
-void VulkanImage::TransitionImageLayout(VulkanDevice& vkDev,
+void VulkanImage::TransitionImageLayout(VulkanContext& vkDev,
 	VkFormat format,
 	VkImageLayout oldLayout,
 	VkImageLayout newLayout,
@@ -600,7 +600,7 @@ void VulkanImage::TransitionImageLayoutCommand(
 }
 
 void VulkanImage::GenerateMipmap(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	uint32_t maxMipLevels,
 	uint32_t width,
 	uint32_t height,
@@ -786,7 +786,7 @@ VkDescriptorImageInfo VulkanImage::GetDescriptorImageInfo()
 	};
 }
 
-void VulkanImage::SetDebugName(VulkanDevice& vkDev, const std::string& debugName)
+void VulkanImage::SetDebugName(VulkanContext& vkDev, const std::string& debugName)
 {
 	vkDev.SetVkObjectName(image_, VK_OBJECT_TYPE_IMAGE, debugName.c_str());
 }

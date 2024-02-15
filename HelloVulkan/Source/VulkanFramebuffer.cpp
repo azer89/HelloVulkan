@@ -1,7 +1,7 @@
 #include "VulkanFramebuffer.h"
 #include "VulkanUtility.h"
 
-void VulkanFramebuffer::Create(VulkanDevice& vkDev,
+void VulkanFramebuffer::Create(VulkanContext& vkDev,
 	VkRenderPass renderPass,
 	const std::vector<VulkanImage*>& attachmentImages,
 	bool offscreen)
@@ -36,7 +36,7 @@ void VulkanFramebuffer::Create(VulkanDevice& vkDev,
 }
 
 void VulkanFramebuffer::Create(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	VkRenderPass renderPass,
 	const std::vector<VkImageView>& attachments,
 	uint32_t width,
@@ -84,7 +84,7 @@ VkFramebuffer VulkanFramebuffer::GetFramebuffer(size_t index) const
 	return VK_NULL_HANDLE;
 }
 
-void VulkanFramebuffer::Recreate(VulkanDevice& vkDev)
+void VulkanFramebuffer::Recreate(VulkanContext& vkDev)
 {
 	const size_t swapchainImageCount = offscreen_ ? 0 : 1;
 	const size_t attachmentLength = attachmentImages_.size() + swapchainImageCount;

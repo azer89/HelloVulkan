@@ -5,7 +5,7 @@ void Lights::Destroy()
 	storageBuffer_.Destroy();
 }
 
-void Lights::AddLights(VulkanDevice& vkDev, const std::vector<LightData>& lights)
+void Lights::AddLights(VulkanContext& vkDev, const std::vector<LightData>& lights)
 {
 	device_ = vkDev.GetDevice();
 	storageBufferSize_ = sizeof(LightData) * lights.size();

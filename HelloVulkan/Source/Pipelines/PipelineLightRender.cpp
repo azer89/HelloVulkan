@@ -6,7 +6,7 @@
 #include <array>
 
 PipelineLightRender::PipelineLightRender(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	Lights* lights,
 	VulkanImage* depthImage, 
 	VulkanImage* offscreenColorImage,
@@ -55,7 +55,7 @@ PipelineLightRender::~PipelineLightRender()
 {
 }
 
-void PipelineLightRender::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
+void PipelineLightRender::FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer)
 {
 	if (!shouldRender_)
 	{
@@ -83,7 +83,7 @@ void PipelineLightRender::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelineLightRender::CreateDescriptor(VulkanDevice& vkDev)
+void PipelineLightRender::CreateDescriptor(VulkanContext& vkDev)
 {
 	// Pool
 	descriptor_.CreatePool(

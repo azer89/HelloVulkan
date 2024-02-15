@@ -1,7 +1,7 @@
 #include "VulkanDescriptor.h"
 #include "VulkanUtility.h"
 
-void VulkanDescriptor::CreatePool(VulkanDevice& vkDev,
+void VulkanDescriptor::CreatePool(VulkanContext& vkDev,
 	DescriptorPoolCreateInfo createInfo)
 {
 	device_ = vkDev.GetDevice();
@@ -65,7 +65,7 @@ void VulkanDescriptor::CreatePool(VulkanDevice& vkDev,
 	VK_CHECK(vkCreateDescriptorPool(vkDev.GetDevice(), &poolInfo, nullptr, &pool_));
 }
 
-void VulkanDescriptor::CreateLayout(VulkanDevice& vkDev,
+void VulkanDescriptor::CreateLayout(VulkanContext& vkDev,
 	const std::vector<DescriptorBinding>& bindings)
 {
 	std::vector<VkDescriptorSetLayoutBinding> vulkanBindings;
@@ -99,7 +99,7 @@ void VulkanDescriptor::CreateLayout(VulkanDevice& vkDev,
 }
 
 void VulkanDescriptor::CreateSet(
-	VulkanDevice& vkDev, 
+	VulkanContext& vkDev, 
 	const std::vector<DescriptorWrite>& writes,
 	VkDescriptorSet* set)
 {
@@ -108,7 +108,7 @@ void VulkanDescriptor::CreateSet(
 	UpdateSet(vkDev, writes, set);
 }
 
-void VulkanDescriptor::AllocateSet(VulkanDevice& vkDev, VkDescriptorSet* set)
+void VulkanDescriptor::AllocateSet(VulkanContext& vkDev, VkDescriptorSet* set)
 {
 	const VkDescriptorSetAllocateInfo allocInfo = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
@@ -121,7 +121,7 @@ void VulkanDescriptor::AllocateSet(VulkanDevice& vkDev, VkDescriptorSet* set)
 	VK_CHECK(vkAllocateDescriptorSets(vkDev.GetDevice(), &allocInfo, set));
 }
 
-void VulkanDescriptor::UpdateSet(VulkanDevice& vkDev, const std::vector<DescriptorWrite>& writes, VkDescriptorSet* set)
+void VulkanDescriptor::UpdateSet(VulkanContext& vkDev, const std::vector<DescriptorWrite>& writes, VkDescriptorSet* set)
 {
 	std::vector<VkWriteDescriptorSet> descriptorWrites;
 

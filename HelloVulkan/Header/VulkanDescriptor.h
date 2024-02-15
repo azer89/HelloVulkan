@@ -42,17 +42,17 @@ struct DescriptorPoolCreateInfo
 class VulkanDescriptor
 {
 public:
-	void CreatePool(VulkanDevice& vkDev,
+	void CreatePool(VulkanContext& vkDev,
 		DescriptorPoolCreateInfo createInfo);
 
-	void CreateLayout(VulkanDevice& vkDev, 
+	void CreateLayout(VulkanContext& vkDev, 
 		const std::vector<DescriptorBinding>& bindings);
 
-	void CreateSet(VulkanDevice& vkDev, const std::vector<DescriptorWrite>& writes, VkDescriptorSet* set);
+	void CreateSet(VulkanContext& vkDev, const std::vector<DescriptorWrite>& writes, VkDescriptorSet* set);
 
-	void AllocateSet(VulkanDevice& vkDev, VkDescriptorSet* set);
+	void AllocateSet(VulkanContext& vkDev, VkDescriptorSet* set);
 
-	void UpdateSet(VulkanDevice& vkDev, const std::vector<DescriptorWrite>& writes, VkDescriptorSet* set);
+	void UpdateSet(VulkanContext& vkDev, const std::vector<DescriptorWrite>& writes, VkDescriptorSet* set);
 
 	void Destroy();
 

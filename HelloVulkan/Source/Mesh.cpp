@@ -5,7 +5,7 @@
 #include "assimp/cimport.h"
 
 // Constructor
-Mesh::Mesh(VulkanDevice& vkDev,
+Mesh::Mesh(VulkanContext& vkDev,
 	std::vector<VertexData>&& _vertices,
 	std::vector<unsigned int>&& _indices,
 	std::unordered_map<TextureType, VulkanImage*>&& _textures) :
@@ -17,7 +17,7 @@ Mesh::Mesh(VulkanDevice& vkDev,
 }
 
 // Constructor
-Mesh::Mesh(VulkanDevice& vkDev,
+Mesh::Mesh(VulkanContext& vkDev,
 	const std::vector<VertexData>& vertices,
 	const std::vector<unsigned int>& indices,
 	const std::unordered_map<TextureType, VulkanImage*>& textures) :
@@ -28,7 +28,7 @@ Mesh::Mesh(VulkanDevice& vkDev,
 	Setup(vkDev);
 }
 
-void Mesh::Setup(VulkanDevice& vkDev)
+void Mesh::Setup(VulkanContext& vkDev)
 {
 	vertexBufferSize_ = sizeof(VertexData) * vertices_.size();
 	vertexBuffer_.CreateGPUOnlyBuffer(

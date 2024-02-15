@@ -21,14 +21,14 @@ public:
 	}
 
 	// Can be recreated
-	void Create(VulkanDevice& vkDev,
+	void Create(VulkanContext& vkDev,
 		VkRenderPass renderPass,
 		const std::vector<VulkanImage*>& attachmentImage,
 		bool offscreen);
 
 	// Cannot be recreated
 	void Create(
-		VulkanDevice& vkDev,
+		VulkanContext& vkDev,
 		VkRenderPass renderPass,
 		const std::vector<VkImageView>& attachments,
 		uint32_t width,
@@ -40,7 +40,7 @@ public:
 
 	VkFramebuffer GetFramebuffer(size_t index) const;
 
-	void Recreate(VulkanDevice& vkDev);
+	void Recreate(VulkanContext& vkDev);
 
 private:
 	std::vector<VkFramebuffer> framebuffers_;

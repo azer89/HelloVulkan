@@ -4,7 +4,7 @@
 /*
 	Present swapchain image 
 */
-PipelineFinish::PipelineFinish(VulkanDevice& vkDev) :
+PipelineFinish::PipelineFinish(VulkanContext& vkDev) :
 	PipelineBase(vkDev,
 		{
 			.type_ = PipelineType::GraphicsOnScreen
@@ -19,7 +19,7 @@ PipelineFinish::PipelineFinish(VulkanDevice& vkDev) :
 	framebuffer_.Create(vkDev, renderPass_.GetHandle(), {}, IsOffscreen());
 }
 
-void PipelineFinish::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
+void PipelineFinish::FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer)
 {
 	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));

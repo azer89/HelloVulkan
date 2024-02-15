@@ -13,7 +13,7 @@ inline glm::mat4 mat4_cast(const aiMatrix4x4& m)
 	return glm::transpose(glm::make_mat4(&m.a1));
 }
 
-Model::Model(VulkanDevice& vkDev, const std::string& path) :
+Model::Model(VulkanContext& vkDev, const std::string& path) :
 	device_(vkDev.GetDevice()),
 	blackTextureFilePath_(AppConfig::TextureFolder + "Black1x1.png")
 {
@@ -58,7 +58,7 @@ void Model::AddTextureIfEmpty(TextureType tType, const std::string& filePath)
 
 // Loads a model with supported ASSIMP extensions from file and 
 // stores the resulting meshes in the meshes vector.
-void Model::LoadModel(VulkanDevice& vkDev, std::string const& path)
+void Model::LoadModel(VulkanContext& vkDev, std::string const& path)
 {
 	// Read file via ASSIMP
 	Assimp::Importer importer;
@@ -86,7 +86,7 @@ void Model::LoadModel(VulkanDevice& vkDev, std::string const& path)
 // Processes each individual mesh located at the node and 
 // repeats this process on its children nodes (if any).
 void Model::ProcessNode(
-	VulkanDevice& vkDev, 
+	VulkanContext& vkDev, 
 	aiNode* node, 
 	const aiScene* scene, 
 	const glm::mat4& parentTransform)
@@ -111,7 +111,7 @@ void Model::ProcessNode(
 }
 
 Mesh Model::ProcessMesh(
-	VulkanDevice& vkDev, 
+	VulkanContext& vkDev, 
 	aiMesh* mesh, 
 	const aiScene* scene, 
 	const glm::mat4& transform)

@@ -12,7 +12,7 @@ constexpr uint32_t PBR_MESH_TEXTURE_COUNT = 6;
 constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 
 PipelinePBR::PipelinePBR(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	std::vector<Model*> models,
 	Lights* lights,
 	VulkanImage* specularMap,
@@ -83,7 +83,7 @@ PipelinePBR::~PipelinePBR()
 {
 }
 
-void PipelinePBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
+void PipelinePBR::FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer)
 {
 	uint32_t frameIndex = vkDev.GetFrameIndex();
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
@@ -127,7 +127,7 @@ void PipelinePBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer command
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelinePBR::CreateDescriptor(VulkanDevice& vkDev)
+void PipelinePBR::CreateDescriptor(VulkanContext& vkDev)
 {
 	uint32_t numMeshes = 0u;
 	for (Model* model : models_)
@@ -177,7 +177,7 @@ void PipelinePBR::CreateDescriptor(VulkanDevice& vkDev)
 }
 
 // TODO Still quite convoluted
-void PipelinePBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh)
+void PipelinePBR::CreateDescriptorSet(VulkanContext& vkDev, Model* parentModel, Mesh& mesh)
 {
 	VkDescriptorImageInfo specularImageInfo = specularCubemap_->GetDescriptorImageInfo();
 	VkDescriptorImageInfo diffuseImageInfo = diffuseCubemap_->GetDescriptorImageInfo();

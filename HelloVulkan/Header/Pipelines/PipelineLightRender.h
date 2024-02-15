@@ -13,7 +13,7 @@ class PipelineLightRender final : public PipelineBase
 {
 public:
 	PipelineLightRender(
-		VulkanDevice& vkDev,
+		VulkanContext& vkDev,
 		Lights* lights,
 		VulkanImage* depthImage,
 		VulkanImage* offscreenColorImage,
@@ -21,12 +21,12 @@ public:
 	);
 	~PipelineLightRender();
 
-	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
+	void FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer) override;
 
 	void RenderEnable(bool enable) { shouldRender_ = enable; }
 
 private:
-	void CreateDescriptor(VulkanDevice& vkDev);
+	void CreateDescriptor(VulkanContext& vkDev);
 
 private:
 	Lights* lights_;

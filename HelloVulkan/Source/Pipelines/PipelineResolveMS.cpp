@@ -4,7 +4,7 @@
 Resolves a multisampled color image to a singlesampled color image
 */
 PipelineResolveMS::PipelineResolveMS(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	VulkanImage* multiSampledColorImage, // Input
 	VulkanImage* singleSampledColorImage // Output
 ) :
@@ -32,7 +32,7 @@ PipelineResolveMS::~PipelineResolveMS()
 }
 
 void PipelineResolveMS::FillCommandBuffer(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	VkCommandBuffer commandBuffer)
 {
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());

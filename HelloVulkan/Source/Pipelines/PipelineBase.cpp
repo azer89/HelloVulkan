@@ -9,7 +9,7 @@
 
 // Constructor
 PipelineBase::PipelineBase(
-	const VulkanDevice& vkDev,
+	const VulkanContext& vkDev,
 	PipelineConfig config) :
 	device_(vkDev.GetDevice()),
 	config_(config)
@@ -33,7 +33,7 @@ PipelineBase::~PipelineBase()
 }
 
 void PipelineBase::CreateMultipleUniformBuffers(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	std::vector<VulkanBuffer>& buffers,
 	uint32_t dataSize,
 	size_t bufferCount)
@@ -50,7 +50,7 @@ void PipelineBase::CreateMultipleUniformBuffers(
 	}
 }
 
-void PipelineBase::BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
+void PipelineBase::BindPipeline(VulkanContext& vkDev, VkCommandBuffer commandBuffer)
 {
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_);
 
@@ -71,7 +71,7 @@ void PipelineBase::BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuff
 	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 }
 
-void PipelineBase::OnWindowResized(VulkanDevice& vkDev)
+void PipelineBase::OnWindowResized(VulkanContext& vkDev)
 {
 	// If this is compute pipeline, no need to recreate framebuffer
 	if (config_.type_ == PipelineType::Compute)
@@ -84,7 +84,7 @@ void PipelineBase::OnWindowResized(VulkanDevice& vkDev)
 }
 
 void PipelineBase::CreatePipelineLayout(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	VkDescriptorSetLayout dsLayout, 
 	VkPipelineLayout* pipelineLayout,
 	const std::vector<VkPushConstantRange>& pushConstantRanges)
@@ -109,7 +109,7 @@ void PipelineBase::CreatePipelineLayout(
 }
 
 void PipelineBase::CreateGraphicsPipeline(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	VkRenderPass renderPass,
 	VkPipelineLayout pipelineLayout,
 	const std::vector<std::string>& shaderFiles,
@@ -206,7 +206,7 @@ void PipelineBase::CreateGraphicsPipeline(
 }
 
 void PipelineBase::CreateComputePipeline(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	const std::string& shaderFile)
 {
 	VulkanShader shader;

@@ -4,7 +4,7 @@
 #include <array>
 
 PipelineLightCulling::PipelineLightCulling(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	Lights* lights,
 	ClusterForwardBuffers* cfBuffers) :
 	PipelineBase(vkDev,
@@ -32,13 +32,13 @@ PipelineLightCulling::~PipelineLightCulling()
 	}
 }
 
-void PipelineLightCulling::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
+void PipelineLightCulling::FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer)
 {
 	uint32_t frameIndex = vkDev.GetFrameIndex();
 	Execute(vkDev, commandBuffer, frameIndex);
 }
 
-void PipelineLightCulling::Execute(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, uint32_t frameIndex)
+void PipelineLightCulling::Execute(VulkanContext& vkDev, VkCommandBuffer commandBuffer, uint32_t frameIndex)
 {
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline_);
 
@@ -107,7 +107,7 @@ void PipelineLightCulling::Execute(VulkanDevice& vkDev, VkCommandBuffer commandB
 		nullptr);
 }
 
-void PipelineLightCulling::CreateDescriptor(VulkanDevice& vkDev)
+void PipelineLightCulling::CreateDescriptor(VulkanContext& vkDev)
 {
 	uint32_t imageCount = static_cast<uint32_t>(AppConfig::FrameOverlapCount);
 

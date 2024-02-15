@@ -8,7 +8,7 @@ constexpr uint32_t PBR_MESH_TEXTURE_COUNT = 6;
 constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 
 PipelinePBRClusterForward::PipelinePBRClusterForward(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	std::vector<Model*> models,
 	Lights* lights,
 	ClusterForwardBuffers* cfBuffers,
@@ -87,7 +87,7 @@ PipelinePBRClusterForward::~PipelinePBRClusterForward()
 	}
 }
 
-void PipelinePBRClusterForward::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
+void PipelinePBRClusterForward::FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer)
 {
 	uint32_t frameIndex = vkDev.GetFrameIndex();
 	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
@@ -131,7 +131,7 @@ void PipelinePBRClusterForward::FillCommandBuffer(VulkanDevice& vkDev, VkCommand
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelinePBRClusterForward::CreateDescriptor(VulkanDevice& vkDev)
+void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& vkDev)
 {
 	uint32_t numMeshes = 0u;
 	for (Model* model : models_)
@@ -180,7 +180,7 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanDevice& vkDev)
 	}
 }
 
-void PipelinePBRClusterForward::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh)
+void PipelinePBRClusterForward::CreateDescriptorSet(VulkanContext& vkDev, Model* parentModel, Mesh& mesh)
 {
 	VkDescriptorImageInfo specularImageInfo = specularCubemap_->GetDescriptorImageInfo();
 	VkDescriptorImageInfo diffuseImageInfo = diffuseCubemap_->GetDescriptorImageInfo();

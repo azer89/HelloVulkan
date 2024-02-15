@@ -10,7 +10,7 @@
 #include "imgui_impl_volk.h"
 
 PipelineImGui::PipelineImGui(
-	VulkanDevice& vkDev,
+	VulkanContext& vkDev,
 	VkInstance vulkanInstance,
 	GLFWwindow* glfwWindow) :
 	PipelineBase(vkDev, 
@@ -100,7 +100,7 @@ void PipelineImGui::DrawEmptyImGui()
 	ImGui::Render();
 }
 
-void PipelineImGui::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
+void PipelineImGui::FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer)
 {
 	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
 	ImDrawData* draw_data = ImGui::GetDrawData();
