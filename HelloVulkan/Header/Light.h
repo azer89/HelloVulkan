@@ -3,7 +3,7 @@
 
 #include "glm/glm.hpp"
 
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 #include "VulkanBuffer.h"
 
 // A single light

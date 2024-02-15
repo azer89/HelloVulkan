@@ -1,7 +1,7 @@
 #ifndef PIPELINE_CREATE_INFO
 #define PIPELINE_CREATE_INFO
 
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 
 // Default pipeline create info
 struct PipelineCreateInfo

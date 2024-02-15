@@ -1,7 +1,7 @@
 #ifndef VULKAN_FRAMEBUFFER
 #define VULKAN_FRAMEBUFFER
 
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 #include "VulkanImage.h"
 
 /*

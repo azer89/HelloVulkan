@@ -1,7 +1,7 @@
 #ifndef MESH
 #define MESH
 
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 #include "VulkanBuffer.h"
 #include "VulkanImage.h"
 #include "TextureMapper.h"

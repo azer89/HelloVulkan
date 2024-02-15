@@ -1,7 +1,7 @@
 #ifndef VULKAN_RENDER_PASS
 #define VULKAN_RENDER_PASS
 
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 
 enum RenderPassBit : uint8_t
 {

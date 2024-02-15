@@ -1,7 +1,7 @@
 #ifndef PIPELINE_LIGHT
 #define PIPELINE_LIGHT
 
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 #include "PipelineBase.h"
 #include "Light.h"
 #include "Configs.h"

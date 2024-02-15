@@ -4,7 +4,7 @@
 #include "volk.h"
 #include "vk_mem_alloc.h"
 
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 
 #include <string>
 

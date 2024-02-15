@@ -3,7 +3,7 @@
 
 #include "volk.h"
 
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 #include "VulkanBuffer.h"
 #include "VulkanRenderPass.h"
 #include "VulkanFramebuffer.h"

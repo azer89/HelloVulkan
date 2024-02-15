@@ -1,7 +1,7 @@
 #ifndef CLUSTER_FORWARD_BUFFERS
 #define CLUSTER_FORWARD_BUFFERS
 
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 #include "VulkanBuffer.h"
 #include "Configs.h"
 

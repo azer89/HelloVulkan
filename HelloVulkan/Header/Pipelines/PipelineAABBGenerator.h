@@ -2,7 +2,7 @@
 #define PIPELINE_AABB_GENERATOR
 
 #include "PipelineBase.h"
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 #include "ClusterForwardBuffers.h"
 #include "Camera.h"
 #include "Configs.h"

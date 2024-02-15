@@ -2,7 +2,7 @@
 #define PIPELINE_LIGHT_CULLING
 
 #include "PipelineBase.h"
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 #include "ClusterForwardBuffers.h"
 #include "Light.h"
 #include "Configs.h"

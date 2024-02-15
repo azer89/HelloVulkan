@@ -125,7 +125,7 @@
     <ClInclude Include="Header\VulkanBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\VulkanDevice.h">
+    <ClInclude Include="Header\VulkanContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header\VulkanFramebuffer.h">
@@ -241,7 +241,7 @@
     <ClCompile Include="Source\VulkanBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\VulkanDevice.cpp">
+    <ClCompile Include="Source\VulkanContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\VulkanFramebuffer.cpp">

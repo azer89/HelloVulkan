@@ -1,5 +1,5 @@
-#ifndef VULKAN_DEVICE
-#define VULKAN_DEVICE
+#ifndef VULKAN_CONTEXT
+#define VULKAN_CONTEXT
 
 #include "VulkanInstance.h"
 #include "Configs.h"

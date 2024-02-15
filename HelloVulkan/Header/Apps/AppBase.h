@@ -2,7 +2,7 @@
 #define APP_BASE
 
 #include "VulkanInstance.h"
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 #include "Camera.h"
 #include "PipelineBase.h"
 

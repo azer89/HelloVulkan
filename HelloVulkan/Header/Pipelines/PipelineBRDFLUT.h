@@ -2,7 +2,7 @@
 #define PIPELINE_BRDF_LUT
 
 #include "PipelineBase.h"
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 #include "VulkanImage.h"
 #include "VulkanBuffer.h"
 #include "VulkanUtility.h"
