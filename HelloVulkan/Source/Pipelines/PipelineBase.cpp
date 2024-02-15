@@ -26,7 +26,7 @@ PipelineBase::~PipelineBase()
 
 	framebuffer_.Destroy();
 	descriptor_.Destroy();
-	renderPass_.Destroy(device_);
+	renderPass_.Destroy();
 
 	vkDestroyPipelineLayout(device_, pipelineLayout_, nullptr);
 	vkDestroyPipeline(device_, pipeline_, nullptr);
