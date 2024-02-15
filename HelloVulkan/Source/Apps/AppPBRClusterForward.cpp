@@ -183,7 +183,7 @@ void AppPBRClusterForward::DestroyResources()
 	// Lights
 	lights_.Destroy();
 
-	cfBuffers_.Destroy(vulkanDevice_.GetDevice());
+	cfBuffers_.Destroy();
 
 	// Destroy renderers
 	clearPtr_.reset();
