@@ -227,17 +227,16 @@ void AppPBRClusterForward::UpdateUBOs()
 
 void AppPBRClusterForward::UpdateUI()
 {
-	imguiPtr_->StartImGui();
-
 	if (!showImgui_)
 	{
-		imguiPtr_->EndImGui();
-
+		imguiPtr_->DrawEmptyImGui();
 		return;
 	}
 
 	static bool lightRender = true;
 	static PushConstantPBR pbrPC;
+
+	imguiPtr_->StartImGui();
 
 	ImGui::SetNextWindowSize(ImVec2(525, 250));
 	ImGui::Begin(AppConfig::ScreenTitle.c_str());
