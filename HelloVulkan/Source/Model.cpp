@@ -31,7 +31,7 @@ Model::~Model()
 {
 	for (Mesh& mesh : meshes_)
 	{
-		mesh.Destroy(device_);
+		mesh.Destroy();
 	}
 
 	for (auto buffer : modelBuffers_)

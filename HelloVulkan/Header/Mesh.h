@@ -88,7 +88,7 @@ public:
 
 	void Setup(VulkanDevice& vkDev);
 
-	void Destroy(VkDevice device);
+	void Destroy();
 };
 
 #endif
