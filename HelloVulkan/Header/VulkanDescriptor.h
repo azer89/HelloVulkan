@@ -16,8 +16,9 @@ struct DescriptorBinding
 
 struct DescriptorWrite
 {
-	VkDescriptorImageInfo* imageInfoPtr_;
-	VkDescriptorBufferInfo* bufferInfoPtr_;
+	void* pNext_ = nullptr;
+	VkDescriptorImageInfo* imageInfoPtr_ = nullptr;
+	VkDescriptorBufferInfo* bufferInfoPtr_ = nullptr;
 	VkDescriptorType type_;
 };
 
@@ -26,7 +27,14 @@ struct DescriptorPoolCreateInfo
 	uint32_t uboCount_ = 0;
 	uint32_t ssboCount_ = 0;
 	uint32_t samplerCount_ = 0;
-	uint32_t frameCount_ = 0; // For duplication, because there are overlapping frames
+
+	// These two below are only for raytracing pipeline
+	uint32_t storageImageCount_ = 0;
+	uint32_t accelerationStructureCount_ = 0;
+
+	// For duplication, because there are overlapping frames
+	uint32_t frameCount_ = 0; 
+
 	uint32_t setCountPerFrame_ = 0;
 	VkDescriptorPoolCreateFlags flags_ = 0;
 };

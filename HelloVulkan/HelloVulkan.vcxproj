@@ -153,12 +153,16 @@
     <None Include="..\Shaders\Equirect2Cube.frag" />
     <None Include="..\Shaders\FullscreenTriangle.vert" />
     <None Include="..\Shaders\Mesh.vert" />
+    <None Include="..\Shaders\SimpleRaytracing\ClosestHit.rchit" />
+    <None Include="..\Shaders\SimpleRaytracing\Miss.rmiss" />
+    <None Include="..\Shaders\SimpleRaytracing\RayGen.rgen" />
     <None Include="..\Shaders\Tonemap.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Apps\AppBase.h" />
     <ClInclude Include="Header\Apps\AppPBR.h" />
     <ClInclude Include="Header\Apps\AppPBRClusterForward.h" />
+    <ClInclude Include="Header\Apps\AppSimpleRaytracing.h" />
     <ClInclude Include="Header\Camera.h" />
     <ClInclude Include="Header\ClusterForwardBuffers.h" />
     <ClInclude Include="Header\Configs.h" />
@@ -180,9 +184,11 @@
     <ClInclude Include="Header\Pipelines\PipelinePBR.h" />
     <ClInclude Include="Header\Pipelines\PipelinePBRClusterForward.h" />
     <ClInclude Include="Header\Pipelines\PipelineResolveMS.h" />
+    <ClInclude Include="Header\Pipelines\PipelineSimpleRaytracing.h" />
     <ClInclude Include="Header\Pipelines\PipelineSkybox.h" />
     <ClInclude Include="Header\Pipelines\PipelineTonemap.h" />
     <ClInclude Include="Header\PushConstants.h" />
+    <ClInclude Include="Header\AccelerationStructure.h" />
     <ClInclude Include="Header\TextureMapper.h" />
     <ClInclude Include="Header\UBO.h" />
     <ClInclude Include="Header\VulkanBuffer.h" />
@@ -199,6 +205,7 @@
     <ClCompile Include="Source\Apps\AppBase.cpp" />
     <ClCompile Include="Source\Apps\AppPBR.cpp" />
     <ClCompile Include="Source\Apps\AppPBRClusterForward.cpp" />
+    <ClCompile Include="Source\Apps\AppSimpleRaytracing.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\ClusterForwardBuffers.cpp" />
     <ClCompile Include="Source\Lights.cpp" />
@@ -218,8 +225,10 @@
     <ClCompile Include="Source\Pipelines\PipelinePBR.cpp" />
     <ClCompile Include="Source\Pipelines\PipelinePBRClusterForward.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineResolveMS.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelineSimpleRaytracing.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineSkybox.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineTonemap.cpp" />
+    <ClCompile Include="Source\AccelerationStructure.cpp" />
     <ClCompile Include="Source\VulkanBuffer.cpp" />
     <ClCompile Include="Source\VulkanDescriptor.cpp" />
     <ClCompile Include="Source\VulkanDevice.cpp" />

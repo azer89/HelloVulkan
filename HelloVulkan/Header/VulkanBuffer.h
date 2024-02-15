@@ -14,6 +14,9 @@ public:
 	VmaAllocation vmaAllocation_;
 	VmaAllocationInfo vmaInfo_;
 
+	// Only used for raytracing
+	uint64_t deviceAddress_ = 0;
+
 public:
 	void Destroy()
 	{
@@ -22,6 +25,12 @@ public:
 
 	void CreateBuffer(
 		VulkanDevice& vkDev,
+		VkDeviceSize size,
+		VkBufferUsageFlags bufferUsage,
+		VmaMemoryUsage memoryUsage,
+		VmaAllocationCreateFlags flags = VMA_ALLOCATION_CREATE_MAPPED_BIT); // Not sure want to keep this default value
+
+	void CreateBufferWithShaderDeviceAddress(VulkanDevice& vkDev,
 		VkDeviceSize size,
 		VkBufferUsageFlags bufferUsage,
 		VmaMemoryUsage memoryUsage,

@@ -33,6 +33,24 @@ void VulkanDescriptor::CreatePool(VulkanDevice& vkDev,
 			});
 	}
 
+	if (createInfo.storageImageCount_)
+	{
+		poolSizes.push_back(VkDescriptorPoolSize
+			{
+				.type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
+				.descriptorCount = createInfo.frameCount_ * createInfo.storageImageCount_
+			});
+	}
+
+	if (createInfo.accelerationStructureCount_)
+	{
+		poolSizes.push_back(VkDescriptorPoolSize
+			{
+				.type = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
+				.descriptorCount = createInfo.frameCount_ * createInfo.accelerationStructureCount_
+			});
+	}
+
 	const VkDescriptorPoolCreateInfo poolInfo = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
 		.pNext = nullptr,
@@ -111,7 +129,7 @@ void VulkanDescriptor::UpdateSet(VulkanDevice& vkDev, const std::vector<Descript
 	{
 		descriptorWrites.push_back({
 			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-			.pNext = nullptr,
+			.pNext = writes[i].pNext_,
 			.dstSet = *set, // Dereference
 			.dstBinding = bindIndex++,
 			.dstArrayElement = 0,
@@ -120,7 +138,7 @@ void VulkanDescriptor::UpdateSet(VulkanDevice& vkDev, const std::vector<Descript
 			.pImageInfo = writes[i].imageInfoPtr_,
 			.pBufferInfo = writes[i].bufferInfoPtr_,
 			.pTexelBufferView = nullptr
-			});
+		});
 	}
 
 	vkUpdateDescriptorSets

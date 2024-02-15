@@ -18,13 +18,12 @@ AppBase::AppBase() :
 {
 	InitGLFW();
 	InitGLSLang();
-	InitVulkan();
 	InitImGui();
 	InitCamera();
 	InitTiming();
 }
 
-void AppBase::InitVulkan()
+void AppBase::InitVulkan(ContextConfig config)
 {
 	// Initialize Volk
 	const VkResult res = volkInitialize();
@@ -33,20 +32,11 @@ void AppBase::InitVulkan()
 		std::cerr << "Volk Cannot be initialized\n";
 	}
 
-	// Multisampling / MSAA
-	constexpr VkPhysicalDeviceFeatures features = {
-		.sampleRateShading = VK_TRUE,
-		.samplerAnisotropy = VK_TRUE,
-	};
-
 	// Initialize Vulkan instance
 	vulkanInstance_.Create();
 	vulkanInstance_.SetupDebugCallbacks();
 	vulkanInstance_.CreateWindowSurface(glfwWindow_);
-	vulkanDevice_.Create(vulkanInstance_,
-		{
-			.supportMSAA_ = true
-		});
+	vulkanDevice_.Create(vulkanInstance_, config);
 }
 
 void AppBase::InitGLSLang()

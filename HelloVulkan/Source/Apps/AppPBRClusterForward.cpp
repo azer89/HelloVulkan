@@ -258,6 +258,11 @@ void AppPBRClusterForward::UpdateUI()
 // This is called from main.cpp
 int AppPBRClusterForward::MainLoop()
 {
+	InitVulkan({
+		.supportRaytracing_ = false,
+		.supportMSAA_ = true
+		});
+
 	Init();
 
 	// Main loop

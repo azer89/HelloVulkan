@@ -149,8 +149,6 @@ public:
 
 	void CreateBarrier(ImageBarrierCreateInfo info, VkImageSubresourceRange subresourceRange);
 
-	// TODO Use Facebook IGL
-	// github.com/facebook/igl/blob/ac5b27bf6339b022e58d682b590dcf5f00ea2ee8/src/igl/vulkan/VulkanImage.cpp#L638
 	void TransitionImageLayout(VulkanDevice& vkDev,
 		VkFormat format,
 		VkImageLayout oldLayout,
@@ -158,8 +156,6 @@ public:
 		uint32_t layerCount = 1,
 		uint32_t mipLevels = 1);
 
-	// This is a public static function because it might be called to
-	// transition a VkImage that is not wrapped in VulkanImage, for example, swapchain images
 	static void TransitionImageLayoutCommand(VkCommandBuffer commandBuffer,
 		VkImage image,
 		VkFormat format,

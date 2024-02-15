@@ -36,6 +36,27 @@ void VulkanBuffer::CreateBuffer(
 		&vmaInfo_));
 }
 
+void VulkanBuffer::CreateBufferWithShaderDeviceAddress(VulkanDevice& vkDev,
+	VkDeviceSize size,
+	VkBufferUsageFlags bufferUsage,
+	VmaMemoryUsage memoryUsage,
+	VmaAllocationCreateFlags flags)
+{
+	CreateBuffer(vkDev,
+		size,
+		bufferUsage | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+		memoryUsage,
+		flags);
+
+	VkBufferDeviceAddressInfoKHR bufferDeviceAddressInfo =
+	{
+		.sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO,
+		.buffer = buffer_
+	};
+
+	deviceAddress_ = vkGetBufferDeviceAddressKHR(vkDev.GetDevice(), &bufferDeviceAddressInfo);
+}
+
 void VulkanBuffer::CreateGPUOnlyBuffer
 (
 	VulkanDevice& vkDev,
