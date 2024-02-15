@@ -188,7 +188,7 @@
     <ClInclude Include="Header\Pipelines\PipelineSkybox.h" />
     <ClInclude Include="Header\Pipelines\PipelineTonemap.h" />
     <ClInclude Include="Header\PushConstants.h" />
-    <ClInclude Include="Header\RaytracingAccelerationStructure.h" />
+    <ClInclude Include="Header\AccelerationStructure.h" />
     <ClInclude Include="Header\TextureMapper.h" />
     <ClInclude Include="Header\UBO.h" />
     <ClInclude Include="Header\VulkanBuffer.h" />
@@ -228,7 +228,7 @@
     <ClCompile Include="Source\Pipelines\PipelineSimpleRaytracing.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineSkybox.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineTonemap.cpp" />
-    <ClCompile Include="Source\RaytracingAccelerationStructure.cpp" />
+    <ClCompile Include="Source\AccelerationStructure.cpp" />
     <ClCompile Include="Source\VulkanBuffer.cpp" />
     <ClCompile Include="Source\VulkanDescriptor.cpp" />
     <ClCompile Include="Source\VulkanDevice.cpp" />

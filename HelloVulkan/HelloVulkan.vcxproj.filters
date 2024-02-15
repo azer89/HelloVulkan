@@ -221,7 +221,7 @@
     <ClInclude Include="Header\Pipelines\PipelineSimpleRaytracing.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
-    <ClInclude Include="Header\RaytracingAccelerationStructure.h">
+    <ClInclude Include="Header\AccelerationStructure.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -331,7 +331,7 @@
     <ClCompile Include="Source\Pipelines\PipelineSimpleRaytracing.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
-    <ClCompile Include="Source\RaytracingAccelerationStructure.cpp">
+    <ClCompile Include="Source\AccelerationStructure.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

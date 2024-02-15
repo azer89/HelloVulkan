@@ -1,7 +1,7 @@
-#include "RaytracingAccelerationStructure.h"
+#include "AccelerationStructure.h"
 #include "VulkanUtility.h"
 
-void RaytracingAccelerationStructure::Create(
+void AccelerationStructure::Create(
 	VulkanDevice& vkDev,
 	VkAccelerationStructureBuildSizesInfoKHR buildSizeInfo)
 {
@@ -27,7 +27,7 @@ void RaytracingAccelerationStructure::Create(
 		&vmaInfo_));
 }
 
-void RaytracingAccelerationStructure::Destroy(VkDevice device)
+void AccelerationStructure::Destroy(VkDevice device)
 {
 	vmaDestroyBuffer(vmaAllocator_, buffer_, vmaAllocation_);
 	vkDestroyAccelerationStructureKHR(device, handle_, nullptr);

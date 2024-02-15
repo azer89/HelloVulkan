@@ -1,16 +1,14 @@
-#ifndef RAYTRACING_ACCELERATION_STRUCTURE
-#define RAYTRACING_ACCELERATION_STRUCTURE
+#ifndef ACCELERATION_STRUCTURE
+#define ACCELERATION_STRUCTURE
 
 #include "VulkanBuffer.h"
 #include "vk_mem_alloc.h"
 
-class RaytracingAccelerationStructure
+class AccelerationStructure
 {
 public:
 	VkAccelerationStructureKHR handle_;
 	uint64_t deviceAddress_ = 0;
-	//VkDeviceMemory memory_;
-	//VkBuffer buffer_;
 	VkBuffer buffer_;
 	VmaAllocator vmaAllocator_;
 	VmaAllocation vmaAllocation_;

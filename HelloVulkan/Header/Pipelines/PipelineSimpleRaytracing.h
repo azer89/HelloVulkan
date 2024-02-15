@@ -2,7 +2,7 @@
 #define PIPELINE_SIMPLE_RAYTRACING
 
 #include "PipelineBase.h"
-#include "RaytracingAccelerationStructure.h"
+#include "AccelerationStructure.h"
 #include "VulkanBuffer.h"
 #include "VulkanImage.h"
 
@@ -40,8 +40,8 @@ private:
 private:
 	VulkanImage storageImage_;
 
-	RaytracingAccelerationStructure blas_;
-	RaytracingAccelerationStructure tlas_;
+	AccelerationStructure blas_;
+	AccelerationStructure tlas_;
 
 	std::vector<VkDescriptorSet> descriptorSets_;
 
