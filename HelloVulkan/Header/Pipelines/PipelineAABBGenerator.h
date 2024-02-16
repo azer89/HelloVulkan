@@ -15,16 +15,16 @@ Clustered Forward
 class PipelineAABBGenerator final : public PipelineBase
 {
 public:
-	PipelineAABBGenerator(VulkanContext& vkDev, ClusterForwardBuffers* cfBuffers);
+	PipelineAABBGenerator(VulkanContext& ctx, ClusterForwardBuffers* cfBuffers);
 	~PipelineAABBGenerator();
 
-	void FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer) override;
-	void OnWindowResized(VulkanContext& vkDev) override;
+	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
+	void OnWindowResized(VulkanContext& ctx) override;
 
-	void SetClusterForwardUBO(VulkanContext& vkDev, ClusterForwardUBO ubo)
+	void SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO ubo)
 	{
-		const size_t frameIndex = vkDev.GetFrameIndex();
-		cfUBOBuffers_[frameIndex].UploadBufferData(vkDev, 0, &ubo, sizeof(ClusterForwardUBO));
+		const size_t frameIndex = ctx.GetFrameIndex();
+		cfUBOBuffers_[frameIndex].UploadBufferData(ctx, 0, &ubo, sizeof(ClusterForwardUBO));
 	}
 
 private:
@@ -34,8 +34,8 @@ private:
 	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;
 
 private:
-	void Execute(VulkanContext& vkDev, VkCommandBuffer commandBuffer, uint32_t frameIndex);
-	void CreateDescriptor(VulkanContext& vkDev);
+	void Execute(VulkanContext& ctx, VkCommandBuffer commandBuffer, uint32_t frameIndex);
+	void CreateDescriptor(VulkanContext& ctx);
 };
 
 #endif
