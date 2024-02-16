@@ -42,6 +42,8 @@ struct ContextConfig
 	// This can be disabled but validation layer will complain a little bit
 	bool supportMSAA_ = true;
 
+	bool supportDynamicRendering_ = true;
+
 	// TODO Set validation layer as optional
 };
 
@@ -142,7 +144,7 @@ private:
 	void AllocateVMA(VulkanInstance& instance);
 
 	void GetRaytracingPropertiesAndFeatures();
-	void GetEnabledRaytracingFeatures();
+	void GetEnabledFeatures();
 
 	VkFormat FindDepthFormat();
 	VkFormat FindSupportedFormat(
@@ -186,6 +188,8 @@ private:
 	VmaAllocator vmaAllocator_;
 
 	ContextConfig config_;
+
+	VkPhysicalDeviceDynamicRenderingFeaturesKHR dynamicRenderFeatures_;
 
 	// Raytracing
 	VkPhysicalDeviceRayTracingPipelinePropertiesKHR rtPipelineProperties_;

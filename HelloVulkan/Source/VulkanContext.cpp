@@ -12,7 +12,7 @@ void VulkanContext::Create(VulkanInstance& instance, ContextConfig config)
 	framebufferWidth_ = AppConfig::InitialScreenWidth;
 	framebufferHeight_ = AppConfig::InitialScreenHeight;
 
-	GetEnabledRaytracingFeatures();
+	GetEnabledFeatures();
 
 	VK_CHECK(CreatePhysicalDevice(instance.GetInstance()));
 
@@ -144,9 +144,10 @@ void VulkanContext::GetRaytracingPropertiesAndFeatures()
 	}
 }
 
-void VulkanContext::GetEnabledRaytracingFeatures()
+void VulkanContext::GetEnabledFeatures()
 {
 	pNextChain_ = nullptr;
+	void* chainPtr = nullptr;
 
 	if (config_.supportRaytracing_)
 	{
@@ -171,8 +172,23 @@ void VulkanContext::GetEnabledRaytracingFeatures()
 			.accelerationStructure = VK_TRUE,
 		};
 
-		pNextChain_ = &rtASEnabledFeatures;
+		chainPtr = &rtASEnabledFeatures;
+		//pNextChain_ = &rtASEnabledFeatures;
 	}
+
+	if (config_.supportDynamicRendering_)
+	{
+		dynamicRenderFeatures_ =
+		{
+			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR,
+			.pNext = chainPtr,
+			.dynamicRendering = VK_TRUE,
+		};
+
+		chainPtr = &dynamicRenderFeatures_;
+	}
+
+	pNextChain_ = chainPtr;
 }
 
 VkSampleCountFlagBits VulkanContext::GetMaxUsableSampleCount(VkPhysicalDevice d)
@@ -245,6 +261,15 @@ VkResult VulkanContext::CreateDevice()
 		extensions.push_back(VK_KHR_SPIRV_1_4_EXTENSION_NAME);
 		// Required by VK_KHR_spirv_1_4
 		extensions.push_back(VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME);
+	}
+
+	if (config_.supportDynamicRendering_)
+	{
+		extensions.push_back(VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME);
+		extensions.push_back(VK_KHR_MAINTENANCE2_EXTENSION_NAME);
+		extensions.push_back(VK_KHR_MULTIVIEW_EXTENSION_NAME);
+		extensions.push_back(VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME);
+		extensions.push_back(VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME);
 	}
 
 	VkPhysicalDeviceFeatures deviceFeatures = {};
