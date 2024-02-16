@@ -36,7 +36,7 @@ void AppBase::InitVulkan(ContextConfig config)
 	vulkanInstance_.Create();
 	vulkanInstance_.SetupDebugCallbacks();
 	vulkanInstance_.CreateWindowSurface(glfwWindow_);
-	vulkanDevice_.Create(vulkanInstance_, config);
+	vulkanContext_.Create(vulkanInstance_, config);
 }
 
 void AppBase::InitGLSLang()
@@ -108,50 +108,50 @@ void AppBase::CreateSharedImageResources()
 	multiSampledColorImage_.Destroy();
 	singleSampledColorImage_.Destroy();
 
-	const VkSampleCountFlagBits msaaSamples = vulkanDevice_.GetMSAASampleCount();
-	const uint32_t width = vulkanDevice_.GetFrameBufferWidth();
-	const uint32_t height = vulkanDevice_.GetFrameBufferHeight();
+	const VkSampleCountFlagBits msaaSamples = vulkanContext_.GetMSAASampleCount();
+	const uint32_t width = vulkanContext_.GetFrameBufferWidth();
+	const uint32_t height = vulkanContext_.GetFrameBufferHeight();
 
 	// Depth attachment (OnScreen and offscreen)
 	depthImage_.CreateDepthResources(
-		vulkanDevice_,
+		vulkanContext_,
 		width,
 		height,
 		msaaSamples);
-	depthImage_.SetDebugName(vulkanDevice_, "Depth_Image");
+	depthImage_.SetDebugName(vulkanContext_, "Depth_Image");
 
 	// Color attachments
 	// Multi-sampled (MSAA)
 	multiSampledColorImage_.CreateColorResources(
-		vulkanDevice_,
+		vulkanContext_,
 		width,
 		height,
 		msaaSamples);
-	multiSampledColorImage_.SetDebugName(vulkanDevice_, "Multisampled_Color_Image");
+	multiSampledColorImage_.SetDebugName(vulkanContext_, "Multisampled_Color_Image");
 
 	// Single-sampled
 	singleSampledColorImage_.CreateColorResources(
-		vulkanDevice_,
+		vulkanContext_,
 		width,
 		height);
-	singleSampledColorImage_.SetDebugName(vulkanDevice_, "Singlesampled_Color_Image");
+	singleSampledColorImage_.SetDebugName(vulkanContext_, "Singlesampled_Color_Image");
 }
 
 void AppBase::DrawFrame()
 {
-	FrameData& frameData = vulkanDevice_.GetCurrentFrameData();
+	FrameData& frameData = vulkanContext_.GetCurrentFrameData();
 
-	vkWaitForFences(vulkanDevice_.GetDevice(), 1, &(frameData.queueSubmitFence_), VK_TRUE, UINT64_MAX);
+	vkWaitForFences(vulkanContext_.GetDevice(), 1, &(frameData.queueSubmitFence_), VK_TRUE, UINT64_MAX);
 
-	VkResult result = vulkanDevice_.GetNextSwapchainImage(frameData.nextSwapchainImageSemaphore_);
+	VkResult result = vulkanContext_.GetNextSwapchainImage(frameData.nextSwapchainImageSemaphore_);
 	if (result == VK_ERROR_OUT_OF_DATE_KHR)
 	{
 		OnWindowResized();
 		return;
 	}
-	uint32_t swapchainImageIndex = vulkanDevice_.GetCurrentSwapchainImageIndex();
+	uint32_t swapchainImageIndex = vulkanContext_.GetCurrentSwapchainImageIndex();
 
-	vkResetFences(vulkanDevice_.GetDevice(), 1, &(frameData.queueSubmitFence_));
+	vkResetFences(vulkanContext_.GetDevice(), 1, &(frameData.queueSubmitFence_));
 	vkResetCommandBuffer(frameData.graphicsCommandBuffer_, 0);
 
 	// Send UBOs to shaders
@@ -180,7 +180,7 @@ void AppBase::DrawFrame()
 		.signalSemaphoreCount = 1u,
 		.pSignalSemaphores = &(frameData.graphicsQueueSemaphore_)
 	};
-	VK_CHECK(vkQueueSubmit(vulkanDevice_.GetGraphicsQueue(), 1, &submitInfo, frameData.queueSubmitFence_));
+	VK_CHECK(vkQueueSubmit(vulkanContext_.GetGraphicsQueue(), 1, &submitInfo, frameData.queueSubmitFence_));
 
 	// Present
 	// TODO Set code below as a function in VulkanDevice
@@ -191,17 +191,17 @@ void AppBase::DrawFrame()
 		.waitSemaphoreCount = 1u,
 		.pWaitSemaphores = &(frameData.graphicsQueueSemaphore_),
 		.swapchainCount = 1u,
-		.pSwapchains = vulkanDevice_.GetSwapchainPtr(),
+		.pSwapchains = vulkanContext_.GetSwapchainPtr(),
 		.pImageIndices = &swapchainImageIndex
 	};
-	result = vkQueuePresentKHR(vulkanDevice_.GetGraphicsQueue(), &presentInfo);
+	result = vkQueuePresentKHR(vulkanContext_.GetGraphicsQueue(), &presentInfo);
 	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || shouldRecreateSwapchain_)
 	{
 		OnWindowResized();
 	}
 
 	// Do this after the end of the draw
-	vulkanDevice_.IncrementFrameIndex();
+	vulkanContext_.IncrementFrameIndex();
 }
 
 void AppBase::UpdateUI()
@@ -225,7 +225,7 @@ void AppBase::FillCommandBuffer(VkCommandBuffer commandBuffer)
 	// Iterate through all pipelines to fill the command buffer
 	for (const auto& pip : pipelines_)
 	{
-		pip->FillCommandBuffer(vulkanDevice_, commandBuffer);
+		pip->FillCommandBuffer(vulkanContext_, commandBuffer);
 	}
 
 	VK_CHECK(vkEndCommandBuffer(commandBuffer));
@@ -242,9 +242,9 @@ void AppBase::OnWindowResized()
 		glfwWaitEvents();
 	}
 
-	vkDeviceWaitIdle(vulkanDevice_.GetDevice());
+	vkDeviceWaitIdle(vulkanContext_.GetDevice());
 
-	vulkanDevice_.RecreateSwapchainResources(
+	vulkanContext_.RecreateSwapchainResources(
 		vulkanInstance_,
 		windowWidth_,
 		windowHeight_
@@ -254,7 +254,7 @@ void AppBase::OnWindowResized()
 
 	for (const auto& pip : pipelines_)
 	{
-		pip->OnWindowResized(vulkanDevice_);
+		pip->OnWindowResized(vulkanContext_);
 	}
 
 	shouldRecreateSwapchain_ = false;
@@ -306,7 +306,7 @@ void AppBase::Terminate()
 	multiSampledColorImage_.Destroy();
 	singleSampledColorImage_.Destroy();
 
-	vulkanDevice_.Destroy();
+	vulkanContext_.Destroy();
 	vulkanInstance_.Destroy();
 }
 

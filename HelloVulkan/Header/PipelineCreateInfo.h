@@ -1,7 +1,7 @@
 #ifndef PIPELINE_CREATE_INFO
 #define PIPELINE_CREATE_INFO
 
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 
 // Default pipeline create info
 struct PipelineCreateInfo
@@ -19,7 +19,7 @@ struct PipelineCreateInfo
 	VkPipelineDynamicStateCreateInfo dynamicState;
 	VkPipelineTessellationStateCreateInfo tessellationState;
 
-	PipelineCreateInfo(const VulkanDevice& vkDev) :
+	PipelineCreateInfo(const VulkanContext& ctx) :
 		vertexInputInfo({
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
 			.pNext = nullptr,
@@ -38,15 +38,15 @@ struct PipelineCreateInfo
 			.x = 0.0f,
 			.y = 0.0f,
 			// Note change these when doing offscreen rendering
-			.width = static_cast<float>(vkDev.GetFrameBufferWidth()),
-			.height = static_cast<float>(vkDev.GetFrameBufferHeight()),
+			.width = static_cast<float>(ctx.GetFrameBufferWidth()),
+			.height = static_cast<float>(ctx.GetFrameBufferHeight()),
 			.minDepth = 0.0f,
 			.maxDepth = 1.0f
 		}),
 		scissor({
 			.offset = { 0, 0 },
 			// Note change these when doing offscreen rendering
-			.extent = { vkDev.GetFrameBufferWidth(), vkDev.GetFrameBufferHeight()}
+			.extent = { ctx.GetFrameBufferWidth(), ctx.GetFrameBufferHeight()}
 		}),
 		viewportState({
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,

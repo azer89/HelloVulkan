@@ -1,7 +1,7 @@
 #ifndef CLUSTER_FORWARD_BUFFERS
 #define CLUSTER_FORWARD_BUFFERS
 
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 #include "VulkanBuffer.h"
 #include "Configs.h"
 
@@ -22,7 +22,7 @@ public:
 	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> lightCellsBuffers_;
 	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> lightIndicesBuffers_;
 
-	void CreateBuffers(VulkanDevice& vkDev, uint32_t lightCount);
+	void CreateBuffers(VulkanContext& ctx, uint32_t lightCount);
 	void SetAABBDirty();
 	bool IsAABBDirty(uint32_t frameIndex) { return aabbDirtyFlags_[frameIndex] == AABBFlag::Dirty; }
 	void SetAABBClean(uint32_t frameIndex) { aabbDirtyFlags_[frameIndex] = AABBFlag::Clean; }

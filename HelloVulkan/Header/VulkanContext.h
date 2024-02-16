@@ -1,5 +1,5 @@
-#ifndef VULKAN_DEVICE
-#define VULKAN_DEVICE
+#ifndef VULKAN_CONTEXT
+#define VULKAN_CONTEXT
 
 #include "VulkanInstance.h"
 #include "Configs.h"
@@ -49,11 +49,11 @@ struct ContextConfig
 Class that encapsulate a Vulkan device, the swapchain, and a VMA allocator.
 Maybe this should be renamed to VulkanContext.
 */
-class VulkanDevice
+class VulkanContext
 {
 public:
-	VulkanDevice() = default;
-	~VulkanDevice() = default;
+	VulkanContext() = default;
+	~VulkanContext() = default;
 
 	void Create(
 		VulkanInstance& instance,

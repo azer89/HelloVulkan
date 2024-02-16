@@ -2,7 +2,7 @@
 #define APP_BASE
 
 #include "VulkanInstance.h"
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 #include "Camera.h"
 #include "PipelineBase.h"
 
@@ -69,7 +69,7 @@ protected:
 
 	// Vulkan
 	VulkanInstance vulkanInstance_;
-	VulkanDevice vulkanDevice_;
+	VulkanContext vulkanContext_;
 
 	// A list of pipelines (graphics and compute)
 	std::vector<PipelineBase*> pipelines_;

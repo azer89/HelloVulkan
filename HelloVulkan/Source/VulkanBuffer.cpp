@@ -4,7 +4,7 @@
 #include <iostream>
 
 void VulkanBuffer::CreateBuffer(
-	VulkanDevice& vkDev,
+	VulkanContext& ctx,
 	VkDeviceSize size,
 	VkBufferUsageFlags bufferUsage,
 	VmaMemoryUsage memoryUsage,
@@ -26,7 +26,7 @@ void VulkanBuffer::CreateBuffer(
 		.usage = memoryUsage,
 	};
 
-	vmaAllocator_ = vkDev.GetVMAAllocator();
+	vmaAllocator_ = ctx.GetVMAAllocator();
 	VK_CHECK(vmaCreateBuffer(
 		vmaAllocator_,
 		&bufferInfo, 
@@ -36,13 +36,13 @@ void VulkanBuffer::CreateBuffer(
 		&vmaInfo_));
 }
 
-void VulkanBuffer::CreateBufferWithShaderDeviceAddress(VulkanDevice& vkDev,
+void VulkanBuffer::CreateBufferWithShaderDeviceAddress(VulkanContext& ctx,
 	VkDeviceSize size,
 	VkBufferUsageFlags bufferUsage,
 	VmaMemoryUsage memoryUsage,
 	VmaAllocationCreateFlags flags)
 {
-	CreateBuffer(vkDev,
+	CreateBuffer(ctx,
 		size,
 		bufferUsage | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
 		memoryUsage,
@@ -54,12 +54,12 @@ void VulkanBuffer::CreateBufferWithShaderDeviceAddress(VulkanDevice& vkDev,
 		.buffer = buffer_
 	};
 
-	deviceAddress_ = vkGetBufferDeviceAddressKHR(vkDev.GetDevice(), &bufferDeviceAddressInfo);
+	deviceAddress_ = vkGetBufferDeviceAddressKHR(ctx.GetDevice(), &bufferDeviceAddressInfo);
 }
 
 void VulkanBuffer::CreateGPUOnlyBuffer
 (
-	VulkanDevice& vkDev,
+	VulkanContext& ctx,
 	size_t bufferSize_,
 	const void* bufferData,
 	VkMemoryPropertyFlags flags
@@ -67,7 +67,7 @@ void VulkanBuffer::CreateGPUOnlyBuffer
 {
 	VulkanBuffer stagingBuffer;
 	stagingBuffer.CreateBuffer(
-		vkDev,
+		ctx,
 		bufferSize_,
 		VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 		VMA_MEMORY_USAGE_CPU_ONLY
@@ -79,18 +79,18 @@ void VulkanBuffer::CreateGPUOnlyBuffer
 	vmaUnmapMemory(stagingBuffer.vmaAllocator_, stagingBuffer.vmaAllocation_);
 
 	CreateBuffer(
-		vkDev,
+		ctx,
 		bufferSize_,
 		flags,
 		VMA_MEMORY_USAGE_GPU_ONLY);
-	CopyFrom(vkDev, stagingBuffer.buffer_, bufferSize_);
+	CopyFrom(ctx, stagingBuffer.buffer_, bufferSize_);
 
 	stagingBuffer.Destroy();
 }
 
-void VulkanBuffer::CopyFrom(VulkanDevice& vkDev, VkBuffer srcBuffer, VkDeviceSize size)
+void VulkanBuffer::CopyFrom(VulkanContext& ctx, VkBuffer srcBuffer, VkDeviceSize size)
 {
-	VkCommandBuffer commandBuffer = vkDev.BeginOneTimeGraphicsCommand();
+	VkCommandBuffer commandBuffer = ctx.BeginOneTimeGraphicsCommand();
 
 	const VkBufferCopy copyRegion = {
 		.srcOffset = 0,
@@ -100,11 +100,11 @@ void VulkanBuffer::CopyFrom(VulkanDevice& vkDev, VkBuffer srcBuffer, VkDeviceSiz
 
 	vkCmdCopyBuffer(commandBuffer, srcBuffer, buffer_, 1, &copyRegion);
 
-	vkDev.EndOneTimeGraphicsCommand(commandBuffer);
+	ctx.EndOneTimeGraphicsCommand(commandBuffer);
 }
 
 void VulkanBuffer::UploadBufferData(
-	VulkanDevice& vkDev,
+	VulkanContext& ctx,
 	VkDeviceSize deviceOffset,
 	const void* data,
 	const size_t dataSize)
@@ -115,7 +115,7 @@ void VulkanBuffer::UploadBufferData(
 	vmaUnmapMemory(vmaAllocator_, vmaAllocation_);
 }
 
-void VulkanBuffer::DownloadBufferData(VulkanDevice& vkDev,
+void VulkanBuffer::DownloadBufferData(VulkanContext& ctx,
 	VkDeviceSize deviceOffset,
 	void* outData,
 	const size_t dataSize)

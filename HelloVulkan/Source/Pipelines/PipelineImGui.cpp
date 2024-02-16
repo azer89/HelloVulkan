@@ -10,24 +10,24 @@
 #include "imgui_impl_volk.h"
 
 PipelineImGui::PipelineImGui(
-	VulkanDevice& vkDev,
+	VulkanContext& ctx,
 	VkInstance vulkanInstance,
 	GLFWwindow* glfwWindow) :
-	PipelineBase(vkDev, 
+	PipelineBase(ctx, 
 		{
 			.type_ = PipelineType::GraphicsOnScreen
 		}
 	)
 {
 	// Create render pass
-	renderPass_.CreateOnScreenColorOnlyRenderPass(vkDev);
+	renderPass_.CreateOnScreenColorOnlyRenderPass(ctx);
 
 	// Create framebuffer
-	framebuffer_.Create(vkDev, renderPass_.GetHandle(), {}, IsOffscreen());
+	framebuffer_.Create(ctx, renderPass_.GetHandle(), {}, IsOffscreen());
 
 	uint32_t imageCount = AppConfig::FrameOverlapCount;
 	descriptor_.CreatePool(
-		vkDev,
+		ctx,
 		{
 			.uboCount_ = 0u,
 			.ssboCount_ = 0u,
@@ -56,17 +56,17 @@ PipelineImGui::PipelineImGui(
 
 	ImGui_ImplVulkan_InitInfo init_info = {
 		.Instance = vulkanInstance,
-		.PhysicalDevice = vkDev.GetPhysicalDevice(),
-		.Device = vkDev.GetDevice(),
-		.QueueFamily = vkDev.GetGraphicsFamily(),
-		.Queue = vkDev.GetGraphicsQueue(),
+		.PhysicalDevice = ctx.GetPhysicalDevice(),
+		.Device = ctx.GetDevice(),
+		.QueueFamily = ctx.GetGraphicsFamily(),
+		.Queue = ctx.GetGraphicsQueue(),
 		.PipelineCache = nullptr,
 		.DescriptorPool = descriptor_.pool_,
 		.Subpass = 0,
 		.MinImageCount = imageCount,
 		.ImageCount = imageCount,
 		.MSAASamples = VK_SAMPLE_COUNT_1_BIT,
-		.ColorAttachmentFormat = vkDev.GetSwapchainImageFormat(),
+		.ColorAttachmentFormat = ctx.GetSwapchainImageFormat(),
 	};
 	
 	ImGui_ImplVulkan_Init(&init_info, renderPass_.GetHandle());
@@ -100,11 +100,11 @@ void PipelineImGui::DrawEmptyImGui()
 	ImGui::Render();
 }
 
-void PipelineImGui::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
+void PipelineImGui::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
-	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
+	uint32_t swapchainImageIndex = ctx.GetCurrentSwapchainImageIndex();
 	ImDrawData* draw_data = ImGui::GetDrawData();
-	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));
+	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));
 	ImGui_ImplVulkan_RenderDrawData(draw_data, commandBuffer);
 	vkCmdEndRenderPass(commandBuffer);
 }

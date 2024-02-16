@@ -12,12 +12,12 @@ Offscreen pipeline to generate a cubemap from an HDR image
 class PipelineEquirect2Cube final : public PipelineBase
 {
 public:
-	PipelineEquirect2Cube(VulkanDevice& vkDev, const std::string& hdrFile);
+	PipelineEquirect2Cube(VulkanContext& ctx, const std::string& hdrFile);
 	~PipelineEquirect2Cube();
 
-	void OffscreenRender(VulkanDevice& vkDev, VulkanImage* outputCubemap);
+	void OffscreenRender(VulkanContext& ctx, VulkanImage* outputCubemap);
 
-	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
+	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
 private:
 	VkDescriptorSet descriptorSet_;
@@ -26,23 +26,23 @@ private:
 	VkFramebuffer cubeFramebuffer_;
 
 private:
-	void InitializeHDRImage(VulkanDevice& vkDev, const std::string& hdrFile);
-	void InitializeCubemap(VulkanDevice& vkDev, VulkanImage* cubemap);
+	void InitializeHDRImage(VulkanContext& ctx, const std::string& hdrFile);
+	void InitializeCubemap(VulkanContext& ctx, VulkanImage* cubemap);
 	void CreateCubemapViews(
-		VulkanDevice& vkDev,
+		VulkanContext& ctx,
 		VulkanImage* cubemap,
 		std::vector<VkImageView>& cubemapViews);
 
-	void CreateDescriptor(VulkanDevice& vkDev);
+	void CreateDescriptor(VulkanContext& ctx);
 
 	void CreateOffscreenGraphicsPipeline(
-		VulkanDevice& vkDev,
+		VulkanContext& ctx,
 		VkRenderPass renderPass,
 		VkPipelineLayout pipelineLayout,
 		const std::vector<std::string>& shaderFiles,
 		VkPipeline* pipeline);
 
-	void CreateFrameBuffer(VulkanDevice& vkDev, std::vector<VkImageView> outputViews);
+	void CreateFrameBuffer(VulkanContext& ctx, std::vector<VkImageView> outputViews);
 };
 
 #endif

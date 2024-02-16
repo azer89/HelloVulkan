@@ -9,9 +9,9 @@ Pipeline to present a swapchain image
 class PipelineFinish final : public PipelineBase
 {
 public:
-	PipelineFinish(VulkanDevice& vkDev);
+	PipelineFinish(VulkanContext& ctx);
 
-	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
+	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 };
 
 #endif

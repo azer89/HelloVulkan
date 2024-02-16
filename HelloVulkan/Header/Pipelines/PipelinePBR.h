@@ -13,7 +13,7 @@ Render meshes using PBR materials, naive forward renderer
 class PipelinePBR final : public PipelineBase
 {
 public:
-	PipelinePBR(VulkanDevice& vkDev,
+	PipelinePBR(VulkanContext& ctx,
 		std::vector<Model*> models,
 		Lights* lights,
 		VulkanImage* specularMap,
@@ -24,7 +24,7 @@ public:
 		uint8_t renderBit = 0u);
 	 ~PipelinePBR();
 
-	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
+	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
 	void SetPBRPushConstants(const PushConstantPBR& pbrPC) { pc_ = pbrPC; };
 
@@ -33,8 +33,8 @@ public:
 	std::vector<Model*> models_;
 
 private:
-	void CreateDescriptor(VulkanDevice& vkDev);
-	void CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh);
+	void CreateDescriptor(VulkanContext& ctx);
+	void CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh& mesh);
 
 	Lights* lights_;
 

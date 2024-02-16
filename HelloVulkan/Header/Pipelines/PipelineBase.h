@@ -3,7 +3,7 @@
 
 #include "volk.h"
 
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 #include "VulkanBuffer.h"
 #include "VulkanRenderPass.h"
 #include "VulkanFramebuffer.h"
@@ -24,22 +24,22 @@ class PipelineBase
 {
 public:
 	explicit PipelineBase(
-		const VulkanDevice& vkDev,
+		const VulkanContext& ctx,
 		PipelineConfig config);
 	virtual ~PipelineBase();
 
 	// If the window is resized
-	virtual void OnWindowResized(VulkanDevice& vkDev);
+	virtual void OnWindowResized(VulkanContext& ctx);
 
 	// TODO Maybe rename to RecordCommandBuffer
 	virtual void FillCommandBuffer(
-		VulkanDevice& vkDev, 
+		VulkanContext& ctx, 
 		VkCommandBuffer commandBuffer) = 0;
 
-	void SetCameraUBO(VulkanDevice& vkDev, CameraUBO ubo)
+	void SetCameraUBO(VulkanContext& ctx, CameraUBO ubo)
 	{
-		uint32_t frameIndex = vkDev.GetFrameIndex();
-		cameraUBOBuffers_[frameIndex].UploadBufferData(vkDev, 0, &ubo, sizeof(CameraUBO));
+		uint32_t frameIndex = ctx.GetFrameIndex();
+		cameraUBOBuffers_[frameIndex].UploadBufferData(ctx, 0, &ubo, sizeof(CameraUBO));
 	}
 
 protected:
@@ -61,29 +61,29 @@ protected:
 		return config_.type_ == PipelineType::GraphicsOffScreen;
 	}
 
-	void BindPipeline(VulkanDevice& vkDev, VkCommandBuffer commandBuffer);
+	void BindPipeline(VulkanContext& ctx, VkCommandBuffer commandBuffer);
 
 	// UBO
 	void CreateMultipleUniformBuffers(
-		VulkanDevice& vkDev,
+		VulkanContext& ctx,
 		std::vector<VulkanBuffer>& buffers,
 		uint32_t dataSize,
 		size_t bufferCount);
 
-	void CreatePipelineLayout(VulkanDevice& vkDev,
+	void CreatePipelineLayout(VulkanContext& ctx,
 		VkDescriptorSetLayout dsLayout, 
 		VkPipelineLayout* pipelineLayout,
 		const std::vector<VkPushConstantRange>& pushConstantRanges = {});
 
 	void CreateGraphicsPipeline(
-		VulkanDevice& vkDev,
+		VulkanContext& ctx,
 		VkRenderPass renderPass, 
 		VkPipelineLayout pipelineLayout,
 		const std::vector<std::string>& shaderFiles,
 		VkPipeline* pipeline);
 
 	void CreateComputePipeline(
-		VulkanDevice& vkDev,
+		VulkanContext& ctx,
 		const std::string& shaderFile);
 };
 

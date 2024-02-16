@@ -1,7 +1,7 @@
 #ifndef PIPELINE_LIGHT
 #define PIPELINE_LIGHT
 
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 #include "PipelineBase.h"
 #include "Light.h"
 #include "Configs.h"
@@ -13,7 +13,7 @@ class PipelineLightRender final : public PipelineBase
 {
 public:
 	PipelineLightRender(
-		VulkanDevice& vkDev,
+		VulkanContext& ctx,
 		Lights* lights,
 		VulkanImage* depthImage,
 		VulkanImage* offscreenColorImage,
@@ -21,12 +21,12 @@ public:
 	);
 	~PipelineLightRender();
 
-	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
+	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
 	void RenderEnable(bool enable) { shouldRender_ = enable; }
 
 private:
-	void CreateDescriptor(VulkanDevice& vkDev);
+	void CreateDescriptor(VulkanContext& ctx);
 
 private:
 	Lights* lights_;

@@ -4,18 +4,18 @@
 #include <iostream>
 
 PipelineAABBGenerator::PipelineAABBGenerator(
-	VulkanDevice& vkDev, 
+	VulkanContext& ctx, 
 	ClusterForwardBuffers* cfBuffers) :
-	PipelineBase(vkDev,
+	PipelineBase(ctx,
 	{
 		.type_ = PipelineType::Compute
 	}),
 	cfBuffers_(cfBuffers)
 {
-	CreateMultipleUniformBuffers(vkDev, cfUBOBuffers_, sizeof(ClusterForwardUBO), AppConfig::FrameOverlapCount);
-	CreateDescriptor(vkDev);
-	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_);
-	CreateComputePipeline(vkDev, AppConfig::ShaderFolder + "ClusteredForward/AABBGenerator.comp");
+	CreateMultipleUniformBuffers(ctx, cfUBOBuffers_, sizeof(ClusterForwardUBO), AppConfig::FrameOverlapCount);
+	CreateDescriptor(ctx);
+	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
+	CreateComputePipeline(ctx, AppConfig::ShaderFolder + "ClusteredForward/AABBGenerator.comp");
 }
 
 PipelineAABBGenerator::~PipelineAABBGenerator()
@@ -26,25 +26,25 @@ PipelineAABBGenerator::~PipelineAABBGenerator()
 	}
 }
 
-void PipelineAABBGenerator::OnWindowResized(VulkanDevice& vkDev)
+void PipelineAABBGenerator::OnWindowResized(VulkanContext& ctx)
 {
 	cfBuffers_->SetAABBDirty();
 }
 
-void PipelineAABBGenerator::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
+void PipelineAABBGenerator::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
-	uint32_t frameIndex = vkDev.GetFrameIndex();
+	uint32_t frameIndex = ctx.GetFrameIndex();
 	if (!cfBuffers_->IsAABBDirty(frameIndex))
 	{
 		return;
 	}
 
-	Execute(vkDev, commandBuffer, frameIndex);
+	Execute(ctx, commandBuffer, frameIndex);
 
 	cfBuffers_->SetAABBClean(frameIndex);
 }
 
-void PipelineAABBGenerator::Execute(VulkanDevice& vkDev, VkCommandBuffer commandBuffer, uint32_t frameIndex)
+void PipelineAABBGenerator::Execute(VulkanContext& ctx, VkCommandBuffer commandBuffer, uint32_t frameIndex)
 {
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline_);
 
@@ -68,8 +68,8 @@ void PipelineAABBGenerator::Execute(VulkanDevice& vkDev, VkCommandBuffer command
 		.pNext = nullptr,
 		.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT,
 		.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
-		.srcQueueFamilyIndex = vkDev.GetComputeFamily(),
-		.dstQueueFamilyIndex = vkDev.GetGraphicsFamily(),
+		.srcQueueFamilyIndex = ctx.GetComputeFamily(),
+		.dstQueueFamilyIndex = ctx.GetGraphicsFamily(),
 		.buffer = cfBuffers_->aabbBuffers_[frameIndex].buffer_,
 		.offset = 0,
 		.size = VK_WHOLE_SIZE };
@@ -84,13 +84,13 @@ void PipelineAABBGenerator::Execute(VulkanDevice& vkDev, VkCommandBuffer command
 		0, nullptr);
 }
 
-void PipelineAABBGenerator::CreateDescriptor(VulkanDevice& vkDev)
+void PipelineAABBGenerator::CreateDescriptor(VulkanContext& ctx)
 {
 	uint32_t imageCount = AppConfig::FrameOverlapCount;
 
 	// Pool
 	descriptor_.CreatePool(
-		vkDev,
+		ctx,
 		{
 			.uboCount_ = 1u,
 			.ssboCount_ = 1u,
@@ -100,7 +100,7 @@ void PipelineAABBGenerator::CreateDescriptor(VulkanDevice& vkDev)
 		});
 
 	// Layout
-	descriptor_.CreateLayout(vkDev,
+	descriptor_.CreateLayout(ctx,
 	{
 		{
 			.descriptorType_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
@@ -121,7 +121,7 @@ void PipelineAABBGenerator::CreateDescriptor(VulkanDevice& vkDev)
 		VkDescriptorBufferInfo bufferInfo2 = { cfUBOBuffers_[i].buffer_, 0, VK_WHOLE_SIZE};
 
 		descriptor_.CreateSet(
-		vkDev,
+		ctx,
 		{
 			{.bufferInfoPtr_ = &bufferInfo1, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER },
 			{.bufferInfoPtr_ = &bufferInfo2, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER }

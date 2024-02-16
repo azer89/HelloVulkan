@@ -3,7 +3,7 @@
 
 #include "volk.h"
 
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 
 #include <vector>
 
@@ -42,17 +42,17 @@ struct DescriptorPoolCreateInfo
 class VulkanDescriptor
 {
 public:
-	void CreatePool(VulkanDevice& vkDev,
+	void CreatePool(VulkanContext& ctx,
 		DescriptorPoolCreateInfo createInfo);
 
-	void CreateLayout(VulkanDevice& vkDev, 
+	void CreateLayout(VulkanContext& ctx, 
 		const std::vector<DescriptorBinding>& bindings);
 
-	void CreateSet(VulkanDevice& vkDev, const std::vector<DescriptorWrite>& writes, VkDescriptorSet* set);
+	void CreateSet(VulkanContext& ctx, const std::vector<DescriptorWrite>& writes, VkDescriptorSet* set);
 
-	void AllocateSet(VulkanDevice& vkDev, VkDescriptorSet* set);
+	void AllocateSet(VulkanContext& ctx, VkDescriptorSet* set);
 
-	void UpdateSet(VulkanDevice& vkDev, const std::vector<DescriptorWrite>& writes, VkDescriptorSet* set);
+	void UpdateSet(VulkanContext& ctx, const std::vector<DescriptorWrite>& writes, VkDescriptorSet* set);
 
 	void Destroy();
 

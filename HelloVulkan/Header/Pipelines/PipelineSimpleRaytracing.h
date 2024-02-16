@@ -12,33 +12,33 @@
 class PipelineSimpleRaytracing final : public PipelineBase
 {
 public:
-	PipelineSimpleRaytracing(VulkanDevice& vkDev);
+	PipelineSimpleRaytracing(VulkanContext& ctx);
 	~PipelineSimpleRaytracing();
 
-	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
+	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
-	void OnWindowResized(VulkanDevice& vkDev) override;
+	void OnWindowResized(VulkanContext& ctx) override;
 
-	void SetRaytracingCameraUBO(VulkanDevice& vkDev, RaytracingCameraUBO ubo)
+	void SetRaytracingCameraUBO(VulkanContext& ctx, RaytracingCameraUBO ubo)
 	{
-		uint32_t frameIndex = vkDev.GetFrameIndex();
-		cameraUBOBuffers_[frameIndex].UploadBufferData(vkDev, 0, &ubo, sizeof(RaytracingCameraUBO));
+		uint32_t frameIndex = ctx.GetFrameIndex();
+		cameraUBOBuffers_[frameIndex].UploadBufferData(ctx, 0, &ubo, sizeof(RaytracingCameraUBO));
 	}
 
 private:
-	void CreateBLAS(VulkanDevice& vkDev);
+	void CreateBLAS(VulkanContext& ctx);
 
-	void CreateTLAS(VulkanDevice& vkDev);
+	void CreateTLAS(VulkanContext& ctx);
 
-	void CreateStorageImage(VulkanDevice& vkDev);
+	void CreateStorageImage(VulkanContext& ctx);
 
-	void CreateDescriptor(VulkanDevice& vkDev);
+	void CreateDescriptor(VulkanContext& ctx);
 
-	void UpdateDescriptor(VulkanDevice& vkDev);
+	void UpdateDescriptor(VulkanContext& ctx);
 
-	void CreateRayTracingPipeline(VulkanDevice& vkDev);
+	void CreateRayTracingPipeline(VulkanContext& ctx);
 
-	void CreateShaderBindingTable(VulkanDevice& vkDev);
+	void CreateShaderBindingTable(VulkanContext& ctx);
 
 private:
 	VulkanImage storageImage_;

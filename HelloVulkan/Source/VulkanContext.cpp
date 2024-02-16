@@ -1,4 +1,4 @@
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 #include "VulkanUtility.h"
 #include "Configs.h"
 
@@ -6,7 +6,7 @@
 #define VMA_STATIC_VULKAN_FUNCTIONS 0
 #include "vk_mem_alloc.h"
 
-void VulkanDevice::Create(VulkanInstance& instance, ContextConfig config)
+void VulkanContext::Create(VulkanInstance& instance, ContextConfig config)
 {
 	config_ = config;
 	framebufferWidth_ = AppConfig::InitialScreenWidth;
@@ -41,7 +41,7 @@ void VulkanDevice::Create(VulkanInstance& instance, ContextConfig config)
 	AllocateVMA(instance);
 }
 
-void VulkanDevice::Destroy()
+void VulkanContext::Destroy()
 {
 	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
 	{
@@ -62,7 +62,7 @@ void VulkanDevice::Destroy()
 	vkDestroyDevice(device_, nullptr);
 }
 
-void VulkanDevice::GetQueues()
+void VulkanContext::GetQueues()
 {
 	deviceQueueIndices_.push_back(graphicsFamily_);
 	if (graphicsFamily_ != computeFamily_)
@@ -77,7 +77,7 @@ void VulkanDevice::GetQueues()
 	if (computeQueue_ == nullptr) { std::cerr << "Cannot get compute queue\n"; }
 }
 
-void VulkanDevice::AllocateVMA(VulkanInstance& instance)
+void VulkanContext::AllocateVMA(VulkanInstance& instance)
 {
 	// Need this because we use Volk
 	const VmaVulkanFunctions vulkanFunctions =
@@ -100,14 +100,14 @@ void VulkanDevice::AllocateVMA(VulkanInstance& instance)
 	vmaCreateAllocator(&allocatorInfo, &vmaAllocator_);
 }
 
-void VulkanDevice::CheckSurfaceSupport(VulkanInstance& instance)
+void VulkanContext::CheckSurfaceSupport(VulkanInstance& instance)
 {
 	VkBool32 presentSupported = 0;
 	vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice_, graphicsFamily_, instance.GetSurface(), &presentSupported);
 	if (!presentSupported) { std::cerr << "Cannot get surface support KHR\n"; }
 }
 
-VkResult VulkanDevice::CreateCommandPool(uint32_t family, VkCommandPool* pool)
+VkResult VulkanContext::CreateCommandPool(uint32_t family, VkCommandPool* pool)
 {
 	const VkCommandPoolCreateInfo cpi =
 	{
@@ -120,7 +120,7 @@ VkResult VulkanDevice::CreateCommandPool(uint32_t family, VkCommandPool* pool)
 	return vkCreateCommandPool(device_, &cpi, nullptr, pool);
 }
 
-void VulkanDevice::GetRaytracingPropertiesAndFeatures()
+void VulkanContext::GetRaytracingPropertiesAndFeatures()
 {
 	if (config_.supportRaytracing_)
 	{
@@ -144,7 +144,7 @@ void VulkanDevice::GetRaytracingPropertiesAndFeatures()
 	}
 }
 
-void VulkanDevice::GetEnabledRaytracingFeatures()
+void VulkanContext::GetEnabledRaytracingFeatures()
 {
 	pNextChain_ = nullptr;
 
@@ -175,7 +175,7 @@ void VulkanDevice::GetEnabledRaytracingFeatures()
 	}
 }
 
-VkSampleCountFlagBits VulkanDevice::GetMaxUsableSampleCount(VkPhysicalDevice d)
+VkSampleCountFlagBits VulkanContext::GetMaxUsableSampleCount(VkPhysicalDevice d)
 {
 	VkPhysicalDeviceProperties physicalDeviceProperties;
 	vkGetPhysicalDeviceProperties(d, &physicalDeviceProperties);
@@ -194,7 +194,7 @@ VkSampleCountFlagBits VulkanDevice::GetMaxUsableSampleCount(VkPhysicalDevice d)
 	return VK_SAMPLE_COUNT_1_BIT;
 }
 
-VkResult VulkanDevice::CreatePhysicalDevice(VkInstance instance)
+VkResult VulkanContext::CreatePhysicalDevice(VkInstance instance)
 {
 	uint32_t deviceCount = 0;
 	VK_CHECK_RET(vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr));
@@ -225,7 +225,7 @@ VkResult VulkanDevice::CreatePhysicalDevice(VkInstance instance)
 	return VK_ERROR_INITIALIZATION_FAILED;
 }
 
-VkResult VulkanDevice::CreateDevice()
+VkResult VulkanContext::CreateDevice()
 {
 	// Add raytracing extensions here
 	std::vector<const char*> extensions =
@@ -313,7 +313,7 @@ VkResult VulkanDevice::CreateDevice()
 	return vkCreateDevice(physicalDevice_, &devCreateInfo, nullptr, &device_);
 }
 
-uint32_t VulkanDevice::FindQueueFamilies(VkQueueFlags desiredFlags)
+uint32_t VulkanContext::FindQueueFamilies(VkQueueFlags desiredFlags)
 {
 	uint32_t familyCount = 0;
 	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice_, &familyCount, nullptr);
@@ -332,7 +332,7 @@ uint32_t VulkanDevice::FindQueueFamilies(VkQueueFlags desiredFlags)
 	return 0;
 }
 
-VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface)
+VkResult VulkanContext::CreateSwapchain(VkSurfaceKHR surface)
 {
 	// TODO We manually select a swapchain format
 	swapchainImageFormat_ = VK_FORMAT_B8G8R8A8_UNORM;
@@ -366,7 +366,7 @@ VkResult VulkanDevice::CreateSwapchain(VkSurfaceKHR surface)
 	return vkCreateSwapchainKHR(device_, &createInfo, nullptr, &swapchain_);
 }
 
-VkPresentModeKHR VulkanDevice::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)
+VkPresentModeKHR VulkanContext::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)
 {
 	for (const VkPresentModeKHR& mode : availablePresentModes)
 	{
@@ -379,7 +379,7 @@ VkPresentModeKHR VulkanDevice::ChooseSwapPresentMode(const std::vector<VkPresent
 	return VK_PRESENT_MODE_FIFO_KHR;
 }
 
-uint32_t VulkanDevice::GetSwapchainImageCount(const VkSurfaceCapabilitiesKHR& capabilities_)
+uint32_t VulkanContext::GetSwapchainImageCount(const VkSurfaceCapabilitiesKHR& capabilities_)
 {
 	// Request one additional image to make sure
 	// we are not waiting on the GPU to complete any operations
@@ -388,7 +388,7 @@ uint32_t VulkanDevice::GetSwapchainImageCount(const VkSurfaceCapabilitiesKHR& ca
 	return imageCountExceeded ? capabilities_.maxImageCount : imageCount;
 }
 
-VkResult VulkanDevice::GetNextSwapchainImage(VkSemaphore nextSwapchainImageSemaphore)
+VkResult VulkanContext::GetNextSwapchainImage(VkSemaphore nextSwapchainImageSemaphore)
 {
 	return vkAcquireNextImageKHR(
 		device_,
@@ -400,7 +400,7 @@ VkResult VulkanDevice::GetNextSwapchainImage(VkSemaphore nextSwapchainImageSemap
 		&currentSwapchainImageIndex_);
 }
 
-size_t VulkanDevice::CreateSwapchainImages()
+size_t VulkanContext::CreateSwapchainImages()
 {
 	uint32_t imageCount = 0;
 	VK_CHECK(vkGetSwapchainImagesKHR(device_, swapchain_, &imageCount, nullptr));
@@ -418,7 +418,7 @@ size_t VulkanDevice::CreateSwapchainImages()
 	return static_cast<size_t>(imageCount);
 }
 
-bool VulkanDevice::CreateSwapChainImageView(
+bool VulkanContext::CreateSwapChainImageView(
 	size_t imageIndex,
 	VkFormat format,
 	VkImageAspectFlags aspectFlags)
@@ -444,7 +444,7 @@ bool VulkanDevice::CreateSwapChainImageView(
 	return (vkCreateImageView(device_, &viewInfo, nullptr, &swapchainImageViews_[imageIndex]) == VK_SUCCESS);
 }
 
-void VulkanDevice::RecreateSwapchainResources(
+void VulkanContext::RecreateSwapchainResources(
 	VulkanInstance& instance,
 	uint32_t width,
 	uint32_t height)
@@ -462,7 +462,7 @@ void VulkanDevice::RecreateSwapchainResources(
 	CreateSwapchainImages();
 }
 
-SwapchainSupportDetails VulkanDevice::QuerySwapchainSupport(VkSurfaceKHR surface)
+SwapchainSupportDetails VulkanContext::QuerySwapchainSupport(VkSurfaceKHR surface)
 {
 	SwapchainSupportDetails details;
 	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice_, surface, &details.capabilities_);
@@ -492,7 +492,7 @@ SwapchainSupportDetails VulkanDevice::QuerySwapchainSupport(VkSurfaceKHR surface
 	return details;
 }
 
-VkResult VulkanDevice::CreateSemaphore(VkSemaphore* outSemaphore)
+VkResult VulkanContext::CreateSemaphore(VkSemaphore* outSemaphore)
 {
 	const VkSemaphoreCreateInfo ci =
 	{
@@ -502,7 +502,7 @@ VkResult VulkanDevice::CreateSemaphore(VkSemaphore* outSemaphore)
 	return vkCreateSemaphore(device_, &ci, nullptr, outSemaphore);
 }
 
-VkResult VulkanDevice::CreateFence(VkFence* fence)
+VkResult VulkanContext::CreateFence(VkFence* fence)
 {
 	const VkFenceCreateInfo fenceInfo =
 	{
@@ -513,7 +513,7 @@ VkResult VulkanDevice::CreateFence(VkFence* fence)
 	return vkCreateFence(device_, &fenceInfo, nullptr, fence);
 }
 
-VkResult VulkanDevice::CreateCommandBuffer(VkCommandPool pool, VkCommandBuffer* commandBuffer)
+VkResult VulkanContext::CreateCommandBuffer(VkCommandPool pool, VkCommandBuffer* commandBuffer)
 {
 	const VkCommandBufferAllocateInfo allocInfo = {
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
@@ -526,7 +526,7 @@ VkResult VulkanDevice::CreateCommandBuffer(VkCommandPool pool, VkCommandBuffer* 
 	return vkAllocateCommandBuffers(device_, &allocInfo, commandBuffer);
 }
 
-bool VulkanDevice::IsDeviceSuitable(VkPhysicalDevice d)
+bool VulkanContext::IsDeviceSuitable(VkPhysicalDevice d)
 {
 	VkPhysicalDeviceProperties deviceProperties;
 	vkGetPhysicalDeviceProperties(d, &deviceProperties);
@@ -543,7 +543,7 @@ bool VulkanDevice::IsDeviceSuitable(VkPhysicalDevice d)
 	return isGPU && deviceFeatures.geometryShader;
 }
 
-VkCommandBuffer VulkanDevice::BeginOneTimeGraphicsCommand()
+VkCommandBuffer VulkanContext::BeginOneTimeGraphicsCommand()
 {
 	VkCommandBuffer commandBuffer;
 	CreateCommandBuffer(graphicsCommandPool_, &commandBuffer);
@@ -560,7 +560,7 @@ VkCommandBuffer VulkanDevice::BeginOneTimeGraphicsCommand()
 	return commandBuffer;
 }
 
-void VulkanDevice::EndOneTimeGraphicsCommand(VkCommandBuffer commandBuffer)
+void VulkanContext::EndOneTimeGraphicsCommand(VkCommandBuffer commandBuffer)
 {
 	vkEndCommandBuffer(commandBuffer);
 
@@ -582,7 +582,7 @@ void VulkanDevice::EndOneTimeGraphicsCommand(VkCommandBuffer commandBuffer)
 	vkFreeCommandBuffers(device_, graphicsCommandPool_, 1, &commandBuffer);
 }
 
-VkCommandBuffer VulkanDevice::BeginOneTimeComputeCommand()
+VkCommandBuffer VulkanContext::BeginOneTimeComputeCommand()
 {
 	VkCommandBuffer commandBuffer;
 	CreateCommandBuffer(computeCommandPool_, &commandBuffer);
@@ -598,7 +598,7 @@ VkCommandBuffer VulkanDevice::BeginOneTimeComputeCommand()
 	return commandBuffer;
 }
 
-void VulkanDevice::EndOneTimeComputeCommand(VkCommandBuffer commandBuffer)
+void VulkanContext::EndOneTimeComputeCommand(VkCommandBuffer commandBuffer)
 {
 	vkEndCommandBuffer(commandBuffer);
 
@@ -619,7 +619,7 @@ void VulkanDevice::EndOneTimeComputeCommand(VkCommandBuffer commandBuffer)
 	vkFreeCommandBuffers(device_, computeCommandPool_, 1, &commandBuffer);
 }
 
-void VulkanDevice::AllocateFrameInFlightData()
+void VulkanContext::AllocateFrameInFlightData()
 {
 	// Frame in flight
 	frameIndex_ = 0;
@@ -632,22 +632,22 @@ void VulkanDevice::AllocateFrameInFlightData()
 	}
 }
 
-FrameData& VulkanDevice::GetCurrentFrameData() 
+FrameData& VulkanContext::GetCurrentFrameData() 
 { 
 	return frameDataArray_[frameIndex_]; 
 }
 
-void VulkanDevice::IncrementFrameIndex() 
+void VulkanContext::IncrementFrameIndex() 
 { 
 	frameIndex_ = (frameIndex_ + 1u) % AppConfig::FrameOverlapCount; 
 }
 
-uint32_t VulkanDevice::GetFrameIndex() const 
+uint32_t VulkanContext::GetFrameIndex() const 
 { 
 	return frameIndex_; 
 }
 
-VkFormat VulkanDevice::FindDepthFormat()
+VkFormat VulkanContext::FindDepthFormat()
 {
 	return FindSupportedFormat(
 		{ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
@@ -656,7 +656,7 @@ VkFormat VulkanDevice::FindDepthFormat()
 	);
 }
 
-VkFormat VulkanDevice::FindSupportedFormat(
+VkFormat VulkanContext::FindSupportedFormat(
 	const std::vector<VkFormat>& candidates,
 	VkImageTiling tiling,
 	VkFormatFeatureFlags features)
@@ -679,7 +679,7 @@ VkFormat VulkanDevice::FindSupportedFormat(
 	throw std::runtime_error("Failed to find supported format\n");
 }
 
-void VulkanDevice::SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name)
+void VulkanContext::SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name)
 {
 	const VkDebugUtilsObjectNameInfoEXT nameInfo = {
 		.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT,

@@ -3,22 +3,22 @@
 #include "VulkanUtility.h"
 #include "Configs.h"
 
-PipelineSimpleRaytracing::PipelineSimpleRaytracing(VulkanDevice& vkDev) :
+PipelineSimpleRaytracing::PipelineSimpleRaytracing(VulkanContext& ctx) :
 	PipelineBase(
-		vkDev,
+		ctx,
 		{
 			.type_ = PipelineType::GraphicsOnScreen
 		})
 {
-	CreateMultipleUniformBuffers(vkDev, cameraUBOBuffers_, sizeof(RaytracingCameraUBO), AppConfig::FrameOverlapCount);
+	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(RaytracingCameraUBO), AppConfig::FrameOverlapCount);
 
-	CreateBLAS(vkDev);
-	CreateTLAS(vkDev);
+	CreateBLAS(ctx);
+	CreateTLAS(ctx);
 
-	CreateStorageImage(vkDev);
-	CreateDescriptor(vkDev);
-	CreateRayTracingPipeline(vkDev);
-	CreateShaderBindingTable(vkDev);
+	CreateStorageImage(ctx);
+	CreateDescriptor(ctx);
+	CreateRayTracingPipeline(ctx);
+	CreateShaderBindingTable(ctx);
 }
 
 PipelineSimpleRaytracing::~PipelineSimpleRaytracing()
@@ -34,9 +34,9 @@ PipelineSimpleRaytracing::~PipelineSimpleRaytracing()
 	hitShaderBindingTable_.Destroy();
 }
 
-void PipelineSimpleRaytracing::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
+void PipelineSimpleRaytracing::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
-	VkPhysicalDeviceRayTracingPipelinePropertiesKHR properties = vkDev.GetRayTracingPipelineProperties();
+	VkPhysicalDeviceRayTracingPipelinePropertiesKHR properties = ctx.GetRayTracingPipelineProperties();
 
 	const uint32_t handleSizeAligned = Utility::AlignedSize(properties.shaderGroupHandleSize, properties.shaderGroupHandleAlignment);
 
@@ -62,7 +62,7 @@ void PipelineSimpleRaytracing::FillCommandBuffer(VulkanDevice& vkDev, VkCommandB
 	};
 	VkStridedDeviceAddressRegionKHR callableShaderSbtEntry{};
 
-	uint32_t frameIndex = vkDev.GetFrameIndex();
+	uint32_t frameIndex = ctx.GetFrameIndex();
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, pipeline_);
 	vkCmdBindDescriptorSets(
 		commandBuffer, 
@@ -78,11 +78,11 @@ void PipelineSimpleRaytracing::FillCommandBuffer(VulkanDevice& vkDev, VkCommandB
 		&missShaderSbtEntry,
 		&hitShaderSbtEntry,
 		&callableShaderSbtEntry,
-		vkDev.GetFrameBufferWidth(),
-		vkDev.GetFrameBufferHeight(),
+		ctx.GetFrameBufferWidth(),
+		ctx.GetFrameBufferHeight(),
 		1);
 
-	uint32_t swapchainIndex = vkDev.GetCurrentSwapchainImageIndex();
+	uint32_t swapchainIndex = ctx.GetCurrentSwapchainImageIndex();
 
 	VulkanImage::TransitionImageLayoutCommand(
 		commandBuffer,
@@ -95,8 +95,8 @@ void PipelineSimpleRaytracing::FillCommandBuffer(VulkanDevice& vkDev, VkCommandB
 
 	VulkanImage::TransitionImageLayoutCommand(
 		commandBuffer, 
-		vkDev.GetSwapchainImage(swapchainIndex),
-		vkDev.GetSwapchainImageFormat(),
+		ctx.GetSwapchainImage(swapchainIndex),
+		ctx.GetSwapchainImageFormat(),
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 		1u,
@@ -107,19 +107,19 @@ void PipelineSimpleRaytracing::FillCommandBuffer(VulkanDevice& vkDev, VkCommandB
 	copyRegion.srcOffset = { 0, 0, 0 };
 	copyRegion.dstSubresource = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1 };
 	copyRegion.dstOffset = { 0, 0, 0 };
-	copyRegion.extent = { vkDev.GetFrameBufferWidth(), vkDev.GetFrameBufferHeight(), 1 };
+	copyRegion.extent = { ctx.GetFrameBufferWidth(), ctx.GetFrameBufferHeight(), 1 };
 	vkCmdCopyImage(commandBuffer, 
 		storageImage_.image_, 
 		VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, 
-		vkDev.GetSwapchainImage(swapchainIndex), 
+		ctx.GetSwapchainImage(swapchainIndex), 
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 
 		1, 
 		&copyRegion);
 	
 	VulkanImage::TransitionImageLayoutCommand(
 		commandBuffer,
-		vkDev.GetSwapchainImage(swapchainIndex),
-		vkDev.GetSwapchainImageFormat(),
+		ctx.GetSwapchainImage(swapchainIndex),
+		ctx.GetSwapchainImageFormat(),
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 		1u,
@@ -132,18 +132,18 @@ void PipelineSimpleRaytracing::FillCommandBuffer(VulkanDevice& vkDev, VkCommandB
 		VK_IMAGE_LAYOUT_GENERAL);
 }
 
-void PipelineSimpleRaytracing::OnWindowResized(VulkanDevice& vkDev)
+void PipelineSimpleRaytracing::OnWindowResized(VulkanContext& ctx)
 {
 	storageImage_.Destroy();
-	CreateStorageImage(vkDev);
-	UpdateDescriptor(vkDev);
+	CreateStorageImage(ctx);
+	UpdateDescriptor(ctx);
 }
 
-void PipelineSimpleRaytracing::CreateDescriptor(VulkanDevice& vkDev)
+void PipelineSimpleRaytracing::CreateDescriptor(VulkanContext& ctx)
 {
 	// Pool
 	descriptor_.CreatePool(
-		vkDev,
+		ctx,
 		{
 			.uboCount_ = 1u,
 			.storageImageCount_ = 1u,
@@ -153,7 +153,7 @@ void PipelineSimpleRaytracing::CreateDescriptor(VulkanDevice& vkDev)
 		});
 
 	// Layout 
-	descriptor_.CreateLayout(vkDev,
+	descriptor_.CreateLayout(ctx,
 	{
 		{
 			.descriptorType_ = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
@@ -176,14 +176,14 @@ void PipelineSimpleRaytracing::CreateDescriptor(VulkanDevice& vkDev)
 	auto frameCount = AppConfig::FrameOverlapCount;
 	for (size_t i = 0; i < frameCount; i++)
 	{
-		descriptor_.AllocateSet(vkDev, &(descriptorSets_[i]));
+		descriptor_.AllocateSet(ctx, &(descriptorSets_[i]));
 	}
 
 	// Set up descriptor sets
-	UpdateDescriptor(vkDev);
+	UpdateDescriptor(ctx);
 }
 
-void PipelineSimpleRaytracing::UpdateDescriptor(VulkanDevice& vkDev)
+void PipelineSimpleRaytracing::UpdateDescriptor(VulkanContext& ctx)
 {
 	// Sets
 	auto frameCount = AppConfig::FrameOverlapCount;
@@ -206,7 +206,7 @@ void PipelineSimpleRaytracing::UpdateDescriptor(VulkanDevice& vkDev)
 		VkDescriptorBufferInfo bufferInfo = { cameraUBOBuffers_[i].buffer_, 0, sizeof(RaytracingCameraUBO) };
 
 		descriptor_.UpdateSet(
-			vkDev,
+			ctx,
 			{
 				{.pNext_ = &asInfo, .type_ = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR },
 				{.imageInfoPtr_ = &imageInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE },
@@ -216,35 +216,35 @@ void PipelineSimpleRaytracing::UpdateDescriptor(VulkanDevice& vkDev)
 	}
 }
 
-void PipelineSimpleRaytracing::CreateStorageImage(VulkanDevice& vkDev)
+void PipelineSimpleRaytracing::CreateStorageImage(VulkanContext& ctx)
 {
 	storageImage_.CreateImage(
-		vkDev,
-		vkDev.GetFrameBufferWidth(),
-		vkDev.GetFrameBufferHeight(),
+		ctx,
+		ctx.GetFrameBufferWidth(),
+		ctx.GetFrameBufferHeight(),
 		1u,
 		1u,
-		vkDev.GetSwapchainImageFormat(),
+		ctx.GetSwapchainImageFormat(),
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_STORAGE_BIT,
 		VMA_MEMORY_USAGE_GPU_ONLY
 	);
 
 	storageImage_.CreateImageView(
-		vkDev,
-		vkDev.GetSwapchainImageFormat(),
+		ctx,
+		ctx.GetSwapchainImageFormat(),
 		VK_IMAGE_ASPECT_COLOR_BIT,
 		VK_IMAGE_VIEW_TYPE_2D,
 		1u,
 		1u);
 
-	storageImage_.TransitionImageLayout(vkDev, 
+	storageImage_.TransitionImageLayout(ctx, 
 		storageImage_.imageFormat_, 
 		VK_IMAGE_LAYOUT_UNDEFINED, 
 		VK_IMAGE_LAYOUT_GENERAL);
 }
 
-void PipelineSimpleRaytracing::CreateRayTracingPipeline(VulkanDevice& vkDev)
+void PipelineSimpleRaytracing::CreateRayTracingPipeline(VulkanContext& ctx)
 {
 	// Pipeline layout
 	const VkPipelineLayoutCreateInfo pipelineLayoutCI =
@@ -253,7 +253,7 @@ void PipelineSimpleRaytracing::CreateRayTracingPipeline(VulkanDevice& vkDev)
 		.setLayoutCount = 1,
 		.pSetLayouts = &descriptor_.layout_
 	};
-	VK_CHECK(vkCreatePipelineLayout(vkDev.GetDevice(), &pipelineLayoutCI, nullptr, &pipelineLayout_));
+	VK_CHECK(vkCreatePipelineLayout(ctx.GetDevice(), &pipelineLayoutCI, nullptr, &pipelineLayout_));
 
 	// Shaders
 	const std::vector<std::string> shaderFiles =
@@ -268,7 +268,7 @@ void PipelineSimpleRaytracing::CreateRayTracingPipeline(VulkanDevice& vkDev)
 	for (size_t i = 0; i < shaderFiles.size(); i++)
 	{
 		const char* file = shaderFiles[i].c_str();
-		VK_CHECK(shaderModules[i].Create(vkDev.GetDevice(), file));
+		VK_CHECK(shaderModules[i].Create(ctx.GetDevice(), file));
 		const VkShaderStageFlagBits stage = GetShaderStageFlagBits(file);
 		shaderStages[i] = shaderModules[i].GetShaderStageInfo(stage, "main");
 	}
@@ -313,7 +313,7 @@ void PipelineSimpleRaytracing::CreateRayTracingPipeline(VulkanDevice& vkDev)
 		.layout = pipelineLayout_
 	};
 	VK_CHECK(vkCreateRayTracingPipelinesKHR(
-		vkDev.GetDevice(), 
+		ctx.GetDevice(), 
 		VK_NULL_HANDLE, 
 		VK_NULL_HANDLE, 
 		1, 
@@ -327,7 +327,7 @@ void PipelineSimpleRaytracing::CreateRayTracingPipeline(VulkanDevice& vkDev)
 	}
 }
 
-void PipelineSimpleRaytracing::CreateBLAS(VulkanDevice& vkDev)
+void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 {
 	// Setup vertices for a single triangle
 	struct Vertex
@@ -351,28 +351,28 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanDevice& vkDev)
 	};
 
 	vertexBuffer_.CreateBufferWithShaderDeviceAddress(
-		vkDev,
+		ctx,
 		vertices.size() * sizeof(Vertex),
 		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
 		VMA_MEMORY_USAGE_CPU_TO_GPU
 	);
-	vertexBuffer_.UploadBufferData(vkDev, 0, vertices.data(), vertices.size() * sizeof(Vertex));
+	vertexBuffer_.UploadBufferData(ctx, 0, vertices.data(), vertices.size() * sizeof(Vertex));
 
 	indexBuffer_.CreateBufferWithShaderDeviceAddress(
-		vkDev,
+		ctx,
 		indices.size() * sizeof(uint32_t),
 		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
 		VMA_MEMORY_USAGE_CPU_TO_GPU
 	);
-	indexBuffer_.UploadBufferData(vkDev, 0, indices.data(), indices.size() * sizeof(uint32_t));
+	indexBuffer_.UploadBufferData(ctx, 0, indices.data(), indices.size() * sizeof(uint32_t));
 
 	transformBuffer_.CreateBufferWithShaderDeviceAddress(
-		vkDev,
+		ctx,
 		sizeof(VkTransformMatrixKHR),
 	VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
 		VMA_MEMORY_USAGE_CPU_TO_GPU
 	);
-	transformBuffer_.UploadBufferData(vkDev, 0, &transformMatrix, sizeof(VkTransformMatrixKHR));
+	transformBuffer_.UploadBufferData(ctx, 0, &transformMatrix, sizeof(VkTransformMatrixKHR));
 
 	VkDeviceOrHostAddressConstKHR vertexBufferDeviceAddress{};
 	VkDeviceOrHostAddressConstKHR indexBufferDeviceAddress{};
@@ -414,13 +414,13 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanDevice& vkDev)
 	VkAccelerationStructureBuildSizesInfoKHR accelerationStructureBuildSizesInfo{};
 	accelerationStructureBuildSizesInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR;
 	vkGetAccelerationStructureBuildSizesKHR(
-		vkDev.GetDevice(),
+		ctx.GetDevice(),
 		VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR,
 		&accelerationStructureBuildGeometryInfo,
 		&numTriangles,
 		&accelerationStructureBuildSizesInfo);
 
-	blas_.Create(vkDev, accelerationStructureBuildSizesInfo);
+	blas_.Create(ctx, accelerationStructureBuildSizesInfo);
 
 	VkAccelerationStructureCreateInfoKHR accelerationStructureCreateInfo =
 	{
@@ -429,11 +429,11 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanDevice& vkDev)
 		.size = accelerationStructureBuildSizesInfo.accelerationStructureSize,
 		.type = VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR
 	};
-	vkCreateAccelerationStructureKHR(vkDev.GetDevice(), &accelerationStructureCreateInfo, nullptr, &blas_.handle_);
+	vkCreateAccelerationStructureKHR(ctx.GetDevice(), &accelerationStructureCreateInfo, nullptr, &blas_.handle_);
 
 	// Create a small scratch buffer used during build of the bottom level acceleration structure
 	VulkanBuffer scratchBuffer;
-	scratchBuffer.CreateBufferWithShaderDeviceAddress(vkDev,
+	scratchBuffer.CreateBufferWithShaderDeviceAddress(ctx,
 		accelerationStructureBuildSizesInfo.buildScratchSize,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VMA_MEMORY_USAGE_GPU_ONLY);
@@ -463,25 +463,25 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanDevice& vkDev)
 	// Build the acceleration structure on the device via a one-time command buffer submission
 	// Some implementations may support acceleration structure building on the host (VkPhysicalDeviceAccelerationStructureFeaturesKHR->accelerationStructureHostCommands), 
 	// but we prefer device builds
-	VkCommandBuffer commandBuffer = vkDev.BeginOneTimeGraphicsCommand();
+	VkCommandBuffer commandBuffer = ctx.BeginOneTimeGraphicsCommand();
 	vkCmdBuildAccelerationStructuresKHR(
 		commandBuffer,
 		1,
 		&accelerationBuildGeometryInfo,
 		accelerationBuildStructureRangeInfos.data());
-	vkDev.EndOneTimeGraphicsCommand(commandBuffer);
+	ctx.EndOneTimeGraphicsCommand(commandBuffer);
 
 	VkAccelerationStructureDeviceAddressInfoKHR accelerationDeviceAddressInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_DEVICE_ADDRESS_INFO_KHR,
 		.accelerationStructure = blas_.handle_,
 	};
-	blas_.deviceAddress_ = vkGetAccelerationStructureDeviceAddressKHR(vkDev.GetDevice(), &accelerationDeviceAddressInfo);
+	blas_.deviceAddress_ = vkGetAccelerationStructureDeviceAddressKHR(ctx.GetDevice(), &accelerationDeviceAddressInfo);
 
 	scratchBuffer.Destroy();
 }
 
-void PipelineSimpleRaytracing::CreateTLAS(VulkanDevice& vkDev)
+void PipelineSimpleRaytracing::CreateTLAS(VulkanContext& ctx)
 {
 	VkTransformMatrixKHR transformMatrix = {
 		1.0f, 0.0f, 0.0f, 0.0f,
@@ -499,11 +499,11 @@ void PipelineSimpleRaytracing::CreateTLAS(VulkanDevice& vkDev)
 	};
 
 	VulkanBuffer instancesBuffer;
-	instancesBuffer.CreateBufferWithShaderDeviceAddress(vkDev,
+	instancesBuffer.CreateBufferWithShaderDeviceAddress(ctx,
 		sizeof(VkAccelerationStructureInstanceKHR),
 		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
 		VMA_MEMORY_USAGE_CPU_TO_GPU);
-	instancesBuffer.UploadBufferData(vkDev, 0, &instance, sizeof(VkAccelerationStructureInstanceKHR));
+	instancesBuffer.UploadBufferData(ctx, 0, &instance, sizeof(VkAccelerationStructureInstanceKHR));
 
 	VkDeviceOrHostAddressConstKHR instanceDataDeviceAddress =
 	{
@@ -542,13 +542,13 @@ void PipelineSimpleRaytracing::CreateTLAS(VulkanDevice& vkDev)
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR
 	};
 	vkGetAccelerationStructureBuildSizesKHR(
-		vkDev.GetDevice(),
+		ctx.GetDevice(),
 		VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR,
 		&accelerationStructureBuildGeometryInfo,
 		&primitive_count,
 		&accelerationStructureBuildSizesInfo);
 
-	tlas_.Create(vkDev, accelerationStructureBuildSizesInfo);
+	tlas_.Create(ctx, accelerationStructureBuildSizesInfo);
 
 	VkAccelerationStructureCreateInfoKHR accelerationStructureCreateInfo =
 	{
@@ -557,11 +557,11 @@ void PipelineSimpleRaytracing::CreateTLAS(VulkanDevice& vkDev)
 		.size = accelerationStructureBuildSizesInfo.accelerationStructureSize,
 		.type = VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR
 	};
-	vkCreateAccelerationStructureKHR(vkDev.GetDevice(), &accelerationStructureCreateInfo, nullptr, &tlas_.handle_);
+	vkCreateAccelerationStructureKHR(ctx.GetDevice(), &accelerationStructureCreateInfo, nullptr, &tlas_.handle_);
 
 	// Create a small scratch buffer used during build of the top level acceleration structure
 	VulkanBuffer scratchBuffer;
-	scratchBuffer.CreateBufferWithShaderDeviceAddress(vkDev,
+	scratchBuffer.CreateBufferWithShaderDeviceAddress(ctx,
 		accelerationStructureBuildSizesInfo.buildScratchSize,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VMA_MEMORY_USAGE_GPU_ONLY);
@@ -590,28 +590,28 @@ void PipelineSimpleRaytracing::CreateTLAS(VulkanDevice& vkDev)
 	// Build the acceleration structure on the device via a one-time command buffer submission
 	// Some implementations may support acceleration structure building on the host (VkPhysicalDeviceAccelerationStructureFeaturesKHR->accelerationStructureHostCommands), 
 	// but we prefer device builds
-	VkCommandBuffer commandBuffer = vkDev.BeginOneTimeGraphicsCommand();
+	VkCommandBuffer commandBuffer = ctx.BeginOneTimeGraphicsCommand();
 	vkCmdBuildAccelerationStructuresKHR(
 		commandBuffer,
 		1,
 		&accelerationBuildGeometryInfo,
 		accelerationBuildStructureRangeInfos.data());
-	vkDev.EndOneTimeGraphicsCommand(commandBuffer);
+	ctx.EndOneTimeGraphicsCommand(commandBuffer);
 
 	VkAccelerationStructureDeviceAddressInfoKHR accelerationDeviceAddressInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_DEVICE_ADDRESS_INFO_KHR,
 		.accelerationStructure = tlas_.handle_
 	};
-	tlas_.deviceAddress_ = vkGetAccelerationStructureDeviceAddressKHR(vkDev.GetDevice(), &accelerationDeviceAddressInfo);
+	tlas_.deviceAddress_ = vkGetAccelerationStructureDeviceAddressKHR(ctx.GetDevice(), &accelerationDeviceAddressInfo);
 
 	scratchBuffer.Destroy();
 	instancesBuffer.Destroy();
 }
 
-void PipelineSimpleRaytracing::CreateShaderBindingTable(VulkanDevice& vkDev)
+void PipelineSimpleRaytracing::CreateShaderBindingTable(VulkanContext& ctx)
 {
-	VkPhysicalDeviceRayTracingPipelinePropertiesKHR properties = vkDev.GetRayTracingPipelineProperties();
+	VkPhysicalDeviceRayTracingPipelinePropertiesKHR properties = ctx.GetRayTracingPipelineProperties();
 
 	const uint32_t handleSize = properties.shaderGroupHandleSize;
 	const uint32_t handleSizeAligned = Utility::AlignedSize(properties.shaderGroupHandleSize, properties.shaderGroupHandleAlignment);
@@ -620,7 +620,7 @@ void PipelineSimpleRaytracing::CreateShaderBindingTable(VulkanDevice& vkDev)
 
 	std::vector<uint8_t> shaderHandleStorage(sbtSize);
 	VK_CHECK(vkGetRayTracingShaderGroupHandlesKHR(
-		vkDev.GetDevice(), 
+		ctx.GetDevice(), 
 		pipeline_, 
 		0, 
 		groupCount, 
@@ -629,12 +629,12 @@ void PipelineSimpleRaytracing::CreateShaderBindingTable(VulkanDevice& vkDev)
 
 	const VkBufferUsageFlags bufferUsage = VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR;
 	const VmaMemoryUsage memoryUsage = VMA_MEMORY_USAGE_CPU_TO_GPU;
-	raygenShaderBindingTable_.CreateBufferWithShaderDeviceAddress(vkDev, handleSize, bufferUsage, memoryUsage);
-	missShaderBindingTable_.CreateBufferWithShaderDeviceAddress(vkDev, handleSize, bufferUsage, memoryUsage);
-	hitShaderBindingTable_.CreateBufferWithShaderDeviceAddress(vkDev, handleSize, bufferUsage, memoryUsage);
+	raygenShaderBindingTable_.CreateBufferWithShaderDeviceAddress(ctx, handleSize, bufferUsage, memoryUsage);
+	missShaderBindingTable_.CreateBufferWithShaderDeviceAddress(ctx, handleSize, bufferUsage, memoryUsage);
+	hitShaderBindingTable_.CreateBufferWithShaderDeviceAddress(ctx, handleSize, bufferUsage, memoryUsage);
 
 	// Copy handles
-	raygenShaderBindingTable_.UploadBufferData(vkDev, 0, shaderHandleStorage.data(), handleSize);
-	missShaderBindingTable_.UploadBufferData(vkDev, 0, shaderHandleStorage.data() + handleSizeAligned, handleSize);
-	hitShaderBindingTable_.UploadBufferData(vkDev, 0, shaderHandleStorage.data() + handleSizeAligned * 2, handleSize);
+	raygenShaderBindingTable_.UploadBufferData(ctx, 0, shaderHandleStorage.data(), handleSize);
+	missShaderBindingTable_.UploadBufferData(ctx, 0, shaderHandleStorage.data() + handleSizeAligned, handleSize);
+	hitShaderBindingTable_.UploadBufferData(ctx, 0, shaderHandleStorage.data() + handleSizeAligned * 2, handleSize);
 }

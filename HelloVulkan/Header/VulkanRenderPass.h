@@ -1,7 +1,7 @@
 #ifndef VULKAN_RENDER_PASS
 #define VULKAN_RENDER_PASS
 
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 
 enum RenderPassBit : uint8_t
 {
@@ -25,34 +25,34 @@ public:
 	~VulkanRenderPass() = default;
 
 	void CreateOnScreenRenderPass(
-		VulkanDevice& device, 
+		VulkanContext& ctx, 
 		uint8_t renderPassBit = 0u,
 		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT);
 
 	void CreateResolveMSRenderPass(
-		VulkanDevice& device,
+		VulkanContext& ctx,
 		uint8_t renderPassBit = 0u,
 		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT);
 
 	void CreateOnScreenColorOnlyRenderPass(
-		VulkanDevice& device, 
+		VulkanContext& ctx, 
 		uint8_t renderPassBit = 0u,
 		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT);
 
 	void CreateOffScreenRenderPass(
-		VulkanDevice& device,
+		VulkanContext& ctx,
 		uint8_t renderPassBit = 0u,
 		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT);
 
 	void CreateOffScreenCubemapRenderPass(
-		VulkanDevice& device, 
+		VulkanContext& ctx, 
 		VkFormat cubeFormat,
 		uint8_t renderPassBit = 0u,
 		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT);
 
 	// There's no EndRenderPass() function because you can just call vkCmdEndRenderPass(commandBuffer);
 	void BeginRenderPass(
-		VulkanDevice& vkDev,
+		VulkanContext& ctx,
 		VkCommandBuffer commandBuffer, 
 		VkFramebuffer framebuffer);
 
@@ -66,7 +66,7 @@ public:
 	VkRenderPass GetHandle() { return handle_;}
 
 private:
-	void CreateBeginInfo(VulkanDevice& device);
+	void CreateBeginInfo(VulkanContext& ctx);
 
 private:
 	VkDevice device_;

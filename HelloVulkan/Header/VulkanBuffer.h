@@ -4,7 +4,7 @@
 #include "volk.h"
 #include "vk_mem_alloc.h"
 
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 
 class VulkanBuffer
 {
@@ -37,38 +37,38 @@ public:
 	}
 
 	void CreateBuffer(
-		VulkanDevice& vkDev,
+		VulkanContext& ctx,
 		VkDeviceSize size,
 		VkBufferUsageFlags bufferUsage,
 		VmaMemoryUsage memoryUsage,
 		VmaAllocationCreateFlags flags = VMA_ALLOCATION_CREATE_MAPPED_BIT); // Not sure want to keep this default value
 
-	void CreateBufferWithShaderDeviceAddress(VulkanDevice& vkDev,
+	void CreateBufferWithShaderDeviceAddress(VulkanContext& ctx,
 		VkDeviceSize size,
 		VkBufferUsageFlags bufferUsage,
 		VmaMemoryUsage memoryUsage,
 		VmaAllocationCreateFlags flags = VMA_ALLOCATION_CREATE_MAPPED_BIT); // Not sure want to keep this default value
 
 	void CreateGPUOnlyBuffer(
-		VulkanDevice& vkDev,
+		VulkanContext& ctx,
 		size_t bufferSize_,
 		const void* bufferData,
 		VkMemoryPropertyFlags flags
 	);
 
 	void CopyFrom(
-		VulkanDevice& vkDev,
+		VulkanContext& ctx,
 		VkBuffer srcBuffer,
 		VkDeviceSize size);
 
 	void UploadBufferData(
-		VulkanDevice& vkDev,
+		VulkanContext& ctx,
 		VkDeviceSize deviceOffset,
 		const void* data,
 		const size_t dataSize);
 
 	void DownloadBufferData(
-		VulkanDevice& vkDev,
+		VulkanContext& ctx,
 		VkDeviceSize deviceOffset,
 		void* outData,
 		const size_t dataSize);

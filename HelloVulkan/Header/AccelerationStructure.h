@@ -4,6 +4,7 @@
 #include "VulkanBuffer.h"
 #include "vk_mem_alloc.h"
 
+// For TLAS and BLAS
 class AccelerationStructure
 {
 public:
@@ -29,7 +30,7 @@ public:
 	}
 
 	void Create(
-		VulkanDevice& vkDev,
+		VulkanContext& ctx,
 		VkAccelerationStructureBuildSizesInfoKHR buildSizeInfo);
 
 public:

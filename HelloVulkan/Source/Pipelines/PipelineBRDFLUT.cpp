@@ -4,13 +4,13 @@
 #include "Configs.h"
 
 PipelineBRDFLUT::PipelineBRDFLUT(
-	VulkanDevice& vkDev) :
-	PipelineBase(vkDev, 
+	VulkanContext& ctx) :
+	PipelineBase(ctx, 
 	{
 		.type_ = PipelineType::Compute
 	})
 {
-	outBuffer_.CreateBuffer(vkDev, 
+	outBuffer_.CreateBuffer(ctx, 
 		IBLConfig::LUTBufferSize,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VMA_MEMORY_USAGE_AUTO,
@@ -24,9 +24,9 @@ PipelineBRDFLUT::PipelineBRDFLUT(
 		.size = sizeof(PushConstantsBRDFLUT)
 	}};
 
-	CreateDescriptor(vkDev);
-	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_, ranges);
-	CreateComputePipeline(vkDev, AppConfig::ShaderFolder + "BRDFLUT.comp");
+	CreateDescriptor(ctx);
+	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, ranges);
+	CreateComputePipeline(ctx, AppConfig::ShaderFolder + "BRDFLUT.comp");
 }
 
 PipelineBRDFLUT::~PipelineBRDFLUT()
@@ -34,21 +34,21 @@ PipelineBRDFLUT::~PipelineBRDFLUT()
 	outBuffer_.Destroy();
 }
 
-void PipelineBRDFLUT::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
+void PipelineBRDFLUT::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
 }
 
-void PipelineBRDFLUT::CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT)
+void PipelineBRDFLUT::CreateLUT(VulkanContext& ctx, VulkanImage* outputLUT)
 {
 	std::vector<float> lutData(IBLConfig::LUTBufferSize, 0);
 
-	Execute(vkDev);
+	Execute(ctx);
 
 	// Copy the buffer content to an image
 	// TODO Find a way so that compute shader can write to an image
-	outBuffer_.DownloadBufferData(vkDev, 0, lutData.data(), IBLConfig::LUTBufferSize);
+	outBuffer_.DownloadBufferData(ctx, 0, lutData.data(), IBLConfig::LUTBufferSize);
 	outputLUT->CreateImageFromData(
-		vkDev,
+		ctx,
 		lutData.data(),
 		IBLConfig::LUTWidth,
 		IBLConfig::LUTHeight,
@@ -56,17 +56,17 @@ void PipelineBRDFLUT::CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT)
 		1, // Layer count
 		VK_FORMAT_R32G32_SFLOAT);
 	outputLUT->CreateImageView(
-		vkDev,
+		ctx,
 		VK_FORMAT_R32G32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT
 	);
 
-	outputLUT->CreateDefaultSampler(vkDev);
+	outputLUT->CreateDefaultSampler(ctx);
 }
 
-void PipelineBRDFLUT::Execute(VulkanDevice& vkDev)
+void PipelineBRDFLUT::Execute(VulkanContext& ctx)
 {
-	VkCommandBuffer commandBuffer = vkDev.BeginOneTimeComputeCommand();
+	VkCommandBuffer commandBuffer = ctx.BeginOneTimeComputeCommand();
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline_);
 
@@ -121,14 +121,14 @@ void PipelineBRDFLUT::Execute(VulkanDevice& vkDev)
 		0, // imageMemoryBarrierCount
 		nullptr); // pImageMemoryBarriers
 
-	vkDev.EndOneTimeComputeCommand(commandBuffer);
+	ctx.EndOneTimeComputeCommand(commandBuffer);
 }
 
-void PipelineBRDFLUT::CreateDescriptor(VulkanDevice& vkDev)
+void PipelineBRDFLUT::CreateDescriptor(VulkanContext& ctx)
 {
 	// Pool
 	descriptor_.CreatePool(
-		vkDev,
+		ctx,
 		{
 			.uboCount_ = 0u,
 			.ssboCount_ = 1u,
@@ -138,7 +138,7 @@ void PipelineBRDFLUT::CreateDescriptor(VulkanDevice& vkDev)
 		});
 
 	// Layout
-	descriptor_.CreateLayout(vkDev,
+	descriptor_.CreateLayout(ctx,
 	{
 		{
 			.descriptorType_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
@@ -151,7 +151,7 @@ void PipelineBRDFLUT::CreateDescriptor(VulkanDevice& vkDev)
 	VkDescriptorBufferInfo outBufferInfo = { outBuffer_.buffer_, 0, VK_WHOLE_SIZE };
 
 	descriptor_.CreateSet(
-		vkDev,
+		ctx,
 		{
 			{.bufferInfoPtr_ = &outBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER }
 		},

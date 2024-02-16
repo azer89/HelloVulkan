@@ -1,7 +1,7 @@
 #include "Camera.h"
 #include "Configs.h"
 
-// Need to set GLM_FORCE_DEPTH_ZERO_TO_ONE in the vcxproj config
+// WARNING Need to set GLM_FORCE_DEPTH_ZERO_TO_ONE in the vcxproj config
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 

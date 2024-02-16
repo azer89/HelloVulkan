@@ -5,7 +5,7 @@
 #include "assimp/cimport.h"
 
 // Constructor
-Mesh::Mesh(VulkanDevice& vkDev,
+Mesh::Mesh(VulkanContext& ctx,
 	std::vector<VertexData>&& _vertices,
 	std::vector<unsigned int>&& _indices,
 	std::unordered_map<TextureType, VulkanImage*>&& _textures) :
@@ -13,11 +13,11 @@ Mesh::Mesh(VulkanDevice& vkDev,
 	indices_(std::move(_indices)),
 	textures_(std::move(_textures))
 {
-	Setup(vkDev);
+	Setup(ctx);
 }
 
 // Constructor
-Mesh::Mesh(VulkanDevice& vkDev,
+Mesh::Mesh(VulkanContext& ctx,
 	const std::vector<VertexData>& vertices,
 	const std::vector<unsigned int>& indices,
 	const std::unordered_map<TextureType, VulkanImage*>& textures) :
@@ -25,14 +25,14 @@ Mesh::Mesh(VulkanDevice& vkDev,
 	indices_(indices),
 	textures_(textures)
 {
-	Setup(vkDev);
+	Setup(ctx);
 }
 
-void Mesh::Setup(VulkanDevice& vkDev)
+void Mesh::Setup(VulkanContext& ctx)
 {
 	vertexBufferSize_ = sizeof(VertexData) * vertices_.size();
 	vertexBuffer_.CreateGPUOnlyBuffer(
-		vkDev, 
+		ctx, 
 		vertexBufferSize_, 
 		vertices_.data(), 
 		VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
@@ -40,7 +40,7 @@ void Mesh::Setup(VulkanDevice& vkDev)
 
 	indexBufferSize_ = sizeof(unsigned int) * indices_.size();
 	indexBuffer_.CreateGPUOnlyBuffer(
-		vkDev, 
+		ctx, 
 		indexBufferSize_, 
 		indices_.data(), 
 		VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT

@@ -2,7 +2,7 @@
 #define PIPELINE_BRDF_LUT
 
 #include "PipelineBase.h"
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 #include "VulkanImage.h"
 #include "VulkanBuffer.h"
 #include "VulkanUtility.h"
@@ -13,14 +13,14 @@ Compute pipeline to generate lookup table
 class PipelineBRDFLUT final : PipelineBase
 {
 public:
-	PipelineBRDFLUT(VulkanDevice& vkDev);
+	PipelineBRDFLUT(VulkanContext& ctx);
 	~PipelineBRDFLUT();
 
-	void CreateLUT(VulkanDevice& vkDev, VulkanImage* outputLUT);
+	void CreateLUT(VulkanContext& ctx, VulkanImage* outputLUT);
 
-	void Execute(VulkanDevice& vkDev);
+	void Execute(VulkanContext& ctx);
 
-	virtual void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
+	virtual void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
 private:
 	// This is the lookup table which has to be transferred to an image
@@ -29,7 +29,7 @@ private:
 	VkDescriptorSet descriptorSet_;
 
 private:
-	void CreateDescriptor(VulkanDevice& vkDev);
+	void CreateDescriptor(VulkanContext& ctx);
 };
 
 #endif

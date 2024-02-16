@@ -1,7 +1,7 @@
 #ifndef VULKAN_FRAMEBUFFER
 #define VULKAN_FRAMEBUFFER
 
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 #include "VulkanImage.h"
 
 /*
@@ -21,14 +21,14 @@ public:
 	}
 
 	// Can be recreated
-	void Create(VulkanDevice& vkDev,
+	void Create(VulkanContext& ctx,
 		VkRenderPass renderPass,
 		const std::vector<VulkanImage*>& attachmentImage,
 		bool offscreen);
 
 	// Cannot be recreated
 	void Create(
-		VulkanDevice& vkDev,
+		VulkanContext& ctx,
 		VkRenderPass renderPass,
 		const std::vector<VkImageView>& attachments,
 		uint32_t width,
@@ -40,7 +40,7 @@ public:
 
 	VkFramebuffer GetFramebuffer(size_t index) const;
 
-	void Recreate(VulkanDevice& vkDev);
+	void Recreate(VulkanContext& ctx);
 
 private:
 	std::vector<VkFramebuffer> framebuffers_;

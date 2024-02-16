@@ -1,15 +1,15 @@
 #include "VulkanFramebuffer.h"
 #include "VulkanUtility.h"
 
-void VulkanFramebuffer::Create(VulkanDevice& vkDev,
+void VulkanFramebuffer::Create(VulkanContext& ctx,
 	VkRenderPass renderPass,
 	const std::vector<VulkanImage*>& attachmentImages,
 	bool offscreen)
 {
 	offscreen_ = offscreen;
-	device_ = vkDev.GetDevice();
+	device_ = ctx.GetDevice();
 	attachmentImages_ = attachmentImages;
-	framebufferCount_ = offscreen_ ? 1u : static_cast<uint32_t>(vkDev.GetSwapchainImageCount());
+	framebufferCount_ = offscreen_ ? 1u : static_cast<uint32_t>(ctx.GetSwapchainImageCount());
 	framebuffers_.resize(framebufferCount_);
 
 	if (offscreen_ && attachmentImages_.empty())
@@ -32,17 +32,17 @@ void VulkanFramebuffer::Create(VulkanDevice& vkDev,
 	};
 
 	// Create framebuffer in this function
-	Recreate(vkDev);
+	Recreate(ctx);
 }
 
 void VulkanFramebuffer::Create(
-	VulkanDevice& vkDev,
+	VulkanContext& ctx,
 	VkRenderPass renderPass,
 	const std::vector<VkImageView>& attachments,
 	uint32_t width,
 	uint32_t height)
 {
-	device_ = vkDev.GetDevice();
+	device_ = ctx.GetDevice();
 
 	framebufferInfo_ =
 	{
@@ -57,7 +57,7 @@ void VulkanFramebuffer::Create(
 		.layers = 1u
 	};
 	framebuffers_.resize(1);
-	VK_CHECK(vkCreateFramebuffer(vkDev.GetDevice(), &framebufferInfo_, nullptr, &framebuffers_[0]));
+	VK_CHECK(vkCreateFramebuffer(ctx.GetDevice(), &framebufferInfo_, nullptr, &framebuffers_[0]));
 }
 
 void VulkanFramebuffer::Destroy()
@@ -84,7 +84,7 @@ VkFramebuffer VulkanFramebuffer::GetFramebuffer(size_t index) const
 	return VK_NULL_HANDLE;
 }
 
-void VulkanFramebuffer::Recreate(VulkanDevice& vkDev)
+void VulkanFramebuffer::Recreate(VulkanContext& ctx)
 {
 	const size_t swapchainImageCount = offscreen_ ? 0 : 1;
 	const size_t attachmentLength = attachmentImages_.size() + swapchainImageCount;
@@ -100,14 +100,14 @@ void VulkanFramebuffer::Recreate(VulkanDevice& vkDev)
 		attachments[i + swapchainImageCount] = attachmentImages_[i]->imageView_;
 	}
 
-	framebufferInfo_.width = vkDev.GetFrameBufferWidth();
-	framebufferInfo_.height = vkDev.GetFrameBufferHeight();
+	framebufferInfo_.width = ctx.GetFrameBufferWidth();
+	framebufferInfo_.height = ctx.GetFrameBufferHeight();
 
 	for (size_t i = 0; i < framebufferCount_; ++i)
 	{
 		if (swapchainImageCount > 0)
 		{
-			attachments[0] = vkDev.GetSwapchainImageView(i);
+			attachments[0] = ctx.GetSwapchainImageView(i);
 		}
 
 		framebufferInfo_.attachmentCount = static_cast<uint32_t>(attachmentLength);

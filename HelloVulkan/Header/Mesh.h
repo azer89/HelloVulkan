@@ -1,7 +1,7 @@
 #ifndef MESH
 #define MESH
 
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
 #include "VulkanBuffer.h"
 #include "VulkanImage.h"
 #include "TextureMapper.h"
@@ -73,20 +73,20 @@ public:
 
 	// Constructors
 	Mesh(
-		VulkanDevice& vkDev,
+		VulkanContext& ctx,
 		std::vector<VertexData>&& _vertices,
 		std::vector<unsigned int>&& _indices,
 		std::unordered_map<TextureType, VulkanImage*>&& _textures);
 	Mesh(
-		VulkanDevice& vkDev,
+		VulkanContext& ctx,
 		const std::vector<VertexData>& vertices,
 		const std::vector<unsigned int>& indices,
 		const std::unordered_map<TextureType, VulkanImage*>& textures);
 
-	// Textures
-	//void AddTexture(VulkanDevice& vkDev, const char* fileName, uint32_t bindIndex);
+	// TODO Implement this function
+	//void AddTexture(VulkanContext& ctx, const char* fileName, uint32_t bindIndex);
 
-	void Setup(VulkanDevice& vkDev);
+	void Setup(VulkanContext& ctx);
 
 	void Destroy();
 };

@@ -10,7 +10,7 @@
 class PipelineSkybox final : public PipelineBase
 {
 public:
-	PipelineSkybox(VulkanDevice& vkDev, 
+	PipelineSkybox(VulkanContext& ctx, 
 		VulkanImage* envMap,
 		VulkanImage* depthImage,
 		VulkanImage* offscreenColorImage,
@@ -18,14 +18,14 @@ public:
 	);
 	~PipelineSkybox();
 
-	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
+	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
 private:
 	VulkanImage* envCubemap_;
 
 	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;
 
-	void CreateDescriptor(VulkanDevice& vkDev);
+	void CreateDescriptor(VulkanContext& ctx);
 };
 
 #endif

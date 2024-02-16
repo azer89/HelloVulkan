@@ -12,7 +12,7 @@ constexpr uint32_t PBR_MESH_TEXTURE_COUNT = 6;
 constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 
 PipelinePBR::PipelinePBR(
-	VulkanDevice& vkDev,
+	VulkanContext& ctx,
 	std::vector<Model*> models,
 	Lights* lights,
 	VulkanImage* specularMap,
@@ -21,7 +21,7 @@ PipelinePBR::PipelinePBR(
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
-	PipelineBase(vkDev, 
+	PipelineBase(ctx, 
 		{
 			.type_ = PipelineType::GraphicsOffScreen,
 			.msaaSamples_ = offscreenColorImage->multisampleCount_,
@@ -35,19 +35,19 @@ PipelinePBR::PipelinePBR(
 	brdfLUT_(brdfLUT)
 {
 	// Per frame UBO
-	CreateMultipleUniformBuffers(vkDev, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
+	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
 	
 	// Model UBO
 	for (Model* model : models_)
 	{
-		CreateMultipleUniformBuffers(vkDev, model->modelBuffers_, sizeof(ModelUBO), AppConfig::FrameOverlapCount);
+		CreateMultipleUniformBuffers(ctx, model->modelBuffers_, sizeof(ModelUBO), AppConfig::FrameOverlapCount);
 	}
 
 	// Note that this pipeline is offscreen rendering
-	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, config_.msaaSamples_);
+	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
 
 	framebuffer_.Create(
-		vkDev, 
+		ctx, 
 		renderPass_.GetHandle(), 
 		{
 			offscreenColorImage,
@@ -55,7 +55,7 @@ PipelinePBR::PipelinePBR(
 		}, 
 		IsOffscreen());
 
-	CreateDescriptor(vkDev);
+	CreateDescriptor(ctx);
 
 	// Push constants
 	std::vector<VkPushConstantRange> ranges =
@@ -65,10 +65,10 @@ PipelinePBR::PipelinePBR(
 		.size = sizeof(PushConstantPBR),
 	}};
 	
-	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_, ranges);
+	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, ranges);
 
 	CreateGraphicsPipeline(
-		vkDev,
+		ctx,
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
@@ -83,12 +83,12 @@ PipelinePBR::~PipelinePBR()
 {
 }
 
-void PipelinePBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer)
+void PipelinePBR::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
-	uint32_t frameIndex = vkDev.GetFrameIndex();
-	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
+	uint32_t frameIndex = ctx.GetFrameIndex();
+	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
 
-	BindPipeline(vkDev, commandBuffer);
+	BindPipeline(ctx, commandBuffer);
 
 	vkCmdPushConstants(
 		commandBuffer,
@@ -127,7 +127,7 @@ void PipelinePBR::FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer command
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelinePBR::CreateDescriptor(VulkanDevice& vkDev)
+void PipelinePBR::CreateDescriptor(VulkanContext& ctx)
 {
 	uint32_t numMeshes = 0u;
 	for (Model* model : models_)
@@ -137,7 +137,7 @@ void PipelinePBR::CreateDescriptor(VulkanDevice& vkDev)
 
 	// Pool
 	descriptor_.CreatePool(
-		vkDev,
+		ctx,
 		{
 			.uboCount_ = UBO_COUNT * static_cast<uint32_t>(models_.size()),
 			.ssboCount_ = SSBO_COUNT,
@@ -147,7 +147,7 @@ void PipelinePBR::CreateDescriptor(VulkanDevice& vkDev)
 		});
 
 	// Layout
-	descriptor_.CreateLayout(vkDev,
+	descriptor_.CreateLayout(ctx,
 	{
 		{
 			.descriptorType_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
@@ -171,13 +171,13 @@ void PipelinePBR::CreateDescriptor(VulkanDevice& vkDev)
 	{
 		for (Mesh& mesh : model->meshes_)
 		{
-			CreateDescriptorSet(vkDev, model, mesh);
+			CreateDescriptorSet(ctx, model, mesh);
 		}
 	}
 }
 
 // TODO Still quite convoluted
-void PipelinePBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, Mesh& mesh)
+void PipelinePBR::CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh& mesh)
 {
 	VkDescriptorImageInfo specularImageInfo = specularCubemap_->GetDescriptorImageInfo();
 	VkDescriptorImageInfo diffuseImageInfo = diffuseCubemap_->GetDescriptorImageInfo();
@@ -213,6 +213,6 @@ void PipelinePBR::CreateDescriptorSet(VulkanDevice& vkDev, Model* parentModel, M
 		writes.push_back({ .imageInfoPtr_ = &diffuseImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
 		writes.push_back({ .imageInfoPtr_ = &lutImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
 
-		descriptor_.CreateSet(vkDev, writes, &(mesh.descriptorSets_[i]));
+		descriptor_.CreateSet(ctx, writes, &(mesh.descriptorSets_[i]));
 	}
 }

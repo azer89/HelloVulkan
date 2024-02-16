@@ -5,13 +5,13 @@ void Lights::Destroy()
 	storageBuffer_.Destroy();
 }
 
-void Lights::AddLights(VulkanDevice& vkDev, const std::vector<LightData>& lights)
+void Lights::AddLights(VulkanContext& ctx, const std::vector<LightData>& lights)
 {
-	device_ = vkDev.GetDevice();
+	device_ = ctx.GetDevice();
 	storageBufferSize_ = sizeof(LightData) * lights.size();
 	lightCount_ = static_cast<uint32_t>(lights.size());
-	storageBuffer_.CreateBuffer(vkDev, storageBufferSize_,
+	storageBuffer_.CreateBuffer(ctx, storageBufferSize_,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VMA_MEMORY_USAGE_CPU_TO_GPU);
-	storageBuffer_.UploadBufferData(vkDev, 0, lights.data(), storageBufferSize_);
+	storageBuffer_.UploadBufferData(ctx, 0, lights.data(), storageBufferSize_);
 }

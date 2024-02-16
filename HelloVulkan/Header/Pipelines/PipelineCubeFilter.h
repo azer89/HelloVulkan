@@ -23,14 +23,14 @@ This class actually has two graphics pipelines.
 class PipelineCubeFilter final : public PipelineBase
 {
 public:
-	PipelineCubeFilter(VulkanDevice& vkDev, VulkanImage* inputCubemap);
+	PipelineCubeFilter(VulkanContext& ctx, VulkanImage* inputCubemap);
 	~PipelineCubeFilter();
 
-	void OffscreenRender(VulkanDevice& vkDev, 
+	void OffscreenRender(VulkanContext& ctx, 
 		VulkanImage* outputCubemap,
 		CubeFilterType filterType);
 
-	void FillCommandBuffer(VulkanDevice& vkDev, VkCommandBuffer commandBuffer) override;
+	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
 private:
 
@@ -40,20 +40,20 @@ private:
 	// Two pipelines for each of diffuse and specular maps
 	std::vector<VkPipeline> graphicsPipelines_;
 
-	void CreateDescriptor(VulkanDevice& vkDev, VulkanImage* inputCubemap);
+	void CreateDescriptor(VulkanContext& ctx, VulkanImage* inputCubemap);
 
-	void InitializeOutputCubemap(VulkanDevice& vkDev, 
+	void InitializeOutputCubemap(VulkanContext& ctx, 
 		VulkanImage* outputDiffuseCubemap,
 		uint32_t numMipmap,
 		uint32_t inputCubeSideLength);
 
-	void CreateOutputCubemapViews(VulkanDevice& vkDev,
+	void CreateOutputCubemapViews(VulkanContext& ctx,
 		VulkanImage* outputCubemap,
 		std::vector<std::vector<VkImageView>>& outputCubemapViews,
 		uint32_t numMip);
 
 	void CreateOffsreenGraphicsPipeline(
-		VulkanDevice& vkDev,
+		VulkanContext& ctx,
 		VkRenderPass renderPass,
 		VkPipelineLayout pipelineLayout,
 		const std::vector<std::string>& shaderFiles,
