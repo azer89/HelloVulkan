@@ -38,7 +38,7 @@ https://github.com/azer89/HelloVulkan/assets/790432/66b9a30a-d187-495a-9879-8eb1
 
 ### Build
 * C++20
-* Vulkan 1.3
+* Vulkan SDK
 * Visual Studio 2022
 * Dependencies are located in folder `External/` 
 
