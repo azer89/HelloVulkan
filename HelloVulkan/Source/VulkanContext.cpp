@@ -173,7 +173,6 @@ void VulkanContext::GetEnabledFeatures()
 		};
 
 		chainPtr = &rtASEnabledFeatures;
-		//pNextChain_ = &rtASEnabledFeatures;
 	}
 
 	if (config_.supportDynamicRendering_)
