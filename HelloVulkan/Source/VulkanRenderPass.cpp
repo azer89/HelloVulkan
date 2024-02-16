@@ -6,17 +6,17 @@
 
 // Resolve multi-sampled image to single-sampled image
 void VulkanRenderPass::CreateResolveMSRenderPass(
-	VulkanContext& vkDev,
+	VulkanContext& ctx,
 	uint8_t renderPassBit,
 	VkSampleCountFlagBits msaaSamples
 )
 {
-	device_ = vkDev.GetDevice();
+	device_ = ctx.GetDevice();
 	renderPassBit_ = renderPassBit;
 
 	const VkAttachmentDescription multisampledAttachment =
 	{
-		.format = vkDev.GetSwapchainImageFormat(),
+		.format = ctx.GetSwapchainImageFormat(),
 		.samples = msaaSamples,
 		.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD, // Just load
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
@@ -32,7 +32,7 @@ void VulkanRenderPass::CreateResolveMSRenderPass(
 	};
 
 	const VkAttachmentDescription singleSampledAttachment = {
-		.format = vkDev.GetSwapchainImageFormat(),
+		.format = ctx.GetSwapchainImageFormat(),
 		.samples = VK_SAMPLE_COUNT_1_BIT,
 		.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
@@ -80,18 +80,18 @@ void VulkanRenderPass::CreateResolveMSRenderPass(
 		.pDependencies = &dependency,
 	};
 
-	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &renderPassInfo, nullptr, &handle_));
+	VK_CHECK(vkCreateRenderPass(ctx.GetDevice(), &renderPassInfo, nullptr, &handle_));
 
 	// Cache VkRenderPassBeginInfo
-	CreateBeginInfo(vkDev);
+	CreateBeginInfo(ctx);
 }
 
 void VulkanRenderPass::CreateOffScreenRenderPass(
-	VulkanContext& vkDev, 
+	VulkanContext& ctx, 
 	uint8_t renderPassBit,
 	VkSampleCountFlagBits msaaSamples)
 {
-	device_ = vkDev.GetDevice();
+	device_ = ctx.GetDevice();
 	renderPassBit_ = renderPassBit;
 
 	const bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
@@ -103,7 +103,7 @@ void VulkanRenderPass::CreateOffScreenRenderPass(
 
 	const VkAttachmentDescription colorAttachment = {
 		.flags = 0,
-		.format = vkDev.GetSwapchainImageFormat(),
+		.format = ctx.GetSwapchainImageFormat(),
 		.samples = msaaSamples,
 		.loadOp =
 			clearColor ?
@@ -129,7 +129,7 @@ void VulkanRenderPass::CreateOffScreenRenderPass(
 
 	const VkAttachmentDescription depthAttachment = {
 		.flags = 0,
-		.format = vkDev.GetDepthFormat(),
+		.format = ctx.GetDepthFormat(),
 		.samples = msaaSamples,
 		.loadOp = clearDepth ?
 				VK_ATTACHMENT_LOAD_OP_CLEAR :
@@ -196,18 +196,18 @@ void VulkanRenderPass::CreateOffScreenRenderPass(
 		.pDependencies = dependencies.data()
 	};
 
-	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &renderPassInfo, nullptr, &handle_));
+	VK_CHECK(vkCreateRenderPass(ctx.GetDevice(), &renderPassInfo, nullptr, &handle_));
 
 	// Cache VkRenderPassBeginInfo
-	CreateBeginInfo(vkDev);
+	CreateBeginInfo(ctx);
 }
 
 void VulkanRenderPass::CreateOnScreenRenderPass(
-	VulkanContext& vkDev, 
+	VulkanContext& ctx, 
 	uint8_t renderPassBit,
 	VkSampleCountFlagBits msaaSamples)
 {
-	device_ = vkDev.GetDevice();
+	device_ = ctx.GetDevice();
 	renderPassBit_ = renderPassBit;
 
 	const bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
@@ -216,7 +216,7 @@ void VulkanRenderPass::CreateOnScreenRenderPass(
 	
 	const VkAttachmentDescription colorAttachment = {
 		.flags = 0,
-		.format = vkDev.GetSwapchainImageFormat(),
+		.format = ctx.GetSwapchainImageFormat(),
 		.samples = msaaSamples,
 		.loadOp = clearColor ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
@@ -237,7 +237,7 @@ void VulkanRenderPass::CreateOnScreenRenderPass(
 
 	const VkAttachmentDescription depthAttachment = {
 		.flags = 0,
-		.format = vkDev.GetDepthFormat(),
+		.format = ctx.GetDepthFormat(),
 		.samples = msaaSamples,
 		.loadOp = clearDepth ?
 				VK_ATTACHMENT_LOAD_OP_CLEAR :
@@ -294,18 +294,18 @@ void VulkanRenderPass::CreateOnScreenRenderPass(
 		.pDependencies = &dependency
 	};
 
-	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &renderPassInfo, nullptr, &handle_));
+	VK_CHECK(vkCreateRenderPass(ctx.GetDevice(), &renderPassInfo, nullptr, &handle_));
 
 	// Cache VkRenderPassBeginInfo
-	CreateBeginInfo(vkDev);
+	CreateBeginInfo(ctx);
 }
 
 void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(
-	VulkanContext& vkDev,
+	VulkanContext& ctx,
 	uint8_t renderPassBit,
 	VkSampleCountFlagBits msaaSamples)
 {
-	device_ = vkDev.GetDevice();
+	device_ = ctx.GetDevice();
 	renderPassBit_ = renderPassBit;
 
 	const bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
@@ -313,7 +313,7 @@ void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(
 
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,
-		.format = vkDev.GetSwapchainImageFormat(),
+		.format = ctx.GetSwapchainImageFormat(),
 		.samples = msaaSamples,
 		.loadOp = clearColor ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
@@ -368,19 +368,19 @@ void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(
 		.pDependencies = &dependency
 	};
 
-	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &renderPassInfo, nullptr, &handle_));
+	VK_CHECK(vkCreateRenderPass(ctx.GetDevice(), &renderPassInfo, nullptr, &handle_));
 
 	// Cache VkRenderPassBeginInfo
-	CreateBeginInfo(vkDev);
+	CreateBeginInfo(ctx);
 }
 
 void VulkanRenderPass::CreateOffScreenCubemapRenderPass(
-	VulkanContext& vkDev,
+	VulkanContext& ctx,
 	VkFormat cubeFormat,
 	uint8_t renderPassBit,
 	VkSampleCountFlagBits msaaSamples)
 {
-	device_ = vkDev.GetDevice();
+	device_ = ctx.GetDevice();
 
 	constexpr VkImageLayout finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
@@ -431,10 +431,10 @@ void VulkanRenderPass::CreateOffScreenCubemapRenderPass(
 		.pSubpasses = &subpassDesc,
 	};
 
-	VK_CHECK(vkCreateRenderPass(vkDev.GetDevice(), &createInfo, nullptr, &handle_));
+	VK_CHECK(vkCreateRenderPass(ctx.GetDevice(), &createInfo, nullptr, &handle_));
 }
 
-void VulkanRenderPass::CreateBeginInfo(VulkanContext& vkDev)
+void VulkanRenderPass::CreateBeginInfo(VulkanContext& ctx)
 {
 	const bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
 	const bool clearDepth = renderPassBit_ & RenderPassBit::DepthClear;
@@ -461,14 +461,14 @@ void VulkanRenderPass::CreateBeginInfo(VulkanContext& vkDev)
 }
 
 void VulkanRenderPass::BeginRenderPass(
-	VulkanContext& vkDev,
+	VulkanContext& ctx,
 	VkCommandBuffer commandBuffer, 
 	VkFramebuffer framebuffer)
 {
 	// Make sure beginInfo has been initialized
 	// Set framebuffer to beginInfo_
 	beginInfo_.framebuffer = framebuffer;
-	beginInfo_.renderArea = { 0u, 0u, vkDev.GetFrameBufferWidth(), vkDev.GetFrameBufferHeight() };
+	beginInfo_.renderArea = { 0u, 0u, ctx.GetFrameBufferWidth(), ctx.GetFrameBufferHeight() };
 	
 	vkCmdBeginRenderPass(commandBuffer, &beginInfo_, VK_SUBPASS_CONTENTS_INLINE);
 }

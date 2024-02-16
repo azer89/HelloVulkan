@@ -124,11 +124,11 @@ void PipelineBRDFLUT::Execute(VulkanContext& ctx)
 	ctx.EndOneTimeComputeCommand(commandBuffer);
 }
 
-void PipelineBRDFLUT::CreateDescriptor(VulkanContext& vkDev)
+void PipelineBRDFLUT::CreateDescriptor(VulkanContext& ctx)
 {
 	// Pool
 	descriptor_.CreatePool(
-		vkDev,
+		ctx,
 		{
 			.uboCount_ = 0u,
 			.ssboCount_ = 1u,
@@ -138,7 +138,7 @@ void PipelineBRDFLUT::CreateDescriptor(VulkanContext& vkDev)
 		});
 
 	// Layout
-	descriptor_.CreateLayout(vkDev,
+	descriptor_.CreateLayout(ctx,
 	{
 		{
 			.descriptorType_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
@@ -151,7 +151,7 @@ void PipelineBRDFLUT::CreateDescriptor(VulkanContext& vkDev)
 	VkDescriptorBufferInfo outBufferInfo = { outBuffer_.buffer_, 0, VK_WHOLE_SIZE };
 
 	descriptor_.CreateSet(
-		vkDev,
+		ctx,
 		{
 			{.bufferInfoPtr_ = &outBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER }
 		},

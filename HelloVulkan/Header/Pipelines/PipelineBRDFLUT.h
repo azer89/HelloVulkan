@@ -29,7 +29,7 @@ private:
 	VkDescriptorSet descriptorSet_;
 
 private:
-	void CreateDescriptor(VulkanContext& vkDev);
+	void CreateDescriptor(VulkanContext& ctx);
 };
 
 #endif

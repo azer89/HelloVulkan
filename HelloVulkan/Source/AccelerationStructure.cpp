@@ -2,7 +2,7 @@
 #include "VulkanUtility.h"
 
 void AccelerationStructure::Create(
-	VulkanContext& vkDev,
+	VulkanContext& ctx,
 	VkAccelerationStructureBuildSizesInfoKHR buildSizeInfo)
 {
 	VkBufferCreateInfo bufferInfo =
@@ -17,8 +17,8 @@ void AccelerationStructure::Create(
 		.usage = VMA_MEMORY_USAGE_GPU_ONLY,
 	};
 
-	device_ = vkDev.GetDevice();
-	vmaAllocator_ = vkDev.GetVMAAllocator();
+	device_ = ctx.GetDevice();
+	vmaAllocator_ = ctx.GetVMAAllocator();
 	VK_CHECK(vmaCreateBuffer(
 		vmaAllocator_,
 		&bufferInfo,

@@ -1,10 +1,10 @@
 #include "VulkanDescriptor.h"
 #include "VulkanUtility.h"
 
-void VulkanDescriptor::CreatePool(VulkanContext& vkDev,
+void VulkanDescriptor::CreatePool(VulkanContext& ctx,
 	DescriptorPoolCreateInfo createInfo)
 {
-	device_ = vkDev.GetDevice();
+	device_ = ctx.GetDevice();
 
 	std::vector<VkDescriptorPoolSize> poolSizes;
 
@@ -62,10 +62,10 @@ void VulkanDescriptor::CreatePool(VulkanContext& vkDev,
 		.pPoolSizes = poolSizes.data()
 	};
 
-	VK_CHECK(vkCreateDescriptorPool(vkDev.GetDevice(), &poolInfo, nullptr, &pool_));
+	VK_CHECK(vkCreateDescriptorPool(ctx.GetDevice(), &poolInfo, nullptr, &pool_));
 }
 
-void VulkanDescriptor::CreateLayout(VulkanContext& vkDev,
+void VulkanDescriptor::CreateLayout(VulkanContext& ctx,
 	const std::vector<DescriptorBinding>& bindings)
 {
 	std::vector<VkDescriptorSetLayoutBinding> vulkanBindings;
@@ -95,20 +95,20 @@ void VulkanDescriptor::CreateLayout(VulkanContext& vkDev,
 		.pBindings = vulkanBindings.data()
 	};
 
-	VK_CHECK(vkCreateDescriptorSetLayout(vkDev.GetDevice(), &layoutInfo, nullptr, &layout_));
+	VK_CHECK(vkCreateDescriptorSetLayout(ctx.GetDevice(), &layoutInfo, nullptr, &layout_));
 }
 
 void VulkanDescriptor::CreateSet(
-	VulkanContext& vkDev, 
+	VulkanContext& ctx, 
 	const std::vector<DescriptorWrite>& writes,
 	VkDescriptorSet* set)
 {
-	AllocateSet(vkDev, set);
+	AllocateSet(ctx, set);
 
-	UpdateSet(vkDev, writes, set);
+	UpdateSet(ctx, writes, set);
 }
 
-void VulkanDescriptor::AllocateSet(VulkanContext& vkDev, VkDescriptorSet* set)
+void VulkanDescriptor::AllocateSet(VulkanContext& ctx, VkDescriptorSet* set)
 {
 	const VkDescriptorSetAllocateInfo allocInfo = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
@@ -118,10 +118,10 @@ void VulkanDescriptor::AllocateSet(VulkanContext& vkDev, VkDescriptorSet* set)
 		.pSetLayouts = &layout_
 	};
 
-	VK_CHECK(vkAllocateDescriptorSets(vkDev.GetDevice(), &allocInfo, set));
+	VK_CHECK(vkAllocateDescriptorSets(ctx.GetDevice(), &allocInfo, set));
 }
 
-void VulkanDescriptor::UpdateSet(VulkanContext& vkDev, const std::vector<DescriptorWrite>& writes, VkDescriptorSet* set)
+void VulkanDescriptor::UpdateSet(VulkanContext& ctx, const std::vector<DescriptorWrite>& writes, VkDescriptorSet* set)
 {
 	std::vector<VkWriteDescriptorSet> descriptorWrites;
 
@@ -145,7 +145,7 @@ void VulkanDescriptor::UpdateSet(VulkanContext& vkDev, const std::vector<Descrip
 
 	vkUpdateDescriptorSets
 	(
-		vkDev.GetDevice(),
+		ctx.GetDevice(),
 		static_cast<uint32_t>(descriptorWrites.size()),
 		descriptorWrites.data(),
 		0,

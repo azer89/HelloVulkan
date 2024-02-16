@@ -30,7 +30,7 @@ public:
 	}
 
 	void Create(
-		VulkanContext& vkDev,
+		VulkanContext& ctx,
 		VkAccelerationStructureBuildSizesInfoKHR buildSizeInfo);
 
 public:

@@ -11,7 +11,7 @@ void ClusterForwardBuffers::SetAABBDirty()
 	}
 }
 
-void ClusterForwardBuffers::CreateBuffers(VulkanContext& vkDev, uint32_t lightCount)
+void ClusterForwardBuffers::CreateBuffers(VulkanContext& ctx, uint32_t lightCount)
 {
 	constexpr uint32_t bufferCount = AppConfig::FrameOverlapCount;
 
@@ -32,21 +32,21 @@ void ClusterForwardBuffers::CreateBuffers(VulkanContext& vkDev, uint32_t lightCo
 
 	for (uint32_t i = 0; i < bufferCount; ++i)
 	{
-		aabbBuffers_[i].CreateBuffer(vkDev, aabbBufferSize,
+		aabbBuffers_[i].CreateBuffer(ctx, aabbBufferSize,
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 			VMA_MEMORY_USAGE_GPU_ONLY,
 			0);
 
-		globalIndexCountBuffers_[i].CreateBuffer(vkDev, sizeof(uint32_t),
+		globalIndexCountBuffers_[i].CreateBuffer(ctx, sizeof(uint32_t),
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 			VMA_MEMORY_USAGE_CPU_TO_GPU);
 
-		lightCellsBuffers_[i].CreateBuffer(vkDev, lightCellsBufferSize,
+		lightCellsBuffers_[i].CreateBuffer(ctx, lightCellsBufferSize,
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 			VMA_MEMORY_USAGE_GPU_ONLY,
 			0);
 
-		lightIndicesBuffers_[i].CreateBuffer(vkDev, lightIndicesBufferSize,
+		lightIndicesBuffers_[i].CreateBuffer(ctx, lightIndicesBufferSize,
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 			VMA_MEMORY_USAGE_GPU_ONLY,
 			0);

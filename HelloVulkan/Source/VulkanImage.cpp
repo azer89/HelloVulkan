@@ -24,29 +24,29 @@ void VulkanImage::Destroy()
 }
 
 void VulkanImage::CreateImageResources(
-	VulkanContext& vkDev,
+	VulkanContext& ctx,
 	const char* filename)
 {
-	CreateFromFile(vkDev, filename);
-	GenerateMipmap(vkDev,
+	CreateFromFile(ctx, filename);
+	GenerateMipmap(ctx,
 		mipCount_,
 		width_,
 		height_,
 		VK_IMAGE_LAYOUT_UNDEFINED);
 	CreateImageView(
-		vkDev,
+		ctx,
 		VK_FORMAT_R8G8B8A8_UNORM,
 		VK_IMAGE_ASPECT_COLOR_BIT,
 		VK_IMAGE_VIEW_TYPE_2D,
 		layerCount_,
 		mipCount_);
-	CreateDefaultSampler(vkDev,
+	CreateDefaultSampler(ctx,
 		0.f, // minLod
 		static_cast<float>(mipCount_)); // maxLod
 }
 
 void VulkanImage::CreateFromFile(
-	VulkanContext& vkDev,
+	VulkanContext& ctx,
 	const char* filename)
 {
 	stbi_set_flip_vertically_on_load(false);
@@ -60,7 +60,7 @@ void VulkanImage::CreateFromFile(
 	}
 
 	CreateImageFromData(
-		vkDev,
+		ctx,
 		pixels,
 		texWidth,
 		texHeight,
@@ -72,7 +72,7 @@ void VulkanImage::CreateFromFile(
 }
 
 void VulkanImage::CreateFromHDR(
-	VulkanContext& vkDev,
+	VulkanContext& ctx,
 	const char* filename)
 {
 	stbi_set_flip_vertically_on_load(true);
@@ -81,7 +81,7 @@ void VulkanImage::CreateFromHDR(
 	float* pixels = stbi_loadf(filename, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 
 	CreateImageFromData(
-		vkDev,
+		ctx,
 		pixels,
 		texWidth,
 		texHeight,
@@ -93,15 +93,15 @@ void VulkanImage::CreateFromHDR(
 }
 
 void VulkanImage::CreateColorResources(
-	VulkanContext& vkDev, 
+	VulkanContext& ctx, 
 	uint32_t width, 
 	uint32_t height,
 	VkSampleCountFlagBits outputDiffuseSampleCount)
 {
-	VkFormat format = vkDev.GetSwapchainImageFormat();
+	VkFormat format = ctx.GetSwapchainImageFormat();
 
 	CreateImage(
-		vkDev,
+		ctx,
 		width,
 		height,
 		1, // mip
@@ -114,22 +114,22 @@ void VulkanImage::CreateColorResources(
 		outputDiffuseSampleCount);
 
 	CreateImageView(
-		vkDev,
+		ctx,
 		format,
 		VK_IMAGE_ASPECT_COLOR_BIT);
-	CreateDefaultSampler(vkDev);
+	CreateDefaultSampler(ctx);
 }
 
 void VulkanImage::CreateDepthResources(
-	VulkanContext& vkDev, 
+	VulkanContext& ctx, 
 	uint32_t width, 
 	uint32_t height,
 	VkSampleCountFlagBits outputDiffuseSampleCount)
 {
-	VkFormat depthFormat = vkDev.GetDepthFormat();
+	VkFormat depthFormat = ctx.GetDepthFormat();
 
 	CreateImage(
-		vkDev,
+		ctx,
 		width,
 		height,
 		1, // mip
@@ -142,19 +142,19 @@ void VulkanImage::CreateDepthResources(
 		outputDiffuseSampleCount);
 
 	CreateImageView(
-		vkDev,
+		ctx,
 		depthFormat,
 		VK_IMAGE_ASPECT_DEPTH_BIT);
 
 	TransitionImageLayout(
-		vkDev, 
+		ctx, 
 		depthFormat, 
 		VK_IMAGE_LAYOUT_UNDEFINED, 
 		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 }
 
 void VulkanImage::CreateImageFromData(
-	VulkanContext& vkDev,
+	VulkanContext& ctx,
 	void* imageData,
 	uint32_t texWidth,
 	uint32_t texHeight,
@@ -164,7 +164,7 @@ void VulkanImage::CreateImageFromData(
 	VkImageCreateFlags flags)
 {
 	CreateImage(
-		vkDev, 
+		ctx, 
 		texWidth, 
 		texHeight, 
 		mipmapCount,
@@ -175,17 +175,17 @@ void VulkanImage::CreateImageFromData(
 		VMA_MEMORY_USAGE_GPU_ONLY,
 		flags);
 
-	UpdateImage(vkDev, texWidth, texHeight, texFormat, layerCount, imageData);
+	UpdateImage(ctx, texWidth, texHeight, texFormat, layerCount, imageData);
 }
 
 void VulkanImage::CopyBufferToImage(
-	VulkanContext& vkDev,
+	VulkanContext& ctx,
 	VkBuffer buffer,
 	uint32_t width,
 	uint32_t height,
 	uint32_t layerCount)
 {
-	VkCommandBuffer commandBuffer = vkDev.BeginOneTimeGraphicsCommand();
+	VkCommandBuffer commandBuffer = ctx.BeginOneTimeGraphicsCommand();
 
 	const VkBufferImageCopy region = {
 		.bufferOffset = 0,
@@ -203,11 +203,11 @@ void VulkanImage::CopyBufferToImage(
 
 	vkCmdCopyBufferToImage(commandBuffer, buffer, image_, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
-	vkDev.EndOneTimeGraphicsCommand(commandBuffer);
+	ctx.EndOneTimeGraphicsCommand(commandBuffer);
 }
 
 void VulkanImage::CreateImage(
-	VulkanContext& vkDev,
+	VulkanContext& ctx,
 	uint32_t width,
 	uint32_t height,
 	uint32_t mipCount,
@@ -249,8 +249,8 @@ void VulkanImage::CreateImage(
 		.requiredFlags = VkMemoryPropertyFlags(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT),
 	};
 
-	device_ = vkDev.GetDevice();
-	vmaAllocator_ = vkDev.GetVMAAllocator();
+	device_ = ctx.GetDevice();
+	vmaAllocator_ = ctx.GetVMAAllocator();
 
 	VK_CHECK(vmaCreateImage(
 		vmaAllocator_,
@@ -262,7 +262,7 @@ void VulkanImage::CreateImage(
 }
 
 void VulkanImage::CreateImageView(
-	VulkanContext& vkDev, 
+	VulkanContext& ctx, 
 	VkFormat format, 
 	VkImageAspectFlags aspectFlags, 
 	VkImageViewType viewType, 
@@ -294,11 +294,11 @@ void VulkanImage::CreateImageView(
 		}
 	};
 
-	VK_CHECK(vkCreateImageView(vkDev.GetDevice(), &viewInfo, nullptr, &imageView_));
+	VK_CHECK(vkCreateImageView(ctx.GetDevice(), &viewInfo, nullptr, &imageView_));
 }
 
 void VulkanImage::CreateDefaultSampler(
-	VulkanContext& vkDev,
+	VulkanContext& ctx,
 	float minLod,
 	float maxLod,
 	VkFilter minFilter,
@@ -306,7 +306,7 @@ void VulkanImage::CreateDefaultSampler(
 	VkSamplerAddressMode addressMode)
 {
 	CreateSampler(
-		vkDev,
+		ctx,
 		defaultImageSampler_,
 		minLod,
 		maxLod,
@@ -317,7 +317,7 @@ void VulkanImage::CreateDefaultSampler(
 }
 
 void VulkanImage::CreateSampler(
-	VulkanContext& vkDev,
+	VulkanContext& ctx,
 	VkSampler& sampler,
 	float minLod,
 	float maxLod,
@@ -346,11 +346,11 @@ void VulkanImage::CreateSampler(
 		.unnormalizedCoordinates = VK_FALSE
 	};
 
-	VK_CHECK(vkCreateSampler(vkDev.GetDevice(), &samplerInfo, nullptr, &sampler));
+	VK_CHECK(vkCreateSampler(ctx.GetDevice(), &samplerInfo, nullptr, &sampler));
 }
 
 void VulkanImage::UpdateImage(
-	VulkanContext& vkDev,
+	VulkanContext& ctx,
 	uint32_t texWidth,
 	uint32_t texHeight,
 	VkFormat texFormat,
@@ -366,29 +366,29 @@ void VulkanImage::UpdateImage(
 	VulkanBuffer stagingBuffer{};
 
 	stagingBuffer.CreateBuffer(
-		vkDev,
+		ctx,
 		imageSize,
 		VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 		VMA_MEMORY_USAGE_CPU_ONLY);
 
-	stagingBuffer.UploadBufferData(vkDev, 0, imageData, imageSize);
-	TransitionImageLayout(vkDev, texFormat, sourceImageLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, layerCount);
-	CopyBufferToImage(vkDev, stagingBuffer.buffer_, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight), layerCount);
-	TransitionImageLayout(vkDev, texFormat, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, layerCount);
+	stagingBuffer.UploadBufferData(ctx, 0, imageData, imageSize);
+	TransitionImageLayout(ctx, texFormat, sourceImageLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, layerCount);
+	CopyBufferToImage(ctx, stagingBuffer.buffer_, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight), layerCount);
+	TransitionImageLayout(ctx, texFormat, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, layerCount);
 
 	stagingBuffer.Destroy();
 }
 
-void VulkanImage::TransitionImageLayout(VulkanContext& vkDev,
+void VulkanImage::TransitionImageLayout(VulkanContext& ctx,
 	VkFormat format,
 	VkImageLayout oldLayout,
 	VkImageLayout newLayout,
 	uint32_t layerCount,
 	uint32_t mipLevels)
 {
-	VkCommandBuffer commandBuffer = vkDev.BeginOneTimeGraphicsCommand();
+	VkCommandBuffer commandBuffer = ctx.BeginOneTimeGraphicsCommand();
 	TransitionImageLayoutCommand(commandBuffer, image_, format, oldLayout, newLayout, layerCount, mipLevels);
-	vkDev.EndOneTimeGraphicsCommand(commandBuffer);
+	ctx.EndOneTimeGraphicsCommand(commandBuffer);
 }
 
 void VulkanImage::TransitionImageLayoutCommand(
@@ -600,14 +600,14 @@ void VulkanImage::TransitionImageLayoutCommand(
 }
 
 void VulkanImage::GenerateMipmap(
-	VulkanContext& vkDev,
+	VulkanContext& ctx,
 	uint32_t maxMipLevels,
 	uint32_t width,
 	uint32_t height,
 	VkImageLayout currentImageLayout
 )
 {
-	VkCommandBuffer commandBuffer = vkDev.BeginOneTimeGraphicsCommand();
+	VkCommandBuffer commandBuffer = ctx.BeginOneTimeGraphicsCommand();
 
 	VkImageSubresourceRange mipbaseRange{};
 	mipbaseRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -697,7 +697,7 @@ void VulkanImage::GenerateMipmap(
 		.destinationAccess = VK_ACCESS_SHADER_READ_BIT 
 	});
 
-	vkDev.EndOneTimeGraphicsCommand(commandBuffer);
+	ctx.EndOneTimeGraphicsCommand(commandBuffer);
 }
 
 void VulkanImage::CreateBarrier(ImageBarrierCreateInfo info)
@@ -786,7 +786,7 @@ VkDescriptorImageInfo VulkanImage::GetDescriptorImageInfo()
 	};
 }
 
-void VulkanImage::SetDebugName(VulkanContext& vkDev, const std::string& debugName)
+void VulkanImage::SetDebugName(VulkanContext& ctx, const std::string& debugName)
 {
-	vkDev.SetVkObjectName(image_, VK_OBJECT_TYPE_IMAGE, debugName.c_str());
+	ctx.SetVkObjectName(image_, VK_OBJECT_TYPE_IMAGE, debugName.c_str());
 }

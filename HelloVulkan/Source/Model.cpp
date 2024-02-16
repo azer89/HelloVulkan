@@ -13,18 +13,18 @@ inline glm::mat4 mat4_cast(const aiMatrix4x4& m)
 	return glm::transpose(glm::make_mat4(&m.a1));
 }
 
-Model::Model(VulkanContext& vkDev, const std::string& path) :
-	device_(vkDev.GetDevice()),
+Model::Model(VulkanContext& ctx, const std::string& path) :
+	device_(ctx.GetDevice()),
 	blackTextureFilePath_(AppConfig::TextureFolder + "Black1x1.png")
 {
 	// In case a texture type cannot be found, replace it with a default texture
 	textureMap_[blackTextureFilePath_] = {};
 	textureMap_[blackTextureFilePath_].CreateImageResources(
-		vkDev, 
+		ctx, 
 		blackTextureFilePath_.c_str());
 
 	// Load model here
-	LoadModel(vkDev, path);
+	LoadModel(ctx, path);
 }
 
 Model::~Model()
@@ -58,7 +58,7 @@ void Model::AddTextureIfEmpty(TextureType tType, const std::string& filePath)
 
 // Loads a model with supported ASSIMP extensions from file and 
 // stores the resulting meshes in the meshes vector.
-void Model::LoadModel(VulkanContext& vkDev, std::string const& path)
+void Model::LoadModel(VulkanContext& ctx, std::string const& path)
 {
 	// Read file via ASSIMP
 	Assimp::Importer importer;
@@ -79,14 +79,14 @@ void Model::LoadModel(VulkanContext& vkDev, std::string const& path)
 	directory_ = path.substr(0, path.find_last_of('/'));
 
 	// Process ASSIMP's root node recursively
-	ProcessNode(vkDev, scene->mRootNode, scene, glm::mat4(1.0));
+	ProcessNode(ctx, scene->mRootNode, scene, glm::mat4(1.0));
 }
 
 // Processes a node in a recursive fashion. 
 // Processes each individual mesh located at the node and 
 // repeats this process on its children nodes (if any).
 void Model::ProcessNode(
-	VulkanContext& vkDev, 
+	VulkanContext& ctx, 
 	aiNode* node, 
 	const aiScene* scene, 
 	const glm::mat4& parentTransform)
@@ -101,17 +101,17 @@ void Model::ProcessNode(
 		// The scene contains all the data, node is just to keep stuff organized (like relations between nodes).
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 
-		meshes_.push_back(ProcessMesh(vkDev, mesh, scene, totalTransform));
+		meshes_.push_back(ProcessMesh(ctx, mesh, scene, totalTransform));
 	}
 	// After we've processed all of the meshes (if any) we then recursively process each of the children nodes
 	for (unsigned int i = 0; i < node->mNumChildren; ++i)
 	{
-		ProcessNode(vkDev, node->mChildren[i], scene, totalTransform);
+		ProcessNode(ctx, node->mChildren[i], scene, totalTransform);
 	}
 }
 
 Mesh Model::ProcessMesh(
-	VulkanContext& vkDev, 
+	VulkanContext& ctx, 
 	aiMesh* mesh, 
 	const aiScene* scene, 
 	const glm::mat4& transform)
@@ -189,7 +189,7 @@ Mesh Model::ProcessMesh(
 			{
 				VulkanImage texture;
 				std::string fullFilePath = this->directory_ + '/' + str.C_Str();
-				texture.CreateImageResources(vkDev, fullFilePath.c_str());
+				texture.CreateImageResources(ctx, fullFilePath.c_str());
 				textureMap_[key] = texture;
 
 				// TODO Create Sampler
@@ -228,5 +228,5 @@ Mesh Model::ProcessMesh(
 		textures[TextureType::Emissive] = &textureMap_[blackTextureFilePath_];
 	}
 
-	return Mesh(vkDev, std::move(vertices), std::move(indices), std::move(textures));
+	return Mesh(ctx, std::move(vertices), std::move(indices), std::move(textures));
 }

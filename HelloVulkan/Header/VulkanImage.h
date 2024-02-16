@@ -60,19 +60,19 @@ public:
 	void Destroy();
 
 	void CreateFromFile(
-		VulkanContext& vkDev,
+		VulkanContext& ctx,
 		const char* filename);
 
 	void CreateImageResources(
-		VulkanContext& vkDev,
+		VulkanContext& ctx,
 		const char* filename);
 
 	void CreateFromHDR(
-		VulkanContext& vkDev,
+		VulkanContext& ctx,
 		const char* filename);
 
 	void CreateSampler(
-		VulkanContext& vkDev,
+		VulkanContext& ctx,
 		VkSampler& sampler,
 		float minLod = 0.f,
 		float maxLod = 0.f,
@@ -81,7 +81,7 @@ public:
 		VkSamplerAddressMode addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
 
 	void CreateDefaultSampler(
-		VulkanContext& vkDev,
+		VulkanContext& ctx,
 		float minLod = 0.f,
 		float maxLod = 0.f,
 		VkFilter minFilter = VK_FILTER_LINEAR,
@@ -89,7 +89,7 @@ public:
 		VkSamplerAddressMode addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
 
 	void CreateImage(
-		VulkanContext& vkDev,
+		VulkanContext& ctx,
 		uint32_t width,
 		uint32_t height,
 		uint32_t mipCount,
@@ -102,7 +102,7 @@ public:
 		VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
 
 	void CreateImageFromData(
-		VulkanContext& vkDev,
+		VulkanContext& ctx,
 		void* imageData,
 		uint32_t texWidth,
 		uint32_t texHeight,
@@ -113,27 +113,27 @@ public:
 
 	// This is used for offscreen rendering as a color attachment
 	void CreateColorResources(
-		VulkanContext& vkDev, 
+		VulkanContext& ctx, 
 		uint32_t width, 
 		uint32_t height,
 		VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
 
 	// Depth attachment for onscreen/offscreen rendering
 	void CreateDepthResources(
-		VulkanContext& vkDev, 
+		VulkanContext& ctx, 
 		uint32_t width, 
 		uint32_t height,
 		VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
 
 	void GenerateMipmap(
-		VulkanContext& vkDev,
+		VulkanContext& ctx,
 		uint32_t maxMipLevels,
 		uint32_t width,
 		uint32_t height,
 		VkImageLayout currentImageLayout);
 
 	void CreateImageView(
-		VulkanContext& vkDev,
+		VulkanContext& ctx,
 		VkFormat format,
 		VkImageAspectFlags aspectFlags,
 		VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_2D,
@@ -141,7 +141,7 @@ public:
 		uint32_t mipCount = 1);
 
 	void CopyBufferToImage(
-		VulkanContext& vkDev,
+		VulkanContext& ctx,
 		VkBuffer buffer,
 		uint32_t width,
 		uint32_t height,
@@ -151,7 +151,7 @@ public:
 
 	void CreateBarrier(ImageBarrierCreateInfo info, VkImageSubresourceRange subresourceRange);
 
-	void TransitionImageLayout(VulkanContext& vkDev,
+	void TransitionImageLayout(VulkanContext& ctx,
 		VkFormat format,
 		VkImageLayout oldLayout,
 		VkImageLayout newLayout,
@@ -170,11 +170,11 @@ public:
 	VkDescriptorImageInfo GetDescriptorImageInfo();
 
 	// For validation layer
-	void SetDebugName(VulkanContext& vkDev, const std::string& debugName);
+	void SetDebugName(VulkanContext& ctx, const std::string& debugName);
 
 private:
 	void UpdateImage(
-		VulkanContext& vkDev,
+		VulkanContext& ctx,
 		uint32_t texWidth,
 		uint32_t texHeight,
 		VkFormat texFormat,

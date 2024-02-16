@@ -118,11 +118,11 @@ void PipelineCubeFilter::InitializeOutputCubemap(
 		numMipmap);
 }
 
-void PipelineCubeFilter::CreateDescriptor(VulkanContext& vkDev, VulkanImage* inputCubemap)
+void PipelineCubeFilter::CreateDescriptor(VulkanContext& ctx, VulkanImage* inputCubemap)
 {
 	// Pool
 	descriptor_.CreatePool(
-		vkDev,
+		ctx,
 		{
 			.uboCount_ = 0u,
 			.ssboCount_ = 0u,
@@ -132,7 +132,7 @@ void PipelineCubeFilter::CreateDescriptor(VulkanContext& vkDev, VulkanImage* inp
 		});
 
 	// Layout
-	descriptor_.CreateLayout(vkDev,
+	descriptor_.CreateLayout(ctx,
 	{
 		{
 			.descriptorType_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -150,7 +150,7 @@ void PipelineCubeFilter::CreateDescriptor(VulkanContext& vkDev, VulkanImage* inp
 	};
 
 	descriptor_.CreateSet(
-		vkDev,
+		ctx,
 		{
 			{.imageInfoPtr_ = &imageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER }
 		},

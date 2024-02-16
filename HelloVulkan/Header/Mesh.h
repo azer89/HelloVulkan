@@ -73,20 +73,20 @@ public:
 
 	// Constructors
 	Mesh(
-		VulkanContext& vkDev,
+		VulkanContext& ctx,
 		std::vector<VertexData>&& _vertices,
 		std::vector<unsigned int>&& _indices,
 		std::unordered_map<TextureType, VulkanImage*>&& _textures);
 	Mesh(
-		VulkanContext& vkDev,
+		VulkanContext& ctx,
 		const std::vector<VertexData>& vertices,
 		const std::vector<unsigned int>& indices,
 		const std::unordered_map<TextureType, VulkanImage*>& textures);
 
 	// TODO Implement this function
-	//void AddTexture(VulkanDevice& vkDev, const char* fileName, uint32_t bindIndex);
+	//void AddTexture(VulkanContext& ctx, const char* fileName, uint32_t bindIndex);
 
-	void Setup(VulkanContext& vkDev);
+	void Setup(VulkanContext& ctx);
 
 	void Destroy();
 };
