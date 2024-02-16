@@ -23,14 +23,14 @@ This class actually has two graphics pipelines.
 class PipelineCubeFilter final : public PipelineBase
 {
 public:
-	PipelineCubeFilter(VulkanContext& vkDev, VulkanImage* inputCubemap);
+	PipelineCubeFilter(VulkanContext& ctx, VulkanImage* inputCubemap);
 	~PipelineCubeFilter();
 
-	void OffscreenRender(VulkanContext& vkDev, 
+	void OffscreenRender(VulkanContext& ctx, 
 		VulkanImage* outputCubemap,
 		CubeFilterType filterType);
 
-	void FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer) override;
+	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
 private:
 
@@ -42,18 +42,18 @@ private:
 
 	void CreateDescriptor(VulkanContext& vkDev, VulkanImage* inputCubemap);
 
-	void InitializeOutputCubemap(VulkanContext& vkDev, 
+	void InitializeOutputCubemap(VulkanContext& ctx, 
 		VulkanImage* outputDiffuseCubemap,
 		uint32_t numMipmap,
 		uint32_t inputCubeSideLength);
 
-	void CreateOutputCubemapViews(VulkanContext& vkDev,
+	void CreateOutputCubemapViews(VulkanContext& ctx,
 		VulkanImage* outputCubemap,
 		std::vector<std::vector<VkImageView>>& outputCubemapViews,
 		uint32_t numMip);
 
 	void CreateOffsreenGraphicsPipeline(
-		VulkanContext& vkDev,
+		VulkanContext& ctx,
 		VkRenderPass renderPass,
 		VkPipelineLayout pipelineLayout,
 		const std::vector<std::string>& shaderFiles,

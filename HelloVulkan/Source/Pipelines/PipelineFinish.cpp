@@ -4,24 +4,24 @@
 /*
 	Present swapchain image 
 */
-PipelineFinish::PipelineFinish(VulkanContext& vkDev) :
-	PipelineBase(vkDev,
+PipelineFinish::PipelineFinish(VulkanContext& ctx) :
+	PipelineBase(ctx,
 		{
 			.type_ = PipelineType::GraphicsOnScreen
 		}
 	)
 {
 	renderPass_.CreateOnScreenColorOnlyRenderPass(
-		vkDev, 
+		ctx, 
 		// Present swapchain image 
 		RenderPassBit::ColorPresent);
 
-	framebuffer_.Create(vkDev, renderPass_.GetHandle(), {}, IsOffscreen());
+	framebuffer_.Create(ctx, renderPass_.GetHandle(), {}, IsOffscreen());
 }
 
-void PipelineFinish::FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer)
+void PipelineFinish::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
-	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
-	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));
+	uint32_t swapchainImageIndex = ctx.GetCurrentSwapchainImageIndex();
+	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));
 	vkCmdEndRenderPass(commandBuffer);
 }

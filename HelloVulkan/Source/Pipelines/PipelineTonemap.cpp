@@ -2,24 +2,24 @@
 #include "VulkanUtility.h"
 #include "Configs.h"
 
-PipelineTonemap::PipelineTonemap(VulkanContext& vkDev,
+PipelineTonemap::PipelineTonemap(VulkanContext& ctx,
 	VulkanImage* singleSampledColorImage) :
-	PipelineBase(vkDev,
+	PipelineBase(ctx,
 		{
 			.type_ = PipelineType::GraphicsOnScreen
 		}),
 	// Need to store a pointer for window resizing
 	singleSampledColorImage_(singleSampledColorImage)
 {
-	renderPass_.CreateOnScreenColorOnlyRenderPass(vkDev);
+	renderPass_.CreateOnScreenColorOnlyRenderPass(ctx);
 
-	framebuffer_.Create(vkDev, renderPass_.GetHandle(), {}, IsOffscreen());
+	framebuffer_.Create(ctx, renderPass_.GetHandle(), {}, IsOffscreen());
 
-	CreateDescriptor(vkDev);
+	CreateDescriptor(ctx);
 
-	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_);
+	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
 
-	CreateGraphicsPipeline(vkDev,
+	CreateGraphicsPipeline(ctx,
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
@@ -29,18 +29,18 @@ PipelineTonemap::PipelineTonemap(VulkanContext& vkDev,
 		&pipeline_);
 }
 
-void PipelineTonemap::OnWindowResized(VulkanContext& vkDev)
+void PipelineTonemap::OnWindowResized(VulkanContext& ctx)
 {
-	PipelineBase::OnWindowResized(vkDev);
-	UpdateDescriptorSets(vkDev);
+	PipelineBase::OnWindowResized(ctx);
+	UpdateDescriptorSets(ctx);
 }
 
-void PipelineTonemap::FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer)
+void PipelineTonemap::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
-	uint32_t frameIndex = vkDev.GetFrameIndex();
-	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
-	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));
-	BindPipeline(vkDev, commandBuffer);
+	uint32_t frameIndex = ctx.GetFrameIndex();
+	uint32_t swapchainImageIndex = ctx.GetCurrentSwapchainImageIndex();
+	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));
+	BindPipeline(ctx, commandBuffer);
 	vkCmdBindDescriptorSets(
 		commandBuffer,
 		VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -54,11 +54,11 @@ void PipelineTonemap::FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer co
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelineTonemap::CreateDescriptor(VulkanContext& vkDev)
+void PipelineTonemap::CreateDescriptor(VulkanContext& ctx)
 {
 	// Pool
 	descriptor_.CreatePool(
-		vkDev,
+		ctx,
 		{
 			.uboCount_ = 0u,
 			.ssboCount_ = 0u,
@@ -68,7 +68,7 @@ void PipelineTonemap::CreateDescriptor(VulkanContext& vkDev)
 		});
 
 	// Layout
-	descriptor_.CreateLayout(vkDev,
+	descriptor_.CreateLayout(ctx,
 	{
 		{
 			.descriptorType_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -78,21 +78,21 @@ void PipelineTonemap::CreateDescriptor(VulkanContext& vkDev)
 	});
 
 	// Set
-	AllocateDescriptorSets(vkDev);
-	UpdateDescriptorSets(vkDev);
+	AllocateDescriptorSets(ctx);
+	UpdateDescriptorSets(ctx);
 }
 
-void PipelineTonemap::AllocateDescriptorSets(VulkanContext& vkDev)
+void PipelineTonemap::AllocateDescriptorSets(VulkanContext& ctx)
 {
 	auto frameCount = AppConfig::FrameOverlapCount;
 
 	for (size_t i = 0; i < frameCount; i++)
 	{
-		descriptor_.AllocateSet(vkDev, &(descriptorSets_[i]));
+		descriptor_.AllocateSet(ctx, &(descriptorSets_[i]));
 	}
 }
 
-void PipelineTonemap::UpdateDescriptorSets(VulkanContext& vkDev)
+void PipelineTonemap::UpdateDescriptorSets(VulkanContext& ctx)
 {
 	VkDescriptorImageInfo imageInfo = singleSampledColorImage_->GetDescriptorImageInfo();
 
@@ -100,7 +100,7 @@ void PipelineTonemap::UpdateDescriptorSets(VulkanContext& vkDev)
 	for (size_t i = 0; i < frameCount; ++i)
 	{
 		descriptor_.UpdateSet(
-			vkDev,
+			ctx,
 			{
 				{.imageInfoPtr_ = &imageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER }
 			},

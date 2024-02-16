@@ -5,8 +5,8 @@
 // Entry point
 int main()
 {
-	AppPBR app;
-	//AppPBRClusterForward app;
+	//AppPBR app;
+	AppPBRClusterForward app;
 	//AppSimpleRaytracing app;
 	
 	auto returnValue = app.MainLoop();

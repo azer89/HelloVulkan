@@ -6,12 +6,12 @@
 #include <array>
 
 PipelineLightRender::PipelineLightRender(
-	VulkanContext& vkDev,
+	VulkanContext& ctx,
 	Lights* lights,
 	VulkanImage* depthImage, 
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
-	PipelineBase(vkDev, 
+	PipelineBase(ctx, 
 		{
 			.type_ = PipelineType::GraphicsOffScreen,
 			.msaaSamples_ = offscreenColorImage->multisampleCount_,
@@ -22,12 +22,12 @@ PipelineLightRender::PipelineLightRender(
 	lights_(lights),
 	shouldRender_(true)
 {
-	CreateMultipleUniformBuffers(vkDev, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
+	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
 
-	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, config_.msaaSamples_);
+	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
 
 	framebuffer_.Create(
-		vkDev,
+		ctx,
 		renderPass_.GetHandle(),
 		{
 			offscreenColorImage,
@@ -36,11 +36,11 @@ PipelineLightRender::PipelineLightRender(
 		IsOffscreen()
 	);
 
-	CreateDescriptor(vkDev);
+	CreateDescriptor(ctx);
 
-	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_);
+	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
 
-	CreateGraphicsPipeline(vkDev,
+	CreateGraphicsPipeline(ctx,
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
@@ -55,16 +55,16 @@ PipelineLightRender::~PipelineLightRender()
 {
 }
 
-void PipelineLightRender::FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer)
+void PipelineLightRender::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
 	if (!shouldRender_)
 	{
 		return;
 	}
 
-	uint32_t frameIndex = vkDev.GetFrameIndex();
-	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
-	BindPipeline(vkDev, commandBuffer);
+	uint32_t frameIndex = ctx.GetFrameIndex();
+	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
+	BindPipeline(ctx, commandBuffer);
 	vkCmdBindDescriptorSets(
 		commandBuffer,
 		VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -83,11 +83,11 @@ void PipelineLightRender::FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffe
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelineLightRender::CreateDescriptor(VulkanContext& vkDev)
+void PipelineLightRender::CreateDescriptor(VulkanContext& ctx)
 {
 	// Pool
 	descriptor_.CreatePool(
-		vkDev,
+		ctx,
 		{
 			.uboCount_ = 1u,
 			.ssboCount_ = 1u,
@@ -97,7 +97,7 @@ void PipelineLightRender::CreateDescriptor(VulkanContext& vkDev)
 		});
 
 	// Layout
-	descriptor_.CreateLayout(vkDev,
+	descriptor_.CreateLayout(ctx,
 	{
 		{
 			.descriptorType_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
@@ -120,7 +120,7 @@ void PipelineLightRender::CreateDescriptor(VulkanContext& vkDev)
 		VkDescriptorBufferInfo bufferInfo2 = {.buffer = lights_->GetSSBOBuffer(), .offset = 0, .range = lights_->GetSSBOSize()};
 
 		descriptor_.CreateSet(
-			vkDev, 
+			ctx, 
 			{
 				{.bufferInfoPtr_ = &bufferInfo1, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER },
 				{.bufferInfoPtr_ = &bufferInfo2, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER }

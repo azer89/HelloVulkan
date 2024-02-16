@@ -9,10 +9,10 @@ Clear a swapchain image
 class PipelineClear final : public PipelineBase
 {
 public:
-	PipelineClear(VulkanContext& vkDev);
+	PipelineClear(VulkanContext& ctx);
 	~PipelineClear();
 
-	void FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer) override;
+	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 };
 
 #endif

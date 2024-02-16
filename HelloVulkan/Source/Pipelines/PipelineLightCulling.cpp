@@ -4,24 +4,24 @@
 #include <array>
 
 PipelineLightCulling::PipelineLightCulling(
-	VulkanContext& vkDev,
+	VulkanContext& ctx,
 	Lights* lights,
 	ClusterForwardBuffers* cfBuffers) :
-	PipelineBase(vkDev,
+	PipelineBase(ctx,
 		{
 			.type_ = PipelineType::Compute
 		}),
 	lights_(lights),
 	cfBuffers_(cfBuffers)
 {
-	CreateMultipleUniformBuffers(vkDev, cfUBOBuffers_, sizeof(ClusterForwardUBO), AppConfig::FrameOverlapCount);
-	CreateDescriptor(vkDev);
-	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_);
+	CreateMultipleUniformBuffers(ctx, cfUBOBuffers_, sizeof(ClusterForwardUBO), AppConfig::FrameOverlapCount);
+	CreateDescriptor(ctx);
+	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
 
 	std::string shaderFile = AppConfig::ShaderFolder + "ClusteredForward/LightCulling.comp";
 	//std::string shaderFile = AppConfig::ShaderFolder + "ClusteredForward/LightCullingBatch.comp";
 
-	CreateComputePipeline(vkDev, shaderFile);
+	CreateComputePipeline(ctx, shaderFile);
 }
 
 PipelineLightCulling::~PipelineLightCulling()
@@ -32,13 +32,13 @@ PipelineLightCulling::~PipelineLightCulling()
 	}
 }
 
-void PipelineLightCulling::FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer)
+void PipelineLightCulling::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
-	uint32_t frameIndex = vkDev.GetFrameIndex();
-	Execute(vkDev, commandBuffer, frameIndex);
+	uint32_t frameIndex = ctx.GetFrameIndex();
+	Execute(ctx, commandBuffer, frameIndex);
 }
 
-void PipelineLightCulling::Execute(VulkanContext& vkDev, VkCommandBuffer commandBuffer, uint32_t frameIndex)
+void PipelineLightCulling::Execute(VulkanContext& ctx, VkCommandBuffer commandBuffer, uint32_t frameIndex)
 {
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline_);
 
@@ -69,8 +69,8 @@ void PipelineLightCulling::Execute(VulkanContext& vkDev, VkCommandBuffer command
 		.pNext = nullptr,
 		.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT,
 		.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
-		.srcQueueFamilyIndex = vkDev.GetComputeFamily(),
-		.dstQueueFamilyIndex = vkDev.GetGraphicsFamily(),
+		.srcQueueFamilyIndex = ctx.GetComputeFamily(),
+		.dstQueueFamilyIndex = ctx.GetGraphicsFamily(),
 		.buffer = cfBuffers_->lightCellsBuffers_[frameIndex].buffer_,
 		.offset = 0,
 		.size = VK_WHOLE_SIZE
@@ -82,8 +82,8 @@ void PipelineLightCulling::Execute(VulkanContext& vkDev, VkCommandBuffer command
 		.pNext = nullptr,
 		.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT,
 		.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
-		.srcQueueFamilyIndex = vkDev.GetComputeFamily(),
-		.dstQueueFamilyIndex = vkDev.GetGraphicsFamily(),
+		.srcQueueFamilyIndex = ctx.GetComputeFamily(),
+		.dstQueueFamilyIndex = ctx.GetGraphicsFamily(),
 		.buffer = cfBuffers_->lightIndicesBuffers_[frameIndex].buffer_,
 		.offset = 0,
 		.size = VK_WHOLE_SIZE,
@@ -107,13 +107,13 @@ void PipelineLightCulling::Execute(VulkanContext& vkDev, VkCommandBuffer command
 		nullptr);
 }
 
-void PipelineLightCulling::CreateDescriptor(VulkanContext& vkDev)
+void PipelineLightCulling::CreateDescriptor(VulkanContext& ctx)
 {
 	uint32_t imageCount = static_cast<uint32_t>(AppConfig::FrameOverlapCount);
 
 	// Pool
 	descriptor_.CreatePool(
-		vkDev,
+		ctx,
 		{
 			.uboCount_ = 5u,
 			.ssboCount_ = 1u,
@@ -123,7 +123,7 @@ void PipelineLightCulling::CreateDescriptor(VulkanContext& vkDev)
 		});
 
 	// Layout
-	descriptor_.CreateLayout(vkDev,
+	descriptor_.CreateLayout(ctx,
 		{
 			{
 				.descriptorType_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
@@ -148,7 +148,7 @@ void PipelineLightCulling::CreateDescriptor(VulkanContext& vkDev)
 		VkDescriptorBufferInfo bufferInfo6 = { cfUBOBuffers_[i].buffer_, 0, sizeof(ClusterForwardUBO) };
 
 		descriptor_.CreateSet(
-			vkDev,
+			ctx,
 			{
 				{.bufferInfoPtr_ = &bufferInfo1, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER },
 				{.bufferInfoPtr_ = &bufferInfo2, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER },

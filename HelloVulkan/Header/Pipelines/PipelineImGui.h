@@ -7,7 +7,7 @@ class PipelineImGui final : public PipelineBase
 {
 public:
 	PipelineImGui(
-		VulkanContext& vkDev, 
+		VulkanContext& ctx, 
 		VkInstance vulkanInstance,
 		GLFWwindow* glfwWindow);
 	~PipelineImGui();
@@ -16,7 +16,7 @@ public:
 	void EndImGui();
 	void DrawEmptyImGui();
 
-	void FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer) override;
+	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 };
 
 #endif

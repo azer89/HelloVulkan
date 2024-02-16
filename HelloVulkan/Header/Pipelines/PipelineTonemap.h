@@ -13,18 +13,18 @@ This applies tonemap to a color image and transfers it to a swapchain image
 class PipelineTonemap final : public PipelineBase
 {
 public:
-	PipelineTonemap(VulkanContext& vkDev,
+	PipelineTonemap(VulkanContext& ctx,
 		VulkanImage* singleSampledColorImage);
 	~PipelineTonemap() = default;
 
-	virtual void FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer) override;
+	virtual void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
-	void OnWindowResized(VulkanContext& vkDev) override;
+	void OnWindowResized(VulkanContext& ctx) override;
 
 private:
-	void CreateDescriptor(VulkanContext& vkDev);
-	void AllocateDescriptorSets(VulkanContext& vkDev);
-	void UpdateDescriptorSets(VulkanContext& vkDev);
+	void CreateDescriptor(VulkanContext& ctx);
+	void AllocateDescriptorSets(VulkanContext& ctx);
+	void UpdateDescriptorSets(VulkanContext& ctx);
 
 private:
 	VulkanImage* singleSampledColorImage_;

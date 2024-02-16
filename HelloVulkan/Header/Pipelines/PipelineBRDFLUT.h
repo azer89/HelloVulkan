@@ -13,14 +13,14 @@ Compute pipeline to generate lookup table
 class PipelineBRDFLUT final : PipelineBase
 {
 public:
-	PipelineBRDFLUT(VulkanContext& vkDev);
+	PipelineBRDFLUT(VulkanContext& ctx);
 	~PipelineBRDFLUT();
 
-	void CreateLUT(VulkanContext& vkDev, VulkanImage* outputLUT);
+	void CreateLUT(VulkanContext& ctx, VulkanImage* outputLUT);
 
-	void Execute(VulkanContext& vkDev);
+	void Execute(VulkanContext& ctx);
 
-	virtual void FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer) override;
+	virtual void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
 private:
 	// This is the lookup table which has to be transferred to an image

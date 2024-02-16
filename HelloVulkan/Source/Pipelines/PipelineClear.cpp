@@ -1,24 +1,24 @@
 #include "PipelineClear.h"
 #include "VulkanUtility.h"
 
-PipelineClear::PipelineClear(VulkanContext& vkDev) :
+PipelineClear::PipelineClear(VulkanContext& ctx) :
 	PipelineBase(
-		vkDev,
+		ctx,
 		{
 			.type_ = PipelineType::GraphicsOnScreen
 		})
 {
-	renderPass_.CreateOnScreenColorOnlyRenderPass(vkDev, RenderPassBit::ColorClear);
-	framebuffer_.Create(vkDev, renderPass_.GetHandle(), {}, IsOffscreen());
+	renderPass_.CreateOnScreenColorOnlyRenderPass(ctx, RenderPassBit::ColorClear);
+	framebuffer_.Create(ctx, renderPass_.GetHandle(), {}, IsOffscreen());
 }
 
 PipelineClear::~PipelineClear()
 {
 }
 
-void PipelineClear::FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer)
+void PipelineClear::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
-	uint32_t swapchainImageIndex = vkDev.GetCurrentSwapchainImageIndex();
-	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));
+	uint32_t swapchainImageIndex = ctx.GetCurrentSwapchainImageIndex();
+	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));
 	vkCmdEndRenderPass(commandBuffer);
 }

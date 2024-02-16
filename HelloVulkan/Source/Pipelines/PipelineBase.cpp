@@ -9,9 +9,9 @@
 
 // Constructor
 PipelineBase::PipelineBase(
-	const VulkanContext& vkDev,
+	const VulkanContext& ctx,
 	PipelineConfig config) :
-	device_(vkDev.GetDevice()),
+	device_(ctx.GetDevice()),
 	config_(config)
 {
 }
@@ -33,7 +33,7 @@ PipelineBase::~PipelineBase()
 }
 
 void PipelineBase::CreateMultipleUniformBuffers(
-	VulkanContext& vkDev,
+	VulkanContext& ctx,
 	std::vector<VulkanBuffer>& buffers,
 	uint32_t dataSize,
 	size_t bufferCount)
@@ -42,7 +42,7 @@ void PipelineBase::CreateMultipleUniformBuffers(
 	for (size_t i = 0; i < bufferCount; i++)
 	{
 		buffers[i].CreateBuffer(
-			vkDev,
+			ctx,
 			dataSize,
 			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 			VMA_MEMORY_USAGE_CPU_TO_GPU
@@ -50,7 +50,7 @@ void PipelineBase::CreateMultipleUniformBuffers(
 	}
 }
 
-void PipelineBase::BindPipeline(VulkanContext& vkDev, VkCommandBuffer commandBuffer)
+void PipelineBase::BindPipeline(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_);
 
@@ -58,8 +58,8 @@ void PipelineBase::BindPipeline(VulkanContext& vkDev, VkCommandBuffer commandBuf
 	{
 		.x = 0.0f,
 		.y = 0.0f,
-		.width = static_cast<float>(vkDev.GetFrameBufferWidth()),
-		.height = static_cast<float>(vkDev.GetFrameBufferHeight()),
+		.width = static_cast<float>(ctx.GetFrameBufferWidth()),
+		.height = static_cast<float>(ctx.GetFrameBufferHeight()),
 		.minDepth = 0.0f,
 		.maxDepth = 1.0f
 	};
@@ -67,11 +67,11 @@ void PipelineBase::BindPipeline(VulkanContext& vkDev, VkCommandBuffer commandBuf
 
 	VkRect2D scissor{};
 	scissor.offset = { 0, 0 };
-	scissor.extent = { vkDev.GetFrameBufferWidth(), vkDev.GetFrameBufferHeight() };
+	scissor.extent = { ctx.GetFrameBufferWidth(), ctx.GetFrameBufferHeight() };
 	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 }
 
-void PipelineBase::OnWindowResized(VulkanContext& vkDev)
+void PipelineBase::OnWindowResized(VulkanContext& ctx)
 {
 	// If this is compute pipeline, no need to recreate framebuffer
 	if (config_.type_ == PipelineType::Compute)
@@ -80,11 +80,11 @@ void PipelineBase::OnWindowResized(VulkanContext& vkDev)
 	}
 
 	framebuffer_.Destroy();
-	framebuffer_.Recreate(vkDev);
+	framebuffer_.Recreate(ctx);
 }
 
 void PipelineBase::CreatePipelineLayout(
-	VulkanContext& vkDev,
+	VulkanContext& ctx,
 	VkDescriptorSetLayout dsLayout, 
 	VkPipelineLayout* pipelineLayout,
 	const std::vector<VkPushConstantRange>& pushConstantRanges)
@@ -105,11 +105,11 @@ void PipelineBase::CreatePipelineLayout(
 		pipelineLayoutInfo.pushConstantRangeCount = static_cast<uint32_t>(pushConstantRanges.size());
 	}
 
-	VK_CHECK(vkCreatePipelineLayout(vkDev.GetDevice(), &pipelineLayoutInfo, nullptr, pipelineLayout));
+	VK_CHECK(vkCreatePipelineLayout(ctx.GetDevice(), &pipelineLayoutInfo, nullptr, pipelineLayout));
 }
 
 void PipelineBase::CreateGraphicsPipeline(
-	VulkanContext& vkDev,
+	VulkanContext& ctx,
 	VkRenderPass renderPass,
 	VkPipelineLayout pipelineLayout,
 	const std::vector<std::string>& shaderFiles,
@@ -124,13 +124,13 @@ void PipelineBase::CreateGraphicsPipeline(
 	for (size_t i = 0; i < shaderFiles.size(); i++)
 	{
 		const char* file = shaderFiles[i].c_str();
-		VK_CHECK(shaderModules[i].Create(vkDev.GetDevice(), file));
+		VK_CHECK(shaderModules[i].Create(ctx.GetDevice(), file));
 		const VkShaderStageFlagBits stage = GetShaderStageFlagBits(file);
 		shaderStages[i] = shaderModules[i].GetShaderStageInfo(stage, "main");
 	}
 
 	// Pipeline create info
-	PipelineCreateInfo pInfo(vkDev);
+	PipelineCreateInfo pInfo(ctx);
 
 	const std::vector<VkVertexInputBindingDescription> bindingDescriptions = 
 		VertexData::GetBindingDescriptions();
@@ -192,7 +192,7 @@ void PipelineBase::CreateGraphicsPipeline(
 	};
 
 	VK_CHECK(vkCreateGraphicsPipelines(
-		vkDev.GetDevice(),
+		ctx.GetDevice(),
 		VK_NULL_HANDLE,
 		1,
 		&pipelineInfo,
@@ -206,11 +206,11 @@ void PipelineBase::CreateGraphicsPipeline(
 }
 
 void PipelineBase::CreateComputePipeline(
-	VulkanContext& vkDev,
+	VulkanContext& ctx,
 	const std::string& shaderFile)
 {
 	VulkanShader shader;
-	shader.Create(vkDev.GetDevice(), shaderFile.c_str());
+	shader.Create(ctx.GetDevice(), shaderFile.c_str());
 
 	const VkComputePipelineCreateInfo computePipelineCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
@@ -230,7 +230,7 @@ void PipelineBase::CreateComputePipeline(
 		.basePipelineIndex = 0
 	};
 
-	VK_CHECK(vkCreateComputePipelines(vkDev.GetDevice(), 0, 1, &computePipelineCreateInfo, nullptr, &pipeline_));
+	VK_CHECK(vkCreateComputePipelines(ctx.GetDevice(), 0, 1, &computePipelineCreateInfo, nullptr, &pipeline_));
 
 	shader.Destroy();
 }

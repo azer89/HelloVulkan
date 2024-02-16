@@ -8,12 +8,12 @@
 #include <cmath>
 #include <array>
 
-PipelineSkybox::PipelineSkybox(VulkanContext& vkDev, 
+PipelineSkybox::PipelineSkybox(VulkanContext& ctx, 
 	VulkanImage* envMap,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
-	PipelineBase(vkDev,
+	PipelineBase(ctx,
 		{
 			.type_ = PipelineType::GraphicsOffScreen,
 			.msaaSamples_ = offscreenColorImage->multisampleCount_,
@@ -23,12 +23,12 @@ PipelineSkybox::PipelineSkybox(VulkanContext& vkDev,
 		}),
 	envCubemap_(envMap)
 {
-	CreateMultipleUniformBuffers(vkDev, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
+	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
 
 	// Note that this pipeline is offscreen rendering
-	renderPass_.CreateOffScreenRenderPass(vkDev, renderBit, config_.msaaSamples_);
+	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
 	framebuffer_.Create(
-		vkDev,
+		ctx,
 		renderPass_.GetHandle(),
 		{
 			offscreenColorImage,
@@ -37,11 +37,11 @@ PipelineSkybox::PipelineSkybox(VulkanContext& vkDev,
 		IsOffscreen()
 	);
 
-	CreateDescriptor(vkDev);
+	CreateDescriptor(ctx);
 	
-	CreatePipelineLayout(vkDev, descriptor_.layout_, &pipelineLayout_);
+	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
 
-	CreateGraphicsPipeline(vkDev,
+	CreateGraphicsPipeline(ctx,
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
@@ -56,11 +56,11 @@ PipelineSkybox::~PipelineSkybox()
 {
 }
 
-void PipelineSkybox::FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer commandBuffer)
+void PipelineSkybox::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
-	uint32_t frameIndex = vkDev.GetFrameIndex();
-	renderPass_.BeginRenderPass(vkDev, commandBuffer, framebuffer_.GetFramebuffer());
-	BindPipeline(vkDev, commandBuffer);
+	uint32_t frameIndex = ctx.GetFrameIndex();
+	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
+	BindPipeline(ctx, commandBuffer);
 	vkCmdBindDescriptorSets(
 		commandBuffer, 
 		VK_PIPELINE_BIND_POINT_GRAPHICS, 
@@ -74,11 +74,11 @@ void PipelineSkybox::FillCommandBuffer(VulkanContext& vkDev, VkCommandBuffer com
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelineSkybox::CreateDescriptor(VulkanContext& vkDev)
+void PipelineSkybox::CreateDescriptor(VulkanContext& ctx)
 {
 	// Pool
 	descriptor_.CreatePool(
-		vkDev,
+		ctx,
 		{
 			.uboCount_ = 1u,
 			.ssboCount_ = 0u,
@@ -88,7 +88,7 @@ void PipelineSkybox::CreateDescriptor(VulkanContext& vkDev)
 		});
 
 	// Layout
-	descriptor_.CreateLayout(vkDev,
+	descriptor_.CreateLayout(ctx,
 	{
 		{
 			.descriptorType_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
@@ -112,7 +112,7 @@ void PipelineSkybox::CreateDescriptor(VulkanContext& vkDev)
 		VkDescriptorBufferInfo bufferInfo = { cameraUBOBuffers_[i].buffer_, 0, sizeof(CameraUBO) };
 
 		descriptor_.CreateSet(
-			vkDev,
+			ctx,
 			{
 				{.bufferInfoPtr_ = &bufferInfo, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER },
 				{.imageInfoPtr_ = &imageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER }
