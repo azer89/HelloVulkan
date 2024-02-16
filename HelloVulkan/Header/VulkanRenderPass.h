@@ -66,7 +66,7 @@ public:
 	VkRenderPass GetHandle() { return handle_;}
 
 private:
-	void CreateBeginInfo(VulkanContext& ctx);
+	void CreateBeginInfo();
 
 private:
 	VkDevice device_;

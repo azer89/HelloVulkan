@@ -83,7 +83,7 @@ void VulkanRenderPass::CreateResolveMSRenderPass(
 	VK_CHECK(vkCreateRenderPass(ctx.GetDevice(), &renderPassInfo, nullptr, &handle_));
 
 	// Cache VkRenderPassBeginInfo
-	CreateBeginInfo(ctx);
+	CreateBeginInfo();
 }
 
 void VulkanRenderPass::CreateOffScreenRenderPass(
@@ -199,7 +199,7 @@ void VulkanRenderPass::CreateOffScreenRenderPass(
 	VK_CHECK(vkCreateRenderPass(ctx.GetDevice(), &renderPassInfo, nullptr, &handle_));
 
 	// Cache VkRenderPassBeginInfo
-	CreateBeginInfo(ctx);
+	CreateBeginInfo();
 }
 
 void VulkanRenderPass::CreateOnScreenRenderPass(
@@ -297,7 +297,7 @@ void VulkanRenderPass::CreateOnScreenRenderPass(
 	VK_CHECK(vkCreateRenderPass(ctx.GetDevice(), &renderPassInfo, nullptr, &handle_));
 
 	// Cache VkRenderPassBeginInfo
-	CreateBeginInfo(ctx);
+	CreateBeginInfo();
 }
 
 void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(
@@ -371,7 +371,7 @@ void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(
 	VK_CHECK(vkCreateRenderPass(ctx.GetDevice(), &renderPassInfo, nullptr, &handle_));
 
 	// Cache VkRenderPassBeginInfo
-	CreateBeginInfo(ctx);
+	CreateBeginInfo();
 }
 
 void VulkanRenderPass::CreateOffScreenCubemapRenderPass(
@@ -434,7 +434,7 @@ void VulkanRenderPass::CreateOffScreenCubemapRenderPass(
 	VK_CHECK(vkCreateRenderPass(ctx.GetDevice(), &createInfo, nullptr, &handle_));
 }
 
-void VulkanRenderPass::CreateBeginInfo(VulkanContext& ctx)
+void VulkanRenderPass::CreateBeginInfo()
 {
 	const bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
 	const bool clearDepth = renderPassBit_ & RenderPassBit::DepthClear;
