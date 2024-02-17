@@ -180,6 +180,7 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 	}
 }
 
+// TODO Separate descriptor arrays from the meshes
 void PipelinePBRClusterForward::CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh& mesh)
 {
 	VkDescriptorImageInfo specularImageInfo = specularCubemap_->GetDescriptorImageInfo();

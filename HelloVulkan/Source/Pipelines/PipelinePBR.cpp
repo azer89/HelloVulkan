@@ -176,7 +176,7 @@ void PipelinePBR::CreateDescriptor(VulkanContext& ctx)
 	}
 }
 
-// TODO Still quite convoluted
+// TODO Separate descriptor arrays from the meshes
 void PipelinePBR::CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh& mesh)
 {
 	VkDescriptorImageInfo specularImageInfo = specularCubemap_->GetDescriptorImageInfo();

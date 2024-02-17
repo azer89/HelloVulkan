@@ -20,5 +20,5 @@ layout(set = 0, binding = 1) uniform ModelUBO
 
 void main()
 {
-	gl_Position = lightSpaceMatrix * model * vec4(aPos, 1.0);
+	gl_Position = lightSpaceMatrix * model * vec4(inPosition.xyz, 1.0);
 }

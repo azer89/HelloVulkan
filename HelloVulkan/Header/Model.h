@@ -23,10 +23,9 @@ private:
 	VkDevice device_;
 
 public:
-
 	std::vector<Mesh> meshes_;
 
-	// ModelUBO
+	// TODO Separate buffers from the model
 	std::vector<VulkanBuffer> modelBuffers_;
 
 public:

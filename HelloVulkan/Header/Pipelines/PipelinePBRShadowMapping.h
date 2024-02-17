@@ -8,7 +8,7 @@
 #include "Light.h"
 
 /*
-Render meshes using PBR materials, naive forward renderer
+Render meshes using PBR materials, naive forward renderer with shadow mapping
 */
 class PipelinePBRShadowMapping final : public PipelineBase
 {

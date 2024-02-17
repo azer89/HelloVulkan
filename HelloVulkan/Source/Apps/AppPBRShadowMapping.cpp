@@ -17,17 +17,25 @@ AppPBRShadowMapping::AppPBRShadowMapping() :
 
 void AppPBRShadowMapping::Init()
 {
+	// Init shadow map
+	uint32_t shadowMapSize = 2048;
+	shadowMap_.CreateDepthResources(
+		vulkanContext_,
+		shadowMapSize,
+		shadowMapSize);
+	shadowMap_.SetDebugName(vulkanContext_, "Shadow_Map_Image");
+
 	// Initialize lights
 	InitLights();
 
 	// Initialize attachments
 	CreateSharedImageResources();
 
-	std::string hdrFile = AppConfig::TextureFolder + "piazza_bologni_1k.hdr";
+	std::string hdrFile = AppConfig::TextureFolder + "kloppenheim_07_puresky_4k.hdr";
 
 	model_ = std::make_unique<Model>(
 		vulkanContext_, 
-		AppConfig::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
+		AppConfig::ModelFolder + "Sponza//Sponza.gltf");
 	std::vector<Model*> models = {model_.get()};
 
 	// Create a cubemap from the input HDR
@@ -89,6 +97,7 @@ void AppPBRShadowMapping::Init()
 		&brdfLut_,
 		&depthImage_,
 		&multiSampledColorImage_);
+	shadowPtr_ = std::make_unique<PipelineShadow>(vulkanContext_, models, &shadowMap_);
 	lightPtr_ = std::make_unique<PipelineLightRender>(
 		vulkanContext_,
 		&lights_,
@@ -130,11 +139,11 @@ void AppPBRShadowMapping::InitLights()
 	lights_.AddLights(vulkanContext_,
 	{
 		{
-			.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f),
+			.position_ = glm::vec4(-1.75f, 12.0f,  1.75f, 1.f),
 			.color_ = glm::vec4(1.f),
 			.radius_ = 10.0f
 		},
-		{
+		/*{
 			.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f),
 			.color_ = glm::vec4(1.f),
 			.radius_ = 10.0f
@@ -148,13 +157,14 @@ void AppPBRShadowMapping::InitLights()
 			.position_ = glm::vec4(1.5f, 0.7f, -1.5f, 1.f),
 			.color_ = glm::vec4(1.f),
 			.radius_ = 10.0f
-		}
+		}*/
 	});
 }
 
 void AppPBRShadowMapping::DestroyResources()
 {
 	// Destroy images
+	shadowMap_.Destroy();
 	environmentCubemap_.Destroy();
 	diffuseCubemap_.Destroy();
 	specularCubemap_.Destroy();
@@ -171,6 +181,7 @@ void AppPBRShadowMapping::DestroyResources()
 	finishPtr_.reset();
 	skyboxPtr_.reset();
 	pbrPtr_.reset();
+	shadowPtr_.reset();
 	lightPtr_.reset();
 	resolveMSPtr_.reset();
 	tonemapPtr_.reset();

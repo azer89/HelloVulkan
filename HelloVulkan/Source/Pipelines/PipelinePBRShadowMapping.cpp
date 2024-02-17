@@ -176,7 +176,7 @@ void PipelinePBRShadowMapping::CreateDescriptor(VulkanContext& ctx)
 	}
 }
 
-// TODO Still quite convoluted
+// TODO Separate descriptor arrays from the meshes
 void PipelinePBRShadowMapping::CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh& mesh)
 {
 	VkDescriptorImageInfo specularImageInfo = specularCubemap_->GetDescriptorImageInfo();

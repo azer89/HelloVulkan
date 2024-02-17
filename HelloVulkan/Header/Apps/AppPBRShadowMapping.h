@@ -11,6 +11,7 @@
 #include "PipelineClear.h"
 #include "PipelineFinish.h"
 #include "PipelinePBRShadowMapping.h"
+#include "PipelineShadow.h"
 #include "PipelineTonemap.h"
 #include "PipelineResolveMS.h"
 #include "PipelineLightRender.h"
@@ -38,13 +39,15 @@ public:
 private:
 	std::unique_ptr<PipelineClear> clearPtr_;
 	std::unique_ptr<PipelineSkybox> skyboxPtr_;
-	
+	std::unique_ptr<PipelineShadow> shadowPtr_;
 	std::unique_ptr<PipelinePBRShadowMapping> pbrPtr_;
 	std::unique_ptr<PipelineTonemap> tonemapPtr_;
 	std::unique_ptr<PipelineFinish> finishPtr_;
 	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;
 	std::unique_ptr<PipelineLightRender> lightPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
+
+	VulkanImage shadowMap_;
 	
 	// PBR stuff
 	VulkanImage environmentCubemap_;
