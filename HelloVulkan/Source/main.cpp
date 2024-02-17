@@ -1,11 +1,13 @@
 #include "AppPBR.h"
+#include "AppPBRShadowMapping.h"
 #include "AppPBRClusterForward.h"
 #include "AppSimpleRaytracing.h"
 
 // Entry point
 int main()
 {
-	AppPBR app;
+	//AppPBR app;
+	AppPBRShadowMapping app;
 	//AppPBRClusterForward app;
 	//AppSimpleRaytracing app;
 	
