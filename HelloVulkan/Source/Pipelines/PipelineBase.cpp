@@ -167,6 +167,12 @@ void PipelineBase::CreateGraphicsPipeline(
 		pInfo.multisampling.minSampleShading = 0.25f;
 	}
 
+	if (config_.customViewportSize_)
+	{
+		pInfo.viewport.width = config_.viewportWidth_;
+		pInfo.viewport.height = config_.viewportHeight_;
+	}
+
 	constexpr std::array<VkDynamicState, 2> dynamicStates = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
 	pInfo.dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
 	pInfo.dynamicState.pDynamicStates = dynamicStates.data();
