@@ -105,10 +105,10 @@
     <None Include="..\Shaders\ShadowMapping\MeshShadowed.frag">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
-    <None Include="..\Shaders\ShadowMapping\ShadowMap.frag">
+    <None Include="..\Shaders\ShadowMapping\Depth.frag">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
-    <None Include="..\Shaders\ShadowMapping\ShadowMap.vert">
+    <None Include="..\Shaders\ShadowMapping\Depth.vert">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
   </ItemGroup>
