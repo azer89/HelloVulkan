@@ -11,6 +11,7 @@ Fragment shader for PBR+IBL, naive forward shading with shadow mapping
 layout(location = 0) in vec3 worldPos;
 layout(location = 1) in vec2 texCoord;
 layout(location = 2) in vec3 normal;
+layout(location = 3) in vec4 shadowPos;
 
 layout(location = 0) out vec4 fragColor;
 
@@ -65,48 +66,41 @@ layout(set = 0, binding = 11) uniform samplerCube diffuseMap;
 layout(set = 0, binding = 12) uniform sampler2D brdfLUT;
 layout(set = 0, binding = 13) uniform sampler2D shadowMap;
 
-float ShadowCalculation()
+float textureProj(vec4 shadowCoord, vec2 off)
 {
-	vec4 fragPosLightSpace = shadowUBO.lightSpaceMatrix * vec4(worldPos, 1.0);
-
-	// Perform perspective divide
-	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-
-	// Transform to [0,1] range
-	projCoords = projCoords * 0.5 + 0.5;
-
-	// Get closest depth value from light's perspective (using [0, 1] range fragPosLight as coords)
-	float closestDepth = texture(shadowMap, projCoords.xy).r;
-
-	// Get depth of current fragment from light's perspective
-	float currentDepth = projCoords.z;
-
-	// Calculate bias (based on depth map resolution and slope)
-	vec3 N = normalize(normal);
-	vec3 lightDir = normalize(shadowUBO.lightPosition.xyz - worldPos);
-	// Bias equation
-	float bias = max(shadowUBO.shadowMaxBias * (1.0 - dot(N, lightDir)), shadowUBO.shadowMinBias);
-
-	// Check whether current frag pos is in shadow
-	// float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
-	float shadow = 0.0;
-	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
-	for (int x = -1; x <= 1; ++x)
+	float shadow = 1.0;
+	if (shadowCoord.z > -1.0 && shadowCoord.z < 1.0)
 	{
-		for (int y = -1; y <= 1; ++y)
+		float dist = texture(shadowMap, shadowCoord.st + off).r;
+		if (shadowCoord.w > 0.0 && dist < shadowCoord.z)
 		{
-			float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
-			shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
+			shadow = 0.1;
 		}
 	}
-	shadow /= 9.0; // TODO create a uniform for blur radius
-
-	// Keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
-	if (projCoords.z > 1.0)
-	{
-		shadow = 0.0;
-	}
 	return shadow;
+}
+
+float filterPCF(vec4 sc)
+{
+	ivec2 texDim = textureSize(shadowMap, 0);
+	float scale = 1.5;
+	float dx = scale * 1.0 / float(texDim.x);
+	float dy = scale * 1.0 / float(texDim.y);
+
+	float shadowFactor = 0.0;
+	int count = 0;
+	int range = 3;
+
+	for (int x = -range; x <= range; x++)
+	{
+		for (int y = -range; y <= range; y++)
+		{
+			shadowFactor += textureProj(sc, vec2(dx*x, dy*y));
+			count++;
+		}
+
+	}
+	return shadowFactor / count;
 }
 
 // Tangent-normals to world-space
@@ -277,7 +271,9 @@ void main()
 		ao,
 		NoV);
 
-	float shadow = ShadowCalculation();
+	//float shadow = ShadowCalculation();
+	float shadow = filterPCF(shadowPos / shadowPos.w);
+
 	vec3 color = ambient + emissive + Lo + vec3(shadow * 0.05, 0.0, 0.0);
 
 	fragColor = vec4(color, 1.0);

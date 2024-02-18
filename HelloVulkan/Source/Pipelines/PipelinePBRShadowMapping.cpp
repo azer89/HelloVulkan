@@ -75,7 +75,7 @@ PipelinePBRShadowMapping::PipelinePBRShadowMapping(
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
-			AppConfig::ShaderFolder + "Mesh.vert",
+			AppConfig::ShaderFolder + "ShadowMapping//Mesh.vert",
 			AppConfig::ShaderFolder + "ShadowMapping//Mesh.frag"
 		},
 		&pipeline_

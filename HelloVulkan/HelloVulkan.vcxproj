@@ -156,6 +156,7 @@
     <None Include="..\Shaders\ShadowMapping\Depth.frag" />
     <None Include="..\Shaders\ShadowMapping\Depth.vert" />
     <None Include="..\Shaders\ShadowMapping\Mesh.frag" />
+    <None Include="..\Shaders\ShadowMapping\Mesh.vert" />
     <None Include="..\Shaders\SimpleRaytracing\ClosestHit.rchit" />
     <None Include="..\Shaders\SimpleRaytracing\Miss.rmiss" />
     <None Include="..\Shaders\SimpleRaytracing\RayGen.rgen" />

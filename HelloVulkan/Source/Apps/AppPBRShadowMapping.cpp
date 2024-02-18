@@ -143,7 +143,7 @@ void AppPBRShadowMapping::InitLights()
 	lights_.AddLights(vulkanContext_,
 	{
 		{
-			.position_ = glm::vec4(1.0f, 7.0f, 1.0f, 1.f),
+			.position_ = glm::vec4(1.0f, 20.0f, 1.0f, 1.f),
 			.color_ = glm::vec4(1.f),
 			.radius_ = 10.0f
 		},
@@ -216,7 +216,8 @@ void AppPBRShadowMapping::UpdateUBOs()
 
 	LightData light = lights_.lights_[0];
 
-	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, shadowConfig_.shadowNearPlane, shadowConfig_.shadowFarPlane);
+	glm::mat4 lightProjection = glm::perspective(glm::radians(45.f), 1.0f, shadowConfig_.shadowNearPlane, shadowConfig_.shadowFarPlane);
+	//glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, shadowConfig_.shadowNearPlane, shadowConfig_.shadowFarPlane);
 	glm::mat4 lightView = glm::lookAt(glm::vec3(light.position_), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
 

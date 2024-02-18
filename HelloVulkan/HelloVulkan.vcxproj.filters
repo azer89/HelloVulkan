@@ -111,6 +111,9 @@
     <None Include="..\Shaders\ShadowMapping\Depth.vert">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
+    <None Include="..\Shaders\ShadowMapping\Mesh.vert">
+      <Filter>Shaders\ShadowMapping</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Camera.h">
