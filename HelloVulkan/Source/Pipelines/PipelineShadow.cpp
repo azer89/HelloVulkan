@@ -20,7 +20,8 @@ PipelineShadow::PipelineShadow(
 {
 	CreateMultipleUniformBuffers(ctx, shadowMapUBOBuffers_, sizeof(ShadowMapUBO), AppConfig::FrameOverlapCount);
 
-	renderPass_.CreateDepthOnlyRenderPass(ctx, RenderPassBit::DepthClear);
+	renderPass_.CreateDepthOnlyRenderPass(ctx, 
+		RenderPassBit::DepthClear | RenderPassBit::DepthShaderReadOnly);
 
 	framebuffer_.Create(
 		ctx,

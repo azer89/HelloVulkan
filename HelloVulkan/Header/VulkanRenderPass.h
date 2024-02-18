@@ -15,7 +15,10 @@ enum RenderPassBit : uint8_t
 	ColorShaderReadOnly = 0x04,
 
 	// Transition color attachment to VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
-	ColorPresent = 0x08
+	ColorPresent = 0x08,
+
+	// Transition depth attachment to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+	DepthShaderReadOnly = 0x10,
 };
 
 class VulkanRenderPass

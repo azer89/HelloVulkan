@@ -309,6 +309,7 @@ void VulkanRenderPass::CreateDepthOnlyRenderPass(
 	renderPassBit_ = renderPassBit;
 
 	const bool clearDepth = renderPassBit_ & RenderPassBit::DepthClear;
+	const bool depthShaderReadOnly = renderPassBit_ & RenderPassBit::DepthShaderReadOnly;
 
 	const VkAttachmentDescription depthAttachment = {
 		.flags = 0,
@@ -323,7 +324,9 @@ void VulkanRenderPass::CreateDepthOnlyRenderPass(
 		.initialLayout = clearDepth ?
 			VK_IMAGE_LAYOUT_UNDEFINED :
 			VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-		.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+		.finalLayout = depthShaderReadOnly ?
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : 
+			VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 	};
 
 	constexpr VkAttachmentReference depthAttachmentRef = {

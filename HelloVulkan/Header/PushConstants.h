@@ -40,7 +40,7 @@ struct PushConstantPBRShadow
 	float shadowMinBias = 0.005f;
 	float shadowMaxBias = 0.05f;
 	float shadowNearPlane = 1.0f;
-	float shadowFarPlane = 1.0f;
+	float shadowFarPlane = 20.0f;
 };
 
 #endif

@@ -96,7 +96,7 @@ void VulkanImage::CreateColorResources(
 	VulkanContext& ctx, 
 	uint32_t width, 
 	uint32_t height,
-	VkSampleCountFlagBits outputDiffuseSampleCount)
+	VkSampleCountFlagBits sampleCount)
 {
 	VkFormat format = ctx.GetSwapchainImageFormat();
 
@@ -111,7 +111,7 @@ void VulkanImage::CreateColorResources(
 		VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
 		VMA_MEMORY_USAGE_GPU_ONLY,
 		0u,
-		outputDiffuseSampleCount);
+		sampleCount);
 
 	CreateImageView(
 		ctx,
@@ -124,7 +124,8 @@ void VulkanImage::CreateDepthResources(
 	VulkanContext& ctx, 
 	uint32_t width, 
 	uint32_t height,
-	VkSampleCountFlagBits outputDiffuseSampleCount)
+	VkSampleCountFlagBits sampleCount,
+	VkImageUsageFlags additionalUsage)
 {
 	VkFormat depthFormat = ctx.GetDepthFormat();
 
@@ -136,10 +137,10 @@ void VulkanImage::CreateDepthResources(
 		1, // layer
 		depthFormat,
 		VK_IMAGE_TILING_OPTIMAL,
-		VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+		VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | additionalUsage,
 		VMA_MEMORY_USAGE_GPU_ONLY,
 		0u,
-		outputDiffuseSampleCount);
+		sampleCount);
 
 	CreateImageView(
 		ctx,
@@ -217,14 +218,14 @@ void VulkanImage::CreateImage(
 	VkImageUsageFlags imageUsage,
 	VmaMemoryUsage memoryUsage,
 	VkImageCreateFlags flags,
-	VkSampleCountFlagBits outputDiffuseSampleCount)
+	VkSampleCountFlagBits sampleCount)
 {
 	width_ = width;
 	height_ = height;
 	mipCount_ = mipCount;
 	layerCount_ = layerCount;
 	imageFormat_ = format;
-	multisampleCount_ = outputDiffuseSampleCount; // MSAA
+	multisampleCount_ = sampleCount; // MSAA
 	
 	const VkImageCreateInfo imageInfo = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
@@ -235,7 +236,7 @@ void VulkanImage::CreateImage(
 		.extent = VkExtent3D {.width = width_, .height = height_, .depth = 1 },
 		.mipLevels = mipCount_,
 		.arrayLayers = layerCount_,
-		.samples = outputDiffuseSampleCount,
+		.samples = sampleCount,
 		.tiling = tiling,
 		.usage = imageUsage,
 		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,

@@ -18,13 +18,12 @@ AppPBRShadowMapping::AppPBRShadowMapping() :
 void AppPBRShadowMapping::Init()
 {
 	// Init shadow map
-	//shadowMapSize_ = 2048;
-	//shadowNearPlane_ = 1.f;
-	//shadowFarPlane_ = 20.f;
 	shadowMap_.CreateDepthResources(
 		vulkanContext_,
 		static_cast<uint32_t>(pc_.shadowMapSize),
-		static_cast<uint32_t>(pc_.shadowMapSize));
+		static_cast<uint32_t>(pc_.shadowMapSize),
+		VK_SAMPLE_COUNT_1_BIT,
+		VK_IMAGE_USAGE_SAMPLED_BIT);
 	shadowMap_.SetDebugName(vulkanContext_, "Shadow_Map_Image");
 
 	// Initialize lights
