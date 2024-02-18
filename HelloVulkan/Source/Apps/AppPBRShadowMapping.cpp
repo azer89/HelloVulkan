@@ -143,11 +143,17 @@ void AppPBRShadowMapping::InitLights()
 	lights_.AddLights(vulkanContext_,
 	{
 		{
-			.position_ = glm::vec4(1.0f, 20.0f, 1.0f, 1.f),
+			.position_ = glm::vec4(0.0f, 50.0f, 4.5f, 1.f),
 			.color_ = glm::vec4(1.f),
 			.radius_ = 10.0f
 		},
-		/*{
+
+		{
+			.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f),
+			.color_ = glm::vec4(1.f),
+			.radius_ = 10.0f
+		},
+		{
 			.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f),
 			.color_ = glm::vec4(1.f),
 			.radius_ = 10.0f
@@ -161,7 +167,7 @@ void AppPBRShadowMapping::InitLights()
 			.position_ = glm::vec4(1.5f, 0.7f, -1.5f, 1.f),
 			.color_ = glm::vec4(1.f),
 			.radius_ = 10.0f
-		}*/
+		}
 	});
 }
 
@@ -264,8 +270,8 @@ void AppPBRShadowMapping::UpdateUI()
 	ImGui::Text("Shadow");
 	ImGui::SliderFloat("Min Bias", &shadowUBO.shadowMinBias, 0.00001f, 0.01f);
 	ImGui::SliderFloat("Max Bias", &shadowUBO.shadowMaxBias, 0.001f, 0.1f);
-	ImGui::SliderFloat("Near Plane", &shadowUBO.shadowNearPlane, 0.1f, 5.0f);
-	ImGui::SliderFloat("Far Plane", &shadowUBO.shadowFarPlane, 10.0f, 150.0f);
+	ImGui::SliderFloat("Near Plane", &shadowUBO.shadowNearPlane, 0.1f, 20.0f);
+	ImGui::SliderFloat("Far Plane", &shadowUBO.shadowFarPlane, 10.0f, 100.0f);
 
 	imguiPtr_->EndImGui();
 

@@ -41,6 +41,8 @@ public:
 	}
 
 	virtual void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
+
+	void OnWindowResized(VulkanContext& ctx) override;
 	
 private:
 	void CreateDescriptor(VulkanContext& ctx);

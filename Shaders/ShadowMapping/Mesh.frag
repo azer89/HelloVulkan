@@ -83,7 +83,7 @@ float textureProj(vec4 shadowCoord, vec2 off)
 float filterPCF(vec4 sc)
 {
 	ivec2 texDim = textureSize(shadowMap, 0);
-	float scale = 1.5;
+	float scale = 1.0;
 	float dx = scale * 1.0 / float(texDim.x);
 	float dy = scale * 1.0 / float(texDim.y);
 
@@ -241,6 +241,8 @@ void main()
 	vec3 F0 = vec3(pc.baseReflectivity);
 	F0 = mix(F0, albedo, metallic);
 
+	
+
 	// A little bit hacky
 	//vec3 Lo = vec3(0.0); // Original code
 	vec3 Lo =  albedo * pc.albedoMultipler;
@@ -274,7 +276,7 @@ void main()
 	//float shadow = ShadowCalculation();
 	float shadow = filterPCF(shadowPos / shadowPos.w);
 
-	vec3 color = ambient + emissive + Lo + vec3(shadow * 0.05, 0.0, 0.0);
+	vec3 color = ambient + emissive + (Lo * shadow);//+ vec3(shadow * 0.05, 0.0, 0.0);
 
 	fragColor = vec4(color, 1.0);
 	//fragColor = vec4(shadow, shadow, shadow, 1.0);

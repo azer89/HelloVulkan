@@ -98,6 +98,12 @@ void PipelineShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comma
 	vkCmdEndRenderPass(commandBuffer);
 }
 
+
+void PipelineShadow::OnWindowResized(VulkanContext& ctx)
+{
+
+}
+
 void PipelineShadow::CreateDescriptor(VulkanContext& ctx)
 {
 	descriptor_.CreatePool(
