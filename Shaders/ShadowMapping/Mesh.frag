@@ -69,7 +69,8 @@ layout(set = 0, binding = 13) uniform sampler2D shadowMap;
 float textureProj(vec4 shadowCoord, vec2 off)
 {
 	float shadow = 1.0;
-	if (shadowCoord.z > -1.0 && shadowCoord.z < 1.0)
+	//if (shadowCoord.z > -1.0 && shadowCoord.z < 1.0)
+	if (shadowCoord.z >= 0.0 && shadowCoord.z <= 1.0)
 	{
 		float dist = texture(shadowMap, shadowCoord.st + off).r;
 		if (shadowCoord.w > 0.0 && dist < shadowCoord.z)
@@ -89,7 +90,7 @@ float filterPCF(vec4 sc)
 
 	float shadowFactor = 0.0;
 	int count = 0;
-	int range = 3;
+	int range = 1;
 
 	for (int x = -range; x <= range; x++)
 	{
