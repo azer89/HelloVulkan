@@ -102,7 +102,7 @@
     <None Include="..\Shaders\SimpleRaytracing\RayGen.rgen">
       <Filter>Shaders\SimpleRaytracing</Filter>
     </None>
-    <None Include="..\Shaders\ShadowMapping\MeshShadowed.frag">
+    <None Include="..\Shaders\ShadowMapping\Mesh.frag">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
     <None Include="..\Shaders\ShadowMapping\Depth.frag">

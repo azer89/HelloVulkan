@@ -9,7 +9,7 @@
 constexpr uint32_t UBO_COUNT = 2;
 constexpr uint32_t SSBO_COUNT = 1;
 constexpr uint32_t PBR_MESH_TEXTURE_COUNT = 6;
-constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
+constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 4; // Specular, diffuse, BRDF LUT, and shadow map
 
 PipelinePBRShadowMapping::PipelinePBRShadowMapping(
 	VulkanContext& ctx,
@@ -18,6 +18,7 @@ PipelinePBRShadowMapping::PipelinePBRShadowMapping(
 	VulkanImage* specularMap,
 	VulkanImage* diffuseMap,
 	VulkanImage* brdfLUT,
+	VulkanImage* shadowMap,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
@@ -32,7 +33,8 @@ PipelinePBRShadowMapping::PipelinePBRShadowMapping(
 	lights_(lights),
 	specularCubemap_(specularMap),
 	diffuseCubemap_(diffuseMap),
-	brdfLUT_(brdfLUT)
+	brdfLUT_(brdfLUT),
+	shadowMap_(shadowMap)
 {
 	// Per frame UBO
 	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
@@ -73,7 +75,7 @@ PipelinePBRShadowMapping::PipelinePBRShadowMapping(
 		pipelineLayout_,
 		{
 			AppConfig::ShaderFolder + "Mesh.vert",
-			AppConfig::ShaderFolder + "Mesh.frag"
+			AppConfig::ShaderFolder + "ShadowMapping//Mesh.frag"
 		},
 		&pipeline_
 	);
@@ -182,6 +184,7 @@ void PipelinePBRShadowMapping::CreateDescriptorSet(VulkanContext& ctx, Model* pa
 	VkDescriptorImageInfo specularImageInfo = specularCubemap_->GetDescriptorImageInfo();
 	VkDescriptorImageInfo diffuseImageInfo = diffuseCubemap_->GetDescriptorImageInfo();
 	VkDescriptorImageInfo lutImageInfo = brdfLUT_->GetDescriptorImageInfo();
+	VkDescriptorImageInfo shadowImageInfo = shadowMap_->GetDescriptorImageInfo();
 
 	std::vector<VkDescriptorImageInfo> meshTextureInfos(PBR_MESH_TEXTURE_COUNT);
 	for (const auto& elem : mesh.textures_)
@@ -212,6 +215,7 @@ void PipelinePBRShadowMapping::CreateDescriptorSet(VulkanContext& ctx, Model* pa
 		writes.push_back({ .imageInfoPtr_ = &specularImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
 		writes.push_back({ .imageInfoPtr_ = &diffuseImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
 		writes.push_back({ .imageInfoPtr_ = &lutImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
+		writes.push_back({ .imageInfoPtr_ = &shadowImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
 
 		descriptor_.CreateSet(ctx, writes, &(mesh.descriptorSets_[i]));
 	}

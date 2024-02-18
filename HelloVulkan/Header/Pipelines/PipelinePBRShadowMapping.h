@@ -19,6 +19,7 @@ public:
 		VulkanImage* specularMap,
 		VulkanImage* diffuseMap,
 		VulkanImage* brdfLUT,
+		VulkanImage* shadowMap,
 		VulkanImage* depthImage,
 		VulkanImage* offscreenColorImage,
 		uint8_t renderBit = 0u);
@@ -43,6 +44,7 @@ private:
 	VulkanImage* specularCubemap_;
 	VulkanImage* diffuseCubemap_;
 	VulkanImage* brdfLUT_;
+	VulkanImage* shadowMap_;
 
 	PushConstantPBR pc_;
 };

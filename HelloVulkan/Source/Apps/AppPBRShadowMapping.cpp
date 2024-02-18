@@ -24,6 +24,7 @@ void AppPBRShadowMapping::Init()
 		static_cast<uint32_t>(pc_.shadowMapSize),
 		VK_SAMPLE_COUNT_1_BIT,
 		VK_IMAGE_USAGE_SAMPLED_BIT);
+	shadowMap_.CreateDefaultSampler(vulkanContext_);
 	shadowMap_.SetDebugName(vulkanContext_, "Shadow_Map_Image");
 
 	// Initialize lights
@@ -96,6 +97,7 @@ void AppPBRShadowMapping::Init()
 		&specularCubemap_,
 		&diffuseCubemap_,
 		&brdfLut_,
+		&shadowMap_,
 		&depthImage_,
 		&multiSampledColorImage_);
 	shadowPtr_ = std::make_unique<PipelineShadow>(vulkanContext_, models, &shadowMap_);

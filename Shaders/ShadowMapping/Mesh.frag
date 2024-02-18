@@ -51,6 +51,7 @@ layout(set = 0, binding = 8) uniform sampler2D textureEmissive;
 layout(set = 0, binding = 9) uniform samplerCube specularMap;
 layout(set = 0, binding = 10) uniform samplerCube diffuseMap;
 layout(set = 0, binding = 11) uniform sampler2D brdfLUT;
+layout(set = 0, binding = 11) uniform sampler2D shadowMap;
 
 // Tangent-normals to world-space
 vec3 GetNormalFromMap(vec3 tangentNormal, vec3 worldPos, vec3 normal, vec2 texCoord)
