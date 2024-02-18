@@ -327,7 +327,7 @@ void VulkanRenderPass::CreateDepthOnlyRenderPass(
 	};
 
 	constexpr VkAttachmentReference depthAttachmentRef = {
-		.attachment = 1,
+		.attachment = 0,
 		.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 	};
 
