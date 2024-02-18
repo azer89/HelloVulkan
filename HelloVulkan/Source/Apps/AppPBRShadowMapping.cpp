@@ -143,7 +143,7 @@ void AppPBRShadowMapping::InitLights()
 	lights_.AddLights(vulkanContext_,
 	{
 		{
-			.position_ = glm::vec4(-1.75f, 12.0f,  1.75f, 1.f),
+			.position_ = glm::vec4(1.0f, 7.0f, 1.0f, 1.f),
 			.color_ = glm::vec4(1.f),
 			.radius_ = 10.0f
 		},
@@ -244,10 +244,11 @@ void AppPBRShadowMapping::UpdateUI()
 
 	static bool lightRender = true;
 	static PushConstantPBR pbrPC;
+	static ShadowMapConfigUBO shadowUBO;
 
 	imguiPtr_->StartImGui();
 
-	ImGui::SetNextWindowSize(ImVec2(525, 250));
+	ImGui::SetNextWindowSize(ImVec2(525, 350));
 	ImGui::Begin(AppConfig::ScreenTitle.c_str());
 	ImGui::SetWindowFontScale(1.25f);
 	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));
@@ -258,10 +259,22 @@ void AppPBRShadowMapping::UpdateUI()
 	ImGui::SliderFloat("Base Reflectivity", &pbrPC.baseReflectivity, 0.01f, 1.f);
 	ImGui::SliderFloat("Max Mipmap Lod", &pbrPC.maxReflectionLod, 0.1f, cubemapMipmapCount_);
 
+	ImGui::Spacing();
+	ImGui::Text("Shadow");
+	ImGui::SliderFloat("Min Bias", &shadowUBO.shadowMinBias, 0.00001f, 0.01f);
+	ImGui::SliderFloat("Max Bias", &shadowUBO.shadowMaxBias, 0.001f, 0.1f);
+	ImGui::SliderFloat("Near Plane", &shadowUBO.shadowNearPlane, 0.1f, 5.0f);
+	ImGui::SliderFloat("Far Plane", &shadowUBO.shadowFarPlane, 10.0f, 150.0f);
+
 	imguiPtr_->EndImGui();
 
 	lightPtr_->RenderEnable(lightRender);
 	pbrPtr_->SetPBRPushConstants(pbrPC);
+
+	shadowConfig_.shadowMinBias = shadowUBO.shadowMinBias;
+	shadowConfig_.shadowMaxBias = shadowUBO.shadowMaxBias;
+	shadowConfig_.shadowNearPlane = shadowUBO.shadowNearPlane;
+	shadowConfig_.shadowFarPlane = shadowUBO.shadowFarPlane;
 }
 
 // This is called from main.cpp
