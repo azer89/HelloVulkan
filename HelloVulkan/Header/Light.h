@@ -50,6 +50,9 @@ public:
 	size_t GetSSBOSize() const { return storageBufferSize_;  }
 	uint32_t GetLightCount() const { return lightCount_; }
 
+public:
+	std::vector<LightData> lights_;
+
 private:
 	uint32_t lightCount_;
 

@@ -28,4 +28,19 @@ struct PushConstantPBR
 	float albedoMultipler = 0.0f; // Show albedo color if the scene is too dark, default value should be zero
 };
 
+struct PushConstantPBRShadow
+{
+	float lightIntensity = 1.f;
+	float baseReflectivity = 0.04f;
+	float maxReflectionLod = 4.f;
+	float lightFalloff = 1.0f;
+	float albedoMultipler = 0.0f;
+
+	float shadowMapSize = 2048;
+	float shadowMinBias = 0.005f;
+	float shadowMaxBias = 0.05f;
+	float shadowNearPlane = 1.0f;
+	float shadowFarPlane = 1.0f;
+};
+
 #endif

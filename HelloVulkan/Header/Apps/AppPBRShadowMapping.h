@@ -47,6 +47,9 @@ private:
 	std::unique_ptr<PipelineLightRender> lightPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
 
+	float shadowNearPlane_;
+	float shadowFarPlane_;
+	uint32_t shadowMapSize_;
 	VulkanImage shadowMap_;
 	
 	// PBR stuff
@@ -60,6 +63,8 @@ private:
 	std::unique_ptr<Model> model_;
 
 	Lights lights_;
+
+	PushConstantPBRShadow pc_;
 };
 
 #endif

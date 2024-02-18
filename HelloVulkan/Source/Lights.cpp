@@ -8,6 +8,7 @@ void Lights::Destroy()
 void Lights::AddLights(VulkanContext& ctx, const std::vector<LightData>& lights)
 {
 	device_ = ctx.GetDevice();
+	lights_ = lights;
 	storageBufferSize_ = sizeof(LightData) * lights.size();
 	lightCount_ = static_cast<uint32_t>(lights.size());
 	storageBuffer_.CreateBuffer(ctx, storageBufferSize_,

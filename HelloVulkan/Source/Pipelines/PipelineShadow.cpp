@@ -57,6 +57,38 @@ PipelineShadow::~PipelineShadow()
 
 void PipelineShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
+	uint32_t frameIndex = ctx.GetFrameIndex();
+	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
+	BindPipeline(ctx, commandBuffer);
+	
+	for (size_t i = 0; i < models_.size(); ++i)
+	{
+		size_t index = i * AppConfig::FrameOverlapCount;
+		vkCmdBindDescriptorSets(
+			commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			pipelineLayout_,
+			0,
+			1,
+			&descriptorSets_[index + frameIndex],
+			0,
+			nullptr);
+		for (Mesh& mesh : models_[i]->meshes_)
+		{
+			// Bind vertex buffer
+			VkBuffer buffers[] = { mesh.vertexBuffer_.buffer_ };
+			VkDeviceSize offsets[] = { 0 };
+			vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
+
+			// Bind index buffer
+			vkCmdBindIndexBuffer(commandBuffer, mesh.indexBuffer_.buffer_, 0, VK_INDEX_TYPE_UINT32);
+
+			// Draw
+			vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBufferSize_ / (sizeof(unsigned int))), 1, 0, 0, 0);
+		}
+	}
+
+	vkCmdEndRenderPass(commandBuffer);
 }
 
 void PipelineShadow::CreateDescriptor(VulkanContext& ctx)

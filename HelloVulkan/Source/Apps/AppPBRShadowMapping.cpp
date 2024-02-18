@@ -18,11 +18,13 @@ AppPBRShadowMapping::AppPBRShadowMapping() :
 void AppPBRShadowMapping::Init()
 {
 	// Init shadow map
-	uint32_t shadowMapSize = 2048;
+	//shadowMapSize_ = 2048;
+	//shadowNearPlane_ = 1.f;
+	//shadowFarPlane_ = 20.f;
 	shadowMap_.CreateDepthResources(
 		vulkanContext_,
-		shadowMapSize,
-		shadowMapSize);
+		static_cast<uint32_t>(pc_.shadowMapSize),
+		static_cast<uint32_t>(pc_.shadowMapSize));
 	shadowMap_.SetDebugName(vulkanContext_, "Shadow_Map_Image");
 
 	// Initialize lights
@@ -123,6 +125,7 @@ void AppPBRShadowMapping::Init()
 	{
 		// Must be in order
 		clearPtr_.get(),
+		shadowPtr_.get(),
 		skyboxPtr_.get(),
 		pbrPtr_.get(),
 		lightPtr_.get(),
@@ -209,6 +212,14 @@ void AppPBRShadowMapping::UpdateUBOs()
 		.model = modelMatrix
 	};
 	model_->SetModelUBO(vulkanContext_, modelUBO1);
+
+	LightData light = lights_.lights_[0];
+	shadowPtr_->SetShadowMapUBO(
+		vulkanContext_, 
+		light.position_, 
+		glm::vec3(0.0f), 
+		pc_.shadowNearPlane, 
+		pc_.shadowFarPlane);
 }
 
 void AppPBRShadowMapping::UpdateUI()
