@@ -32,6 +32,18 @@ layout(set = 0, binding = 0) uniform CameraUBO
 }
 camUBO;
 
+layout(set = 0, binding = 2) uniform ShadowMapConfigUBO
+{
+	mat4 lightSpaceMatrix;
+	vec4 lightPosition;
+	float shadowMapSize;
+	float shadowMinBias;
+	float shadowMaxBias;
+	float shadowNearPlane;
+	float shadowFarPlane;
+}
+shadowUBO;
+
 // SSBO
 struct LightData
 {
@@ -39,19 +51,63 @@ struct LightData
 	vec4 color;
 	float radius;
 };
-layout(set = 0, binding = 2) readonly buffer Lights { LightData lights []; };
+layout(set = 0, binding = 3) readonly buffer Lights { LightData lights []; };
 
-layout(set = 0, binding = 3) uniform sampler2D textureAlbedo;
-layout(set = 0, binding = 4) uniform sampler2D textureNormal;
-layout(set = 0, binding = 5) uniform sampler2D textureMetalness;
-layout(set = 0, binding = 6) uniform sampler2D textureRoughness;
-layout(set = 0, binding = 7) uniform sampler2D textureAO;
-layout(set = 0, binding = 8) uniform sampler2D textureEmissive;
+layout(set = 0, binding = 4) uniform sampler2D textureAlbedo;
+layout(set = 0, binding = 5) uniform sampler2D textureNormal;
+layout(set = 0, binding = 6) uniform sampler2D textureMetalness;
+layout(set = 0, binding = 7) uniform sampler2D textureRoughness;
+layout(set = 0, binding = 8) uniform sampler2D textureAO;
+layout(set = 0, binding = 9) uniform sampler2D textureEmissive;
 
-layout(set = 0, binding = 9) uniform samplerCube specularMap;
-layout(set = 0, binding = 10) uniform samplerCube diffuseMap;
-layout(set = 0, binding = 11) uniform sampler2D brdfLUT;
-layout(set = 0, binding = 11) uniform sampler2D shadowMap;
+layout(set = 0, binding = 10) uniform samplerCube specularMap;
+layout(set = 0, binding = 11) uniform samplerCube diffuseMap;
+layout(set = 0, binding = 12) uniform sampler2D brdfLUT;
+layout(set = 0, binding = 13) uniform sampler2D shadowMap;
+
+float ShadowCalculation()
+{
+	vec4 fragPosLightSpace = shadowUBO.lightSpaceMatrix * vec4(worldPos, 1.0);
+
+	// Perform perspective divide
+	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+
+	// Transform to [0,1] range
+	projCoords = projCoords * 0.5 + 0.5;
+
+	// Get closest depth value from light's perspective (using [0, 1] range fragPosLight as coords)
+	float closestDepth = texture(shadowMap, projCoords.xy).r;
+
+	// Get depth of current fragment from light's perspective
+	float currentDepth = projCoords.z;
+
+	// Calculate bias (based on depth map resolution and slope)
+	vec3 N = normalize(normal);
+	vec3 lightDir = normalize(shadowUBO.lightPosition.xyz - worldPos);
+	// Bias equation
+	float bias = max(shadowUBO.shadowMaxBias * (1.0 - dot(N, lightDir)), shadowUBO.shadowMinBias);
+
+	// Check whether current frag pos is in shadow
+	// float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
+	float shadow = 0.0;
+	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
+	for (int x = -1; x <= 1; ++x)
+	{
+		for (int y = -1; y <= 1; ++y)
+		{
+			float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+			shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
+		}
+	}
+	shadow /= 9.0; // TODO create a uniform for blur radius
+
+	// Keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
+	if (projCoords.z > 1.0)
+	{
+		shadow = 0.0;
+	}
+	return shadow;
+}
 
 // Tangent-normals to world-space
 vec3 GetNormalFromMap(vec3 tangentNormal, vec3 worldPos, vec3 normal, vec2 texCoord)
@@ -221,7 +277,9 @@ void main()
 		ao,
 		NoV);
 
-	vec3 color = ambient + emissive + Lo;
+	float shadow = ShadowCalculation();
+	vec3 color = ambient + emissive + Lo + vec3(shadow * 0.05, 0.0, 0.0);
 
 	fragColor = vec4(color, 1.0);
+	//fragColor = vec4(shadow, shadow, shadow, 1.0);
 }

@@ -5,7 +5,7 @@
 #include "PipelineCubeFilter.h"
 #include "PipelineBRDFLUT.h"
 
-#include "glm/gtc/matrix_transform.hpp"
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_volk.h"
@@ -20,8 +20,8 @@ void AppPBRShadowMapping::Init()
 	// Init shadow map
 	shadowMap_.CreateDepthResources(
 		vulkanContext_,
-		static_cast<uint32_t>(pc_.shadowMapSize),
-		static_cast<uint32_t>(pc_.shadowMapSize),
+		static_cast<uint32_t>(shadowConfig_.shadowMapSize),
+		static_cast<uint32_t>(shadowConfig_.shadowMapSize),
 		VK_SAMPLE_COUNT_1_BIT,
 		VK_IMAGE_USAGE_SAMPLED_BIT);
 	shadowMap_.CreateDefaultSampler(vulkanContext_);
@@ -215,12 +215,23 @@ void AppPBRShadowMapping::UpdateUBOs()
 	model_->SetModelUBO(vulkanContext_, modelUBO1);
 
 	LightData light = lights_.lights_[0];
-	shadowPtr_->SetShadowMapUBO(
-		vulkanContext_, 
-		light.position_, 
-		glm::vec3(0.0f), 
-		pc_.shadowNearPlane, 
-		pc_.shadowFarPlane);
+
+	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, shadowConfig_.shadowNearPlane, shadowConfig_.shadowFarPlane);
+	glm::mat4 lightView = glm::lookAt(glm::vec3(light.position_), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
+
+	/*shadowPtr_->SetShadowMapUBO(
+		vulkanContext_,
+		light.position_,
+		glm::vec3(0.0f),
+		shadowConfig_.shadowNearPlane,
+		shadowConfig_.shadowFarPlane);*/
+	shadowPtr_->SetShadowMapUBO(vulkanContext_, lightSpaceMatrix);
+
+	shadowConfig_.lightSpaceMatrix = lightSpaceMatrix;
+	shadowConfig_.lightPosition = light.position_;
+
+	pbrPtr_->SetShadowMapConfigUBO(vulkanContext_, shadowConfig_);
 }
 
 void AppPBRShadowMapping::UpdateUI()

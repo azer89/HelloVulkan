@@ -6,7 +6,7 @@
 #include <array>
 
 // Constants
-constexpr uint32_t UBO_COUNT = 2;
+constexpr uint32_t UBO_COUNT = 3;
 constexpr uint32_t SSBO_COUNT = 1;
 constexpr uint32_t PBR_MESH_TEXTURE_COUNT = 6;
 constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 4; // Specular, diffuse, BRDF LUT, and shadow map
@@ -36,8 +36,9 @@ PipelinePBRShadowMapping::PipelinePBRShadowMapping(
 	brdfLUT_(brdfLUT),
 	shadowMap_(shadowMap)
 {
-	// Per frame UBO
+	// UBOs
 	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
+	CreateMultipleUniformBuffers(ctx, shadowMapConfigUBOBuffers_, sizeof(ShadowMapConfigUBO), AppConfig::FrameOverlapCount);
 	
 	// Model UBO
 	for (Model* model : models_)
@@ -83,6 +84,10 @@ PipelinePBRShadowMapping::PipelinePBRShadowMapping(
 
 PipelinePBRShadowMapping::~PipelinePBRShadowMapping()
 {
+	for (auto uboBuffer : shadowMapConfigUBOBuffers_)
+	{
+		uboBuffer.Destroy();
+	}
 }
 
 void PipelinePBRShadowMapping::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
@@ -154,7 +159,7 @@ void PipelinePBRShadowMapping::CreateDescriptor(VulkanContext& ctx)
 		{
 			.descriptorType_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 			.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-			.bindingCount_ = 2
+			.bindingCount_ = 3
 		},
 		{
 			.descriptorType_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
@@ -201,13 +206,15 @@ void PipelinePBRShadowMapping::CreateDescriptorSet(VulkanContext& ctx, Model* pa
 	{
 		VkDescriptorBufferInfo bufferInfo1 = { cameraUBOBuffers_[i].buffer_, 0, sizeof(CameraUBO) };
 		VkDescriptorBufferInfo bufferInfo2 = { parentModel->modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
-		VkDescriptorBufferInfo bufferInfo3 = { lights_->GetSSBOBuffer(), 0, lights_->GetSSBOSize() };
-
+		VkDescriptorBufferInfo bufferInfo3 = { shadowMapConfigUBOBuffers_[i].buffer_, 0, sizeof(ShadowMapConfigUBO) };
+		VkDescriptorBufferInfo bufferInfo4 = { lights_->GetSSBOBuffer(), 0, lights_->GetSSBOSize() };
+		
 		std::vector<DescriptorWrite> writes;
 
 		writes.push_back({ .bufferInfoPtr_ = &bufferInfo1, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
 		writes.push_back({ .bufferInfoPtr_ = &bufferInfo2, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
-		writes.push_back({ .bufferInfoPtr_ = &bufferInfo3, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
+		writes.push_back({ .bufferInfoPtr_ = &bufferInfo3, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
+		writes.push_back({ .bufferInfoPtr_ = &bufferInfo4, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
 		for (size_t i = 0; i < meshTextureInfos.size(); ++i)
 		{
 			writes.push_back({ .imageInfoPtr_ = &meshTextureInfos[i], .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });

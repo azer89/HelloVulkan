@@ -64,7 +64,8 @@ private:
 
 	Lights lights_;
 
-	PushConstantPBRShadow pc_;
+	//PushConstantPBRShadow pc_;
+	ShadowMapConfigUBO shadowConfig_;
 };
 
 #endif

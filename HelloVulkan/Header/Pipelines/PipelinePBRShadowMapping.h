@@ -29,6 +29,12 @@ public:
 
 	void SetPBRPushConstants(const PushConstantPBR& pbrPC) { pc_ = pbrPC; };
 
+	void SetShadowMapConfigUBO(VulkanContext& ctx, ShadowMapConfigUBO ubo)
+	{
+		uint32_t frameIndex = ctx.GetFrameIndex();
+		shadowMapConfigUBOBuffers_[frameIndex].UploadBufferData(ctx, 0, &ubo, sizeof(ShadowMapConfigUBO));
+	}
+
 public:
 	// TODO change this to private
 	std::vector<Model*> models_;
@@ -36,6 +42,9 @@ public:
 private:
 	void CreateDescriptor(VulkanContext& ctx);
 	void CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh& mesh);
+
+private:
+	std::vector<VulkanBuffer> shadowMapConfigUBOBuffers_;
 
 	Lights* lights_;
 
