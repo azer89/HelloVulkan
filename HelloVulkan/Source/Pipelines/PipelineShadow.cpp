@@ -27,9 +27,10 @@ PipelineShadow::PipelineShadow(
 		renderPass_.GetHandle(),
 		{
 			// Use the shadow map as depth attachment
-			shadowMap_
+			shadowMap_->imageView_
 		},
-		IsOffscreen());
+		shadowMap_->width_,
+		shadowMap_->height_);
 
 	CreateDescriptor(ctx);
 
@@ -58,7 +59,12 @@ PipelineShadow::~PipelineShadow()
 void PipelineShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
 	uint32_t frameIndex = ctx.GetFrameIndex();
-	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
+	renderPass_.BeginRenderPass(
+		ctx, 
+		commandBuffer, 
+		framebuffer_.GetFramebuffer(), 
+		shadowMap_->width_,
+		shadowMap_->height_);
 	BindPipeline(ctx, commandBuffer);
 	
 	for (size_t i = 0; i < models_.size(); ++i)

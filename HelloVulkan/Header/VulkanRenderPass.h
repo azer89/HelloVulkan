@@ -61,6 +61,13 @@ public:
 		VkCommandBuffer commandBuffer, 
 		VkFramebuffer framebuffer);
 
+	void BeginRenderPass(
+		VulkanContext& ctx,
+		VkCommandBuffer commandBuffer,
+		VkFramebuffer framebuffer,
+		uint32_t width,
+		uint32_t height);
+
 	void BeginCubemapRenderPass(
 		VkCommandBuffer commandBuffer, 
 		VkFramebuffer framebuffer,

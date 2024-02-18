@@ -535,6 +535,19 @@ void VulkanRenderPass::BeginRenderPass(
 	vkCmdBeginRenderPass(commandBuffer, &beginInfo_, VK_SUBPASS_CONTENTS_INLINE);
 }
 
+void VulkanRenderPass::BeginRenderPass(
+	VulkanContext& ctx,
+	VkCommandBuffer commandBuffer,
+	VkFramebuffer framebuffer,
+	uint32_t width,
+	uint32_t height)
+{
+	beginInfo_.framebuffer = framebuffer;
+	beginInfo_.renderArea = { 0u, 0u, width, height };
+
+	vkCmdBeginRenderPass(commandBuffer, &beginInfo_, VK_SUBPASS_CONTENTS_INLINE);
+}
+
 void VulkanRenderPass::BeginCubemapRenderPass(
 	VkCommandBuffer commandBuffer,
 	VkFramebuffer framebuffer,

@@ -54,20 +54,32 @@ void PipelineBase::BindPipeline(VulkanContext& ctx, VkCommandBuffer commandBuffe
 {
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_);
 
+	float w = static_cast<float>(ctx.GetFrameBufferWidth());
+	float h = static_cast<float>(ctx.GetFrameBufferHeight());
+	if (config_.customViewportSize_)
+	{
+		w = config_.viewportWidth_;
+		h = config_.viewportHeight_;
+	}
 	const VkViewport viewport =
 	{
 		.x = 0.0f,
 		.y = 0.0f,
-		.width = static_cast<float>(ctx.GetFrameBufferWidth()),
-		.height = static_cast<float>(ctx.GetFrameBufferHeight()),
+		.width = w,
+		.height = h,
 		.minDepth = 0.0f,
 		.maxDepth = 1.0f
 	};
+
 	vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
 
 	VkRect2D scissor{};
 	scissor.offset = { 0, 0 };
-	scissor.extent = { ctx.GetFrameBufferWidth(), ctx.GetFrameBufferHeight() };
+	scissor.extent =
+	{
+		static_cast<uint32_t>(w),
+		static_cast<uint32_t>(h)
+	};
 	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 }
 
@@ -167,11 +179,15 @@ void PipelineBase::CreateGraphicsPipeline(
 		pInfo.multisampling.minSampleShading = 0.25f;
 	}
 
-	if (config_.customViewportSize_)
+	/*if (config_.customViewportSize_)
 	{
 		pInfo.viewport.width = config_.viewportWidth_;
 		pInfo.viewport.height = config_.viewportHeight_;
-	}
+		pInfo.scissor.extent.width = config_.viewportWidth_;
+		pInfo.scissor.extent.height = config_.viewportHeight_;
+		pInfo.viewportState.pViewports = &(pInfo.viewport);
+		pInfo.viewportState.pScissors = &(pInfo.scissor);
+	}*/
 
 	constexpr std::array<VkDynamicState, 2> dynamicStates = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
 	pInfo.dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
