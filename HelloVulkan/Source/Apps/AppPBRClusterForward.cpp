@@ -32,30 +32,33 @@ void AppPBRClusterForward::Init()
 		AppConfig::ModelFolder + "Sponza//Sponza.gltf");
 	std::vector<Model*> models = { model_.get()};
 
+	// Image-Based Lighting
+	iblResources_ = std::make_unique<IBLResources>();
+
 	// Create a cubemap from the input HDR
 	{
 		PipelineEquirect2Cube e2c(
 			vulkanContext_,
 			hdrFile);
 		e2c.OffscreenRender(vulkanContext_,
-			&environmentCubemap_); // Output
-		environmentCubemap_.SetDebugName(vulkanContext_, "Environment_Cubemap");
+			&(iblResources_->environmentCubemap_)); // Output
+		//environmentCubemap_.SetDebugName(vulkanContext_, "Environment_Cubemap");
 	}
 
 	// Cube filtering
 	{
-		PipelineCubeFilter cubeFilter(vulkanContext_, &environmentCubemap_);
+		PipelineCubeFilter cubeFilter(vulkanContext_, &(iblResources_->environmentCubemap_));
 		// Diffuse
 		cubeFilter.OffscreenRender(vulkanContext_,
-			&diffuseCubemap_,
+			&(iblResources_->diffuseCubemap_),
 			CubeFilterType::Diffuse);
 		// Specular
 		cubeFilter.OffscreenRender(vulkanContext_,
-			&specularCubemap_,
+			&(iblResources_->specularCubemap_),
 			CubeFilterType::Specular);
 
-		diffuseCubemap_.SetDebugName(vulkanContext_, "Diffuse_Cubemap");
-		specularCubemap_.SetDebugName(vulkanContext_, "Specular_Cubemap");
+		//diffuseCubemap_.SetDebugName(vulkanContext_, "Diffuse_Cubemap");
+		//specularCubemap_.SetDebugName(vulkanContext_, "Specular_Cubemap");
 
 		cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 	}
@@ -63,9 +66,11 @@ void AppPBRClusterForward::Init()
 	// BRDF look up table
 	{
 		PipelineBRDFLUT brdfLUTCompute(vulkanContext_);
-		brdfLUTCompute.CreateLUT(vulkanContext_, &brdfLut_);
-		brdfLut_.SetDebugName(vulkanContext_, "BRDF_LUT");
+		brdfLUTCompute.CreateLUT(vulkanContext_, &(iblResources_->brdfLut_));
+		//brdfLut_.SetDebugName(vulkanContext_, "BRDF_LUT");
 	}
+
+	iblResources_->SetDebugNames(vulkanContext_);
 
 	// Renderers
 	// This is responsible to clear swapchain image
@@ -74,7 +79,7 @@ void AppPBRClusterForward::Init()
 	// This draws a cube
 	skyboxPtr_ = std::make_unique<PipelineSkybox>(
 		vulkanContext_,
-		&environmentCubemap_,
+		&(iblResources_->environmentCubemap_),
 		&depthImage_,
 		&multiSampledColorImage_,
 		// This is the first offscreen render pass so
@@ -89,9 +94,10 @@ void AppPBRClusterForward::Init()
 		models,
 		&lights_,
 		&cfBuffers_,
-		&specularCubemap_,
-		&diffuseCubemap_,
-		&brdfLut_,
+		//&specularCubemap_,
+		//&diffuseCubemap_,
+		//&brdfLut_,
+		iblResources_.get(),
 		&depthImage_,
 		&multiSampledColorImage_);
 	lightPtr_ = std::make_unique<PipelineLightRender>(
@@ -172,10 +178,11 @@ void AppPBRClusterForward::InitLights()
 void AppPBRClusterForward::DestroyResources()
 {
 	// Destroy images
-	environmentCubemap_.Destroy();
-	diffuseCubemap_.Destroy();
-	specularCubemap_.Destroy();
-	brdfLut_.Destroy();
+	//environmentCubemap_.Destroy();
+	//diffuseCubemap_.Destroy();
+	//specularCubemap_.Destroy();
+	//brdfLut_.Destroy();
+	iblResources_.reset();
 
 	// Destroy meshes
 	model_.reset();

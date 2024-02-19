@@ -15,9 +15,10 @@ PipelinePBRShadowMapping::PipelinePBRShadowMapping(
 	VulkanContext& ctx,
 	std::vector<Model*> models,
 	Lights* lights,
-	VulkanImage* specularMap,
-	VulkanImage* diffuseMap,
-	VulkanImage* brdfLUT,
+	//VulkanImage* specularMap,
+	//VulkanImage* diffuseMap,
+	//VulkanImage* brdfLUT,
+	IBLResources* iblResources,
 	VulkanImage* shadowMap,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
@@ -31,9 +32,10 @@ PipelinePBRShadowMapping::PipelinePBRShadowMapping(
 	),
 	models_(models),
 	lights_(lights),
-	specularCubemap_(specularMap),
-	diffuseCubemap_(diffuseMap),
-	brdfLUT_(brdfLUT),
+	//specularCubemap_(specularMap),
+	//diffuseCubemap_(diffuseMap),
+	//brdfLUT_(brdfLUT),
+	iblResources_(iblResources),
 	shadowMap_(shadowMap)
 {
 	// UBOs
@@ -193,9 +195,9 @@ void PipelinePBRShadowMapping::CreateDescriptorSet(
 	Mesh* mesh, 
 	const size_t meshIndex)
 {
-	VkDescriptorImageInfo specularImageInfo = specularCubemap_->GetDescriptorImageInfo();
-	VkDescriptorImageInfo diffuseImageInfo = diffuseCubemap_->GetDescriptorImageInfo();
-	VkDescriptorImageInfo lutImageInfo = brdfLUT_->GetDescriptorImageInfo();
+	VkDescriptorImageInfo specularImageInfo = iblResources_->specularCubemap_.GetDescriptorImageInfo();
+	VkDescriptorImageInfo diffuseImageInfo = iblResources_->diffuseCubemap_.GetDescriptorImageInfo();
+	VkDescriptorImageInfo lutImageInfo = iblResources_->brdfLut_.GetDescriptorImageInfo();
 	VkDescriptorImageInfo shadowImageInfo = shadowMap_->GetDescriptorImageInfo();
 
 	std::vector<VkDescriptorImageInfo> meshTextureInfos(PBR_MESH_TEXTURE_COUNT);

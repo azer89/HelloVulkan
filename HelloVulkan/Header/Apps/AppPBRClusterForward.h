@@ -5,6 +5,7 @@
 #include "VulkanImage.h"
 #include "Light.h"
 #include "Model.h"
+#include "IBLResources.h"
 
 // Pipelines
 #include "PipelineSkybox.h"
@@ -53,13 +54,16 @@ private:
 	std::unique_ptr<PipelinePBRClusterForward> pbrPtr_;
 	std::unique_ptr<PipelineAABBGenerator> aabbPtr_;
 	std::unique_ptr<PipelineLightCulling> lightCullPtr_;
+
+	// TODO Set as unique_ptr
 	ClusterForwardBuffers cfBuffers_; // Buffers for clustered forward shading
 	
 	// PBR stuff
-	VulkanImage environmentCubemap_;
-	VulkanImage diffuseCubemap_;
-	VulkanImage specularCubemap_;
-	VulkanImage brdfLut_;
+	//VulkanImage environmentCubemap_;
+	//VulkanImage diffuseCubemap_;
+	//VulkanImage specularCubemap_;
+	//VulkanImage brdfLut_;
+	std::unique_ptr<IBLResources> iblResources_;
 	float cubemapMipmapCount_;
 
 	std::unique_ptr<Model> model_;

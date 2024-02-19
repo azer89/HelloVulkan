@@ -15,9 +15,10 @@ PipelinePBR::PipelinePBR(
 	VulkanContext& ctx,
 	std::vector<Model*> models,
 	Lights* lights,
-	VulkanImage* specularMap,
-	VulkanImage* diffuseMap,
-	VulkanImage* brdfLUT,
+	//VulkanImage* specularMap,
+	//VulkanImage* diffuseMap,
+	//VulkanImage* brdfLUT,
+	IBLResources* iblResources,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
@@ -30,9 +31,10 @@ PipelinePBR::PipelinePBR(
 	),
 	models_(models),
 	lights_(lights),
-	specularCubemap_(specularMap),
-	diffuseCubemap_(diffuseMap),
-	brdfLUT_(brdfLUT)
+	iblResources_(iblResources)
+	//specularCubemap_(specularMap),
+	//diffuseCubemap_(diffuseMap),
+	//brdfLUT_(brdfLUT)
 {
 	// Per frame UBO
 	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
@@ -181,9 +183,9 @@ void PipelinePBR::CreateDescriptor(VulkanContext& ctx)
 
 void PipelinePBR::CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh* mesh, const size_t meshIndex)
 {
-	VkDescriptorImageInfo specularImageInfo = specularCubemap_->GetDescriptorImageInfo();
-	VkDescriptorImageInfo diffuseImageInfo = diffuseCubemap_->GetDescriptorImageInfo();
-	VkDescriptorImageInfo lutImageInfo = brdfLUT_->GetDescriptorImageInfo();
+	VkDescriptorImageInfo specularImageInfo = iblResources_->specularCubemap_.GetDescriptorImageInfo();
+	VkDescriptorImageInfo diffuseImageInfo = iblResources_->diffuseCubemap_.GetDescriptorImageInfo();
+	VkDescriptorImageInfo lutImageInfo = iblResources_->brdfLut_.GetDescriptorImageInfo();
 
 	std::vector<VkDescriptorImageInfo> meshTextureInfos(PBR_MESH_TEXTURE_COUNT);
 	for (const auto& elem : mesh->textures_)

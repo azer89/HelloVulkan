@@ -3,6 +3,7 @@
 
 #include "PipelinePBR.h"
 #include "ClusterForwardBuffers.h"
+#include "IBLResources.h"
 
 #include <vector>
 
@@ -16,9 +17,10 @@ public:
 		std::vector<Model*> models,
 		Lights* lights,
 		ClusterForwardBuffers* cfBuffers,
-		VulkanImage* specularMap,
-		VulkanImage* diffuseMap,
-		VulkanImage* brdfLUT,
+		//VulkanImage* specularMap,
+		//VulkanImage* diffuseMap,
+		//VulkanImage* brdfLUT,
+		IBLResources* iblResources,
 		VulkanImage* depthImage,
 		VulkanImage* offscreenColorImage,
 		uint8_t renderBit = 0u);
@@ -42,9 +44,10 @@ private:
 
 	// Image-Based Lighting
 	// TODO Organize these inside a struct
-	VulkanImage* specularCubemap_;
-	VulkanImage* diffuseCubemap_;
-	VulkanImage* brdfLUT_;
+	//VulkanImage* specularCubemap_;
+	//VulkanImage* diffuseCubemap_;
+	//VulkanImage* brdfLUT_;
+	IBLResources* iblResources_;
 
 	PushConstantPBR pc_;
 

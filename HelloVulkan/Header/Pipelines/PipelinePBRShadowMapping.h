@@ -4,6 +4,7 @@
 #include "PipelineBase.h"
 #include "VulkanImage.h"
 #include "PushConstants.h"
+#include "IBLResources.h"
 #include "Model.h"
 #include "Light.h"
 
@@ -18,9 +19,10 @@ public:
 	PipelinePBRShadowMapping(VulkanContext& ctx,
 		std::vector<Model*> models,
 		Lights* lights,
-		VulkanImage* specularMap,
-		VulkanImage* diffuseMap,
-		VulkanImage* brdfLUT,
+		//VulkanImage* specularMap,
+		//VulkanImage* diffuseMap,
+		//VulkanImage* brdfLUT,
+		IBLResources* iblResources,
 		VulkanImage* shadowMap,
 		VulkanImage* depthImage,
 		VulkanImage* offscreenColorImage,
@@ -48,9 +50,10 @@ private:
 
 	// Image-Based Lighting
 	// TODO Organize these inside a struct
-	VulkanImage* specularCubemap_;
-	VulkanImage* diffuseCubemap_;
-	VulkanImage* brdfLUT_;
+	//VulkanImage* specularCubemap_;
+	//VulkanImage* diffuseCubemap_;
+	//VulkanImage* brdfLUT_;
+	IBLResources* iblResources_;
 	VulkanImage* shadowMap_;
 
 	PushConstantPBR pc_;
