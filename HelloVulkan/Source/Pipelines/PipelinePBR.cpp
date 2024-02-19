@@ -175,20 +175,19 @@ void PipelinePBR::CreateDescriptor(VulkanContext& ctx)
 	{
 		for (Mesh& mesh : model->meshes_)
 		{
-			CreateDescriptorSet(ctx, model, mesh, meshIndex++);
+			CreateDescriptorSet(ctx, model, &mesh, meshIndex++);
 		}
 	}
 }
 
-// TODO Separate descriptor arrays from the meshes
-void PipelinePBR::CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh& mesh, const size_t meshIndex)
+void PipelinePBR::CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh* mesh, const size_t meshIndex)
 {
 	VkDescriptorImageInfo specularImageInfo = specularCubemap_->GetDescriptorImageInfo();
 	VkDescriptorImageInfo diffuseImageInfo = diffuseCubemap_->GetDescriptorImageInfo();
 	VkDescriptorImageInfo lutImageInfo = brdfLUT_->GetDescriptorImageInfo();
 
 	std::vector<VkDescriptorImageInfo> meshTextureInfos(PBR_MESH_TEXTURE_COUNT);
-	for (const auto& elem : mesh.textures_)
+	for (const auto& elem : mesh->textures_)
 	{
 		// Should be ordered based on elem.first
 		uint32_t index = static_cast<uint32_t>(elem.first) - 1;
@@ -196,7 +195,6 @@ void PipelinePBR::CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Me
 	}
 
 	size_t frameCount = AppConfig::FrameOverlapCount;
-	//mesh.descriptorSets_.resize(frameCount);
 	descriptorSets_[meshIndex].resize(frameCount);
 
 	for (size_t i = 0; i < frameCount; i++)

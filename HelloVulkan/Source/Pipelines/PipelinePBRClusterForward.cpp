@@ -178,7 +178,7 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 	{
 		for (Mesh& mesh : model->meshes_)
 		{
-			CreateDescriptorSet(ctx, model, mesh, meshIndex++);
+			CreateDescriptorSet(ctx, model, &mesh, meshIndex++);
 		}
 	}
 }
@@ -187,7 +187,7 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 void PipelinePBRClusterForward::CreateDescriptorSet(
 	VulkanContext& ctx, 
 	Model* parentModel, 
-	Mesh& mesh, 
+	Mesh* mesh, 
 	const size_t meshIndex)
 {
 	VkDescriptorImageInfo specularImageInfo = specularCubemap_->GetDescriptorImageInfo();
@@ -195,7 +195,7 @@ void PipelinePBRClusterForward::CreateDescriptorSet(
 	VkDescriptorImageInfo lutImageInfo = brdfLUT_->GetDescriptorImageInfo();
 
 	std::vector<VkDescriptorImageInfo> meshTextureInfos(PBR_MESH_TEXTURE_COUNT);
-	for (const auto& elem : mesh.textures_)
+	for (const auto& elem : mesh->textures_)
 	{
 		// Should be ordered based on elem.first
 		uint32_t index = static_cast<uint32_t>(elem.first) - 1;

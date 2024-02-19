@@ -43,7 +43,7 @@ public:
 
 private:
 	void CreateDescriptor(VulkanContext& ctx);
-	void CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh& mesh, const size_t meshIndex);
+	void CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh* mesh, const size_t meshIndex);
 
 private:
 	std::vector<VulkanBuffer> shadowMapConfigUBOBuffers_;
