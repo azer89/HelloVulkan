@@ -43,7 +43,9 @@ PipelineShadow::PipelineShadow(
 		pipelineLayout_,
 		{
 			AppConfig::ShaderFolder + "ShadowMapping//Depth.vert",
-			AppConfig::ShaderFolder + "ShadowMapping//Depth.frag"
+
+			// Not needed
+			//AppConfig::ShaderFolder + "ShadowMapping//Depth.frag"
 		},
 		&pipeline_
 	);
