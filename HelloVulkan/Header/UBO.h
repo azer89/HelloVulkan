@@ -39,13 +39,13 @@ struct ShadowMapConfigUBO
 	alignas(4)
 	float shadowMapSize = 2048;
 	alignas(4)
-	float shadowMinBias = 0.005f;
+	float shadowMinBias = 0.001f;
 	alignas(4)
-	float shadowMaxBias = 0.05f;
+	float shadowMaxBias = 0.001f;
 	alignas(4)
-	float shadowNearPlane = 1.0f;
+	float shadowNearPlane = 15.0f;
 	alignas(4)
-	float shadowFarPlane = 20.0f;
+	float shadowFarPlane = 50.0f;
 };
 
 // Per model transformation matrix
