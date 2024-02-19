@@ -7,6 +7,8 @@
 #include "Model.h"
 #include "Light.h"
 
+#include <vector>
+
 /*
 Render meshes using PBR materials, naive forward renderer
 */
@@ -34,7 +36,7 @@ public:
 
 private:
 	void CreateDescriptor(VulkanContext& ctx);
-	void CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh& mesh);
+	void CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh& mesh, const size_t meshIndex);
 
 	Lights* lights_;
 
@@ -45,6 +47,8 @@ private:
 	VulkanImage* brdfLUT_;
 
 	PushConstantPBR pc_;
+
+	std::vector<std::vector<VkDescriptorSet>> descriptorSets_;
 };
 
 #endif

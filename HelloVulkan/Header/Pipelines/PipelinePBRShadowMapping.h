@@ -7,6 +7,8 @@
 #include "Model.h"
 #include "Light.h"
 
+#include <vector>
+
 /*
 Render meshes using PBR materials, naive forward renderer with shadow mapping
 */
@@ -41,7 +43,7 @@ public:
 
 private:
 	void CreateDescriptor(VulkanContext& ctx);
-	void CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh& mesh);
+	void CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh& mesh, const size_t meshIndex);
 
 private:
 	std::vector<VulkanBuffer> shadowMapConfigUBOBuffers_;
@@ -56,6 +58,8 @@ private:
 	VulkanImage* shadowMap_;
 
 	PushConstantPBR pc_;
+
+	std::vector<std::vector<VkDescriptorSet>> descriptorSets_;
 };
 
 #endif

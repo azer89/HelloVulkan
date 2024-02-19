@@ -70,7 +70,7 @@ public:
 	std::unordered_map<TextureType, VulkanImage*> textures_;
 
 	// TODO Move this to Model
-	std::vector<VkDescriptorSet> descriptorSets_;
+	//std::vector<VkDescriptorSet> descriptorSets_;
 
 	// Constructors
 	Mesh(

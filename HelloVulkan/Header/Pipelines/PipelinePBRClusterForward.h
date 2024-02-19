@@ -4,6 +4,8 @@
 #include "PipelinePBR.h"
 #include "ClusterForwardBuffers.h"
 
+#include <vector>
+
 /*
 Render meshes using PBR materials, clustered forward renderer
 */
@@ -50,9 +52,11 @@ private:
 
 	PushConstantPBR pc_;
 
+	std::vector<std::vector<VkDescriptorSet>> descriptorSets_;
+
 private:
 	void CreateDescriptor(VulkanContext& ctx);
-	void CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh& mesh);
+	void CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh& mesh, const size_t meshIndex);
 };
 
 #endif
