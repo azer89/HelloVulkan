@@ -69,9 +69,6 @@ public:
 	std::vector<unsigned int> indices_;
 	std::unordered_map<TextureType, VulkanImage*> textures_;
 
-	// TODO Move this to Model
-	//std::vector<VkDescriptorSet> descriptorSets_;
-
 	// Constructors
 	Mesh(
 		VulkanContext& ctx,
