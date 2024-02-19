@@ -154,11 +154,11 @@ void AppBase::DrawFrame()
 	vkResetFences(vulkanContext_.GetDevice(), 1, &(frameData.queueSubmitFence_));
 	vkResetCommandBuffer(frameData.graphicsCommandBuffer_, 0);
 
-	// Send UBOs to shaders
-	UpdateUBOs();
-
 	// ImGui
 	UpdateUI();
+
+	// Send UBOs to shaders
+	UpdateUBOs();
 
 	// Start recording command buffers
 	FillCommandBuffer(frameData.graphicsCommandBuffer_);

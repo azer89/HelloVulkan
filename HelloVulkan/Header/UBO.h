@@ -28,17 +28,17 @@ struct ShadowMapUBO
 	alignas(16)
 	glm::mat4 lightSpaceMatrix;
 	alignas(16)
-	glm::vec4 lightPosition = glm::vec4(0.0);
+	glm::vec4 lightPosition;
 	alignas(4)
-	float shadowMinBias = 0.001f;
+	float shadowMinBias;
 	alignas(4)
-	float shadowMaxBias = 0.001f;
+	float shadowMaxBias;
 	alignas(4)
-	float shadowNearPlane = 15.0f;
+	float shadowNearPlane;
 	alignas(4)
-	float shadowFarPlane = 50.0f;
+	float shadowFarPlane;
 	alignas(4)
-	uint32_t pcfIteration = 1;
+	uint32_t pcfIteration;
 };
 
 // Per model transformation matrix
@@ -48,7 +48,6 @@ struct ModelUBO
 	glm::mat4 model;
 };
 
-// For clustered forward
 struct ClusterForwardUBO
 {
 	alignas(16)

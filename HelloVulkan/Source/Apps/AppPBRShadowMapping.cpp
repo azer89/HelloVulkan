@@ -148,9 +148,8 @@ void AppPBRShadowMapping::InitLights()
 		// The first light is used to generate the shadow map
 		// and its position is set by ImGui
 		{
-			.position_ = glm::vec4(0.f, 0.f, 0.f, 1.f),
 			.color_ = glm::vec4(1.f),
-			.radius_ = 10.0f
+			.radius_ = 1.0f
 		},
 
 		// Add additional lights so that the scene is not too dark
@@ -254,7 +253,13 @@ void AppPBRShadowMapping::UpdateUI()
 
 	static bool staticLightRender = true;
 	static PushConstantPBR staticPBRPushConstants;
-	static ShadowMapUBO staticShadowUBO;
+	static ShadowMapUBO staticShadowUBO =
+	{
+		.shadowMinBias = 0.001f,
+		.shadowMaxBias = 0.001f,
+		.shadowNearPlane = 15.0f,
+		.shadowFarPlane = 50.0f
+	};
 	static float staticLightPos[3] = { -5.f, 45.0f, 5.0f};
 	static int staticPCFIteration = 1;
 
