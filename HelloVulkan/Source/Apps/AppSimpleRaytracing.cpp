@@ -12,7 +12,7 @@ AppSimpleRaytracing::AppSimpleRaytracing()
 void AppSimpleRaytracing::Init()
 {
 	// Initialize attachments
-	CreateSharedImageResources();
+	InitSharedImageResources();
 	clearPtr_ = std::make_unique<PipelineClear>(vulkanContext_);
 	rtxPtr_ = std::make_unique<PipelineSimpleRaytracing>(vulkanContext_);
 	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);

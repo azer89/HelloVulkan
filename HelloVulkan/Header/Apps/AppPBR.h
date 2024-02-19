@@ -46,13 +46,7 @@ private:
 	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;
 	std::unique_ptr<PipelineLightRender> lightPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
-	
-	// PBR stuff
-	//VulkanImage environmentCubemap_;
-	//VulkanImage diffuseCubemap_;
-	//VulkanImage specularCubemap_;
-	//VulkanImage brdfLut_;
-	std::unique_ptr<IBLResources> iblResources_;
+
 	float cubemapMipmapCount_;
 
 	float modelRotation_;

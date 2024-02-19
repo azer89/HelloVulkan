@@ -18,14 +18,14 @@ AppPBRClusterForward::AppPBRClusterForward()
 void AppPBRClusterForward::Init()
 {
 	// Initialize attachments
-	CreateSharedImageResources();
+	InitSharedImageResources();
 
 	// Initialize lights
 	InitLights();
 
 	cfBuffers_.CreateBuffers(vulkanContext_, lights_.GetLightCount());
 
-	std::string hdrFile = AppConfig::TextureFolder + "dikhololo_night_4k.hdr";
+	//std::string hdrFile = AppConfig::TextureFolder + "dikhololo_night_4k.hdr";
 
 	model_ = std::make_unique<Model>(
 		vulkanContext_, 
@@ -33,46 +33,10 @@ void AppPBRClusterForward::Init()
 	std::vector<Model*> models = { model_.get()};
 
 	// Image-Based Lighting
-	iblResources_ = std::make_unique<IBLResources>();
+	InitIBLResources(AppConfig::TextureFolder + "dikhololo_night_4k.hdr");
+	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
-	// Create a cubemap from the input HDR
-	{
-		PipelineEquirect2Cube e2c(
-			vulkanContext_,
-			hdrFile);
-		e2c.OffscreenRender(vulkanContext_,
-			&(iblResources_->environmentCubemap_)); // Output
-		//environmentCubemap_.SetDebugName(vulkanContext_, "Environment_Cubemap");
-	}
-
-	// Cube filtering
-	{
-		PipelineCubeFilter cubeFilter(vulkanContext_, &(iblResources_->environmentCubemap_));
-		// Diffuse
-		cubeFilter.OffscreenRender(vulkanContext_,
-			&(iblResources_->diffuseCubemap_),
-			CubeFilterType::Diffuse);
-		// Specular
-		cubeFilter.OffscreenRender(vulkanContext_,
-			&(iblResources_->specularCubemap_),
-			CubeFilterType::Specular);
-
-		//diffuseCubemap_.SetDebugName(vulkanContext_, "Diffuse_Cubemap");
-		//specularCubemap_.SetDebugName(vulkanContext_, "Specular_Cubemap");
-
-		cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
-	}
-	
-	// BRDF look up table
-	{
-		PipelineBRDFLUT brdfLUTCompute(vulkanContext_);
-		brdfLUTCompute.CreateLUT(vulkanContext_, &(iblResources_->brdfLut_));
-		//brdfLut_.SetDebugName(vulkanContext_, "BRDF_LUT");
-	}
-
-	iblResources_->SetDebugNames(vulkanContext_);
-
-	// Renderers
+	// Pipelines
 	// This is responsible to clear swapchain image
 	clearPtr_ = std::make_unique<PipelineClear>(
 		vulkanContext_);

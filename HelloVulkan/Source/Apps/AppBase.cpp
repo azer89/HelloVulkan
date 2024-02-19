@@ -2,6 +2,11 @@
 #include "Configs.h"
 #include "VulkanUtility.h"
 
+// IBL
+#include "PipelineEquirect2Cube.h"
+#include "PipelineCubeFilter.h"
+#include "PipelineBRDFLUT.h"
+
 #include "volk.h"
 
 // Init GLSLang
@@ -102,7 +107,7 @@ void AppBase::InitGLFW()
 	glfwSetKeyCallback(glfwWindow_, FuncKey);
 }
 
-void AppBase::CreateSharedImageResources()
+void AppBase::InitSharedImageResources()
 {
 	depthImage_.Destroy();
 	multiSampledColorImage_.Destroy();
@@ -250,7 +255,7 @@ void AppBase::OnWindowResized()
 		windowHeight_
 	);
 
-	CreateSharedImageResources();
+	InitSharedImageResources();
 
 	for (const auto& pip : pipelines_)
 	{
@@ -404,4 +409,39 @@ void AppBase::ProcessInput()
 	{
 		camera_->ProcessKeyboard(CameraMovement::Right, deltaTime_);
 	}
+}
+
+void AppBase::InitIBLResources(const std::string& hdrFile)
+{
+	iblResources_ = std::make_unique<IBLResources>();
+
+	// Create a cubemap from the input HDR
+	{
+		PipelineEquirect2Cube e2c(
+			vulkanContext_,
+			hdrFile);
+		e2c.OffscreenRender(vulkanContext_,
+			&(iblResources_->environmentCubemap_)); // Output
+	}
+
+	// Cube filtering
+	{
+		PipelineCubeFilter cubeFilter(vulkanContext_, &(iblResources_->environmentCubemap_));
+		// Diffuse
+		cubeFilter.OffscreenRender(vulkanContext_,
+			&(iblResources_->diffuseCubemap_),
+			CubeFilterType::Diffuse);
+		// Specular
+		cubeFilter.OffscreenRender(vulkanContext_,
+			&(iblResources_->specularCubemap_),
+			CubeFilterType::Specular);
+	}
+
+	// BRDF look up table
+	{
+		PipelineBRDFLUT brdfLUTCompute(vulkanContext_);
+		brdfLUTCompute.CreateLUT(vulkanContext_, &(iblResources_->brdfLut_));
+	}
+
+	iblResources_->SetDebugNames(vulkanContext_);
 }
