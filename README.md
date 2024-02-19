@@ -12,6 +12,7 @@ A real-time rendering engine using Vulkan.
 * Reinhard tonemap postprocessing.
 * glTF mesh/texture loading and rendering.
 * Multisample anti-aliasing (MSAA).
+* Shadow mapping.
 * Automatic runtime compilation from GLSL to SPIR-V.
 * A a lightweight abstraction layer that encapsulates Vulkan API for rapid prototyping/development.
 * Minor features: Skybox, instancing with SSBOs, ImGui, UBOs, and push constants.
@@ -31,10 +32,16 @@ I finally implemented "Clustered Forward Shading" which is based on an article b
 The current implementation consists of two steps. The first step involves subdividing the view frustum into clusters.
 The next step is light culling, where we calculate lights that intersect the clusters. This step removes lights that are too far from a fragment, leading to reduced light iteration inside the final fragment shader.
 
-Although I haven't done a proper evaluation, a Sponza scene with 1000+ point lights can be rendered around 60-100 FPS, tested using a 3070M graphics card.
+Preliminary testing using a 3070M graphics card shows the technique can render a PBR Sponza scene with over 1000 dynamic lights at 60-100 FPS.
 If too many lights end up inside the view frustum, especially when you zoom out, the frame rate will drop regardless, but still much faster than a naive forward shading.
 
 https://github.com/azer89/HelloVulkan/assets/790432/66b9a30a-d187-495a-9879-8eb11a497087
+
+### Shadow Mapping
+
+<img width="850" alt="sponza_shadow_mapping_01" src="https://github.com/azer89/HelloVulkan/assets/790432/4751e9bc-2d54-4af0-a5dc-acdc07e7982c">
+
+<img width="850" alt="sponza_shadow_mapping_02" src="https://github.com/azer89/HelloVulkan/assets/790432/55283773-f554-4af3-be0d-42ecdd3ede8b">
 
 ### Build
 * C++20
