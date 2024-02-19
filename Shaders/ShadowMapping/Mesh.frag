@@ -68,12 +68,16 @@ layout(set = 0, binding = 13) uniform sampler2D shadowMap;
 
 float textureProj(vec4 shadowCoord, vec2 off)
 {
+	vec3 N = normalize(normal);
+	vec3 lightDir = normalize(shadowUBO.lightPosition.xyz - worldPos);
+	float bias = max(shadowUBO.shadowMaxBias * (1.0 - dot(N, lightDir)), shadowUBO.shadowMinBias);
+
 	float shadow = 1.0;
 	//if (shadowCoord.z > -1.0 && shadowCoord.z < 1.0)
 	if (shadowCoord.z >= 0.0 && shadowCoord.z <= 1.0)
 	{
 		float dist = texture(shadowMap, shadowCoord.st + off).r;
-		if (shadowCoord.w > 0.0 && dist < shadowCoord.z)
+		if (shadowCoord.w > 0.0 && dist < (shadowCoord.z - bias))
 		{
 			shadow = 0.1;
 		}
@@ -90,7 +94,7 @@ float filterPCF(vec4 sc)
 
 	float shadowFactor = 0.0;
 	int count = 0;
-	int range = 1;
+	int range = 3;
 
 	for (int x = -range; x <= range; x++)
 	{
@@ -273,12 +277,9 @@ void main()
 		roughness,
 		ao,
 		NoV);
-
-	//float shadow = ShadowCalculation();
 	float shadow = filterPCF(shadowPos / shadowPos.w);
 
-	vec3 color = ambient + emissive + (Lo * shadow);//+ vec3(shadow * 0.05, 0.0, 0.0);
+	vec3 color = ambient + emissive + (Lo * shadow);
 
 	fragColor = vec4(color, 1.0);
-	//fragColor = vec4(shadow, shadow, shadow, 1.0);
 }
