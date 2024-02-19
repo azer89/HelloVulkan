@@ -255,7 +255,8 @@ void AppPBRShadowMapping::UpdateUI()
 	static PushConstantPBR staticPBRPushConstants =
 	{
 		.lightIntensity = 0.5f,
-		.lightFalloff = 0.1f
+		.baseReflectivity = 0.01f,
+		.lightFalloff = 0.1f,
 	};
 	static ShadowMapUBO staticShadowUBO =
 	{
