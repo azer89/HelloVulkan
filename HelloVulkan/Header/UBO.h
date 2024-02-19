@@ -23,14 +23,7 @@ struct RaytracingCameraUBO
 	glm::mat4 viewInverse;
 };
 
-// Shadow mapping
 struct ShadowMapUBO
-{
-	alignas(16)
-	glm::mat4 lightSpaceMatrix;
-};
-
-struct ShadowMapConfigUBO
 {
 	alignas(16)
 	glm::mat4 lightSpaceMatrix;

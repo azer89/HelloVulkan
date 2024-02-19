@@ -11,6 +11,12 @@ layout(location = 2) in vec4 inUV;
 layout(set = 0, binding = 0) uniform ShadowMapUBO
 {
 	mat4 lightSpaceMatrix;
+	vec4 lightPosition;
+	float shadowMapSize;
+	float shadowMinBias;
+	float shadowMaxBias;
+	float shadowNearPlane;
+	float shadowFarPlane;
 };
 
 layout(set = 0, binding = 1) uniform ModelUBO

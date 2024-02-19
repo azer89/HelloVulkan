@@ -17,26 +17,9 @@ public:
 		VulkanImage* shadowMap);
 	~PipelineShadow();
 
-	/*void SetShadowMapUBO(VulkanContext& ctx,
-		glm::vec3 lightPosition, 
-		glm::vec3 lightTarget,
-		float nearPlane,
-		float farPlane)*/
-	void SetShadowMapUBO(VulkanContext& ctx, glm::mat4 lightSpaceMatrix)
+	void SetShadowMapUBO(VulkanContext& ctx, ShadowMapUBO& ubo)
 	{
 		uint32_t frameIndex = ctx.GetFrameIndex();
-		
-		//glm::mat4 lightProjection =
-		//	glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, nearPlane, farPlane);
-		//glm::mat4 lightView =
-		//	glm::lookAt(lightPosition, lightTarget, glm::vec3(0.0, 1.0, 0.0));
-
-		ShadowMapUBO ubo =
-		{
-			//.lightSpaceMatrix = lightProjection * lightView
-			.lightSpaceMatrix = lightSpaceMatrix
-		};
-
 		shadowMapUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ShadowMapUBO));
 	}
 

@@ -207,22 +207,24 @@ void AppPBRShadowMapping::DestroyResources()
 
 void AppPBRShadowMapping::UpdateUBOs()
 {
+	// Camera matrices
 	CameraUBO ubo = camera_->GetCameraUBO();
 	lightPtr_->SetCameraUBO(vulkanContext_, ubo);
 	pbrPtr_->SetCameraUBO(vulkanContext_, ubo);
 
-	// Remove translation
+	// Skybox
 	CameraUBO skyboxUbo = ubo;
 	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view));
 	skyboxPtr_->SetCameraUBO(vulkanContext_, skyboxUbo);
 
-	// Model UBOs
+	// Sponza
 	glm::mat4 modelMatrix(1.f);
 	sponzaModel_->SetModelUBO(vulkanContext_, 
 	{
 		.model = modelMatrix
 	});
 
+	// Tachikoma
 	modelMatrix = glm::mat4(1.f);
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.5f, 0.62f, 0.f));
@@ -231,17 +233,14 @@ void AppPBRShadowMapping::UpdateUBOs()
 		.model = modelMatrix
 	});
 
+	// Shadow mapping
 	LightData light = lights_.lights_[0];
-
 	glm::mat4 lightProjection = glm::perspective(glm::radians(45.f), 1.0f, shadowConfig_.shadowNearPlane, shadowConfig_.shadowFarPlane);
 	glm::mat4 lightView = glm::lookAt(glm::vec3(light.position_), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
-
-	shadowPtr_->SetShadowMapUBO(vulkanContext_, lightSpaceMatrix);
-
 	shadowConfig_.lightSpaceMatrix = lightSpaceMatrix;
 	shadowConfig_.lightPosition = light.position_;
-
+	shadowPtr_->SetShadowMapUBO(vulkanContext_, shadowConfig_);
 	pbrPtr_->SetShadowMapConfigUBO(vulkanContext_, shadowConfig_);
 }
 
@@ -253,49 +252,49 @@ void AppPBRShadowMapping::UpdateUI()
 		return;
 	}
 
-	static bool lightRender = true;
-	static PushConstantPBR pbrPC;
-	static ShadowMapConfigUBO shadowUBO;
-
-	static float lightPos[4] = { -5.f, 45.0f, 5.0f, 1.0f};
+	static bool staticLightRender = true;
+	static PushConstantPBR staticPBRPushConstants;
+	static ShadowMapUBO staticShadowUBO;
+	static float staticLightPos[3] = { -5.f, 45.0f, 5.0f};
 
 	imguiPtr_->StartImGui();
 
-	ImGui::SetNextWindowSize(ImVec2(525, 450));
+	ImGui::SetNextWindowSize(ImVec2(525, 500));
 	ImGui::Begin(AppConfig::ScreenTitle.c_str());
 	ImGui::SetWindowFontScale(1.25f);
+	
 	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));
-	ImGui::Checkbox("Render Lights", &lightRender);
-	ImGui::SliderFloat("Light Falloff", &pbrPC.lightFalloff, 0.01f, 5.f);
-	ImGui::SliderFloat("Light Intensity", &pbrPC.lightIntensity, 0.1f, 100.f);
-	ImGui::SliderFloat("Albedo Multiplier", &pbrPC.albedoMultipler, 0.0f, 1.0f);
-	ImGui::SliderFloat("Base Reflectivity", &pbrPC.baseReflectivity, 0.01f, 1.f);
-	ImGui::SliderFloat("Max Mipmap Lod", &pbrPC.maxReflectionLod, 0.1f, cubemapMipmapCount_);
 
-	ImGui::Spacing();
-	ImGui::Text("Shadow");
-	ImGui::SliderFloat("Min Bias", &shadowUBO.shadowMinBias, 0.00001f, 0.01f);
-	ImGui::SliderFloat("Max Bias", &shadowUBO.shadowMaxBias, 0.001f, 0.1f);
-	ImGui::SliderFloat("Near Plane", &shadowUBO.shadowNearPlane, 0.1f, 50.0f);
-	ImGui::SliderFloat("Far Plane", &shadowUBO.shadowFarPlane, 10.0f, 150.0f);
+	ImGui::SeparatorText("Shading");
+	ImGui::Checkbox("Render Lights", &staticLightRender);
+	ImGui::SliderFloat("Light Falloff", &staticPBRPushConstants.lightFalloff, 0.01f, 5.f);
+	ImGui::SliderFloat("Light Intensity", &staticPBRPushConstants.lightIntensity, 0.1f, 100.f);
+	ImGui::SliderFloat("Albedo Multiplier", &staticPBRPushConstants.albedoMultipler, 0.0f, 1.0f);
+	ImGui::SliderFloat("Base Reflectivity", &staticPBRPushConstants.baseReflectivity, 0.01f, 1.f);
+	ImGui::SliderFloat("Max Mipmap Lod", &staticPBRPushConstants.maxReflectionLod, 0.1f, cubemapMipmapCount_);
 
-	ImGui::Spacing();
-	ImGui::Text("Light position");
-	ImGui::SliderFloat("x", &(lightPos[0]), -10.0f, 10.0f);
-	ImGui::SliderFloat("y", &(lightPos[1]), 5.0f, 70.0f);
-	ImGui::SliderFloat("z", &(lightPos[2]), -10.0f, 10.0f);
+	ImGui::SeparatorText("Shadow mapping");
+	ImGui::SliderFloat("Min Bias", &staticShadowUBO.shadowMinBias, 0.00001f, 0.01f);
+	ImGui::SliderFloat("Max Bias", &staticShadowUBO.shadowMaxBias, 0.001f, 0.1f);
+	ImGui::SliderFloat("Near Plane", &staticShadowUBO.shadowNearPlane, 0.1f, 50.0f);
+	ImGui::SliderFloat("Far Plane", &staticShadowUBO.shadowFarPlane, 10.0f, 150.0f);
+
+	ImGui::SeparatorText("Light position");
+	ImGui::SliderFloat("X", &(staticLightPos[0]), -10.0f, 10.0f);
+	ImGui::SliderFloat("Y", &(staticLightPos[1]), 40.0f, 70.0f);
+	ImGui::SliderFloat("Z", &(staticLightPos[2]), -10.0f, 10.0f);
 
 	imguiPtr_->EndImGui();
 
-	lights_.UpdateLightPosition(vulkanContext_, 0, &(lightPos[0]));
+	lights_.UpdateLightPosition(vulkanContext_, 0, &(staticLightPos[0]));
 
-	lightPtr_->RenderEnable(lightRender);
-	pbrPtr_->SetPBRPushConstants(pbrPC);
+	lightPtr_->RenderEnable(staticLightRender);
+	pbrPtr_->SetPBRPushConstants(staticPBRPushConstants);
 
-	shadowConfig_.shadowMinBias = shadowUBO.shadowMinBias;
-	shadowConfig_.shadowMaxBias = shadowUBO.shadowMaxBias;
-	shadowConfig_.shadowNearPlane = shadowUBO.shadowNearPlane;
-	shadowConfig_.shadowFarPlane = shadowUBO.shadowFarPlane;
+	shadowConfig_.shadowMinBias = staticShadowUBO.shadowMinBias;
+	shadowConfig_.shadowMaxBias = staticShadowUBO.shadowMaxBias;
+	shadowConfig_.shadowNearPlane = staticShadowUBO.shadowNearPlane;
+	shadowConfig_.shadowFarPlane = staticShadowUBO.shadowFarPlane;
 }
 
 // This is called from main.cpp

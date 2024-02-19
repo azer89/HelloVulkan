@@ -29,10 +29,10 @@ public:
 
 	void SetPBRPushConstants(const PushConstantPBR& pbrPC) { pc_ = pbrPC; };
 
-	void SetShadowMapConfigUBO(VulkanContext& ctx, ShadowMapConfigUBO ubo)
+	void SetShadowMapConfigUBO(VulkanContext& ctx, ShadowMapUBO ubo)
 	{
 		uint32_t frameIndex = ctx.GetFrameIndex();
-		shadowMapConfigUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ShadowMapConfigUBO));
+		shadowMapConfigUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ShadowMapUBO));
 	}
 
 public:

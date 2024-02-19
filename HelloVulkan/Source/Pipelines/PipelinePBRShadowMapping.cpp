@@ -38,7 +38,7 @@ PipelinePBRShadowMapping::PipelinePBRShadowMapping(
 {
 	// UBOs
 	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
-	CreateMultipleUniformBuffers(ctx, shadowMapConfigUBOBuffers_, sizeof(ShadowMapConfigUBO), AppConfig::FrameOverlapCount);
+	CreateMultipleUniformBuffers(ctx, shadowMapConfigUBOBuffers_, sizeof(ShadowMapUBO), AppConfig::FrameOverlapCount);
 	
 	// Model UBO
 	for (Model* model : models_)
@@ -206,7 +206,7 @@ void PipelinePBRShadowMapping::CreateDescriptorSet(VulkanContext& ctx, Model* pa
 	{
 		VkDescriptorBufferInfo bufferInfo1 = { cameraUBOBuffers_[i].buffer_, 0, sizeof(CameraUBO) };
 		VkDescriptorBufferInfo bufferInfo2 = { parentModel->modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
-		VkDescriptorBufferInfo bufferInfo3 = { shadowMapConfigUBOBuffers_[i].buffer_, 0, sizeof(ShadowMapConfigUBO) };
+		VkDescriptorBufferInfo bufferInfo3 = { shadowMapConfigUBOBuffers_[i].buffer_, 0, sizeof(ShadowMapUBO) };
 		VkDescriptorBufferInfo bufferInfo4 = { lights_->GetSSBOBuffer(), 0, lights_->GetSSBOSize() };
 		
 		std::vector<DescriptorWrite> writes;
