@@ -15,9 +15,6 @@ PipelinePBR::PipelinePBR(
 	VulkanContext& ctx,
 	std::vector<Model*> models,
 	Lights* lights,
-	//VulkanImage* specularMap,
-	//VulkanImage* diffuseMap,
-	//VulkanImage* brdfLUT,
 	IBLResources* iblResources,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
@@ -32,9 +29,6 @@ PipelinePBR::PipelinePBR(
 	models_(models),
 	lights_(lights),
 	iblResources_(iblResources)
-	//specularCubemap_(specularMap),
-	//diffuseCubemap_(diffuseMap),
-	//brdfLUT_(brdfLUT)
 {
 	// Per frame UBO
 	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);

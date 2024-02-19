@@ -66,9 +66,6 @@ void AppPBRShadowMapping::Init()
 		vulkanContext_,
 		models,
 		&lights_,
-		//&specularCubemap_,
-		//&diffuseCubemap_,
-		//&brdfLut_,
 		iblResources_.get(),
 		&shadowMap_,
 		&depthImage_,
@@ -148,12 +145,9 @@ void AppPBRShadowMapping::InitLights()
 
 void AppPBRShadowMapping::DestroyResources()
 {
-	// Destroy images
 	shadowMap_.Destroy();
-	//environmentCubemap_.Destroy();
-	//diffuseCubemap_.Destroy();
-	//specularCubemap_.Destroy();
-	//brdfLut_.Destroy();
+
+	// IBL Images
 	iblResources_.reset();
 
 	// Destroy meshes

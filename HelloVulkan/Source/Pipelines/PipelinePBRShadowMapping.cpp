@@ -15,9 +15,6 @@ PipelinePBRShadowMapping::PipelinePBRShadowMapping(
 	VulkanContext& ctx,
 	std::vector<Model*> models,
 	Lights* lights,
-	//VulkanImage* specularMap,
-	//VulkanImage* diffuseMap,
-	//VulkanImage* brdfLUT,
 	IBLResources* iblResources,
 	VulkanImage* shadowMap,
 	VulkanImage* depthImage,
@@ -32,9 +29,6 @@ PipelinePBRShadowMapping::PipelinePBRShadowMapping(
 	),
 	models_(models),
 	lights_(lights),
-	//specularCubemap_(specularMap),
-	//diffuseCubemap_(diffuseMap),
-	//brdfLUT_(brdfLUT),
 	iblResources_(iblResources),
 	shadowMap_(shadowMap)
 {
@@ -188,7 +182,6 @@ void PipelinePBRShadowMapping::CreateDescriptor(VulkanContext& ctx)
 	}
 }
 
-// TODO Separate descriptor arrays from the meshes
 void PipelinePBRShadowMapping::CreateDescriptorSet(
 	VulkanContext& ctx, 
 	Model* parentModel, 

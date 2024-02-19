@@ -58,9 +58,6 @@ void AppPBRClusterForward::Init()
 		models,
 		&lights_,
 		&cfBuffers_,
-		//&specularCubemap_,
-		//&diffuseCubemap_,
-		//&brdfLut_,
 		iblResources_.get(),
 		&depthImage_,
 		&multiSampledColorImage_);
@@ -141,11 +138,7 @@ void AppPBRClusterForward::InitLights()
 
 void AppPBRClusterForward::DestroyResources()
 {
-	// Destroy images
-	//environmentCubemap_.Destroy();
-	//diffuseCubemap_.Destroy();
-	//specularCubemap_.Destroy();
-	//brdfLut_.Destroy();
+	// IBL Images
 	iblResources_.reset();
 
 	// Destroy meshes

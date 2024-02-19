@@ -12,9 +12,6 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 	std::vector<Model*> models,
 	Lights* lights,
 	ClusterForwardBuffers* cfBuffers,
-	//VulkanImage* specularMap,
-	//VulkanImage* diffuseMap,
-	//VulkanImage* brdfLUT,
 	IBLResources* iblResources,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
@@ -29,9 +26,6 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 	lights_(lights),
 	cfBuffers_(cfBuffers),
 	iblResources_(iblResources)
-	//specularCubemap_(specularMap),
-	//diffuseCubemap_(diffuseMap),
-	//brdfLUT_(brdfLUT)
 {
 	// Per frame UBO
 	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
@@ -185,7 +179,6 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 	}
 }
 
-// TODO Separate descriptor arrays from the meshes
 void PipelinePBRClusterForward::CreateDescriptorSet(
 	VulkanContext& ctx, 
 	Model* parentModel, 
