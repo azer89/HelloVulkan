@@ -4,8 +4,11 @@
 #include "PipelineBase.h"
 #include "VulkanImage.h"
 #include "PushConstants.h"
+#include "IBLResources.h"
 #include "Model.h"
 #include "Light.h"
+
+#include <vector>
 
 /*
 Render meshes using PBR materials, naive forward renderer
@@ -16,9 +19,7 @@ public:
 	PipelinePBR(VulkanContext& ctx,
 		std::vector<Model*> models,
 		Lights* lights,
-		VulkanImage* specularMap,
-		VulkanImage* diffuseMap,
-		VulkanImage* brdfLUT,
+		IBLResources* iblResources,
 		VulkanImage* depthImage,
 		VulkanImage* offscreenColorImage,
 		uint8_t renderBit = 0u);
@@ -28,23 +29,15 @@ public:
 
 	void SetPBRPushConstants(const PushConstantPBR& pbrPC) { pc_ = pbrPC; };
 
-public:
-	// TODO change this to private
-	std::vector<Model*> models_;
-
 private:
 	void CreateDescriptor(VulkanContext& ctx);
-	void CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh& mesh);
-
-	Lights* lights_;
-
-	// Image-Based Lighting
-	// TODO Organize these inside a struct
-	VulkanImage* specularCubemap_;
-	VulkanImage* diffuseCubemap_;
-	VulkanImage* brdfLUT_;
+	void CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh* mesh, const size_t meshIndex);
 
 	PushConstantPBR pc_;
+	Lights* lights_;
+	IBLResources* iblResources_;
+	std::vector<Model*> models_;
+	std::vector<std::vector<VkDescriptorSet>> descriptorSets_;
 };
 
 #endif

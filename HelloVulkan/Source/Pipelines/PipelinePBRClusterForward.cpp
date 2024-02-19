@@ -12,9 +12,7 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 	std::vector<Model*> models,
 	Lights* lights,
 	ClusterForwardBuffers* cfBuffers,
-	VulkanImage* specularMap,
-	VulkanImage* diffuseMap,
-	VulkanImage* brdfLUT,
+	IBLResources* iblResources,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
@@ -27,9 +25,7 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 	models_(models),
 	lights_(lights),
 	cfBuffers_(cfBuffers),
-	specularCubemap_(specularMap),
-	diffuseCubemap_(diffuseMap),
-	brdfLUT_(brdfLUT)
+	iblResources_(iblResources)
 {
 	// Per frame UBO
 	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
@@ -101,6 +97,7 @@ void PipelinePBRClusterForward::FillCommandBuffer(VulkanContext& ctx, VkCommandB
 		0,
 		sizeof(PushConstantPBR), &pc_);
 
+	size_t meshIndex = 0;
 	for (Model* model : models_)
 	{
 		for (Mesh& mesh : model->meshes_)
@@ -111,7 +108,7 @@ void PipelinePBRClusterForward::FillCommandBuffer(VulkanContext& ctx, VkCommandB
 				pipelineLayout_,
 				0,
 				1,
-				&mesh.descriptorSets_[frameIndex],
+				&(descriptorSets_[meshIndex++][frameIndex]),
 				0,
 				nullptr);
 
@@ -171,24 +168,29 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 		});
 
 	// Set
+	descriptorSets_.resize(numMeshes);
+	size_t meshIndex = 0;
 	for (Model* model : models_)
 	{
 		for (Mesh& mesh : model->meshes_)
 		{
-			CreateDescriptorSet(ctx, model, mesh);
+			CreateDescriptorSet(ctx, model, &mesh, meshIndex++);
 		}
 	}
 }
 
-// TODO Separate descriptor arrays from the meshes
-void PipelinePBRClusterForward::CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh& mesh)
+void PipelinePBRClusterForward::CreateDescriptorSet(
+	VulkanContext& ctx, 
+	Model* parentModel, 
+	Mesh* mesh, 
+	const size_t meshIndex)
 {
-	VkDescriptorImageInfo specularImageInfo = specularCubemap_->GetDescriptorImageInfo();
-	VkDescriptorImageInfo diffuseImageInfo = diffuseCubemap_->GetDescriptorImageInfo();
-	VkDescriptorImageInfo lutImageInfo = brdfLUT_->GetDescriptorImageInfo();
+	VkDescriptorImageInfo specularImageInfo = iblResources_->specularCubemap_.GetDescriptorImageInfo();
+	VkDescriptorImageInfo diffuseImageInfo = iblResources_->diffuseCubemap_.GetDescriptorImageInfo();
+	VkDescriptorImageInfo lutImageInfo = iblResources_->brdfLut_.GetDescriptorImageInfo();
 
 	std::vector<VkDescriptorImageInfo> meshTextureInfos(PBR_MESH_TEXTURE_COUNT);
-	for (const auto& elem : mesh.textures_)
+	for (const auto& elem : mesh->textures_)
 	{
 		// Should be ordered based on elem.first
 		uint32_t index = static_cast<uint32_t>(elem.first) - 1;
@@ -196,7 +198,7 @@ void PipelinePBRClusterForward::CreateDescriptorSet(VulkanContext& ctx, Model* p
 	}
 
 	size_t frameCount = AppConfig::FrameOverlapCount;
-	mesh.descriptorSets_.resize(frameCount);
+	descriptorSets_[meshIndex].resize(frameCount);
 
 	for (size_t i = 0; i < frameCount; i++)
 	{
@@ -225,6 +227,6 @@ void PipelinePBRClusterForward::CreateDescriptorSet(VulkanContext& ctx, Model* p
 		writes.push_back({ .imageInfoPtr_ = &diffuseImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
 		writes.push_back({ .imageInfoPtr_ = &lutImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
 
-		descriptor_.CreateSet(ctx, writes, &(mesh.descriptorSets_[i]));
+		descriptor_.CreateSet(ctx, writes, &(descriptorSets_[meshIndex][i]));
 	}
 }

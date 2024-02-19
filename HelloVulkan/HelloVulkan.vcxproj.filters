@@ -254,6 +254,9 @@
     <ClInclude Include="..\Shaders\ShadowMapping\UBO.frag">
       <Filter>Shaders\ShadowMapping</Filter>
     </ClInclude>
+    <ClInclude Include="Header\IBLResources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">

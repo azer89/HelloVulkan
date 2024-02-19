@@ -21,58 +21,25 @@ void AppPBR::Init()
 	InitLights();
 
 	// Initialize attachments
-	CreateSharedImageResources();
+	InitSharedImageResources();
 
-	std::string hdrFile = AppConfig::TextureFolder + "piazza_bologni_1k.hdr";
+	// Image-Based Lighting
+	InitIBLResources(AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
+	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
 	model_ = std::make_unique<Model>(
 		vulkanContext_, 
 		AppConfig::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
 	std::vector<Model*> models = { model_.get()};
 
-	// Create a cubemap from the input HDR
-	{
-		PipelineEquirect2Cube e2c(
-			vulkanContext_,
-			hdrFile);
-		e2c.OffscreenRender(vulkanContext_,
-			&environmentCubemap_); // Output
-		environmentCubemap_.SetDebugName(vulkanContext_, "Environment_Cubemap");
-	}
-
-	// Cube filtering
-	{
-		PipelineCubeFilter cubeFilter(vulkanContext_, &environmentCubemap_);
-		// Diffuse
-		cubeFilter.OffscreenRender(vulkanContext_,
-			&diffuseCubemap_,
-			CubeFilterType::Diffuse);
-		// Specular
-		cubeFilter.OffscreenRender(vulkanContext_,
-			&specularCubemap_,
-			CubeFilterType::Specular);
-
-		diffuseCubemap_.SetDebugName(vulkanContext_, "Diffuse_Cubemap");
-		specularCubemap_.SetDebugName(vulkanContext_, "Specular_Cubemap");
-
-		cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
-	}
-	
-	// BRDF look up table
-	{
-		PipelineBRDFLUT brdfLUTCompute(vulkanContext_);
-		brdfLUTCompute.CreateLUT(vulkanContext_, &brdfLut_);
-		brdfLut_.SetDebugName(vulkanContext_, "BRDF_LUT");
-	}
-
-	// Renderers
+	// Pipelines
 	// This is responsible to clear swapchain image
 	clearPtr_ = std::make_unique<PipelineClear>(
 		vulkanContext_);
 	// This draws a cube
 	skyboxPtr_ = std::make_unique<PipelineSkybox>(
 		vulkanContext_,
-		&environmentCubemap_,
+		&(iblResources_->environmentCubemap_),
 		&depthImage_,
 		&multiSampledColorImage_,
 		// This is the first offscreen render pass so
@@ -84,9 +51,7 @@ void AppPBR::Init()
 		vulkanContext_,
 		models,
 		&lights_,
-		&specularCubemap_,
-		&diffuseCubemap_,
-		&brdfLut_,
+		iblResources_.get(),
 		&depthImage_,
 		&multiSampledColorImage_);
 	lightPtr_ = std::make_unique<PipelineLightRender>(
@@ -154,11 +119,8 @@ void AppPBR::InitLights()
 
 void AppPBR::DestroyResources()
 {
-	// Destroy images
-	environmentCubemap_.Destroy();
-	diffuseCubemap_.Destroy();
-	specularCubemap_.Destroy();
-	brdfLut_.Destroy();
+	// IBL Images
+	iblResources_.reset();
 
 	// Destroy meshes
 	model_.reset();

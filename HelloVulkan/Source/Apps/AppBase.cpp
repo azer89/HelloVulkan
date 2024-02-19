@@ -2,6 +2,11 @@
 #include "Configs.h"
 #include "VulkanUtility.h"
 
+// IBL
+#include "PipelineEquirect2Cube.h"
+#include "PipelineCubeFilter.h"
+#include "PipelineBRDFLUT.h"
+
 #include "volk.h"
 
 // Init GLSLang
@@ -100,41 +105,6 @@ void AppBase::InitGLFW()
 		static_cast<AppBase*>(glfwGetWindowUserPointer(window))->KeyCallback(window, key, scancode, action, mods);
 	};
 	glfwSetKeyCallback(glfwWindow_, FuncKey);
-}
-
-void AppBase::CreateSharedImageResources()
-{
-	depthImage_.Destroy();
-	multiSampledColorImage_.Destroy();
-	singleSampledColorImage_.Destroy();
-
-	const VkSampleCountFlagBits msaaSamples = vulkanContext_.GetMSAASampleCount();
-	const uint32_t width = vulkanContext_.GetFrameBufferWidth();
-	const uint32_t height = vulkanContext_.GetFrameBufferHeight();
-
-	// Depth attachment (OnScreen and offscreen)
-	depthImage_.CreateDepthResources(
-		vulkanContext_,
-		width,
-		height,
-		msaaSamples);
-	depthImage_.SetDebugName(vulkanContext_, "Depth_Image");
-
-	// Color attachments
-	// Multi-sampled (MSAA)
-	multiSampledColorImage_.CreateColorResources(
-		vulkanContext_,
-		width,
-		height,
-		msaaSamples);
-	multiSampledColorImage_.SetDebugName(vulkanContext_, "Multisampled_Color_Image");
-
-	// Single-sampled
-	singleSampledColorImage_.CreateColorResources(
-		vulkanContext_,
-		width,
-		height);
-	singleSampledColorImage_.SetDebugName(vulkanContext_, "Singlesampled_Color_Image");
 }
 
 void AppBase::DrawFrame()
@@ -250,7 +220,7 @@ void AppBase::OnWindowResized()
 		windowHeight_
 	);
 
-	CreateSharedImageResources();
+	InitSharedImageResources();
 
 	for (const auto& pip : pipelines_)
 	{
@@ -404,4 +374,74 @@ void AppBase::ProcessInput()
 	{
 		camera_->ProcessKeyboard(CameraMovement::Right, deltaTime_);
 	}
+}
+
+void AppBase::InitSharedImageResources()
+{
+	depthImage_.Destroy();
+	multiSampledColorImage_.Destroy();
+	singleSampledColorImage_.Destroy();
+
+	const VkSampleCountFlagBits msaaSamples = vulkanContext_.GetMSAASampleCount();
+	const uint32_t width = vulkanContext_.GetFrameBufferWidth();
+	const uint32_t height = vulkanContext_.GetFrameBufferHeight();
+
+	// Depth attachment (OnScreen and offscreen)
+	depthImage_.CreateDepthResources(
+		vulkanContext_,
+		width,
+		height,
+		msaaSamples);
+	depthImage_.SetDebugName(vulkanContext_, "Depth_Image");
+
+	// Color attachments
+	// Multi-sampled (MSAA)
+	multiSampledColorImage_.CreateColorResources(
+		vulkanContext_,
+		width,
+		height,
+		msaaSamples);
+	multiSampledColorImage_.SetDebugName(vulkanContext_, "Multisampled_Color_Image");
+
+	// Single-sampled
+	singleSampledColorImage_.CreateColorResources(
+		vulkanContext_,
+		width,
+		height);
+	singleSampledColorImage_.SetDebugName(vulkanContext_, "Singlesampled_Color_Image");
+}
+
+void AppBase::InitIBLResources(const std::string& hdrFile)
+{
+	iblResources_ = std::make_unique<IBLResources>();
+
+	// Create a cubemap from the input HDR
+	{
+		PipelineEquirect2Cube e2c(
+			vulkanContext_,
+			hdrFile);
+		e2c.OffscreenRender(vulkanContext_,
+			&(iblResources_->environmentCubemap_)); // Output
+	}
+
+	// Cube filtering
+	{
+		PipelineCubeFilter cubeFilter(vulkanContext_, &(iblResources_->environmentCubemap_));
+		// Diffuse
+		cubeFilter.OffscreenRender(vulkanContext_,
+			&(iblResources_->diffuseCubemap_),
+			CubeFilterType::Diffuse);
+		// Specular
+		cubeFilter.OffscreenRender(vulkanContext_,
+			&(iblResources_->specularCubemap_),
+			CubeFilterType::Specular);
+	}
+
+	// BRDF look up table
+	{
+		PipelineBRDFLUT brdfLUTCompute(vulkanContext_);
+		brdfLUTCompute.CreateLUT(vulkanContext_, &(iblResources_->brdfLut_));
+	}
+
+	iblResources_->SetDebugNames(vulkanContext_);
 }

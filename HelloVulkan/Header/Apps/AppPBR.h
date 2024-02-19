@@ -5,6 +5,7 @@
 #include "VulkanImage.h"
 #include "Light.h"
 #include "Model.h"
+#include "IBLResources.h"
 
 // Pipelines
 #include "PipelineSkybox.h"
@@ -45,18 +46,12 @@ private:
 	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;
 	std::unique_ptr<PipelineLightRender> lightPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
-	
-	// PBR stuff
-	VulkanImage environmentCubemap_;
-	VulkanImage diffuseCubemap_;
-	VulkanImage specularCubemap_;
-	VulkanImage brdfLut_;
-	float cubemapMipmapCount_;
 
-	float modelRotation_;
 	std::unique_ptr<Model> model_;
-
 	Lights lights_;
+
+	float cubemapMipmapCount_;
+	float modelRotation_;
 };
 
 #endif

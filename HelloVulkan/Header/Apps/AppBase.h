@@ -5,6 +5,7 @@
 #include "VulkanContext.h"
 #include "Camera.h"
 #include "PipelineBase.h"
+#include "IBLResources.h"
 
 #define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
@@ -25,9 +26,6 @@ protected:
 	void OnWindowResized();
 	void DrawFrame();
 
-	// TODO Implement this inside the derived classes
-	void CreateSharedImageResources();
-
 	// GLFW callbacks
 	void FrameBufferSizeCallback(GLFWwindow* window, int width, int height);
 	void MouseCallback(GLFWwindow* window, double xpos, double ypos);
@@ -42,6 +40,10 @@ protected:
 	void InitGLFW();
 	void InitCamera();
 	void InitTiming();
+
+	// Resources
+	void InitIBLResources(const std::string& hdrFile);
+	void InitSharedImageResources();
 	
 	// Functions related to the main loop
 	int GLFWWindowShouldClose();
@@ -80,12 +82,13 @@ protected:
 	bool shouldRecreateSwapchain_;
 
 	// Shared by multiple render passes
-	// TODO:
-	// [1] Maybe group these inside a struct
-	// [2] Move these inside the derived classes
+	// TODO Maybe group these inside a struct and use a unique_ptr
 	VulkanImage multiSampledColorImage_;
 	VulkanImage singleSampledColorImage_;
 	VulkanImage depthImage_;
+
+	// Optional IBL images
+	std::unique_ptr<IBLResources> iblResources_;
 };
 
 #endif

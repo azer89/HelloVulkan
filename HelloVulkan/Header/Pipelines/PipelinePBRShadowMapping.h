@@ -4,8 +4,11 @@
 #include "PipelineBase.h"
 #include "VulkanImage.h"
 #include "PushConstants.h"
+#include "IBLResources.h"
 #include "Model.h"
 #include "Light.h"
+
+#include <vector>
 
 /*
 Render meshes using PBR materials, naive forward renderer with shadow mapping
@@ -16,9 +19,7 @@ public:
 	PipelinePBRShadowMapping(VulkanContext& ctx,
 		std::vector<Model*> models,
 		Lights* lights,
-		VulkanImage* specularMap,
-		VulkanImage* diffuseMap,
-		VulkanImage* brdfLUT,
+		IBLResources* iblResources,
 		VulkanImage* shadowMap,
 		VulkanImage* depthImage,
 		VulkanImage* offscreenColorImage,
@@ -35,27 +36,18 @@ public:
 		shadowMapConfigUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ShadowMapUBO));
 	}
 
-public:
-	// TODO change this to private
-	std::vector<Model*> models_;
-
 private:
 	void CreateDescriptor(VulkanContext& ctx);
-	void CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh& mesh);
+	void CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh* mesh, const size_t meshIndex);
 
 private:
-	std::vector<VulkanBuffer> shadowMapConfigUBOBuffers_;
-
-	Lights* lights_;
-
-	// Image-Based Lighting
-	// TODO Organize these inside a struct
-	VulkanImage* specularCubemap_;
-	VulkanImage* diffuseCubemap_;
-	VulkanImage* brdfLUT_;
-	VulkanImage* shadowMap_;
-
 	PushConstantPBR pc_;
+	Lights* lights_;
+	IBLResources* iblResources_;
+	VulkanImage* shadowMap_;
+	std::vector<Model*> models_;
+	std::vector<std::vector<VkDescriptorSet>> descriptorSets_;
+	std::vector<VulkanBuffer> shadowMapConfigUBOBuffers_;
 };
 
 #endif

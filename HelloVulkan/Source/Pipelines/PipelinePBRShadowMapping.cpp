@@ -15,9 +15,7 @@ PipelinePBRShadowMapping::PipelinePBRShadowMapping(
 	VulkanContext& ctx,
 	std::vector<Model*> models,
 	Lights* lights,
-	VulkanImage* specularMap,
-	VulkanImage* diffuseMap,
-	VulkanImage* brdfLUT,
+	IBLResources* iblResources,
 	VulkanImage* shadowMap,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
@@ -31,9 +29,7 @@ PipelinePBRShadowMapping::PipelinePBRShadowMapping(
 	),
 	models_(models),
 	lights_(lights),
-	specularCubemap_(specularMap),
-	diffuseCubemap_(diffuseMap),
-	brdfLUT_(brdfLUT),
+	iblResources_(iblResources),
 	shadowMap_(shadowMap)
 {
 	// UBOs
@@ -104,6 +100,7 @@ void PipelinePBRShadowMapping::FillCommandBuffer(VulkanContext& ctx, VkCommandBu
 		0,
 		sizeof(PushConstantPBR), &pc_);
 
+	size_t meshIndex = 0;
 	for (Model* model : models_)
 	{
 		for (Mesh& mesh : model->meshes_)
@@ -114,7 +111,7 @@ void PipelinePBRShadowMapping::FillCommandBuffer(VulkanContext& ctx, VkCommandBu
 				pipelineLayout_,
 				0,
 				1,
-				&mesh.descriptorSets_[frameIndex],
+				&(descriptorSets_[meshIndex++][frameIndex]),
 				0,
 				nullptr);
 
@@ -174,25 +171,30 @@ void PipelinePBRShadowMapping::CreateDescriptor(VulkanContext& ctx)
 	});
 
 	// Set
+	descriptorSets_.resize(numMeshes);
+	size_t meshIndex = 0;
 	for (Model* model : models_)
 	{
 		for (Mesh& mesh : model->meshes_)
 		{
-			CreateDescriptorSet(ctx, model, mesh);
+			CreateDescriptorSet(ctx, model, &mesh, meshIndex++);
 		}
 	}
 }
 
-// TODO Separate descriptor arrays from the meshes
-void PipelinePBRShadowMapping::CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh& mesh)
+void PipelinePBRShadowMapping::CreateDescriptorSet(
+	VulkanContext& ctx, 
+	Model* parentModel, 
+	Mesh* mesh, 
+	const size_t meshIndex)
 {
-	VkDescriptorImageInfo specularImageInfo = specularCubemap_->GetDescriptorImageInfo();
-	VkDescriptorImageInfo diffuseImageInfo = diffuseCubemap_->GetDescriptorImageInfo();
-	VkDescriptorImageInfo lutImageInfo = brdfLUT_->GetDescriptorImageInfo();
+	VkDescriptorImageInfo specularImageInfo = iblResources_->specularCubemap_.GetDescriptorImageInfo();
+	VkDescriptorImageInfo diffuseImageInfo = iblResources_->diffuseCubemap_.GetDescriptorImageInfo();
+	VkDescriptorImageInfo lutImageInfo = iblResources_->brdfLut_.GetDescriptorImageInfo();
 	VkDescriptorImageInfo shadowImageInfo = shadowMap_->GetDescriptorImageInfo();
 
 	std::vector<VkDescriptorImageInfo> meshTextureInfos(PBR_MESH_TEXTURE_COUNT);
-	for (const auto& elem : mesh.textures_)
+	for (const auto& elem : mesh->textures_)
 	{
 		// Should be ordered based on elem.first
 		uint32_t index = static_cast<uint32_t>(elem.first) - 1;
@@ -200,7 +202,7 @@ void PipelinePBRShadowMapping::CreateDescriptorSet(VulkanContext& ctx, Model* pa
 	}
 
 	size_t frameCount = AppConfig::FrameOverlapCount;
-	mesh.descriptorSets_.resize(frameCount);
+	descriptorSets_[meshIndex].resize(frameCount);
 
 	for (size_t i = 0; i < frameCount; i++)
 	{
@@ -224,6 +226,6 @@ void PipelinePBRShadowMapping::CreateDescriptorSet(VulkanContext& ctx, Model* pa
 		writes.push_back({ .imageInfoPtr_ = &lutImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
 		writes.push_back({ .imageInfoPtr_ = &shadowImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
 
-		descriptor_.CreateSet(ctx, writes, &(mesh.descriptorSets_[i]));
+		descriptor_.CreateSet(ctx, writes, &(descriptorSets_[meshIndex][i]));
 	}
 }

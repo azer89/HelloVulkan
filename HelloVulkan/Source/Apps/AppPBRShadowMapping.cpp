@@ -31,9 +31,11 @@ void AppPBRShadowMapping::Init()
 	InitLights();
 
 	// Initialize attachments
-	CreateSharedImageResources();
+	InitSharedImageResources();
 
-	std::string hdrFile = AppConfig::TextureFolder + "piazza_bologni_1k.hdr";
+	// Image-Based Lighting
+	InitIBLResources(AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
+	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
 	sponzaModel_ = std::make_unique<Model>(
 		vulkanContext_, 
@@ -43,49 +45,14 @@ void AppPBRShadowMapping::Init()
 		AppConfig::ModelFolder + "Tachikoma//Tachikoma.gltf");
 	std::vector<Model*> models = {sponzaModel_.get(), tachikomaModel_.get()};
 
-	// Create a cubemap from the input HDR
-	{
-		PipelineEquirect2Cube e2c(
-			vulkanContext_,
-			hdrFile);
-		e2c.OffscreenRender(vulkanContext_,
-			&environmentCubemap_); // Output
-		environmentCubemap_.SetDebugName(vulkanContext_, "Environment_Cubemap");
-	}
-
-	// Cube filtering
-	{
-		PipelineCubeFilter cubeFilter(vulkanContext_, &environmentCubemap_);
-		// Diffuse
-		cubeFilter.OffscreenRender(vulkanContext_,
-			&diffuseCubemap_,
-			CubeFilterType::Diffuse);
-		// Specular
-		cubeFilter.OffscreenRender(vulkanContext_,
-			&specularCubemap_,
-			CubeFilterType::Specular);
-
-		diffuseCubemap_.SetDebugName(vulkanContext_, "Diffuse_Cubemap");
-		specularCubemap_.SetDebugName(vulkanContext_, "Specular_Cubemap");
-
-		cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
-	}
-	
-	// BRDF look up table
-	{
-		PipelineBRDFLUT brdfLUTCompute(vulkanContext_);
-		brdfLUTCompute.CreateLUT(vulkanContext_, &brdfLut_);
-		brdfLut_.SetDebugName(vulkanContext_, "BRDF_LUT");
-	}
-
-	// Renderers
+	// Pipelines
 	// This is responsible to clear swapchain image
 	clearPtr_ = std::make_unique<PipelineClear>(
 		vulkanContext_);
 	// This draws a cube
 	skyboxPtr_ = std::make_unique<PipelineSkybox>(
 		vulkanContext_,
-		&environmentCubemap_,
+		&(iblResources_->environmentCubemap_),
 		&depthImage_,
 		&multiSampledColorImage_,
 		// This is the first offscreen render pass so
@@ -97,9 +64,7 @@ void AppPBRShadowMapping::Init()
 		vulkanContext_,
 		models,
 		&lights_,
-		&specularCubemap_,
-		&diffuseCubemap_,
-		&brdfLut_,
+		iblResources_.get(),
 		&shadowMap_,
 		&depthImage_,
 		&multiSampledColorImage_);
@@ -178,12 +143,10 @@ void AppPBRShadowMapping::InitLights()
 
 void AppPBRShadowMapping::DestroyResources()
 {
-	// Destroy images
 	shadowMap_.Destroy();
-	environmentCubemap_.Destroy();
-	diffuseCubemap_.Destroy();
-	specularCubemap_.Destroy();
-	brdfLut_.Destroy();
+
+	// IBL Images
+	iblResources_.reset();
 
 	// Destroy meshes
 	sponzaModel_.reset();

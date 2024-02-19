@@ -3,6 +3,9 @@
 
 #include "PipelinePBR.h"
 #include "ClusterForwardBuffers.h"
+#include "IBLResources.h"
+
+#include <vector>
 
 /*
 Render meshes using PBR materials, clustered forward renderer
@@ -14,9 +17,7 @@ public:
 		std::vector<Model*> models,
 		Lights* lights,
 		ClusterForwardBuffers* cfBuffers,
-		VulkanImage* specularMap,
-		VulkanImage* diffuseMap,
-		VulkanImage* brdfLUT,
+		IBLResources* iblResources,
 		VulkanImage* depthImage,
 		VulkanImage* offscreenColorImage,
 		uint8_t renderBit = 0u);
@@ -32,27 +33,18 @@ public:
 		cfUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ClusterForwardUBO));
 	}
 
-public:
-	// TODO change this to private
-	std::vector<Model*> models_;
-
 private:
-	ClusterForwardBuffers* cfBuffers_;
-	std::vector<VulkanBuffer> cfUBOBuffers_;
-
-	Lights* lights_;
-
-	// Image-Based Lighting
-	// TODO Organize these inside a struct
-	VulkanImage* specularCubemap_;
-	VulkanImage* diffuseCubemap_;
-	VulkanImage* brdfLUT_;
-
 	PushConstantPBR pc_;
+	ClusterForwardBuffers* cfBuffers_;
+	Lights* lights_;
+	IBLResources* iblResources_;
+	std::vector<VulkanBuffer> cfUBOBuffers_;
+	std::vector<Model*> models_;
+	std::vector<std::vector<VkDescriptorSet>> descriptorSets_;
 
 private:
 	void CreateDescriptor(VulkanContext& ctx);
-	void CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh& mesh);
+	void CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh* mesh, const size_t meshIndex);
 };
 
 #endif
