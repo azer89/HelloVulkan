@@ -252,7 +252,11 @@ void AppPBRShadowMapping::UpdateUI()
 	}
 
 	static bool staticLightRender = true;
-	static PushConstantPBR staticPBRPushConstants;
+	static PushConstantPBR staticPBRPushConstants =
+	{
+		.lightIntensity = 0.5f,
+		.lightFalloff = 0.1f
+	};
 	static ShadowMapUBO staticShadowUBO =
 	{
 		.shadowMinBias = 0.001f,

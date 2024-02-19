@@ -54,7 +54,7 @@ private:
 	float cubemapMipmapCount_;
 
 	float modelRotation_;
-	std::unique_ptr<Model> sponzaModel_;
+	std::unique_ptr<Model> model_;
 
 	Lights lights_;
 };
