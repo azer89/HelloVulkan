@@ -30,10 +30,6 @@ public:
 
 	void SetPBRPushConstants(const PushConstantPBR& pbrPC) { pc_ = pbrPC; };
 
-public:
-	// TODO change this to private
-	std::vector<Model*> models_;
-
 private:
 	void CreateDescriptor(VulkanContext& ctx);
 	void CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh* mesh, const size_t meshIndex);
@@ -48,6 +44,7 @@ private:
 
 	PushConstantPBR pc_;
 
+	std::vector<Model*> models_;
 	std::vector<std::vector<VkDescriptorSet>> descriptorSets_;
 };
 

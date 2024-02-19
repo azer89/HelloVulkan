@@ -34,10 +34,6 @@ public:
 		cfUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ClusterForwardUBO));
 	}
 
-public:
-	// TODO change this to private
-	std::vector<Model*> models_;
-
 private:
 	ClusterForwardBuffers* cfBuffers_;
 	std::vector<VulkanBuffer> cfUBOBuffers_;
@@ -52,6 +48,7 @@ private:
 
 	PushConstantPBR pc_;
 
+	std::vector<Model*> models_;
 	std::vector<std::vector<VkDescriptorSet>> descriptorSets_;
 
 private:

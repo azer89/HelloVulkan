@@ -108,7 +108,6 @@ void PipelinePBR::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandB
 				pipelineLayout_,
 				0,
 				1,
-				//&mesh.descriptorSets_[frameIndex],
 				&(descriptorSets_[meshIndex++][frameIndex]),
 				0,
 				nullptr);

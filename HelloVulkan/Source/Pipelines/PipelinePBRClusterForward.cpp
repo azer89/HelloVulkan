@@ -203,7 +203,6 @@ void PipelinePBRClusterForward::CreateDescriptorSet(
 	}
 
 	size_t frameCount = AppConfig::FrameOverlapCount;
-	//mesh.descriptorSets_.resize(frameCount);
 	descriptorSets_[meshIndex].resize(frameCount);
 
 	for (size_t i = 0; i < frameCount; i++)

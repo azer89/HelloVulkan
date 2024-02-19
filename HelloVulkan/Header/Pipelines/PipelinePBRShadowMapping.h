@@ -37,10 +37,6 @@ public:
 		shadowMapConfigUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ShadowMapUBO));
 	}
 
-public:
-	// TODO change this to private
-	std::vector<Model*> models_;
-
 private:
 	void CreateDescriptor(VulkanContext& ctx);
 	void CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh* mesh, const size_t meshIndex);
@@ -59,6 +55,7 @@ private:
 
 	PushConstantPBR pc_;
 
+	std::vector<Model*> models_;
 	std::vector<std::vector<VkDescriptorSet>> descriptorSets_;
 };
 
