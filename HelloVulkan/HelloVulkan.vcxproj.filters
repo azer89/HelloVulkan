@@ -114,6 +114,9 @@
     <None Include="..\Shaders\ShadowMapping\Mesh.vert">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
+    <None Include="..\Shaders\ShadowMapping\Header.frag">
+      <Filter>Shaders\ShadowMapping</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Camera.h">
@@ -247,6 +250,9 @@
     </ClInclude>
     <ClInclude Include="Header\Pipelines\PipelinePBRShadowMapping.h">
       <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shaders\ShadowMapping\UBO.frag">
+      <Filter>Shaders\ShadowMapping</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

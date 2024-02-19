@@ -1,23 +1,20 @@
 #version 460 core
 
-//layout(location = 0) in vec3 aPos;
-//uniform mat4 lightSpaceMatrix;
-//uniform mat4 model;
-
 layout(location = 0) in vec4 inPosition;
 layout(location = 1) in vec4 inNormal;
 layout(location = 2) in vec4 inUV;
 
-layout(set = 0, binding = 0) uniform ShadowMapUBO
+layout(set = 0, binding = 0) uniform ShadowUBO
 {
 	mat4 lightSpaceMatrix;
 	vec4 lightPosition;
-	float shadowMapSize;
 	float shadowMinBias;
 	float shadowMaxBias;
 	float shadowNearPlane;
 	float shadowFarPlane;
-};
+	uint pcfIteration;
+}
+shadowUBO;
 
 layout(set = 0, binding = 1) uniform ModelUBO
 {
@@ -26,5 +23,5 @@ layout(set = 0, binding = 1) uniform ModelUBO
 
 void main()
 {
-	gl_Position = lightSpaceMatrix * model * vec4(inPosition.xyz, 1.0);
+	gl_Position = shadowUBO.lightSpaceMatrix * model * vec4(inPosition.xyz, 1.0);
 }

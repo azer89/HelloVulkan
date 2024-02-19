@@ -59,14 +59,12 @@ private:
 	VulkanImage brdfLut_;
 	float cubemapMipmapCount_;
 
-	float modelRotation_;
 	std::unique_ptr<Model> sponzaModel_;
 	std::unique_ptr<Model> tachikomaModel_;
 
 	Lights lights_;
 
-	//PushConstantPBRShadow pc_;
-	ShadowMapUBO shadowConfig_;
+	ShadowMapUBO shadowUBO_;
 };
 
 #endif

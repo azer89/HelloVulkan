@@ -155,6 +155,7 @@
     <None Include="..\Shaders\Mesh.vert" />
     <None Include="..\Shaders\ShadowMapping\Depth.frag" />
     <None Include="..\Shaders\ShadowMapping\Depth.vert" />
+    <None Include="..\Shaders\ShadowMapping\Header.frag" />
     <None Include="..\Shaders\ShadowMapping\Mesh.frag" />
     <None Include="..\Shaders\ShadowMapping\Mesh.vert" />
     <None Include="..\Shaders\SimpleRaytracing\ClosestHit.rchit" />
@@ -163,6 +164,7 @@
     <None Include="..\Shaders\Tonemap.frag" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Shaders\ShadowMapping\UBO.frag" />
     <ClInclude Include="Header\Apps\AppBase.h" />
     <ClInclude Include="Header\Apps\AppPBR.h" />
     <ClInclude Include="Header\Apps\AppPBRClusterForward.h" />

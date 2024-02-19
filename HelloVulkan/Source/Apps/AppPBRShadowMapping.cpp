@@ -10,18 +10,18 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_volk.h"
 
-AppPBRShadowMapping::AppPBRShadowMapping() :
-	modelRotation_(0.f)
+AppPBRShadowMapping::AppPBRShadowMapping()
 {
 }
 
 void AppPBRShadowMapping::Init()
 {
 	// Init shadow map
+	uint32_t shadowMapSize = 2048;
 	shadowMap_.CreateDepthResources(
 		vulkanContext_,
-		static_cast<uint32_t>(shadowConfig_.shadowMapSize),
-		static_cast<uint32_t>(shadowConfig_.shadowMapSize),
+		shadowMapSize,
+		shadowMapSize,
 		VK_SAMPLE_COUNT_1_BIT,
 		VK_IMAGE_USAGE_SAMPLED_BIT);
 	shadowMap_.CreateDefaultSampler(vulkanContext_);
@@ -235,13 +235,13 @@ void AppPBRShadowMapping::UpdateUBOs()
 
 	// Shadow mapping
 	LightData light = lights_.lights_[0];
-	glm::mat4 lightProjection = glm::perspective(glm::radians(45.f), 1.0f, shadowConfig_.shadowNearPlane, shadowConfig_.shadowFarPlane);
+	glm::mat4 lightProjection = glm::perspective(glm::radians(45.f), 1.0f, shadowUBO_.shadowNearPlane, shadowUBO_.shadowFarPlane);
 	glm::mat4 lightView = glm::lookAt(glm::vec3(light.position_), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
-	shadowConfig_.lightSpaceMatrix = lightSpaceMatrix;
-	shadowConfig_.lightPosition = light.position_;
-	shadowPtr_->SetShadowMapUBO(vulkanContext_, shadowConfig_);
-	pbrPtr_->SetShadowMapConfigUBO(vulkanContext_, shadowConfig_);
+	shadowUBO_.lightSpaceMatrix = lightSpaceMatrix;
+	shadowUBO_.lightPosition = light.position_;
+	shadowPtr_->SetShadowMapUBO(vulkanContext_, shadowUBO_);
+	pbrPtr_->SetShadowMapConfigUBO(vulkanContext_, shadowUBO_);
 }
 
 void AppPBRShadowMapping::UpdateUI()
@@ -256,6 +256,7 @@ void AppPBRShadowMapping::UpdateUI()
 	static PushConstantPBR staticPBRPushConstants;
 	static ShadowMapUBO staticShadowUBO;
 	static float staticLightPos[3] = { -5.f, 45.0f, 5.0f};
+	static int staticPCFIteration = 1;
 
 	imguiPtr_->StartImGui();
 
@@ -278,6 +279,7 @@ void AppPBRShadowMapping::UpdateUI()
 	ImGui::SliderFloat("Max Bias", &staticShadowUBO.shadowMaxBias, 0.001f, 0.1f);
 	ImGui::SliderFloat("Near Plane", &staticShadowUBO.shadowNearPlane, 0.1f, 50.0f);
 	ImGui::SliderFloat("Far Plane", &staticShadowUBO.shadowFarPlane, 10.0f, 150.0f);
+	ImGui::SliderInt("PCF Iteration", &staticPCFIteration, 1, 10);
 
 	ImGui::SeparatorText("Light position");
 	ImGui::SliderFloat("X", &(staticLightPos[0]), -10.0f, 10.0f);
@@ -291,10 +293,11 @@ void AppPBRShadowMapping::UpdateUI()
 	lightPtr_->RenderEnable(staticLightRender);
 	pbrPtr_->SetPBRPushConstants(staticPBRPushConstants);
 
-	shadowConfig_.shadowMinBias = staticShadowUBO.shadowMinBias;
-	shadowConfig_.shadowMaxBias = staticShadowUBO.shadowMaxBias;
-	shadowConfig_.shadowNearPlane = staticShadowUBO.shadowNearPlane;
-	shadowConfig_.shadowFarPlane = staticShadowUBO.shadowFarPlane;
+	shadowUBO_.shadowMinBias = staticShadowUBO.shadowMinBias;
+	shadowUBO_.shadowMaxBias = staticShadowUBO.shadowMaxBias;
+	shadowUBO_.shadowNearPlane = staticShadowUBO.shadowNearPlane;
+	shadowUBO_.shadowFarPlane = staticShadowUBO.shadowFarPlane;
+	shadowUBO_.pcfIteration = staticPCFIteration;
 }
 
 // This is called from main.cpp

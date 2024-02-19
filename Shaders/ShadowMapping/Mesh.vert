@@ -23,17 +23,8 @@ layout(set = 0, binding = 1) uniform ModelUBO
 }
 modelUBO;
 
-layout(set = 0, binding = 2) uniform ShadowMapConfigUBO
-{
-	mat4 lightSpaceMatrix;
-	vec4 lightPosition;
-	float shadowMapSize;
-	float shadowMinBias;
-	float shadowMaxBias;
-	float shadowNearPlane;
-	float shadowFarPlane;
-}
-shadowUBO;
+layout(set = 0, binding = 2)
+#include <ShadowMapping//UBO.frag>
 
 const mat4 biasMat = mat4(
 	0.5, 0.0, 0.0, 0.0,

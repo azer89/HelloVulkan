@@ -30,8 +30,6 @@ struct ShadowMapUBO
 	alignas(16)
 	glm::vec4 lightPosition = glm::vec4(0.0);
 	alignas(4)
-	float shadowMapSize = 2048;
-	alignas(4)
 	float shadowMinBias = 0.001f;
 	alignas(4)
 	float shadowMaxBias = 0.001f;
@@ -39,6 +37,8 @@ struct ShadowMapUBO
 	float shadowNearPlane = 15.0f;
 	alignas(4)
 	float shadowFarPlane = 50.0f;
+	alignas(4)
+	uint32_t pcfIteration = 1;
 };
 
 // Per model transformation matrix

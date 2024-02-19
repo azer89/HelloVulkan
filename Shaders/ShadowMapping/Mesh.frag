@@ -33,17 +33,8 @@ layout(set = 0, binding = 0) uniform CameraUBO
 }
 camUBO;
 
-layout(set = 0, binding = 2) uniform ShadowMapConfigUBO
-{
-	mat4 lightSpaceMatrix;
-	vec4 lightPosition;
-	float shadowMapSize;
-	float shadowMinBias;
-	float shadowMaxBias;
-	float shadowNearPlane;
-	float shadowFarPlane;
-}
-shadowUBO;
+layout(set = 0, binding = 2)
+#include <ShadowMapping//UBO.frag>
 
 // SSBO
 struct LightData
@@ -66,47 +57,8 @@ layout(set = 0, binding = 11) uniform samplerCube diffuseMap;
 layout(set = 0, binding = 12) uniform sampler2D brdfLUT;
 layout(set = 0, binding = 13) uniform sampler2D shadowMap;
 
-float textureProj(vec4 shadowCoord, vec2 off)
-{
-	vec3 N = normalize(normal);
-	vec3 lightDir = normalize(shadowUBO.lightPosition.xyz - worldPos);
-	float bias = max(shadowUBO.shadowMaxBias * (1.0 - dot(N, lightDir)), shadowUBO.shadowMinBias);
-
-	float shadow = 1.0;
-	//if (shadowCoord.z > -1.0 && shadowCoord.z < 1.0)
-	if (shadowCoord.z >= 0.0 && shadowCoord.z <= 1.0)
-	{
-		float dist = texture(shadowMap, shadowCoord.st + off).r;
-		if (shadowCoord.w > 0.0 && dist < (shadowCoord.z - bias))
-		{
-			shadow = 0.1;
-		}
-	}
-	return shadow;
-}
-
-float filterPCF(vec4 sc)
-{
-	ivec2 texDim = textureSize(shadowMap, 0);
-	float scale = 1.0;
-	float dx = scale * 1.0 / float(texDim.x);
-	float dy = scale * 1.0 / float(texDim.y);
-
-	float shadowFactor = 0.0;
-	int count = 0;
-	int range = 3;
-
-	for (int x = -range; x <= range; x++)
-	{
-		for (int y = -range; y <= range; y++)
-		{
-			shadowFactor += textureProj(sc, vec2(dx*x, dy*y));
-			count++;
-		}
-
-	}
-	return shadowFactor / count;
-}
+// Shadow mapping functions
+#include <ShadowMapping//Header.frag>
 
 // Tangent-normals to world-space
 vec3 GetNormalFromMap(vec3 tangentNormal, vec3 worldPos, vec3 normal, vec2 texCoord)
@@ -246,8 +198,6 @@ void main()
 	vec3 F0 = vec3(pc.baseReflectivity);
 	F0 = mix(F0, albedo, metallic);
 
-	
-
 	// A little bit hacky
 	//vec3 Lo = vec3(0.0); // Original code
 	vec3 Lo =  albedo * pc.albedoMultipler;
@@ -277,7 +227,8 @@ void main()
 		roughness,
 		ao,
 		NoV);
-	float shadow = filterPCF(shadowPos / shadowPos.w);
+
+	float shadow = FilterPCF(shadowPos / shadowPos.w);
 
 	vec3 color = ambient + emissive + (Lo * shadow);
 
