@@ -22,6 +22,12 @@ public:
 	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> lightCellsBuffers_;
 	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> lightIndicesBuffers_;
 
+	ClusterForwardBuffers() = default;
+	~ClusterForwardBuffers()
+	{
+		Destroy();
+	}
+
 	void CreateBuffers(VulkanContext& ctx, uint32_t lightCount);
 	void SetAABBDirty();
 	bool IsAABBDirty(uint32_t frameIndex) { return aabbDirtyFlags_[frameIndex] == AABBFlag::Dirty; }

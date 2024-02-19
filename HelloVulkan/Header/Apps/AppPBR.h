@@ -47,12 +47,11 @@ private:
 	std::unique_ptr<PipelineLightRender> lightPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
 
-	float cubemapMipmapCount_;
-
-	float modelRotation_;
 	std::unique_ptr<Model> model_;
-
 	Lights lights_;
+
+	float cubemapMipmapCount_;
+	float modelRotation_;
 };
 
 #endif

@@ -55,14 +55,14 @@ private:
 	std::unique_ptr<PipelineAABBGenerator> aabbPtr_;
 	std::unique_ptr<PipelineLightCulling> lightCullPtr_;
 
-	// TODO Set as unique_ptr
-	ClusterForwardBuffers cfBuffers_; // Buffers for clustered forward shading
-
-	float cubemapMipmapCount_;
+	// Buffers for clustered forward shading
+	std::unique_ptr<ClusterForwardBuffers> cfBuffers_; 
 
 	std::unique_ptr<Model> model_;
 
 	Lights lights_;
+
+	float cubemapMipmapCount_;
 };
 
 #endif

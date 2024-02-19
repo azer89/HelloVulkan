@@ -23,16 +23,14 @@ void AppPBR::Init()
 	// Initialize attachments
 	InitSharedImageResources();
 
-	std::string hdrFile = AppConfig::TextureFolder + "piazza_bologni_1k.hdr";
+	// Image-Based Lighting
+	InitIBLResources(AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
+	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
 	model_ = std::make_unique<Model>(
 		vulkanContext_, 
 		AppConfig::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
 	std::vector<Model*> models = { model_.get()};
-
-	// Image-Based Lighting
-	InitIBLResources(AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
-	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
 	// Pipelines
 	// This is responsible to clear swapchain image

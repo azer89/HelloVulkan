@@ -48,19 +48,18 @@ private:
 	std::unique_ptr<PipelineLightRender> lightPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
 
-	float shadowNearPlane_;
-	float shadowFarPlane_;
-	uint32_t shadowMapSize_;
-	VulkanImage shadowMap_;
-	
-	float cubemapMipmapCount_;
-
 	std::unique_ptr<Model> sponzaModel_;
 	std::unique_ptr<Model> tachikomaModel_;
 
 	Lights lights_;
-
 	ShadowMapUBO shadowUBO_;
+
+	float cubemapMipmapCount_;
+
+	float shadowNearPlane_;
+	float shadowFarPlane_;
+	uint32_t shadowMapSize_;
+	VulkanImage shadowMap_;
 };
 
 #endif

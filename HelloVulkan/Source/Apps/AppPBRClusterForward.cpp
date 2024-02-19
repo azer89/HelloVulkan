@@ -23,18 +23,17 @@ void AppPBRClusterForward::Init()
 	// Initialize lights
 	InitLights();
 
-	cfBuffers_.CreateBuffers(vulkanContext_, lights_.GetLightCount());
+	// Image-Based Lighting
+	InitIBLResources(AppConfig::TextureFolder + "dikhololo_night_4k.hdr");
+	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
-	//std::string hdrFile = AppConfig::TextureFolder + "dikhololo_night_4k.hdr";
+	cfBuffers_ = std::make_unique<ClusterForwardBuffers>();
+	cfBuffers_->CreateBuffers(vulkanContext_, lights_.GetLightCount());
 
 	model_ = std::make_unique<Model>(
 		vulkanContext_, 
 		AppConfig::ModelFolder + "Sponza//Sponza.gltf");
 	std::vector<Model*> models = { model_.get()};
-
-	// Image-Based Lighting
-	InitIBLResources(AppConfig::TextureFolder + "dikhololo_night_4k.hdr");
-	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
 	// Pipelines
 	// This is responsible to clear swapchain image
@@ -51,13 +50,13 @@ void AppPBRClusterForward::Init()
 		RenderPassBit::ColorClear | 
 		RenderPassBit::DepthClear
 	);
-	aabbPtr_ = std::make_unique<PipelineAABBGenerator>(vulkanContext_, &cfBuffers_);
-	lightCullPtr_ = std::make_unique<PipelineLightCulling>(vulkanContext_, &lights_, &cfBuffers_);
+	aabbPtr_ = std::make_unique<PipelineAABBGenerator>(vulkanContext_, cfBuffers_.get());
+	lightCullPtr_ = std::make_unique<PipelineLightCulling>(vulkanContext_, &lights_, cfBuffers_.get());
 	pbrPtr_ = std::make_unique<PipelinePBRClusterForward>(
 		vulkanContext_,
 		models,
 		&lights_,
-		&cfBuffers_,
+		cfBuffers_.get(),
 		iblResources_.get(),
 		&depthImage_,
 		&multiSampledColorImage_);
@@ -147,7 +146,7 @@ void AppPBRClusterForward::DestroyResources()
 	// Lights
 	lights_.Destroy();
 
-	cfBuffers_.Destroy();
+	cfBuffers_.reset();
 
 	// Destroy renderers
 	clearPtr_.reset();
