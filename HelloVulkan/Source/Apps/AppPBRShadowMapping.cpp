@@ -33,12 +33,15 @@ void AppPBRShadowMapping::Init()
 	// Initialize attachments
 	CreateSharedImageResources();
 
-	std::string hdrFile = AppConfig::TextureFolder + "kloppenheim_07_puresky_4k.hdr";
+	std::string hdrFile = AppConfig::TextureFolder + "piazza_bologni_1k.hdr";
 
-	model_ = std::make_unique<Model>(
+	sponzaModel_ = std::make_unique<Model>(
 		vulkanContext_, 
 		AppConfig::ModelFolder + "Sponza//Sponza.gltf");
-	std::vector<Model*> models = {model_.get()};
+	tachikomaModel_ = std::make_unique<Model>(
+		vulkanContext_,
+		AppConfig::ModelFolder + "Tachikoma//Tachikoma.gltf");
+	std::vector<Model*> models = {sponzaModel_.get(), tachikomaModel_.get()};
 
 	// Create a cubemap from the input HDR
 	{
@@ -142,11 +145,15 @@ void AppPBRShadowMapping::InitLights()
 	// Lights (SSBO)
 	lights_.AddLights(vulkanContext_,
 	{
+		// The first light is used to generate the shadow map
+		// and its position is set by ImGui
 		{
-			.position_ = glm::vec4(-5.f, 45.0f, 5.0f, 1.f),
+			.position_ = glm::vec4(0.f, 0.f, 0.f, 1.f),
 			.color_ = glm::vec4(1.f),
 			.radius_ = 10.0f
 		},
+
+		// Add additional lights so that the scene is not too dark
 		{
 			.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f),
 			.color_ = glm::vec4(1.f),
@@ -180,7 +187,8 @@ void AppPBRShadowMapping::DestroyResources()
 	brdfLut_.Destroy();
 
 	// Destroy meshes
-	model_.reset();
+	sponzaModel_.reset();
+	tachikomaModel_.reset();
 
 	// Lights
 	lights_.Destroy();
@@ -210,28 +218,25 @@ void AppPBRShadowMapping::UpdateUBOs()
 
 	// Model UBOs
 	glm::mat4 modelMatrix(1.f);
-	modelMatrix = glm::rotate(modelMatrix, modelRotation_, glm::vec3(0.f, 1.f, 0.f));
-	//modelRotation_ += deltaTime_ * 0.1f;
-
-	ModelUBO modelUBO1
+	sponzaModel_->SetModelUBO(vulkanContext_, 
 	{
 		.model = modelMatrix
-	};
-	model_->SetModelUBO(vulkanContext_, modelUBO1);
+	});
+
+	modelMatrix = glm::mat4(1.f);
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.5f, 0.62f, 0.f));
+	tachikomaModel_->SetModelUBO(vulkanContext_, 
+	{
+		.model = modelMatrix
+	});
 
 	LightData light = lights_.lights_[0];
 
 	glm::mat4 lightProjection = glm::perspective(glm::radians(45.f), 1.0f, shadowConfig_.shadowNearPlane, shadowConfig_.shadowFarPlane);
-	//glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, shadowConfig_.shadowNearPlane, shadowConfig_.shadowFarPlane);
 	glm::mat4 lightView = glm::lookAt(glm::vec3(light.position_), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
 
-	/*shadowPtr_->SetShadowMapUBO(
-		vulkanContext_,
-		light.position_,
-		glm::vec3(0.0f),
-		shadowConfig_.shadowNearPlane,
-		shadowConfig_.shadowFarPlane);*/
 	shadowPtr_->SetShadowMapUBO(vulkanContext_, lightSpaceMatrix);
 
 	shadowConfig_.lightSpaceMatrix = lightSpaceMatrix;
@@ -252,9 +257,11 @@ void AppPBRShadowMapping::UpdateUI()
 	static PushConstantPBR pbrPC;
 	static ShadowMapConfigUBO shadowUBO;
 
+	static float lightPos[4] = { -5.f, 45.0f, 5.0f, 1.0f};
+
 	imguiPtr_->StartImGui();
 
-	ImGui::SetNextWindowSize(ImVec2(525, 350));
+	ImGui::SetNextWindowSize(ImVec2(525, 450));
 	ImGui::Begin(AppConfig::ScreenTitle.c_str());
 	ImGui::SetWindowFontScale(1.25f);
 	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));
@@ -272,7 +279,15 @@ void AppPBRShadowMapping::UpdateUI()
 	ImGui::SliderFloat("Near Plane", &shadowUBO.shadowNearPlane, 0.1f, 50.0f);
 	ImGui::SliderFloat("Far Plane", &shadowUBO.shadowFarPlane, 10.0f, 150.0f);
 
+	ImGui::Spacing();
+	ImGui::Text("Light position");
+	ImGui::SliderFloat("x", &(lightPos[0]), -10.0f, 10.0f);
+	ImGui::SliderFloat("y", &(lightPos[1]), 5.0f, 70.0f);
+	ImGui::SliderFloat("z", &(lightPos[2]), -10.0f, 10.0f);
+
 	imguiPtr_->EndImGui();
+
+	lights_.UpdateLightPosition(vulkanContext_, 0, &(lightPos[0]));
 
 	lightPtr_->RenderEnable(lightRender);
 	pbrPtr_->SetPBRPushConstants(pbrPC);

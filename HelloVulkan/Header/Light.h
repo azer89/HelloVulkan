@@ -46,7 +46,7 @@ public:
 
 	void AddLights(VulkanContext& ctx, const std::vector<LightData>& lights);
 
-	void UpdateLight(VulkanContext& ctx, size_t index);
+	void UpdateLightPosition(VulkanContext& ctx, size_t index, float* position);
 
 	VkBuffer GetSSBOBuffer() const { return storageBuffer_.buffer_; }
 	size_t GetSSBOSize() const { return storageBufferSize_;  }

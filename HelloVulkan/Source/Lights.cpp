@@ -17,12 +17,13 @@ void Lights::AddLights(VulkanContext& ctx, const std::vector<LightData>& lights)
 	storageBuffer_.UploadBufferData(ctx, lights.data(), storageBufferSize_);
 }
 
-void Lights::UpdateLight(VulkanContext& ctx, size_t index)
+void Lights::UpdateLightPosition(VulkanContext& ctx, size_t index, float* position)
 {
 	if (index < 0 || index >= lights_.size())
 	{
 		return;
 	}
 
-
+	lights_[index].position_ = {position[0], position[1], position[2], 1.0};
+	storageBuffer_.UploadOffsetBufferData(ctx, &(lights_[index]), sizeof(LightData) * index, sizeof(LightData));
 }

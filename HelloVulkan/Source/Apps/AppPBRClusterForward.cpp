@@ -27,10 +27,10 @@ void AppPBRClusterForward::Init()
 
 	std::string hdrFile = AppConfig::TextureFolder + "dikhololo_night_4k.hdr";
 
-	model_ = std::make_unique<Model>(
+	sponzaModel_ = std::make_unique<Model>(
 		vulkanContext_, 
 		AppConfig::ModelFolder + "Sponza//Sponza.gltf");
-	std::vector<Model*> models = {model_.get()};
+	std::vector<Model*> models = {sponzaModel_.get()};
 
 	// Create a cubemap from the input HDR
 	{
@@ -178,7 +178,7 @@ void AppPBRClusterForward::DestroyResources()
 	brdfLut_.Destroy();
 
 	// Destroy meshes
-	model_.reset();
+	sponzaModel_.reset();
 
 	// Lights
 	lights_.Destroy();
@@ -215,7 +215,7 @@ void AppPBRClusterForward::UpdateUBOs()
 	{
 		.model = glm::mat4(1.0)
 	};
-	model_->SetModelUBO(vulkanContext_, modelUBO1);
+	sponzaModel_->SetModelUBO(vulkanContext_, modelUBO1);
 
 	// Clustered forward
 	ClusterForwardUBO cfUBO = camera_->GetClusterForwardUBO();

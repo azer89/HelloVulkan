@@ -62,7 +62,7 @@ private:
 	VulkanImage brdfLut_;
 	float cubemapMipmapCount_;
 
-	std::unique_ptr<Model> model_;
+	std::unique_ptr<Model> sponzaModel_;
 
 	Lights lights_;
 };

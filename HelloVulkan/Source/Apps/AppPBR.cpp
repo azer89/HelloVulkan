@@ -25,10 +25,10 @@ void AppPBR::Init()
 
 	std::string hdrFile = AppConfig::TextureFolder + "piazza_bologni_1k.hdr";
 
-	model_ = std::make_unique<Model>(
+	sponzaModel_ = std::make_unique<Model>(
 		vulkanContext_, 
 		AppConfig::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
-	std::vector<Model*> models = {model_.get()};
+	std::vector<Model*> models = {sponzaModel_.get()};
 
 	// Create a cubemap from the input HDR
 	{
@@ -161,7 +161,7 @@ void AppPBR::DestroyResources()
 	brdfLut_.Destroy();
 
 	// Destroy meshes
-	model_.reset();
+	sponzaModel_.reset();
 
 	// Lights
 	lights_.Destroy();
@@ -197,7 +197,7 @@ void AppPBR::UpdateUBOs()
 	{
 		.model = modelMatrix
 	};
-	model_->SetModelUBO(vulkanContext_, modelUBO1);
+	sponzaModel_->SetModelUBO(vulkanContext_, modelUBO1);
 }
 
 void AppPBR::UpdateUI()
