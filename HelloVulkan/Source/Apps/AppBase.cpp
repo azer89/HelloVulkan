@@ -107,41 +107,6 @@ void AppBase::InitGLFW()
 	glfwSetKeyCallback(glfwWindow_, FuncKey);
 }
 
-void AppBase::InitSharedImageResources()
-{
-	depthImage_.Destroy();
-	multiSampledColorImage_.Destroy();
-	singleSampledColorImage_.Destroy();
-
-	const VkSampleCountFlagBits msaaSamples = vulkanContext_.GetMSAASampleCount();
-	const uint32_t width = vulkanContext_.GetFrameBufferWidth();
-	const uint32_t height = vulkanContext_.GetFrameBufferHeight();
-
-	// Depth attachment (OnScreen and offscreen)
-	depthImage_.CreateDepthResources(
-		vulkanContext_,
-		width,
-		height,
-		msaaSamples);
-	depthImage_.SetDebugName(vulkanContext_, "Depth_Image");
-
-	// Color attachments
-	// Multi-sampled (MSAA)
-	multiSampledColorImage_.CreateColorResources(
-		vulkanContext_,
-		width,
-		height,
-		msaaSamples);
-	multiSampledColorImage_.SetDebugName(vulkanContext_, "Multisampled_Color_Image");
-
-	// Single-sampled
-	singleSampledColorImage_.CreateColorResources(
-		vulkanContext_,
-		width,
-		height);
-	singleSampledColorImage_.SetDebugName(vulkanContext_, "Singlesampled_Color_Image");
-}
-
 void AppBase::DrawFrame()
 {
 	FrameData& frameData = vulkanContext_.GetCurrentFrameData();
@@ -409,6 +374,41 @@ void AppBase::ProcessInput()
 	{
 		camera_->ProcessKeyboard(CameraMovement::Right, deltaTime_);
 	}
+}
+
+void AppBase::InitSharedImageResources()
+{
+	depthImage_.Destroy();
+	multiSampledColorImage_.Destroy();
+	singleSampledColorImage_.Destroy();
+
+	const VkSampleCountFlagBits msaaSamples = vulkanContext_.GetMSAASampleCount();
+	const uint32_t width = vulkanContext_.GetFrameBufferWidth();
+	const uint32_t height = vulkanContext_.GetFrameBufferHeight();
+
+	// Depth attachment (OnScreen and offscreen)
+	depthImage_.CreateDepthResources(
+		vulkanContext_,
+		width,
+		height,
+		msaaSamples);
+	depthImage_.SetDebugName(vulkanContext_, "Depth_Image");
+
+	// Color attachments
+	// Multi-sampled (MSAA)
+	multiSampledColorImage_.CreateColorResources(
+		vulkanContext_,
+		width,
+		height,
+		msaaSamples);
+	multiSampledColorImage_.SetDebugName(vulkanContext_, "Multisampled_Color_Image");
+
+	// Single-sampled
+	singleSampledColorImage_.CreateColorResources(
+		vulkanContext_,
+		width,
+		height);
+	singleSampledColorImage_.SetDebugName(vulkanContext_, "Singlesampled_Color_Image");
 }
 
 void AppBase::InitIBLResources(const std::string& hdrFile)

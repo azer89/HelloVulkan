@@ -16,12 +16,6 @@ enum class AABBFlag : uint8_t
 struct ClusterForwardBuffers
 {
 public:
-	std::array<AABBFlag, AppConfig::FrameOverlapCount> aabbDirtyFlags_;
-	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> aabbBuffers_;
-	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> globalIndexCountBuffers_;
-	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> lightCellsBuffers_;
-	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> lightIndicesBuffers_;
-
 	ClusterForwardBuffers() = default;
 	~ClusterForwardBuffers()
 	{
@@ -33,6 +27,13 @@ public:
 	bool IsAABBDirty(uint32_t frameIndex) { return aabbDirtyFlags_[frameIndex] == AABBFlag::Dirty; }
 	void SetAABBClean(uint32_t frameIndex) { aabbDirtyFlags_[frameIndex] = AABBFlag::Clean; }
 	void Destroy();
+
+public:
+	std::array<AABBFlag, AppConfig::FrameOverlapCount> aabbDirtyFlags_;
+	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> aabbBuffers_;
+	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> globalIndexCountBuffers_;
+	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> lightCellsBuffers_;
+	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> lightIndicesBuffers_;
 };
 
 #endif
