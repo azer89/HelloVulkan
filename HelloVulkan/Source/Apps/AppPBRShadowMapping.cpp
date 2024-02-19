@@ -143,7 +143,7 @@ void AppPBRShadowMapping::InitLights()
 	lights_.AddLights(vulkanContext_,
 	{
 		{
-			.position_ = glm::vec4(-5.f, 40.0f, 5.0f, 1.f),
+			.position_ = glm::vec4(-5.f, 45.0f, 5.0f, 1.f),
 			.color_ = glm::vec4(1.f),
 			.radius_ = 10.0f
 		},

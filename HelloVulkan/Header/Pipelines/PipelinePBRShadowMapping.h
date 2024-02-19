@@ -32,7 +32,7 @@ public:
 	void SetShadowMapConfigUBO(VulkanContext& ctx, ShadowMapConfigUBO ubo)
 	{
 		uint32_t frameIndex = ctx.GetFrameIndex();
-		shadowMapConfigUBOBuffers_[frameIndex].UploadBufferData(ctx, 0, &ubo, sizeof(ShadowMapConfigUBO));
+		shadowMapConfigUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ShadowMapConfigUBO));
 	}
 
 public:

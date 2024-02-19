@@ -63,13 +63,11 @@ public:
 
 	void UploadBufferData(
 		VulkanContext& ctx,
-		VkDeviceSize deviceOffset,
 		const void* data,
 		const size_t dataSize);
 
 	void DownloadBufferData(
 		VulkanContext& ctx,
-		VkDeviceSize deviceOffset,
 		void* outData,
 		const size_t dataSize);
 };

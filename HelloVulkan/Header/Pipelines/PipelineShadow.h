@@ -37,7 +37,7 @@ public:
 			.lightSpaceMatrix = lightSpaceMatrix
 		};
 
-		shadowMapUBOBuffers_[frameIndex].UploadBufferData(ctx, 0, &ubo, sizeof(ShadowMapUBO));
+		shadowMapUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ShadowMapUBO));
 	}
 
 	virtual void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;

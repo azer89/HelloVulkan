@@ -46,6 +46,8 @@ public:
 
 	void AddLights(VulkanContext& ctx, const std::vector<LightData>& lights);
 
+	void UpdateLight(VulkanContext& ctx, size_t index);
+
 	VkBuffer GetSSBOBuffer() const { return storageBuffer_.buffer_; }
 	size_t GetSSBOSize() const { return storageBufferSize_;  }
 	uint32_t GetLightCount() const { return lightCount_; }

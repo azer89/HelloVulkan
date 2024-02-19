@@ -14,5 +14,15 @@ void Lights::AddLights(VulkanContext& ctx, const std::vector<LightData>& lights)
 	storageBuffer_.CreateBuffer(ctx, storageBufferSize_,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VMA_MEMORY_USAGE_CPU_TO_GPU);
-	storageBuffer_.UploadBufferData(ctx, 0, lights.data(), storageBufferSize_);
+	storageBuffer_.UploadBufferData(ctx, lights.data(), storageBufferSize_);
+}
+
+void Lights::UpdateLight(VulkanContext& ctx, size_t index)
+{
+	if (index < 0 || index >= lights_.size())
+	{
+		return;
+	}
+
+
 }

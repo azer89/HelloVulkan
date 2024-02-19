@@ -22,7 +22,7 @@ public:
 	void SetRaytracingCameraUBO(VulkanContext& ctx, RaytracingCameraUBO ubo)
 	{
 		uint32_t frameIndex = ctx.GetFrameIndex();
-		cameraUBOBuffers_[frameIndex].UploadBufferData(ctx, 0, &ubo, sizeof(RaytracingCameraUBO));
+		cameraUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(RaytracingCameraUBO));
 	}
 
 private:

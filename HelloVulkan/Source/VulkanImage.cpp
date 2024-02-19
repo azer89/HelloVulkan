@@ -372,7 +372,7 @@ void VulkanImage::UpdateImage(
 		VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 		VMA_MEMORY_USAGE_CPU_ONLY);
 
-	stagingBuffer.UploadBufferData(ctx, 0, imageData, imageSize);
+	stagingBuffer.UploadBufferData(ctx, imageData, imageSize);
 	TransitionImageLayout(ctx, texFormat, sourceImageLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, layerCount);
 	CopyBufferToImage(ctx, stagingBuffer.buffer_, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight), layerCount);
 	TransitionImageLayout(ctx, texFormat, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, layerCount);

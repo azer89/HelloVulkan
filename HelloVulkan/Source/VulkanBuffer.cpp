@@ -105,7 +105,6 @@ void VulkanBuffer::CopyFrom(VulkanContext& ctx, VkBuffer srcBuffer, VkDeviceSize
 
 void VulkanBuffer::UploadBufferData(
 	VulkanContext& ctx,
-	VkDeviceSize deviceOffset,
 	const void* data,
 	const size_t dataSize)
 {
@@ -115,8 +114,8 @@ void VulkanBuffer::UploadBufferData(
 	vmaUnmapMemory(vmaAllocator_, vmaAllocation_);
 }
 
-void VulkanBuffer::DownloadBufferData(VulkanContext& ctx,
-	VkDeviceSize deviceOffset,
+void VulkanBuffer::DownloadBufferData(
+	VulkanContext& ctx,
 	void* outData,
 	const size_t dataSize)
 {

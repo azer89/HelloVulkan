@@ -24,7 +24,7 @@ public:
 	void SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO ubo)
 	{
 		const size_t frameIndex = ctx.GetFrameIndex();
-		cfUBOBuffers_[frameIndex].UploadBufferData(ctx, 0, &ubo, sizeof(ClusterForwardUBO));
+		cfUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ClusterForwardUBO));
 	}
 
 private:
