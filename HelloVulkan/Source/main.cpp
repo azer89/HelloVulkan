@@ -1,4 +1,5 @@
 #include "AppPBR.h"
+#include "AppPBRShadowMapping.h"
 #include "AppPBRClusterForward.h"
 #include "AppSimpleRaytracing.h"
 
@@ -6,6 +7,7 @@
 int main()
 {
 	AppPBR app;
+	//AppPBRShadowMapping app;
 	//AppPBRClusterForward app;
 	//AppSimpleRaytracing app;
 	

@@ -300,6 +300,71 @@ void VulkanRenderPass::CreateOnScreenRenderPass(
 	CreateBeginInfo();
 }
 
+void VulkanRenderPass::CreateDepthOnlyRenderPass(
+	VulkanContext& ctx,
+	uint8_t renderPassBit,
+	VkSampleCountFlagBits msaaSamples)
+{
+	device_ = ctx.GetDevice();
+	renderPassBit_ = renderPassBit;
+
+	const bool clearDepth = renderPassBit_ & RenderPassBit::DepthClear;
+	const bool depthShaderReadOnly = renderPassBit_ & RenderPassBit::DepthShaderReadOnly;
+
+	const VkAttachmentDescription depthAttachment = {
+		.flags = 0,
+		.format = ctx.GetDepthFormat(),
+		.samples = msaaSamples,
+		.loadOp = clearDepth ?
+				VK_ATTACHMENT_LOAD_OP_CLEAR :
+				VK_ATTACHMENT_LOAD_OP_LOAD,
+		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+		.initialLayout = clearDepth ?
+			VK_IMAGE_LAYOUT_UNDEFINED :
+			VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+		.finalLayout = depthShaderReadOnly ?
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : 
+			VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+	};
+
+	constexpr VkAttachmentReference depthAttachmentRef = {
+		.attachment = 0,
+		.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+	};
+
+	VkSubpassDescription subpass = {
+		.flags = 0,
+		.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+		.inputAttachmentCount = 0,
+		.pInputAttachments = nullptr,
+		.colorAttachmentCount = 0,
+		.pColorAttachments = nullptr,
+		.pResolveAttachments = nullptr,
+		.pDepthStencilAttachment = &depthAttachmentRef,
+		.preserveAttachmentCount = 0,
+		.pPreserveAttachments = nullptr
+	};
+
+	const VkRenderPassCreateInfo renderPassInfo = {
+		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0,
+		.attachmentCount = 1,
+		.pAttachments = &depthAttachment,
+		.subpassCount = 1,
+		.pSubpasses = &subpass,
+		.dependencyCount = 0,
+		.pDependencies = nullptr
+	};
+
+	VK_CHECK(vkCreateRenderPass(ctx.GetDevice(), &renderPassInfo, nullptr, &handle_));
+
+	// Cache VkRenderPassBeginInfo
+	CreateBeginInfo();
+}
+
 void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(
 	VulkanContext& ctx,
 	uint8_t renderPassBit,
@@ -470,6 +535,19 @@ void VulkanRenderPass::BeginRenderPass(
 	beginInfo_.framebuffer = framebuffer;
 	beginInfo_.renderArea = { 0u, 0u, ctx.GetFrameBufferWidth(), ctx.GetFrameBufferHeight() };
 	
+	vkCmdBeginRenderPass(commandBuffer, &beginInfo_, VK_SUBPASS_CONTENTS_INLINE);
+}
+
+void VulkanRenderPass::BeginRenderPass(
+	VulkanContext& ctx,
+	VkCommandBuffer commandBuffer,
+	VkFramebuffer framebuffer,
+	uint32_t width,
+	uint32_t height)
+{
+	beginInfo_.framebuffer = framebuffer;
+	beginInfo_.renderArea = { 0u, 0u, width, height };
+
 	vkCmdBeginRenderPass(commandBuffer, &beginInfo_, VK_SUBPASS_CONTENTS_INLINE);
 }
 

@@ -23,10 +23,9 @@ private:
 	VkDevice device_;
 
 public:
-
 	std::vector<Mesh> meshes_;
 
-	// ModelUBO
+	// TODO Separate buffers from the model
 	std::vector<VulkanBuffer> modelBuffers_;
 
 public:
@@ -47,7 +46,7 @@ public:
 	void SetModelUBO(VulkanContext& ctx, ModelUBO ubo)
 	{
 		uint32_t frameIndex = ctx.GetFrameIndex();
-		modelBuffers_[frameIndex].UploadBufferData(ctx, 0, &ubo, sizeof(ModelUBO));
+		modelBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ModelUBO));
 	}
 
 private:

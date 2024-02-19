@@ -3,6 +3,7 @@
 
 #include "glm/glm.hpp"
 
+// General-purpose
 struct CameraUBO
 {
 	alignas(16)
@@ -13,6 +14,7 @@ struct CameraUBO
 	glm::vec4 position;
 };
 
+// Needed for generating rays
 struct RaytracingCameraUBO
 {
 	alignas(16)
@@ -21,6 +23,25 @@ struct RaytracingCameraUBO
 	glm::mat4 viewInverse;
 };
 
+struct ShadowMapUBO
+{
+	alignas(16)
+	glm::mat4 lightSpaceMatrix;
+	alignas(16)
+	glm::vec4 lightPosition;
+	alignas(4)
+	float shadowMinBias;
+	alignas(4)
+	float shadowMaxBias;
+	alignas(4)
+	float shadowNearPlane;
+	alignas(4)
+	float shadowFarPlane;
+	alignas(4)
+	uint32_t pcfIteration;
+};
+
+// Per model transformation matrix
 struct ModelUBO
 {
 	alignas(16)

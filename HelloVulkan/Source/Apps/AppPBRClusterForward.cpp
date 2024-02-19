@@ -30,7 +30,7 @@ void AppPBRClusterForward::Init()
 	model_ = std::make_unique<Model>(
 		vulkanContext_, 
 		AppConfig::ModelFolder + "Sponza//Sponza.gltf");
-	std::vector<Model*> models = {model_.get()};
+	std::vector<Model*> models = { model_.get()};
 
 	// Create a cubemap from the input HDR
 	{

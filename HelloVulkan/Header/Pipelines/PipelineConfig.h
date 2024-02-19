@@ -20,6 +20,10 @@ struct PipelineConfig
 	bool depthTest_ = true;
 	bool depthWrite_ = true;
 	bool useBlending_ = true;
+
+	bool customViewportSize_ = false;
+	float viewportWidth_ = 0;
+	float viewportHeight_ = 0;
 };
 
 #endif

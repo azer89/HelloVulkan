@@ -1,22 +1,32 @@
-#include "AppPBR.h"
+#include "AppPBRShadowMapping.h"
 #include "Configs.h"
 #include "VulkanUtility.h"
 #include "PipelineEquirect2Cube.h"
 #include "PipelineCubeFilter.h"
 #include "PipelineBRDFLUT.h"
 
-#include "glm/gtc/matrix_transform.hpp"
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_volk.h"
 
-AppPBR::AppPBR() :
-	modelRotation_(0.f)
+AppPBRShadowMapping::AppPBRShadowMapping()
 {
 }
 
-void AppPBR::Init()
+void AppPBRShadowMapping::Init()
 {
+	// Init shadow map
+	uint32_t shadowMapSize = 2048;
+	shadowMap_.CreateDepthResources(
+		vulkanContext_,
+		shadowMapSize,
+		shadowMapSize,
+		VK_SAMPLE_COUNT_1_BIT,
+		VK_IMAGE_USAGE_SAMPLED_BIT);
+	shadowMap_.CreateDefaultSampler(vulkanContext_);
+	shadowMap_.SetDebugName(vulkanContext_, "Shadow_Map_Image");
+
 	// Initialize lights
 	InitLights();
 
@@ -25,10 +35,13 @@ void AppPBR::Init()
 
 	std::string hdrFile = AppConfig::TextureFolder + "piazza_bologni_1k.hdr";
 
-	model_ = std::make_unique<Model>(
+	sponzaModel_ = std::make_unique<Model>(
 		vulkanContext_, 
-		AppConfig::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
-	std::vector<Model*> models = { model_.get()};
+		AppConfig::ModelFolder + "Sponza//Sponza.gltf");
+	tachikomaModel_ = std::make_unique<Model>(
+		vulkanContext_,
+		AppConfig::ModelFolder + "Tachikoma//Tachikoma.gltf");
+	std::vector<Model*> models = {sponzaModel_.get(), tachikomaModel_.get()};
 
 	// Create a cubemap from the input HDR
 	{
@@ -80,15 +93,17 @@ void AppPBR::Init()
 		RenderPassBit::ColorClear | 
 		RenderPassBit::DepthClear
 	);
-	pbrPtr_ = std::make_unique<PipelinePBR>(
+	pbrPtr_ = std::make_unique<PipelinePBRShadowMapping>(
 		vulkanContext_,
 		models,
 		&lights_,
 		&specularCubemap_,
 		&diffuseCubemap_,
 		&brdfLut_,
+		&shadowMap_,
 		&depthImage_,
 		&multiSampledColorImage_);
+	shadowPtr_ = std::make_unique<PipelineShadow>(vulkanContext_, models, &shadowMap_);
 	lightPtr_ = std::make_unique<PipelineLightRender>(
 		vulkanContext_,
 		&lights_,
@@ -114,6 +129,7 @@ void AppPBR::Init()
 	{
 		// Must be in order
 		clearPtr_.get(),
+		shadowPtr_.get(),
 		skyboxPtr_.get(),
 		pbrPtr_.get(),
 		lightPtr_.get(),
@@ -124,11 +140,19 @@ void AppPBR::Init()
 	};
 }
 
-void AppPBR::InitLights()
+void AppPBRShadowMapping::InitLights()
 {
 	// Lights (SSBO)
 	lights_.AddLights(vulkanContext_,
 	{
+		// The first light is used to generate the shadow map
+		// and its position is set by ImGui
+		{
+			.color_ = glm::vec4(1.f),
+			.radius_ = 1.0f
+		},
+
+		// Add additional lights so that the scene is not too dark
 		{
 			.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f),
 			.color_ = glm::vec4(1.f),
@@ -152,16 +176,18 @@ void AppPBR::InitLights()
 	});
 }
 
-void AppPBR::DestroyResources()
+void AppPBRShadowMapping::DestroyResources()
 {
 	// Destroy images
+	shadowMap_.Destroy();
 	environmentCubemap_.Destroy();
 	diffuseCubemap_.Destroy();
 	specularCubemap_.Destroy();
 	brdfLut_.Destroy();
 
 	// Destroy meshes
-	model_.reset();
+	sponzaModel_.reset();
+	tachikomaModel_.reset();
 
 	// Lights
 	lights_.Destroy();
@@ -171,36 +197,53 @@ void AppPBR::DestroyResources()
 	finishPtr_.reset();
 	skyboxPtr_.reset();
 	pbrPtr_.reset();
+	shadowPtr_.reset();
 	lightPtr_.reset();
 	resolveMSPtr_.reset();
 	tonemapPtr_.reset();
 	imguiPtr_.reset();
 }
 
-void AppPBR::UpdateUBOs()
+void AppPBRShadowMapping::UpdateUBOs()
 {
+	// Camera matrices
 	CameraUBO ubo = camera_->GetCameraUBO();
 	lightPtr_->SetCameraUBO(vulkanContext_, ubo);
 	pbrPtr_->SetCameraUBO(vulkanContext_, ubo);
 
-	// Remove translation
+	// Skybox
 	CameraUBO skyboxUbo = ubo;
 	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view));
 	skyboxPtr_->SetCameraUBO(vulkanContext_, skyboxUbo);
 
-	// Model UBOs
+	// Sponza
 	glm::mat4 modelMatrix(1.f);
-	modelMatrix = glm::rotate(modelMatrix, modelRotation_, glm::vec3(0.f, 1.f, 0.f));
-	//modelRotation_ += deltaTime_ * 0.1f;
-
-	ModelUBO modelUBO1
+	sponzaModel_->SetModelUBO(vulkanContext_, 
 	{
 		.model = modelMatrix
-	};
-	model_->SetModelUBO(vulkanContext_, modelUBO1);
+	});
+
+	// Tachikoma
+	modelMatrix = glm::mat4(1.f);
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.5f, 0.62f, 0.f));
+	tachikomaModel_->SetModelUBO(vulkanContext_, 
+	{
+		.model = modelMatrix
+	});
+
+	// Shadow mapping
+	LightData light = lights_.lights_[0];
+	glm::mat4 lightProjection = glm::perspective(glm::radians(45.f), 1.0f, shadowUBO_.shadowNearPlane, shadowUBO_.shadowFarPlane);
+	glm::mat4 lightView = glm::lookAt(glm::vec3(light.position_), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
+	shadowUBO_.lightSpaceMatrix = lightSpaceMatrix;
+	shadowUBO_.lightPosition = light.position_;
+	shadowPtr_->SetShadowMapUBO(vulkanContext_, shadowUBO_);
+	pbrPtr_->SetShadowMapConfigUBO(vulkanContext_, shadowUBO_);
 }
 
-void AppPBR::UpdateUI()
+void AppPBRShadowMapping::UpdateUI()
 {
 	if (!showImgui_)
 	{
@@ -208,30 +251,67 @@ void AppPBR::UpdateUI()
 		return;
 	}
 
-	static bool lightRender = true;
-	static PushConstantPBR pbrPC;
+	static bool staticLightRender = true;
+	static PushConstantPBR staticPBRPushConstants =
+	{
+		.lightIntensity = 0.5f,
+		.baseReflectivity = 0.01f,
+		.lightFalloff = 0.1f,
+	};
+	static ShadowMapUBO staticShadowUBO =
+	{
+		.shadowMinBias = 0.001f,
+		.shadowMaxBias = 0.001f,
+		.shadowNearPlane = 15.0f,
+		.shadowFarPlane = 50.0f
+	};
+	static float staticLightPos[3] = { -5.f, 45.0f, 5.0f};
+	static int staticPCFIteration = 1;
 
 	imguiPtr_->StartImGui();
 
-	ImGui::SetNextWindowSize(ImVec2(525, 250));
+	ImGui::SetNextWindowSize(ImVec2(525, 500));
 	ImGui::Begin(AppConfig::ScreenTitle.c_str());
 	ImGui::SetWindowFontScale(1.25f);
+	
 	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));
-	ImGui::Checkbox("Render Lights", &lightRender);
-	ImGui::SliderFloat("Light Falloff", &pbrPC.lightFalloff, 0.01f, 5.f);
-	ImGui::SliderFloat("Light Intensity", &pbrPC.lightIntensity, 0.1f, 100.f);
-	ImGui::SliderFloat("Albedo Multiplier", &pbrPC.albedoMultipler, 0.0f, 1.0f);
-	ImGui::SliderFloat("Base Reflectivity", &pbrPC.baseReflectivity, 0.01f, 1.f);
-	ImGui::SliderFloat("Max Mipmap Lod", &pbrPC.maxReflectionLod, 0.1f, cubemapMipmapCount_);
+
+	ImGui::SeparatorText("Shading");
+	ImGui::Checkbox("Render Lights", &staticLightRender);
+	ImGui::SliderFloat("Light Falloff", &staticPBRPushConstants.lightFalloff, 0.01f, 5.f);
+	ImGui::SliderFloat("Light Intensity", &staticPBRPushConstants.lightIntensity, 0.1f, 100.f);
+	ImGui::SliderFloat("Albedo Multiplier", &staticPBRPushConstants.albedoMultipler, 0.0f, 1.0f);
+	ImGui::SliderFloat("Base Reflectivity", &staticPBRPushConstants.baseReflectivity, 0.01f, 1.f);
+	ImGui::SliderFloat("Max Mipmap Lod", &staticPBRPushConstants.maxReflectionLod, 0.1f, cubemapMipmapCount_);
+
+	ImGui::SeparatorText("Shadow mapping");
+	ImGui::SliderFloat("Min Bias", &staticShadowUBO.shadowMinBias, 0.00001f, 0.01f);
+	ImGui::SliderFloat("Max Bias", &staticShadowUBO.shadowMaxBias, 0.001f, 0.1f);
+	ImGui::SliderFloat("Near Plane", &staticShadowUBO.shadowNearPlane, 0.1f, 50.0f);
+	ImGui::SliderFloat("Far Plane", &staticShadowUBO.shadowFarPlane, 10.0f, 150.0f);
+	ImGui::SliderInt("PCF Iteration", &staticPCFIteration, 1, 10);
+
+	ImGui::SeparatorText("Light position");
+	ImGui::SliderFloat("X", &(staticLightPos[0]), -10.0f, 10.0f);
+	ImGui::SliderFloat("Y", &(staticLightPos[1]), 40.0f, 70.0f);
+	ImGui::SliderFloat("Z", &(staticLightPos[2]), -10.0f, 10.0f);
 
 	imguiPtr_->EndImGui();
 
-	lightPtr_->RenderEnable(lightRender);
-	pbrPtr_->SetPBRPushConstants(pbrPC);
+	lights_.UpdateLightPosition(vulkanContext_, 0, &(staticLightPos[0]));
+
+	lightPtr_->RenderEnable(staticLightRender);
+	pbrPtr_->SetPBRPushConstants(staticPBRPushConstants);
+
+	shadowUBO_.shadowMinBias = staticShadowUBO.shadowMinBias;
+	shadowUBO_.shadowMaxBias = staticShadowUBO.shadowMaxBias;
+	shadowUBO_.shadowNearPlane = staticShadowUBO.shadowNearPlane;
+	shadowUBO_.shadowFarPlane = staticShadowUBO.shadowFarPlane;
+	shadowUBO_.pcfIteration = staticPCFIteration;
 }
 
 // This is called from main.cpp
-int AppPBR::MainLoop()
+int AppPBRShadowMapping::MainLoop()
 {
 	InitVulkan({
 		.supportRaytracing_ = false,

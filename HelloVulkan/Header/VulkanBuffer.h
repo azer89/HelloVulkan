@@ -61,15 +61,19 @@ public:
 		VkBuffer srcBuffer,
 		VkDeviceSize size);
 
+	void UploadOffsetBufferData(
+		VulkanContext& ctx,
+		const void* data,
+		VkDeviceSize offset,
+		VkDeviceSize dataSize);
+
 	void UploadBufferData(
 		VulkanContext& ctx,
-		VkDeviceSize deviceOffset,
 		const void* data,
 		const size_t dataSize);
 
 	void DownloadBufferData(
 		VulkanContext& ctx,
-		VkDeviceSize deviceOffset,
 		void* outData,
 		const size_t dataSize);
 };

@@ -24,13 +24,13 @@ public:
 	{
 		uint32_t zeroValue = 0u;
 		uint32_t frameIndex = ctx.GetFrameIndex();
-		cfBuffers_->globalIndexCountBuffers_[frameIndex].UploadBufferData(ctx, 0, &zeroValue, sizeof(uint32_t));
+		cfBuffers_->globalIndexCountBuffers_[frameIndex].UploadBufferData(ctx, &zeroValue, sizeof(uint32_t));
 	}
 
 	void SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO ubo)
 	{
 		size_t frameIndex = ctx.GetFrameIndex();
-		cfUBOBuffers_[frameIndex].UploadBufferData(ctx, 0, &ubo, sizeof(ClusterForwardUBO));
+		cfUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ClusterForwardUBO));
 	}
 
 private:

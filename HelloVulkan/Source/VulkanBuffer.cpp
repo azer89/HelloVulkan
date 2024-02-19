@@ -103,20 +103,29 @@ void VulkanBuffer::CopyFrom(VulkanContext& ctx, VkBuffer srcBuffer, VkDeviceSize
 	ctx.EndOneTimeGraphicsCommand(commandBuffer);
 }
 
+void VulkanBuffer::UploadOffsetBufferData(
+	VulkanContext& ctx,
+	const void* data,
+	VkDeviceSize offset,
+	VkDeviceSize dataSize)
+{
+	vmaCopyMemoryToAllocation(vmaAllocator_, data, vmaAllocation_, offset, dataSize);
+}
+
 void VulkanBuffer::UploadBufferData(
 	VulkanContext& ctx,
-	VkDeviceSize deviceOffset,
 	const void* data,
 	const size_t dataSize)
 {
-	void* mappedData = nullptr;
+	/*void* mappedData = nullptr;
 	vmaMapMemory(vmaAllocator_, vmaAllocation_, &mappedData);
 	memcpy(mappedData, data, dataSize);
-	vmaUnmapMemory(vmaAllocator_, vmaAllocation_);
+	vmaUnmapMemory(vmaAllocator_, vmaAllocation_);*/
+	vmaCopyMemoryToAllocation(vmaAllocator_, data, vmaAllocation_, 0, dataSize);
 }
 
-void VulkanBuffer::DownloadBufferData(VulkanContext& ctx,
-	VkDeviceSize deviceOffset,
+void VulkanBuffer::DownloadBufferData(
+	VulkanContext& ctx,
 	void* outData,
 	const size_t dataSize)
 {

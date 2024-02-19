@@ -35,18 +35,18 @@ struct PipelineCreateInfo
 			.primitiveRestartEnable = VK_FALSE
 		}),
 		viewport({
-			.x = 0.0f,
-			.y = 0.0f,
-			// Note change these when doing offscreen rendering
-			.width = static_cast<float>(ctx.GetFrameBufferWidth()),
-			.height = static_cast<float>(ctx.GetFrameBufferHeight()),
-			.minDepth = 0.0f,
-			.maxDepth = 1.0f
+			.x = 0.f,
+			.y = 0.f,
+			// Doesn't need to set these because of dynamic state
+			.width = 0.f,
+			.height = 0.f,
+			.minDepth = 0.f,
+			.maxDepth = 1.f
 		}),
 		scissor({
 			.offset = { 0, 0 },
-			// Note change these when doing offscreen rendering
-			.extent = { ctx.GetFrameBufferWidth(), ctx.GetFrameBufferHeight()}
+			// Doesn't need to set these because of dynamic state
+			.extent = { 0, 0}
 		}),
 		viewportState({
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,

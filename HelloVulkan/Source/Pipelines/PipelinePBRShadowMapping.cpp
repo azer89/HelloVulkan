@@ -1,70 +1,73 @@
-#include "PipelinePBRClusterForward.h"
+#include "PipelinePBRShadowMapping.h"
+#include "VulkanUtility.h"
 #include "Configs.h"
+
+#include <vector>
+#include <array>
 
 // Constants
 constexpr uint32_t UBO_COUNT = 3;
-constexpr uint32_t SSBO_COUNT = 4;
+constexpr uint32_t SSBO_COUNT = 1;
 constexpr uint32_t PBR_MESH_TEXTURE_COUNT = 6;
-constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
+constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 4; // Specular, diffuse, BRDF LUT, and shadow map
 
-PipelinePBRClusterForward::PipelinePBRClusterForward(
+PipelinePBRShadowMapping::PipelinePBRShadowMapping(
 	VulkanContext& ctx,
 	std::vector<Model*> models,
 	Lights* lights,
-	ClusterForwardBuffers* cfBuffers,
 	VulkanImage* specularMap,
 	VulkanImage* diffuseMap,
 	VulkanImage* brdfLUT,
+	VulkanImage* shadowMap,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
-	PipelineBase(ctx,
+	PipelineBase(ctx, 
 		{
 			.type_ = PipelineType::GraphicsOffScreen,
 			.msaaSamples_ = offscreenColorImage->multisampleCount_,
 			.vertexBufferBind_ = true,
-		}),
+		}
+	),
 	models_(models),
 	lights_(lights),
-	cfBuffers_(cfBuffers),
 	specularCubemap_(specularMap),
 	diffuseCubemap_(diffuseMap),
-	brdfLUT_(brdfLUT)
+	brdfLUT_(brdfLUT),
+	shadowMap_(shadowMap)
 {
-	// Per frame UBO
+	// UBOs
 	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
-
+	CreateMultipleUniformBuffers(ctx, shadowMapConfigUBOBuffers_, sizeof(ShadowMapUBO), AppConfig::FrameOverlapCount);
+	
 	// Model UBO
 	for (Model* model : models_)
 	{
 		CreateMultipleUniformBuffers(ctx, model->modelBuffers_, sizeof(ModelUBO), AppConfig::FrameOverlapCount);
 	}
 
-	// Cluster forward UBO
-	CreateMultipleUniformBuffers(ctx, cfUBOBuffers_, sizeof(ClusterForwardUBO), AppConfig::FrameOverlapCount);
-
 	// Note that this pipeline is offscreen rendering
 	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
 
 	framebuffer_.Create(
-		ctx,
-		renderPass_.GetHandle(),
+		ctx, 
+		renderPass_.GetHandle(), 
 		{
 			offscreenColorImage,
 			depthImage
-		},
+		}, 
 		IsOffscreen());
 
 	CreateDescriptor(ctx);
 
 	// Push constants
 	std::vector<VkPushConstantRange> ranges =
-	{ {
+	{{
 		.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
 		.offset = 0u,
 		.size = sizeof(PushConstantPBR),
-	} };
-
+	}};
+	
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, ranges);
 
 	CreateGraphicsPipeline(
@@ -72,22 +75,22 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
-			AppConfig::ShaderFolder + "Mesh.vert",
-			AppConfig::ShaderFolder + "ClusteredForward/MeshClusterForward.frag"
+			AppConfig::ShaderFolder + "ShadowMapping//Mesh.vert",
+			AppConfig::ShaderFolder + "ShadowMapping//Mesh.frag"
 		},
 		&pipeline_
 	);
 }
 
-PipelinePBRClusterForward::~PipelinePBRClusterForward()
+PipelinePBRShadowMapping::~PipelinePBRShadowMapping()
 {
-	for (auto uboBuffer : cfUBOBuffers_)
+	for (auto uboBuffer : shadowMapConfigUBOBuffers_)
 	{
 		uboBuffer.Destroy();
 	}
 }
 
-void PipelinePBRClusterForward::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
+void PipelinePBRShadowMapping::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
 	uint32_t frameIndex = ctx.GetFrameIndex();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
@@ -127,11 +130,11 @@ void PipelinePBRClusterForward::FillCommandBuffer(VulkanContext& ctx, VkCommandB
 			vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBufferSize_ / (sizeof(unsigned int))), 1, 0, 0, 0);
 		}
 	}
-
+	
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
+void PipelinePBRShadowMapping::CreateDescriptor(VulkanContext& ctx)
 {
 	uint32_t numMeshes = 0u;
 	for (Model* model : models_)
@@ -152,23 +155,23 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 
 	// Layout
 	descriptor_.CreateLayout(ctx,
+	{
 		{
-			{
-				.descriptorType_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-				.bindingCount_ = 3
-			},
-			{
-				.descriptorType_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-				.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-				.bindingCount_ = 4
-			},
-			{
-				.descriptorType_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-				.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
-				.bindingCount_ = PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT
-			}
-		});
+			.descriptorType_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+			.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+			.bindingCount_ = 3
+		},
+		{
+			.descriptorType_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+			.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+			.bindingCount_ = 1
+		},
+		{
+			.descriptorType_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
+			.bindingCount_ = PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT
+		}
+	});
 
 	// Set
 	for (Model* model : models_)
@@ -181,11 +184,12 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 }
 
 // TODO Separate descriptor arrays from the meshes
-void PipelinePBRClusterForward::CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh& mesh)
+void PipelinePBRShadowMapping::CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh& mesh)
 {
 	VkDescriptorImageInfo specularImageInfo = specularCubemap_->GetDescriptorImageInfo();
 	VkDescriptorImageInfo diffuseImageInfo = diffuseCubemap_->GetDescriptorImageInfo();
 	VkDescriptorImageInfo lutImageInfo = brdfLUT_->GetDescriptorImageInfo();
+	VkDescriptorImageInfo shadowImageInfo = shadowMap_->GetDescriptorImageInfo();
 
 	std::vector<VkDescriptorImageInfo> meshTextureInfos(PBR_MESH_TEXTURE_COUNT);
 	for (const auto& elem : mesh.textures_)
@@ -202,21 +206,15 @@ void PipelinePBRClusterForward::CreateDescriptorSet(VulkanContext& ctx, Model* p
 	{
 		VkDescriptorBufferInfo bufferInfo1 = { cameraUBOBuffers_[i].buffer_, 0, sizeof(CameraUBO) };
 		VkDescriptorBufferInfo bufferInfo2 = { parentModel->modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
-		VkDescriptorBufferInfo bufferInfo3 = { cfUBOBuffers_[i].buffer_, 0, sizeof(ClusterForwardUBO) };
+		VkDescriptorBufferInfo bufferInfo3 = { shadowMapConfigUBOBuffers_[i].buffer_, 0, sizeof(ShadowMapUBO) };
 		VkDescriptorBufferInfo bufferInfo4 = { lights_->GetSSBOBuffer(), 0, lights_->GetSSBOSize() };
-		VkDescriptorBufferInfo bufferInfo5 = { cfBuffers_->lightCellsBuffers_[i].buffer_, 0, VK_WHOLE_SIZE };
-		VkDescriptorBufferInfo bufferInfo6 = { cfBuffers_->lightIndicesBuffers_[i].buffer_, 0, VK_WHOLE_SIZE };
-		VkDescriptorBufferInfo bufferInfo7 = { cfBuffers_->aabbBuffers_[i].buffer_, 0, VK_WHOLE_SIZE};
-
+		
 		std::vector<DescriptorWrite> writes;
 
 		writes.push_back({ .bufferInfoPtr_ = &bufferInfo1, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
 		writes.push_back({ .bufferInfoPtr_ = &bufferInfo2, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
 		writes.push_back({ .bufferInfoPtr_ = &bufferInfo3, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
 		writes.push_back({ .bufferInfoPtr_ = &bufferInfo4, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-		writes.push_back({ .bufferInfoPtr_ = &bufferInfo5, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-		writes.push_back({ .bufferInfoPtr_ = &bufferInfo6, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-		writes.push_back({ .bufferInfoPtr_ = &bufferInfo7, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
 		for (size_t i = 0; i < meshTextureInfos.size(); ++i)
 		{
 			writes.push_back({ .imageInfoPtr_ = &meshTextureInfos[i], .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
@@ -224,6 +222,7 @@ void PipelinePBRClusterForward::CreateDescriptorSet(VulkanContext& ctx, Model* p
 		writes.push_back({ .imageInfoPtr_ = &specularImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
 		writes.push_back({ .imageInfoPtr_ = &diffuseImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
 		writes.push_back({ .imageInfoPtr_ = &lutImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
+		writes.push_back({ .imageInfoPtr_ = &shadowImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
 
 		descriptor_.CreateSet(ctx, writes, &(mesh.descriptorSets_[i]));
 	}

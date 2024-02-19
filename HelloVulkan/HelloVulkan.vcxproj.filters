@@ -31,6 +31,9 @@
     <Filter Include="Shaders\SimpleRaytracing">
       <UniqueIdentifier>{cf84cfb1-6675-4214-b93b-2033515180c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\ShadowMapping">
+      <UniqueIdentifier>{c0f7c7d6-309b-4695-b723-a302677825d5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\Cube.vert">
@@ -98,6 +101,21 @@
     </None>
     <None Include="..\Shaders\SimpleRaytracing\RayGen.rgen">
       <Filter>Shaders\SimpleRaytracing</Filter>
+    </None>
+    <None Include="..\Shaders\ShadowMapping\Mesh.frag">
+      <Filter>Shaders\ShadowMapping</Filter>
+    </None>
+    <None Include="..\Shaders\ShadowMapping\Depth.frag">
+      <Filter>Shaders\ShadowMapping</Filter>
+    </None>
+    <None Include="..\Shaders\ShadowMapping\Depth.vert">
+      <Filter>Shaders\ShadowMapping</Filter>
+    </None>
+    <None Include="..\Shaders\ShadowMapping\Mesh.vert">
+      <Filter>Shaders\ShadowMapping</Filter>
+    </None>
+    <None Include="..\Shaders\ShadowMapping\Header.frag">
+      <Filter>Shaders\ShadowMapping</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -224,6 +242,18 @@
     <ClInclude Include="Header\AccelerationStructure.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineShadow.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Apps\AppPBRShadowMapping.h">
+      <Filter>Header Files\Apps</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelinePBRShadowMapping.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shaders\ShadowMapping\UBO.frag">
+      <Filter>Shaders\ShadowMapping</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">
@@ -333,6 +363,15 @@
     </ClCompile>
     <ClCompile Include="Source\AccelerationStructure.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineShadow.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Apps\AppPBRShadowMapping.cpp">
+      <Filter>Source Files\Apps</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelinePBRShadowMapping.cpp">
+      <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

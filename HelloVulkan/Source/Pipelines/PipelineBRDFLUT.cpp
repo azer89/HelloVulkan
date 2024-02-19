@@ -46,7 +46,7 @@ void PipelineBRDFLUT::CreateLUT(VulkanContext& ctx, VulkanImage* outputLUT)
 
 	// Copy the buffer content to an image
 	// TODO Find a way so that compute shader can write to an image
-	outBuffer_.DownloadBufferData(ctx, 0, lutData.data(), IBLConfig::LUTBufferSize);
+	outBuffer_.DownloadBufferData(ctx, lutData.data(), IBLConfig::LUTBufferSize);
 	outputLUT->CreateImageFromData(
 		ctx,
 		lutData.data(),

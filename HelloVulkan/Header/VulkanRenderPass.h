@@ -15,7 +15,10 @@ enum RenderPassBit : uint8_t
 	ColorShaderReadOnly = 0x04,
 
 	// Transition color attachment to VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
-	ColorPresent = 0x08
+	ColorPresent = 0x08,
+
+	// Transition depth attachment to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+	DepthShaderReadOnly = 0x10,
 };
 
 class VulkanRenderPass
@@ -26,6 +29,11 @@ public:
 
 	void CreateOnScreenRenderPass(
 		VulkanContext& ctx, 
+		uint8_t renderPassBit = 0u,
+		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT);
+
+	void CreateDepthOnlyRenderPass(
+		VulkanContext& ctx,
 		uint8_t renderPassBit = 0u,
 		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT);
 
@@ -55,6 +63,13 @@ public:
 		VulkanContext& ctx,
 		VkCommandBuffer commandBuffer, 
 		VkFramebuffer framebuffer);
+
+	void BeginRenderPass(
+		VulkanContext& ctx,
+		VkCommandBuffer commandBuffer,
+		VkFramebuffer framebuffer,
+		uint32_t width,
+		uint32_t height);
 
 	void BeginCubemapRenderPass(
 		VkCommandBuffer commandBuffer, 

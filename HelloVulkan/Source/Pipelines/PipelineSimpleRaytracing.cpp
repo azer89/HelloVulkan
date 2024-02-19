@@ -356,7 +356,7 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
 		VMA_MEMORY_USAGE_CPU_TO_GPU
 	);
-	vertexBuffer_.UploadBufferData(ctx, 0, vertices.data(), vertices.size() * sizeof(Vertex));
+	vertexBuffer_.UploadBufferData(ctx, vertices.data(), vertices.size() * sizeof(Vertex));
 
 	indexBuffer_.CreateBufferWithShaderDeviceAddress(
 		ctx,
@@ -364,7 +364,7 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
 		VMA_MEMORY_USAGE_CPU_TO_GPU
 	);
-	indexBuffer_.UploadBufferData(ctx, 0, indices.data(), indices.size() * sizeof(uint32_t));
+	indexBuffer_.UploadBufferData(ctx, indices.data(), indices.size() * sizeof(uint32_t));
 
 	transformBuffer_.CreateBufferWithShaderDeviceAddress(
 		ctx,
@@ -372,7 +372,7 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 	VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
 		VMA_MEMORY_USAGE_CPU_TO_GPU
 	);
-	transformBuffer_.UploadBufferData(ctx, 0, &transformMatrix, sizeof(VkTransformMatrixKHR));
+	transformBuffer_.UploadBufferData(ctx, &transformMatrix, sizeof(VkTransformMatrixKHR));
 
 	VkDeviceOrHostAddressConstKHR vertexBufferDeviceAddress{};
 	VkDeviceOrHostAddressConstKHR indexBufferDeviceAddress{};
@@ -503,7 +503,7 @@ void PipelineSimpleRaytracing::CreateTLAS(VulkanContext& ctx)
 		sizeof(VkAccelerationStructureInstanceKHR),
 		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
 		VMA_MEMORY_USAGE_CPU_TO_GPU);
-	instancesBuffer.UploadBufferData(ctx, 0, &instance, sizeof(VkAccelerationStructureInstanceKHR));
+	instancesBuffer.UploadBufferData(ctx, &instance, sizeof(VkAccelerationStructureInstanceKHR));
 
 	VkDeviceOrHostAddressConstKHR instanceDataDeviceAddress =
 	{
@@ -634,7 +634,7 @@ void PipelineSimpleRaytracing::CreateShaderBindingTable(VulkanContext& ctx)
 	hitShaderBindingTable_.CreateBufferWithShaderDeviceAddress(ctx, handleSize, bufferUsage, memoryUsage);
 
 	// Copy handles
-	raygenShaderBindingTable_.UploadBufferData(ctx, 0, shaderHandleStorage.data(), handleSize);
-	missShaderBindingTable_.UploadBufferData(ctx, 0, shaderHandleStorage.data() + handleSizeAligned, handleSize);
-	hitShaderBindingTable_.UploadBufferData(ctx, 0, shaderHandleStorage.data() + handleSizeAligned * 2, handleSize);
+	raygenShaderBindingTable_.UploadBufferData(ctx, shaderHandleStorage.data(), handleSize);
+	missShaderBindingTable_.UploadBufferData(ctx, shaderHandleStorage.data() + handleSizeAligned, handleSize);
+	hitShaderBindingTable_.UploadBufferData(ctx, shaderHandleStorage.data() + handleSizeAligned * 2, handleSize);
 }

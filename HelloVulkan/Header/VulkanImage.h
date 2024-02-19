@@ -123,7 +123,8 @@ public:
 		VulkanContext& ctx, 
 		uint32_t width, 
 		uint32_t height,
-		VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
+		VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT,
+		VkImageUsageFlags additionalUsage = 0);
 
 	void GenerateMipmap(
 		VulkanContext& ctx,
