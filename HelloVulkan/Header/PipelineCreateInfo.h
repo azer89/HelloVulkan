@@ -37,7 +37,7 @@ struct PipelineCreateInfo
 		viewport({
 			.x = 0.f,
 			.y = 0.f,
-			// Doesn't need to set these because of dynamic state
+			// Below don't matter because of dynamic state
 			.width = 0.f,
 			.height = 0.f,
 			.minDepth = 0.f,
@@ -45,7 +45,7 @@ struct PipelineCreateInfo
 		}),
 		scissor({
 			.offset = { 0, 0 },
-			// Doesn't need to set these because of dynamic state
+			// Below don't matter because of dynamic state
 			.extent = { 0, 0}
 		}),
 		viewportState({

@@ -6,8 +6,8 @@
 // Entry point
 int main()
 {
-	AppPBR app;
-	//AppPBRShadowMapping app;
+	//AppPBR app;
+	AppPBRShadowMapping app;
 	//AppPBRClusterForward app;
 	//AppSimpleRaytracing app;
 	
