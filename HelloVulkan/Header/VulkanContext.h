@@ -82,8 +82,8 @@ public:
 	VkQueue GetGraphicsQueue() const { return graphicsQueue_; }
 	uint32_t GetGraphicsFamily() const { return graphicsFamily_; }
 	uint32_t GetComputeFamily() const { return computeFamily_; }
-	uint32_t GetFrameBufferWidth() const { return framebufferWidth_; }
-	uint32_t GetFrameBufferHeight() const { return framebufferHeight_; }
+	uint32_t GetFrameBufferWidth() const { return swapchainWidth_; }
+	uint32_t GetFrameBufferHeight() const { return swapchainHeight_; }
 	size_t GetDeviceQueueIndicesSize() const { return deviceQueueIndices_.size(); }
 	const uint32_t* GetDeviceQueueIndicesData() const { return deviceQueueIndices_.data(); }
 	VkSampleCountFlagBits GetMSAASampleCount() const { return msaaSampleCount_; }
@@ -156,9 +156,9 @@ private:
 	std::vector<VkImageView> swapchainImageViews_;
 	VkFormat swapchainImageFormat_;
 	uint32_t currentSwapchainImageIndex_; // Current image index
-
-	uint32_t framebufferWidth_;
-	uint32_t framebufferHeight_;
+	uint32_t swapchainWidth_;
+	uint32_t swapchainHeight_;
+	
 	VkFormat depthFormat_;
 	VkSampleCountFlagBits msaaSampleCount_;
 

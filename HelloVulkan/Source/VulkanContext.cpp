@@ -9,8 +9,8 @@
 void VulkanContext::Create(VulkanInstance& instance, ContextConfig config)
 {
 	config_ = config;
-	framebufferWidth_ = AppConfig::InitialScreenWidth;
-	framebufferHeight_ = AppConfig::InitialScreenHeight;
+	swapchainWidth_ = AppConfig::InitialScreenWidth;
+	swapchainHeight_ = AppConfig::InitialScreenHeight;
 
 	GetEnabledRaytracingFeatures();
 
@@ -348,7 +348,7 @@ VkResult VulkanContext::CreateSwapchain(VkSurfaceKHR surface)
 		.minImageCount = GetSwapchainImageCount(swapchainSupport.capabilities_),
 		.imageFormat = surfaceFormat.format,
 		.imageColorSpace = surfaceFormat.colorSpace,
-		.imageExtent = {.width = framebufferWidth_, .height = framebufferHeight_ },
+		.imageExtent = {.width = swapchainWidth_, .height = swapchainHeight_ },
 		.imageArrayLayers = 1,
 		.imageUsage = 
 			VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | 
@@ -455,8 +455,8 @@ void VulkanContext::RecreateSwapchainResources(
 	}
 	vkDestroySwapchainKHR(device_, swapchain_, nullptr);
 
-	framebufferWidth_ = width;
-	framebufferHeight_ = height;
+	swapchainWidth_ = width;
+	swapchainHeight_ = height;
 
 	VK_CHECK(CreateSwapchain(instance.GetSurface()));
 	CreateSwapchainImages();
