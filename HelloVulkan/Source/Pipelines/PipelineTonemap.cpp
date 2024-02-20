@@ -13,7 +13,7 @@ PipelineTonemap::PipelineTonemap(VulkanContext& ctx,
 {
 	renderPass_.CreateOnScreenColorOnlyRenderPass(ctx);
 
-	framebuffer_.Create(ctx, renderPass_.GetHandle(), {}, IsOffscreen());
+	framebuffer_.CreateResizeable(ctx, renderPass_.GetHandle(), {}, IsOffscreen());
 
 	CreateDescriptor(ctx);
 

@@ -300,7 +300,7 @@ void PipelineCubeFilter::OffscreenRender(VulkanContext& ctx,
 	for (uint32_t i = 0; i < outputMipMapCount; ++i)
 	{
 		uint32_t targetSize = outputSideLength >> i;
-		mipFramebuffers[i].Create(ctx, renderPass_.GetHandle(), outputViews[i], targetSize, targetSize);
+		mipFramebuffers[i].CreateUnresizeable(ctx, renderPass_.GetHandle(), outputViews[i], targetSize, targetSize);
 	}
 
 	// Get command buffers

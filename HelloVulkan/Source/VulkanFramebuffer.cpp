@@ -1,7 +1,7 @@
 #include "VulkanFramebuffer.h"
 #include "VulkanUtility.h"
 
-void VulkanFramebuffer::Create(VulkanContext& ctx,
+void VulkanFramebuffer::CreateResizeable(VulkanContext& ctx,
 	VkRenderPass renderPass,
 	const std::vector<VulkanImage*>& attachmentImages,
 	bool offscreen)
@@ -35,7 +35,7 @@ void VulkanFramebuffer::Create(VulkanContext& ctx,
 	Recreate(ctx);
 }
 
-void VulkanFramebuffer::Create(
+void VulkanFramebuffer::CreateUnresizeable(
 	VulkanContext& ctx,
 	VkRenderPass renderPass,
 	const std::vector<VkImageView>& attachments,
