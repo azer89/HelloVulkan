@@ -71,9 +71,9 @@ public:
 	VkResult GetNextSwapchainImage(VkSemaphore nextSwapchainImageSemaphore);
 
 	// TODO Maybe these four functions can be simplified/combined
-	VkCommandBuffer BeginOneTimeGraphicsCommand();
+	[[nodiscard]] VkCommandBuffer BeginOneTimeGraphicsCommand();
 	void EndOneTimeGraphicsCommand(VkCommandBuffer commandBuffer);
-	VkCommandBuffer BeginOneTimeComputeCommand();
+	[[nodiscard]] VkCommandBuffer BeginOneTimeComputeCommand();
 	void EndOneTimeComputeCommand(VkCommandBuffer commandBuffer);
 
 	// Getters
@@ -92,8 +92,7 @@ public:
 	VmaAllocator GetVMAAllocator() const { return vmaAllocator_; }
 
 	// Raytracing getters
-	VkPhysicalDeviceRayTracingPipelinePropertiesKHR GetRayTracingPipelineProperties() { return rtPipelineProperties_; }
-	VkPhysicalDeviceAccelerationStructureFeaturesKHR GetAccelerationStructureFeatures() { rtASFeatures_; }
+	VkPhysicalDeviceRayTracingPipelinePropertiesKHR GetRayTracingPipelineProperties() const { return rtPipelineProperties_; }
 
 	// Getters related to swapchain
 	VkSwapchainKHR GetSwapChain() const { return swapchain_; }
