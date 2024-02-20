@@ -108,7 +108,7 @@ void AppPBRClusterForward::InitLights()
 	constexpr uint32_t NR_LIGHTS = 2000;
 	for (uint32_t i = 0; i < NR_LIGHTS; ++i)
 	{
-		float yPos = Utility::RandomNumber(-2.f, 10.0f);
+		float yPos = Utility::RandomNumber(-2.f, 7.0f);
 		float radius = Utility::RandomNumber(0.0f, 15.0f);
 		float rad = Utility::RandomNumber(0.0f, pi2);
 		float xPos = glm::cos(rad);
