@@ -78,8 +78,8 @@ void PipelineSimpleRaytracing::FillCommandBuffer(VulkanContext& ctx, VkCommandBu
 		&missShaderSbtEntry,
 		&hitShaderSbtEntry,
 		&callableShaderSbtEntry,
-		ctx.GetFrameBufferWidth(),
-		ctx.GetFrameBufferHeight(),
+		ctx.GetSwapchainWidth(),
+		ctx.GetSwapchainHeight(),
 		1);
 
 	uint32_t swapchainIndex = ctx.GetCurrentSwapchainImageIndex();
@@ -107,7 +107,7 @@ void PipelineSimpleRaytracing::FillCommandBuffer(VulkanContext& ctx, VkCommandBu
 	copyRegion.srcOffset = { 0, 0, 0 };
 	copyRegion.dstSubresource = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1 };
 	copyRegion.dstOffset = { 0, 0, 0 };
-	copyRegion.extent = { ctx.GetFrameBufferWidth(), ctx.GetFrameBufferHeight(), 1 };
+	copyRegion.extent = { ctx.GetSwapchainWidth(), ctx.GetSwapchainHeight(), 1 };
 	vkCmdCopyImage(commandBuffer, 
 		storageImage_.image_, 
 		VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, 
@@ -220,8 +220,8 @@ void PipelineSimpleRaytracing::CreateStorageImage(VulkanContext& ctx)
 {
 	storageImage_.CreateImage(
 		ctx,
-		ctx.GetFrameBufferWidth(),
-		ctx.GetFrameBufferHeight(),
+		ctx.GetSwapchainWidth(),
+		ctx.GetSwapchainHeight(),
 		1u,
 		1u,
 		ctx.GetSwapchainImageFormat(),

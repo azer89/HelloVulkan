@@ -383,8 +383,8 @@ void AppBase::InitSharedImageResources()
 	singleSampledColorImage_.Destroy();
 
 	const VkSampleCountFlagBits msaaSamples = vulkanContext_.GetMSAASampleCount();
-	const uint32_t width = vulkanContext_.GetFrameBufferWidth();
-	const uint32_t height = vulkanContext_.GetFrameBufferHeight();
+	const uint32_t width = vulkanContext_.GetSwapchainWidth();
+	const uint32_t height = vulkanContext_.GetSwapchainHeight();
 
 	// Depth attachment (OnScreen and offscreen)
 	depthImage_.CreateDepthResources(

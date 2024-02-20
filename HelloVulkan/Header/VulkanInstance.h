@@ -11,6 +11,12 @@ public:
 	VulkanInstance() = default;
 	~VulkanInstance() = default;
 
+	// Not copyable or movable
+	VulkanInstance(const VulkanInstance&) = delete;
+	VulkanInstance& operator=(const VulkanInstance&) = delete;
+	VulkanInstance(VulkanInstance&&) = delete;
+	VulkanInstance& operator=(VulkanInstance&&) = delete;
+
 	void Create();
 	void Destroy();
 

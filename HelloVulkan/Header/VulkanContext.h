@@ -55,13 +55,17 @@ public:
 	VulkanContext() = default;
 	~VulkanContext() = default;
 
+	// Not copyable or movable
+	VulkanContext(const VulkanContext&) = delete;
+	VulkanContext& operator=(const VulkanContext&) = delete;
+	VulkanContext(VulkanContext&&) = delete;
+	VulkanContext& operator=(VulkanContext&&) = delete;
+
 	void Create(
 		VulkanInstance& instance,
 		ContextConfig config
 	);
-
-	void CheckSurfaceSupport(VulkanInstance& instance);
-
+	
 	void Destroy();
 
 	void RecreateSwapchainResources(
@@ -71,10 +75,10 @@ public:
 	VkResult GetNextSwapchainImage(VkSemaphore nextSwapchainImageSemaphore);
 
 	// TODO Maybe these four functions can be simplified/combined
-	[[nodiscard]] VkCommandBuffer BeginOneTimeGraphicsCommand();
-	void EndOneTimeGraphicsCommand(VkCommandBuffer commandBuffer);
-	[[nodiscard]] VkCommandBuffer BeginOneTimeComputeCommand();
-	void EndOneTimeComputeCommand(VkCommandBuffer commandBuffer);
+	[[nodiscard]] VkCommandBuffer BeginOneTimeGraphicsCommand() const;
+	void EndOneTimeGraphicsCommand(VkCommandBuffer commandBuffer) const;
+	[[nodiscard]] VkCommandBuffer BeginOneTimeComputeCommand() const;
+	void EndOneTimeComputeCommand(VkCommandBuffer commandBuffer) const;
 
 	// Getters
 	VkDevice GetDevice() const { return device_; }
@@ -82,8 +86,8 @@ public:
 	VkQueue GetGraphicsQueue() const { return graphicsQueue_; }
 	uint32_t GetGraphicsFamily() const { return graphicsFamily_; }
 	uint32_t GetComputeFamily() const { return computeFamily_; }
-	uint32_t GetFrameBufferWidth() const { return swapchainWidth_; }
-	uint32_t GetFrameBufferHeight() const { return swapchainHeight_; }
+	uint32_t GetSwapchainWidth() const { return swapchainWidth_; }
+	uint32_t GetSwapchainHeight() const { return swapchainHeight_; }
 	size_t GetDeviceQueueIndicesSize() const { return deviceQueueIndices_.size(); }
 	const uint32_t* GetDeviceQueueIndicesData() const { return deviceQueueIndices_.data(); }
 	VkSampleCountFlagBits GetMSAASampleCount() const { return msaaSampleCount_; }
@@ -111,13 +115,14 @@ public:
 	uint32_t GetFrameIndex() const;
 
 	// For debugging purpose
-	void SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name);
+	void SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name) const;
 
 private:
 	VkResult CreatePhysicalDevice(VkInstance instance);
 	uint32_t FindQueueFamilies(VkQueueFlags desiredFlags);
 	VkResult CreateDevice();
 	bool IsDeviceSuitable(VkPhysicalDevice d);
+	void CheckSurfaceSupport(VulkanInstance& instance);
 	VkSampleCountFlagBits GetMaxUsableSampleCount(VkPhysicalDevice d);
 
 	// Swapchain
@@ -131,10 +136,10 @@ private:
 	VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 	uint32_t GetSwapchainImageCount(const VkSurfaceCapabilitiesKHR& capabilities_);
 
-	VkResult CreateSemaphore(VkSemaphore* outSemaphore);
-	VkResult CreateFence(VkFence* fence);
-	VkResult CreateCommandBuffer(VkCommandPool pool, VkCommandBuffer* commandBuffer);
-	VkResult CreateCommandPool(uint32_t family, VkCommandPool* pool);
+	VkResult CreateSemaphore(VkSemaphore* outSemaphore) const;
+	VkResult CreateFence(VkFence* fence) const;
+	VkResult CreateCommandBuffer(VkCommandPool pool, VkCommandBuffer* commandBuffer) const;
+	VkResult CreateCommandPool(uint32_t family, VkCommandPool* pool) const;
 
 	void GetQueues();
 	void AllocateFrameInFlightData();
@@ -143,11 +148,11 @@ private:
 	void GetRaytracingPropertiesAndFeatures();
 	void GetEnabledRaytracingFeatures();
 
-	VkFormat FindDepthFormat();
+	VkFormat FindDepthFormat() const;
 	VkFormat FindSupportedFormat(
 		const std::vector<VkFormat>& candidates,
 		VkImageTiling tiling,
-		VkFormatFeatureFlags features);
+		VkFormatFeatureFlags features) const;
 
 private:
 	VkSwapchainKHR swapchain_;

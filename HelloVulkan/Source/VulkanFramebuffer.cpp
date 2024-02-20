@@ -107,8 +107,8 @@ void VulkanFramebuffer::Recreate(VulkanContext& ctx)
 		attachments[i + swapchainImageCount] = attachmentImages_[i]->imageView_;
 	}
 
-	framebufferInfo_.width = ctx.GetFrameBufferWidth();
-	framebufferInfo_.height = ctx.GetFrameBufferHeight();
+	framebufferInfo_.width = ctx.GetSwapchainWidth();
+	framebufferInfo_.height = ctx.GetSwapchainHeight();
 
 	for (size_t i = 0; i < framebufferCount_; ++i)
 	{
