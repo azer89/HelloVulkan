@@ -9,13 +9,8 @@ layout(location = 1) out vec2 texCoord;
 layout(location = 2) out vec3 normal;
 layout(location = 3) out vec4 shadowPos;
 
-layout(set = 0, binding = 0) uniform CameraUBO
-{
-	mat4 projection;
-	mat4 view;
-	vec4 position;
-}
-camUBO;
+layout(set = 0, binding = 0)
+#include <CameraUBO.frag>
 
 layout(set = 0, binding = 1) uniform ModelUBO
 {

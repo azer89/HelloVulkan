@@ -18,13 +18,8 @@ layout(location = 0) out vec4 fragColor;
 layout(push_constant)
 #include <PBRPushConstants.frag>
 
-layout(set = 0, binding = 0) uniform CameraUBO
-{
-	mat4 projection;
-	mat4 view;
-	vec4 position;
-}
-camUBO;
+layout(set = 0, binding = 0)
+#include <CameraUBO.frag>
 
 // SSBO
 struct LightData

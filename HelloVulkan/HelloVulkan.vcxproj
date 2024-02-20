@@ -136,6 +136,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="..\Shaders\BRDFLUT.comp" />
+    <None Include="..\Shaders\CameraUBO.frag" />
     <None Include="..\Shaders\ClusteredForward\AABBGenerator.comp" />
     <None Include="..\Shaders\ClusteredForward\ClusterForwardHeader.comp" />
     <None Include="..\Shaders\ClusteredForward\LightCulling.comp" />

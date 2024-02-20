@@ -123,6 +123,9 @@
     <None Include="..\Shaders\PBRPushConstants.frag">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\Shaders\CameraUBO.frag">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Camera.h">

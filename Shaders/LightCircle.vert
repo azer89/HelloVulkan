@@ -4,12 +4,8 @@
 layout(location = 0) out vec2 fragOffset;
 layout(location = 1) out vec4 circleColor;
 
-layout(set = 0, binding = 0) uniform CameraUBO
-{
-	mat4 projection;
-	mat4 view;
-	vec4 position;
-} camUBO;
+layout(set = 0, binding = 0)
+#include <CameraUBO.frag>
 
 struct LightData
 {
