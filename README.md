@@ -31,7 +31,7 @@ The next step is light culling, where we calculate lights that intersect the clu
 Preliminary testing using a 3070M graphics card shows the technique can render a PBR Sponza scene with over 1000 dynamic lights at 60-100 FPS.
 If too many lights end up inside the view frustum, especially when you zoom out, the frame rate will drop regardless, but still much faster than a naive forward shading.
 
-https://github.com/azer89/HelloVulkan/assets/790432/d7e5823b-6159-46db-bbef-6b5868dffc57
+https://github.com/azer89/HelloVulkan/assets/790432/1f0f6b11-1cb6-42ab-9676-fcc180109279
 
 ### [Link to more cool results](https://github.com/azer89/HelloVulkan/blob/main/GALLERY.md)
 
