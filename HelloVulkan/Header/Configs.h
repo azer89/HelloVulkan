@@ -8,7 +8,7 @@
 namespace AppConfig
 {
 	constexpr uint32_t InitialScreenWidth = 1600;
-	constexpr uint32_t InitialScreenHeight = 1200;
+	constexpr uint32_t InitialScreenHeight = 900;
 
 	// Number of overlapping frames (Frame in flight)
 	constexpr uint32_t FrameOverlapCount = 2;

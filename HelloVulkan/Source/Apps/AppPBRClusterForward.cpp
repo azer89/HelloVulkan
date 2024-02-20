@@ -121,7 +121,8 @@ void AppPBRClusterForward::InitLights()
 		);
 
 		float iColor = Utility::RandomNumber(0.0f, 1.0f);
-		glm::vec3 color3 = blueColor * (iColor) + redColor * (1.f - iColor);
+		iColor *= iColor;
+		glm::vec3 color3 = redColor * (iColor) + blueColor * (1.f - iColor);
 		glm::vec4 color4(
 			color3,
 			1.f
@@ -166,7 +167,7 @@ void AppPBRClusterForward::DestroyResources()
 
 void AppPBRClusterForward::UpdateUBOs()
 {
-	camera_->ProcessMouseMovement(deltaTime_ * 5.f, 0.0f);
+	camera_->ProcessMouseMovement(deltaTime_ * 20.f, 0.0f);
 
 	// Camera UBO
 	CameraUBO ubo = camera_->GetCameraUBO();
