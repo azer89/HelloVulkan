@@ -99,14 +99,17 @@ void AppPBRClusterForward::Init()
 
 void AppPBRClusterForward::InitLights()
 {
+	glm::vec3 blueColor(0.0, 0.466, 0.713);
+	glm::vec3 redColor(0.710, 0.09, 0.620);
+
 	std::vector<LightData> lights;
 
 	float pi2 = glm::two_pi<float>();
-	constexpr uint32_t NR_LIGHTS = 1000;
+	constexpr uint32_t NR_LIGHTS = 2000;
 	for (uint32_t i = 0; i < NR_LIGHTS; ++i)
 	{
 		float yPos = Utility::RandomNumber(-2.f, 10.0f);
-		float radius = Utility::RandomNumber(0.0f, 10.0f);
+		float radius = Utility::RandomNumber(0.0f, 15.0f);
 		float rad = Utility::RandomNumber(0.0f, pi2);
 		float xPos = glm::cos(rad);
 
@@ -117,15 +120,15 @@ void AppPBRClusterForward::InitLights()
 			1.f
 		);
 
-		glm::vec4 color(
-			Utility::RandomNumber(0.0f, 1.0f),
-			Utility::RandomNumber(0.0f, 1.0f),
-			Utility::RandomNumber(0.0f, 1.0f),
+		float iColor = Utility::RandomNumber(0.0f, 1.0f);
+		glm::vec3 color3 = blueColor * (iColor) + redColor * (1.f - iColor);
+		glm::vec4 color4(
+			color3,
 			1.f
 		);
 
 		LightData l;
-		l.color_ = color;
+		l.color_ = color4;
 		l.position_ = position;
 		l.radius_ = Utility::RandomNumber(0.5f, 2.0f);
 
@@ -163,6 +166,8 @@ void AppPBRClusterForward::DestroyResources()
 
 void AppPBRClusterForward::UpdateUBOs()
 {
+	camera_->ProcessMouseMovement(deltaTime_ * 5.f, 0.0f);
+
 	// Camera UBO
 	CameraUBO ubo = camera_->GetCameraUBO();
 	lightPtr_->SetCameraUBO(vulkanContext_, ubo);
