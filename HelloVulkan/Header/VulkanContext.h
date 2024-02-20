@@ -47,7 +47,6 @@ struct ContextConfig
 
 /*
 Class that encapsulate a Vulkan device, the swapchain, and a VMA allocator.
-Maybe this should be renamed to VulkanContext.
 */
 class VulkanContext
 {
