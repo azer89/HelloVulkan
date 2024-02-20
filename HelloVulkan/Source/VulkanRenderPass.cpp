@@ -533,7 +533,7 @@ void VulkanRenderPass::BeginRenderPass(
 	// Make sure beginInfo has been initialized
 	// Set framebuffer to beginInfo_
 	beginInfo_.framebuffer = framebuffer;
-	beginInfo_.renderArea = { 0u, 0u, ctx.GetFrameBufferWidth(), ctx.GetFrameBufferHeight() };
+	beginInfo_.renderArea = { 0u, 0u, ctx.GetSwapchainWidth(), ctx.GetSwapchainHeight() };
 	
 	vkCmdBeginRenderPass(commandBuffer, &beginInfo_, VK_SUBPASS_CONTENTS_INLINE);
 }

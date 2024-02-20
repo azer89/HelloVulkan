@@ -1,11 +1,12 @@
 #include "VulkanFramebuffer.h"
 #include "VulkanUtility.h"
 
-void VulkanFramebuffer::Create(VulkanContext& ctx,
+void VulkanFramebuffer::CreateResizeable(VulkanContext& ctx,
 	VkRenderPass renderPass,
 	const std::vector<VulkanImage*>& attachmentImages,
 	bool offscreen)
 {
+	resizeable_ = true;
 	offscreen_ = offscreen;
 	device_ = ctx.GetDevice();
 	attachmentImages_ = attachmentImages;
@@ -35,13 +36,14 @@ void VulkanFramebuffer::Create(VulkanContext& ctx,
 	Recreate(ctx);
 }
 
-void VulkanFramebuffer::Create(
+void VulkanFramebuffer::CreateUnresizeable(
 	VulkanContext& ctx,
 	VkRenderPass renderPass,
 	const std::vector<VkImageView>& attachments,
 	uint32_t width,
 	uint32_t height)
 {
+	resizeable_ = false;
 	device_ = ctx.GetDevice();
 
 	framebufferInfo_ =
@@ -86,6 +88,11 @@ VkFramebuffer VulkanFramebuffer::GetFramebuffer(size_t index) const
 
 void VulkanFramebuffer::Recreate(VulkanContext& ctx)
 {
+	if (!resizeable_)
+	{
+		std::cerr << "Cannot resize framebuffer\n";
+	}
+
 	const size_t swapchainImageCount = offscreen_ ? 0 : 1;
 	const size_t attachmentLength = attachmentImages_.size() + swapchainImageCount;
 
@@ -100,8 +107,8 @@ void VulkanFramebuffer::Recreate(VulkanContext& ctx)
 		attachments[i + swapchainImageCount] = attachmentImages_[i]->imageView_;
 	}
 
-	framebufferInfo_.width = ctx.GetFrameBufferWidth();
-	framebufferInfo_.height = ctx.GetFrameBufferHeight();
+	framebufferInfo_.width = ctx.GetSwapchainWidth();
+	framebufferInfo_.height = ctx.GetSwapchainHeight();
 
 	for (size_t i = 0; i < framebufferCount_; ++i)
 	{

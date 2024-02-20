@@ -26,7 +26,7 @@ PipelineLightRender::PipelineLightRender(
 
 	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
 
-	framebuffer_.Create(
+	framebuffer_.CreateResizeable(
 		ctx,
 		renderPass_.GetHandle(),
 		{

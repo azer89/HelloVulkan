@@ -300,7 +300,7 @@ void PipelineCubeFilter::OffscreenRender(VulkanContext& ctx,
 	for (uint32_t i = 0; i < outputMipMapCount; ++i)
 	{
 		uint32_t targetSize = outputSideLength >> i;
-		mipFramebuffers[i].Create(ctx, renderPass_.GetHandle(), outputViews[i], targetSize, targetSize);
+		mipFramebuffers[i].CreateUnresizeable(ctx, renderPass_.GetHandle(), outputViews[i], targetSize, targetSize);
 	}
 
 	// Get command buffers
@@ -352,12 +352,8 @@ void PipelineCubeFilter::OffscreenRender(VulkanContext& ctx,
 			0,
 			sizeof(PushConstantCubeFilter), &pc);
 
-		const std::vector<VkClearValue> clearValues(6u, { 0.0f, 0.0f, 1.0f, 1.0f });
-
 		renderPass_.BeginCubemapRenderPass(commandBuffer, mipFramebuffers[i].GetFramebuffer(), targetSize);
-
 		vkCmdDraw(commandBuffer, 3, 1u, 0, 0);
-
 		vkCmdEndRenderPass(commandBuffer);
 	}
 

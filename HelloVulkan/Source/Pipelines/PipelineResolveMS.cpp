@@ -17,7 +17,7 @@ PipelineResolveMS::PipelineResolveMS(
 		0u,
 		multiSampledColorImage->multisampleCount_);
 
-	framebuffer_.Create(
+	framebuffer_.CreateResizeable(
 		ctx, 
 		renderPass_.GetHandle(),
 		{

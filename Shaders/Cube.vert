@@ -6,12 +6,8 @@ Vertex shader to generate a cube
 
 layout(location = 0) out vec3 direction;
 
-layout(set = 0, binding = 0) uniform CameraUBO
-{
-	mat4 projection;
-	mat4 view;
-	vec4 position;
-} camUBO;
+layout(set = 0, binding = 0)
+#include <CameraUBO.frag>
 
 const vec3 pos[8] = vec3[8]
 (

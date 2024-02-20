@@ -23,7 +23,7 @@ PipelineShadow::PipelineShadow(
 	renderPass_.CreateDepthOnlyRenderPass(ctx, 
 		RenderPassBit::DepthClear | RenderPassBit::DepthShaderReadOnly);
 
-	framebuffer_.Create(
+	framebuffer_.CreateUnresizeable(
 		ctx,
 		renderPass_.GetHandle(),
 		{

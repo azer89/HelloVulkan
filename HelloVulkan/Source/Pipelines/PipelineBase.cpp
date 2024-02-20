@@ -54,8 +54,8 @@ void PipelineBase::BindPipeline(VulkanContext& ctx, VkCommandBuffer commandBuffe
 {
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_);
 
-	float w = static_cast<float>(ctx.GetFrameBufferWidth());
-	float h = static_cast<float>(ctx.GetFrameBufferHeight());
+	float w = static_cast<float>(ctx.GetSwapchainWidth());
+	float h = static_cast<float>(ctx.GetSwapchainHeight());
 	if (config_.customViewportSize_)
 	{
 		w = config_.viewportWidth_;

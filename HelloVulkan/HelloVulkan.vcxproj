@@ -136,6 +136,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="..\Shaders\BRDFLUT.comp" />
+    <None Include="..\Shaders\CameraUBO.frag" />
     <None Include="..\Shaders\ClusteredForward\AABBGenerator.comp" />
     <None Include="..\Shaders\ClusteredForward\ClusterForwardHeader.comp" />
     <None Include="..\Shaders\ClusteredForward\LightCulling.comp" />
@@ -143,6 +144,8 @@
     <None Include="..\Shaders\ClusteredForward\MeshClusterForward.frag" />
     <None Include="..\Shaders\CubeFilterDiffuse.frag" />
     <None Include="..\Shaders\CubeFilterSpecular.frag" />
+    <None Include="..\Shaders\PBRPushConstants.frag" />
+    <None Include="..\Shaders\TangentNormalToWorld.frag" />
     <None Include="..\Shaders\Hammersley.frag" />
     <None Include="..\Shaders\LightCircle.frag" />
     <None Include="..\Shaders\LightCircle.vert" />

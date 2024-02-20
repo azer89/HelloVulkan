@@ -23,7 +23,7 @@ PipelineImGui::PipelineImGui(
 	renderPass_.CreateOnScreenColorOnlyRenderPass(ctx);
 
 	// Create framebuffer
-	framebuffer_.Create(ctx, renderPass_.GetHandle(), {}, IsOffscreen());
+	framebuffer_.CreateResizeable(ctx, renderPass_.GetHandle(), {}, IsOffscreen());
 
 	uint32_t imageCount = AppConfig::FrameOverlapCount;
 	descriptor_.CreatePool(

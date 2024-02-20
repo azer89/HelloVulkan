@@ -117,6 +117,15 @@
     <None Include="..\Shaders\ShadowMapping\Header.frag">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
+    <None Include="..\Shaders\TangentNormalToWorld.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\PBRPushConstants.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\CameraUBO.frag">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Camera.h">

@@ -20,26 +20,24 @@ public:
 	{
 	}
 
-	// Can be recreated
-	void Create(VulkanContext& ctx,
+	void Destroy();
+
+	// Can be recreated/resized
+	void CreateResizeable(VulkanContext& ctx,
 		VkRenderPass renderPass,
 		const std::vector<VulkanImage*>& attachmentImage,
 		bool offscreen);
 
-	// Cannot be recreated
-	void Create(
+	// Cannot be recreated/resized
+	void CreateUnresizeable(
 		VulkanContext& ctx,
 		VkRenderPass renderPass,
 		const std::vector<VkImageView>& attachments,
 		uint32_t width,
 		uint32_t height);
 
-	void Destroy();
-
 	VkFramebuffer GetFramebuffer() const;
-
 	VkFramebuffer GetFramebuffer(size_t index) const;
-
 	void Recreate(VulkanContext& ctx);
 
 private:
@@ -49,6 +47,7 @@ private:
 	VkDevice device_;
 	uint32_t framebufferCount_;
 	bool offscreen_;
+	bool resizeable_;
 };
 
 #endif
