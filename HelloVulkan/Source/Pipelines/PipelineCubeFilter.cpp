@@ -352,12 +352,8 @@ void PipelineCubeFilter::OffscreenRender(VulkanContext& ctx,
 			0,
 			sizeof(PushConstantCubeFilter), &pc);
 
-		const std::vector<VkClearValue> clearValues(6u, { 0.0f, 0.0f, 1.0f, 1.0f });
-
 		renderPass_.BeginCubemapRenderPass(commandBuffer, mipFramebuffers[i].GetFramebuffer(), targetSize);
-
 		vkCmdDraw(commandBuffer, 3, 1u, 0, 0);
-
 		vkCmdEndRenderPass(commandBuffer);
 	}
 

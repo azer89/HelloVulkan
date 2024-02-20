@@ -47,6 +47,7 @@ private:
 	VkDevice device_;
 	uint32_t framebufferCount_;
 	bool offscreen_;
+	bool resizeable_;
 };
 
 #endif

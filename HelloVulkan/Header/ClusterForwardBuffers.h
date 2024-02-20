@@ -22,16 +22,16 @@ public:
 		Destroy();
 	}
 
+	void Destroy();
 	void CreateBuffers(VulkanContext& ctx, uint32_t lightCount);
 	void SetAABBDirty();
 	bool IsAABBDirty(uint32_t frameIndex) { return aabbDirtyFlags_[frameIndex] == AABBFlag::Dirty; }
 	void SetAABBClean(uint32_t frameIndex) { aabbDirtyFlags_[frameIndex] = AABBFlag::Clean; }
-	void Destroy();
-
+	
 public:
-	std::array<AABBFlag, AppConfig::FrameOverlapCount> aabbDirtyFlags_;
+	std::array<AABBFlag, AppConfig::FrameOverlapCount> aabbDirtyFlags_; // For window resizing
 	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> aabbBuffers_;
-	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> globalIndexCountBuffers_;
+	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> globalIndexCountBuffers_; // Atomic counter
 	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> lightCellsBuffers_;
 	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> lightIndicesBuffers_;
 };

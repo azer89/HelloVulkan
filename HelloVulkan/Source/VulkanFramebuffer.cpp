@@ -6,6 +6,7 @@ void VulkanFramebuffer::CreateResizeable(VulkanContext& ctx,
 	const std::vector<VulkanImage*>& attachmentImages,
 	bool offscreen)
 {
+	resizeable_ = true;
 	offscreen_ = offscreen;
 	device_ = ctx.GetDevice();
 	attachmentImages_ = attachmentImages;
@@ -42,6 +43,7 @@ void VulkanFramebuffer::CreateUnresizeable(
 	uint32_t width,
 	uint32_t height)
 {
+	resizeable_ = false;
 	device_ = ctx.GetDevice();
 
 	framebufferInfo_ =
@@ -86,6 +88,11 @@ VkFramebuffer VulkanFramebuffer::GetFramebuffer(size_t index) const
 
 void VulkanFramebuffer::Recreate(VulkanContext& ctx)
 {
+	if (!resizeable_)
+	{
+		std::cerr << "Cannot resize framebuffer\n";
+	}
+
 	const size_t swapchainImageCount = offscreen_ ? 0 : 1;
 	const size_t attachmentLength = attachmentImages_.size() + swapchainImageCount;
 
