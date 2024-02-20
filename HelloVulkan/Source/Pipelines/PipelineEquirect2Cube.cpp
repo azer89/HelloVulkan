@@ -196,7 +196,7 @@ void PipelineEquirect2Cube::CreateOffscreenGraphicsPipeline(
 }
 
 // TODO Can be moved to generic function in PipelineBase
-void PipelineEquirect2Cube::CreateFrameBuffer(
+void PipelineEquirect2Cube::CreateFramebuffer(
 	VulkanContext& ctx, 
 	std::vector<VkImageView> outputViews)
 {
@@ -263,7 +263,7 @@ void PipelineEquirect2Cube::OffscreenRender(VulkanContext& ctx, VulkanImage* out
 	std::vector<VkImageView> outputViews;
 	CreateCubemapViews(ctx, outputEnvMap, outputViews);
 
-	CreateFrameBuffer(ctx, outputViews);
+	CreateFramebuffer(ctx, outputViews);
 
 	VkCommandBuffer commandBuffer = ctx.BeginOneTimeGraphicsCommand();
 

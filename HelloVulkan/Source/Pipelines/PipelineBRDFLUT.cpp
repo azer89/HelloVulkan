@@ -40,6 +40,8 @@ void PipelineBRDFLUT::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comm
 
 void PipelineBRDFLUT::CreateLUT(VulkanContext& ctx, VulkanImage* outputLUT)
 {
+	// Need to use std::vector because std::array will cause stack overflow, 
+	// probably because the length is too long.
 	std::vector<float> lutData(IBLConfig::LUTBufferSize, 0);
 
 	Execute(ctx);
@@ -99,7 +101,7 @@ void PipelineBRDFLUT::Execute(VulkanContext& ctx)
 		static_cast<uint32_t>(IBLConfig::LUTHeight), // groupCountY
 		1u); // groupCountZ
 
-	// https://github.com/KhronosGroup/Vulkan-Docs/wiki/Synchronization-Examples-(Legacy-synchronization-APIs)#cpu-read-back-of-data-written-by-a-compute-shader
+	// github.com/KhronosGroup/Vulkan-Docs/wiki/Synchronization-Examples-(Legacy-synchronization-APIs)#cpu-read-back-of-data-written-by-a-compute-shader
 	VkMemoryBarrier readoutBarrier = {
 		.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER,
 		.pNext = nullptr,

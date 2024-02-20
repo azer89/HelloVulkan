@@ -112,32 +112,13 @@ void AppPBRShadowMapping::InitLights()
 	{
 		// The first light is used to generate the shadow map
 		// and its position is set by ImGui
-		{
-			.color_ = glm::vec4(1.f),
-			.radius_ = 1.0f
-		},
+		{ .color_ = glm::vec4(1.f), .radius_ = 1.0f },
 
 		// Add additional lights so that the scene is not too dark
-		{
-			.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f),
-			.color_ = glm::vec4(1.f),
-			.radius_ = 10.0f
-		},
-		{
-			.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f),
-			.color_ = glm::vec4(1.f),
-			.radius_ = 10.0f
-		},
-		{
-			.position_ = glm::vec4(-1.5f, 0.7f, -1.5f, 1.f),
-			.color_ = glm::vec4(1.f),
-			.radius_ = 10.0f
-		},
-		{
-			.position_ = glm::vec4(1.5f, 0.7f, -1.5f, 1.f),
-			.color_ = glm::vec4(1.f),
-			.radius_ = 10.0f
-		}
+		{.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
+		{.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
+		{.position_ = glm::vec4(-1.5f, 0.7f, -1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
+		{.position_ = glm::vec4(1.5f, 0.7f, -1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f }
 	});
 }
 
