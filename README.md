@@ -16,14 +16,10 @@ A real-time rendering engine using Vulkan.
 * Automatic runtime compilation from GLSL to SPIR-V.
 * A a lightweight abstraction layer that encapsulates Vulkan API for rapid prototyping/development.
 * Minor features: Skybox, instancing with SSBOs, ImGui, UBOs, and push constants.
-  
-https://github.com/azer89/HelloVulkan/assets/790432/8b0562ed-ab72-4e93-9ce9-31c61c0e986a
+
+<img width="850" alt="vulkan_tachikoma_shadow_mapping" src="https://github.com/azer89/HelloVulkan/assets/790432/9600c642-6331-43f8-80de-1967cd575f420">
 
 https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d130bf910
-
-<img width="850" alt="vulkan_tachikoma" src="https://github.com/azer89/HelloVulkan/assets/790432/535a2d75-fffd-436f-bf18-df18968b79e0">
-
-<img width="850" alt="freya" src="https://github.com/azer89/HelloVulkan/assets/790432/c3dd2921-b46a-458c-af26-fa49fecc884b">
 
 ### Clustered Forward Shading
 
@@ -37,11 +33,7 @@ If too many lights end up inside the view frustum, especially when you zoom out,
 
 https://github.com/azer89/HelloVulkan/assets/790432/66b9a30a-d187-495a-9879-8eb11a497087
 
-### Shadow Mapping
-
-<img width="850" alt="sponza_shadow_mapping_01" src="https://github.com/azer89/HelloVulkan/assets/790432/4751e9bc-2d54-4af0-a5dc-acdc07e7982c">
-
-<img width="850" alt="sponza_shadow_mapping_02" src="https://github.com/azer89/HelloVulkan/assets/790432/55283773-f554-4af3-be0d-42ecdd3ede8b">
+### [Link to more cool results](https://github.com/azer89/HelloVulkan/blob/main/GALLERY.md)
 
 ### Build
 * C++20
@@ -55,7 +47,7 @@ Technical Resources:
 * [Epic Games PBR Notes](https://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf)
 * [3D Graphics Rendering Cookbook](https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook)
 * [Angel Ortiz - Clustered Shading](https://www.aortiz.me/2018/12/21/CG.html)
-* [Tons of online resources](https://github.com/azer89/VulkanResources)
+* [The internet](https://github.com/azer89/VulkanResources)
 
 Assets:
 * [Tachikoma](https://sketchfab.com/3d-models/tachikoma-7ec03deb78de4a1b908d2bc736ff0f15)
