@@ -8,14 +8,14 @@ A real-time rendering engine using Vulkan.
 * Image-Based Lighting (IBL) with offscreen pipelines that generate:
     * A cubemap from an equirectangular HDR image.
     * Specular and diffuse cubemaps.
-    * Compute shader to generate BRDF lookup table.
+* Compute shader to generate BRDF lookup table.
+* Shadow mapping.
 * Reinhard tonemap postprocessing.
 * glTF mesh/texture loading and rendering.
 * Multisample anti-aliasing (MSAA).
-* Shadow mapping.
-* Automatic runtime compilation from GLSL to SPIR-V.
+* Automatic runtime compilation from GLSL to SPIR-V using `glslang`.
 * A a lightweight abstraction layer that encapsulates Vulkan API for rapid prototyping/development.
-* Minor features: Skybox, instancing with SSBOs, ImGui, UBOs, and push constants.
+* Minor features: Basic raytracing pipeline, skybox, instancing, ImGui, SSBOs, UBOs, and push constants.
 
 <img width="850" alt="vulkan_tachikoma_shadow_mapping" src="https://github.com/azer89/HelloVulkan/assets/790432/9600c642-6331-43f8-80de-1967cd575f420">
 
