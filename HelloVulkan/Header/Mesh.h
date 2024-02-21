@@ -24,9 +24,13 @@ struct VertexData
 class Mesh
 {
 public:
-	size_t vertexBufferSize_;
-	size_t indexBufferSize_;
+	// Bindless rendering
+	uint32_t vertexOffset_;
+	uint32_t indexOffset_;
 
+	// Binded rendering
+	VkDeviceSize vertexBufferSize_;
+	VkDeviceSize indexBufferSize_;
 	VulkanBuffer vertexBuffer_;
 	VulkanBuffer indexBuffer_;
 
@@ -37,11 +41,15 @@ public:
 	// Constructors
 	Mesh(
 		VulkanContext& ctx,
+		uint32_t vertexOffset,
+		uint32_t indexOffset,
 		std::vector<VertexData>&& _vertices,
 		std::vector<uint32_t>&& _indices,
 		std::unordered_map<TextureType, uint32_t>&& textureIndices);
 	Mesh(
 		VulkanContext& ctx,
+		uint32_t vertexOffset,
+		uint32_t indexOffset,
 		const std::vector<VertexData>& vertices,
 		const std::vector<uint32_t>& indices,
 		const std::unordered_map<TextureType, uint32_t>& textureIndices);

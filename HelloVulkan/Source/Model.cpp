@@ -24,6 +24,9 @@ Model::Model(VulkanContext& ctx, const std::string& path) :
 
 	// Load model here
 	LoadModel(ctx, path);
+
+	// Bindless rendering
+	//CreateBuffers(ctx);
 }
 
 Model::~Model()
@@ -42,6 +45,28 @@ Model::~Model()
 	{
 		tex.Destroy();
 	}
+
+	vertexBuffer_.Destroy();
+	indexBuffer_.Destroy();
+}
+
+void Model::CreateBuffers(VulkanContext& ctx)
+{
+	vertexBufferSize_ = static_cast<VkDeviceSize>(sizeof(VertexData) * vertices_.size());
+	vertexBuffer_.CreateGPUOnlyBuffer(
+		ctx,
+		vertexBufferSize_,
+		vertices_.data(),
+		VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
+	);
+
+	indexBufferSize_ = static_cast<VkDeviceSize>(sizeof(uint32_t) * indices_.size());
+	indexBuffer_.CreateGPUOnlyBuffer(
+		ctx,
+		indexBufferSize_,
+		indices_.data(),
+		VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
+	);
 }
 
 void Model::AddTexture(VulkanContext& ctx, const std::string& textureFilename)
@@ -106,7 +131,9 @@ void Model::LoadModel(VulkanContext& ctx, std::string const& path)
 	directory_ = path.substr(0, path.find_last_of('/'));
 
 	// Process ASSIMP's root node recursively
-	ProcessNode(ctx, scene->mRootNode, scene, glm::mat4(1.0));
+	uint32_t vertexOffset = 0u;
+	uint32_t indexOffset = 0u;
+	ProcessNode(ctx, vertexOffset, indexOffset, scene->mRootNode, scene, glm::mat4(1.0));
 }
 
 // Processes a node in a recursive fashion. 
@@ -114,6 +141,8 @@ void Model::LoadModel(VulkanContext& ctx, std::string const& path)
 // repeats this process on its children nodes (if any).
 void Model::ProcessNode(
 	VulkanContext& ctx, 
+	uint32_t& vertexOffset,
+	uint32_t& indexOffset,
 	aiNode* node, 
 	const aiScene* scene, 
 	const glm::mat4& parentTransform)
@@ -128,17 +157,19 @@ void Model::ProcessNode(
 		// The scene contains all the data, node is just to keep stuff organized (like relations between nodes).
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 
-		meshes_.push_back(ProcessMesh(ctx, mesh, scene, totalTransform));
+		meshes_.push_back(ProcessMesh(ctx, vertexOffset, indexOffset, mesh, scene, totalTransform));
 	}
 	// After we've processed all of the meshes (if any) we then recursively process each of the children nodes
 	for (unsigned int i = 0; i < node->mNumChildren; ++i)
 	{
-		ProcessNode(ctx, node->mChildren[i], scene, totalTransform);
+		ProcessNode(ctx, vertexOffset, indexOffset, node->mChildren[i], scene, totalTransform);
 	}
 }
 
 Mesh Model::ProcessMesh(
 	VulkanContext& ctx, 
+	uint32_t& vertexOffset,
+	uint32_t& indexOffset,
 	aiMesh* mesh, 
 	const aiScene* scene, 
 	const glm::mat4& transform)
@@ -256,5 +287,24 @@ Mesh Model::ProcessMesh(
 		textures[TextureType::Emissive] = textureMap_[BLACK_TEXTURE];
 	}
 
-	return Mesh(ctx, std::move(vertices), std::move(indices), std::move(textures));
+	uint32_t vOffset = static_cast<uint32_t>(vertices.size());
+	uint32_t iOffset = static_cast<uint32_t>(indices.size());
+
+	// Copy vertices and indices
+	vertices_.insert(std::end(vertices_), std::begin(vertices), std::end(vertices));
+	indices_.insert(std::end(indices_), std::begin(indices), std::end(indices));
+
+	// Create a mesh
+	Mesh m(ctx, 
+		vertexOffset,
+		indexOffset,
+		std::move(vertices), 
+		std::move(indices), 
+		std::move(textures));
+
+	// Update offsets
+	vertexOffset += vOffset;
+	indexOffset += iOffset;
+
+	return m;
 }

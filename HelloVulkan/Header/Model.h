@@ -27,6 +27,14 @@ private:
 public:
 	std::vector<Mesh> meshes_;
 
+	// Bindless rendering
+	std::vector<VertexData> vertices_;
+	std::vector<uint32_t> indices_;
+	VkDeviceSize vertexBufferSize_;
+	VkDeviceSize indexBufferSize_;
+	VulkanBuffer vertexBuffer_;
+	VulkanBuffer indexBuffer_;
+
 	// TODO Separate buffers from the model
 	std::vector<VulkanBuffer> modelBuffers_;
 
@@ -63,18 +71,24 @@ private:
 		VulkanContext& ctx, 
 		std::string const& path);
 
-	// Processes a node in a recursive fashion. 
+	// Processes a node recursively. 
 	void ProcessNode(
 		VulkanContext& ctx, 
+		uint32_t& vertexOffset,
+		uint32_t& indexOffset,
 		aiNode* node, 
 		const aiScene* scene, 
 		const glm::mat4& parentTransform);
 
 	Mesh ProcessMesh(
 		VulkanContext& ctx, 
+		uint32_t& vertexOffset,
+		uint32_t& indexOffset,
 		aiMesh* mesh, 
 		const aiScene* scene, 
 		const glm::mat4& transform);
+
+	void CreateBuffers(VulkanContext& ctx);
 };
 
 #endif
