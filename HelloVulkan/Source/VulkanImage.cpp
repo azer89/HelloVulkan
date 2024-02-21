@@ -45,6 +45,37 @@ void VulkanImage::CreateImageResources(
 		static_cast<float>(mipCount_)); // maxLod
 }
 
+void VulkanImage::CreateImageResources(
+	VulkanContext& ctx,
+	void* data,
+	int width,
+	int height)
+{
+	CreateImageFromData(
+		ctx,
+		data,
+		width,
+		height,
+		Utility::MipMapCount(width, height),
+		1, // layerCount
+		VK_FORMAT_R8G8B8A8_UNORM);
+	GenerateMipmap(ctx,
+		mipCount_,
+		width_,
+		height_,
+		VK_IMAGE_LAYOUT_UNDEFINED);
+	CreateImageView(
+		ctx,
+		VK_FORMAT_R8G8B8A8_UNORM,
+		VK_IMAGE_ASPECT_COLOR_BIT,
+		VK_IMAGE_VIEW_TYPE_2D,
+		layerCount_,
+		mipCount_);
+	CreateDefaultSampler(ctx,
+		0.f, // minLod
+		static_cast<float>(mipCount_)); // maxLod
+}
+
 void VulkanImage::CreateFromFile(
 	VulkanContext& ctx,
 	const char* filename)

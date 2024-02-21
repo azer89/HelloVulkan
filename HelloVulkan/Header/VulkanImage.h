@@ -63,9 +63,17 @@ public:
 		VulkanContext& ctx,
 		const char* filename);
 
+	// Create a mipmapped image, an image view, and a sampler
 	void CreateImageResources(
 		VulkanContext& ctx,
 		const char* filename);
+
+	// Create a mipmapped image, an image view, and a sampler
+	void CreateImageResources(
+		VulkanContext& ctx,
+		void* data,
+		int width,
+		int height);
 
 	void CreateFromHDR(
 		VulkanContext& ctx,

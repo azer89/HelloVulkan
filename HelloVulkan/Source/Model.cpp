@@ -8,20 +8,23 @@
 #include <iostream>
 #include <ranges>
 
+static const std::string BLACK_TEXTURE = "DefaultBlackTexture";
+
 inline glm::mat4 mat4_cast(const aiMatrix4x4& m)
 {
 	return glm::transpose(glm::make_mat4(&m.a1));
 }
 
 Model::Model(VulkanContext& ctx, const std::string& path) :
-	device_(ctx.GetDevice()),
-	blackTextureFilePath_(AppConfig::TextureFolder + "Black1x1.png")
+	device_(ctx.GetDevice())
 {
 	// In case a texture type cannot be found, replace it with a default texture
-	textureMap_[blackTextureFilePath_] = {};
-	textureMap_[blackTextureFilePath_].CreateImageResources(
+	unsigned char black[4] = { 0, 0, 0, 255 };
+	textureMap_[BLACK_TEXTURE].CreateImageResources(
 		ctx, 
-		blackTextureFilePath_.c_str());
+		(void*)&black,
+		1,
+		1);
 
 	// Load model here
 	LoadModel(ctx, path);
@@ -205,27 +208,27 @@ Mesh Model::ProcessMesh(
 	// TODO Use a loop instead of multiple IFs
 	if (!textures.contains(TextureType::Albedo))
 	{
-		textures[TextureType::Albedo] = &textureMap_[blackTextureFilePath_];
+		textures[TextureType::Albedo] = &textureMap_[BLACK_TEXTURE];
 	}
 	if (!textures.contains(TextureType::Normal))
 	{
-		textures[TextureType::Normal] = &textureMap_[blackTextureFilePath_];
+		textures[TextureType::Normal] = &textureMap_[BLACK_TEXTURE];
 	}
 	if (!textures.contains(TextureType::Metalness))
 	{
-		textures[TextureType::Metalness] = &textureMap_[blackTextureFilePath_];
+		textures[TextureType::Metalness] = &textureMap_[BLACK_TEXTURE];
 	}
 	if (!textures.contains(TextureType::Roughness))
 	{
-		textures[TextureType::Roughness] = &textureMap_[blackTextureFilePath_];
+		textures[TextureType::Roughness] = &textureMap_[BLACK_TEXTURE];
 	}
 	if (!textures.contains(TextureType::AmbientOcclusion))
 	{
-		textures[TextureType::AmbientOcclusion] = &textureMap_[blackTextureFilePath_];
+		textures[TextureType::AmbientOcclusion] = &textureMap_[BLACK_TEXTURE];
 	}
 	if (!textures.contains(TextureType::Emissive))
 	{
-		textures[TextureType::Emissive] = &textureMap_[blackTextureFilePath_];
+		textures[TextureType::Emissive] = &textureMap_[BLACK_TEXTURE];
 	}
 
 	return Mesh(ctx, std::move(vertices), std::move(indices), std::move(textures));
