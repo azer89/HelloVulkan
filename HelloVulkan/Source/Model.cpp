@@ -46,6 +46,7 @@ Model::~Model()
 		tex.Destroy();
 	}
 
+	meshDataBuffer_.Destroy();
 	vertexBuffer_.Destroy();
 	indexBuffer_.Destroy();
 }

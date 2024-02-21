@@ -11,7 +11,8 @@ struct DescriptorBinding
 {
 	VkDescriptorType descriptorType_;
 	VkShaderStageFlags shaderFlags_;
-	uint32_t bindingCount_;
+	uint32_t descriptorCount_ = 1u;
+	uint32_t bindingCount_ = 1u;
 };
 
 struct DescriptorWrite
@@ -19,6 +20,7 @@ struct DescriptorWrite
 	void* pNext_ = nullptr;
 	VkDescriptorImageInfo* imageInfoPtr_ = nullptr;
 	VkDescriptorBufferInfo* bufferInfoPtr_ = nullptr;
+	uint32_t descriptorCount_ = 1u;
 	VkDescriptorType type_;
 };
 
@@ -65,7 +67,7 @@ private:
 		uint32_t binding,
 		VkDescriptorType descriptorType,
 		VkShaderStageFlags stageFlags,
-		uint32_t descriptorCount = 1);
+		uint32_t descriptorCount = 1u);
 
 private:
 	VkDevice device_ = nullptr;

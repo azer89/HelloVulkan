@@ -135,7 +135,7 @@ void VulkanDescriptor::UpdateSet(VulkanContext& ctx, const std::vector<Descripto
 			.dstSet = *set, // Dereference
 			.dstBinding = bindIndex++,
 			.dstArrayElement = 0,
-			.descriptorCount = 1,
+			.descriptorCount = writes[i].descriptorCount_,
 			.descriptorType = writes[i].type_,
 			.pImageInfo = writes[i].imageInfoPtr_,
 			.pBufferInfo = writes[i].bufferInfoPtr_,
