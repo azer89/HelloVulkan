@@ -67,7 +67,6 @@ public:
 
 	std::vector<VertexData> vertices_;
 	std::vector<unsigned int> indices_;
-	//std::unordered_map<TextureType, VulkanImage*> textures_;
 	std::unordered_map<TextureType, int> textureIndices_;
 
 	// Constructors

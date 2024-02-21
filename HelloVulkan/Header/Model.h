@@ -16,14 +16,12 @@
 class Model
 {
 private:
-	// Model data 
-	
-	std::string directory_;
 	VkDevice device_;
+	std::string directory_;
 
-	// Textures
+	// PBR Textures
 	std::vector<VulkanImage> textureList_;
-	// key is the filename, value points to elements in textureList_
+	// string key is the filename, int value points to elements in textureList_
 	std::unordered_map<std::string, int> textureMap_; 
 
 public:

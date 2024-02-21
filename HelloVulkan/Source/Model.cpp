@@ -18,13 +18,8 @@ inline glm::mat4 mat4_cast(const aiMatrix4x4& m)
 Model::Model(VulkanContext& ctx, const std::string& path) :
 	device_(ctx.GetDevice())
 {
-	// In case a texture type cannot be found, replace it with a default texture
+	// In case a texture type cannot be found, replace it with a black 1x1 texture
 	unsigned char black[4] = { 0, 0, 0, 255 };
-	//textureMap_[BLACK_TEXTURE].CreateImageResources(
-	//	ctx, 
-	//	(void*)&black,
-	//	1,
-	//	1);
 	AddTexture(ctx, BLACK_TEXTURE, (void*)&black, 1, 1);
 
 	// Load model here
@@ -157,38 +152,40 @@ Mesh Model::ProcessMesh(
 	// Walk through each of the mesh's vertices
 	for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
 	{
-		VertexData vertex;
-
-		// We declare a placeholder vector since assimp uses its own vector class that doesn't 
-		// directly convert to glm's vec3 class so we transfer 
-		// the data to this placeholder glm::vec3 first.
-		glm::vec4 vector; 
 		// Positions
-		vector.x = mesh->mVertices[i].x;
-		vector.y = mesh->mVertices[i].y;
-		vector.z = mesh->mVertices[i].z;
-		vector.w = 1;
-		vertex.position_ = transform * vector;
+		VertexData vertex =
+		{
+			.position_ = transform * 
+				glm::vec4(
+					mesh->mVertices[i].x,
+					mesh->mVertices[i].y,
+					mesh->mVertices[i].z,
+					1)
+		};
+
 		// Normals
 		if (mesh->HasNormals())
 		{
-			vector.x = mesh->mNormals[i].x;
-			vector.y = mesh->mNormals[i].y;
-			vector.z = mesh->mNormals[i].z;
-			vector.w = 0;
-			vertex.normal_ = transform * vector;
+			vertex.normal_ = transform * 
+				glm::vec4(
+					mesh->mNormals[i].x,
+					mesh->mNormals[i].y,
+					mesh->mNormals[i].z,
+					0
+				);
 		}
-		// Texture coordinates
-		if (mesh->mTextureCoords[0]) // Does the mesh contain texture coordinates?
+
+		// UV
+		if (mesh->mTextureCoords[0])
 		{
-			glm::vec4 vec;
-			// A vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't 
-			// use models where a vertex can have multiple texture coordinates so we always take the first set (0).
-			vec.x = mesh->mTextureCoords[0][i].x;
-			vec.y = mesh->mTextureCoords[0][i].y;
-			vec.z = 0;
-			vec.w = 0;
-			vertex.textureCoordinate_ = vec;
+			// A vertex can contain up to 8 different texture coordinates. 
+			// We thus make the assumption that we won't use models where a vertex 
+			// can have multiple texture coordinates so we always take the first set (0).
+			vertex.textureCoordinate_ = glm::vec4(
+				mesh->mTextureCoords[0][i].x, 
+				mesh->mTextureCoords[0][i].y, 
+				0, 
+				0);
 		}
 		else
 		{
@@ -210,7 +207,7 @@ Mesh Model::ProcessMesh(
 		}
 	}
 
-	// Process PBR materials
+	// PBR materials
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 	for (auto& aiTType : TextureMapper::aiTTypeSearchOrder)
 	{
@@ -219,29 +216,25 @@ Mesh Model::ProcessMesh(
 		{
 			aiString str;
 			material->GetTexture(aiTType, i, &str);
-			std::string key = str.C_Str();
+			std::string filename = str.C_Str();
 			TextureType tType = TextureMapper::GetTextureType(aiTType);
 
-			// Make sure never loaded before
-			if (!textureMap_.contains(key)) 
+			// Make sure each texture is loaded once
+			if (!textureMap_.contains(filename)) 
 			{
-				//VulkanImage texture;
-				//std::string fullFilePath = this->directory_ + '/' + str.C_Str();
-				//texture.CreateImageResources(ctx, fullFilePath.c_str());
-				//textureMap_[key] = texture;
-				AddTexture(ctx, key);
+				AddTexture(ctx, filename);
 			}
 
 			// Only support one image per texture type, if we happen to load 
 			// multiple textures of the same type, we only use one.
 			if (!textures.contains(tType)) 
 			{
-				textures[tType] = textureMap_[key];
+				textures[tType] = textureMap_[filename];
 			}
 		}
 	}
-	// Replace missing PBR textures with black texture
-	// TODO Use a loop instead of multiple IFs
+
+	// Replace missing PBR textures with a black 1x1 texture
 	if (!textures.contains(TextureType::Albedo))
 	{
 		textures[TextureType::Albedo] = textureMap_[BLACK_TEXTURE];
