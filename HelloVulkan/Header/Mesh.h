@@ -74,26 +74,26 @@ public:
 	{
 		std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
 		attributeDescriptions.push_back(
-			{
-				.location = 0,
-				.binding = 0,
-				.format = VK_FORMAT_R32G32B32A32_SFLOAT,
-				.offset = offsetof(VertexData, position_)
-			});
+		{
+			.location = 0,
+			.binding = 0,
+			.format = VK_FORMAT_R32G32B32A32_SFLOAT,
+			.offset = offsetof(VertexData, position_)
+		});
 		attributeDescriptions.push_back(
-			{
-				.location = 1,
-				.binding = 0,
-				.format = VK_FORMAT_R32G32B32A32_SFLOAT,
-				.offset = offsetof(VertexData, normal_)
-			});
+		{
+			.location = 1,
+			.binding = 0,
+			.format = VK_FORMAT_R32G32B32A32_SFLOAT,
+			.offset = offsetof(VertexData, normal_)
+		});
 		attributeDescriptions.push_back(
-			{
-				.location = 2,
-				.binding = 0,
-				.format = VK_FORMAT_R32G32B32A32_SFLOAT,
-				.offset = offsetof(VertexData, textureCoordinate_)
-			});
+		{
+			.location = 2,
+			.binding = 0,
+			.format = VK_FORMAT_R32G32B32A32_SFLOAT,
+			.offset = offsetof(VertexData, textureCoordinate_)
+		});
 		return attributeDescriptions;
 	}
 };

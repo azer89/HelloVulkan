@@ -136,9 +136,7 @@ void Model::LoadModel(VulkanContext& ctx, std::string const& path)
 	ProcessNode(ctx, vertexOffset, indexOffset, scene->mRootNode, scene, glm::mat4(1.0));
 }
 
-// Processes a node in a recursive fashion. 
-// Processes each individual mesh located at the node and 
-// repeats this process on its children nodes (if any).
+// Processes a node in a recursive fashion.
 void Model::ProcessNode(
 	VulkanContext& ctx, 
 	uint32_t& vertexOffset,
@@ -153,11 +151,8 @@ void Model::ProcessNode(
 	// Process each mesh located at the current node
 	for (unsigned int i = 0; i < node->mNumMeshes; ++i)
 	{
-		// The node object only contains indices to index the actual objects in the scene. 
-		// The scene contains all the data, node is just to keep stuff organized (like relations between nodes).
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-
-		meshes_.push_back(ProcessMesh(ctx, vertexOffset, indexOffset, mesh, scene, totalTransform));
+		ProcessMesh(ctx, vertexOffset, indexOffset, mesh, scene, totalTransform);
 	}
 	// After we've processed all of the meshes (if any) we then recursively process each of the children nodes
 	for (unsigned int i = 0; i < node->mNumChildren; ++i)
@@ -166,7 +161,7 @@ void Model::ProcessNode(
 	}
 }
 
-Mesh Model::ProcessMesh(
+void Model::ProcessMesh(
 	VulkanContext& ctx, 
 	uint32_t& vertexOffset,
 	uint32_t& indexOffset,
@@ -295,16 +290,16 @@ Mesh Model::ProcessMesh(
 	indices_.insert(std::end(indices_), std::begin(indices), std::end(indices));
 
 	// Create a mesh
-	Mesh m(ctx, 
+	meshes_.emplace_back(
+		ctx,
 		vertexOffset,
 		indexOffset,
-		std::move(vertices), 
-		std::move(indices), 
-		std::move(textures));
+		std::move(vertices),
+		std::move(indices),
+		std::move(textures)
+	);
 
 	// Update offsets
 	vertexOffset += vOffset;
 	indexOffset += iOffset;
-
-	return m;
 }

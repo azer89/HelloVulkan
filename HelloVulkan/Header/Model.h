@@ -80,7 +80,7 @@ private:
 		const aiScene* scene, 
 		const glm::mat4& parentTransform);
 
-	Mesh ProcessMesh(
+	void ProcessMesh(
 		VulkanContext& ctx, 
 		uint32_t& vertexOffset,
 		uint32_t& indexOffset,
