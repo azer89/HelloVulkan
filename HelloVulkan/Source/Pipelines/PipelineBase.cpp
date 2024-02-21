@@ -145,9 +145,9 @@ void PipelineBase::CreateGraphicsPipeline(
 	PipelineCreateInfo pInfo(ctx);
 
 	const std::vector<VkVertexInputBindingDescription> bindingDescriptions = 
-		VertexData::GetBindingDescriptions();
+		Mesh::GetBindingDescriptions();
 	const std::vector<VkVertexInputAttributeDescription> attributeDescriptions = 
-		VertexData::GetAttributeDescriptions();
+		Mesh::GetAttributeDescriptions();
 
 	if (config_.vertexBufferBind_)
 	{

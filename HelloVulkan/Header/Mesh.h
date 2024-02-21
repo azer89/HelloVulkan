@@ -19,42 +19,6 @@ struct VertexData
 	glm::vec4 position_;
 	glm::vec4 normal_;
 	glm::vec4 textureCoordinate_;
-
-	static std::vector<VkVertexInputBindingDescription> GetBindingDescriptions()
-	{
-		std::vector<VkVertexInputBindingDescription> bindingDescriptions(1);
-		bindingDescriptions[0].binding = 0;
-		bindingDescriptions[0].stride = sizeof(VertexData);
-		bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-		return bindingDescriptions;
-	}
-
-	static std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions()
-	{
-		std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
-		attributeDescriptions.push_back(
-		{ 
-			.location = 0, 
-			.binding = 0, 
-			.format = VK_FORMAT_R32G32B32A32_SFLOAT, 
-			.offset = offsetof(VertexData, position_) 
-		});
-		attributeDescriptions.push_back(
-		{ 
-			.location = 1,
-			.binding = 0,
-			.format = VK_FORMAT_R32G32B32A32_SFLOAT,
-			.offset = offsetof(VertexData, normal_)
-		});
-		attributeDescriptions.push_back(
-		{ 
-			.location = 2,
-			.binding = 0,
-			.format = VK_FORMAT_R32G32B32A32_SFLOAT,
-			.offset = offsetof(VertexData, textureCoordinate_)
-		});
-		return attributeDescriptions;
-	}
 };
 
 class Mesh
@@ -88,6 +52,42 @@ public:
 	void Setup(VulkanContext& ctx);
 
 	void Destroy();
+
+	static std::vector<VkVertexInputBindingDescription> GetBindingDescriptions()
+	{
+		std::vector<VkVertexInputBindingDescription> bindingDescriptions(1);
+		bindingDescriptions[0].binding = 0;
+		bindingDescriptions[0].stride = sizeof(VertexData);
+		bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		return bindingDescriptions;
+	}
+
+	static std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions()
+	{
+		std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
+		attributeDescriptions.push_back(
+			{
+				.location = 0,
+				.binding = 0,
+				.format = VK_FORMAT_R32G32B32A32_SFLOAT,
+				.offset = offsetof(VertexData, position_)
+			});
+		attributeDescriptions.push_back(
+			{
+				.location = 1,
+				.binding = 0,
+				.format = VK_FORMAT_R32G32B32A32_SFLOAT,
+				.offset = offsetof(VertexData, normal_)
+			});
+		attributeDescriptions.push_back(
+			{
+				.location = 2,
+				.binding = 0,
+				.format = VK_FORMAT_R32G32B32A32_SFLOAT,
+				.offset = offsetof(VertexData, textureCoordinate_)
+			});
+		return attributeDescriptions;
+	}
 };
 
 #endif
