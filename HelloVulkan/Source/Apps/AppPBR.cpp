@@ -29,7 +29,7 @@ void AppPBR::Init()
 
 	model_ = std::make_unique<Model>(
 		vulkanContext_, 
-		AppConfig::ModelFolder + "Sponza//Sponza.gltf");
+		AppConfig::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
 	std::vector<Model*> models = { model_.get()};
 
 	// Pipelines
