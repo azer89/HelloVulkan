@@ -28,10 +28,13 @@ public:
 	std::vector<Mesh> meshes_;
 
 	// Bindless rendering
+	std::vector<MeshData> meshDataArray_;
 	std::vector<VertexData> vertices_;
 	std::vector<uint32_t> indices_;
+	VkDeviceSize meshDataBufferSize_;
 	VkDeviceSize vertexBufferSize_;
 	VkDeviceSize indexBufferSize_;
+	VulkanBuffer meshDataBuffer_;
 	VulkanBuffer vertexBuffer_;
 	VulkanBuffer indexBuffer_;
 
@@ -88,7 +91,7 @@ private:
 		const aiScene* scene, 
 		const glm::mat4& transform);
 
-	void CreateBuffers(VulkanContext& ctx);
+	void CreateBindlessResources(VulkanContext& ctx);
 };
 
 #endif

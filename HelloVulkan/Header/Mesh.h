@@ -21,6 +21,20 @@ struct VertexData
 	glm::vec4 textureCoordinate_;
 };
 
+// For bindless
+struct MeshData
+{
+	uint32_t vertexOffset_;
+	uint32_t indexOffset_;
+
+	uint32_t albedo_;
+	uint32_t normal_;
+	uint32_t metalness_;
+	uint32_t roughness_;
+	uint32_t ao_;
+	uint32_t emissive_;
+};
+
 class Mesh
 {
 public:
@@ -68,6 +82,22 @@ public:
 		bindingDescriptions[0].stride = sizeof(VertexData);
 		bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 		return bindingDescriptions;
+	}
+
+	MeshData GetMeshData()
+	{
+		return
+		{
+			.vertexOffset_ = vertexOffset_,
+			.indexOffset_ = indexOffset_,
+
+			.albedo_ = textureIndices_[TextureType::Albedo],
+			.normal_ = textureIndices_[TextureType::Normal],
+			.metalness_ = textureIndices_[TextureType::Metalness],
+			.roughness_ = textureIndices_[TextureType::Roughness],
+			.ao_ = textureIndices_[TextureType::AmbientOcclusion],
+			.emissive_ = textureIndices_[TextureType::Emissive],
+		};
 	}
 
 	static std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions()

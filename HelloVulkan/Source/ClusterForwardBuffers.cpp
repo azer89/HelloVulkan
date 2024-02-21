@@ -11,7 +11,7 @@ void ClusterForwardBuffers::SetAABBDirty()
 	}
 }
 
-void ClusterForwardBuffers::CreateBuffers(VulkanContext& ctx, uint32_t lightCount)
+void ClusterForwardBuffers::CreateBindlessResources(VulkanContext& ctx, uint32_t lightCount)
 {
 	constexpr uint32_t bufferCount = AppConfig::FrameOverlapCount;
 

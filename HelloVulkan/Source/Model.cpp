@@ -26,7 +26,7 @@ Model::Model(VulkanContext& ctx, const std::string& path) :
 	LoadModel(ctx, path);
 
 	// Bindless rendering
-	//CreateBuffers(ctx);
+	CreateBindlessResources(ctx);
 }
 
 Model::~Model()
@@ -50,23 +50,42 @@ Model::~Model()
 	indexBuffer_.Destroy();
 }
 
-void Model::CreateBuffers(VulkanContext& ctx)
+// TODO Create GPU only buffers
+void Model::CreateBindlessResources(VulkanContext& ctx)
 {
+	for (Mesh& mesh : meshes_)
+	{
+		meshDataArray_.emplace_back(mesh.GetMeshData());
+	}
+	meshDataBufferSize_ = static_cast<VkDeviceSize>(sizeof(MeshData) * meshDataArray_.size());
+	meshDataBuffer_.CreateBuffer(
+		ctx,
+		meshDataBufferSize_,
+		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+		VMA_MEMORY_USAGE_CPU_TO_GPU,
+		0
+	);
+	meshDataBuffer_.UploadBufferData(ctx, meshDataArray_.data(), meshDataBufferSize_);
+
 	vertexBufferSize_ = static_cast<VkDeviceSize>(sizeof(VertexData) * vertices_.size());
-	vertexBuffer_.CreateGPUOnlyBuffer(
+	vertexBuffer_.CreateBuffer(
 		ctx,
 		vertexBufferSize_,
-		vertices_.data(),
-		VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
+		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+		VMA_MEMORY_USAGE_CPU_TO_GPU,
+		0
 	);
+	vertexBuffer_.UploadBufferData(ctx, vertices_.data(), vertexBufferSize_);
 
 	indexBufferSize_ = static_cast<VkDeviceSize>(sizeof(uint32_t) * indices_.size());
-	indexBuffer_.CreateGPUOnlyBuffer(
+	indexBuffer_.CreateBuffer(
 		ctx,
 		indexBufferSize_,
-		indices_.data(),
-		VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
+		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+		VMA_MEMORY_USAGE_CPU_TO_GPU,
+		0
 	);
+	indexBuffer_.UploadBufferData(ctx, indices_.data(), indexBufferSize_);
 }
 
 void Model::AddTexture(VulkanContext& ctx, const std::string& textureFilename)

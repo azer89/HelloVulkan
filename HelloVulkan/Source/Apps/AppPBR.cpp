@@ -47,7 +47,7 @@ void AppPBR::Init()
 		RenderPassBit::ColorClear | 
 		RenderPassBit::DepthClear
 	);
-	pbrPtr_ = std::make_unique<PipelinePBR>(
+	pbrPtr_ = std::make_unique<PipelinePBRBindless>(
 		vulkanContext_,
 		models,
 		&lights_,

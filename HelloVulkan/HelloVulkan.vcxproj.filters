@@ -266,6 +266,9 @@
     <ClInclude Include="Header\IBLResources.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelinePBRBindless.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">
@@ -383,6 +386,9 @@
       <Filter>Source Files\Apps</Filter>
     </ClCompile>
     <ClCompile Include="Source\Pipelines\PipelinePBRShadowMapping.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelinePBRBindless.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
   </ItemGroup>

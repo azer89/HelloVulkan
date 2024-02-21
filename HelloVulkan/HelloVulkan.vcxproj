@@ -193,6 +193,7 @@
     <ClInclude Include="Header\Pipelines\PipelineLightRender.h" />
     <ClInclude Include="Header\Pipelines\PipelineLightCulling.h" />
     <ClInclude Include="Header\Pipelines\PipelinePBR.h" />
+    <ClInclude Include="Header\Pipelines\PipelinePBRBindless.h" />
     <ClInclude Include="Header\Pipelines\PipelinePBRClusterForward.h" />
     <ClInclude Include="Header\Pipelines\PipelinePBRShadowMapping.h" />
     <ClInclude Include="Header\Pipelines\PipelineResolveMS.h" />
@@ -237,6 +238,7 @@
     <ClCompile Include="Source\Pipelines\PipelineLightRender.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineLightCulling.cpp" />
     <ClCompile Include="Source\Pipelines\PipelinePBR.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelinePBRBindless.cpp" />
     <ClCompile Include="Source\Pipelines\PipelinePBRClusterForward.cpp" />
     <ClCompile Include="Source\Pipelines\PipelinePBRShadowMapping.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineResolveMS.cpp" />
