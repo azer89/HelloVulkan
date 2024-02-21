@@ -15,6 +15,7 @@
 struct VertexData
 {
 	// TODO add color
+	// TODO use alignas
 	glm::vec4 position_;
 	glm::vec4 normal_;
 	glm::vec4 textureCoordinate_;
