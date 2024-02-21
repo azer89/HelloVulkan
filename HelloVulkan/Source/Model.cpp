@@ -10,7 +10,7 @@
 
 static const std::string BLACK_TEXTURE = "DefaultBlackTexture";
 
-inline glm::mat4 mat4_cast(const aiMatrix4x4& m)
+inline glm::mat4 CastToGLMMat4(const aiMatrix4x4& m)
 {
 	return glm::transpose(glm::make_mat4(&m.a1));
 }
@@ -118,7 +118,7 @@ void Model::ProcessNode(
 	const aiScene* scene, 
 	const glm::mat4& parentTransform)
 {
-	glm::mat4 nodeTransform = mat4_cast(node->mTransformation);
+	glm::mat4 nodeTransform = CastToGLMMat4(node->mTransformation);
 	glm::mat4 totalTransform = parentTransform * nodeTransform;
 
 	// Process each mesh located at the current node
@@ -143,13 +143,8 @@ Mesh Model::ProcessMesh(
 	const aiScene* scene, 
 	const glm::mat4& transform)
 {
+	// Vertices
 	std::vector<VertexData> vertices;
-	std::vector<unsigned int> indices;
-
-	// PBR textures
-	std::unordered_map<TextureType, int> textures;
-
-	// Walk through each of the mesh's vertices
 	for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
 	{
 		// Positions
@@ -195,19 +190,20 @@ Mesh Model::ProcessMesh(
 		vertices.push_back(vertex);
 	}
 
-	// Now walk through each of the mesh's faces (a face is a mesh its triangle) and 
-	// retrieve the corresponding vertex indices.
+	// Indices
+	std::vector<unsigned int> indices;
 	for (unsigned int i = 0; i < mesh->mNumFaces; ++i)
 	{
 		aiFace face = mesh->mFaces[i];
 		// Retrieve all indices of the face and store them in the indices vector
-		for (unsigned int j = 0; j < face.mNumIndices; j++)
+		for (unsigned int j = 0; j < face.mNumIndices; ++j)
 		{
 			indices.push_back(face.mIndices[j]);
 		}
 	}
 
-	// PBR materials
+	// PBR textures
+	std::unordered_map<TextureType, int> textures;
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 	for (auto& aiTType : TextureMapper::aiTTypeSearchOrder)
 	{
