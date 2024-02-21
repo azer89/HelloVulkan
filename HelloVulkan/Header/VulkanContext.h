@@ -42,6 +42,8 @@ struct ContextConfig
 	// This can be disabled but validation layer will complain a little bit
 	bool supportMSAA_ = true;
 
+	bool supportDescriptorIndexing_ = true;
+
 	// TODO Set validation layer as optional
 };
 
@@ -145,7 +147,7 @@ private:
 	void AllocateVMA(VulkanInstance& instance);
 
 	void GetRaytracingPropertiesAndFeatures();
-	void GetEnabledRaytracingFeatures();
+	void GetEnabledFeatures();
 
 	VkFormat FindDepthFormat() const;
 	VkFormat FindSupportedFormat(
@@ -197,6 +199,9 @@ private:
 	VkPhysicalDeviceBufferDeviceAddressFeatures rtDevAddressEnabledFeatures_;
 	VkPhysicalDeviceRayTracingPipelineFeaturesKHR rtPipelineEnabledFeatures_;
 	VkPhysicalDeviceAccelerationStructureFeaturesKHR rtASEnabledFeatures;
+
+	// Descriptor indexing
+	VkPhysicalDeviceDescriptorIndexingFeaturesEXT descriptorIndexingFeatures_;
 
 	// pNext structure for passing extension structures to device creation
 	void* pNextChain_ = nullptr;

@@ -181,7 +181,8 @@ int AppPBR::MainLoop()
 {
 	InitVulkan({
 		.supportRaytracing_ = false,
-		.supportMSAA_ = true
+		.supportMSAA_ = true,
+		.supportDescriptorIndexing_ = true,
 	});
 	Init();
 

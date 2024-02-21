@@ -12,7 +12,7 @@ void VulkanContext::Create(VulkanInstance& instance, ContextConfig config)
 	swapchainWidth_ = AppConfig::InitialScreenWidth;
 	swapchainHeight_ = AppConfig::InitialScreenHeight;
 
-	GetEnabledRaytracingFeatures();
+	GetEnabledFeatures();
 
 	VK_CHECK(CreatePhysicalDevice(instance.GetInstance()));
 
@@ -126,9 +126,22 @@ void VulkanContext::GetRaytracingPropertiesAndFeatures()
 	}
 }
 
-void VulkanContext::GetEnabledRaytracingFeatures()
+void VulkanContext::GetEnabledFeatures()
 {
 	pNextChain_ = nullptr;
+	void* chainPtr = nullptr;
+
+	if (config_.supportDescriptorIndexing_)
+	{
+		descriptorIndexingFeatures_ =
+		{
+			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT,
+			.shaderSampledImageArrayNonUniformIndexing = VK_TRUE,
+			.descriptorBindingVariableDescriptorCount = VK_TRUE,
+			.runtimeDescriptorArray = VK_TRUE
+		};
+		chainPtr = &descriptorIndexingFeatures_;
+	}
 
 	if (config_.supportRaytracing_)
 	{
@@ -136,6 +149,7 @@ void VulkanContext::GetEnabledRaytracingFeatures()
 		rtDevAddressEnabledFeatures_ =
 		{
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES,
+			.pNext = chainPtr,
 			.bufferDeviceAddress = VK_TRUE
 		};
 
@@ -153,8 +167,10 @@ void VulkanContext::GetEnabledRaytracingFeatures()
 			.accelerationStructure = VK_TRUE,
 		};
 
-		pNextChain_ = &rtASEnabledFeatures;
+		chainPtr = &rtASEnabledFeatures;
 	}
+
+	pNextChain_ = chainPtr;
 }
 
 VkSampleCountFlagBits VulkanContext::GetMaxUsableSampleCount(VkPhysicalDevice d)
@@ -234,6 +250,10 @@ VkResult VulkanContext::CreateDevice()
 	{
 		deviceFeatures.sampleRateShading = VK_TRUE;
 		deviceFeatures.samplerAnisotropy = VK_TRUE;
+	}
+	if (config_.supportDescriptorIndexing_)
+	{
+		deviceFeatures.shaderSampledImageArrayDynamicIndexing = VK_TRUE;
 	}
 
 	const bool sameFamily = graphicsFamily_ == computeFamily_;
