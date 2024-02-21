@@ -24,7 +24,7 @@ https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d
 ### Clustered Forward Shading
 
 The technique consists of two steps. The first step involves subdividing the view frustum into clusters.
-The next step is light culling, where it calculates lights that intersect the clusters. This step removes lights that are too far from a fragment, leading to reduced light iteration inside the final fragment shader.
+The next step is light culling, where it calculates lights that intersect the clusters. This step removes lights that are too far from a fragment, leading to reduced light iteration in the final fragment shader.
 
 Preliminary testing using a 3070M graphics card shows the technique can render a PBR Sponza scene with over 1000 dynamic lights at 60-100 FPS.
 If too many lights end up inside the view frustum, especially when zooming out, there may be a drop in frame rate, but still much faster than a naive forward shading.
@@ -40,15 +40,8 @@ https://github.com/azer89/HelloVulkan/assets/790432/13a4426f-deec-40f5-816a-5594
 * Dependencies are located in folder `External/` 
 
 ### Credit
-Technical Resources:
 * [learnopengl.com PBR](https://learnopengl.com/PBR/Theory)
 * [Epic Games PBR Notes](https://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf)
 * [3D Graphics Rendering Cookbook](https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook)
 * [Angel Ortiz - Clustered Shading](https://www.aortiz.me/2018/12/21/CG.html)
 * [The internet](https://github.com/azer89/VulkanResources)
-
-Assets:
-* [Tachikoma](https://sketchfab.com/3d-models/tachikoma-7ec03deb78de4a1b908d2bc736ff0f15)
-* [Freya](https://sketchfab.com/3d-models/freya-crescent-6d8eae57c17f4a81a23301ee0afda8cf)
-* [Polyhaven](https://polyhaven.com/)
-* [glTF Assets](https://github.com/KhronosGroup/glTF-Sample-Assets)
