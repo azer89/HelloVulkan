@@ -17,9 +17,14 @@ class Model
 {
 private:
 	// Model data 
-	std::unordered_map<std::string, VulkanImage> textureMap_; // key is the filename
+	
 	std::string directory_;
 	VkDevice device_;
+
+	// Textures
+	std::vector<VulkanImage> textureList_;
+	// key is the filename, value points to elements in textureList_
+	std::unordered_map<std::string, int> textureMap_; 
 
 public:
 	std::vector<Mesh> meshes_;
@@ -33,6 +38,8 @@ public:
 
 	// Destructor
 	~Model();
+
+	VulkanImage* GetTexture(int textureIndex);
 
 	void AddTextureIfEmpty(TextureType tType, const std::string& filePath);
 
@@ -49,6 +56,9 @@ public:
 	}
 
 private:
+	void AddTexture(VulkanContext& ctx, const std::string& textureFilename);
+	void AddTexture(VulkanContext& ctx, const std::string& textureName, void* data, int width, int height);
+
 	// Loads a model with supported ASSIMP extensions from file and 
 	// stores the resulting meshes in the meshes vector.
 	void LoadModel(

@@ -181,12 +181,15 @@ void PipelinePBR::CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Me
 	VkDescriptorImageInfo diffuseImageInfo = iblResources_->diffuseCubemap_.GetDescriptorImageInfo();
 	VkDescriptorImageInfo lutImageInfo = iblResources_->brdfLut_.GetDescriptorImageInfo();
 
+	// PBR Textures
 	std::vector<VkDescriptorImageInfo> meshTextureInfos(PBR_MESH_TEXTURE_COUNT);
-	for (const auto& elem : mesh->textures_)
+	for (const auto& elem : mesh->textureIndices_)
 	{
 		// Should be ordered based on elem.first
-		uint32_t index = static_cast<uint32_t>(elem.first) - 1;
-		meshTextureInfos[index] = elem.second->GetDescriptorImageInfo();
+		uint32_t typeIndex = static_cast<uint32_t>(elem.first) - 1;
+		int textureIndex = elem.second;
+		VulkanImage* texture = parentModel->GetTexture(textureIndex);
+		meshTextureInfos[typeIndex] = texture->GetDescriptorImageInfo();
 	}
 
 	size_t frameCount = AppConfig::FrameOverlapCount;

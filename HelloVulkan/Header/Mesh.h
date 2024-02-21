@@ -67,19 +67,20 @@ public:
 
 	std::vector<VertexData> vertices_;
 	std::vector<unsigned int> indices_;
-	std::unordered_map<TextureType, VulkanImage*> textures_;
+	//std::unordered_map<TextureType, VulkanImage*> textures_;
+	std::unordered_map<TextureType, int> textureIndices_;
 
 	// Constructors
 	Mesh(
 		VulkanContext& ctx,
 		std::vector<VertexData>&& _vertices,
 		std::vector<unsigned int>&& _indices,
-		std::unordered_map<TextureType, VulkanImage*>&& _textures);
+		std::unordered_map<TextureType, int>&& textureIndices);
 	Mesh(
 		VulkanContext& ctx,
 		const std::vector<VertexData>& vertices,
 		const std::vector<unsigned int>& indices,
-		const std::unordered_map<TextureType, VulkanImage*>& textures);
+		const std::unordered_map<TextureType, int>& textureIndices);
 
 	// TODO Implement this function
 	//void AddTexture(VulkanContext& ctx, const char* fileName, uint32_t bindIndex);

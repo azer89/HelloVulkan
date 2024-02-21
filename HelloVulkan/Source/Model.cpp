@@ -20,11 +20,12 @@ Model::Model(VulkanContext& ctx, const std::string& path) :
 {
 	// In case a texture type cannot be found, replace it with a default texture
 	unsigned char black[4] = { 0, 0, 0, 255 };
-	textureMap_[BLACK_TEXTURE].CreateImageResources(
-		ctx, 
-		(void*)&black,
-		1,
-		1);
+	//textureMap_[BLACK_TEXTURE].CreateImageResources(
+	//	ctx, 
+	//	(void*)&black,
+	//	1,
+	//	1);
+	AddTexture(ctx, BLACK_TEXTURE, (void*)&black, 1, 1);
 
 	// Load model here
 	LoadModel(ctx, path);
@@ -42,11 +43,39 @@ Model::~Model()
 		buffer.Destroy();
 	}
 
-	// C++20 feature
-	for (VulkanImage& tex : std::views::values(textureMap_))
+	for (VulkanImage& tex : textureList_)
 	{
 		tex.Destroy();
 	}
+}
+
+void Model::AddTexture(VulkanContext& ctx, const std::string& textureFilename)
+{
+	textureList_.push_back({});
+	std::string fullFilePath = this->directory_ + '/' + textureFilename;
+	textureList_.back().CreateImageResources(ctx, fullFilePath.c_str());
+	textureMap_[textureFilename] = textureList_.size() - 1;
+}
+
+void Model::AddTexture(VulkanContext& ctx, const std::string& textureName, void* data, int width, int height)
+{
+	textureList_.push_back({});
+	textureList_.back().CreateImageResources(
+		ctx,
+		data,
+		1,
+		1);
+	textureMap_[textureName] = textureList_.size() - 1;
+}
+
+VulkanImage* Model::GetTexture(int textureIndex)
+{
+	if (textureIndex < 0 || textureIndex >= textureList_.size())
+	{
+		std::cerr << "Failed to retrieve a texture because the textureIndex is out of bound\n";
+		return nullptr;
+	}
+	return &(textureList_[textureIndex]);
 }
 
 void Model::AddTextureIfEmpty(TextureType tType, const std::string& filePath)
@@ -119,16 +148,21 @@ Mesh Model::ProcessMesh(
 	const aiScene* scene, 
 	const glm::mat4& transform)
 {
-	// Data to fill
 	std::vector<VertexData> vertices;
 	std::vector<unsigned int> indices;
-	std::unordered_map<TextureType, VulkanImage*> textures;
+
+	// PBR textures
+	std::unordered_map<TextureType, int> textures;
 
 	// Walk through each of the mesh's vertices
 	for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
 	{
 		VertexData vertex;
-		glm::vec4 vector; // We declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
+
+		// We declare a placeholder vector since assimp uses its own vector class that doesn't 
+		// directly convert to glm's vec3 class so we transfer 
+		// the data to this placeholder glm::vec3 first.
+		glm::vec4 vector; 
 		// Positions
 		vector.x = mesh->mVertices[i].x;
 		vector.y = mesh->mVertices[i].y;
@@ -176,7 +210,7 @@ Mesh Model::ProcessMesh(
 		}
 	}
 
-	// Process materials
+	// Process PBR materials
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 	for (auto& aiTType : TextureMapper::aiTTypeSearchOrder)
 	{
@@ -188,19 +222,21 @@ Mesh Model::ProcessMesh(
 			std::string key = str.C_Str();
 			TextureType tType = TextureMapper::GetTextureType(aiTType);
 
-			if (!textureMap_.contains(key)) // Make sure never loaded before
+			// Make sure never loaded before
+			if (!textureMap_.contains(key)) 
 			{
-				VulkanImage texture;
-				std::string fullFilePath = this->directory_ + '/' + str.C_Str();
-				texture.CreateImageResources(ctx, fullFilePath.c_str());
-				textureMap_[key] = texture;
-
-				// TODO Create Sampler
+				//VulkanImage texture;
+				//std::string fullFilePath = this->directory_ + '/' + str.C_Str();
+				//texture.CreateImageResources(ctx, fullFilePath.c_str());
+				//textureMap_[key] = texture;
+				AddTexture(ctx, key);
 			}
 
-			if (!textures.contains(tType)) // Only support one image per texture type
+			// Only support one image per texture type, if we happen to load 
+			// multiple textures of the same type, we only use one.
+			if (!textures.contains(tType)) 
 			{
-				textures[tType] = &textureMap_[key];
+				textures[tType] = textureMap_[key];
 			}
 		}
 	}
@@ -208,27 +244,27 @@ Mesh Model::ProcessMesh(
 	// TODO Use a loop instead of multiple IFs
 	if (!textures.contains(TextureType::Albedo))
 	{
-		textures[TextureType::Albedo] = &textureMap_[BLACK_TEXTURE];
+		textures[TextureType::Albedo] = textureMap_[BLACK_TEXTURE];
 	}
 	if (!textures.contains(TextureType::Normal))
 	{
-		textures[TextureType::Normal] = &textureMap_[BLACK_TEXTURE];
+		textures[TextureType::Normal] = textureMap_[BLACK_TEXTURE];
 	}
 	if (!textures.contains(TextureType::Metalness))
 	{
-		textures[TextureType::Metalness] = &textureMap_[BLACK_TEXTURE];
+		textures[TextureType::Metalness] = textureMap_[BLACK_TEXTURE];
 	}
 	if (!textures.contains(TextureType::Roughness))
 	{
-		textures[TextureType::Roughness] = &textureMap_[BLACK_TEXTURE];
+		textures[TextureType::Roughness] = textureMap_[BLACK_TEXTURE];
 	}
 	if (!textures.contains(TextureType::AmbientOcclusion))
 	{
-		textures[TextureType::AmbientOcclusion] = &textureMap_[BLACK_TEXTURE];
+		textures[TextureType::AmbientOcclusion] = textureMap_[BLACK_TEXTURE];
 	}
 	if (!textures.contains(TextureType::Emissive))
 	{
-		textures[TextureType::Emissive] = &textureMap_[BLACK_TEXTURE];
+		textures[TextureType::Emissive] = textureMap_[BLACK_TEXTURE];
 	}
 
 	return Mesh(ctx, std::move(vertices), std::move(indices), std::move(textures));

@@ -8,10 +8,10 @@
 Mesh::Mesh(VulkanContext& ctx,
 	std::vector<VertexData>&& _vertices,
 	std::vector<unsigned int>&& _indices,
-	std::unordered_map<TextureType, VulkanImage*>&& _textures) :
+	std::unordered_map<TextureType, int>&& textureIndices) :
 	vertices_(std::move(_vertices)),
 	indices_(std::move(_indices)),
-	textures_(std::move(_textures))
+	textureIndices_(std::move(textureIndices))
 {
 	Setup(ctx);
 }
@@ -20,10 +20,10 @@ Mesh::Mesh(VulkanContext& ctx,
 Mesh::Mesh(VulkanContext& ctx,
 	const std::vector<VertexData>& vertices,
 	const std::vector<unsigned int>& indices,
-	const std::unordered_map<TextureType, VulkanImage*>& textures) :
+	const std::unordered_map<TextureType, int>& textureIndices) :
 	vertices_(vertices),
 	indices_(indices),
-	textures_(textures)
+	textureIndices_(textureIndices)
 {
 	Setup(ctx);
 }
