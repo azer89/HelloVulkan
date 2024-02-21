@@ -55,7 +55,7 @@ public:
 		const std::unordered_map<TextureType, uint32_t>& textureIndices);
 
 	// TODO Implement this function
-	//void AddTexture(VulkanContext& ctx, const char* fileName, uint32_t bindIndex);
+	//void AddTexture(VulkanContext& ctx, const char* fileName);
 
 	void Setup(VulkanContext& ctx);
 
