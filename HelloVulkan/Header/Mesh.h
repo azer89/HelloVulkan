@@ -66,20 +66,20 @@ public:
 	VulkanBuffer indexBuffer_;
 
 	std::vector<VertexData> vertices_;
-	std::vector<unsigned int> indices_;
-	std::unordered_map<TextureType, int> textureIndices_;
+	std::vector<uint32_t> indices_;
+	std::unordered_map<TextureType, uint32_t> textureIndices_;
 
 	// Constructors
 	Mesh(
 		VulkanContext& ctx,
 		std::vector<VertexData>&& _vertices,
-		std::vector<unsigned int>&& _indices,
-		std::unordered_map<TextureType, int>&& textureIndices);
+		std::vector<uint32_t>&& _indices,
+		std::unordered_map<TextureType, uint32_t>&& textureIndices);
 	Mesh(
 		VulkanContext& ctx,
 		const std::vector<VertexData>& vertices,
-		const std::vector<unsigned int>& indices,
-		const std::unordered_map<TextureType, int>& textureIndices);
+		const std::vector<uint32_t>& indices,
+		const std::unordered_map<TextureType, uint32_t>& textureIndices);
 
 	// TODO Implement this function
 	//void AddTexture(VulkanContext& ctx, const char* fileName, uint32_t bindIndex);

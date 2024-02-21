@@ -22,7 +22,7 @@ private:
 	// PBR Textures
 	std::vector<VulkanImage> textureList_;
 	// string key is the filename, int value points to elements in textureList_
-	std::unordered_map<std::string, int> textureMap_; 
+	std::unordered_map<std::string, uint32_t> textureMap_;
 
 public:
 	std::vector<Mesh> meshes_;
@@ -37,7 +37,7 @@ public:
 	// Destructor
 	~Model();
 
-	VulkanImage* GetTexture(int textureIndex);
+	VulkanImage* GetTexture(uint32_t textureIndex);
 
 	void AddTextureIfEmpty(TextureType tType, const std::string& filePath);
 

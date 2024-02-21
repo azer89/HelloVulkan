@@ -49,7 +49,7 @@ void Model::AddTexture(VulkanContext& ctx, const std::string& textureFilename)
 	textureList_.push_back({});
 	std::string fullFilePath = this->directory_ + '/' + textureFilename;
 	textureList_.back().CreateImageResources(ctx, fullFilePath.c_str());
-	textureMap_[textureFilename] = textureList_.size() - 1;
+	textureMap_[textureFilename] = static_cast<uint32_t>(textureList_.size() - 1);
 }
 
 void Model::AddTexture(VulkanContext& ctx, const std::string& textureName, void* data, int width, int height)
@@ -60,10 +60,10 @@ void Model::AddTexture(VulkanContext& ctx, const std::string& textureName, void*
 		data,
 		1,
 		1);
-	textureMap_[textureName] = textureList_.size() - 1;
+	textureMap_[textureName] = static_cast<uint32_t>(textureList_.size() - 1);
 }
 
-VulkanImage* Model::GetTexture(int textureIndex)
+VulkanImage* Model::GetTexture(uint32_t textureIndex)
 {
 	if (textureIndex < 0 || textureIndex >= textureList_.size())
 	{
@@ -191,19 +191,19 @@ Mesh Model::ProcessMesh(
 	}
 
 	// Indices
-	std::vector<unsigned int> indices;
+	std::vector<uint32_t> indices;
 	for (unsigned int i = 0; i < mesh->mNumFaces; ++i)
 	{
 		aiFace face = mesh->mFaces[i];
 		// Retrieve all indices of the face and store them in the indices vector
 		for (unsigned int j = 0; j < face.mNumIndices; ++j)
 		{
-			indices.push_back(face.mIndices[j]);
+			indices.push_back(static_cast<uint32_t>(face.mIndices[j]));
 		}
 	}
 
 	// PBR textures
-	std::unordered_map<TextureType, int> textures;
+	std::unordered_map<TextureType, uint32_t> textures;
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 	for (auto& aiTType : TextureMapper::aiTTypeSearchOrder)
 	{

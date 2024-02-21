@@ -7,8 +7,8 @@
 // Constructor
 Mesh::Mesh(VulkanContext& ctx,
 	std::vector<VertexData>&& _vertices,
-	std::vector<unsigned int>&& _indices,
-	std::unordered_map<TextureType, int>&& textureIndices) :
+	std::vector<uint32_t>&& _indices,
+	std::unordered_map<TextureType, uint32_t>&& textureIndices) :
 	vertices_(std::move(_vertices)),
 	indices_(std::move(_indices)),
 	textureIndices_(std::move(textureIndices))
@@ -19,8 +19,8 @@ Mesh::Mesh(VulkanContext& ctx,
 // Constructor
 Mesh::Mesh(VulkanContext& ctx,
 	const std::vector<VertexData>& vertices,
-	const std::vector<unsigned int>& indices,
-	const std::unordered_map<TextureType, int>& textureIndices) :
+	const std::vector<uint32_t>& indices,
+	const std::unordered_map<TextureType, uint32_t>& textureIndices) :
 	vertices_(vertices),
 	indices_(indices),
 	textureIndices_(textureIndices)
@@ -38,7 +38,7 @@ void Mesh::Setup(VulkanContext& ctx)
 		VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
 	);
 
-	indexBufferSize_ = sizeof(unsigned int) * indices_.size();
+	indexBufferSize_ = sizeof(uint32_t) * indices_.size();
 	indexBuffer_.CreateGPUOnlyBuffer(
 		ctx, 
 		indexBufferSize_, 
