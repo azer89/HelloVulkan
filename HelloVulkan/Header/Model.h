@@ -16,14 +16,24 @@
 class Model
 {
 private:
-	// Model data 
-	std::unordered_map<std::string, VulkanImage> textureMap_; // key is the filename
-	std::string directory_;
-	std::string blackTextureFilePath_;
 	VkDevice device_;
+	std::string directory_;
+
+	// PBR Textures
+	std::vector<VulkanImage> textureList_;
+	// string key is the filename, int value points to elements in textureList_
+	std::unordered_map<std::string, uint32_t> textureMap_;
 
 public:
 	std::vector<Mesh> meshes_;
+
+	// Bindless rendering
+	std::vector<VertexData> vertices_;
+	std::vector<uint32_t> indices_;
+	VkDeviceSize vertexBufferSize_;
+	VkDeviceSize indexBufferSize_;
+	VulkanBuffer vertexBuffer_;
+	VulkanBuffer indexBuffer_;
 
 	// TODO Separate buffers from the model
 	std::vector<VulkanBuffer> modelBuffers_;
@@ -34,6 +44,8 @@ public:
 
 	// Destructor
 	~Model();
+
+	VulkanImage* GetTexture(uint32_t textureIndex);
 
 	void AddTextureIfEmpty(TextureType tType, const std::string& filePath);
 
@@ -50,24 +62,33 @@ public:
 	}
 
 private:
+	void AddTexture(VulkanContext& ctx, const std::string& textureFilename);
+	void AddTexture(VulkanContext& ctx, const std::string& textureName, void* data, int width, int height);
+
 	// Loads a model with supported ASSIMP extensions from file and 
 	// stores the resulting meshes in the meshes vector.
 	void LoadModel(
 		VulkanContext& ctx, 
 		std::string const& path);
 
-	// Processes a node in a recursive fashion. 
+	// Processes a node recursively. 
 	void ProcessNode(
 		VulkanContext& ctx, 
+		uint32_t& vertexOffset,
+		uint32_t& indexOffset,
 		aiNode* node, 
 		const aiScene* scene, 
 		const glm::mat4& parentTransform);
 
-	Mesh ProcessMesh(
+	void ProcessMesh(
 		VulkanContext& ctx, 
+		uint32_t& vertexOffset,
+		uint32_t& indexOffset,
 		aiMesh* mesh, 
 		const aiScene* scene, 
 		const glm::mat4& transform);
+
+	void CreateBuffers(VulkanContext& ctx);
 };
 
 #endif

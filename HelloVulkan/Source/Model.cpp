@@ -8,23 +8,25 @@
 #include <iostream>
 #include <ranges>
 
-inline glm::mat4 mat4_cast(const aiMatrix4x4& m)
+static const std::string BLACK_TEXTURE = "DefaultBlackTexture";
+
+inline glm::mat4 CastToGLMMat4(const aiMatrix4x4& m)
 {
 	return glm::transpose(glm::make_mat4(&m.a1));
 }
 
 Model::Model(VulkanContext& ctx, const std::string& path) :
-	device_(ctx.GetDevice()),
-	blackTextureFilePath_(AppConfig::TextureFolder + "Black1x1.png")
+	device_(ctx.GetDevice())
 {
-	// In case a texture type cannot be found, replace it with a default texture
-	textureMap_[blackTextureFilePath_] = {};
-	textureMap_[blackTextureFilePath_].CreateImageResources(
-		ctx, 
-		blackTextureFilePath_.c_str());
+	// In case a texture type cannot be found, replace it with a black 1x1 texture
+	unsigned char black[4] = { 0, 0, 0, 255 };
+	AddTexture(ctx, BLACK_TEXTURE, (void*)&black, 1, 1);
 
 	// Load model here
 	LoadModel(ctx, path);
+
+	// Bindless rendering
+	//CreateBuffers(ctx);
 }
 
 Model::~Model()
@@ -39,11 +41,61 @@ Model::~Model()
 		buffer.Destroy();
 	}
 
-	// C++20 feature
-	for (VulkanImage& tex : std::views::values(textureMap_))
+	for (VulkanImage& tex : textureList_)
 	{
 		tex.Destroy();
 	}
+
+	vertexBuffer_.Destroy();
+	indexBuffer_.Destroy();
+}
+
+void Model::CreateBuffers(VulkanContext& ctx)
+{
+	vertexBufferSize_ = static_cast<VkDeviceSize>(sizeof(VertexData) * vertices_.size());
+	vertexBuffer_.CreateGPUOnlyBuffer(
+		ctx,
+		vertexBufferSize_,
+		vertices_.data(),
+		VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
+	);
+
+	indexBufferSize_ = static_cast<VkDeviceSize>(sizeof(uint32_t) * indices_.size());
+	indexBuffer_.CreateGPUOnlyBuffer(
+		ctx,
+		indexBufferSize_,
+		indices_.data(),
+		VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
+	);
+}
+
+void Model::AddTexture(VulkanContext& ctx, const std::string& textureFilename)
+{
+	textureList_.push_back({});
+	std::string fullFilePath = this->directory_ + '/' + textureFilename;
+	textureList_.back().CreateImageResources(ctx, fullFilePath.c_str());
+	textureMap_[textureFilename] = static_cast<uint32_t>(textureList_.size() - 1);
+}
+
+void Model::AddTexture(VulkanContext& ctx, const std::string& textureName, void* data, int width, int height)
+{
+	textureList_.push_back({});
+	textureList_.back().CreateImageResources(
+		ctx,
+		data,
+		1,
+		1);
+	textureMap_[textureName] = static_cast<uint32_t>(textureList_.size() - 1);
+}
+
+VulkanImage* Model::GetTexture(uint32_t textureIndex)
+{
+	if (textureIndex < 0 || textureIndex >= textureList_.size())
+	{
+		std::cerr << "Failed to retrieve a texture because the textureIndex is out of bound\n";
+		return nullptr;
+	}
+	return &(textureList_[textureIndex]);
 }
 
 void Model::AddTextureIfEmpty(TextureType tType, const std::string& filePath)
@@ -79,79 +131,82 @@ void Model::LoadModel(VulkanContext& ctx, std::string const& path)
 	directory_ = path.substr(0, path.find_last_of('/'));
 
 	// Process ASSIMP's root node recursively
-	ProcessNode(ctx, scene->mRootNode, scene, glm::mat4(1.0));
+	uint32_t vertexOffset = 0u;
+	uint32_t indexOffset = 0u;
+	ProcessNode(ctx, vertexOffset, indexOffset, scene->mRootNode, scene, glm::mat4(1.0));
 }
 
-// Processes a node in a recursive fashion. 
-// Processes each individual mesh located at the node and 
-// repeats this process on its children nodes (if any).
+// Processes a node in a recursive fashion.
 void Model::ProcessNode(
 	VulkanContext& ctx, 
+	uint32_t& vertexOffset,
+	uint32_t& indexOffset,
 	aiNode* node, 
 	const aiScene* scene, 
 	const glm::mat4& parentTransform)
 {
-	glm::mat4 nodeTransform = mat4_cast(node->mTransformation);
+	glm::mat4 nodeTransform = CastToGLMMat4(node->mTransformation);
 	glm::mat4 totalTransform = parentTransform * nodeTransform;
 
 	// Process each mesh located at the current node
 	for (unsigned int i = 0; i < node->mNumMeshes; ++i)
 	{
-		// The node object only contains indices to index the actual objects in the scene. 
-		// The scene contains all the data, node is just to keep stuff organized (like relations between nodes).
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-
-		meshes_.push_back(ProcessMesh(ctx, mesh, scene, totalTransform));
+		ProcessMesh(ctx, vertexOffset, indexOffset, mesh, scene, totalTransform);
 	}
 	// After we've processed all of the meshes (if any) we then recursively process each of the children nodes
 	for (unsigned int i = 0; i < node->mNumChildren; ++i)
 	{
-		ProcessNode(ctx, node->mChildren[i], scene, totalTransform);
+		ProcessNode(ctx, vertexOffset, indexOffset, node->mChildren[i], scene, totalTransform);
 	}
 }
 
-Mesh Model::ProcessMesh(
+void Model::ProcessMesh(
 	VulkanContext& ctx, 
+	uint32_t& vertexOffset,
+	uint32_t& indexOffset,
 	aiMesh* mesh, 
 	const aiScene* scene, 
 	const glm::mat4& transform)
 {
-	// Data to fill
+	// Vertices
 	std::vector<VertexData> vertices;
-	std::vector<unsigned int> indices;
-	std::unordered_map<TextureType, VulkanImage*> textures;
-
-	// Walk through each of the mesh's vertices
 	for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
 	{
-		VertexData vertex;
-		glm::vec4 vector; // We declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
 		// Positions
-		vector.x = mesh->mVertices[i].x;
-		vector.y = mesh->mVertices[i].y;
-		vector.z = mesh->mVertices[i].z;
-		vector.w = 1;
-		vertex.position_ = transform * vector;
+		VertexData vertex =
+		{
+			.position_ = transform * 
+				glm::vec4(
+					mesh->mVertices[i].x,
+					mesh->mVertices[i].y,
+					mesh->mVertices[i].z,
+					1)
+		};
+
 		// Normals
 		if (mesh->HasNormals())
 		{
-			vector.x = mesh->mNormals[i].x;
-			vector.y = mesh->mNormals[i].y;
-			vector.z = mesh->mNormals[i].z;
-			vector.w = 0;
-			vertex.normal_ = transform * vector;
+			vertex.normal_ = transform * 
+				glm::vec4(
+					mesh->mNormals[i].x,
+					mesh->mNormals[i].y,
+					mesh->mNormals[i].z,
+					0
+				);
 		}
-		// Texture coordinates
-		if (mesh->mTextureCoords[0]) // Does the mesh contain texture coordinates?
+
+		// UV
+		if (mesh->mTextureCoords[0])
 		{
-			glm::vec4 vec;
-			// A vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't 
-			// use models where a vertex can have multiple texture coordinates so we always take the first set (0).
-			vec.x = mesh->mTextureCoords[0][i].x;
-			vec.y = mesh->mTextureCoords[0][i].y;
-			vec.z = 0;
-			vec.w = 0;
-			vertex.textureCoordinate_ = vec;
+			// A vertex can contain up to 8 different texture coordinates. 
+			// We thus make the assumption that we won't use models where a vertex 
+			// can have multiple texture coordinates so we always take the first set (0).
+			vertex.textureCoordinate_ = glm::vec4(
+				mesh->mTextureCoords[0][i].x, 
+				mesh->mTextureCoords[0][i].y, 
+				0, 
+				0);
 		}
 		else
 		{
@@ -161,19 +216,20 @@ Mesh Model::ProcessMesh(
 		vertices.push_back(vertex);
 	}
 
-	// Now walk through each of the mesh's faces (a face is a mesh its triangle) and 
-	// retrieve the corresponding vertex indices.
+	// Indices
+	std::vector<uint32_t> indices;
 	for (unsigned int i = 0; i < mesh->mNumFaces; ++i)
 	{
 		aiFace face = mesh->mFaces[i];
 		// Retrieve all indices of the face and store them in the indices vector
-		for (unsigned int j = 0; j < face.mNumIndices; j++)
+		for (unsigned int j = 0; j < face.mNumIndices; ++j)
 		{
-			indices.push_back(face.mIndices[j]);
+			indices.push_back(static_cast<uint32_t>(face.mIndices[j]));
 		}
 	}
 
-	// Process materials
+	// PBR textures
+	std::unordered_map<TextureType, uint32_t> textures;
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 	for (auto& aiTType : TextureMapper::aiTTypeSearchOrder)
 	{
@@ -182,51 +238,68 @@ Mesh Model::ProcessMesh(
 		{
 			aiString str;
 			material->GetTexture(aiTType, i, &str);
-			std::string key = str.C_Str();
+			std::string filename = str.C_Str();
 			TextureType tType = TextureMapper::GetTextureType(aiTType);
 
-			if (!textureMap_.contains(key)) // Make sure never loaded before
+			// Make sure each texture is loaded once
+			if (!textureMap_.contains(filename)) 
 			{
-				VulkanImage texture;
-				std::string fullFilePath = this->directory_ + '/' + str.C_Str();
-				texture.CreateImageResources(ctx, fullFilePath.c_str());
-				textureMap_[key] = texture;
-
-				// TODO Create Sampler
+				AddTexture(ctx, filename);
 			}
 
-			if (!textures.contains(tType)) // Only support one image per texture type
+			// Only support one image per texture type, if we happen to load 
+			// multiple textures of the same type, we only use one.
+			if (!textures.contains(tType)) 
 			{
-				textures[tType] = &textureMap_[key];
+				textures[tType] = textureMap_[filename];
 			}
 		}
 	}
-	// Replace missing PBR textures with black texture
-	// TODO Use a loop instead of multiple IFs
+
+	// Replace missing PBR textures with a black 1x1 texture
 	if (!textures.contains(TextureType::Albedo))
 	{
-		textures[TextureType::Albedo] = &textureMap_[blackTextureFilePath_];
+		textures[TextureType::Albedo] = textureMap_[BLACK_TEXTURE];
 	}
 	if (!textures.contains(TextureType::Normal))
 	{
-		textures[TextureType::Normal] = &textureMap_[blackTextureFilePath_];
+		textures[TextureType::Normal] = textureMap_[BLACK_TEXTURE];
 	}
 	if (!textures.contains(TextureType::Metalness))
 	{
-		textures[TextureType::Metalness] = &textureMap_[blackTextureFilePath_];
+		textures[TextureType::Metalness] = textureMap_[BLACK_TEXTURE];
 	}
 	if (!textures.contains(TextureType::Roughness))
 	{
-		textures[TextureType::Roughness] = &textureMap_[blackTextureFilePath_];
+		textures[TextureType::Roughness] = textureMap_[BLACK_TEXTURE];
 	}
 	if (!textures.contains(TextureType::AmbientOcclusion))
 	{
-		textures[TextureType::AmbientOcclusion] = &textureMap_[blackTextureFilePath_];
+		textures[TextureType::AmbientOcclusion] = textureMap_[BLACK_TEXTURE];
 	}
 	if (!textures.contains(TextureType::Emissive))
 	{
-		textures[TextureType::Emissive] = &textureMap_[blackTextureFilePath_];
+		textures[TextureType::Emissive] = textureMap_[BLACK_TEXTURE];
 	}
 
-	return Mesh(ctx, std::move(vertices), std::move(indices), std::move(textures));
+	uint32_t vOffset = static_cast<uint32_t>(vertices.size());
+	uint32_t iOffset = static_cast<uint32_t>(indices.size());
+
+	// Copy vertices and indices
+	vertices_.insert(std::end(vertices_), std::begin(vertices), std::end(vertices));
+	indices_.insert(std::end(indices_), std::begin(indices), std::end(indices));
+
+	// Create a mesh
+	meshes_.emplace_back(
+		ctx,
+		vertexOffset,
+		indexOffset,
+		std::move(vertices),
+		std::move(indices),
+		std::move(textures)
+	);
+
+	// Update offsets
+	vertexOffset += vOffset;
+	indexOffset += iOffset;
 }

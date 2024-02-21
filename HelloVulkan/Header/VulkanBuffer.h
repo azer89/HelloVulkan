@@ -51,7 +51,7 @@ public:
 
 	void CreateGPUOnlyBuffer(
 		VulkanContext& ctx,
-		size_t bufferSize_,
+		VkDeviceSize bufferSize_,
 		const void* bufferData,
 		VkMemoryPropertyFlags flags
 	);
