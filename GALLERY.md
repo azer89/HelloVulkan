@@ -7,3 +7,6 @@ https://github.com/azer89/HelloVulkan/assets/790432/8b0562ed-ab72-4e93-9ce9-31c6
 <img width="850" alt="sponza_shadow_mapping_01" src="https://github.com/azer89/HelloVulkan/assets/790432/4751e9bc-2d54-4af0-a5dc-acdc07e7982c">
 
 <img width="850" alt="sponza_shadow_mapping_02" src="https://github.com/azer89/HelloVulkan/assets/790432/55283773-f554-4af3-be0d-42ecdd3ede8b">
+
+https://github.com/azer89/HelloVulkan/assets/790432/f09b279a-dcc7-4e96-9546-cde7b1340637
+
