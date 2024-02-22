@@ -1,6 +1,6 @@
 # 🌋Hello Engine🖖🏽
 
-A real-time rendering engine built from scrath using Vulkan API and C++.
+A real-time rendering engine built from scratch using Vulkan API and C++.
 
 ### Features
 * Clustered Forward Shading, no more deferred!
