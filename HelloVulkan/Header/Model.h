@@ -48,6 +48,7 @@ public:
 	// Destructor
 	~Model();
 
+	uint32_t GetNumTextures() { return static_cast<uint32_t>(textureList_.size()); }
 	VulkanImage* GetTexture(uint32_t textureIndex);
 
 	void AddTextureIfEmpty(TextureType tType, const std::string& filePath);

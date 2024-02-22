@@ -10,6 +10,22 @@
 
 #include <vector>
 
+struct PerModelBindlessResource
+{
+	VulkanDescriptor descriptor_;
+	std::vector<VkDescriptorSet> descriptorSets_;
+	std::vector<VulkanBuffer> indirectBuffers_;
+
+	void Destroy()
+	{
+		descriptor_.Destroy();
+		for (VulkanBuffer& buffer : indirectBuffers_)
+		{
+			buffer.Destroy();
+		}
+	}
+};
+
 /*
 Render meshes using PBR materials, naive forward renderer, bindless
 */
@@ -32,17 +48,22 @@ public:
 private:
 	void CreateIndirectBuffers(VulkanContext& ctx);
 
-	void CreateDescriptor(VulkanContext& ctx);
-	void CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh* mesh, const size_t meshIndex);
+	void CreateDescriptor(VulkanContext& ctx, size_t modelIndex);
+	//void CreateDescriptorSet(VulkanContext& ctx, Model* model, size_t modelIndex);
 
 	PushConstantPBR pc_;
 	Lights* lights_;
 	IBLResources* iblResources_;
 	std::vector<Model*> models_;
-	std::vector<std::vector<VkDescriptorSet>> descriptorSets_;
 
+	std::vector<PerModelBindlessResource> modelResources_;
+
+	// One descriptor per model
+	//std::vector<VulkanDescriptor> modelDescriptors_;
+	// One descriptor set per model per frame
+	//std::vector<std::vector<VkDescriptorSet>> descriptorSets_;
 	// One draw call per model per frame
-	std::vector<std::vector<VulkanBuffer>> indirectBuffers_;
+	//std::vector<std::vector<VulkanBuffer>> indirectBuffers_;
 };
 
 #endif

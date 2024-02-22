@@ -8,7 +8,6 @@
 // Constants
 constexpr uint32_t UBO_COUNT = 2;
 constexpr uint32_t SSBO_COUNT = 4;
-constexpr uint32_t PBR_MESH_TEXTURE_COUNT = 6;
 constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 
 PipelinePBRBindless::PipelinePBRBindless(
@@ -39,6 +38,14 @@ PipelinePBRBindless::PipelinePBRBindless(
 		CreateMultipleUniformBuffers(ctx, model->modelBuffers_, sizeof(ModelUBO), AppConfig::FrameOverlapCount);
 	}
 
+	// Model resources
+	modelResources_.resize(models.size());
+	CreateIndirectBuffers(ctx);
+	for (size_t i = 0; i < models_.size(); ++i)
+	{
+		CreateDescriptor(ctx, i);
+	}
+
 	// Note that this pipeline is offscreen rendering
 	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
 
@@ -50,8 +57,6 @@ PipelinePBRBindless::PipelinePBRBindless(
 			depthImage
 		}, 
 		IsOffscreen());
-
-	CreateDescriptor(ctx);
 
 	// Push constants
 	std::vector<VkPushConstantRange> ranges =
@@ -77,13 +82,9 @@ PipelinePBRBindless::PipelinePBRBindless(
 
 PipelinePBRBindless::~PipelinePBRBindless()
 {
-	size_t numFrames = AppConfig::FrameOverlapCount;
-	for (size_t i = 0; i < models_.size(); ++i)
+	for (PerModelBindlessResource& res : modelResources_)
 	{
-		for (size_t j = 0; j < numFrames; ++j)
-		{
-			indirectBuffers_[i][j].Destroy();
-		}
+		res.Destroy();
 	}
 }
 
@@ -101,38 +102,25 @@ void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 		0,
 		sizeof(PushConstantPBR), &pc_);
 
-	for (Model* model : models_)
+	for (size_t i = 0; i < models_.size(); ++i)
 	{
+		vkCmdBindDescriptorSets(
+			commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			pipelineLayout_,
+			0u, // firstSet
+			1u, // descriptorSetCount
+			&(modelResources_[i].descriptorSets_[frameIndex]),
+			0u, // dynamicOffsetCount
+			nullptr); // pDynamicOffsets
 
+		vkCmdDrawIndirect(
+			commandBuffer, 
+			modelResources_[i].indirectBuffers_[frameIndex].buffer_, 
+			0, // offset
+			models_[i]->NumMeshes(),
+			sizeof(VkDrawIndirectCommand));
 	}
-
-	/*size_t meshIndex = 0;
-	for (Model* model : models_)
-	{
-		for (Mesh& mesh : model->meshes_)
-		{
-			vkCmdBindDescriptorSets(
-				commandBuffer,
-				VK_PIPELINE_BIND_POINT_GRAPHICS,
-				pipelineLayout_,
-				0,
-				1,
-				&(descriptorSets_[meshIndex++][frameIndex]),
-				0,
-				nullptr);
-
-			// Bind vertex buffer
-			VkBuffer buffers[] = { mesh.vertexBuffer_.buffer_ };
-			VkDeviceSize offsets[] = { 0 };
-			vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
-
-			// Bind index buffer
-			vkCmdBindIndexBuffer(commandBuffer, mesh.indexBuffer_.buffer_, 0, VK_INDEX_TYPE_UINT32);
-
-			// Draw
-			vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBufferSize_ / (sizeof(unsigned int))), 1, 0, 0, 0);
-		}
-	}*/
 	
 	vkCmdEndRenderPass(commandBuffer);
 }
@@ -140,18 +128,17 @@ void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 void PipelinePBRBindless::CreateIndirectBuffers(VulkanContext& ctx)
 {
 	size_t numFrames = AppConfig::FrameOverlapCount;
-	indirectBuffers_.resize(models_.size());
 	for (size_t i = 0; i < models_.size(); ++i)
 	{
 		const uint32_t meshSize = static_cast<uint32_t>(models_[i]->meshes_.size());
 		const uint32_t indirectDataSize = meshSize * sizeof(VkDrawIndirectCommand);
 		
-		indirectBuffers_[i].resize(numFrames);
+		modelResources_[i].indirectBuffers_.resize(numFrames);
 		for (size_t j = 0; j < numFrames; ++j)
 		{
 			// Create and map
-			indirectBuffers_[i][j].CreateIndirectBuffer(ctx, indirectDataSize);
-			VkDrawIndirectCommand* data = indirectBuffers_[i][j].MapIndirectBuffer();
+			modelResources_[i].indirectBuffers_[j].CreateIndirectBuffer(ctx, indirectDataSize);
+			VkDrawIndirectCommand* data = modelResources_[i].indirectBuffers_[j].MapIndirectBuffer();
 
 			for (uint32_t k = 0; k < meshSize; ++k)
 			{
@@ -165,43 +152,31 @@ void PipelinePBRBindless::CreateIndirectBuffers(VulkanContext& ctx)
 			}
 
 			// Unmap
-			indirectBuffers_[i][j].UnmapIndirectBuffer();
+			modelResources_[i].indirectBuffers_[j].UnmapIndirectBuffer();
 		}
 	}
 }
 
-void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
+// TODO Refactor VulkanDescriptor to make the code below simpler
+void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx, size_t modelIndex)
 {
-	const uint32_t modelCount = static_cast<uint32_t>(models_.size());
-	descriptor_.CreatePool(
+	Model* model = models_[modelIndex];
+	const uint32_t textureCount = model->GetNumTextures();
+	const uint32_t frameCount = AppConfig::FrameOverlapCount;
+
+	// Pool
+	modelResources_[modelIndex].descriptor_.CreatePool(
 		ctx,
 		{
 			.uboCount_ = UBO_COUNT,
 			.ssboCount_ = SSBO_COUNT,
-			.samplerCount_ = (PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT),
+			.samplerCount_ = (textureCount + PBR_ENV_TEXTURE_COUNT),
 			.frameCount_ = AppConfig::FrameOverlapCount,
-			.setCountPerFrame_ = modelCount,
-		});
-
-	/*uint32_t numMeshes = 0u;
-	for (Model* model : models_)
-	{
-		numMeshes += model->NumMeshes();
-	}
-
-	// Pool
-	descriptor_.CreatePool(
-		ctx,
-		{
-			.uboCount_ = UBO_COUNT * static_cast<uint32_t>(models_.size()),
-			.ssboCount_ = SSBO_COUNT,
-			.samplerCount_ = (PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT) * numMeshes,
-			.frameCount_ = AppConfig::FrameOverlapCount,
-			.setCountPerFrame_ = numMeshes,
+			.setCountPerFrame_ = 1,
 		});
 
 	// Layout
-	descriptor_.CreateLayout(ctx,
+	modelResources_[modelIndex].descriptor_.CreateLayout(ctx,
 	{
 		{
 			.type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
@@ -211,66 +186,58 @@ void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
 		{
 			.type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
 			.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+			.bindingCount_ = 4
+		},
+		{
+			.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
+			.descriptorCount_ = textureCount,
 			.bindingCount_ = 1
 		},
 		{
 			.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
-			.bindingCount_ = PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT
+			.bindingCount_ = PBR_ENV_TEXTURE_COUNT
 		}
 	});
 
 	// Set
-	descriptorSets_.resize(numMeshes);
-	size_t meshIndex = 0;
-	for (Model* model : models_)
-	{
-		for (Mesh& mesh : model->meshes_)
-		{
-			CreateDescriptorSet(ctx, model, &mesh, meshIndex++);
-		}
-	}*/
-}
+	modelResources_[modelIndex].descriptorSets_.resize(frameCount);
 
-void PipelinePBRBindless::CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh* mesh, const size_t meshIndex)
-{
-	/*VkDescriptorImageInfo specularImageInfo = iblResources_->specularCubemap_.GetDescriptorImageInfo();
-	VkDescriptorImageInfo diffuseImageInfo = iblResources_->diffuseCubemap_.GetDescriptorImageInfo();
-	VkDescriptorImageInfo lutImageInfo = iblResources_->brdfLut_.GetDescriptorImageInfo();
-
-	// PBR Textures
-	std::vector<VkDescriptorImageInfo> meshTextureInfos(PBR_MESH_TEXTURE_COUNT);
-	for (const auto& elem : mesh->textureIndices_)
+	/*2*/ VkDescriptorBufferInfo vertexBufferInfo = { model->vertexBuffer_.buffer_, 0, model->vertexBufferSize_};
+	/*3*/ VkDescriptorBufferInfo indexBufferInfo = { model->indexBuffer_.buffer_, 0, model->indexBufferSize_ };
+	/*4*/ VkDescriptorBufferInfo meshBufferInfo = { model->meshDataBuffer_.buffer_, 0, model->meshDataBufferSize_ };
+	/*5*/ VkDescriptorBufferInfo lightBufferInfo = { lights_->GetSSBOBuffer(), 0, lights_->GetSSBOSize() };
+	/*6*/ std::vector<VkDescriptorImageInfo> textureInfoArray(textureCount);
+	for (size_t i = 0; i < textureCount; ++i)
 	{
-		// Should be ordered based on elem.first
-		uint32_t typeIndex = static_cast<uint32_t>(elem.first) - 1;
-		int textureIndex = elem.second;
-		VulkanImage* texture = parentModel->GetTexture(textureIndex);
-		meshTextureInfos[typeIndex] = texture->GetDescriptorImageInfo();
+		VulkanImage* texture = model->GetTexture(i);
+		textureInfoArray[i] = texture->GetDescriptorImageInfo();
 	}
-
-	size_t frameCount = AppConfig::FrameOverlapCount;
-	descriptorSets_[meshIndex].resize(frameCount);
-
-	for (size_t i = 0; i < frameCount; i++)
+	/*7*/ VkDescriptorImageInfo specularImageInfo = iblResources_->specularCubemap_.GetDescriptorImageInfo();
+	/*8*/ VkDescriptorImageInfo diffuseImageInfo = iblResources_->diffuseCubemap_.GetDescriptorImageInfo();
+	/*9*/ VkDescriptorImageInfo lutImageInfo = iblResources_->brdfLut_.GetDescriptorImageInfo();
+	
+	for (uint32_t i = 0; i < frameCount; ++i)
 	{
-		VkDescriptorBufferInfo bufferInfo1 = { cameraUBOBuffers_[i].buffer_, 0, sizeof(CameraUBO) };
-		VkDescriptorBufferInfo bufferInfo2 = { parentModel->modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
-		VkDescriptorBufferInfo bufferInfo3 = { lights_->GetSSBOBuffer(), 0, lights_->GetSSBOSize() };
+		/*0*/ VkDescriptorBufferInfo camBufferInfo = { cameraUBOBuffers_[i].buffer_, 0, sizeof(CameraUBO) };
+		/*1*/ VkDescriptorBufferInfo modelBufferInfo = { model->modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
 
 		std::vector<DescriptorSetWrite> writes;
-
-		writes.push_back({ .bufferInfoPtr_ = &bufferInfo1, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
-		writes.push_back({ .bufferInfoPtr_ = &bufferInfo2, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
-		writes.push_back({ .bufferInfoPtr_ = &bufferInfo3, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-		for (size_t i = 0; i < meshTextureInfos.size(); ++i)
-		{
-			writes.push_back({ .imageInfoPtr_ = &meshTextureInfos[i], .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
-		}
-		writes.push_back({ .imageInfoPtr_ = &specularImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
-		writes.push_back({ .imageInfoPtr_ = &diffuseImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
-		writes.push_back({ .imageInfoPtr_ = &lutImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
-
-		descriptor_.CreateSet(ctx, writes, &(descriptorSets_[meshIndex][i]));
-	}*/
+		/*0*/ writes.push_back({ .bufferInfoPtr_ = &camBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
+		/*1*/ writes.push_back({ .bufferInfoPtr_ = &modelBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
+		/*2*/ writes.push_back({ .bufferInfoPtr_ = &vertexBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
+		/*3*/ writes.push_back({ .bufferInfoPtr_ = &indexBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
+		/*4*/ writes.push_back({ .bufferInfoPtr_ = &meshBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
+		/*5*/ writes.push_back({ .bufferInfoPtr_ = &lightBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
+		/*6*/ writes.push_back({
+			.imageInfoPtr_ = textureInfoArray.data(),
+			.descriptorCount_ = textureCount,
+			.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
+		/*7*/ writes.push_back({ .imageInfoPtr_ = &specularImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
+		/*8*/ writes.push_back({ .imageInfoPtr_ = &diffuseImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
+		/*9*/ writes.push_back({ .imageInfoPtr_ = &lutImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
+	
+		modelResources_[modelIndex].descriptor_.CreateSet(ctx, writes, &(modelResources_[modelIndex].descriptorSets_[i]));
+	}
 }
