@@ -1,6 +1,6 @@
 # 🌋Hello Engine🖖🏽
 
-A real-time rendering engine using Vulkan.
+A real-time rendering engine built from scrath using Vulkan API and C++.
 
 ### Features
 * Clustered Forward Shading, no more deferred!
@@ -45,7 +45,7 @@ https://github.com/azer89/HelloVulkan/assets/790432/13a4426f-deec-40f5-816a-5594
 * C++20
 * Vulkan SDK
 * Visual Studio 2022
-* Dependencies are located in folder `External/` 
+* Dependencies: glfw, ImGui, VMA, assimp, glm, stb, and volk.
 
 ### Credit
 * [learnopengl.com PBR](https://learnopengl.com/PBR/Theory)
