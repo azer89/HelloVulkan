@@ -135,6 +135,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="..\Shaders\Bindless\Mesh.frag" />
+    <None Include="..\Shaders\Bindless\Mesh.vert" />
+    <None Include="..\Shaders\Bindless\MeshData.frag" />
+    <None Include="..\Shaders\Bindless\VertexData.frag" />
     <None Include="..\Shaders\BRDFLUT.comp" />
     <None Include="..\Shaders\CameraUBO.frag" />
     <None Include="..\Shaders\ClusteredForward\AABBGenerator.comp" />

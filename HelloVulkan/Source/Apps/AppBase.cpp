@@ -259,6 +259,7 @@ void AppBase::ProcessTiming()
 
 int AppBase::GLFWWindowShouldClose()
 {
+	// TODO Maybe you can call vkDeviceWaitIdle when the window is closed
 	return glfwWindowShouldClose(glfwWindow_);
 }
 

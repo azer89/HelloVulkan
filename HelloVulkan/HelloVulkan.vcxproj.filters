@@ -34,6 +34,9 @@
     <Filter Include="Shaders\ShadowMapping">
       <UniqueIdentifier>{c0f7c7d6-309b-4695-b723-a302677825d5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Bindless">
+      <UniqueIdentifier>{375283ac-d6d1-45b2-8b7b-1ac287d4e62d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\Cube.vert">
@@ -125,6 +128,18 @@
     </None>
     <None Include="..\Shaders\CameraUBO.frag">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\Bindless\Mesh.frag">
+      <Filter>Shaders\Bindless</Filter>
+    </None>
+    <None Include="..\Shaders\Bindless\Mesh.vert">
+      <Filter>Shaders\Bindless</Filter>
+    </None>
+    <None Include="..\Shaders\Bindless\MeshData.frag">
+      <Filter>Shaders\Bindless</Filter>
+    </None>
+    <None Include="..\Shaders\Bindless\VertexData.frag">
+      <Filter>Shaders\Bindless</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
