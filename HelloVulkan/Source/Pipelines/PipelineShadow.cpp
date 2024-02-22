@@ -120,7 +120,7 @@ void PipelineShadow::CreateDescriptor(VulkanContext& ctx)
 	descriptor_.CreateLayout(ctx,
 		{
 			{
-				.descriptorType_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+				.type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT,
 				.bindingCount_ = 2
 			}

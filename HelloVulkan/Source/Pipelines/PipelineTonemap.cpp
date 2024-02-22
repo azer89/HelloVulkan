@@ -71,7 +71,7 @@ void PipelineTonemap::CreateDescriptor(VulkanContext& ctx)
 	descriptor_.CreateLayout(ctx,
 	{
 		{
-			.descriptorType_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
 			.bindingCount_ = 1
 		}

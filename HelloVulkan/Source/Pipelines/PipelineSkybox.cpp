@@ -91,12 +91,12 @@ void PipelineSkybox::CreateDescriptor(VulkanContext& ctx)
 	descriptor_.CreateLayout(ctx,
 	{
 		{
-			.descriptorType_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+			.type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 			.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT,
 			.bindingCount_ = 1
 		},
 		{
-			.descriptorType_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
 			.bindingCount_ = 1
 		}

@@ -156,17 +156,17 @@ void PipelineSimpleRaytracing::CreateDescriptor(VulkanContext& ctx)
 	descriptor_.CreateLayout(ctx,
 	{
 		{
-			.descriptorType_ = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
+			.type_ = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
 			.shaderFlags_ = VK_SHADER_STAGE_RAYGEN_BIT_KHR,
 			.bindingCount_ = 1
 		},
 		{
-			.descriptorType_ = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
+			.type_ = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
 			.shaderFlags_ = VK_SHADER_STAGE_RAYGEN_BIT_KHR,
 			.bindingCount_ = 1
 		},
 		{
-			.descriptorType_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+			.type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 			.shaderFlags_ = VK_SHADER_STAGE_RAYGEN_BIT_KHR,
 			.bindingCount_ = 1
 		}

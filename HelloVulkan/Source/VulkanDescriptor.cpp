@@ -66,7 +66,7 @@ void VulkanDescriptor::CreatePool(VulkanContext& ctx,
 }
 
 void VulkanDescriptor::CreateLayout(VulkanContext& ctx,
-	const std::vector<DescriptorBinding>& bindings)
+	const std::vector<DescriptorLayoutBinding>& bindings)
 {
 	std::vector<VkDescriptorSetLayoutBinding> vulkanBindings;
 
@@ -76,11 +76,12 @@ void VulkanDescriptor::CreateLayout(VulkanContext& ctx,
 		for (size_t j = 0; j < bindings[i].bindingCount_; ++j)
 		{
 			vulkanBindings.emplace_back(
-				DescriptorSetLayoutBinding
+				CreateDescriptorSetLayoutBinding
 				(
 					bindingIndex++,
-					bindings[i].descriptorType_,
-					bindings[i].shaderFlags_
+					bindings[i].type_,
+					bindings[i].shaderFlags_,
+					bindings[i].descriptorCount_
 				)
 			);
 		}
@@ -100,7 +101,7 @@ void VulkanDescriptor::CreateLayout(VulkanContext& ctx,
 
 void VulkanDescriptor::CreateSet(
 	VulkanContext& ctx, 
-	const std::vector<DescriptorWrite>& writes,
+	const std::vector<DescriptorSetWrite>& writes,
 	VkDescriptorSet* set)
 {
 	AllocateSet(ctx, set);
@@ -121,7 +122,7 @@ void VulkanDescriptor::AllocateSet(VulkanContext& ctx, VkDescriptorSet* set)
 	VK_CHECK(vkAllocateDescriptorSets(ctx.GetDevice(), &allocInfo, set));
 }
 
-void VulkanDescriptor::UpdateSet(VulkanContext& ctx, const std::vector<DescriptorWrite>& writes, VkDescriptorSet* set)
+void VulkanDescriptor::UpdateSet(VulkanContext& ctx, const std::vector<DescriptorSetWrite>& writes, VkDescriptorSet* set)
 {
 	std::vector<VkWriteDescriptorSet> descriptorWrites;
 
@@ -166,7 +167,7 @@ void VulkanDescriptor::Destroy()
 	}
 }
 
-VkDescriptorSetLayoutBinding VulkanDescriptor::DescriptorSetLayoutBinding(
+VkDescriptorSetLayoutBinding VulkanDescriptor::CreateDescriptorSetLayoutBinding(
 	uint32_t binding,
 	VkDescriptorType descriptorType,
 	VkShaderStageFlags stageFlags,

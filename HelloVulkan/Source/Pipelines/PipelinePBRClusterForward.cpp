@@ -151,17 +151,17 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 	descriptor_.CreateLayout(ctx,
 		{
 			{
-				.descriptorType_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+				.type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
 				.bindingCount_ = 3
 			},
 			{
-				.descriptorType_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+				.type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
 				.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
 				.bindingCount_ = 4
 			},
 			{
-				.descriptorType_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+				.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 				.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
 				.bindingCount_ = PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT
 			}
@@ -213,7 +213,7 @@ void PipelinePBRClusterForward::CreateDescriptorSet(
 		VkDescriptorBufferInfo bufferInfo6 = { cfBuffers_->lightIndicesBuffers_[i].buffer_, 0, VK_WHOLE_SIZE };
 		VkDescriptorBufferInfo bufferInfo7 = { cfBuffers_->aabbBuffers_[i].buffer_, 0, VK_WHOLE_SIZE};
 
-		std::vector<DescriptorWrite> writes;
+		std::vector<DescriptorSetWrite> writes;
 
 		writes.push_back({ .bufferInfoPtr_ = &bufferInfo1, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
 		writes.push_back({ .bufferInfoPtr_ = &bufferInfo2, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });

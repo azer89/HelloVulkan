@@ -75,15 +75,6 @@ public:
 
 	void Destroy();
 
-	static std::vector<VkVertexInputBindingDescription> GetBindingDescriptions()
-	{
-		std::vector<VkVertexInputBindingDescription> bindingDescriptions(1);
-		bindingDescriptions[0].binding = 0;
-		bindingDescriptions[0].stride = sizeof(VertexData);
-		bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-		return bindingDescriptions;
-	}
-
 	MeshData GetMeshData()
 	{
 		return
@@ -98,6 +89,15 @@ public:
 			.ao_ = textureIndices_[TextureType::AmbientOcclusion],
 			.emissive_ = textureIndices_[TextureType::Emissive],
 		};
+	}
+
+	static std::vector<VkVertexInputBindingDescription> GetBindingDescriptions()
+	{
+		std::vector<VkVertexInputBindingDescription> bindingDescriptions(1);
+		bindingDescriptions[0].binding = 0;
+		bindingDescriptions[0].stride = sizeof(VertexData);
+		bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		return bindingDescriptions;
 	}
 
 	static std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions()
