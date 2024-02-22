@@ -5,20 +5,25 @@ layout(location = 1) out vec2 texCoord;
 layout(location = 2) out vec3 normal;
 layout(location = 3) out uint meshIndex;
 
+// UBO
 layout(set = 0, binding = 0)
 #include <CameraUBO.frag>
 
+// UBO
 layout(set = 0, binding = 1) uniform ModelUBO
 {
 	mat4 model;
 }
 modelUBO;
 
+// SSBO
 #include <Bindless//VertexData.frag>
 layout(set = 0, binding = 2) readonly buffer Vertices { VertexData vertices[]; };
 
+// SSBO
 layout(set = 0, binding = 3) readonly buffer Indices { uint indices[]; };
 
+// SSBO
 #include <Bindless//MeshData.frag>
 layout(set = 0, binding = 4) readonly buffer Meshes { MeshData meshes[]; };
 

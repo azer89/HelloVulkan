@@ -30,6 +30,8 @@ public:
 	void SetPBRPushConstants(const PushConstantPBR& pbrPC) { pc_ = pbrPC; };
 
 private:
+	void CreateIndirectBuffers(VulkanContext& ctx);
+
 	void CreateDescriptor(VulkanContext& ctx);
 	void CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh* mesh, const size_t meshIndex);
 
@@ -38,6 +40,9 @@ private:
 	IBLResources* iblResources_;
 	std::vector<Model*> models_;
 	std::vector<std::vector<VkDescriptorSet>> descriptorSets_;
+
+	// One draw call per model per frame
+	std::vector<std::vector<VulkanBuffer>> indirectBuffers_;
 };
 
 #endif

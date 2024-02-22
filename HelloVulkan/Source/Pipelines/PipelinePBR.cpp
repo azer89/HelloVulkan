@@ -136,9 +136,9 @@ void PipelinePBR::CreateDescriptor(VulkanContext& ctx)
 	descriptor_.CreatePool(
 		ctx,
 		{
-			.uboCount_ = UBO_COUNT * static_cast<uint32_t>(models_.size()),
+			.uboCount_ = UBO_COUNT,
 			.ssboCount_ = SSBO_COUNT,
-			.samplerCount_ = (PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT) * numMeshes,
+			.samplerCount_ = PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT,
 			.frameCount_ = AppConfig::FrameOverlapCount,
 			.setCountPerFrame_ = numMeshes,
 		});

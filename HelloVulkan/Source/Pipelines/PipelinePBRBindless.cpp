@@ -7,7 +7,7 @@
 
 // Constants
 constexpr uint32_t UBO_COUNT = 2;
-constexpr uint32_t SSBO_COUNT = 1;
+constexpr uint32_t SSBO_COUNT = 4;
 constexpr uint32_t PBR_MESH_TEXTURE_COUNT = 6;
 constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 
@@ -68,8 +68,8 @@ PipelinePBRBindless::PipelinePBRBindless(
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
-			AppConfig::ShaderFolder + "Mesh.vert",
-			AppConfig::ShaderFolder + "Mesh.frag"
+			AppConfig::ShaderFolder + "Bindless//Mesh.vert",
+			AppConfig::ShaderFolder + "Bindless//Mesh.frag"
 		},
 		&pipeline_
 	);
@@ -77,6 +77,14 @@ PipelinePBRBindless::PipelinePBRBindless(
 
 PipelinePBRBindless::~PipelinePBRBindless()
 {
+	size_t numFrames = AppConfig::FrameOverlapCount;
+	for (size_t i = 0; i < models_.size(); ++i)
+	{
+		for (size_t j = 0; j < numFrames; ++j)
+		{
+			indirectBuffers_[i][j].Destroy();
+		}
+	}
 }
 
 void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
@@ -93,7 +101,12 @@ void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 		0,
 		sizeof(PushConstantPBR), &pc_);
 
-	size_t meshIndex = 0;
+	for (Model* model : models_)
+	{
+
+	}
+
+	/*size_t meshIndex = 0;
 	for (Model* model : models_)
 	{
 		for (Mesh& mesh : model->meshes_)
@@ -119,14 +132,58 @@ void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 			// Draw
 			vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBufferSize_ / (sizeof(unsigned int))), 1, 0, 0, 0);
 		}
-	}
+	}*/
 	
 	vkCmdEndRenderPass(commandBuffer);
 }
 
+void PipelinePBRBindless::CreateIndirectBuffers(VulkanContext& ctx)
+{
+	size_t numFrames = AppConfig::FrameOverlapCount;
+	indirectBuffers_.resize(models_.size());
+	for (size_t i = 0; i < models_.size(); ++i)
+	{
+		const uint32_t meshSize = static_cast<uint32_t>(models_[i]->meshes_.size());
+		const uint32_t indirectDataSize = meshSize * sizeof(VkDrawIndirectCommand);
+		
+		indirectBuffers_[i].resize(numFrames);
+		for (size_t j = 0; j < numFrames; ++j)
+		{
+			// Create and map
+			indirectBuffers_[i][j].CreateIndirectBuffer(ctx, indirectDataSize);
+			VkDrawIndirectCommand* data = indirectBuffers_[i][j].MapIndirectBuffer();
+
+			for (uint32_t k = 0; k < meshSize; ++k)
+			{
+				data[i] = 
+				{
+					.vertexCount = static_cast<uint32_t>(models_[i]->meshes_[k].vertices_.size()),
+					.instanceCount = 1u,
+					.firstVertex = 0,
+					.firstInstance = k
+				};
+			}
+
+			// Unmap
+			indirectBuffers_[i][j].UnmapIndirectBuffer();
+		}
+	}
+}
+
 void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
 {
-	uint32_t numMeshes = 0u;
+	const uint32_t modelCount = static_cast<uint32_t>(models_.size());
+	descriptor_.CreatePool(
+		ctx,
+		{
+			.uboCount_ = UBO_COUNT,
+			.ssboCount_ = SSBO_COUNT,
+			.samplerCount_ = (PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT),
+			.frameCount_ = AppConfig::FrameOverlapCount,
+			.setCountPerFrame_ = modelCount,
+		});
+
+	/*uint32_t numMeshes = 0u;
 	for (Model* model : models_)
 	{
 		numMeshes += model->NumMeshes();
@@ -172,12 +229,12 @@ void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
 		{
 			CreateDescriptorSet(ctx, model, &mesh, meshIndex++);
 		}
-	}
+	}*/
 }
 
 void PipelinePBRBindless::CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh* mesh, const size_t meshIndex)
 {
-	VkDescriptorImageInfo specularImageInfo = iblResources_->specularCubemap_.GetDescriptorImageInfo();
+	/*VkDescriptorImageInfo specularImageInfo = iblResources_->specularCubemap_.GetDescriptorImageInfo();
 	VkDescriptorImageInfo diffuseImageInfo = iblResources_->diffuseCubemap_.GetDescriptorImageInfo();
 	VkDescriptorImageInfo lutImageInfo = iblResources_->brdfLut_.GetDescriptorImageInfo();
 
@@ -215,5 +272,5 @@ void PipelinePBRBindless::CreateDescriptorSet(VulkanContext& ctx, Model* parentM
 		writes.push_back({ .imageInfoPtr_ = &lutImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
 
 		descriptor_.CreateSet(ctx, writes, &(descriptorSets_[meshIndex][i]));
-	}
+	}*/
 }

@@ -23,9 +23,11 @@ layout(location = 0) out vec4 fragColor;
 layout(push_constant)
 #include <PBRPushConstants.frag>
 
+// UBO
 layout(set = 0, binding = 0)
 #include <CameraUBO.frag>
 
+// SSBO
 #include <Bindless//MeshData.frag>
 layout(set = 0, binding = 4) readonly buffer Meshes { MeshData meshes []; };
 
