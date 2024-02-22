@@ -17,7 +17,15 @@ A real-time rendering engine using Vulkan.
 * A a lightweight abstraction layer that encapsulates Vulkan API for rapid prototyping/development.
 * Minor features: Basic raytracing pipeline, skybox, instancing, ImGui, SSBOs, UBOs, and push constants.
 
+### Gallery
+
+The image below shows a demo of PBR, IBL, and Shadow mapping.
+
 <img width="850" alt="vulkan_tachikoma_shadow_mapping" src="https://github.com/azer89/HelloVulkan/assets/790432/9600c642-6331-43f8-80de-1967cd575f420">
+
+</br>
+</br>
+A realistic rendering of a helmet demonstrating PBR and IBL techniques.
 
 https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d130bf910
 
