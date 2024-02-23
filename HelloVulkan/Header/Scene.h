@@ -2,6 +2,7 @@
 #define SCENE
 
 #include "Model.h"
+#include "UBO.h"
 
 #include <vector>
 #include <string>
@@ -9,31 +10,31 @@
 class Scene
 {
 public:
-	Scene(VulkanContext& ctx,
-		std::vector<std::string> modelFiles)
-	{
+	Scene(VulkanContext& ctx, std::vector<std::string> modelFiles);
 
-	}
-
-	~Scene()
-	{
-	}
-
-public:
-	// Bindless rendering
-	std::vector<MeshData> meshDataArray_;
-	std::vector<VertexData> vertices_;
-	std::vector<uint32_t> indices_;
-	VkDeviceSize meshDataBufferSize_;
-	VkDeviceSize vertexBufferSize_;
-	VkDeviceSize indexBufferSize_;
-	VulkanBuffer meshDataBuffer_;
-	VulkanBuffer vertexBuffer_;
-	VulkanBuffer indexBuffer_;
+	~Scene();
 
 private:
+	// TODO Create GPU only buffers
+	void CreateBindlessResources(VulkanContext& ctx);
 
+public:
+	std::vector<MeshData> meshDataArray_ = {};
+	VulkanBuffer meshDataBuffer_;
+	VkDeviceSize meshDataBufferSize_;
 
+	std::vector<VertexData> vertices_ = {};
+	VulkanBuffer vertexBuffer_;
+	VkDeviceSize vertexBufferSize_;
+
+	std::vector<uint32_t> indices_ = {};
+	VulkanBuffer indexBuffer_;
+	VkDeviceSize indexBufferSize_;
+
+	VulkanBuffer modelUBOBuffer_;
+	VkDeviceSize modelUBOBufferSize_;
+
+	std::vector<Model> models_ = {};
 };
 
 #endif

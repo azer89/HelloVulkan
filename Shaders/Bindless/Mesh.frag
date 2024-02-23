@@ -40,6 +40,10 @@ struct LightData
 };
 layout(set = 0, binding = 5) readonly buffer Lights { LightData lights []; };
 
+layout(set = 0, binding = 6) uniform samplerCube specularMap;
+layout(set = 0, binding = 7) uniform samplerCube diffuseMap;
+layout(set = 0, binding = 8) uniform sampler2D brdfLUT;
+
 /*
 0 = albedo
 1 = normal
@@ -48,10 +52,6 @@ layout(set = 0, binding = 5) readonly buffer Lights { LightData lights []; };
 4 = ao
 5 = emissive
 */
-layout(set = 0, binding = 6) uniform samplerCube specularMap;
-layout(set = 0, binding = 7) uniform samplerCube diffuseMap;
-layout(set = 0, binding = 8) uniform sampler2D brdfLUT;
-
 layout(set = 0, binding = 9) uniform sampler2D pbrTextures[];
 
 vec3 Radiance(

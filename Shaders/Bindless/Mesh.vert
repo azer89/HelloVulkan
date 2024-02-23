@@ -10,11 +10,16 @@ layout(set = 0, binding = 0)
 #include <CameraUBO.frag>
 
 // UBO
-layout(set = 0, binding = 1) uniform ModelUBO
+struct ModelUBO
 {
 	mat4 model;
 }
-modelUBO;
+/*layout(set = 0, binding = 1) uniform ModelUBO
+{
+	mat4 model;
+}
+modelUBO;*/
+layout(set = 0, binding = 1) readonly buffer ModelUBOs { ModelUBO modelUBOs []; };
 
 // SSBO
 #include <Bindless//VertexData.frag>

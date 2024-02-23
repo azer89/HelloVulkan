@@ -78,19 +78,19 @@ public:
 
 	void Destroy();
 
-	MeshData GetMeshData()
+	MeshData GetMeshData(uint32_t textureIndexOffset)
 	{
 		return
 		{
 			.vertexOffset_ = vertexOffset_,
 			.indexOffset_ = indexOffset_,
 
-			.albedo_ = textureIndices_[TextureType::Albedo],
-			.normal_ = textureIndices_[TextureType::Normal],
-			.metalness_ = textureIndices_[TextureType::Metalness],
-			.roughness_ = textureIndices_[TextureType::Roughness],
-			.ao_ = textureIndices_[TextureType::AmbientOcclusion],
-			.emissive_ = textureIndices_[TextureType::Emissive],
+			.albedo_ = textureIndices_[TextureType::Albedo] + textureIndexOffset,
+			.normal_ = textureIndices_[TextureType::Normal] + textureIndexOffset,
+			.metalness_ = textureIndices_[TextureType::Metalness] + textureIndexOffset,
+			.roughness_ = textureIndices_[TextureType::Roughness] + textureIndexOffset,
+			.ao_ = textureIndices_[TextureType::AmbientOcclusion] + textureIndexOffset,
+			.emissive_ = textureIndices_[TextureType::Emissive] + textureIndexOffset,
 		};
 	}
 

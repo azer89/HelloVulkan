@@ -28,25 +28,18 @@ private:
 public:
 	std::vector<Mesh> meshes_;
 
-	// Bindless rendering
-	std::vector<MeshData> meshDataArray_;
-	std::vector<VertexData> vertices_;
-	std::vector<uint32_t> indices_;
-	VkDeviceSize meshDataBufferSize_;
-	VkDeviceSize vertexBufferSize_;
-	VkDeviceSize indexBufferSize_;
-	VulkanBuffer meshDataBuffer_;
-	VulkanBuffer vertexBuffer_;
-	VulkanBuffer indexBuffer_;
-
-	// TODO Create a function to create the buffers
 	std::vector<VulkanBuffer> modelBuffers_;
 
 public:
 	Model() = default;
 
 	void Load(VulkanContext& ctx, const std::string& path);
-	void LoadBindless(VulkanContext& ctx, const std::string& path);
+	void LoadBindless(VulkanContext& ctx, 
+		const std::string& path, 
+		std::vector<VertexData>& globalVertices,
+		std::vector<uint32_t>& globalIndices,
+		uint32_t& globalVertexOffset,
+		uint32_t& globalIndexOffset);
 
 	// Destructor
 	~Model();
@@ -72,26 +65,34 @@ private:
 	// stores the resulting meshes in the meshes vector.
 	void LoadModel(
 		VulkanContext& ctx, 
-		std::string const& path);
+		std::string const& path,
+		std::vector<VertexData>& globalVertices,
+		std::vector<uint32_t>& globalIndices,
+		uint32_t& globalVertexOffset,
+		uint32_t& globalIndexOffset);
 
 	// Processes a node recursively. 
 	void ProcessNode(
 		VulkanContext& ctx, 
-		uint32_t& vertexOffset,
-		uint32_t& indexOffset,
+		std::vector<VertexData>& globalVertices,
+		std::vector<uint32_t>& globalIndices,
+		uint32_t& globalVertexOffset,
+		uint32_t& globalIndexOffset,
 		aiNode* node, 
 		const aiScene* scene, 
 		const glm::mat4& parentTransform);
 
 	void ProcessMesh(
 		VulkanContext& ctx, 
-		uint32_t& vertexOffset,
-		uint32_t& indexOffset,
+		std::vector<VertexData>& globalVertices,
+		std::vector<uint32_t>& globalIndices,
+		uint32_t& globalVertexOffset,
+		uint32_t& globalIndexOffset,
 		aiMesh* mesh, 
 		const aiScene* scene, 
 		const glm::mat4& transform);
 
-	void CreateBindlessResources(VulkanContext& ctx);
+	//void CreateBindlessResources(VulkanContext& ctx);
 };
 
 #endif
