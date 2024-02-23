@@ -31,7 +31,7 @@ https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d
 
 ### Clustered Forward Shading
 
-The technique consists of two steps. The first step involves subdividing the view frustum into clusters.
+The technique consists of two steps that are done in compute shaders. The first step is to subdivide the view frustum into AABB clusters.
 The next step is light culling, where it calculates lights that intersect the clusters. This step removes lights that are too far from a fragment, leading to reduced light iteration in the final fragment shader.
 
 Preliminary testing using a 3070M graphics card shows the technique can render a PBR Sponza scene with over 1000 dynamic lights at 60-100 FPS.
