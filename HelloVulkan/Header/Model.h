@@ -43,8 +43,10 @@ public:
 	std::vector<VulkanBuffer> modelBuffers_;
 
 public:
-	// Constructor, expects a filepath to a 3D model.
-	Model(VulkanContext& ctx, const std::string& path, bool bindless);
+	Model() = default;
+
+	void Load(VulkanContext& ctx, const std::string& path);
+	void LoadBindless(VulkanContext& ctx, const std::string& path);
 
 	// Destructor
 	~Model();

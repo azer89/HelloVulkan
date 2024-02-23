@@ -33,6 +33,18 @@ Model::Model(VulkanContext& ctx, const std::string& path, bool bindless) :
 	CreateModelUBOBuffers(ctx);
 }
 
+void Model::Load(VulkanContext& ctx, const std::string& path)
+{
+	bindless_ = false;
+}
+
+void Model::LoadBindless(VulkanContext& ctx, const std::string& path)
+{
+	bindless_ = true;
+
+
+}
+
 Model::~Model()
 {
 	for (Mesh& mesh : meshes_)

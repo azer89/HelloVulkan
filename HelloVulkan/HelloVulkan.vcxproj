@@ -207,6 +207,7 @@
     <ClInclude Include="Header\Pipelines\PipelineTonemap.h" />
     <ClInclude Include="Header\PushConstants.h" />
     <ClInclude Include="Header\AccelerationStructure.h" />
+    <ClInclude Include="Header\Scene.h" />
     <ClInclude Include="Header\TextureMapper.h" />
     <ClInclude Include="Header\UBO.h" />
     <ClInclude Include="Header\VulkanBuffer.h" />
@@ -251,6 +252,7 @@
     <ClCompile Include="Source\Pipelines\PipelineSkybox.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineTonemap.cpp" />
     <ClCompile Include="Source\AccelerationStructure.cpp" />
+    <ClCompile Include="Source\Scene.cpp" />
     <ClCompile Include="Source\VulkanBuffer.cpp" />
     <ClCompile Include="Source\VulkanDescriptor.cpp" />
     <ClCompile Include="Source\VulkanContext.cpp" />
