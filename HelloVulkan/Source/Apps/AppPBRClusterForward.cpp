@@ -30,11 +30,10 @@ void AppPBRClusterForward::Init()
 	cfBuffers_ = std::make_unique<ClusterForwardBuffers>();
 	cfBuffers_->CreateBuffers(vulkanContext_, lights_.GetLightCount());
 
-	bool bindless = false;
-	model_ = std::make_unique<Model>(
-		vulkanContext_, 
-		AppConfig::ModelFolder + "Sponza//Sponza.gltf",
-		bindless);
+	// glTF model
+	model_ = std::make_unique<Model>();
+	model_->Load(vulkanContext_, 
+		AppConfig::ModelFolder + "Sponza//Sponza.gltf");
 	std::vector<Model*> models = { model_.get()};
 
 	// Pipelines

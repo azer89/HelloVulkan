@@ -15,10 +15,26 @@ inline glm::mat4 CastToGLMMat4(const aiMatrix4x4& m)
 	return glm::transpose(glm::make_mat4(&m.a1));
 }
 
-Model::Model(VulkanContext& ctx, const std::string& path, bool bindless) :
-	device_(ctx.GetDevice()),
-	bindless_(bindless)
+
+void Model::Load(VulkanContext& ctx, const std::string& path)
 {
+	bindless_ = false;
+
+	// In case a texture type cannot be found, replace it with a black 1x1 texture
+	unsigned char black[4] = { 0, 0, 0, 255 };
+	AddTexture(ctx, BLACK_TEXTURE, (void*)&black, 1, 1);
+
+	// Load model here
+	LoadModel(ctx, path);
+
+	// Bind-ful redering
+	CreateModelUBOBuffers(ctx);
+}
+
+void Model::LoadBindless(VulkanContext& ctx, const std::string& path)
+{
+	bindless_ = true;
+
 	// In case a texture type cannot be found, replace it with a black 1x1 texture
 	unsigned char black[4] = { 0, 0, 0, 255 };
 	AddTexture(ctx, BLACK_TEXTURE, (void*)&black, 1, 1);
@@ -28,21 +44,6 @@ Model::Model(VulkanContext& ctx, const std::string& path, bool bindless) :
 
 	// Bindless rendering
 	CreateBindlessResources(ctx);
-
-	// Binded
-	CreateModelUBOBuffers(ctx);
-}
-
-void Model::Load(VulkanContext& ctx, const std::string& path)
-{
-	bindless_ = false;
-}
-
-void Model::LoadBindless(VulkanContext& ctx, const std::string& path)
-{
-	bindless_ = true;
-
-
 }
 
 Model::~Model()

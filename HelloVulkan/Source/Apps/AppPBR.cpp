@@ -27,11 +27,10 @@ void AppPBR::Init()
 	InitIBLResources(AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
-	bool bindless = false;
-	model_ = std::make_unique<Model>(
-		vulkanContext_, 
-		AppConfig::ModelFolder + "Sponza//Sponza.gltf",
-		bindless);
+	// glTF model
+	model_ = std::make_unique<Model>();
+	model_->Load(vulkanContext_, 
+		AppConfig::ModelFolder + "Sponza//Sponza.gltf");
 	std::vector<Model*> models = { model_.get()};
 
 	// Pipelines
