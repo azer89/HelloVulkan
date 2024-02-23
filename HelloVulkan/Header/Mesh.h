@@ -48,6 +48,7 @@ public:
 	VulkanBuffer vertexBuffer_;
 	VulkanBuffer indexBuffer_;
 
+	bool bindless_;
 	std::vector<VertexData> vertices_;
 	std::vector<uint32_t> indices_;
 	std::unordered_map<TextureType, uint32_t> textureIndices_;
@@ -55,6 +56,7 @@ public:
 	// Constructors
 	Mesh(
 		VulkanContext& ctx,
+		bool bindless,
 		uint32_t vertexOffset,
 		uint32_t indexOffset,
 		std::vector<VertexData>&& _vertices,
@@ -62,6 +64,7 @@ public:
 		std::unordered_map<TextureType, uint32_t>&& textureIndices);
 	Mesh(
 		VulkanContext& ctx,
+		bool bindless,
 		uint32_t vertexOffset,
 		uint32_t indexOffset,
 		const std::vector<VertexData>& vertices,

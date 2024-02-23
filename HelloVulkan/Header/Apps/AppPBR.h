@@ -11,7 +11,7 @@
 #include "PipelineSkybox.h"
 #include "PipelineClear.h"
 #include "PipelineFinish.h"
-#include "PipelinePBRBindless.h"
+#include "PipelinePBR.h"
 #include "PipelineTonemap.h"
 #include "PipelineResolveMS.h"
 #include "PipelineLightRender.h"
@@ -40,7 +40,7 @@ private:
 	std::unique_ptr<PipelineClear> clearPtr_;
 	std::unique_ptr<PipelineSkybox> skyboxPtr_;
 	
-	std::unique_ptr<PipelinePBRBindless> pbrPtr_;
+	std::unique_ptr<PipelinePBR> pbrPtr_;
 	std::unique_ptr<PipelineTonemap> tonemapPtr_;
 	std::unique_ptr<PipelineFinish> finishPtr_;
 	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;

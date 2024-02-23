@@ -15,8 +15,9 @@ inline glm::mat4 CastToGLMMat4(const aiMatrix4x4& m)
 	return glm::transpose(glm::make_mat4(&m.a1));
 }
 
-Model::Model(VulkanContext& ctx, const std::string& path) :
-	device_(ctx.GetDevice())
+Model::Model(VulkanContext& ctx, const std::string& path, bool bindless) :
+	device_(ctx.GetDevice()),
+	bindless_(bindless)
 {
 	// In case a texture type cannot be found, replace it with a black 1x1 texture
 	unsigned char black[4] = { 0, 0, 0, 255 };
@@ -27,6 +28,9 @@ Model::Model(VulkanContext& ctx, const std::string& path) :
 
 	// Bindless rendering
 	CreateBindlessResources(ctx);
+
+	// Binded
+	CreateModelUBOBuffers(ctx);
 }
 
 Model::~Model()
@@ -49,6 +53,27 @@ Model::~Model()
 	meshDataBuffer_.Destroy();
 	vertexBuffer_.Destroy();
 	indexBuffer_.Destroy();
+}
+
+void Model::CreateModelUBOBuffers(VulkanContext& ctx)
+{
+	uint32_t frameCount = AppConfig::FrameOverlapCount;
+	modelBuffers_.resize(frameCount);
+	for (uint32_t i = 0; i < frameCount; ++i)
+	{
+		modelBuffers_[i].CreateBuffer(
+			ctx,
+			sizeof(ModelUBO),
+			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+			VMA_MEMORY_USAGE_CPU_TO_GPU
+		);
+	}
+}
+
+void Model::SetModelUBO(VulkanContext& ctx, ModelUBO ubo)
+{
+	uint32_t frameIndex = ctx.GetFrameIndex();
+	modelBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ModelUBO));
 }
 
 // TODO Create GPU only buffers
@@ -312,6 +337,7 @@ void Model::ProcessMesh(
 	// Create a mesh
 	meshes_.emplace_back(
 		ctx,
+		bindless_,
 		vertexOffset,
 		indexOffset,
 		std::move(vertices),

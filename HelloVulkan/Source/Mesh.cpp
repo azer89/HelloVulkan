@@ -6,11 +6,13 @@
 
 // Constructor
 Mesh::Mesh(VulkanContext& ctx,
+	bool bindless,
 	uint32_t vertexOffset,
 	uint32_t indexOffset,
 	std::vector<VertexData>&& _vertices,
 	std::vector<uint32_t>&& _indices,
 	std::unordered_map<TextureType, uint32_t>&& textureIndices) :
+	bindless_(bindless),
 	vertexOffset_(vertexOffset),
 	indexOffset_(indexOffset),
 	vertices_(std::move(_vertices)),
@@ -22,11 +24,13 @@ Mesh::Mesh(VulkanContext& ctx,
 
 // Constructor
 Mesh::Mesh(VulkanContext& ctx,
+	bool bindless,
 	uint32_t vertexOffset,
 	uint32_t indexOffset,
 	const std::vector<VertexData>& vertices,
 	const std::vector<uint32_t>& indices,
 	const std::unordered_map<TextureType, uint32_t>& textureIndices) :
+	bindless_(bindless_),
 	vertexOffset_(vertexOffset),
 	indexOffset_(indexOffset),
 	vertices_(vertices),
@@ -38,6 +42,11 @@ Mesh::Mesh(VulkanContext& ctx,
 
 void Mesh::Setup(VulkanContext& ctx)
 {
+	if (bindless_)
+	{
+		return;
+	}
+
 	vertexBufferSize_ = static_cast< VkDeviceSize>(sizeof(VertexData) * vertices_.size());
 	vertexBuffer_.CreateGPUOnlyBuffer(
 		ctx, 

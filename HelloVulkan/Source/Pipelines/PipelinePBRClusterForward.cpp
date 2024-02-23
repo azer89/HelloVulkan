@@ -30,12 +30,6 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 	// Per frame UBO
 	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
 
-	// Model UBO
-	for (Model* model : models_)
-	{
-		CreateMultipleUniformBuffers(ctx, model->modelBuffers_, sizeof(ModelUBO), AppConfig::FrameOverlapCount);
-	}
-
 	// Cluster forward UBO
 	CreateMultipleUniformBuffers(ctx, cfUBOBuffers_, sizeof(ClusterForwardUBO), AppConfig::FrameOverlapCount);
 

@@ -27,9 +27,11 @@ void AppPBR::Init()
 	InitIBLResources(AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
+	bool bindless = false;
 	model_ = std::make_unique<Model>(
 		vulkanContext_, 
-		AppConfig::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
+		AppConfig::ModelFolder + "Sponza//Sponza.gltf",
+		bindless);
 	std::vector<Model*> models = { model_.get()};
 
 	// Pipelines
@@ -47,7 +49,7 @@ void AppPBR::Init()
 		RenderPassBit::ColorClear | 
 		RenderPassBit::DepthClear
 	);
-	pbrPtr_ = std::make_unique<PipelinePBRBindless>(
+	pbrPtr_ = std::make_unique<PipelinePBR>(
 		vulkanContext_,
 		models,
 		&lights_,

@@ -18,6 +18,7 @@ class Model
 private:
 	VkDevice device_;
 	std::string directory_;
+	bool bindless_;
 
 	// PBR Textures
 	std::vector<VulkanImage> textureList_;
@@ -38,12 +39,12 @@ public:
 	VulkanBuffer vertexBuffer_;
 	VulkanBuffer indexBuffer_;
 
-	// TODO Separate buffers from the model
+	// TODO Create a function to create the buffers
 	std::vector<VulkanBuffer> modelBuffers_;
 
 public:
 	// Constructor, expects a filepath to a 3D model.
-	Model(VulkanContext& ctx, const std::string& path);
+	Model(VulkanContext& ctx, const std::string& path, bool bindless);
 
 	// Destructor
 	~Model();
@@ -58,12 +59,8 @@ public:
 		return static_cast<uint32_t>(meshes_.size());
 	}
 
-	// TODO Probably move the buffers to pipelines
-	void SetModelUBO(VulkanContext& ctx, ModelUBO ubo)
-	{
-		uint32_t frameIndex = ctx.GetFrameIndex();
-		modelBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ModelUBO));
-	}
+	void CreateModelUBOBuffers(VulkanContext& ctx);
+	void SetModelUBO(VulkanContext& ctx, ModelUBO ubo);
 
 private:
 	void AddTexture(VulkanContext& ctx, const std::string& textureFilename);

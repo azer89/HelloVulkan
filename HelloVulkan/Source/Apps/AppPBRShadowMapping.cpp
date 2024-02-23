@@ -37,12 +37,15 @@ void AppPBRShadowMapping::Init()
 	InitIBLResources(AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
+	bool bindless = false;
 	sponzaModel_ = std::make_unique<Model>(
 		vulkanContext_, 
-		AppConfig::ModelFolder + "Sponza//Sponza.gltf");
+		AppConfig::ModelFolder + "Sponza//Sponza.gltf",
+		bindless);
 	tachikomaModel_ = std::make_unique<Model>(
 		vulkanContext_,
-		AppConfig::ModelFolder + "Tachikoma//Tachikoma.gltf");
+		AppConfig::ModelFolder + "Tachikoma//Tachikoma.gltf",
+		bindless);
 	std::vector<Model*> models = {sponzaModel_.get(), tachikomaModel_.get()};
 
 	// Pipelines
