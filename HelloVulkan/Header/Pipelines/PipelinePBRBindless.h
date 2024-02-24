@@ -10,30 +10,13 @@
 
 #include <vector>
 
-/*struct PerModelBindlessResource
-{
-	VulkanDescriptor descriptor_;
-	std::vector<VkDescriptorSet> descriptorSets_;
-	std::vector<VulkanBuffer> indirectBuffers_;
-
-	void Destroy()
-	{
-		descriptor_.Destroy();
-		for (VulkanBuffer& buffer : indirectBuffers_)
-		{
-			buffer.Destroy();
-		}
-	}
-};*/
-
 /*
-Render meshes using PBR materials, naive forward renderer, bindless
+Render a scene using PBR materials, naive forward renderer, bindless
 */
 class PipelinePBRBindless final : public PipelineBase
 {
 public:
 	PipelinePBRBindless(VulkanContext& ctx,
-		//std::vector<Model*> models,
 		Scene* scene,
 		Lights* lights,
 		IBLResources* iblResources,
@@ -43,23 +26,18 @@ public:
 	 ~PipelinePBRBindless();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
-
 	void SetPBRPushConstants(const PushConstantPBR& pbrPC) { pc_ = pbrPC; };
 
 private:
 	void CreateIndirectBuffers(VulkanContext& ctx);
-
 	void CreateDescriptor(VulkanContext& ctx);
-	//void CreateDescriptorSet(VulkanContext& ctx, Model* model, size_t modelIndex);
 
-	PushConstantPBR pc_;
+	Scene* scene_;
 	Lights* lights_;
 	IBLResources* iblResources_;
-	//std::vector<Model*> models_;
-	Scene* scene_;
+	PushConstantPBR pc_;
 	std::vector<VulkanBuffer> indirectBuffers_;
 	std::vector<VkDescriptorSet> descriptorSets_;
-	//std::vector<PerModelBindlessResource> modelResources_;
 };
 
 #endif

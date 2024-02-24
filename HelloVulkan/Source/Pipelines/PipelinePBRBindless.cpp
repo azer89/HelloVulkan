@@ -12,7 +12,6 @@ constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 
 PipelinePBRBindless::PipelinePBRBindless(
 	VulkanContext& ctx,
-	//std::vector<Model*> models,
 	Scene* scene,
 	Lights* lights,
 	IBLResources* iblResources,
@@ -26,27 +25,14 @@ PipelinePBRBindless::PipelinePBRBindless(
 			.vertexBufferBind_ = true,
 		}
 	),
-	//models_(models),
 	scene_(scene),
 	lights_(lights),
 	iblResources_(iblResources)
 {
 	// Per frame UBO
 	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
-	
-	// Model UBO
-	//for (Model* model : models_)
-	//{
-	//	CreateMultipleUniformBuffers(ctx, model->modelBuffers_, sizeof(ModelUBO), AppConfig::FrameOverlapCount);
-	//}
 
-	// Model resources
-	//modelResources_.resize(models.size());
 	CreateIndirectBuffers(ctx);
-	/*for (size_t i = 0; i < models_.size(); ++i)
-	{
-		CreateDescriptor(ctx, i);
-	}*/
 
 	CreateDescriptor(ctx);
 
@@ -62,14 +48,13 @@ PipelinePBRBindless::PipelinePBRBindless(
 		}, 
 		IsOffscreen());
 
-	// Push constants
+	// Push constants and pipeline layout
 	std::vector<VkPushConstantRange> ranges =
 	{{
 		.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
 		.offset = 0u,
 		.size = sizeof(PushConstantPBR),
 	}};
-	
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, ranges);
 
 	CreateGraphicsPipeline(
@@ -86,10 +71,6 @@ PipelinePBRBindless::PipelinePBRBindless(
 
 PipelinePBRBindless::~PipelinePBRBindless()
 {
-	//for (PerModelBindlessResource& res : modelResources_)
-	//{
-	//	res.Destroy();
-	//}
 	for (auto& buffer : indirectBuffers_)
 	{
 		buffer.Destroy();
@@ -110,25 +91,22 @@ void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 		0,
 		sizeof(PushConstantPBR), &pc_);
 
-	//for (size_t i = 0; i < models_.size(); ++i)
-	//{
-		vkCmdBindDescriptorSets(
-			commandBuffer,
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			pipelineLayout_,
-			0u, // firstSet
-			1u, // descriptorSetCount
-			&(descriptorSets_[frameIndex]),
-			0u, // dynamicOffsetCount
-			nullptr); // pDynamicOffsets
+	vkCmdBindDescriptorSets(
+		commandBuffer,
+		VK_PIPELINE_BIND_POINT_GRAPHICS,
+		pipelineLayout_,
+		0u, // firstSet
+		1u, // descriptorSetCount
+		&(descriptorSets_[frameIndex]),
+		0u, // dynamicOffsetCount
+		nullptr); // pDynamicOffsets
 
-		vkCmdDrawIndirect(
-			commandBuffer, 
-			indirectBuffers_[frameIndex].buffer_, 
-			0, // offset
-			scene_->models_.size(),
-			sizeof(VkDrawIndirectCommand));
-	//}
+	vkCmdDrawIndirect(
+		commandBuffer, 
+		indirectBuffers_[frameIndex].buffer_, 
+		0, // offset
+		scene_->models_.size(),
+		sizeof(VkDrawIndirectCommand));
 	
 	vkCmdEndRenderPass(commandBuffer);
 }
