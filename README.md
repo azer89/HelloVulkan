@@ -52,4 +52,4 @@ https://github.com/azer89/HelloVulkan/assets/790432/13a4426f-deec-40f5-816a-5594
 * [Epic Games PBR Notes](https://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf)
 * [3D Graphics Rendering Cookbook](https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook)
 * [Angel Ortiz - Clustered Shading](https://www.aortiz.me/2018/12/21/CG.html)
-* [The internet](https://github.com/azer89/VulkanResources)
+* [The internet](https://github.com/azer89/GraphicsResources)
