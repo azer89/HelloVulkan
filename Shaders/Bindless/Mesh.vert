@@ -13,8 +13,8 @@ layout(set = 0, binding = 0)
 struct ModelUBO
 {
 	mat4 model;
-}
-layout(set = 0, binding = 1) readonly buffer ModelUBOs { ModelUBO modelUBOs []; };
+};
+layout(set = 0, binding = 1) readonly buffer ModelUBOs { ModelUBO modelUBOs[]; };
 
 // SSBO
 #include <Bindless//VertexData.frag>
@@ -35,9 +35,11 @@ void main()
 	uint vIndex = indices[iOffset + gl_VertexIndex] + vOffset;
 	VertexData vertexData = vertices[vIndex];
 
-	mat3 normalMatrix = transpose(inverse(mat3(modelUBO.model)));
+	mat4 model = modelUBOs[gl_BaseInstance].model;
 
-	worldPos = (modelUBO.model * vertexData.position).xyz;
+	mat3 normalMatrix = transpose(inverse(mat3(model)));
+
+	worldPos = (model * vertexData.position).xyz;
 	texCoord = vertexData.uv.xy;
 	normal = normalMatrix * vertexData.normal.xyz;
 	meshIndex = gl_BaseInstance;

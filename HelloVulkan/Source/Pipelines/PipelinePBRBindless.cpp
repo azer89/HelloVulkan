@@ -22,7 +22,7 @@ PipelinePBRBindless::PipelinePBRBindless(
 		{
 			.type_ = PipelineType::GraphicsOffScreen,
 			.msaaSamples_ = offscreenColorImage->multisampleCount_,
-			.vertexBufferBind_ = true,
+			.vertexBufferBind_ = false,
 		}
 	),
 	scene_(scene),
@@ -144,7 +144,17 @@ void PipelinePBRBindless::CreateIndirectBuffers(VulkanContext& ctx)
 // TODO Refactor VulkanDescriptor to make the code below simpler
 void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
 {
-	/*9*/std::vector<VkDescriptorImageInfo> imageInfos = scene_->GetImageInfos() ;
+	/*9*///std::vector<VkDescriptorImageInfo> imageInfos = scene_->GetImageInfos() ;
+	std::vector<VkDescriptorImageInfo> imageInfos;
+	for (size_t i = 0; i < scene_->models_.size(); ++i)
+	{
+		for (size_t j = 0; j < scene_->models_[i].textureList_.size(); ++j)
+		{
+			//imageInfos.push_back(scene_->models_[i].textureList_[j].GetDescriptorImageInfo());
+			imageInfos.push_back(iblResources_->brdfLut_.GetDescriptorImageInfo());
+		}
+	}
+	
 	const uint32_t textureCount = static_cast<uint32_t>(imageInfos.size());
 	const uint32_t frameCount = AppConfig::FrameOverlapCount;
 
@@ -182,7 +192,7 @@ void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
 			.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
 			.descriptorCount_ = textureCount,
-			.bindingCount_ = 1
+			.bindingCount_ = 1u
 		}
 	});
 
@@ -211,15 +221,10 @@ void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
 		/*6*/ writes.push_back({ .imageInfoPtr_ = &specularImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
 		/*7*/ writes.push_back({ .imageInfoPtr_ = &diffuseImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
 		/*8*/ writes.push_back({ .imageInfoPtr_ = &lutImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
-		/*9*/ /*writes.push_back({
+		/*9*/ writes.push_back({
 			.imageInfoPtr_ = imageInfos.data(),
 			.descriptorCount_ = textureCount,
-			.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });*/
-		// for (int j = imageInfos.size() - 1; j << imageInfos.size() >= 0; --j)
-		for (int j = 0; j < imageInfos.size(); ++j)
-		{
-			writes.push_back({ .imageInfoPtr_ = &(imageInfos[j]), .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER});
-		}
+			.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
 	
 		descriptor_.CreateSet(ctx, writes, &(descriptorSets_[i]));
 	}
