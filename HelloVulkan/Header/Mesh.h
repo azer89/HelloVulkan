@@ -42,7 +42,7 @@ public:
 	uint32_t vertexOffset_;
 	uint32_t indexOffset_;
 
-	// Binded rendering
+	// Bind-ful rendering
 	VkDeviceSize vertexBufferSize_;
 	VkDeviceSize indexBufferSize_;
 	VulkanBuffer vertexBuffer_;

@@ -1,5 +1,5 @@
-#ifndef SCENE
-#define SCENE
+#ifndef SCENE_BINDLESS
+#define SCENE_BINDLESS
 
 #include "Model.h"
 #include "UBO.h"
@@ -10,8 +10,13 @@
 class Scene
 {
 public:
-	Scene(VulkanContext& ctx, std::vector<std::string> modelFiles);
+	Scene(VulkanContext& ctx, const std::vector<std::string>& modelFiles);
 	~Scene();
+
+	uint32_t GetMeshCount() { return static_cast<uint32_t>(meshDataArray_.size()); }
+
+	std::vector<VkDescriptorImageInfo> GetImageInfos();
+	std::vector<uint32_t> GetMeshVertexCountArray();
 
 private:
 	void CreateBindlessResources(VulkanContext& ctx);
@@ -29,10 +34,9 @@ public:
 	VulkanBuffer indexBuffer_;
 	VkDeviceSize indexBufferSize_;
 
-	VulkanBuffer modelUBOBuffer_;
+	// Per-frame buffer
+	std::vector<VulkanBuffer> modelUBOBuffers_;
 	VkDeviceSize modelUBOBufferSize_;
-
-	uint32_t meshCount_;
 
 	std::vector<Model> models_ = {};
 };

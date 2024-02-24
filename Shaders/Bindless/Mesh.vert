@@ -3,22 +3,17 @@
 layout(location = 0) out vec3 worldPos;
 layout(location = 1) out vec2 texCoord;
 layout(location = 2) out vec3 normal;
-layout(location = 3) out flat  uint meshIndex;
+layout(location = 3) out flat uint meshIndex;
 
 // UBO
 layout(set = 0, binding = 0)
 #include <CameraUBO.frag>
 
-// UBO
+// SSBO
 struct ModelUBO
 {
 	mat4 model;
 }
-/*layout(set = 0, binding = 1) uniform ModelUBO
-{
-	mat4 model;
-}
-modelUBO;*/
 layout(set = 0, binding = 1) readonly buffer ModelUBOs { ModelUBO modelUBOs []; };
 
 // SSBO

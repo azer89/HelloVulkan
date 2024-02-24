@@ -20,8 +20,6 @@ private:
 	std::string directory_;
 	bool bindless_;
 
-	// PBR Textures
-	std::vector<VulkanImage> textureList_;
 	// string key is the filename, int value points to elements in textureList_
 	std::unordered_map<std::string, uint32_t> textureMap_;
 
@@ -29,6 +27,9 @@ public:
 	std::vector<Mesh> meshes_;
 
 	std::vector<VulkanBuffer> modelBuffers_;
+
+	// NOTE In case of bindless rendering, textures are stored in Model, not Scene
+	std::vector<VulkanImage> textureList_;
 
 public:
 	Model() = default;

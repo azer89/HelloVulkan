@@ -71,7 +71,7 @@ Model::~Model()
 		mesh.Destroy();
 	}
 
-	for (auto buffer : modelBuffers_)
+	for (auto& buffer : modelBuffers_)
 	{
 		buffer.Destroy();
 	}

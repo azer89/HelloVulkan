@@ -57,7 +57,8 @@ private:
 	IBLResources* iblResources_;
 	//std::vector<Model*> models_;
 	Scene* scene_;
-	VulkanBuffer indirectBuffer_;
+	std::vector<VulkanBuffer> indirectBuffers_;
+	std::vector<VkDescriptorSet> descriptorSets_;
 	//std::vector<PerModelBindlessResource> modelResources_;
 };
 

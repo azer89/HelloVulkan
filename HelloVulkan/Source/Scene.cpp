@@ -2,12 +2,11 @@
 
 #include "glm/glm.hpp"
 
-Scene::Scene(VulkanContext& ctx,
-	std::vector<std::string> modelFiles)
+Scene::Scene(VulkanContext& ctx, const std::vector<std::string>& modelFiles)
 {
 	uint32_t vertexOffset = 0u;
 	uint32_t indexOffset = 0u;
-	for (std::string& file : modelFiles)
+	for (const std::string& file : modelFiles)
 	{
 		Model m;
 		m.LoadBindless(
@@ -27,7 +26,10 @@ Scene::~Scene()
 	meshDataBuffer_.Destroy();
 	vertexBuffer_.Destroy();
 	indexBuffer_.Destroy();
-	modelUBOBuffer_.Destroy();
+	for (auto& buffer : modelUBOBuffers_)
+	{
+		buffer.Destroy();
+	}
 }
 
 // TODO Create GPU only buffers
@@ -43,7 +45,6 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 		}
 		textureIndexOffset += models_[i].GetNumTextures();
 	}
-	meshCount_ += meshDataArray_.size();
 	meshDataBufferSize_ = static_cast<VkDeviceSize>(sizeof(MeshData) * meshDataArray_.size());
 	meshDataBuffer_.CreateBuffer(
 		ctx,
@@ -77,14 +78,46 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 	indexBuffer_.UploadBufferData(ctx, indices_.data(), indexBufferSize_);
 
 	// ModelUBO
+	std::vector<ModelUBO> initModelUBOs(models_.size(), { .model = glm::mat4(1.0f) });
+	const uint32_t frameCount = AppConfig::FrameOverlapCount;
 	modelUBOBufferSize_ = sizeof(ModelUBO) * models_.size();
-	modelUBOBuffer_.CreateBuffer(ctx, modelUBOBufferSize_,
-		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-		VMA_MEMORY_USAGE_CPU_TO_GPU);
-	std::vector<ModelUBO> initModelUBOs(models_.size());
+	modelUBOBuffers_.resize(frameCount);
+	for (uint32_t i = 0; i < frameCount; ++i)
+	{
+		modelUBOBuffers_[i].CreateBuffer(ctx, modelUBOBufferSize_,
+			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+			VMA_MEMORY_USAGE_CPU_TO_GPU);
+
+		modelUBOBuffers_[i].UploadBufferData(ctx, initModelUBOs.data(), modelUBOBufferSize_);
+	}
+}
+
+// This is for descriptor indexing
+std::vector<VkDescriptorImageInfo> Scene::GetImageInfos()
+{
+	std::vector<VkDescriptorImageInfo> textureInfoArray;
 	for (size_t i = 0; i < models_.size(); ++i)
 	{
-		initModelUBOs[i] = {.model = glm::mat4(1.0f)};
+		for (size_t j = 0; j < models_[i].textureList_.size(); ++j)
+		{
+			textureInfoArray.emplace_back(models_[i].textureList_[j].GetDescriptorImageInfo());
+		}
 	}
-	modelUBOBuffer_.UploadBufferData(ctx, initModelUBOs.data(), modelUBOBufferSize_);
+	return textureInfoArray;
+}
+
+// This is for indirect draw
+std::vector<uint32_t> Scene::GetMeshVertexCountArray()
+{
+	std::vector<uint32_t> vCountArray(GetMeshCount());
+	size_t counter = 0;
+	for (size_t i = 0; i < models_.size(); ++i)
+	{
+		for (size_t j = 0; j < models_[i].meshes_.size(); ++j)
+		{
+			// Note that we use the index count here
+			vCountArray[counter++] = models_[i].meshes_[j].indices_.size();
+		}
+	}
+	return vCountArray;
 }
