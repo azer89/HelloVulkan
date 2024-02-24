@@ -144,16 +144,7 @@ void PipelinePBRBindless::CreateIndirectBuffers(VulkanContext& ctx)
 // TODO Refactor VulkanDescriptor to make the code below simpler
 void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
 {
-	/*9*///std::vector<VkDescriptorImageInfo> imageInfos = scene_->GetImageInfos() ;
-	std::vector<VkDescriptorImageInfo> imageInfos;
-	for (size_t i = 0; i < scene_->models_.size(); ++i)
-	{
-		for (size_t j = 0; j < scene_->models_[i].textureList_.size(); ++j)
-		{
-			//imageInfos.push_back(scene_->models_[i].textureList_[j].GetDescriptorImageInfo());
-			imageInfos.push_back(iblResources_->brdfLut_.GetDescriptorImageInfo());
-		}
-	}
+	/*9*/std::vector<VkDescriptorImageInfo> imageInfos = scene_->GetImageInfos();
 	
 	const uint32_t textureCount = static_cast<uint32_t>(imageInfos.size());
 	const uint32_t frameCount = AppConfig::FrameOverlapCount;

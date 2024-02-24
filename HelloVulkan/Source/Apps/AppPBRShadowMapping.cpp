@@ -131,7 +131,9 @@ void AppPBRShadowMapping::DestroyResources()
 	iblResources_.reset();
 
 	// Destroy meshes
+	sponzaModel_->Destroy();
 	sponzaModel_.reset();
+	tachikomaModel_->Destroy();
 	tachikomaModel_.reset();
 
 	// Lights

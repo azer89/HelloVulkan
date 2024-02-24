@@ -64,7 +64,7 @@ void Model::LoadBindless(
 		globalIndexOffset);
 }
 
-Model::~Model()
+void Model::Destroy()
 {
 	for (Mesh& mesh : meshes_)
 	{

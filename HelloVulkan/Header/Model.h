@@ -33,6 +33,9 @@ public:
 
 public:
 	Model() = default;
+	~Model() = default;
+
+	void Destroy();
 
 	void Load(VulkanContext& ctx, const std::string& path);
 	void LoadBindless(VulkanContext& ctx, 
@@ -41,9 +44,6 @@ public:
 		std::vector<uint32_t>& globalIndices,
 		uint32_t& globalVertexOffset,
 		uint32_t& globalIndexOffset);
-
-	// Destructor
-	~Model();
 
 	uint32_t GetNumTextures() { return static_cast<uint32_t>(textureList_.size()); }
 	VulkanImage* GetTexture(uint32_t textureIndex);

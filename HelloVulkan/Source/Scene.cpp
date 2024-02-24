@@ -30,6 +30,10 @@ Scene::~Scene()
 	{
 		buffer.Destroy();
 	}
+	for (auto& model : models_)
+	{
+		model.Destroy();
+	}
 }
 
 // TODO Create GPU only buffers

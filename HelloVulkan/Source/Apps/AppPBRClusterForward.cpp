@@ -142,6 +142,7 @@ void AppPBRClusterForward::DestroyResources()
 	iblResources_.reset();
 
 	// Destroy meshes
+	model_->Destroy();
 	model_.reset();
 
 	// Lights
