@@ -231,6 +231,12 @@ VkResult VulkanContext::CreateDevice()
 		VK_KHR_SWAPCHAIN_EXTENSION_NAME
 	};
 
+	if (config_.supportDescriptorIndexing_)
+	{
+		extensions.push_back(VK_KHR_MAINTENANCE3_EXTENSION_NAME);
+		extensions.push_back(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
+	}
+
 	if (config_.supportRaytracing_)
 	{
 		extensions.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);

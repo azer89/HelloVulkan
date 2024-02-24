@@ -195,6 +195,7 @@ void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
 	/*7*/ VkDescriptorImageInfo diffuseImageInfo = iblResources_->diffuseCubemap_.GetDescriptorImageInfo();
 	/*8*/ VkDescriptorImageInfo lutImageInfo = iblResources_->brdfLut_.GetDescriptorImageInfo();
 
+	descriptorSets_.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
 		/*0*/ VkDescriptorBufferInfo camBufferInfo = { cameraUBOBuffers_[i].buffer_, 0, sizeof(CameraUBO) };
@@ -210,10 +211,15 @@ void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
 		/*6*/ writes.push_back({ .imageInfoPtr_ = &specularImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
 		/*7*/ writes.push_back({ .imageInfoPtr_ = &diffuseImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
 		/*8*/ writes.push_back({ .imageInfoPtr_ = &lutImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
-		/*9*/ writes.push_back({
+		/*9*/ /*writes.push_back({
 			.imageInfoPtr_ = imageInfos.data(),
 			.descriptorCount_ = textureCount,
-			.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
+			.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });*/
+		// for (int j = imageInfos.size() - 1; j << imageInfos.size() >= 0; --j)
+		for (int j = 0; j < imageInfos.size(); ++j)
+		{
+			writes.push_back({ .imageInfoPtr_ = &(imageInfos[j]), .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER});
+		}
 	
 		descriptor_.CreateSet(ctx, writes, &(descriptorSets_[i]));
 	}

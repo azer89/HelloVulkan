@@ -28,10 +28,12 @@ void AppPBR::Init()
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
 	// glTF model
-	model_ = std::make_unique<Model>();
-	model_->Load(vulkanContext_, 
-		AppConfig::ModelFolder + "Sponza//Sponza.gltf");
-	std::vector<Model*> models = { model_.get()};
+	//model_ = std::make_unique<Model>();
+	//model_->Load(vulkanContext_, 
+	//	AppConfig::ModelFolder + "Sponza//Sponza.gltf");
+	//std::vector<Model*> models = { model_.get()};
+	std::vector<std::string> modelFiles = { AppConfig::ModelFolder + "Sponza//Sponza.gltf" };
+	scene_ = std::make_unique<Scene>(vulkanContext_, modelFiles);
 
 	// Pipelines
 	// This is responsible to clear swapchain image
@@ -48,9 +50,9 @@ void AppPBR::Init()
 		RenderPassBit::ColorClear | 
 		RenderPassBit::DepthClear
 	);
-	pbrPtr_ = std::make_unique<PipelinePBR>(
+	pbrPtr_ = std::make_unique<PipelinePBRBindless>(
 		vulkanContext_,
-		models,
+		scene_.get(),
 		&lights_,
 		iblResources_.get(),
 		&depthImage_,
@@ -108,7 +110,7 @@ void AppPBR::DestroyResources()
 	iblResources_.reset();
 
 	// Destroy meshes
-	model_.reset();
+	scene_.reset();
 
 	// Lights
 	lights_.Destroy();
@@ -140,11 +142,11 @@ void AppPBR::UpdateUBOs()
 	modelMatrix = glm::rotate(modelMatrix, modelRotation_, glm::vec3(0.f, 1.f, 0.f));
 	//modelRotation_ += deltaTime_ * 0.1f;
 
-	ModelUBO modelUBO1
+	/*ModelUBO modelUBO1
 	{
 		.model = modelMatrix
 	};
-	model_->SetModelUBO(vulkanContext_, modelUBO1);
+	model_->SetModelUBO(vulkanContext_, modelUBO1);*/
 }
 
 void AppPBR::UpdateUI()
