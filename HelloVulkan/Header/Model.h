@@ -91,8 +91,6 @@ private:
 		aiMesh* mesh, 
 		const aiScene* scene, 
 		const glm::mat4& transform);
-
-	//void CreateBindlessResources(VulkanContext& ctx);
 };
 
 #endif

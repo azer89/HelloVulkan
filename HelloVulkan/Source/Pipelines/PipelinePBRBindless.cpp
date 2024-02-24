@@ -12,7 +12,8 @@ constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 
 PipelinePBRBindless::PipelinePBRBindless(
 	VulkanContext& ctx,
-	std::vector<Model*> models,
+	//std::vector<Model*> models,
+	Scene* scene,
 	Lights* lights,
 	IBLResources* iblResources,
 	VulkanImage* depthImage,
@@ -25,7 +26,8 @@ PipelinePBRBindless::PipelinePBRBindless(
 			.vertexBufferBind_ = true,
 		}
 	),
-	models_(models),
+	//models_(models),
+	scene_(scene),
 	lights_(lights),
 	iblResources_(iblResources)
 {
@@ -33,18 +35,20 @@ PipelinePBRBindless::PipelinePBRBindless(
 	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
 	
 	// Model UBO
-	for (Model* model : models_)
-	{
-		CreateMultipleUniformBuffers(ctx, model->modelBuffers_, sizeof(ModelUBO), AppConfig::FrameOverlapCount);
-	}
+	//for (Model* model : models_)
+	//{
+	//	CreateMultipleUniformBuffers(ctx, model->modelBuffers_, sizeof(ModelUBO), AppConfig::FrameOverlapCount);
+	//}
 
 	// Model resources
-	modelResources_.resize(models.size());
+	//modelResources_.resize(models.size());
 	CreateIndirectBuffers(ctx);
-	for (size_t i = 0; i < models_.size(); ++i)
+	/*for (size_t i = 0; i < models_.size(); ++i)
 	{
 		CreateDescriptor(ctx, i);
-	}
+	}*/
+
+	CreateDescriptor(ctx);
 
 	// Note that this pipeline is offscreen rendering
 	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
@@ -82,10 +86,11 @@ PipelinePBRBindless::PipelinePBRBindless(
 
 PipelinePBRBindless::~PipelinePBRBindless()
 {
-	for (PerModelBindlessResource& res : modelResources_)
-	{
-		res.Destroy();
-	}
+	//for (PerModelBindlessResource& res : modelResources_)
+	//{
+	//	res.Destroy();
+	//}
+	indirectBuffer_.Destroy();
 }
 
 void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
@@ -127,8 +132,8 @@ void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 
 void PipelinePBRBindless::CreateIndirectBuffers(VulkanContext& ctx)
 {
-	size_t numFrames = AppConfig::FrameOverlapCount;
-	for (size_t i = 0; i < models_.size(); ++i)
+	//size_t numFrames = AppConfig::FrameOverlapCount;
+	/*for (size_t i = 0; i < models_.size(); ++i)
 	{
 		const uint32_t meshSize = static_cast<uint32_t>(models_[i]->meshes_.size());
 		const uint32_t indirectDataSize = meshSize * sizeof(VkDrawIndirectCommand);
@@ -154,7 +159,7 @@ void PipelinePBRBindless::CreateIndirectBuffers(VulkanContext& ctx)
 			// Unmap
 			modelResources_[i].indirectBuffers_[j].UnmapIndirectBuffer();
 		}
-	}
+	}*/
 }
 
 // TODO Refactor VulkanDescriptor to make the code below simpler

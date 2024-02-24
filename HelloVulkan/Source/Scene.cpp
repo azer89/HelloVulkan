@@ -1,5 +1,7 @@
 #include "Scene.h"
 
+#include "glm/glm.hpp"
+
 Scene::Scene(VulkanContext& ctx,
 	std::vector<std::string> modelFiles)
 {
@@ -39,39 +41,37 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 		{
 			meshDataArray_.emplace_back(models_[i].meshes_[j].GetMeshData(textureIndexOffset));
 		}
-		textureIndexOffset = models_[i].GetNumTextures();
+		textureIndexOffset += models_[i].GetNumTextures();
 	}
+	meshCount_ += meshDataArray_.size();
 	meshDataBufferSize_ = static_cast<VkDeviceSize>(sizeof(MeshData) * meshDataArray_.size());
-	// TODO GPU only
 	meshDataBuffer_.CreateBuffer(
 		ctx,
 		meshDataBufferSize_,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-		VMA_MEMORY_USAGE_CPU_TO_GPU,
+		VMA_MEMORY_USAGE_CPU_TO_GPU, // TODO GPU only
 		0
 	);
 	meshDataBuffer_.UploadBufferData(ctx, meshDataArray_.data(), meshDataBufferSize_);
 
 	// Vertices
 	vertexBufferSize_ = static_cast<VkDeviceSize>(sizeof(VertexData) * vertices_.size());
-	// TODO GPU only
 	vertexBuffer_.CreateBuffer(
 		ctx,
 		vertexBufferSize_,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-		VMA_MEMORY_USAGE_CPU_TO_GPU,
+		VMA_MEMORY_USAGE_CPU_TO_GPU, // TODO GPU only
 		0
 	);
 	vertexBuffer_.UploadBufferData(ctx, vertices_.data(), vertexBufferSize_);
 
 	// Indices
 	indexBufferSize_ = static_cast<VkDeviceSize>(sizeof(uint32_t) * indices_.size());
-	// TODO GPU only
 	indexBuffer_.CreateBuffer(
 		ctx,
 		indexBufferSize_,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-		VMA_MEMORY_USAGE_CPU_TO_GPU,
+		VMA_MEMORY_USAGE_CPU_TO_GPU, // TODO GPU only
 		0
 	);
 	indexBuffer_.UploadBufferData(ctx, indices_.data(), indexBufferSize_);
@@ -81,4 +81,10 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 	modelUBOBuffer_.CreateBuffer(ctx, modelUBOBufferSize_,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VMA_MEMORY_USAGE_CPU_TO_GPU);
+	std::vector<ModelUBO> initModelUBOs(models_.size());
+	for (size_t i = 0; i < models_.size(); ++i)
+	{
+		initModelUBOs[i] = {.model = glm::mat4(1.0f)};
+	}
+	modelUBOBuffer_.UploadBufferData(ctx, initModelUBOs.data(), modelUBOBufferSize_);
 }

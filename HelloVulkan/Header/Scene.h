@@ -11,11 +11,9 @@ class Scene
 {
 public:
 	Scene(VulkanContext& ctx, std::vector<std::string> modelFiles);
-
 	~Scene();
 
 private:
-	// TODO Create GPU only buffers
 	void CreateBindlessResources(VulkanContext& ctx);
 
 public:
@@ -33,6 +31,8 @@ public:
 
 	VulkanBuffer modelUBOBuffer_;
 	VkDeviceSize modelUBOBufferSize_;
+
+	uint32_t meshCount_;
 
 	std::vector<Model> models_ = {};
 };

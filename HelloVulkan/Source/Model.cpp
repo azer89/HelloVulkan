@@ -161,7 +161,7 @@ void Model::LoadModel(VulkanContext& ctx,
 	// Check for errors
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
 	{
-		std::cerr << "Error ASSIMP:: " << importer.GetErrorString() << '\n';
+		std::cerr << "Error ASSIMP: " << importer.GetErrorString() << '\n';
 		return;
 	}
 
