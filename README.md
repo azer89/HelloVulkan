@@ -4,6 +4,7 @@ A real-time rendering engine built from scratch using Vulkan API and C++.
 
 ### Features
 * Clustered Forward Shading, no more deferred!
+* Bindless Rendering.
 * Physically-Based Rendering (PBR) with Cook-Torrance BRDF.
 * Image-Based Lighting (IBL) with offscreen pipelines that generate:
     * A cubemap from an equirectangular HDR image.
