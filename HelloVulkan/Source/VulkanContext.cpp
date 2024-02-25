@@ -270,7 +270,8 @@ VkResult VulkanContext::CreateDevice()
 	}
 	if (config_.supportBindlessRendering_)
 	{
-		
+		deviceFeatures.multiDrawIndirect = VK_TRUE;
+		deviceFeatures.drawIndirectFirstInstance = VK_TRUE;
 		deviceFeatures.shaderSampledImageArrayDynamicIndexing = VK_TRUE;
 	}
 

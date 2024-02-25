@@ -18,7 +18,7 @@ void VulkanInstance::Create()
 		"VK_KHR_surface",
 		"VK_KHR_win32_surface", // This project only works on Windows
 		VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
-		VK_EXT_DEBUG_REPORT_EXTENSION_NAME,
+		//VK_EXT_DEBUG_REPORT_EXTENSION_NAME,
 		VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME // for indexed textures
 	};
 
@@ -55,7 +55,7 @@ void VulkanInstance::Destroy()
 {
 	vkDestroySurfaceKHR(instance_, surface_, nullptr);
 
-	vkDestroyDebugReportCallbackEXT(instance_, reportCallback_, nullptr);
+	//vkDestroyDebugReportCallbackEXT(instance_, reportCallback_, nullptr);
 	vkDestroyDebugUtilsMessengerEXT(instance_, messenger_, nullptr);
 
 	vkDestroyInstance(instance_, nullptr);
@@ -79,7 +79,7 @@ void VulkanInstance::SetupDebugCallbacks()
 
 		VK_CHECK(vkCreateDebugUtilsMessengerEXT(instance_, &ci, nullptr, &messenger_));
 	}
-	{
+	/* {
 		const VkDebugReportCallbackCreateInfoEXT ci = {
 			.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT,
 			.pNext = nullptr,
@@ -93,7 +93,7 @@ void VulkanInstance::SetupDebugCallbacks()
 		};
 
 		VK_CHECK(vkCreateDebugReportCallbackEXT(instance_, &ci, nullptr, &reportCallback_));
-	}
+	}*/
 }
 
 void VulkanInstance::CreateWindowSurface(GLFWwindow* glfwWindow_)

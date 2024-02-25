@@ -105,7 +105,7 @@ void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 		commandBuffer, 
 		indirectBuffers_[frameIndex].buffer_, 
 		0, // offset
-		scene_->models_.size(),
+		scene_->GetMeshCount(),
 		sizeof(VkDrawIndirectCommand));
 	
 	vkCmdEndRenderPass(commandBuffer);
@@ -127,7 +127,7 @@ void PipelinePBRBindless::CreateIndirectBuffers(VulkanContext& ctx)
 
 		for (uint32_t j = 0; j < meshSize; ++j)
 		{
-			data[i] =
+			data[j] =
 			{
 				.vertexCount = static_cast<uint32_t>(meshVertexCountArray[j]),
 				.instanceCount = 1u,

@@ -2,6 +2,8 @@
 
 #include "glm/glm.hpp"
 
+#include <iostream>
+
 Scene::Scene(VulkanContext& ctx, const std::vector<std::string>& modelFiles)
 {
 	uint32_t vertexOffset = 0u;
@@ -120,7 +122,9 @@ std::vector<uint32_t> Scene::GetMeshVertexCountArray()
 		for (size_t j = 0; j < models_[i].meshes_.size(); ++j)
 		{
 			// Note that we use the index count here
-			vCountArray[counter++] = models_[i].meshes_[j].indices_.size();
+			uint32_t numIndices = static_cast<uint32_t>(models_[i].meshes_[j].indices_.size());
+			vCountArray[counter++] = numIndices;
+			//std::cout << models_[i].meshes_[j].indices_.size() << "\n";
 		}
 	}
 	return vCountArray;

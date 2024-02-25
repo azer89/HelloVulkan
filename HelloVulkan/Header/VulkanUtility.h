@@ -40,7 +40,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugCallback(
 }
 
 // This is used in VulkanInstance::SetupDebugCallbacks()
-static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugReportCallback
+/*static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugReportCallback
 (
 	VkDebugReportFlagsEXT      flags,
 	VkDebugReportObjectTypeEXT objectType,
@@ -61,7 +61,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugReportCallback
 
 	std::cerr << "VulkanDebugReportCallback (" << pLayerPrefix << "): " << pMessage << "\n\n";
 	return VK_FALSE;
-}
+}*/
 
 namespace Utility
 {
