@@ -7,13 +7,17 @@
 #include <vector>
 #include <string>
 
+/*
+A scene used for bindless rendering.
+It contains huge SSBO buffers for vertices, indices, and mesh data.
+*/
 class Scene
 {
 public:
 	Scene(VulkanContext& ctx, const std::vector<std::string>& modelFilenames);
 	~Scene();
 
-	uint32_t GetMeshCount() { return static_cast<uint32_t>(meshDataArray_.size()); }
+	uint32_t GetMeshCount() const { return static_cast<uint32_t>(meshDataArray_.size()); }
 
 	std::vector<VkDescriptorImageInfo> GetImageInfos();
 	std::vector<uint32_t> GetMeshVertexCountArray();
