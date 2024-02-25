@@ -27,8 +27,10 @@ struct MeshData
 	uint32_t vertexOffset_;
 	uint32_t indexOffset_;
 
+	// Needed to access model matrix
 	uint32_t modelIndex;
 
+	// PBR Material
 	uint32_t albedo_;
 	uint32_t normal_;
 	uint32_t metalness_;
@@ -40,6 +42,15 @@ struct MeshData
 class Mesh
 {
 public:
+	// Slot based
+	VkDeviceSize vertexBufferSize_;
+	VkDeviceSize indexBufferSize_;
+	VulkanBuffer vertexBuffer_;
+	VulkanBuffer indexBuffer_;
+
+	std::unordered_map<TextureType, uint32_t> textureIndices_;
+
+private:
 	// Bindless rendering
 	bool bindless_;
 	uint32_t vertexOffset_;
@@ -48,36 +59,36 @@ public:
 	// Slot-based rendering
 	std::vector<VertexData> vertices_;
 	std::vector<uint32_t> indices_;
-	VkDeviceSize vertexBufferSize_;
-	VkDeviceSize indexBufferSize_;
-	VulkanBuffer vertexBuffer_;
-	VulkanBuffer indexBuffer_;
 
-	std::unordered_map<TextureType, uint32_t> textureIndices_;
+	uint32_t numIndices_;
 
-	// Constructors
-	Mesh(
+public:
+	// TODO Create a default constructor
+	Mesh() = default;
+	~Mesh() = default;
+
+	void InitSlotBased(
 		VulkanContext& ctx,
-		bool bindless,
 		uint32_t vertexOffset,
 		uint32_t indexOffset,
 		std::vector<VertexData>&& _vertices,
 		std::vector<uint32_t>&& _indices,
-		std::unordered_map<TextureType, uint32_t>&& textureIndices);
+		std::unordered_map<TextureType, uint32_t>&& textureIndices
+	);
 
-	Mesh(
+	void InitBindless(
 		VulkanContext& ctx,
-		bool bindless,
 		uint32_t vertexOffset,
 		uint32_t indexOffset,
-		const std::vector<VertexData>& vertices,
-		const std::vector<uint32_t>& indices,
-		const std::unordered_map<TextureType, uint32_t>& textureIndices);
+		uint32_t numIndices,
+		std::unordered_map<TextureType, uint32_t>&& textureIndices);
+
+	uint32_t GetNumIndices() const { return numIndices_; };
 
 	// TODO Implement this function
-	//void AddTexture(VulkanContext& ctx, const char* fileName);
+	//void AddTexture(VulkanContext& ctx, uint32_t textureIndex);
 
-	void Setup(VulkanContext& ctx);
+	void SetupSlotBased(VulkanContext& ctx);
 
 	void Destroy();
 

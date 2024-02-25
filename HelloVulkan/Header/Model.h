@@ -16,9 +16,9 @@
 class Model
 {
 private:
+	bool bindless_;
 	VkDevice device_;
 	std::string directory_;
-	bool bindless_;
 
 	// string key is the filename, int value points to elements in textureList_
 	std::unordered_map<std::string, uint32_t> textureMap_;
@@ -26,10 +26,12 @@ private:
 public:
 	std::vector<Mesh> meshes_;
 
-	std::vector<VulkanBuffer> modelBuffers_;
-
 	// NOTE Textures are stored in Model regardless of Bindless or Slot-Based
 	std::vector<VulkanImage> textureList_;
+
+	// Optional per-frame buffers for model matrix
+	// TODO Maybe can be moved to pipelines
+	std::vector<VulkanBuffer> modelBuffers_;
 
 public:
 	Model() = default;
@@ -45,15 +47,12 @@ public:
 		uint32_t& globalVertexOffset,
 		uint32_t& globalIndexOffset);
 
-	uint32_t GetNumTextures() { return static_cast<uint32_t>(textureList_.size()); }
 	VulkanImage* GetTexture(uint32_t textureIndex);
 
 	void AddTextureIfEmpty(TextureType tType, const std::string& filePath);
 
-	uint32_t NumMeshes()
-	{
-		return static_cast<uint32_t>(meshes_.size());
-	}
+	uint32_t GetNumTextures() const { return static_cast<uint32_t>(textureList_.size()); }
+	uint32_t NumMeshes() const { return static_cast<uint32_t>(meshes_.size()); }
 
 	void CreateModelUBOBuffers(VulkanContext& ctx);
 	void SetModelUBO(VulkanContext& ctx, ModelUBO ubo);
@@ -62,8 +61,7 @@ private:
 	void AddTexture(VulkanContext& ctx, const std::string& textureFilename);
 	void AddTexture(VulkanContext& ctx, const std::string& textureName, void* data, int width, int height);
 
-	// Loads a model with supported ASSIMP extensions from file and 
-	// stores the resulting meshes in the meshes vector.
+	// TODO Three functios below are pretty ugly because we pass too many references
 	void LoadModel(
 		VulkanContext& ctx, 
 		std::string const& path,

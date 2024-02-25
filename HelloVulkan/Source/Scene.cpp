@@ -131,7 +131,7 @@ std::vector<uint32_t> Scene::GetMeshVertexCountArray()
 		for (size_t j = 0; j < models_[i].meshes_.size(); ++j)
 		{
 			// Note that we use the index count here
-			uint32_t numIndices = static_cast<uint32_t>(models_[i].meshes_[j].indices_.size());
+			uint32_t numIndices = static_cast<uint32_t>(models_[i].meshes_[j].GetNumIndices());
 			vCountArray[counter++] = numIndices;
 		}
 	}

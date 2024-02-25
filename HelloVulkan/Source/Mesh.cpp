@@ -5,42 +5,40 @@
 #include "assimp/cimport.h"
 
 // Constructor
-Mesh::Mesh(VulkanContext& ctx,
-	bool bindless,
+void Mesh::InitSlotBased(
+	VulkanContext& ctx,
 	uint32_t vertexOffset,
 	uint32_t indexOffset,
+	// Currently only support r-values
 	std::vector<VertexData>&& _vertices,
 	std::vector<uint32_t>&& _indices,
-	std::unordered_map<TextureType, uint32_t>&& textureIndices) :
-	bindless_(bindless),
-	vertexOffset_(vertexOffset),
-	indexOffset_(indexOffset),
-	vertices_(std::move(_vertices)),
-	indices_(std::move(_indices)),
-	textureIndices_(std::move(textureIndices))
+	std::unordered_map<TextureType, uint32_t>&& textureIndices)
 {
-	Setup(ctx);
+	bindless_ = false;
+	vertexOffset_ = vertexOffset;
+	indexOffset_ = indexOffset; 
+	vertices_ = std::move(_vertices);
+	indices_ = std::move(_indices);
+	textureIndices_ = std::move(textureIndices);
+
+	SetupSlotBased(ctx);
 }
 
-// Constructor
-Mesh::Mesh(VulkanContext& ctx,
-	bool bindless,
+void Mesh::InitBindless(
+	VulkanContext& ctx,
 	uint32_t vertexOffset,
 	uint32_t indexOffset,
-	const std::vector<VertexData>& vertices,
-	const std::vector<uint32_t>& indices,
-	const std::unordered_map<TextureType, uint32_t>& textureIndices) :
-	bindless_(bindless_),
-	vertexOffset_(vertexOffset),
-	indexOffset_(indexOffset),
-	vertices_(vertices),
-	indices_(indices),
-	textureIndices_(textureIndices)
+	uint32_t numIndices,
+	std::unordered_map<TextureType, uint32_t>&& textureIndices)
 {
-	Setup(ctx);
+	bindless_ = true;
+	vertexOffset_ = vertexOffset;
+	indexOffset_ = indexOffset;
+	numIndices_ = numIndices;
+	textureIndices_ = std::move(textureIndices);
 }
 
-void Mesh::Setup(VulkanContext& ctx)
+void Mesh::SetupSlotBased(VulkanContext& ctx)
 {
 	if (bindless_)
 	{
@@ -62,6 +60,7 @@ void Mesh::Setup(VulkanContext& ctx)
 		indices_.data(), 
 		VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
 	);
+	numIndices_ = static_cast<uint32_t>(indices_.size());
 }
 
 void Mesh::Destroy()

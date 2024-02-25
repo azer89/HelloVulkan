@@ -134,12 +134,7 @@ VulkanImage* Model::GetTexture(uint32_t textureIndex)
 
 void Model::AddTextureIfEmpty(TextureType tType, const std::string& filePath)
 {
-	// TODO add to textureMap_
-
-	for (Mesh& mesh : meshes_)
-	{
-		//mesh.AddTextureIfEmpty(tType, filePath);
-	}
+	// TODO
 }
 
 // Loads a model with supported ASSIMP extensions from file and 
@@ -349,29 +344,36 @@ void Model::ProcessMesh(
 	uint32_t vOffset = static_cast<uint32_t>(vertices.size());
 	uint32_t iOffset = static_cast<uint32_t>(indices.size());
 
-	// Copy vertices and indices
+	// TODO This if-else statement is kinda dirty
 	if (bindless_)
 	{
 		globalVertices.insert(std::end(globalVertices), std::begin(vertices), std::end(vertices));
 		globalIndices.insert(std::end(globalIndices), std::begin(indices), std::end(indices));
-	};
 
-	// TODO If bindless, do not transfer vertices and indices
-	// Create a mesh
-	meshes_.emplace_back(
-		ctx,
-		bindless_,
-		globalVertexOffset,
-		globalIndexOffset,
-		std::move(vertices),
-		std::move(indices),
-		std::move(textures)
-	);
+		// If Bindless, we do not move vertices and indices
+		meshes_.push_back({});
+		meshes_.back().InitBindless(
+			ctx,
+			globalVertexOffset,
+			globalIndexOffset,
+			static_cast<uint32_t>(indices.size()),
+			std::move(textures));
 
-	if (bindless_)
-	{
 		// Update offsets
 		globalVertexOffset += vOffset;
 		globalIndexOffset += iOffset;
+	}
+	else
+	{
+		meshes_.push_back({});
+		// If Slot-based we move vertices and indices
+		meshes_.back().InitSlotBased(
+			ctx,
+			globalVertexOffset,
+			globalIndexOffset,
+			std::move(vertices),
+			std::move(indices),
+			std::move(textures)
+		);
 	}
 }
