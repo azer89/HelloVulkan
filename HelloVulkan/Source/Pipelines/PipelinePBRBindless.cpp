@@ -200,7 +200,7 @@ void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
 		/*0*/ VkDescriptorBufferInfo camBufferInfo = { cameraUBOBuffers_[i].buffer_, 0, sizeof(CameraUBO) };
-		/*1*/ VkDescriptorBufferInfo modelBufferInfo = { scene_->modelUBOBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
+		/*1*/ VkDescriptorBufferInfo modelBufferInfo = { scene_->modelUBOBuffers_[i].buffer_, 0, scene_->modelUBOBufferSize_ };
 
 		std::vector<DescriptorSetWrite> writes;
 		/*0*/ writes.push_back({ .bufferInfoPtr_ = &camBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });

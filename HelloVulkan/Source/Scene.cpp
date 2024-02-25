@@ -84,9 +84,9 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 	indexBuffer_.UploadBufferData(ctx, indices_.data(), indexBufferSize_);
 
 	// ModelUBO
-	std::vector<ModelUBO> initModelUBOs(models_.size(), { .model = glm::mat4(1.0f) });
+	std::vector<ModelUBO> initModelUBOs(meshDataArray_.size(), { .model = glm::mat4(1.0f) });
 	const uint32_t frameCount = AppConfig::FrameOverlapCount;
-	modelUBOBufferSize_ = sizeof(ModelUBO) * models_.size();
+	modelUBOBufferSize_ = sizeof(ModelUBO) * meshDataArray_.size();
 	modelUBOBuffers_.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
@@ -124,7 +124,6 @@ std::vector<uint32_t> Scene::GetMeshVertexCountArray()
 			// Note that we use the index count here
 			uint32_t numIndices = static_cast<uint32_t>(models_[i].meshes_[j].indices_.size());
 			vCountArray[counter++] = numIndices;
-			//std::cout << models_[i].meshes_[j].indices_.size() << "\n";
 		}
 	}
 	return vCountArray;
