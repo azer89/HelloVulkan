@@ -29,8 +29,8 @@ void AppPBR::Init()
 
 	// Scene
 	std::vector<std::string> modelFiles = { 
-		"Sponza//Sponza.gltf",
-		"Tachikoma//Tachikoma.gltf",
+		AppConfig::ModelFolder + "Sponza//Sponza.gltf",
+		AppConfig::ModelFolder + "Tachikoma//Tachikoma.gltf",
 	};
 	scene_ = std::make_unique<Scene>(vulkanContext_, modelFiles);
 

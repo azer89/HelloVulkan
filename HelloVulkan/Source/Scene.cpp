@@ -13,7 +13,7 @@ Scene::Scene(VulkanContext& ctx, const std::vector<std::string>& modelFilenames)
 		Model m;
 		m.LoadBindless(
 			ctx,
-			AppConfig::ModelFolder + filename,
+			filename,
 			vertices_,
 			indices_,
 			vertexOffset,
