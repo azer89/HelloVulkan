@@ -41,18 +41,18 @@ class Mesh
 {
 public:
 	// Bindless rendering
+	bool bindless_;
 	uint32_t vertexOffset_;
 	uint32_t indexOffset_;
 
-	// Bind-ful rendering
+	// Slot-based rendering
+	std::vector<VertexData> vertices_;
+	std::vector<uint32_t> indices_;
 	VkDeviceSize vertexBufferSize_;
 	VkDeviceSize indexBufferSize_;
 	VulkanBuffer vertexBuffer_;
 	VulkanBuffer indexBuffer_;
 
-	bool bindless_;
-	std::vector<VertexData> vertices_;
-	std::vector<uint32_t> indices_;
 	std::unordered_map<TextureType, uint32_t> textureIndices_;
 
 	// Constructors
@@ -64,6 +64,7 @@ public:
 		std::vector<VertexData>&& _vertices,
 		std::vector<uint32_t>&& _indices,
 		std::unordered_map<TextureType, uint32_t>&& textureIndices);
+
 	Mesh(
 		VulkanContext& ctx,
 		bool bindless,

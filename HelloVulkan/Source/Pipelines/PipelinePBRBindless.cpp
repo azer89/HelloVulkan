@@ -122,7 +122,9 @@ void PipelinePBRBindless::CreateIndirectBuffers(VulkanContext& ctx)
 	indirectBuffers_.resize(numFrames);
 	for (size_t i = 0; i < numFrames; ++i)
 	{
+		// Create
 		indirectBuffers_[i].CreateIndirectBuffer(ctx, indirectDataSize);
+		// Map
 		VkDrawIndirectCommand* data = indirectBuffers_[i].MapIndirectBuffer();
 
 		for (uint32_t j = 0; j < meshSize; ++j)
@@ -144,7 +146,7 @@ void PipelinePBRBindless::CreateIndirectBuffers(VulkanContext& ctx)
 // TODO Refactor VulkanDescriptor to make the code below simpler
 void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
 {
-	/*9*/std::vector<VkDescriptorImageInfo> imageInfos = scene_->GetImageInfos();
+	/*9*/ std::vector<VkDescriptorImageInfo> imageInfos = scene_->GetImageInfos();
 	
 	const uint32_t textureCount = static_cast<uint32_t>(imageInfos.size());
 	const uint32_t frameCount = AppConfig::FrameOverlapCount;

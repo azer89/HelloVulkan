@@ -18,7 +18,11 @@ public:
 	std::vector<VkDescriptorImageInfo> GetImageInfos();
 	std::vector<uint32_t> GetMeshVertexCountArray();
 
-	void UpdateModelMatrix(VulkanContext& ctx, ModelUBO modelUBO, uint32_t frameIndex, uint32_t modelIndex);
+	// TODO The interface is kinda weird
+	void UpdateModelMatrix(VulkanContext& ctx, 
+		ModelUBO modelUBO, 
+		uint32_t frameIndex, 
+		uint32_t modelIndex);
 
 private:
 	void CreateBindlessResources(VulkanContext& ctx);

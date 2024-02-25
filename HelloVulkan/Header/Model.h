@@ -28,7 +28,7 @@ public:
 
 	std::vector<VulkanBuffer> modelBuffers_;
 
-	// NOTE In case of bindless rendering, textures are stored in Model, not Scene
+	// NOTE Textures are stored in Model regardless of Bindless or Slot-Based
 	std::vector<VulkanImage> textureList_;
 
 public:

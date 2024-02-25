@@ -39,30 +39,6 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugCallback(
 	return VK_FALSE;
 }
 
-// This is used in VulkanInstance::SetupDebugCallbacks()
-/*static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugReportCallback
-(
-	VkDebugReportFlagsEXT      flags,
-	VkDebugReportObjectTypeEXT objectType,
-	uint64_t                   object,
-	size_t                     location,
-	int32_t                    messageCode,
-	const char* pLayerPrefix,
-	const char* pMessage,
-	void* UserData
-)
-{
-	// https://github.com/zeux/niagara/blob/master/src/device.cpp   [ignoring performance warnings]
-	// This silences warnings like "For optimal performance image layout should be VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL instead of GENERAL."
-	if (flags & VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT)
-	{
-		return VK_FALSE;
-	}
-
-	std::cerr << "VulkanDebugReportCallback (" << pLayerPrefix << "): " << pMessage << "\n\n";
-	return VK_FALSE;
-}*/
-
 namespace Utility
 {
 	inline float RandomNumber()

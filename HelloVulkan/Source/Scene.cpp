@@ -52,41 +52,31 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 		textureIndexOffset += models_[i].GetNumTextures();
 	}
 	meshDataBufferSize_ = static_cast<VkDeviceSize>(sizeof(MeshData) * meshDataArray_.size());
-	meshDataBuffer_.CreateBuffer(
-		ctx,
-		meshDataBufferSize_,
-		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-		VMA_MEMORY_USAGE_CPU_TO_GPU, // TODO GPU only
-		0
-	);
-	meshDataBuffer_.UploadBufferData(ctx, meshDataArray_.data(), meshDataBufferSize_);
-
+	meshDataBuffer_.CreateGPUOnlyBuffer(
+		ctx, 
+		meshDataBufferSize_, 
+		meshDataArray_.data(), 
+		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT);
+	
 	// Vertices
 	vertexBufferSize_ = static_cast<VkDeviceSize>(sizeof(VertexData) * vertices_.size());
-	vertexBuffer_.CreateBuffer(
+	vertexBuffer_.CreateGPUOnlyBuffer(
 		ctx,
 		vertexBufferSize_,
-		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-		VMA_MEMORY_USAGE_CPU_TO_GPU, // TODO GPU only
-		0
-	);
-	vertexBuffer_.UploadBufferData(ctx, vertices_.data(), vertexBufferSize_);
+		vertices_.data(),
+		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT);
 
 	// Indices
 	indexBufferSize_ = static_cast<VkDeviceSize>(sizeof(uint32_t) * indices_.size());
-	indexBuffer_.CreateBuffer(
+	indexBuffer_.CreateGPUOnlyBuffer(
 		ctx,
 		indexBufferSize_,
-		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-		VMA_MEMORY_USAGE_CPU_TO_GPU, // TODO GPU only
-		0
-	);
-	indexBuffer_.UploadBufferData(ctx, indices_.data(), indexBufferSize_);
+		indices_.data(),
+		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT);
 
 	// ModelUBO
 	std::vector<ModelUBO> initModelUBOs(models_.size(), { .model = glm::mat4(1.0f) });
 	modelUBOBufferSize_ = sizeof(ModelUBO) * models_.size();
-
 	const uint32_t frameCount = AppConfig::FrameOverlapCount;
 	modelUBOBuffers_.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
@@ -94,11 +84,9 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 		modelUBOBuffers_[i].CreateBuffer(ctx, modelUBOBufferSize_,
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 			VMA_MEMORY_USAGE_CPU_TO_GPU);
-
 		modelUBOBuffers_[i].UploadBufferData(ctx, initModelUBOs.data(), modelUBOBufferSize_);
 	}
 }
-
 
 void Scene::UpdateModelMatrix(VulkanContext& ctx, ModelUBO modelUBO, uint32_t frameIndex, uint32_t modelIndex)
 {

@@ -105,7 +105,7 @@ void VulkanBuffer::CreateGPUOnlyBuffer
 		ctx,
 		bufferSize_,
 		VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-		VMA_MEMORY_USAGE_CPU_ONLY
+		VMA_MEMORY_USAGE_CPU_ONLY // TODO Deprecated flag
 	);
 
 	void* data;
@@ -117,7 +117,7 @@ void VulkanBuffer::CreateGPUOnlyBuffer
 		ctx,
 		bufferSize_,
 		flags,
-		VMA_MEMORY_USAGE_GPU_ONLY);
+		VMA_MEMORY_USAGE_GPU_ONLY); // TODO Deprecated flag
 	CopyFrom(ctx, stagingBuffer.buffer_, bufferSize_);
 
 	stagingBuffer.Destroy();
