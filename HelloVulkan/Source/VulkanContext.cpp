@@ -131,11 +131,19 @@ void VulkanContext::GetEnabledFeatures()
 	pNextChain_ = nullptr;
 	void* chainPtr = nullptr;
 
-	if (config_.supportDescriptorIndexing_)
+	if (config_.supportBindlessRendering_)
 	{
+		// TODO Is this necessary?
+		/*shaderDrawFeatures_ =
+		{
+			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES,
+			.shaderDrawParameters = VK_TRUE
+		};*/
+
 		descriptorIndexingFeatures_ =
 		{
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT,
+			//.pNext = &shaderDrawFeatures_,
 			.shaderSampledImageArrayNonUniformIndexing = VK_TRUE,
 			.descriptorBindingVariableDescriptorCount = VK_TRUE,
 			.runtimeDescriptorArray = VK_TRUE
@@ -231,10 +239,13 @@ VkResult VulkanContext::CreateDevice()
 		VK_KHR_SWAPCHAIN_EXTENSION_NAME
 	};
 
-	if (config_.supportDescriptorIndexing_)
+	if (config_.supportBindlessRendering_)
 	{
 		extensions.push_back(VK_KHR_MAINTENANCE3_EXTENSION_NAME);
 		extensions.push_back(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
+		extensions.push_back(VK_KHR_DRAW_INDIRECT_COUNT_EXTENSION_NAME);
+		// Needed for gl_BaseInstance
+		extensions.push_back(VK_KHR_SHADER_DRAW_PARAMETERS_EXTENSION_NAME);
 	}
 
 	if (config_.supportRaytracing_)
@@ -257,8 +268,9 @@ VkResult VulkanContext::CreateDevice()
 		deviceFeatures.sampleRateShading = VK_TRUE;
 		deviceFeatures.samplerAnisotropy = VK_TRUE;
 	}
-	if (config_.supportDescriptorIndexing_)
+	if (config_.supportBindlessRendering_)
 	{
+		
 		deviceFeatures.shaderSampledImageArrayDynamicIndexing = VK_TRUE;
 	}
 

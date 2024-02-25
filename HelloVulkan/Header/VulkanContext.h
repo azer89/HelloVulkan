@@ -42,7 +42,7 @@ struct ContextConfig
 	// This can be disabled but validation layer will complain a little bit
 	bool supportMSAA_ = true;
 
-	bool supportDescriptorIndexing_ = true;
+	bool supportBindlessRendering_ = true;
 
 	// TODO Set validation layer as optional
 };
@@ -202,6 +202,7 @@ private:
 
 	// Descriptor indexing
 	VkPhysicalDeviceDescriptorIndexingFeaturesEXT descriptorIndexingFeatures_;
+	VkPhysicalDeviceShaderDrawParametersFeatures shaderDrawFeatures_;
 
 	// pNext structure for passing extension structures to device creation
 	void* pNextChain_ = nullptr;

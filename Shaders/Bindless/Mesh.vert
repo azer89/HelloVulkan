@@ -1,4 +1,4 @@
-#version 460 core
+#version 460
 
 layout(location = 0) out vec3 worldPos;
 layout(location = 1) out vec2 texCoord;

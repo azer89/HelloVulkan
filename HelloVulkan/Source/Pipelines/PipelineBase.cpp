@@ -144,21 +144,15 @@ void PipelineBase::CreateGraphicsPipeline(
 	// Pipeline create info
 	PipelineCreateInfo pInfo(ctx);
 
-	const std::vector<VkVertexInputBindingDescription> bindingDescriptions = 
-		Mesh::GetBindingDescriptions();
-	const std::vector<VkVertexInputAttributeDescription> attributeDescriptions = 
-		Mesh::GetAttributeDescriptions();
+	const std::vector<VkVertexInputBindingDescription> bindingDescriptions = Mesh::GetBindingDescriptions();
+	const std::vector<VkVertexInputAttributeDescription> attributeDescriptions = Mesh::GetAttributeDescriptions();
 
 	if (config_.vertexBufferBind_)
 	{
-		pInfo.vertexInputInfo.vertexAttributeDescriptionCount = 
-			static_cast<uint32_t>(attributeDescriptions.size());
-		pInfo.vertexInputInfo.vertexBindingDescriptionCount = 
-			static_cast<uint32_t>(bindingDescriptions.size());
-		pInfo.vertexInputInfo.pVertexAttributeDescriptions = 
-			attributeDescriptions.data();
-		pInfo.vertexInputInfo.pVertexBindingDescriptions = 
-			bindingDescriptions.data();
+		pInfo.vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+		pInfo.vertexInputInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(bindingDescriptions.size());
+		pInfo.vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+		pInfo.vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
 	}
 	
 	pInfo.inputAssembly.topology = config_.topology_;
