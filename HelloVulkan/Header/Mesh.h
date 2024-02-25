@@ -27,6 +27,8 @@ struct MeshData
 	uint32_t vertexOffset_;
 	uint32_t indexOffset_;
 
+	uint32_t modelIndex;
+
 	uint32_t albedo_;
 	uint32_t normal_;
 	uint32_t metalness_;
@@ -78,12 +80,14 @@ public:
 
 	void Destroy();
 
-	MeshData GetMeshData(uint32_t textureIndexOffset)
+	MeshData GetMeshData(uint32_t textureIndexOffset, uint32_t modelIndex)
 	{
 		return
 		{
 			.vertexOffset_ = vertexOffset_,
 			.indexOffset_ = indexOffset_,
+
+			.modelIndex = modelIndex,
 
 			.albedo_ = textureIndices_[TextureType::Albedo] + textureIndexOffset,
 			.normal_ = textureIndices_[TextureType::Normal] + textureIndexOffset,

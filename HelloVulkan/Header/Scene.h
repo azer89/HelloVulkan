@@ -10,13 +10,15 @@
 class Scene
 {
 public:
-	Scene(VulkanContext& ctx, const std::vector<std::string>& modelFiles);
+	Scene(VulkanContext& ctx, const std::vector<std::string>& modelFilenames);
 	~Scene();
 
 	uint32_t GetMeshCount() { return static_cast<uint32_t>(meshDataArray_.size()); }
 
 	std::vector<VkDescriptorImageInfo> GetImageInfos();
 	std::vector<uint32_t> GetMeshVertexCountArray();
+
+	void UpdateModelMatrix(VulkanContext& ctx, ModelUBO modelUBO, uint32_t frameIndex, uint32_t modelIndex);
 
 private:
 	void CreateBindlessResources(VulkanContext& ctx);

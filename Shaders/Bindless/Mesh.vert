@@ -34,15 +34,13 @@ void main()
 	uint iOffset = meshData.indexOffset;
 	uint vIndex = indices[iOffset + gl_VertexIndex] + vOffset;
 	VertexData vertexData = vertices[vIndex];
-
-	mat4 model = modelUBOs[gl_BaseInstance].model;
-
+	mat4 model = modelUBOs[meshData.modelMatrixIndex].model;
 	mat3 normalMatrix = transpose(inverse(mat3(model)));
 
+	// Output
 	worldPos = (model * vertexData.position).xyz;
 	texCoord = vertexData.uv.xy;
 	normal = normalMatrix * vertexData.normal.xyz;
 	meshIndex = gl_BaseInstance;
-
 	gl_Position =  camUBO.projection * camUBO.view * vec4(worldPos, 1.0);
 }

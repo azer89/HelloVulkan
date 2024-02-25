@@ -4,16 +4,16 @@
 
 #include <iostream>
 
-Scene::Scene(VulkanContext& ctx, const std::vector<std::string>& modelFiles)
+Scene::Scene(VulkanContext& ctx, const std::vector<std::string>& modelFilenames)
 {
 	uint32_t vertexOffset = 0u;
 	uint32_t indexOffset = 0u;
-	for (const std::string& file : modelFiles)
+	for (const std::string& filename : modelFilenames)
 	{
 		Model m;
 		m.LoadBindless(
 			ctx,
-			file,
+			AppConfig::ModelFolder + filename,
 			vertices_,
 			indices_,
 			vertexOffset,
@@ -47,7 +47,7 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 	{
 		for (size_t j = 0; j < models_[i].meshes_.size(); ++j)
 		{
-			meshDataArray_.emplace_back(models_[i].meshes_[j].GetMeshData(textureIndexOffset));
+			meshDataArray_.emplace_back(models_[i].meshes_[j].GetMeshData(textureIndexOffset, i));
 		}
 		textureIndexOffset += models_[i].GetNumTextures();
 	}
@@ -84,9 +84,10 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 	indexBuffer_.UploadBufferData(ctx, indices_.data(), indexBufferSize_);
 
 	// ModelUBO
-	std::vector<ModelUBO> initModelUBOs(meshDataArray_.size(), { .model = glm::mat4(1.0f) });
+	std::vector<ModelUBO> initModelUBOs(models_.size(), { .model = glm::mat4(1.0f) });
+	modelUBOBufferSize_ = sizeof(ModelUBO) * models_.size();
+
 	const uint32_t frameCount = AppConfig::FrameOverlapCount;
-	modelUBOBufferSize_ = sizeof(ModelUBO) * meshDataArray_.size();
 	modelUBOBuffers_.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
@@ -96,6 +97,26 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 
 		modelUBOBuffers_[i].UploadBufferData(ctx, initModelUBOs.data(), modelUBOBufferSize_);
 	}
+}
+
+
+void Scene::UpdateModelMatrix(VulkanContext& ctx, ModelUBO modelUBO, uint32_t frameIndex, uint32_t modelIndex)
+{
+	if (modelIndex < 0 || modelIndex >= models_.size())
+	{
+		std::cerr << "Cannot update ModelUBO because of invalid modelIndex " << modelIndex << "\n";
+		return;
+	}
+	if (frameIndex < 0 || frameIndex >= AppConfig::FrameOverlapCount)
+	{
+		std::cerr << "Cannot update ModelUBO because of invalid frameIndex " << frameIndex << "\n";
+		return;
+	}
+	modelUBOBuffers_[frameIndex].UploadOffsetBufferData(
+		ctx,
+		&modelUBO,
+		sizeof(ModelUBO) * modelIndex,
+		sizeof(ModelUBO));
 }
 
 // This is for descriptor indexing
