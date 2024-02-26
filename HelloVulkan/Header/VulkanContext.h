@@ -147,7 +147,7 @@ private:
 	void AllocateVMA(VulkanInstance& instance);
 
 	void GetRaytracingPropertiesAndFeatures();
-	void GetEnabledFeatures();
+	void ChainFeatures();
 
 	VkFormat FindDepthFormat() const;
 	VkFormat FindSupportedFormat(
@@ -202,7 +202,12 @@ private:
 
 	// Bindless rendering
 	VkPhysicalDeviceDescriptorIndexingFeaturesEXT descriptorIndexingFeatures_;
-	VkPhysicalDeviceShaderDrawParametersFeatures shaderDrawFeatures_;
+	//VkPhysicalDeviceShaderDrawParametersFeatures shaderDrawFeatures_;
+
+	// Features
+	VkPhysicalDeviceVulkan11Features features11_;
+	VkPhysicalDeviceFeatures2 features2_;
+	VkPhysicalDeviceFeatures features_;
 
 	// pNext structure for passing extension structures to device creation
 	void* pNextChain_ = nullptr;

@@ -12,7 +12,7 @@ void VulkanContext::Create(VulkanInstance& instance, ContextConfig config)
 	swapchainWidth_ = AppConfig::InitialScreenWidth;
 	swapchainHeight_ = AppConfig::InitialScreenHeight;
 
-	GetEnabledFeatures();
+	ChainFeatures();
 
 	VK_CHECK(CreatePhysicalDevice(instance.GetInstance()));
 
@@ -126,7 +126,7 @@ void VulkanContext::GetRaytracingPropertiesAndFeatures()
 	}
 }
 
-void VulkanContext::GetEnabledFeatures()
+void VulkanContext::ChainFeatures()
 {
 	pNextChain_ = nullptr;
 	void* chainPtr = nullptr;
@@ -134,18 +134,23 @@ void VulkanContext::GetEnabledFeatures()
 	if (config_.supportBindlessRendering_)
 	{
 		// Needed for gl_BaseInstance
-		// TODO I'm confused why we need to add this manually, 
-		// an alternative is VkPhysicalDeviceVulkan11Features
-		shaderDrawFeatures_ =
+		/*shaderDrawFeatures_ =
 		{
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES,
+			.shaderDrawParameters = VK_TRUE
+		};*/
+
+		// Needed for gl_BaseInstance
+		features11_ =
+		{
+			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES,
 			.shaderDrawParameters = VK_TRUE
 		};
 
 		descriptorIndexingFeatures_ =
 		{
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT,
-			.pNext = &shaderDrawFeatures_,
+			.pNext = &features11_,
 			.shaderSampledImageArrayNonUniformIndexing = VK_TRUE,
 			.descriptorBindingVariableDescriptorCount = VK_TRUE,
 			.runtimeDescriptorArray = VK_TRUE
@@ -181,6 +186,115 @@ void VulkanContext::GetEnabledFeatures()
 	}
 
 	pNextChain_ = chainPtr;
+	
+	features_ = {};
+	if (config_.supportMSAA_)
+	{
+		features_.sampleRateShading = VK_TRUE;
+		features_.samplerAnisotropy = VK_TRUE;
+	}
+	if (config_.supportBindlessRendering_)
+	{
+		features_.multiDrawIndirect = VK_TRUE;
+		features_.drawIndirectFirstInstance = VK_TRUE;
+		features_.shaderSampledImageArrayDynamicIndexing = VK_TRUE;
+	}
+
+	if (pNextChain_)
+	{
+		features2_ =
+		{
+			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2,
+			.pNext = pNextChain_,
+			.features = features_,
+		};
+	}
+}
+
+VkResult VulkanContext::CreateDevice()
+{
+	// Add raytracing extensions here
+	std::vector<const char*> extensions =
+	{
+		VK_KHR_SWAPCHAIN_EXTENSION_NAME
+	};
+
+	if (config_.supportBindlessRendering_)
+	{
+		extensions.push_back(VK_KHR_MAINTENANCE3_EXTENSION_NAME);
+		extensions.push_back(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
+		extensions.push_back(VK_KHR_DRAW_INDIRECT_COUNT_EXTENSION_NAME);
+		// Needed for gl_BaseInstance
+		//extensions.push_back(VK_KHR_SHADER_DRAW_PARAMETERS_EXTENSION_NAME);
+	}
+
+	if (config_.supportRaytracing_)
+	{
+		extensions.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);
+		extensions.push_back(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME);
+		// Required by VK_KHR_acceleration_structure
+		extensions.push_back(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME);
+		extensions.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);
+		extensions.push_back(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
+		// Required for VK_KHR_ray_tracing_pipeline
+		extensions.push_back(VK_KHR_SPIRV_1_4_EXTENSION_NAME);
+		// Required by VK_KHR_spirv_1_4
+		extensions.push_back(VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME);
+	}
+
+	const bool sameFamily = graphicsFamily_ == computeFamily_;
+	const float priorityOne = 1.f;
+	const float priorityZero = 0.f;
+
+	std::vector<VkDeviceQueueCreateInfo> queueInfoArray;
+	const VkDeviceQueueCreateInfo graphicsQueueInfo =
+	{
+		.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0,
+		.queueFamilyIndex = graphicsFamily_,
+		.queueCount = 1,
+		.pQueuePriorities = sameFamily ? &priorityOne : &priorityZero
+	};
+
+	queueInfoArray.push_back(graphicsQueueInfo);
+
+	if (!sameFamily)
+	{
+		const VkDeviceQueueCreateInfo computeQueueInfo =
+		{
+			.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+			.pNext = nullptr,
+			.flags = 0,
+			.queueFamilyIndex = computeFamily_,
+			.queueCount = 1,
+			.pQueuePriorities = &priorityZero
+		};
+		queueInfoArray.push_back(computeQueueInfo);
+	}
+
+	VkDeviceCreateInfo devCreateInfo =
+	{
+		.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0,
+		.queueCreateInfoCount = static_cast<uint32_t>(queueInfoArray.size()),
+		.pQueueCreateInfos = queueInfoArray.data(),
+		.enabledLayerCount = 0,
+		.ppEnabledLayerNames = nullptr,
+		.enabledExtensionCount = static_cast<uint32_t>(extensions.size()),
+		.ppEnabledExtensionNames = extensions.data(),
+		.pEnabledFeatures = &features_
+	};
+
+	// Chaining
+	if (pNextChain_)
+	{
+		devCreateInfo.pEnabledFeatures = nullptr;
+		devCreateInfo.pNext = &features2_;
+	}
+
+	return vkCreateDevice(physicalDevice_, &devCreateInfo, nullptr, &device_);
 }
 
 VkSampleCountFlagBits VulkanContext::GetMaxUsableSampleCount(VkPhysicalDevice d)
@@ -231,109 +345,6 @@ VkResult VulkanContext::CreatePhysicalDevice(VkInstance instance)
 	}
 
 	return VK_ERROR_INITIALIZATION_FAILED;
-}
-
-VkResult VulkanContext::CreateDevice()
-{
-	// Add raytracing extensions here
-	std::vector<const char*> extensions =
-	{
-		VK_KHR_SWAPCHAIN_EXTENSION_NAME
-	};
-
-	if (config_.supportBindlessRendering_)
-	{
-		extensions.push_back(VK_KHR_MAINTENANCE3_EXTENSION_NAME);
-		extensions.push_back(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
-		extensions.push_back(VK_KHR_DRAW_INDIRECT_COUNT_EXTENSION_NAME);
-		// Needed for gl_BaseInstance
-		//extensions.push_back(VK_KHR_SHADER_DRAW_PARAMETERS_EXTENSION_NAME);
-	}
-
-	if (config_.supportRaytracing_)
-	{
-		extensions.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);
-		extensions.push_back(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME);
-		// Required by VK_KHR_acceleration_structure
-		extensions.push_back(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME);
-		extensions.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);
-		extensions.push_back(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
-		// Required for VK_KHR_ray_tracing_pipeline
-		extensions.push_back(VK_KHR_SPIRV_1_4_EXTENSION_NAME);
-		// Required by VK_KHR_spirv_1_4
-		extensions.push_back(VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME);
-	}
-
-	VkPhysicalDeviceFeatures deviceFeatures = {};
-	if (config_.supportMSAA_)
-	{
-		deviceFeatures.sampleRateShading = VK_TRUE;
-		deviceFeatures.samplerAnisotropy = VK_TRUE;
-	}
-	if (config_.supportBindlessRendering_)
-	{
-		deviceFeatures.multiDrawIndirect = VK_TRUE;
-		deviceFeatures.drawIndirectFirstInstance = VK_TRUE;
-		deviceFeatures.shaderSampledImageArrayDynamicIndexing = VK_TRUE;
-	}
-
-	const bool sameFamily = graphicsFamily_ == computeFamily_;
-	const float priorityOne = 1.f;
-	const float priorityZero = 0.f;
-
-	std::vector<VkDeviceQueueCreateInfo> queueInfoArray;
-	const VkDeviceQueueCreateInfo graphicsQueueInfo =
-	{
-		.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.queueFamilyIndex = graphicsFamily_,
-		.queueCount = 1,
-		.pQueuePriorities = sameFamily ? &priorityOne : &priorityZero
-	};
-
-	queueInfoArray.push_back(graphicsQueueInfo);
-
-	if (!sameFamily)
-	{
-		const VkDeviceQueueCreateInfo computeQueueInfo =
-		{
-			.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-			.pNext = nullptr,
-			.flags = 0,
-			.queueFamilyIndex = computeFamily_,
-			.queueCount = 1,
-			.pQueuePriorities = &priorityZero
-		};
-		queueInfoArray.push_back(computeQueueInfo);
-	}
-
-	VkDeviceCreateInfo devCreateInfo =
-	{
-		.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.queueCreateInfoCount = static_cast<uint32_t>(queueInfoArray.size()),
-		.pQueueCreateInfos = queueInfoArray.data(),
-		.enabledLayerCount = 0,
-		.ppEnabledLayerNames = nullptr,
-		.enabledExtensionCount = static_cast<uint32_t>(extensions.size()),
-		.ppEnabledExtensionNames = extensions.data(),
-		.pEnabledFeatures = &deviceFeatures
-	};
-
-	// Chaining
-	VkPhysicalDeviceFeatures2 phyDevFeatures2{};
-	if (pNextChain_)
-	{
-		phyDevFeatures2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
-		phyDevFeatures2.features = deviceFeatures;
-		phyDevFeatures2.pNext = pNextChain_;
-		devCreateInfo.pEnabledFeatures = nullptr;
-		devCreateInfo.pNext = &phyDevFeatures2;
-	}
-
-	return vkCreateDevice(physicalDevice_, &devCreateInfo, nullptr, &device_);
 }
 
 uint32_t VulkanContext::FindQueueFamilies(VkQueueFlags desiredFlags)
