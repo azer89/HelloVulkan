@@ -133,14 +133,14 @@ void VulkanContext::ChainFeatures()
 
 	if (config_.supportBindlessRendering_)
 	{
-		// Needed for gl_BaseInstance
+		// An alternative to gl_BaseInstance using Vulkan 1.1
 		/*shaderDrawFeatures_ =
 		{
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES,
 			.shaderDrawParameters = VK_TRUE
 		};*/
 
-		// Needed for gl_BaseInstance
+		// Used for gl_BaseInstance but requires Vulkan 1.2
 		features11_ =
 		{
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES,
@@ -224,7 +224,7 @@ VkResult VulkanContext::CreateDevice()
 		extensions.push_back(VK_KHR_MAINTENANCE3_EXTENSION_NAME);
 		extensions.push_back(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
 		extensions.push_back(VK_KHR_DRAW_INDIRECT_COUNT_EXTENSION_NAME);
-		// Needed for gl_BaseInstance
+		// Used for gl_BaseInstance but deprecated
 		//extensions.push_back(VK_KHR_SHADER_DRAW_PARAMETERS_EXTENSION_NAME);
 	}
 
