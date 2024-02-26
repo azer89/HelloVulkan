@@ -134,7 +134,8 @@ void VulkanContext::GetEnabledFeatures()
 	if (config_.supportBindlessRendering_)
 	{
 		// Needed for gl_BaseInstance
-		// TODO I'm confused why we need to add this manually
+		// TODO I'm confused why we need to add this manually, 
+		// an alternative is VkPhysicalDeviceVulkan11Features
 		shaderDrawFeatures_ =
 		{
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES,
