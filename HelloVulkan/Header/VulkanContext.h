@@ -202,7 +202,7 @@ private:
 
 	// Bindless rendering
 	VkPhysicalDeviceDescriptorIndexingFeaturesEXT descriptorIndexingFeatures_;
-	//VkPhysicalDeviceShaderDrawParametersFeatures shaderDrawFeatures_;
+	VkPhysicalDeviceShaderDrawParametersFeatures shaderDrawFeatures_;
 
 	// pNext structure for passing extension structures to device creation
 	void* pNextChain_ = nullptr;
