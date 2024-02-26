@@ -54,13 +54,13 @@
     <None Include="..\Shaders\Cube.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\PBRHeader.frag">
+    <None Include="..\Shaders\PBRHeader.glsl">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\BRDFLUT.comp">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\Hammersley.frag">
+    <None Include="..\Shaders\Hammersley.glsl">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\CubeFilterDiffuse.frag">
@@ -81,7 +81,7 @@
     <None Include="..\Shaders\ClusteredForward\AABBGenerator.comp">
       <Filter>Shaders\ClusteredForward</Filter>
     </None>
-    <None Include="..\Shaders\ClusteredForward\ClusterForwardHeader.comp">
+    <None Include="..\Shaders\ClusteredForward\ClusterForwardHeader.glsl">
       <Filter>Shaders\ClusteredForward</Filter>
     </None>
     <None Include="..\Shaders\ClusteredForward\MeshClusterForward.frag">
@@ -105,25 +105,22 @@
     <None Include="..\Shaders\ShadowMapping\Mesh.frag">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
-    <None Include="..\Shaders\ShadowMapping\Depth.frag">
-      <Filter>Shaders\ShadowMapping</Filter>
-    </None>
     <None Include="..\Shaders\ShadowMapping\Depth.vert">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
     <None Include="..\Shaders\ShadowMapping\Mesh.vert">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
-    <None Include="..\Shaders\ShadowMapping\Header.frag">
+    <None Include="..\Shaders\ShadowMapping\Header.glsl">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
-    <None Include="..\Shaders\TangentNormalToWorld.frag">
+    <None Include="..\Shaders\TangentNormalToWorld.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\PBRPushConstants.frag">
+    <None Include="..\Shaders\PBRPushConstants.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\CameraUBO.frag">
+    <None Include="..\Shaders\CameraUBO.glsl">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\Bindless\Scene.frag">
@@ -278,7 +275,7 @@
     <ClInclude Include="Header\Pipelines\PipelinePBRShadowMapping.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
-    <ClInclude Include="..\Shaders\ShadowMapping\UBO.frag">
+    <ClInclude Include="..\Shaders\ShadowMapping\UBO.glsl">
       <Filter>Shaders\ShadowMapping</Filter>
     </ClInclude>
     <ClInclude Include="Header\IBLResources.h">

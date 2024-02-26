@@ -7,7 +7,7 @@ Vertex shader to generate a cube
 layout(location = 0) out vec3 direction;
 
 layout(set = 0, binding = 0)
-#include <CameraUBO.frag>
+#include <CameraUBO.glsl>
 
 const vec3 pos[8] = vec3[8]
 (

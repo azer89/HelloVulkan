@@ -7,15 +7,15 @@
 // Entry point
 int main()
 {
+	// Bind resource once and render using draw indirect and dsecriptor indexing
+	AppPBRBindless app;
+
 	// The good ol resource binding per draw call
 	//AppPBRSlotBased app;
 	
-	// Bind resource once and render using draw indirect and dsecriptor indexing
-	//AppPBRBindless app;
-	
 	//AppPBRShadowMapping app;
 	
-	AppPBRClusterForward app;
+	//AppPBRClusterForward app;
 	
 	// Currently can only draw a triangle
 	//AppSimpleRaytracing app;

@@ -5,7 +5,7 @@ layout(location = 0) out vec2 fragOffset;
 layout(location = 1) out vec4 circleColor;
 
 layout(set = 0, binding = 0)
-#include <CameraUBO.frag>
+#include <CameraUBO.glsl>
 
 struct LightData
 {
