@@ -7,13 +7,7 @@ layout(location = 1) out vec4 circleColor;
 layout(set = 0, binding = 0)
 #include <CameraUBO.glsl>
 
-struct LightData
-{
-	vec4 position;
-	vec4 color;
-	float radius;
-};
-
+#include <LightData.glsl>
 layout(binding = 1) readonly buffer Lights { LightData lights []; };
 
 const vec2 OFFSETS[6] = vec2[](

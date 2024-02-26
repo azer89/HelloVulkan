@@ -5,6 +5,7 @@ Fragment shader for PBR+IBL, naive forward shading (non clustered)
 */
 
 // Include files
+#include <LightData.glsl>
 #include <PBRHeader.glsl>
 #include <Hammersley.glsl>
 #include <TangentNormalToWorld.glsl>

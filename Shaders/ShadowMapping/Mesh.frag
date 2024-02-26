@@ -5,6 +5,7 @@ Fragment shader for PBR+IBL, naive forward shading with shadow mapping
 */
 
 // Include files
+#include <LightData.glsl>
 #include <PBRHeader.glsl>
 #include <Hammersley.glsl>
 #include <TangentNormalToWorld.glsl>
@@ -26,12 +27,6 @@ layout(set = 0, binding = 2)
 #include <ShadowMapping//UBO.glsl>
 
 // SSBO
-struct LightData
-{
-	vec4 position;
-	vec4 color;
-	float radius;
-};
 layout(set = 0, binding = 3) readonly buffer Lights { LightData lights []; };
 
 layout(set = 0, binding = 4) uniform sampler2D textureAlbedo;

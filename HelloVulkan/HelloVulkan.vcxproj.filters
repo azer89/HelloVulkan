@@ -141,6 +141,9 @@
     <None Include="..\Shaders\SlotBased\Mesh.vert">
       <Filter>Shaders\SlotBased</Filter>
     </None>
+    <None Include="..\Shaders\LightData.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Camera.h">

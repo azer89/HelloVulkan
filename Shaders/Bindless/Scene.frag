@@ -9,6 +9,7 @@ Fragment shader for
 */
 
 // Include files
+#include <LightData.glsl>
 #include <PBRHeader.glsl>
 #include <Hammersley.glsl>
 #include <TangentNormalToWorld.glsl>
@@ -32,12 +33,6 @@ layout(set = 0, binding = 0)
 layout(set = 0, binding = 4) readonly buffer Meshes { MeshData meshes []; };
 
 // SSBO
-struct LightData
-{
-	vec4 position;
-	vec4 color;
-	float radius;
-};
 layout(set = 0, binding = 5) readonly buffer Lights { LightData lights []; };
 
 layout(set = 0, binding = 6) uniform samplerCube specularMap;

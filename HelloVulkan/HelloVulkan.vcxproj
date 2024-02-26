@@ -148,6 +148,7 @@
     <None Include="..\Shaders\ClusteredForward\MeshClusterForward.frag" />
     <None Include="..\Shaders\CubeFilterDiffuse.frag" />
     <None Include="..\Shaders\CubeFilterSpecular.frag" />
+    <None Include="..\Shaders\LightData.glsl" />
     <None Include="..\Shaders\PBRPushConstants.glsl" />
     <None Include="..\Shaders\SlotBased\Mesh.frag" />
     <None Include="..\Shaders\SlotBased\Mesh.vert" />

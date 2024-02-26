@@ -22,12 +22,7 @@ layout(set = 0, binding = 0)
 #include <CameraUBO.glsl>
 
 // SSBO
-struct LightData
-{
-	vec4 position;
-	vec4 color;
-	float radius;
-};
+#include <LightData.glsl>
 layout(set = 0, binding = 2) readonly buffer Lights { LightData lights []; };
 
 layout(set = 0, binding = 3) uniform sampler2D textureAlbedo;
