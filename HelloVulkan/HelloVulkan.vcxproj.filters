@@ -37,12 +37,12 @@
     <Filter Include="Shaders\Bindless">
       <UniqueIdentifier>{375283ac-d6d1-45b2-8b7b-1ac287d4e62d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\SlotBased">
+      <UniqueIdentifier>{c9d188c8-c6c8-44ce-9761-a9e9047303d5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\Cube.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\Mesh.vert">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\Equirect2Cube.frag">
@@ -76,9 +76,6 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\LightCircle.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\Mesh.frag">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\ClusteredForward\AABBGenerator.comp">
@@ -141,6 +138,12 @@
     <None Include="..\Shaders\Bindless\VertexData.glsl">
       <Filter>Shaders\Bindless</Filter>
     </None>
+    <None Include="..\Shaders\SlotBased\Mesh.frag">
+      <Filter>Shaders\SlotBased</Filter>
+    </None>
+    <None Include="..\Shaders\SlotBased\Mesh.vert">
+      <Filter>Shaders\SlotBased</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Camera.h">
@@ -194,7 +197,7 @@
     <ClInclude Include="Header\Apps\AppBase.h">
       <Filter>Header Files\Apps</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Apps\AppPBR.h">
+    <ClInclude Include="Header\Apps\AppPBRBindless.h">
       <Filter>Header Files\Apps</Filter>
     </ClInclude>
     <ClInclude Include="Header\Pipelines\PipelineBase.h">
@@ -221,7 +224,7 @@
     <ClInclude Include="Header\Pipelines\PipelineLightRender.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Pipelines\PipelinePBR.h">
+    <ClInclude Include="Header\Pipelines\PipelinePBRSlotBased.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
     <ClInclude Include="Header\Pipelines\PipelineResolveMS.h">
@@ -287,6 +290,9 @@
     <ClInclude Include="Header\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Apps\AppPBRSlotBased.h">
+      <Filter>Header Files\Apps</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">
@@ -331,7 +337,7 @@
     <ClCompile Include="Source\Apps\AppBase.cpp">
       <Filter>Source Files\Apps</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Apps\AppPBR.cpp">
+    <ClCompile Include="Source\Apps\AppPBRBindless.cpp">
       <Filter>Source Files\Apps</Filter>
     </ClCompile>
     <ClCompile Include="Source\Pipelines\PipelineBase.cpp">
@@ -358,7 +364,7 @@
     <ClCompile Include="Source\Pipelines\PipelineLightRender.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Pipelines\PipelinePBR.cpp">
+    <ClCompile Include="Source\Pipelines\PipelinePBRSlotBased.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
     <ClCompile Include="Source\Pipelines\PipelineResolveMS.cpp">
@@ -411,6 +417,9 @@
     </ClCompile>
     <ClCompile Include="Source\Scene.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Apps\AppPBRSlotBased.cpp">
+      <Filter>Source Files\Apps</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

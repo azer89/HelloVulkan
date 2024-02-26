@@ -1,4 +1,4 @@
-#include "AppPBR.h"
+#include "AppPBRBindless.h"
 #include "Configs.h"
 #include "VulkanUtility.h"
 #include "PipelineEquirect2Cube.h"
@@ -10,12 +10,12 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_volk.h"
 
-AppPBR::AppPBR() :
+AppPBRBindless::AppPBRBindless() :
 	modelRotation_(0.f)
 {
 }
 
-void AppPBR::Init()
+void AppPBRBindless::Init()
 {
 	// Initialize lights
 	InitLights();
@@ -100,7 +100,7 @@ void AppPBR::Init()
 	};
 }
 
-void AppPBR::InitLights()
+void AppPBRBindless::InitLights()
 {
 	// Lights (SSBO)
 	lights_.AddLights(vulkanContext_,
@@ -112,7 +112,7 @@ void AppPBR::InitLights()
 	});
 }
 
-void AppPBR::DestroyResources()
+void AppPBRBindless::DestroyResources()
 {
 	// IBL Images
 	iblResources_.reset();
@@ -134,7 +134,7 @@ void AppPBR::DestroyResources()
 	imguiPtr_.reset();
 }
 
-void AppPBR::UpdateUBOs()
+void AppPBRBindless::UpdateUBOs()
 {
 	CameraUBO ubo = camera_->GetCameraUBO();
 	lightPtr_->SetCameraUBO(vulkanContext_, ubo);
@@ -146,7 +146,7 @@ void AppPBR::UpdateUBOs()
 	skyboxPtr_->SetCameraUBO(vulkanContext_, skyboxUbo);
 }
 
-void AppPBR::UpdateUI()
+void AppPBRBindless::UpdateUI()
 {
 	if (!showImgui_)
 	{
@@ -177,7 +177,7 @@ void AppPBR::UpdateUI()
 }
 
 // This is called from main.cpp
-int AppPBR::MainLoop()
+int AppPBRBindless::MainLoop()
 {
 	InitVulkan({
 		.supportRaytracing_ = false,

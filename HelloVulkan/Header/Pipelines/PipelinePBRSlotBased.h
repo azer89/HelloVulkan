@@ -1,5 +1,5 @@
-#ifndef PIPELINE_PBR
-#define PIPELINE_PBR
+#ifndef PIPELINE_PBR_SLOT_BASED
+#define PIPELINE_PBR_SLOT_BASED
 
 #include "PipelineBase.h"
 #include "VulkanImage.h"
@@ -13,17 +13,17 @@
 /*
 Render meshes using PBR materials, naive forward renderer
 */
-class PipelinePBR final : public PipelineBase
+class PipelinePBRSlotBased final : public PipelineBase
 {
 public:
-	PipelinePBR(VulkanContext& ctx,
+	PipelinePBRSlotBased(VulkanContext& ctx,
 		const std::vector<Model*>& models,
 		Lights* lights,
 		IBLResources* iblResources,
 		VulkanImage* depthImage,
 		VulkanImage* offscreenColorImage,
 		uint8_t renderBit = 0u);
-	 ~PipelinePBR();
+	 ~PipelinePBRSlotBased();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 

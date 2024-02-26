@@ -1,9 +1,12 @@
 #ifndef PIPELINE_PBR_CLUSTER_FORWARD
 #define PIPELINE_PBR_CLUSTER_FORWARD
 
-#include "PipelinePBR.h"
+#include "PipelineBase.h"
 #include "ClusterForwardBuffers.h"
+#include "PushConstants.h"
 #include "IBLResources.h"
+#include "Model.h"
+#include "Light.h"
 
 #include <vector>
 

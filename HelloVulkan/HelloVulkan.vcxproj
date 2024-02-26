@@ -149,17 +149,17 @@
     <None Include="..\Shaders\CubeFilterDiffuse.frag" />
     <None Include="..\Shaders\CubeFilterSpecular.frag" />
     <None Include="..\Shaders\PBRPushConstants.frag" />
+    <None Include="..\Shaders\SlotBased\Mesh.frag" />
+    <None Include="..\Shaders\SlotBased\Mesh.vert" />
     <None Include="..\Shaders\TangentNormalToWorld.frag" />
     <None Include="..\Shaders\Hammersley.frag" />
     <None Include="..\Shaders\LightCircle.frag" />
     <None Include="..\Shaders\LightCircle.vert" />
-    <None Include="..\Shaders\Mesh.frag" />
     <None Include="..\Shaders\PBRHeader.frag" />
     <None Include="..\Shaders\Cube.frag" />
     <None Include="..\Shaders\Cube.vert" />
     <None Include="..\Shaders\Equirect2Cube.frag" />
     <None Include="..\Shaders\FullscreenTriangle.vert" />
-    <None Include="..\Shaders\Mesh.vert" />
     <None Include="..\Shaders\ShadowMapping\Depth.frag" />
     <None Include="..\Shaders\ShadowMapping\Depth.vert" />
     <None Include="..\Shaders\ShadowMapping\Header.frag" />
@@ -173,9 +173,10 @@
   <ItemGroup>
     <ClInclude Include="..\Shaders\ShadowMapping\UBO.frag" />
     <ClInclude Include="Header\Apps\AppBase.h" />
-    <ClInclude Include="Header\Apps\AppPBR.h" />
+    <ClInclude Include="Header\Apps\AppPBRBindless.h" />
     <ClInclude Include="Header\Apps\AppPBRClusterForward.h" />
     <ClInclude Include="Header\Apps\AppPBRShadowMapping.h" />
+    <ClInclude Include="Header\Apps\AppPBRSlotBased.h" />
     <ClInclude Include="Header\Apps\AppSimpleRaytracing.h" />
     <ClInclude Include="Header\Camera.h" />
     <ClInclude Include="Header\ClusterForwardBuffers.h" />
@@ -196,7 +197,7 @@
     <ClInclude Include="Header\Pipelines\PipelineImGui.h" />
     <ClInclude Include="Header\Pipelines\PipelineLightRender.h" />
     <ClInclude Include="Header\Pipelines\PipelineLightCulling.h" />
-    <ClInclude Include="Header\Pipelines\PipelinePBR.h" />
+    <ClInclude Include="Header\Pipelines\PipelinePBRSlotBased.h" />
     <ClInclude Include="Header\Pipelines\PipelinePBRBindless.h" />
     <ClInclude Include="Header\Pipelines\PipelinePBRClusterForward.h" />
     <ClInclude Include="Header\Pipelines\PipelinePBRShadowMapping.h" />
@@ -222,9 +223,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Apps\AppBase.cpp" />
-    <ClCompile Include="Source\Apps\AppPBR.cpp" />
+    <ClCompile Include="Source\Apps\AppPBRBindless.cpp" />
     <ClCompile Include="Source\Apps\AppPBRClusterForward.cpp" />
     <ClCompile Include="Source\Apps\AppPBRShadowMapping.cpp" />
+    <ClCompile Include="Source\Apps\AppPBRSlotBased.cpp" />
     <ClCompile Include="Source\Apps\AppSimpleRaytracing.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\ClusterForwardBuffers.cpp" />
@@ -242,7 +244,7 @@
     <ClCompile Include="Source\Pipelines\PipelineImGui.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineLightRender.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineLightCulling.cpp" />
-    <ClCompile Include="Source\Pipelines\PipelinePBR.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelinePBRSlotBased.cpp" />
     <ClCompile Include="Source\Pipelines\PipelinePBRBindless.cpp" />
     <ClCompile Include="Source\Pipelines\PipelinePBRClusterForward.cpp" />
     <ClCompile Include="Source\Pipelines\PipelinePBRShadowMapping.cpp" />

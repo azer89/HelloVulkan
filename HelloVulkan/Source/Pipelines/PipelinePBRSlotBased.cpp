@@ -1,4 +1,4 @@
-#include "PipelinePBR.h"
+#include "PipelinePBRSlotBased.h"
 #include "VulkanUtility.h"
 #include "Configs.h"
 
@@ -10,7 +10,7 @@ constexpr uint32_t SSBO_COUNT = 1;
 constexpr uint32_t PBR_MESH_TEXTURE_COUNT = 6;
 constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 
-PipelinePBR::PipelinePBR(
+PipelinePBRSlotBased::PipelinePBRSlotBased(
 	VulkanContext& ctx,
 	const std::vector<Model*>& models,
 	Lights* lights,
@@ -61,18 +61,18 @@ PipelinePBR::PipelinePBR(
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
-			AppConfig::ShaderFolder + "Mesh.vert",
-			AppConfig::ShaderFolder + "Mesh.frag"
+			AppConfig::ShaderFolder + "SlotBased//Mesh.vert",
+			AppConfig::ShaderFolder + "SlotBased//Mesh.frag"
 		},
 		&pipeline_
 	);
 }
 
-PipelinePBR::~PipelinePBR()
+PipelinePBRSlotBased::~PipelinePBRSlotBased()
 {
 }
 
-void PipelinePBR::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
+void PipelinePBRSlotBased::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
 	const uint32_t frameIndex = ctx.GetFrameIndex();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
@@ -117,7 +117,7 @@ void PipelinePBR::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandB
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelinePBR::CreateDescriptor(VulkanContext& ctx)
+void PipelinePBRSlotBased::CreateDescriptor(VulkanContext& ctx)
 {
 	uint32_t numMeshes = 0u;
 	for (Model* model : models_)
@@ -168,7 +168,7 @@ void PipelinePBR::CreateDescriptor(VulkanContext& ctx)
 	}
 }
 
-void PipelinePBR::CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh* mesh, const size_t meshIndex)
+void PipelinePBRSlotBased::CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh* mesh, const size_t meshIndex)
 {
 	VkDescriptorImageInfo specularImageInfo = iblResources_->specularCubemap_.GetDescriptorImageInfo();
 	VkDescriptorImageInfo diffuseImageInfo = iblResources_->diffuseCubemap_.GetDescriptorImageInfo();
