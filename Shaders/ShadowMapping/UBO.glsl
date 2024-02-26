@@ -6,6 +6,7 @@ uniform ShadowUBO
 	float shadowMaxBias;
 	float shadowNearPlane;
 	float shadowFarPlane;
+	float pcfScale;
 	uint pcfIteration;
 }
 shadowUBO;

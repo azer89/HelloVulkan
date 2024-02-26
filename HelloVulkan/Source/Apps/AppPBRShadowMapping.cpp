@@ -216,23 +216,26 @@ void AppPBRShadowMapping::UpdateUI()
 	static bool staticLightRender = true;
 	static PushConstantPBR staticPBRPushConstants =
 	{
-		.lightIntensity = 0.5f,
+		.lightIntensity = 1.5f,
 		.baseReflectivity = 0.01f,
+		.maxReflectionLod = 1.f,
 		.lightFalloff = 0.1f,
+		.albedoMultipler = 0.5
 	};
 	static ShadowMapUBO staticShadowUBO =
 	{
 		.shadowMinBias = 0.001f,
 		.shadowMaxBias = 0.001f,
 		.shadowNearPlane = 10.0f,
-		.shadowFarPlane = 40.0f
+		.shadowFarPlane = 40.0f,
+		.pcfScale = 0.5
 	};
 	static float staticLightPos[3] = { -5.f, 30.0f, 5.0f};
-	static int staticPCFIteration = 1;
+	static int staticPCFIteration = 2;
 
 	imguiPtr_->StartImGui();
 
-	ImGui::SetNextWindowSize(ImVec2(525, 500));
+	ImGui::SetNextWindowSize(ImVec2(525, 550));
 	ImGui::Begin(AppConfig::ScreenTitle.c_str());
 	ImGui::SetWindowFontScale(1.25f);
 	
@@ -251,6 +254,7 @@ void AppPBRShadowMapping::UpdateUI()
 	ImGui::SliderFloat("Max Bias", &staticShadowUBO.shadowMaxBias, 0.001f, 0.1f);
 	ImGui::SliderFloat("Near Plane", &staticShadowUBO.shadowNearPlane, 0.1f, 50.0f);
 	ImGui::SliderFloat("Far Plane", &staticShadowUBO.shadowFarPlane, 10.0f, 150.0f);
+	ImGui::SliderFloat("PCF Scale", &staticShadowUBO.pcfScale, 0.1, 1.0);
 	ImGui::SliderInt("PCF Iteration", &staticPCFIteration, 1, 10);
 
 	ImGui::SeparatorText("Light position");
@@ -269,6 +273,7 @@ void AppPBRShadowMapping::UpdateUI()
 	shadowUBO_.shadowMaxBias = staticShadowUBO.shadowMaxBias;
 	shadowUBO_.shadowNearPlane = staticShadowUBO.shadowNearPlane;
 	shadowUBO_.shadowFarPlane = staticShadowUBO.shadowFarPlane;
+	shadowUBO_.pcfScale = staticShadowUBO.pcfScale;
 	shadowUBO_.pcfIteration = staticPCFIteration;
 }
 

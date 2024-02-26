@@ -4,7 +4,7 @@ float TextureProj(vec4 shadowCoord, vec2 off)
 	vec3 lightDir = normalize(shadowUBO.lightPosition.xyz - worldPos);
 	float bias = max(shadowUBO.shadowMaxBias * (1.0 - dot(N, lightDir)), shadowUBO.shadowMinBias);
 
-	float shadow = 0.5;
+	float shadow = 1.0;
 	if (shadowCoord.z >= 0.0 && shadowCoord.z <= 1.0)
 	{
 		float dist = texture(shadowMap, shadowCoord.st + off).r;
@@ -19,7 +19,7 @@ float TextureProj(vec4 shadowCoord, vec2 off)
 float FilterPCF(vec4 sc)
 {
 	ivec2 texDim = textureSize(shadowMap, 0);
-	float scale = 1.0;
+	float scale = shadowUBO.pcfScale;
 	float dx = scale * 1.0 / float(texDim.x);
 	float dy = scale * 1.0 / float(texDim.y);
 
