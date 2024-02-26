@@ -134,16 +134,16 @@ void VulkanContext::GetEnabledFeatures()
 	if (config_.supportBindlessRendering_)
 	{
 		// Needed for gl_BaseInstance
-		shaderDrawFeatures_ =
+		/*shaderDrawFeatures_ =
 		{
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES,
 			.shaderDrawParameters = VK_TRUE
-		};
+		};*/
 
 		descriptorIndexingFeatures_ =
 		{
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT,
-			.pNext = &shaderDrawFeatures_,
+			//.pNext = &shaderDrawFeatures_,
 			.shaderSampledImageArrayNonUniformIndexing = VK_TRUE,
 			.descriptorBindingVariableDescriptorCount = VK_TRUE,
 			.runtimeDescriptorArray = VK_TRUE
@@ -246,7 +246,7 @@ VkResult VulkanContext::CreateDevice()
 		extensions.push_back(VK_KHR_DRAW_INDIRECT_COUNT_EXTENSION_NAME);
 		// Needed for gl_BaseInstance
 		// TODO I'm confused why we need to add this manually
-		//extensions.push_back(VK_KHR_SHADER_DRAW_PARAMETERS_EXTENSION_NAME);
+		extensions.push_back(VK_KHR_SHADER_DRAW_PARAMETERS_EXTENSION_NAME);
 	}
 
 	if (config_.supportRaytracing_)
