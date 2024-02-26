@@ -134,7 +134,7 @@ void PipelineShadow::CreateDescriptor(VulkanContext& ctx)
 		for (size_t j = 0; j < AppConfig::FrameOverlapCount; ++j)
 		{
 			VkDescriptorBufferInfo bufferInfo1 = { shadowMapUBOBuffers_[j].buffer_, 0, sizeof(ShadowMapUBO)};
-			VkDescriptorBufferInfo bufferInfo2 = { models_[i]->modelBuffers_[i].buffer_, 0, sizeof(ModelUBO)};
+			VkDescriptorBufferInfo bufferInfo2 = { models_[i]->modelBuffers_[j].buffer_, 0, sizeof(ModelUBO)};
 
 			descriptor_.CreateSet(
 				ctx,

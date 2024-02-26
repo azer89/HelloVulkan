@@ -4,7 +4,7 @@ float TextureProj(vec4 shadowCoord, vec2 off)
 	vec3 lightDir = normalize(shadowUBO.lightPosition.xyz - worldPos);
 	float bias = max(shadowUBO.shadowMaxBias * (1.0 - dot(N, lightDir)), shadowUBO.shadowMinBias);
 
-	float shadow = 1.0;
+	float shadow = 0.5;
 	if (shadowCoord.z >= 0.0 && shadowCoord.z <= 1.0)
 	{
 		float dist = texture(shadowMap, shadowCoord.st + off).r;

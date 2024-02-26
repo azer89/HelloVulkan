@@ -49,6 +49,7 @@ private:
 	std::unique_ptr<PipelineImGui> imguiPtr_;
 
 	std::unique_ptr<Model> sponzaModel_;
+	std::unique_ptr<Model> hexapodModel_;
 	std::unique_ptr<Model> tachikomaModel_;
 
 	Lights lights_;

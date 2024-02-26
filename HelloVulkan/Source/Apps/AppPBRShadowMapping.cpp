@@ -44,7 +44,10 @@ void AppPBRShadowMapping::Init()
 	tachikomaModel_ = std::make_unique<Model>();
 	tachikomaModel_->LoadSlotBased(vulkanContext_,
 		AppConfig::ModelFolder + "Tachikoma//Tachikoma.gltf");
-	std::vector<Model*> models = {sponzaModel_.get(), tachikomaModel_.get()};
+	hexapodModel_ = std::make_unique<Model>();
+	hexapodModel_->LoadSlotBased(vulkanContext_,
+		AppConfig::ModelFolder + "Hexapod//Hexapod.gltf");
+	std::vector<Model*> models = {sponzaModel_.get(), tachikomaModel_.get(), hexapodModel_.get()};
 
 	// Pipelines
 	// This is responsible to clear swapchain image
@@ -116,10 +119,10 @@ void AppPBRShadowMapping::InitLights()
 		{ .color_ = glm::vec4(1.f), .radius_ = 1.0f },
 
 		// Add additional lights so that the scene is not too dark
-		{.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
-		{.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
-		{.position_ = glm::vec4(-1.5f, 0.7f, -1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
-		{.position_ = glm::vec4(1.5f, 0.7f, -1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f }
+		{.position_ = glm::vec4(-1.5f, 2.5f,  5.f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
+		{.position_ = glm::vec4(1.5f, 2.5f,  5.f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
+		{.position_ = glm::vec4(-1.5f, 2.5f, -5.f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
+		{.position_ = glm::vec4(1.5f, 2.5f, -5.f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f }
 	});
 }
 
@@ -135,6 +138,8 @@ void AppPBRShadowMapping::DestroyResources()
 	sponzaModel_.reset();
 	tachikomaModel_->Destroy();
 	tachikomaModel_.reset();
+	hexapodModel_->Destroy();
+	hexapodModel_.reset();
 
 	// Lights
 	lights_.Destroy();
@@ -172,12 +177,22 @@ void AppPBRShadowMapping::UpdateUBOs()
 
 	// Tachikoma
 	modelMatrix = glm::mat4(1.f);
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.15f, 0.35f, 1.5f));
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.5f, 0.62f, 0.f));
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.7f, 0.7f, 0.7f));
 	tachikomaModel_->SetModelUBO(vulkanContext_, 
 	{
 		.model = modelMatrix
 	});
+
+	// Hexapod
+	modelMatrix = glm::mat4(1.f);
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.62f, -1.5f));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f));
+	hexapodModel_->SetModelUBO(vulkanContext_,
+		{
+			.model = modelMatrix
+		});
 
 	// Shadow mapping
 	LightData light = lights_.lights_[0];
@@ -209,10 +224,10 @@ void AppPBRShadowMapping::UpdateUI()
 	{
 		.shadowMinBias = 0.001f,
 		.shadowMaxBias = 0.001f,
-		.shadowNearPlane = 15.0f,
-		.shadowFarPlane = 50.0f
+		.shadowNearPlane = 10.0f,
+		.shadowFarPlane = 40.0f
 	};
-	static float staticLightPos[3] = { -5.f, 45.0f, 5.0f};
+	static float staticLightPos[3] = { -5.f, 30.0f, 5.0f};
 	static int staticPCFIteration = 1;
 
 	imguiPtr_->StartImGui();
@@ -240,7 +255,7 @@ void AppPBRShadowMapping::UpdateUI()
 
 	ImGui::SeparatorText("Light position");
 	ImGui::SliderFloat("X", &(staticLightPos[0]), -10.0f, 10.0f);
-	ImGui::SliderFloat("Y", &(staticLightPos[1]), 40.0f, 70.0f);
+	ImGui::SliderFloat("Y", &(staticLightPos[1]), 20.0f, 60.0f);
 	ImGui::SliderFloat("Z", &(staticLightPos[2]), -10.0f, 10.0f);
 
 	imguiPtr_->EndImGui();
