@@ -15,28 +15,63 @@ inline glm::mat4 CastToGLMMat4(const aiMatrix4x4& m)
 	return glm::transpose(glm::make_mat4(&m.a1));
 }
 
-Model::Model(VulkanContext& ctx, const std::string& path) :
-	device_(ctx.GetDevice())
+void Model::LoadSlotBased(VulkanContext& ctx, const std::string& path)
 {
+	bindless_ = false;
+
 	// In case a texture type cannot be found, replace it with a black 1x1 texture
 	unsigned char black[4] = { 0, 0, 0, 255 };
 	AddTexture(ctx, BLACK_TEXTURE, (void*)&black, 1, 1);
 
 	// Load model here
-	LoadModel(ctx, path);
+	uint32_t tempVertexOffset = 0u;
+	uint32_t tempIndexOffset = 0u;
+	std::vector<VertexData> tempVertices;
+	std::vector<uint32_t> tempIndices;
+	LoadModel(
+		ctx, 
+		path, 
+		tempVertices, 
+		tempIndices,
+		tempVertexOffset,
+		tempIndexOffset);
 
-	// Bindless rendering
-	//CreateBuffers(ctx);
+	// Slot-based rendering
+	CreateModelUBOBuffers(ctx);
 }
 
-Model::~Model()
+void Model::LoadBindless(
+	VulkanContext& ctx, 
+	const std::string& path,
+	std::vector<VertexData>& globalVertices,
+	std::vector<uint32_t>& globalIndices,
+	uint32_t& globalVertexOffset,
+	uint32_t& globalIndexOffset)
+{
+	bindless_ = true;
+
+	// In case a texture type cannot be found, replace it with a black 1x1 texture
+	unsigned char black[4] = { 0, 0, 0, 255 };
+	AddTexture(ctx, BLACK_TEXTURE, (void*)&black, 1, 1);
+
+	// Load model here
+	LoadModel(
+		ctx,
+		path,
+		globalVertices,
+		globalIndices, 
+		globalVertexOffset, 
+		globalIndexOffset);
+}
+
+void Model::Destroy()
 {
 	for (Mesh& mesh : meshes_)
 	{
 		mesh.Destroy();
 	}
 
-	for (auto buffer : modelBuffers_)
+	for (auto& buffer : modelBuffers_)
 	{
 		buffer.Destroy();
 	}
@@ -45,28 +80,27 @@ Model::~Model()
 	{
 		tex.Destroy();
 	}
-
-	vertexBuffer_.Destroy();
-	indexBuffer_.Destroy();
 }
 
-void Model::CreateBuffers(VulkanContext& ctx)
+void Model::CreateModelUBOBuffers(VulkanContext& ctx)
 {
-	vertexBufferSize_ = static_cast<VkDeviceSize>(sizeof(VertexData) * vertices_.size());
-	vertexBuffer_.CreateGPUOnlyBuffer(
-		ctx,
-		vertexBufferSize_,
-		vertices_.data(),
-		VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
-	);
+	uint32_t frameCount = AppConfig::FrameOverlapCount;
+	modelBuffers_.resize(frameCount);
+	for (uint32_t i = 0; i < frameCount; ++i)
+	{
+		modelBuffers_[i].CreateBuffer(
+			ctx,
+			sizeof(ModelUBO),
+			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+			VMA_MEMORY_USAGE_CPU_TO_GPU
+		);
+	}
+}
 
-	indexBufferSize_ = static_cast<VkDeviceSize>(sizeof(uint32_t) * indices_.size());
-	indexBuffer_.CreateGPUOnlyBuffer(
-		ctx,
-		indexBufferSize_,
-		indices_.data(),
-		VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
-	);
+void Model::SetModelUBO(VulkanContext& ctx, ModelUBO ubo)
+{
+	uint32_t frameIndex = ctx.GetFrameIndex();
+	modelBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ModelUBO));
 }
 
 void Model::AddTexture(VulkanContext& ctx, const std::string& textureFilename)
@@ -100,19 +134,18 @@ VulkanImage* Model::GetTexture(uint32_t textureIndex)
 
 void Model::AddTextureIfEmpty(TextureType tType, const std::string& filePath)
 {
-	// TODO add to textureMap_
-
-	for (Mesh& mesh : meshes_)
-	{
-		//mesh.AddTextureIfEmpty(tType, filePath);
-	}
+	// TODO
 }
 
 // Loads a model with supported ASSIMP extensions from file and 
 // stores the resulting meshes in the meshes vector.
-void Model::LoadModel(VulkanContext& ctx, std::string const& path)
+void Model::LoadModel(VulkanContext& ctx, 
+	std::string const& path,
+	std::vector<VertexData>& globalVertices,
+	std::vector<uint32_t>& globalIndices,
+	uint32_t& globalVertexOffset,
+	uint32_t& globalIndexOffset)
 {
-	// Read file via ASSIMP
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(
 		path, 
@@ -123,24 +156,32 @@ void Model::LoadModel(VulkanContext& ctx, std::string const& path)
 	// Check for errors
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
 	{
-		std::cerr << "Error ASSIMP:: " << importer.GetErrorString() << '\n';
+		std::cerr << "Error ASSIMP: " << importer.GetErrorString() << '\n';
 		return;
 	}
 
 	// Retrieve the directory path of the filepath
 	directory_ = path.substr(0, path.find_last_of('/'));
 
-	// Process ASSIMP's root node recursively
-	uint32_t vertexOffset = 0u;
-	uint32_t indexOffset = 0u;
-	ProcessNode(ctx, vertexOffset, indexOffset, scene->mRootNode, scene, glm::mat4(1.0));
+	// Process assimp's root node recursively
+	ProcessNode(
+		ctx, 
+		globalVertices,
+		globalIndices,
+		globalVertexOffset, 
+		globalIndexOffset, 
+		scene->mRootNode, 
+		scene, 
+		glm::mat4(1.0));
 }
 
 // Processes a node in a recursive fashion.
 void Model::ProcessNode(
 	VulkanContext& ctx, 
-	uint32_t& vertexOffset,
-	uint32_t& indexOffset,
+	std::vector<VertexData>& globalVertices,
+	std::vector<uint32_t>& globalIndices,
+	uint32_t& globalVertexOffset,
+	uint32_t& globalIndexOffset,
 	aiNode* node, 
 	const aiScene* scene, 
 	const glm::mat4& parentTransform)
@@ -152,19 +193,37 @@ void Model::ProcessNode(
 	for (unsigned int i = 0; i < node->mNumMeshes; ++i)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		ProcessMesh(ctx, vertexOffset, indexOffset, mesh, scene, totalTransform);
+		ProcessMesh(
+			ctx, 
+			globalVertices, 
+			globalIndices, 
+			globalVertexOffset, 
+			globalIndexOffset, 
+			mesh, 
+			scene, 
+			totalTransform);
 	}
 	// After we've processed all of the meshes (if any) we then recursively process each of the children nodes
 	for (unsigned int i = 0; i < node->mNumChildren; ++i)
 	{
-		ProcessNode(ctx, vertexOffset, indexOffset, node->mChildren[i], scene, totalTransform);
+		ProcessNode(
+			ctx, 
+			globalVertices,
+			globalIndices,
+			globalVertexOffset,
+			globalIndexOffset, 
+			node->mChildren[i], 
+			scene, 
+			totalTransform);
 	}
 }
 
 void Model::ProcessMesh(
 	VulkanContext& ctx, 
-	uint32_t& vertexOffset,
-	uint32_t& indexOffset,
+	std::vector<VertexData>& globalVertices,
+	std::vector<uint32_t>& globalIndices,
+	uint32_t& globalVertexOffset,
+	uint32_t& globalIndexOffset,
 	aiMesh* mesh, 
 	const aiScene* scene, 
 	const glm::mat4& transform)
@@ -285,21 +344,36 @@ void Model::ProcessMesh(
 	uint32_t vOffset = static_cast<uint32_t>(vertices.size());
 	uint32_t iOffset = static_cast<uint32_t>(indices.size());
 
-	// Copy vertices and indices
-	vertices_.insert(std::end(vertices_), std::begin(vertices), std::end(vertices));
-	indices_.insert(std::end(indices_), std::begin(indices), std::end(indices));
+	// TODO This if-else statement is kinda dirty
+	if (bindless_)
+	{
+		globalVertices.insert(std::end(globalVertices), std::begin(vertices), std::end(vertices));
+		globalIndices.insert(std::end(globalIndices), std::begin(indices), std::end(indices));
 
-	// Create a mesh
-	meshes_.emplace_back(
-		ctx,
-		vertexOffset,
-		indexOffset,
-		std::move(vertices),
-		std::move(indices),
-		std::move(textures)
-	);
+		// If Bindless, we do not move vertices and indices
+		meshes_.push_back({});
+		meshes_.back().InitBindless(
+			ctx,
+			globalVertexOffset,
+			globalIndexOffset,
+			static_cast<uint32_t>(indices.size()),
+			std::move(textures));
 
-	// Update offsets
-	vertexOffset += vOffset;
-	indexOffset += iOffset;
+		// Update offsets
+		globalVertexOffset += vOffset;
+		globalIndexOffset += iOffset;
+	}
+	else
+	{
+		meshes_.push_back({});
+		// If Slot-based we move vertices and indices
+		meshes_.back().InitSlotBased(
+			ctx,
+			globalVertexOffset,
+			globalIndexOffset,
+			std::move(vertices),
+			std::move(indices),
+			std::move(textures)
+		);
+	}
 }

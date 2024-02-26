@@ -1,10 +1,9 @@
 #ifndef VULKAN_BUFFER
 #define VULKAN_BUFFER
 
-#include "volk.h"
-#include "vk_mem_alloc.h"
-
 #include "VulkanContext.h"
+
+#include "vk_mem_alloc.h"
 
 class VulkanBuffer
 {
@@ -18,13 +17,16 @@ public:
 
 	VmaAllocator vmaAllocator_;
 
+private:
+	bool isIndirectBuffer_;
+
 public:
 	VulkanBuffer() :
 		buffer_(nullptr),
-		vmaAllocator_(nullptr),
 		vmaAllocation_(nullptr),
+		vmaInfo_({}),
 		deviceAddress_(0),
-		vmaInfo_({})
+		vmaAllocator_(nullptr)
 	{
 	}
 
@@ -42,6 +44,14 @@ public:
 		VkBufferUsageFlags bufferUsage,
 		VmaMemoryUsage memoryUsage,
 		VmaAllocationCreateFlags flags = VMA_ALLOCATION_CREATE_MAPPED_BIT); // Not sure want to keep this default value
+
+	void CreateIndirectBuffer(
+		VulkanContext& ctx,
+		VkDeviceSize size);
+	
+	VkDrawIndirectCommand* MapIndirectBuffer();
+
+	void UnmapIndirectBuffer();
 
 	void CreateBufferWithShaderDeviceAddress(VulkanContext& ctx,
 		VkDeviceSize size,

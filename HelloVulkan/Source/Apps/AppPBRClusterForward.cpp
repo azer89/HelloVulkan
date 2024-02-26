@@ -30,8 +30,9 @@ void AppPBRClusterForward::Init()
 	cfBuffers_ = std::make_unique<ClusterForwardBuffers>();
 	cfBuffers_->CreateBuffers(vulkanContext_, lights_.GetLightCount());
 
-	model_ = std::make_unique<Model>(
-		vulkanContext_, 
+	// glTF model
+	model_ = std::make_unique<Model>();
+	model_->LoadSlotBased(vulkanContext_, 
 		AppConfig::ModelFolder + "Sponza//Sponza.gltf");
 	std::vector<Model*> models = { model_.get()};
 
@@ -141,6 +142,7 @@ void AppPBRClusterForward::DestroyResources()
 	iblResources_.reset();
 
 	// Destroy meshes
+	model_->Destroy();
 	model_.reset();
 
 	// Lights

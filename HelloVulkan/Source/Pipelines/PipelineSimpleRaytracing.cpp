@@ -36,7 +36,7 @@ PipelineSimpleRaytracing::~PipelineSimpleRaytracing()
 
 void PipelineSimpleRaytracing::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
-	VkPhysicalDeviceRayTracingPipelinePropertiesKHR properties = ctx.GetRayTracingPipelineProperties();
+	const VkPhysicalDeviceRayTracingPipelinePropertiesKHR properties = ctx.GetRayTracingPipelineProperties();
 
 	const uint32_t handleSizeAligned = Utility::AlignedSize(properties.shaderGroupHandleSize, properties.shaderGroupHandleAlignment);
 
@@ -62,7 +62,7 @@ void PipelineSimpleRaytracing::FillCommandBuffer(VulkanContext& ctx, VkCommandBu
 	};
 	VkStridedDeviceAddressRegionKHR callableShaderSbtEntry{};
 
-	uint32_t frameIndex = ctx.GetFrameIndex();
+	const uint32_t frameIndex = ctx.GetFrameIndex();
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, pipeline_);
 	vkCmdBindDescriptorSets(
 		commandBuffer, 
@@ -82,7 +82,7 @@ void PipelineSimpleRaytracing::FillCommandBuffer(VulkanContext& ctx, VkCommandBu
 		ctx.GetSwapchainHeight(),
 		1);
 
-	uint32_t swapchainIndex = ctx.GetCurrentSwapchainImageIndex();
+	const uint32_t swapchainIndex = ctx.GetCurrentSwapchainImageIndex();
 
 	VulkanImage::TransitionImageLayoutCommand(
 		commandBuffer,
@@ -156,24 +156,24 @@ void PipelineSimpleRaytracing::CreateDescriptor(VulkanContext& ctx)
 	descriptor_.CreateLayout(ctx,
 	{
 		{
-			.descriptorType_ = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
+			.type_ = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
 			.shaderFlags_ = VK_SHADER_STAGE_RAYGEN_BIT_KHR,
 			.bindingCount_ = 1
 		},
 		{
-			.descriptorType_ = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
+			.type_ = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
 			.shaderFlags_ = VK_SHADER_STAGE_RAYGEN_BIT_KHR,
 			.bindingCount_ = 1
 		},
 		{
-			.descriptorType_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+			.type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 			.shaderFlags_ = VK_SHADER_STAGE_RAYGEN_BIT_KHR,
 			.bindingCount_ = 1
 		}
 	});
 
 	// Allocate descriptor sets
-	auto frameCount = AppConfig::FrameOverlapCount;
+	const auto frameCount = AppConfig::FrameOverlapCount;
 	for (size_t i = 0; i < frameCount; i++)
 	{
 		descriptor_.AllocateSet(ctx, &(descriptorSets_[i]));
@@ -186,7 +186,7 @@ void PipelineSimpleRaytracing::CreateDescriptor(VulkanContext& ctx)
 void PipelineSimpleRaytracing::UpdateDescriptor(VulkanContext& ctx)
 {
 	// Sets
-	auto frameCount = AppConfig::FrameOverlapCount;
+	constexpr auto frameCount = AppConfig::FrameOverlapCount;
 
 	VkWriteDescriptorSetAccelerationStructureKHR asInfo =
 	{

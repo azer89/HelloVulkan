@@ -27,10 +27,21 @@ void AppPBR::Init()
 	InitIBLResources(AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
-	model_ = std::make_unique<Model>(
-		vulkanContext_, 
-		AppConfig::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
-	std::vector<Model*> models = { model_.get()};
+	// Scene
+	std::vector<std::string> modelFiles = { 
+		AppConfig::ModelFolder + "Sponza//Sponza.gltf",
+		AppConfig::ModelFolder + "Tachikoma//Tachikoma.gltf",
+	};
+	scene_ = std::make_unique<Scene>(vulkanContext_, modelFiles);
+
+	// Tachikoma model matrix
+	glm::mat4 modelMatrix(1.f);
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.5f, 0.62f, 0.f));
+	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
+	{
+		scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, i, 1);
+	}
 
 	// Pipelines
 	// This is responsible to clear swapchain image
@@ -47,9 +58,9 @@ void AppPBR::Init()
 		RenderPassBit::ColorClear | 
 		RenderPassBit::DepthClear
 	);
-	pbrPtr_ = std::make_unique<PipelinePBR>(
+	pbrPtr_ = std::make_unique<PipelinePBRBindless>(
 		vulkanContext_,
-		models,
+		scene_.get(),
 		&lights_,
 		iblResources_.get(),
 		&depthImage_,
@@ -107,7 +118,7 @@ void AppPBR::DestroyResources()
 	iblResources_.reset();
 
 	// Destroy meshes
-	model_.reset();
+	scene_.reset();
 
 	// Lights
 	lights_.Destroy();
@@ -133,17 +144,6 @@ void AppPBR::UpdateUBOs()
 	CameraUBO skyboxUbo = ubo;
 	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view));
 	skyboxPtr_->SetCameraUBO(vulkanContext_, skyboxUbo);
-
-	// Model UBOs
-	glm::mat4 modelMatrix(1.f);
-	modelMatrix = glm::rotate(modelMatrix, modelRotation_, glm::vec3(0.f, 1.f, 0.f));
-	//modelRotation_ += deltaTime_ * 0.1f;
-
-	ModelUBO modelUBO1
-	{
-		.model = modelMatrix
-	};
-	model_->SetModelUBO(vulkanContext_, modelUBO1);
 }
 
 void AppPBR::UpdateUI()
@@ -181,7 +181,8 @@ int AppPBR::MainLoop()
 {
 	InitVulkan({
 		.supportRaytracing_ = false,
-		.supportMSAA_ = true
+		.supportMSAA_ = true,
+		.supportBindlessRendering_ = true,
 	});
 	Init();
 

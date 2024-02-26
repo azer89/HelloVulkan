@@ -37,8 +37,8 @@ void PipelineTonemap::OnWindowResized(VulkanContext& ctx)
 
 void PipelineTonemap::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
-	uint32_t frameIndex = ctx.GetFrameIndex();
-	uint32_t swapchainImageIndex = ctx.GetCurrentSwapchainImageIndex();
+	const uint32_t frameIndex = ctx.GetFrameIndex();
+	const uint32_t swapchainImageIndex = ctx.GetCurrentSwapchainImageIndex();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));
 	BindPipeline(ctx, commandBuffer);
 	vkCmdBindDescriptorSets(
@@ -71,7 +71,7 @@ void PipelineTonemap::CreateDescriptor(VulkanContext& ctx)
 	descriptor_.CreateLayout(ctx,
 	{
 		{
-			.descriptorType_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
 			.bindingCount_ = 1
 		}
@@ -84,7 +84,7 @@ void PipelineTonemap::CreateDescriptor(VulkanContext& ctx)
 
 void PipelineTonemap::AllocateDescriptorSets(VulkanContext& ctx)
 {
-	auto frameCount = AppConfig::FrameOverlapCount;
+	constexpr auto frameCount = AppConfig::FrameOverlapCount;
 
 	for (size_t i = 0; i < frameCount; i++)
 	{
@@ -96,7 +96,7 @@ void PipelineTonemap::UpdateDescriptorSets(VulkanContext& ctx)
 {
 	VkDescriptorImageInfo imageInfo = singleSampledColorImage_->GetDescriptorImageInfo();
 
-	auto frameCount = AppConfig::FrameOverlapCount;
+	constexpr auto frameCount = AppConfig::FrameOverlapCount;
 	for (size_t i = 0; i < frameCount; ++i)
 	{
 		descriptor_.UpdateSet(

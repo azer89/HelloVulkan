@@ -135,6 +135,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="..\Shaders\Bindless\Scene.frag" />
+    <None Include="..\Shaders\Bindless\Scene.vert" />
+    <None Include="..\Shaders\Bindless\MeshData.frag" />
+    <None Include="..\Shaders\Bindless\VertexData.frag" />
     <None Include="..\Shaders\BRDFLUT.comp" />
     <None Include="..\Shaders\CameraUBO.frag" />
     <None Include="..\Shaders\ClusteredForward\AABBGenerator.comp" />
@@ -193,6 +197,7 @@
     <ClInclude Include="Header\Pipelines\PipelineLightRender.h" />
     <ClInclude Include="Header\Pipelines\PipelineLightCulling.h" />
     <ClInclude Include="Header\Pipelines\PipelinePBR.h" />
+    <ClInclude Include="Header\Pipelines\PipelinePBRBindless.h" />
     <ClInclude Include="Header\Pipelines\PipelinePBRClusterForward.h" />
     <ClInclude Include="Header\Pipelines\PipelinePBRShadowMapping.h" />
     <ClInclude Include="Header\Pipelines\PipelineResolveMS.h" />
@@ -202,6 +207,7 @@
     <ClInclude Include="Header\Pipelines\PipelineTonemap.h" />
     <ClInclude Include="Header\PushConstants.h" />
     <ClInclude Include="Header\AccelerationStructure.h" />
+    <ClInclude Include="Header\Scene.h" />
     <ClInclude Include="Header\TextureMapper.h" />
     <ClInclude Include="Header\UBO.h" />
     <ClInclude Include="Header\VulkanBuffer.h" />
@@ -237,6 +243,7 @@
     <ClCompile Include="Source\Pipelines\PipelineLightRender.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineLightCulling.cpp" />
     <ClCompile Include="Source\Pipelines\PipelinePBR.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelinePBRBindless.cpp" />
     <ClCompile Include="Source\Pipelines\PipelinePBRClusterForward.cpp" />
     <ClCompile Include="Source\Pipelines\PipelinePBRShadowMapping.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineResolveMS.cpp" />
@@ -245,6 +252,7 @@
     <ClCompile Include="Source\Pipelines\PipelineSkybox.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineTonemap.cpp" />
     <ClCompile Include="Source\AccelerationStructure.cpp" />
+    <ClCompile Include="Source\Scene.cpp" />
     <ClCompile Include="Source\VulkanBuffer.cpp" />
     <ClCompile Include="Source\VulkanDescriptor.cpp" />
     <ClCompile Include="Source\VulkanContext.cpp" />

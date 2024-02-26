@@ -1,24 +1,28 @@
 #ifndef VULKAN_DESCRIPTOR
 #define VULKAN_DESCRIPTOR
 
-#include "volk.h"
-
 #include "VulkanContext.h"
 
 #include <vector>
 
-struct DescriptorBinding
+// For creating descriptor layout
+struct DescriptorLayoutBinding
 {
-	VkDescriptorType descriptorType_;
+	VkDescriptorType type_;
 	VkShaderStageFlags shaderFlags_;
-	uint32_t bindingCount_;
+	uint32_t descriptorCount_ = 1u;
+	uint32_t bindingCount_ = 1u;
 };
 
-struct DescriptorWrite
+// FOr creating descriptor set
+struct DescriptorSetWrite
 {
+	// pNext_ is for raytracing pipeline
 	void* pNext_ = nullptr;
 	VkDescriptorImageInfo* imageInfoPtr_ = nullptr;
 	VkDescriptorBufferInfo* bufferInfoPtr_ = nullptr;
+	// If you have an array of buffers/images, descriptorCount_ must be bigger than one
+	uint32_t descriptorCount_ = 1u;
 	VkDescriptorType type_;
 };
 
@@ -46,13 +50,13 @@ public:
 		DescriptorPoolCreateInfo createInfo);
 
 	void CreateLayout(VulkanContext& ctx, 
-		const std::vector<DescriptorBinding>& bindings);
+		const std::vector<DescriptorLayoutBinding>& bindings);
 
-	void CreateSet(VulkanContext& ctx, const std::vector<DescriptorWrite>& writes, VkDescriptorSet* set);
+	void CreateSet(VulkanContext& ctx, const std::vector<DescriptorSetWrite>& writes, VkDescriptorSet* set);
 
 	void AllocateSet(VulkanContext& ctx, VkDescriptorSet* set);
 
-	void UpdateSet(VulkanContext& ctx, const std::vector<DescriptorWrite>& writes, VkDescriptorSet* set);
+	void UpdateSet(VulkanContext& ctx, const std::vector<DescriptorSetWrite>& writes, VkDescriptorSet* set);
 
 	void Destroy();
 
@@ -61,11 +65,11 @@ public:
 	VkDescriptorSetLayout layout_ = nullptr;
 
 private:
-	VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(
+	VkDescriptorSetLayoutBinding CreateDescriptorSetLayoutBinding(
 		uint32_t binding,
 		VkDescriptorType descriptorType,
 		VkShaderStageFlags stageFlags,
-		uint32_t descriptorCount = 1);
+		uint32_t descriptorCount);
 
 private:
 	VkDevice device_ = nullptr;

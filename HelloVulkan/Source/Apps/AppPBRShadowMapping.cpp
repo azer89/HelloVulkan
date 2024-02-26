@@ -37,11 +37,12 @@ void AppPBRShadowMapping::Init()
 	InitIBLResources(AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
-	sponzaModel_ = std::make_unique<Model>(
-		vulkanContext_, 
+	// Models
+	sponzaModel_ = std::make_unique<Model>();
+	sponzaModel_->LoadSlotBased(vulkanContext_,
 		AppConfig::ModelFolder + "Sponza//Sponza.gltf");
-	tachikomaModel_ = std::make_unique<Model>(
-		vulkanContext_,
+	tachikomaModel_ = std::make_unique<Model>();
+	tachikomaModel_->LoadSlotBased(vulkanContext_,
 		AppConfig::ModelFolder + "Tachikoma//Tachikoma.gltf");
 	std::vector<Model*> models = {sponzaModel_.get(), tachikomaModel_.get()};
 
@@ -130,7 +131,9 @@ void AppPBRShadowMapping::DestroyResources()
 	iblResources_.reset();
 
 	// Destroy meshes
+	sponzaModel_->Destroy();
 	sponzaModel_.reset();
+	tachikomaModel_->Destroy();
 	tachikomaModel_.reset();
 
 	// Lights

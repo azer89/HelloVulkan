@@ -2,16 +2,14 @@
 #define APP_PBR
 
 #include "AppBase.h"
-#include "VulkanImage.h"
 #include "Light.h"
-#include "Model.h"
-#include "IBLResources.h"
+#include "Scene.h"
 
 // Pipelines
 #include "PipelineSkybox.h"
 #include "PipelineClear.h"
 #include "PipelineFinish.h"
-#include "PipelinePBR.h"
+#include "PipelinePBRBindless.h"
 #include "PipelineTonemap.h"
 #include "PipelineResolveMS.h"
 #include "PipelineLightRender.h"
@@ -39,15 +37,14 @@ public:
 private:
 	std::unique_ptr<PipelineClear> clearPtr_;
 	std::unique_ptr<PipelineSkybox> skyboxPtr_;
-	
-	std::unique_ptr<PipelinePBR> pbrPtr_;
+	std::unique_ptr<PipelinePBRBindless> pbrPtr_;
 	std::unique_ptr<PipelineTonemap> tonemapPtr_;
 	std::unique_ptr<PipelineFinish> finishPtr_;
 	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;
 	std::unique_ptr<PipelineLightRender> lightPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
 
-	std::unique_ptr<Model> model_;
+	std::unique_ptr<Scene> scene_;
 	Lights lights_;
 
 	float cubemapMipmapCount_;

@@ -52,7 +52,7 @@ private:
 		std::vector<std::vector<VkImageView>>& outputCubemapViews,
 		uint32_t numMip);
 
-	void CreateOffsreenGraphicsPipeline(
+	void CreateOffscreenGraphicsPipeline(
 		VulkanContext& ctx,
 		VkRenderPass renderPass,
 		VkPipelineLayout pipelineLayout,

@@ -3,7 +3,6 @@
 #include "Configs.h"
 
 #include <vector>
-#include <array>
 
 // Constants
 constexpr uint32_t UBO_COUNT = 2;
@@ -13,7 +12,7 @@ constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 
 PipelinePBR::PipelinePBR(
 	VulkanContext& ctx,
-	std::vector<Model*> models,
+	const std::vector<Model*>& models,
 	Lights* lights,
 	IBLResources* iblResources,
 	VulkanImage* depthImage,
@@ -26,18 +25,12 @@ PipelinePBR::PipelinePBR(
 			.vertexBufferBind_ = true,
 		}
 	),
-	models_(models),
 	lights_(lights),
-	iblResources_(iblResources)
+	iblResources_(iblResources),
+	models_(models)
 {
 	// Per frame UBO
 	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
-	
-	// Model UBO
-	for (Model* model : models_)
-	{
-		CreateMultipleUniformBuffers(ctx, model->modelBuffers_, sizeof(ModelUBO), AppConfig::FrameOverlapCount);
-	}
 
 	// Note that this pipeline is offscreen rendering
 	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
@@ -54,7 +47,7 @@ PipelinePBR::PipelinePBR(
 	CreateDescriptor(ctx);
 
 	// Push constants
-	std::vector<VkPushConstantRange> ranges =
+	const std::vector<VkPushConstantRange> ranges =
 	{{
 		.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
 		.offset = 0u,
@@ -81,7 +74,7 @@ PipelinePBR::~PipelinePBR()
 
 void PipelinePBR::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
-	uint32_t frameIndex = ctx.GetFrameIndex();
+	const uint32_t frameIndex = ctx.GetFrameIndex();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
 
 	BindPipeline(ctx, commandBuffer);
@@ -136,9 +129,9 @@ void PipelinePBR::CreateDescriptor(VulkanContext& ctx)
 	descriptor_.CreatePool(
 		ctx,
 		{
-			.uboCount_ = UBO_COUNT * static_cast<uint32_t>(models_.size()),
+			.uboCount_ = UBO_COUNT,
 			.ssboCount_ = SSBO_COUNT,
-			.samplerCount_ = (PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT) * numMeshes,
+			.samplerCount_ = PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT,
 			.frameCount_ = AppConfig::FrameOverlapCount,
 			.setCountPerFrame_ = numMeshes,
 		});
@@ -147,17 +140,17 @@ void PipelinePBR::CreateDescriptor(VulkanContext& ctx)
 	descriptor_.CreateLayout(ctx,
 	{
 		{
-			.descriptorType_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+			.type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 			.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
 			.bindingCount_ = 2
 		},
 		{
-			.descriptorType_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+			.type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
 			.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
 			.bindingCount_ = 1
 		},
 		{
-			.descriptorType_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
 			.bindingCount_ = PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT
 		}
@@ -192,7 +185,7 @@ void PipelinePBR::CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Me
 		meshTextureInfos[typeIndex] = texture->GetDescriptorImageInfo();
 	}
 
-	size_t frameCount = AppConfig::FrameOverlapCount;
+	constexpr size_t frameCount = AppConfig::FrameOverlapCount;
 	descriptorSets_[meshIndex].resize(frameCount);
 
 	for (size_t i = 0; i < frameCount; i++)
@@ -201,14 +194,14 @@ void PipelinePBR::CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Me
 		VkDescriptorBufferInfo bufferInfo2 = { parentModel->modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
 		VkDescriptorBufferInfo bufferInfo3 = { lights_->GetSSBOBuffer(), 0, lights_->GetSSBOSize() };
 
-		std::vector<DescriptorWrite> writes;
+		std::vector<DescriptorSetWrite> writes;
 
 		writes.push_back({ .bufferInfoPtr_ = &bufferInfo1, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
 		writes.push_back({ .bufferInfoPtr_ = &bufferInfo2, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
 		writes.push_back({ .bufferInfoPtr_ = &bufferInfo3, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-		for (size_t i = 0; i < meshTextureInfos.size(); ++i)
+		for (auto& textureInfo : meshTextureInfos)
 		{
-			writes.push_back({ .imageInfoPtr_ = &meshTextureInfos[i], .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
+			writes.push_back({ .imageInfoPtr_ = &textureInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
 		}
 		writes.push_back({ .imageInfoPtr_ = &specularImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
 		writes.push_back({ .imageInfoPtr_ = &diffuseImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });

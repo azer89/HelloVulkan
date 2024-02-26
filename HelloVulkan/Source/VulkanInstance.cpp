@@ -18,7 +18,6 @@ void VulkanInstance::Create()
 		"VK_KHR_surface",
 		"VK_KHR_win32_surface", // This project only works on Windows
 		VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
-		VK_EXT_DEBUG_REPORT_EXTENSION_NAME,
 		VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME // for indexed textures
 	};
 
@@ -27,9 +26,9 @@ void VulkanInstance::Create()
 		.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
 		.pNext = nullptr,
 		.pApplicationName = AppConfig::ScreenTitle.c_str(),
-		.applicationVersion = VK_MAKE_VERSION(1, 3, 0),
+		.applicationVersion = VK_MAKE_VERSION(1, 0, 0),
 		.pEngineName = "Hello Engine",
-		.engineVersion = VK_MAKE_VERSION(1, 3, 0),
+		.engineVersion = VK_MAKE_VERSION(1, 0, 0),
 		.apiVersion = VK_API_VERSION_1_3
 	};
 
@@ -55,7 +54,6 @@ void VulkanInstance::Destroy()
 {
 	vkDestroySurfaceKHR(instance_, surface_, nullptr);
 
-	vkDestroyDebugReportCallbackEXT(instance_, reportCallback_, nullptr);
 	vkDestroyDebugUtilsMessengerEXT(instance_, messenger_, nullptr);
 
 	vkDestroyInstance(instance_, nullptr);
@@ -78,21 +76,6 @@ void VulkanInstance::SetupDebugCallbacks()
 		};
 
 		VK_CHECK(vkCreateDebugUtilsMessengerEXT(instance_, &ci, nullptr, &messenger_));
-	}
-	{
-		const VkDebugReportCallbackCreateInfoEXT ci = {
-			.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT,
-			.pNext = nullptr,
-			.flags =
-				VK_DEBUG_REPORT_WARNING_BIT_EXT |
-				VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT |
-				VK_DEBUG_REPORT_ERROR_BIT_EXT |
-				VK_DEBUG_REPORT_DEBUG_BIT_EXT,
-			.pfnCallback = &VulkanDebugReportCallback,
-			.pUserData = nullptr
-		};
-
-		VK_CHECK(vkCreateDebugReportCallbackEXT(instance_, &ci, nullptr, &reportCallback_));
 	}
 }
 

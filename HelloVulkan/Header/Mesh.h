@@ -3,11 +3,8 @@
 
 #include "VulkanContext.h"
 #include "VulkanBuffer.h"
-#include "VulkanImage.h"
 #include "TextureMapper.h"
 #include "UBO.h"
-
-#include "volk.h"
 
 #include <vector>
 #include <unordered_map>
@@ -21,45 +18,94 @@ struct VertexData
 	glm::vec4 textureCoordinate_;
 };
 
-class Mesh
+// For bindless
+struct MeshData
 {
-public:
-	// Bindless rendering
 	uint32_t vertexOffset_;
 	uint32_t indexOffset_;
 
-	// Binded rendering
+	// Needed to access model matrix
+	uint32_t modelIndex;
+
+	// PBR Material
+	uint32_t albedo_;
+	uint32_t normal_;
+	uint32_t metalness_;
+	uint32_t roughness_;
+	uint32_t ao_;
+	uint32_t emissive_;
+};
+
+class Mesh
+{
+public:
+	// Slot based
 	VkDeviceSize vertexBufferSize_;
 	VkDeviceSize indexBufferSize_;
 	VulkanBuffer vertexBuffer_;
 	VulkanBuffer indexBuffer_;
 
-	std::vector<VertexData> vertices_;
-	std::vector<uint32_t> indices_;
 	std::unordered_map<TextureType, uint32_t> textureIndices_;
 
-	// Constructors
-	Mesh(
+private:
+	// Bindless rendering
+	bool bindless_;
+	uint32_t vertexOffset_;
+	uint32_t indexOffset_;
+
+	// Slot-based rendering
+	std::vector<VertexData> vertices_;
+	std::vector<uint32_t> indices_;
+
+	uint32_t numIndices_;
+
+public:
+	// TODO Create a default constructor
+	Mesh() = default;
+	~Mesh() = default;
+
+	void InitSlotBased(
 		VulkanContext& ctx,
 		uint32_t vertexOffset,
 		uint32_t indexOffset,
 		std::vector<VertexData>&& _vertices,
 		std::vector<uint32_t>&& _indices,
-		std::unordered_map<TextureType, uint32_t>&& textureIndices);
-	Mesh(
+		std::unordered_map<TextureType, uint32_t>&& textureIndices
+	);
+
+	void InitBindless(
 		VulkanContext& ctx,
 		uint32_t vertexOffset,
 		uint32_t indexOffset,
-		const std::vector<VertexData>& vertices,
-		const std::vector<uint32_t>& indices,
-		const std::unordered_map<TextureType, uint32_t>& textureIndices);
+		uint32_t numIndices,
+		std::unordered_map<TextureType, uint32_t>&& textureIndices);
+
+	uint32_t GetNumIndices() const { return numIndices_; };
 
 	// TODO Implement this function
-	//void AddTexture(VulkanContext& ctx, const char* fileName);
+	//void AddTexture(VulkanContext& ctx, uint32_t textureIndex);
 
-	void Setup(VulkanContext& ctx);
+	void SetupSlotBased(VulkanContext& ctx);
 
 	void Destroy();
+
+	MeshData GetMeshData(uint32_t textureIndexOffset, uint32_t modelIndex)
+	{
+		return
+		{
+			.vertexOffset_ = vertexOffset_,
+			.indexOffset_ = indexOffset_,
+
+			.modelIndex = modelIndex,
+
+			.albedo_ = textureIndices_[TextureType::Albedo] + textureIndexOffset,
+			.normal_ = textureIndices_[TextureType::Normal] + textureIndexOffset,
+			.metalness_ = textureIndices_[TextureType::Metalness] + textureIndexOffset,
+			.roughness_ = textureIndices_[TextureType::Roughness] + textureIndexOffset,
+			.ao_ = textureIndices_[TextureType::AmbientOcclusion] + textureIndexOffset,
+			.emissive_ = textureIndices_[TextureType::Emissive] + textureIndexOffset,
+		};
+	}
 
 	static std::vector<VkVertexInputBindingDescription> GetBindingDescriptions()
 	{

@@ -45,7 +45,7 @@ void PipelineEquirect2Cube::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffe
 
 void PipelineEquirect2Cube::InitializeCubemap(VulkanContext& ctx, VulkanImage* cubemap)
 {
-	uint32_t mipmapCount = Utility::MipMapCount(IBLConfig::InputCubeSideLength);
+	const uint32_t mipmapCount = Utility::MipMapCount(IBLConfig::InputCubeSideLength);
 
 	cubemap->CreateImage(
 		ctx,
@@ -100,7 +100,7 @@ void PipelineEquirect2Cube::CreateDescriptor(VulkanContext& ctx)
 	descriptor_.CreateLayout(ctx,
 	{
 		{
-			.descriptorType_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
 			.bindingCount_ = 1
 		}
@@ -200,7 +200,7 @@ void PipelineEquirect2Cube::CreateFramebuffer(
 	VulkanContext& ctx, 
 	std::vector<VkImageView> outputViews)
 {
-	VkFramebufferCreateInfo info =
+	const VkFramebufferCreateInfo info =
 	{
 		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
 		.pNext = nullptr,
