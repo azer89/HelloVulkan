@@ -62,7 +62,7 @@ void PipelineLightRender::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 		return;
 	}
 
-	uint32_t frameIndex = ctx.GetFrameIndex();
+	const uint32_t frameIndex = ctx.GetFrameIndex();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
 	BindPipeline(ctx, commandBuffer);
 	vkCmdBindDescriptorSets(
@@ -112,7 +112,7 @@ void PipelineLightRender::CreateDescriptor(VulkanContext& ctx)
 	});
 
 	// Set
-	size_t frameCount = AppConfig::FrameOverlapCount;
+	constexpr size_t frameCount = AppConfig::FrameOverlapCount;
 
 	for (size_t i = 0; i < frameCount; ++i)
 	{

@@ -34,7 +34,7 @@ PipelineLightCulling::~PipelineLightCulling()
 
 void PipelineLightCulling::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
-	uint32_t frameIndex = ctx.GetFrameIndex();
+	const uint32_t frameIndex = ctx.GetFrameIndex();
 	Execute(ctx, commandBuffer, frameIndex);
 }
 
@@ -76,7 +76,7 @@ void PipelineLightCulling::Execute(VulkanContext& ctx, VkCommandBuffer commandBu
 		.size = VK_WHOLE_SIZE
 	};
 
-	VkBufferMemoryBarrier lightIndicesBarrier =
+	const VkBufferMemoryBarrier lightIndicesBarrier =
 	{
 		.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
 		.pNext = nullptr,
@@ -89,7 +89,7 @@ void PipelineLightCulling::Execute(VulkanContext& ctx, VkCommandBuffer commandBu
 		.size = VK_WHOLE_SIZE,
 	};
 
-	std::array<VkBufferMemoryBarrier, 2> barriers =
+	const std::array<VkBufferMemoryBarrier, 2> barriers =
 	{
 		lightGridBarrier,
 		lightIndicesBarrier
@@ -109,7 +109,7 @@ void PipelineLightCulling::Execute(VulkanContext& ctx, VkCommandBuffer commandBu
 
 void PipelineLightCulling::CreateDescriptor(VulkanContext& ctx)
 {
-	uint32_t imageCount = static_cast<uint32_t>(AppConfig::FrameOverlapCount);
+	const uint32_t imageCount = static_cast<uint32_t>(AppConfig::FrameOverlapCount);
 
 	// Pool
 	descriptor_.CreatePool(

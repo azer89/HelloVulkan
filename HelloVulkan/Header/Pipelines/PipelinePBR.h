@@ -17,7 +17,7 @@ class PipelinePBR final : public PipelineBase
 {
 public:
 	PipelinePBR(VulkanContext& ctx,
-		std::vector<Model*> models,
+		const std::vector<Model*>& models,
 		Lights* lights,
 		IBLResources* iblResources,
 		VulkanImage* depthImage,

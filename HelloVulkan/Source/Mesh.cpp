@@ -1,9 +1,5 @@
 #include "Mesh.h"
 
-#include "assimp/scene.h"
-#include "assimp/postprocess.h"
-#include "assimp/cimport.h"
-
 // Constructor
 void Mesh::InitSlotBased(
 	VulkanContext& ctx,

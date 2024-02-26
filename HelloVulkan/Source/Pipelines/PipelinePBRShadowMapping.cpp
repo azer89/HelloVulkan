@@ -3,7 +3,6 @@
 #include "Configs.h"
 
 #include <vector>
-#include <array>
 
 // Constants
 constexpr uint32_t UBO_COUNT = 3;
@@ -214,9 +213,9 @@ void PipelinePBRShadowMapping::CreateDescriptorSet(
 		writes.push_back({ .bufferInfoPtr_ = &bufferInfo2, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
 		writes.push_back({ .bufferInfoPtr_ = &bufferInfo3, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
 		writes.push_back({ .bufferInfoPtr_ = &bufferInfo4, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-		for (size_t i = 0; i < meshTextureInfos.size(); ++i)
+		for (auto& textureInfo : meshTextureInfos)
 		{
-			writes.push_back({ .imageInfoPtr_ = &meshTextureInfos[i], .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
+			writes.push_back({ .imageInfoPtr_ = &textureInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
 		}
 		writes.push_back({ .imageInfoPtr_ = &specularImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
 		writes.push_back({ .imageInfoPtr_ = &diffuseImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });

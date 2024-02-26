@@ -32,7 +32,7 @@ void AppPBRClusterForward::Init()
 
 	// glTF model
 	model_ = std::make_unique<Model>();
-	model_->Load(vulkanContext_, 
+	model_->LoadSlotBased(vulkanContext_, 
 		AppConfig::ModelFolder + "Sponza//Sponza.gltf");
 	std::vector<Model*> models = { model_.get()};
 

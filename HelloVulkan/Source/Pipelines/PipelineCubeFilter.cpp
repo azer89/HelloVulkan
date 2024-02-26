@@ -17,7 +17,7 @@ PipelineCubeFilter::PipelineCubeFilter(
 	renderPass_.CreateOffScreenCubemapRenderPass(ctx, IBLConfig::CubeFormat);
 
 	// Input cubemap
-	uint32_t inputNumMipmap = Utility::MipMapCount(IBLConfig::InputCubeSideLength);
+	const uint32_t inputNumMipmap = Utility::MipMapCount(IBLConfig::InputCubeSideLength);
 	inputCubemap->GenerateMipmap(
 		ctx,
 		inputNumMipmap,
@@ -47,7 +47,7 @@ PipelineCubeFilter::PipelineCubeFilter(
 
 	// Diffuse pipeline
 	graphicsPipelines_.emplace_back(VK_NULL_HANDLE);
-	CreateOffsreenGraphicsPipeline(
+	CreateOffscreenGraphicsPipeline(
 		ctx,
 		renderPass_.GetHandle(),
 		pipelineLayout_,
@@ -57,12 +57,12 @@ PipelineCubeFilter::PipelineCubeFilter(
 		},
 		IBLConfig::OutputDiffuseSideLength,
 		IBLConfig::OutputDiffuseSideLength,
-		&graphicsPipelines_[0]
+		&(graphicsPipelines_[0])
 	);
 
 	// Specular pipeline
 	graphicsPipelines_.emplace_back(VK_NULL_HANDLE);
-	CreateOffsreenGraphicsPipeline(
+	CreateOffscreenGraphicsPipeline(
 		ctx,
 		renderPass_.GetHandle(),
 		pipelineLayout_,
@@ -196,7 +196,7 @@ void PipelineCubeFilter::CreateOutputCubemapViews(VulkanContext& ctx,
 	}
 }
 
-void PipelineCubeFilter::CreateOffsreenGraphicsPipeline(
+void PipelineCubeFilter::CreateOffscreenGraphicsPipeline(
 	VulkanContext& ctx,
 	VkRenderPass renderPass,
 	VkPipelineLayout pipelineLayout,
@@ -281,11 +281,11 @@ void PipelineCubeFilter::OffscreenRender(VulkanContext& ctx,
 	VulkanImage* outputCubemap,
 	CubeFilterType filterType)
 {
-	uint32_t outputMipMapCount = filterType == CubeFilterType::Diffuse ?
+	const uint32_t outputMipMapCount = filterType == CubeFilterType::Diffuse ?
 		1u :
 		Utility::MipMapCount(IBLConfig::OutputSpecularSideLength);
 
-	uint32_t outputSideLength = filterType == CubeFilterType::Diffuse ?
+	const uint32_t outputSideLength = filterType == CubeFilterType::Diffuse ?
 		IBLConfig::OutputDiffuseSideLength :
 		IBLConfig::OutputSpecularSideLength;
 
@@ -299,7 +299,7 @@ void PipelineCubeFilter::OffscreenRender(VulkanContext& ctx,
 	std::vector<VulkanFramebuffer> mipFramebuffers(outputMipMapCount);
 	for (uint32_t i = 0; i < outputMipMapCount; ++i)
 	{
-		uint32_t targetSize = outputSideLength >> i;
+		const uint32_t targetSize = outputSideLength >> i;
 		mipFramebuffers[i].CreateUnresizeable(ctx, renderPass_.GetHandle(), outputViews[i], targetSize, targetSize);
 	}
 
@@ -323,9 +323,9 @@ void PipelineCubeFilter::OffscreenRender(VulkanContext& ctx,
 
 	for (int i = static_cast<int>(outputMipMapCount - 1u); i >= 0; --i)
 	{
-		uint32_t targetSize = outputSideLength >> i;
+		const uint32_t targetSize = outputSideLength >> i;
 
-		VkImageSubresourceRange  subresourceRange =
+		const VkImageSubresourceRange  subresourceRange =
 		{ VK_IMAGE_ASPECT_COLOR_BIT, static_cast<uint32_t>(i), 1u, 0u, 6u };
 
 		outputCubemap->CreateBarrier({

@@ -2,24 +2,19 @@
 #define PIPELINE_SHADOW_MAPPING
 
 #include "PipelineBase.h"
-#include "PushConstants.h"
 #include "Model.h"
-
-#include <glm/gtc/matrix_transform.hpp>
-
-#include <array>
 
 class PipelineShadow final : public PipelineBase
 {
 public:
 	PipelineShadow(VulkanContext& ctx,
-		std::vector<Model*> models,
+		const std::vector<Model*>& models,
 		VulkanImage* shadowMap);
 	~PipelineShadow();
 
 	void SetShadowMapUBO(VulkanContext& ctx, ShadowMapUBO& ubo)
 	{
-		uint32_t frameIndex = ctx.GetFrameIndex();
+		const uint32_t frameIndex = ctx.GetFrameIndex();
 		shadowMapUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ShadowMapUBO));
 	}
 

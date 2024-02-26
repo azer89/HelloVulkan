@@ -17,7 +17,7 @@ PipelineBRDFLUT::PipelineBRDFLUT(
 		VMA_ALLOCATION_CREATE_HOST_ACCESS_RANDOM_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT);
 
 	// Push constants
-	std::vector<VkPushConstantRange> ranges =
+	const std::vector<VkPushConstantRange> ranges =
 	{{
 		.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT,
 		.offset = 0u,

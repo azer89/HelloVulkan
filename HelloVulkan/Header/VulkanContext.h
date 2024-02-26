@@ -200,7 +200,7 @@ private:
 	VkPhysicalDeviceRayTracingPipelineFeaturesKHR rtPipelineEnabledFeatures_;
 	VkPhysicalDeviceAccelerationStructureFeaturesKHR rtASEnabledFeatures;
 
-	// Descriptor indexing
+	// Bindless rendering
 	VkPhysicalDeviceDescriptorIndexingFeaturesEXT descriptorIndexingFeatures_;
 	VkPhysicalDeviceShaderDrawParametersFeatures shaderDrawFeatures_;
 

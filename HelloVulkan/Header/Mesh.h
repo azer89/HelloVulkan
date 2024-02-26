@@ -3,11 +3,8 @@
 
 #include "VulkanContext.h"
 #include "VulkanBuffer.h"
-#include "VulkanImage.h"
 #include "TextureMapper.h"
 #include "UBO.h"
-
-#include "volk.h"
 
 #include <vector>
 #include <unordered_map>

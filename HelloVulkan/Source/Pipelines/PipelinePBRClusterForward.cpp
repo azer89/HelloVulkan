@@ -216,9 +216,9 @@ void PipelinePBRClusterForward::CreateDescriptorSet(
 		writes.push_back({ .bufferInfoPtr_ = &bufferInfo5, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
 		writes.push_back({ .bufferInfoPtr_ = &bufferInfo6, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
 		writes.push_back({ .bufferInfoPtr_ = &bufferInfo7, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-		for (size_t i = 0; i < meshTextureInfos.size(); ++i)
+		for (auto& textureInfo : meshTextureInfos)
 		{
-			writes.push_back({ .imageInfoPtr_ = &meshTextureInfos[i], .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
+			writes.push_back({ .imageInfoPtr_ = &textureInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
 		}
 		writes.push_back({ .imageInfoPtr_ = &specularImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
 		writes.push_back({ .imageInfoPtr_ = &diffuseImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });

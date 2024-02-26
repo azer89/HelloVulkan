@@ -15,7 +15,7 @@ inline glm::mat4 CastToGLMMat4(const aiMatrix4x4& m)
 	return glm::transpose(glm::make_mat4(&m.a1));
 }
 
-void Model::Load(VulkanContext& ctx, const std::string& path)
+void Model::LoadSlotBased(VulkanContext& ctx, const std::string& path)
 {
 	bindless_ = false;
 

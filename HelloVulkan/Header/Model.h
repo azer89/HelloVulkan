@@ -39,7 +39,7 @@ public:
 
 	void Destroy();
 
-	void Load(VulkanContext& ctx, const std::string& path);
+	void LoadSlotBased(VulkanContext& ctx, const std::string& path);
 	void LoadBindless(VulkanContext& ctx, 
 		const std::string& path, 
 		std::vector<VertexData>& globalVertices,

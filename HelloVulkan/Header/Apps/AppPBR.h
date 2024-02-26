@@ -2,11 +2,8 @@
 #define APP_PBR
 
 #include "AppBase.h"
-#include "VulkanImage.h"
 #include "Light.h"
-#include "Model.h"
 #include "Scene.h"
-#include "IBLResources.h"
 
 // Pipelines
 #include "PipelineSkybox.h"

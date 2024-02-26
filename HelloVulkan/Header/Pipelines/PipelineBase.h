@@ -25,7 +25,7 @@ class PipelineBase
 public:
 	explicit PipelineBase(
 		const VulkanContext& ctx,
-		PipelineConfig config);
+		const PipelineConfig& config);
 	virtual ~PipelineBase();
 
 	// If the window is resized

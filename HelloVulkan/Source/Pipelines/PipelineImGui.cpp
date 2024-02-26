@@ -25,7 +25,7 @@ PipelineImGui::PipelineImGui(
 	// Create framebuffer
 	framebuffer_.CreateResizeable(ctx, renderPass_.GetHandle(), {}, IsOffscreen());
 
-	uint32_t imageCount = AppConfig::FrameOverlapCount;
+	constexpr uint32_t imageCount = AppConfig::FrameOverlapCount;
 	descriptor_.CreatePool(
 		ctx,
 		{

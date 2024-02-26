@@ -58,7 +58,7 @@ PipelineSkybox::~PipelineSkybox()
 
 void PipelineSkybox::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
-	uint32_t frameIndex = ctx.GetFrameIndex();
+	const uint32_t frameIndex = ctx.GetFrameIndex();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
 	BindPipeline(ctx, commandBuffer);
 	vkCmdBindDescriptorSets(
@@ -103,7 +103,7 @@ void PipelineSkybox::CreateDescriptor(VulkanContext& ctx)
 	});
 
 	// Set
-	auto frameCount = AppConfig::FrameOverlapCount;
+	constexpr auto frameCount = AppConfig::FrameOverlapCount;
 
 	VkDescriptorImageInfo imageInfo = envCubemap_->GetDescriptorImageInfo();
 

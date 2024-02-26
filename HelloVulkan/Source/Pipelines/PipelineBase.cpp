@@ -10,7 +10,7 @@
 // Constructor
 PipelineBase::PipelineBase(
 	const VulkanContext& ctx,
-	PipelineConfig config) :
+	const PipelineConfig& config) :
 	device_(ctx.GetDevice()),
 	config_(config)
 {

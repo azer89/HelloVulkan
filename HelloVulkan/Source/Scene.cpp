@@ -75,9 +75,9 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT);
 
 	// ModelUBO
-	std::vector<ModelUBO> initModelUBOs(models_.size(), { .model = glm::mat4(1.0f) });
+	const std::vector<ModelUBO> initModelUBOs(models_.size(), { .model = glm::mat4(1.0f) });
 	modelUBOBufferSize_ = sizeof(ModelUBO) * models_.size();
-	const uint32_t frameCount = AppConfig::FrameOverlapCount;
+	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
 	modelUBOBuffers_.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
@@ -111,11 +111,13 @@ void Scene::UpdateModelMatrix(VulkanContext& ctx, ModelUBO modelUBO, uint32_t fr
 std::vector<VkDescriptorImageInfo> Scene::GetImageInfos()
 {
 	std::vector<VkDescriptorImageInfo> textureInfoArray;
-	for (size_t i = 0; i < models_.size(); ++i)
+	//for (size_t i = 0; i < models_.size(); ++i)
+	for (auto& model : models_)
 	{
-		for (size_t j = 0; j < models_[i].textureList_.size(); ++j)
+		//for (size_t j = 0; j < model.textureList_.size(); ++j)
+		for (auto& texture : model.textureList_)
 		{
-			textureInfoArray.emplace_back(models_[i].textureList_[j].GetDescriptorImageInfo());
+			textureInfoArray.emplace_back(texture.GetDescriptorImageInfo());
 		}
 	}
 	return textureInfoArray;
@@ -126,12 +128,14 @@ std::vector<uint32_t> Scene::GetMeshVertexCountArray()
 {
 	std::vector<uint32_t> vCountArray(GetMeshCount());
 	size_t counter = 0;
-	for (size_t i = 0; i < models_.size(); ++i)
+	//for (size_t i = 0; i < models_.size(); ++i)
+	for (auto& model : models_)
 	{
-		for (size_t j = 0; j < models_[i].meshes_.size(); ++j)
+		//for (size_t j = 0; j < models_[i].meshes_.size(); ++j)
+		for (auto& mesh : model.meshes_)
 		{
 			// Note that we use the index count here
-			uint32_t numIndices = static_cast<uint32_t>(models_[i].meshes_[j].GetNumIndices());
+			uint32_t numIndices = static_cast<uint32_t>(mesh.GetNumIndices());
 			vCountArray[counter++] = numIndices;
 		}
 	}

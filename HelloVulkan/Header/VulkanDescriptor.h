@@ -1,8 +1,6 @@
 #ifndef VULKAN_DESCRIPTOR
 #define VULKAN_DESCRIPTOR
 
-#include "volk.h"
-
 #include "VulkanContext.h"
 
 #include <vector>

@@ -49,7 +49,7 @@ PipelinePBRBindless::PipelinePBRBindless(
 		IsOffscreen());
 
 	// Push constants and pipeline layout
-	std::vector<VkPushConstantRange> ranges =
+	const std::vector<VkPushConstantRange> ranges =
 	{{
 		.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
 		.offset = 0u,
@@ -79,7 +79,7 @@ PipelinePBRBindless::~PipelinePBRBindless()
 
 void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
-	uint32_t frameIndex = ctx.GetFrameIndex();
+	const uint32_t frameIndex = ctx.GetFrameIndex();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
 
 	BindPipeline(ctx, commandBuffer);
@@ -115,7 +115,7 @@ void PipelinePBRBindless::CreateIndirectBuffers(VulkanContext& ctx)
 {
 	const uint32_t meshSize = scene_->GetMeshCount();
 	const uint32_t indirectDataSize = meshSize * sizeof(VkDrawIndirectCommand);
-	const size_t numFrames = AppConfig::FrameOverlapCount;
+	constexpr size_t numFrames = AppConfig::FrameOverlapCount;
 
 	const std::vector<uint32_t> meshVertexCountArray = scene_->GetMeshVertexCountArray();
 	
@@ -149,7 +149,7 @@ void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
 	/*9*/ std::vector<VkDescriptorImageInfo> imageInfos = scene_->GetImageInfos();
 	
 	const uint32_t textureCount = static_cast<uint32_t>(imageInfos.size());
-	const uint32_t frameCount = AppConfig::FrameOverlapCount;
+	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
 
 	// Pool
 	descriptor_.CreatePool(

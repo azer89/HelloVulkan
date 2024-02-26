@@ -2,7 +2,7 @@
 
 PipelineShadow::PipelineShadow(
 	VulkanContext& ctx,
-	std::vector<Model*> models,
+	const std::vector<Model*>& models,
 	VulkanImage* shadowMap) :
 	PipelineBase(ctx,
 		{

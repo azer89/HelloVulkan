@@ -39,10 +39,10 @@ void AppPBRShadowMapping::Init()
 
 	// Models
 	sponzaModel_ = std::make_unique<Model>();
-	sponzaModel_->Load(vulkanContext_,
+	sponzaModel_->LoadSlotBased(vulkanContext_,
 		AppConfig::ModelFolder + "Sponza//Sponza.gltf");
 	tachikomaModel_ = std::make_unique<Model>();
-	tachikomaModel_->Load(vulkanContext_,
+	tachikomaModel_->LoadSlotBased(vulkanContext_,
 		AppConfig::ModelFolder + "Tachikoma//Tachikoma.gltf");
 	std::vector<Model*> models = {sponzaModel_.get(), tachikomaModel_.get()};
 
