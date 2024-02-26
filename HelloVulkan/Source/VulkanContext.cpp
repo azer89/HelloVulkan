@@ -129,11 +129,13 @@ void VulkanContext::GetRaytracingPropertiesAndFeatures()
 void VulkanContext::ChainFeatures()
 {
 	pNextChain_ = nullptr;
+
+	// This pointer is for chaining
 	void* chainPtr = nullptr;
 
 	if (config_.supportBindlessRendering_)
 	{
-		// An alternative to gl_BaseInstance using Vulkan 1.1
+		// Used for gl_BaseInstance that requires Vulkan 1.1
 		/*shaderDrawFeatures_ =
 		{
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES,
@@ -160,7 +162,6 @@ void VulkanContext::ChainFeatures()
 
 	if (config_.supportRaytracing_)
 	{
-		// Enable features required for ray tracing using feature chaining via pNext		
 		rtDevAddressEnabledFeatures_ =
 		{
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES,
