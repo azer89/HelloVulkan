@@ -62,8 +62,8 @@ PipelinePBRBindless::PipelinePBRBindless(
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
-			AppConfig::ShaderFolder + "Bindless//Mesh.vert",
-			AppConfig::ShaderFolder + "Bindless//Mesh.frag"
+			AppConfig::ShaderFolder + "Bindless//Scene.vert",
+			AppConfig::ShaderFolder + "Bindless//Scene.frag"
 		},
 		&pipeline_
 	);

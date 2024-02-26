@@ -129,10 +129,10 @@
     <None Include="..\Shaders\CameraUBO.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\Bindless\Mesh.frag">
+    <None Include="..\Shaders\Bindless\Scene.frag">
       <Filter>Shaders\Bindless</Filter>
     </None>
-    <None Include="..\Shaders\Bindless\Mesh.vert">
+    <None Include="..\Shaders\Bindless\Scene.vert">
       <Filter>Shaders\Bindless</Filter>
     </None>
     <None Include="..\Shaders\Bindless\MeshData.frag">
