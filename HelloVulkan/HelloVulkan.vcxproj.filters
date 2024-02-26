@@ -135,10 +135,10 @@
     <None Include="..\Shaders\Bindless\Scene.vert">
       <Filter>Shaders\Bindless</Filter>
     </None>
-    <None Include="..\Shaders\Bindless\MeshData.frag">
+    <None Include="..\Shaders\Bindless\MeshData.glsl">
       <Filter>Shaders\Bindless</Filter>
     </None>
-    <None Include="..\Shaders\Bindless\VertexData.frag">
+    <None Include="..\Shaders\Bindless\VertexData.glsl">
       <Filter>Shaders\Bindless</Filter>
     </None>
   </ItemGroup>

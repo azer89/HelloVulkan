@@ -28,7 +28,7 @@ layout(set = 0, binding = 0)
 #include <CameraUBO.frag>
 
 // SSBO
-#include <Bindless//MeshData.frag>
+#include <Bindless/MeshData.glsl>
 layout(set = 0, binding = 4) readonly buffer Meshes { MeshData meshes []; };
 
 // SSBO

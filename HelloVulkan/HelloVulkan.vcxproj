@@ -137,8 +137,8 @@
   <ItemGroup>
     <None Include="..\Shaders\Bindless\Scene.frag" />
     <None Include="..\Shaders\Bindless\Scene.vert" />
-    <None Include="..\Shaders\Bindless\MeshData.frag" />
-    <None Include="..\Shaders\Bindless\VertexData.frag" />
+    <None Include="..\Shaders\Bindless\MeshData.glsl" />
+    <None Include="..\Shaders\Bindless\VertexData.glsl" />
     <None Include="..\Shaders\BRDFLUT.comp" />
     <None Include="..\Shaders\CameraUBO.frag" />
     <None Include="..\Shaders\ClusteredForward\AABBGenerator.comp" />
