@@ -36,7 +36,7 @@ void Model::LoadSlotBased(VulkanContext& ctx, const std::string& path)
 		tempVertexOffset,
 		tempIndexOffset);
 
-	// Bind-ful redering
+	// Slot-based rendering
 	CreateModelUBOBuffers(ctx);
 }
 
