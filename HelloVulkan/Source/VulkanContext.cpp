@@ -245,6 +245,7 @@ VkResult VulkanContext::CreateDevice()
 		extensions.push_back(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
 		extensions.push_back(VK_KHR_DRAW_INDIRECT_COUNT_EXTENSION_NAME);
 		// Needed for gl_BaseInstance
+		// TODO I'm confused why we need to add this manually
 		//extensions.push_back(VK_KHR_SHADER_DRAW_PARAMETERS_EXTENSION_NAME);
 	}
 
