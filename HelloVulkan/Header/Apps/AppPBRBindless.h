@@ -1,5 +1,5 @@
-#ifndef APP_PBR
-#define APP_PBR
+#ifndef APP_PBR_BINDLESS
+#define APP_PBR_BINDLESS
 
 #include "AppBase.h"
 #include "Light.h"
@@ -22,10 +22,10 @@
 /*
 Naive forward PBR
 */
-class AppPBR final : AppBase
+class AppPBRBindless final : AppBase
 {
 public:
-	AppPBR();
+	AppPBRBindless();
 	int MainLoop() override;
 	void UpdateUBOs() override;
 	void UpdateUI() override;

@@ -37,12 +37,12 @@
     <Filter Include="Shaders\Bindless">
       <UniqueIdentifier>{375283ac-d6d1-45b2-8b7b-1ac287d4e62d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\SlotBased">
+      <UniqueIdentifier>{c9d188c8-c6c8-44ce-9761-a9e9047303d5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\Cube.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\Mesh.vert">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\Equirect2Cube.frag">
@@ -54,13 +54,13 @@
     <None Include="..\Shaders\Cube.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\PBRHeader.frag">
+    <None Include="..\Shaders\PBRHeader.glsl">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\BRDFLUT.comp">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\Hammersley.frag">
+    <None Include="..\Shaders\Hammersley.glsl">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\CubeFilterDiffuse.frag">
@@ -78,13 +78,10 @@
     <None Include="..\Shaders\LightCircle.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\Mesh.frag">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\Shaders\ClusteredForward\AABBGenerator.comp">
       <Filter>Shaders\ClusteredForward</Filter>
     </None>
-    <None Include="..\Shaders\ClusteredForward\ClusterForwardHeader.comp">
+    <None Include="..\Shaders\ClusteredForward\ClusterForwardHeader.glsl">
       <Filter>Shaders\ClusteredForward</Filter>
     </None>
     <None Include="..\Shaders\ClusteredForward\MeshClusterForward.frag">
@@ -108,25 +105,22 @@
     <None Include="..\Shaders\ShadowMapping\Mesh.frag">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
-    <None Include="..\Shaders\ShadowMapping\Depth.frag">
-      <Filter>Shaders\ShadowMapping</Filter>
-    </None>
     <None Include="..\Shaders\ShadowMapping\Depth.vert">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
     <None Include="..\Shaders\ShadowMapping\Mesh.vert">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
-    <None Include="..\Shaders\ShadowMapping\Header.frag">
+    <None Include="..\Shaders\ShadowMapping\Header.glsl">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
-    <None Include="..\Shaders\TangentNormalToWorld.frag">
+    <None Include="..\Shaders\TangentNormalToWorld.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\PBRPushConstants.frag">
+    <None Include="..\Shaders\PBRPushConstants.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\CameraUBO.frag">
+    <None Include="..\Shaders\CameraUBO.glsl">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\Bindless\Scene.frag">
@@ -135,11 +129,20 @@
     <None Include="..\Shaders\Bindless\Scene.vert">
       <Filter>Shaders\Bindless</Filter>
     </None>
-    <None Include="..\Shaders\Bindless\MeshData.frag">
+    <None Include="..\Shaders\Bindless\MeshData.glsl">
       <Filter>Shaders\Bindless</Filter>
     </None>
-    <None Include="..\Shaders\Bindless\VertexData.frag">
+    <None Include="..\Shaders\Bindless\VertexData.glsl">
       <Filter>Shaders\Bindless</Filter>
+    </None>
+    <None Include="..\Shaders\SlotBased\Mesh.frag">
+      <Filter>Shaders\SlotBased</Filter>
+    </None>
+    <None Include="..\Shaders\SlotBased\Mesh.vert">
+      <Filter>Shaders\SlotBased</Filter>
+    </None>
+    <None Include="..\Shaders\LightData.glsl">
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -194,7 +197,7 @@
     <ClInclude Include="Header\Apps\AppBase.h">
       <Filter>Header Files\Apps</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Apps\AppPBR.h">
+    <ClInclude Include="Header\Apps\AppPBRBindless.h">
       <Filter>Header Files\Apps</Filter>
     </ClInclude>
     <ClInclude Include="Header\Pipelines\PipelineBase.h">
@@ -221,7 +224,7 @@
     <ClInclude Include="Header\Pipelines\PipelineLightRender.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Pipelines\PipelinePBR.h">
+    <ClInclude Include="Header\Pipelines\PipelinePBRSlotBased.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
     <ClInclude Include="Header\Pipelines\PipelineResolveMS.h">
@@ -275,7 +278,7 @@
     <ClInclude Include="Header\Pipelines\PipelinePBRShadowMapping.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
-    <ClInclude Include="..\Shaders\ShadowMapping\UBO.frag">
+    <ClInclude Include="..\Shaders\ShadowMapping\UBO.glsl">
       <Filter>Shaders\ShadowMapping</Filter>
     </ClInclude>
     <ClInclude Include="Header\IBLResources.h">
@@ -286,6 +289,9 @@
     </ClInclude>
     <ClInclude Include="Header\Scene.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Apps\AppPBRSlotBased.h">
+      <Filter>Header Files\Apps</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -331,7 +337,7 @@
     <ClCompile Include="Source\Apps\AppBase.cpp">
       <Filter>Source Files\Apps</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Apps\AppPBR.cpp">
+    <ClCompile Include="Source\Apps\AppPBRBindless.cpp">
       <Filter>Source Files\Apps</Filter>
     </ClCompile>
     <ClCompile Include="Source\Pipelines\PipelineBase.cpp">
@@ -358,7 +364,7 @@
     <ClCompile Include="Source\Pipelines\PipelineLightRender.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Pipelines\PipelinePBR.cpp">
+    <ClCompile Include="Source\Pipelines\PipelinePBRSlotBased.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
     <ClCompile Include="Source\Pipelines\PipelineResolveMS.cpp">
@@ -411,6 +417,9 @@
     </ClCompile>
     <ClCompile Include="Source\Scene.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Apps\AppPBRSlotBased.cpp">
+      <Filter>Source Files\Apps</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

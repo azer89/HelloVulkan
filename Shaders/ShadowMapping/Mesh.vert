@@ -10,7 +10,7 @@ layout(location = 2) out vec3 normal;
 layout(location = 3) out vec4 shadowPos;
 
 layout(set = 0, binding = 0)
-#include <CameraUBO.frag>
+#include <CameraUBO.glsl>
 
 layout(set = 0, binding = 1) uniform ModelUBO
 {
@@ -19,7 +19,7 @@ layout(set = 0, binding = 1) uniform ModelUBO
 modelUBO;
 
 layout(set = 0, binding = 2)
-#include <ShadowMapping//UBO.frag>
+#include <ShadowMapping//UBO.glsl>
 
 const mat4 biasMat = mat4(
 	0.5, 0.0, 0.0, 0.0,

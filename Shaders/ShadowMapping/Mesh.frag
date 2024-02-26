@@ -5,9 +5,10 @@ Fragment shader for PBR+IBL, naive forward shading with shadow mapping
 */
 
 // Include files
-#include <PBRHeader.frag>
-#include <Hammersley.frag>
-#include <TangentNormalToWorld.frag>
+#include <LightData.glsl>
+#include <PBRHeader.glsl>
+#include <Hammersley.glsl>
+#include <TangentNormalToWorld.glsl>
 
 layout(location = 0) in vec3 worldPos;
 layout(location = 1) in vec2 texCoord;
@@ -17,21 +18,15 @@ layout(location = 3) in vec4 shadowPos;
 layout(location = 0) out vec4 fragColor;
 
 layout(push_constant)
-#include <PBRPushConstants.frag>
+#include <PBRPushConstants.glsl>
 
 layout(set = 0, binding = 0)
-#include <CameraUBO.frag>
+#include <CameraUBO.glsl>
 
 layout(set = 0, binding = 2)
-#include <ShadowMapping//UBO.frag>
+#include <ShadowMapping//UBO.glsl>
 
 // SSBO
-struct LightData
-{
-	vec4 position;
-	vec4 color;
-	float radius;
-};
 layout(set = 0, binding = 3) readonly buffer Lights { LightData lights []; };
 
 layout(set = 0, binding = 4) uniform sampler2D textureAlbedo;
@@ -47,7 +42,7 @@ layout(set = 0, binding = 12) uniform sampler2D brdfLUT;
 layout(set = 0, binding = 13) uniform sampler2D shadowMap;
 
 // Shadow mapping functions
-#include <ShadowMapping//Header.frag>
+#include <ShadowMapping//Header.glsl>
 
 vec3 Radiance(
 	vec3 albedo,

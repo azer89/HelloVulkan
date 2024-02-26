@@ -137,32 +137,32 @@
   <ItemGroup>
     <None Include="..\Shaders\Bindless\Scene.frag" />
     <None Include="..\Shaders\Bindless\Scene.vert" />
-    <None Include="..\Shaders\Bindless\MeshData.frag" />
-    <None Include="..\Shaders\Bindless\VertexData.frag" />
+    <None Include="..\Shaders\Bindless\MeshData.glsl" />
+    <None Include="..\Shaders\Bindless\VertexData.glsl" />
     <None Include="..\Shaders\BRDFLUT.comp" />
-    <None Include="..\Shaders\CameraUBO.frag" />
+    <None Include="..\Shaders\CameraUBO.glsl" />
     <None Include="..\Shaders\ClusteredForward\AABBGenerator.comp" />
-    <None Include="..\Shaders\ClusteredForward\ClusterForwardHeader.comp" />
+    <None Include="..\Shaders\ClusteredForward\ClusterForwardHeader.glsl" />
     <None Include="..\Shaders\ClusteredForward\LightCulling.comp" />
     <None Include="..\Shaders\ClusteredForward\LightCullingBatch.comp" />
     <None Include="..\Shaders\ClusteredForward\MeshClusterForward.frag" />
     <None Include="..\Shaders\CubeFilterDiffuse.frag" />
     <None Include="..\Shaders\CubeFilterSpecular.frag" />
-    <None Include="..\Shaders\PBRPushConstants.frag" />
-    <None Include="..\Shaders\TangentNormalToWorld.frag" />
-    <None Include="..\Shaders\Hammersley.frag" />
+    <None Include="..\Shaders\LightData.glsl" />
+    <None Include="..\Shaders\PBRPushConstants.glsl" />
+    <None Include="..\Shaders\SlotBased\Mesh.frag" />
+    <None Include="..\Shaders\SlotBased\Mesh.vert" />
+    <None Include="..\Shaders\TangentNormalToWorld.glsl" />
+    <None Include="..\Shaders\Hammersley.glsl" />
     <None Include="..\Shaders\LightCircle.frag" />
     <None Include="..\Shaders\LightCircle.vert" />
-    <None Include="..\Shaders\Mesh.frag" />
-    <None Include="..\Shaders\PBRHeader.frag" />
+    <None Include="..\Shaders\PBRHeader.glsl" />
     <None Include="..\Shaders\Cube.frag" />
     <None Include="..\Shaders\Cube.vert" />
     <None Include="..\Shaders\Equirect2Cube.frag" />
     <None Include="..\Shaders\FullscreenTriangle.vert" />
-    <None Include="..\Shaders\Mesh.vert" />
-    <None Include="..\Shaders\ShadowMapping\Depth.frag" />
     <None Include="..\Shaders\ShadowMapping\Depth.vert" />
-    <None Include="..\Shaders\ShadowMapping\Header.frag" />
+    <None Include="..\Shaders\ShadowMapping\Header.glsl" />
     <None Include="..\Shaders\ShadowMapping\Mesh.frag" />
     <None Include="..\Shaders\ShadowMapping\Mesh.vert" />
     <None Include="..\Shaders\SimpleRaytracing\ClosestHit.rchit" />
@@ -171,11 +171,12 @@
     <None Include="..\Shaders\Tonemap.frag" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Shaders\ShadowMapping\UBO.frag" />
+    <ClInclude Include="..\Shaders\ShadowMapping\UBO.glsl" />
     <ClInclude Include="Header\Apps\AppBase.h" />
-    <ClInclude Include="Header\Apps\AppPBR.h" />
+    <ClInclude Include="Header\Apps\AppPBRBindless.h" />
     <ClInclude Include="Header\Apps\AppPBRClusterForward.h" />
     <ClInclude Include="Header\Apps\AppPBRShadowMapping.h" />
+    <ClInclude Include="Header\Apps\AppPBRSlotBased.h" />
     <ClInclude Include="Header\Apps\AppSimpleRaytracing.h" />
     <ClInclude Include="Header\Camera.h" />
     <ClInclude Include="Header\ClusterForwardBuffers.h" />
@@ -196,7 +197,7 @@
     <ClInclude Include="Header\Pipelines\PipelineImGui.h" />
     <ClInclude Include="Header\Pipelines\PipelineLightRender.h" />
     <ClInclude Include="Header\Pipelines\PipelineLightCulling.h" />
-    <ClInclude Include="Header\Pipelines\PipelinePBR.h" />
+    <ClInclude Include="Header\Pipelines\PipelinePBRSlotBased.h" />
     <ClInclude Include="Header\Pipelines\PipelinePBRBindless.h" />
     <ClInclude Include="Header\Pipelines\PipelinePBRClusterForward.h" />
     <ClInclude Include="Header\Pipelines\PipelinePBRShadowMapping.h" />
@@ -222,9 +223,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Apps\AppBase.cpp" />
-    <ClCompile Include="Source\Apps\AppPBR.cpp" />
+    <ClCompile Include="Source\Apps\AppPBRBindless.cpp" />
     <ClCompile Include="Source\Apps\AppPBRClusterForward.cpp" />
     <ClCompile Include="Source\Apps\AppPBRShadowMapping.cpp" />
+    <ClCompile Include="Source\Apps\AppPBRSlotBased.cpp" />
     <ClCompile Include="Source\Apps\AppSimpleRaytracing.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\ClusterForwardBuffers.cpp" />
@@ -242,7 +244,7 @@
     <ClCompile Include="Source\Pipelines\PipelineImGui.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineLightRender.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineLightCulling.cpp" />
-    <ClCompile Include="Source\Pipelines\PipelinePBR.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelinePBRSlotBased.cpp" />
     <ClCompile Include="Source\Pipelines\PipelinePBRBindless.cpp" />
     <ClCompile Include="Source\Pipelines\PipelinePBRClusterForward.cpp" />
     <ClCompile Include="Source\Pipelines\PipelinePBRShadowMapping.cpp" />

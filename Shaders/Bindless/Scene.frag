@@ -9,9 +9,10 @@ Fragment shader for
 */
 
 // Include files
-#include <PBRHeader.frag>
-#include <Hammersley.frag>
-#include <TangentNormalToWorld.frag>
+#include <LightData.glsl>
+#include <PBRHeader.glsl>
+#include <Hammersley.glsl>
+#include <TangentNormalToWorld.glsl>
 
 layout(location = 0) in vec3 worldPos;
 layout(location = 1) in vec2 texCoord;
@@ -21,23 +22,17 @@ layout(location = 3) in flat uint meshIndex;
 layout(location = 0) out vec4 fragColor;
 
 layout(push_constant)
-#include <PBRPushConstants.frag>
+#include <PBRPushConstants.glsl>
 
 // UBO
 layout(set = 0, binding = 0)
-#include <CameraUBO.frag>
+#include <CameraUBO.glsl>
 
 // SSBO
-#include <Bindless//MeshData.frag>
+#include <Bindless//MeshData.glsl>
 layout(set = 0, binding = 4) readonly buffer Meshes { MeshData meshes []; };
 
 // SSBO
-struct LightData
-{
-	vec4 position;
-	vec4 color;
-	float radius;
-};
 layout(set = 0, binding = 5) readonly buffer Lights { LightData lights []; };
 
 layout(set = 0, binding = 6) uniform samplerCube specularMap;
