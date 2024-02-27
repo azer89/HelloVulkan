@@ -17,7 +17,8 @@ class PipelinePBRShadowMapping final : public PipelineBase
 {
 public:
 	PipelinePBRShadowMapping(VulkanContext& ctx,
-		std::vector<Model*> models,
+		//std::vector<Model*> models,
+		Scene* scene,
 		Lights* lights,
 		IBLResources* iblResources,
 		VulkanImage* shadowMap,
@@ -38,16 +39,19 @@ public:
 
 private:
 	void CreateDescriptor(VulkanContext& ctx);
-	void CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh* mesh, const size_t meshIndex);
+	//void CreateDescriptorSet(VulkanContext& ctx, Model* parentModel, Mesh* mesh, const size_t meshIndex);
 
 private:
 	PushConstantPBR pc_;
 	Lights* lights_;
 	IBLResources* iblResources_;
 	VulkanImage* shadowMap_;
-	std::vector<Model*> models_;
-	std::vector<std::vector<VkDescriptorSet>> descriptorSets_;
+	//std::vector<Model*> models_;
+	Scene* scene_;
+	std::vector<VkDescriptorSet> descriptorSets_;
+	//std::vector<std::vector<VkDescriptorSet>> descriptorSets_;
 	std::vector<VulkanBuffer> shadowMapConfigUBOBuffers_;
+	std::vector<VulkanBuffer> indirectBuffers_;
 };
 
 #endif

@@ -13,9 +13,9 @@ int main()
 	// The good ol resource binding per draw call
 	//AppPBRSlotBased app;
 	
-	//AppPBRShadowMapping app;
+	AppPBRShadowMapping app;
 	
-	AppPBRClusterForward app;
+	//AppPBRClusterForward app;
 	
 	// Currently can only draw a triangle
 	//AppSimpleRaytracing app;

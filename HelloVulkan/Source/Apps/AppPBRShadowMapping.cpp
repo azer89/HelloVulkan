@@ -38,7 +38,7 @@ void AppPBRShadowMapping::Init()
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
 	// Models
-	sponzaModel_ = std::make_unique<Model>();
+	/*sponzaModel_ = std::make_unique<Model>();
 	sponzaModel_->LoadSlotBased(vulkanContext_,
 		AppConfig::ModelFolder + "Sponza//Sponza.gltf");
 	tachikomaModel_ = std::make_unique<Model>();
@@ -47,7 +47,31 @@ void AppPBRShadowMapping::Init()
 	hexapodModel_ = std::make_unique<Model>();
 	hexapodModel_->LoadSlotBased(vulkanContext_,
 		AppConfig::ModelFolder + "Hexapod//Hexapod.gltf");
-	std::vector<Model*> models = {sponzaModel_.get(), tachikomaModel_.get(), hexapodModel_.get()};
+	std::vector<Model*> models = {sponzaModel_.get(), tachikomaModel_.get(), hexapodModel_.get()};*/
+
+	std::vector<std::string> modelFiles = {
+		AppConfig::ModelFolder + "Sponza//Sponza.gltf",
+		AppConfig::ModelFolder + "Tachikoma//Tachikoma.gltf",
+		AppConfig::ModelFolder + "Hexapod//Hexapod.gltf"
+	};
+	scene_ = std::make_unique<Scene>(vulkanContext_, modelFiles);
+
+	// Set model matrices
+	glm::mat4 modelMatrix(1.f);
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.15f, 0.35f, 1.5f));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.7f, 0.7f, 0.7f));
+	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
+	{
+		scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, i, 1);
+	}
+	modelMatrix = glm::mat4(1.f);
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.62f, -1.5f));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f));
+	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
+	{
+		scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, i, 2);
+	}
 
 	// Pipelines
 	// This is responsible to clear swapchain image
@@ -66,13 +90,13 @@ void AppPBRShadowMapping::Init()
 	);
 	pbrPtr_ = std::make_unique<PipelinePBRShadowMapping>(
 		vulkanContext_,
-		models,
+		scene_.get(),
 		&lights_,
 		iblResources_.get(),
 		&shadowMap_,
 		&depthImage_,
 		&multiSampledColorImage_);
-	shadowPtr_ = std::make_unique<PipelineShadow>(vulkanContext_, models, &shadowMap_);
+	shadowPtr_ = std::make_unique<PipelineShadow>(vulkanContext_, scene_.get(), &shadowMap_);
 	lightPtr_ = std::make_unique<PipelineLightRender>(
 		vulkanContext_,
 		&lights_,
@@ -134,12 +158,13 @@ void AppPBRShadowMapping::DestroyResources()
 	iblResources_.reset();
 
 	// Destroy meshes
-	sponzaModel_->Destroy();
+	scene_.reset();
+	/*sponzaModel_->Destroy();
 	sponzaModel_.reset();
 	tachikomaModel_->Destroy();
 	tachikomaModel_.reset();
 	hexapodModel_->Destroy();
-	hexapodModel_.reset();
+	hexapodModel_.reset();*/
 
 	// Lights
 	lights_.Destroy();
@@ -169,7 +194,7 @@ void AppPBRShadowMapping::UpdateUBOs()
 	skyboxPtr_->SetCameraUBO(vulkanContext_, skyboxUbo);
 
 	// Sponza
-	glm::mat4 modelMatrix(1.f);
+	/*glm::mat4 modelMatrix(1.f);
 	sponzaModel_->SetModelUBO(vulkanContext_, 
 	{
 		.model = modelMatrix
@@ -192,7 +217,7 @@ void AppPBRShadowMapping::UpdateUBOs()
 	hexapodModel_->SetModelUBO(vulkanContext_,
 		{
 			.model = modelMatrix
-		});
+		});*/
 
 	// Shadow mapping
 	LightData light = lights_.lights_[0];

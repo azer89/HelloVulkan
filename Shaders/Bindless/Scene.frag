@@ -147,7 +147,6 @@ void main()
 {
 	MeshData mData = meshes[meshIndex];
 
-	//vec4 albedo4 = texture(textureAlbedo, texCoord).rgba;
 	vec4 albedo4 = texture(pbrTextures[nonuniformEXT(mData.albedo)], texCoord).rgba;
 
 	if (albedo4.a < 0.5)
