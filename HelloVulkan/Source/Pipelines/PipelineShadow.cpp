@@ -114,7 +114,6 @@ void PipelineShadow::CreateDescriptor(VulkanContext& ctx)
 			.ssboCount_ = 4u,
 			.frameCount_ = frameCount,
 			.setCountPerFrame_ = 1u
-			//.setCountPerFrame_ = static_cast<uint32_t>(models_.size()),
 		});
 
 	// Layout
@@ -153,42 +152,4 @@ void PipelineShadow::CreateDescriptor(VulkanContext& ctx)
 
 		descriptor_.CreateSet(ctx, writes, &(descriptorSets_[i]));
 	}
-
-	/*descriptor_.CreatePool(
-		ctx,
-		{
-			.uboCount_ = 2u,
-			.frameCount_ = AppConfig::FrameOverlapCount,
-			.setCountPerFrame_ = static_cast<uint32_t>(models_.size()),
-		});
-
-	// Layout
-	descriptor_.CreateLayout(ctx,
-		{
-			{
-				.type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT,
-				.bindingCount_ = 2
-			}
-		});
-
-	// Set
-	descriptorSets_.resize(models_.size() * AppConfig::FrameOverlapCount);
-	for (size_t i = 0; i < models_.size(); ++i)
-	{
-		size_t index = i * AppConfig::FrameOverlapCount;
-		for (size_t j = 0; j < AppConfig::FrameOverlapCount; ++j)
-		{
-			VkDescriptorBufferInfo bufferInfo1 = { shadowMapUBOBuffers_[j].buffer_, 0, sizeof(ShadowMapUBO)};
-			VkDescriptorBufferInfo bufferInfo2 = { models_[i]->modelBuffers_[j].buffer_, 0, sizeof(ModelUBO)};
-
-			descriptor_.CreateSet(
-				ctx,
-				{
-					{.bufferInfoPtr_ = &bufferInfo1, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER },
-					{.bufferInfoPtr_ = &bufferInfo2, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER },
-				},
-				&(descriptorSets_[index + j]));
-		}
-	}*/
 }
