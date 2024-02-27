@@ -212,11 +212,12 @@ void AppPBRShadowMapping::UpdateUI()
 
 	imguiPtr_->StartImGui();
 
-	ImGui::SetNextWindowSize(ImVec2(525, 550));
+	ImGui::SetNextWindowSize(ImVec2(525, 560));
 	ImGui::Begin("Bindless Shadow Mapping");
 	ImGui::SetWindowFontScale(1.25f);
 	
-	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));
+	ImGui::Text("FPS: %.0f", (1.f / deltaTime_));
+	ImGui::Text("Vertices: %i, Indices: %i", scene_->vertices_.size(), scene_->indices_.size());
 
 	ImGui::SeparatorText("Shading");
 	ImGui::Checkbox("Render Lights", &staticLightRender);

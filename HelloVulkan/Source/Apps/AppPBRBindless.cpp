@@ -157,9 +157,10 @@ void AppPBRBindless::UpdateUI()
 	imguiPtr_->StartImGui();
 
 	ImGui::SetNextWindowSize(ImVec2(525, 250));
-	ImGui::Begin(AppConfig::ScreenTitle.c_str());
+	ImGui::Begin("Bindless Rendering");
 	ImGui::SetWindowFontScale(1.25f);
 	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));
+	ImGui::Text("Vertices: %i, Indices: %i", scene_->vertices_.size(), scene_->indices_.size());
 	ImGui::Checkbox("Render Lights", &lightRender);
 	ImGui::SliderFloat("Light Falloff", &pbrPC.lightFalloff, 0.01f, 5.f);
 	ImGui::SliderFloat("Light Intensity", &pbrPC.lightIntensity, 0.1f, 100.f);

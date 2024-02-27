@@ -204,7 +204,7 @@ void AppPBRClusterForward::UpdateUI()
 	imguiPtr_->StartImGui();
 
 	ImGui::SetNextWindowSize(ImVec2(525, 250));
-	ImGui::Begin(AppConfig::ScreenTitle.c_str());
+	ImGui::Begin("Clustered Forward Shading");
 	ImGui::SetWindowFontScale(1.25f);
 	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));
 	ImGui::Checkbox("Render Lights", &lightRender);
