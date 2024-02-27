@@ -37,14 +37,25 @@ void AppPBRShadowMapping::Init()
 	InitIBLResources(AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
-	// Models
-	sponzaModel_ = std::make_unique<Model>();
-	sponzaModel_->LoadSlotBased(vulkanContext_,
-		AppConfig::ModelFolder + "Sponza//Sponza.gltf");
-	tachikomaModel_ = std::make_unique<Model>();
-	tachikomaModel_->LoadSlotBased(vulkanContext_,
-		AppConfig::ModelFolder + "Tachikoma//Tachikoma.gltf");
-	std::vector<Model*> models = {sponzaModel_.get(), tachikomaModel_.get()};
+	std::vector<std::string> modelFiles = {
+		AppConfig::ModelFolder + "Sponza//Sponza.gltf",
+		AppConfig::ModelFolder + "Tachikoma//Tachikoma.gltf",
+		AppConfig::ModelFolder + "Hexapod//Hexapod.gltf"
+	};
+	scene_ = std::make_unique<Scene>(vulkanContext_, modelFiles);
+
+	// Model matrix for Tachikoma
+	glm::mat4 modelMatrix(1.f);
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.15f, 0.35f, 1.5f));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.7f, 0.7f, 0.7f));
+	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 1);
+
+	// Model matrix for Hexapod
+	modelMatrix = glm::mat4(1.f);
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.62f, -1.5f));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f));
+	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 2);
 
 	// Pipelines
 	// This is responsible to clear swapchain image
@@ -63,13 +74,13 @@ void AppPBRShadowMapping::Init()
 	);
 	pbrPtr_ = std::make_unique<PipelinePBRShadowMapping>(
 		vulkanContext_,
-		models,
+		scene_.get(),
 		&lights_,
 		iblResources_.get(),
 		&shadowMap_,
 		&depthImage_,
 		&multiSampledColorImage_);
-	shadowPtr_ = std::make_unique<PipelineShadow>(vulkanContext_, models, &shadowMap_);
+	shadowPtr_ = std::make_unique<PipelineShadow>(vulkanContext_, scene_.get(), &shadowMap_);
 	lightPtr_ = std::make_unique<PipelineLightRender>(
 		vulkanContext_,
 		&lights_,
@@ -116,10 +127,10 @@ void AppPBRShadowMapping::InitLights()
 		{ .color_ = glm::vec4(1.f), .radius_ = 1.0f },
 
 		// Add additional lights so that the scene is not too dark
-		{.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
-		{.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
-		{.position_ = glm::vec4(-1.5f, 0.7f, -1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
-		{.position_ = glm::vec4(1.5f, 0.7f, -1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f }
+		{.position_ = glm::vec4(-1.5f, 2.5f,  5.f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
+		{.position_ = glm::vec4(1.5f, 2.5f,  5.f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
+		{.position_ = glm::vec4(-1.5f, 2.5f, -5.f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
+		{.position_ = glm::vec4(1.5f, 2.5f, -5.f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f }
 	});
 }
 
@@ -131,10 +142,7 @@ void AppPBRShadowMapping::DestroyResources()
 	iblResources_.reset();
 
 	// Destroy meshes
-	sponzaModel_->Destroy();
-	sponzaModel_.reset();
-	tachikomaModel_->Destroy();
-	tachikomaModel_.reset();
+	scene_.reset();
 
 	// Lights
 	lights_.Destroy();
@@ -163,22 +171,6 @@ void AppPBRShadowMapping::UpdateUBOs()
 	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view));
 	skyboxPtr_->SetCameraUBO(vulkanContext_, skyboxUbo);
 
-	// Sponza
-	glm::mat4 modelMatrix(1.f);
-	sponzaModel_->SetModelUBO(vulkanContext_, 
-	{
-		.model = modelMatrix
-	});
-
-	// Tachikoma
-	modelMatrix = glm::mat4(1.f);
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.5f, 0.62f, 0.f));
-	tachikomaModel_->SetModelUBO(vulkanContext_, 
-	{
-		.model = modelMatrix
-	});
-
 	// Shadow mapping
 	LightData light = lights_.lights_[0];
 	glm::mat4 lightProjection = glm::perspective(glm::radians(45.f), 1.0f, shadowUBO_.shadowNearPlane, shadowUBO_.shadowFarPlane);
@@ -201,27 +193,31 @@ void AppPBRShadowMapping::UpdateUI()
 	static bool staticLightRender = true;
 	static PushConstantPBR staticPBRPushConstants =
 	{
-		.lightIntensity = 0.5f,
+		.lightIntensity = 1.5f,
 		.baseReflectivity = 0.01f,
+		.maxReflectionLod = 1.f,
 		.lightFalloff = 0.1f,
+		.albedoMultipler = 0.5
 	};
 	static ShadowMapUBO staticShadowUBO =
 	{
 		.shadowMinBias = 0.001f,
 		.shadowMaxBias = 0.001f,
-		.shadowNearPlane = 15.0f,
-		.shadowFarPlane = 50.0f
+		.shadowNearPlane = 10.0f,
+		.shadowFarPlane = 40.0f,
+		.pcfScale = 0.5
 	};
-	static float staticLightPos[3] = { -5.f, 45.0f, 5.0f};
-	static int staticPCFIteration = 1;
+	static float staticLightPos[3] = { -5.f, 30.0f, 5.0f};
+	static int staticPCFIteration = 2;
 
 	imguiPtr_->StartImGui();
 
-	ImGui::SetNextWindowSize(ImVec2(525, 500));
-	ImGui::Begin(AppConfig::ScreenTitle.c_str());
+	ImGui::SetNextWindowSize(ImVec2(525, 560));
+	ImGui::Begin("Bindless Shadow Mapping");
 	ImGui::SetWindowFontScale(1.25f);
 	
-	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));
+	ImGui::Text("FPS: %.0f", (1.f / deltaTime_));
+	ImGui::Text("Vertices: %i, Indices: %i", scene_->vertices_.size(), scene_->indices_.size());
 
 	ImGui::SeparatorText("Shading");
 	ImGui::Checkbox("Render Lights", &staticLightRender);
@@ -236,11 +232,12 @@ void AppPBRShadowMapping::UpdateUI()
 	ImGui::SliderFloat("Max Bias", &staticShadowUBO.shadowMaxBias, 0.001f, 0.1f);
 	ImGui::SliderFloat("Near Plane", &staticShadowUBO.shadowNearPlane, 0.1f, 50.0f);
 	ImGui::SliderFloat("Far Plane", &staticShadowUBO.shadowFarPlane, 10.0f, 150.0f);
+	ImGui::SliderFloat("PCF Scale", &staticShadowUBO.pcfScale, 0.1, 1.0);
 	ImGui::SliderInt("PCF Iteration", &staticPCFIteration, 1, 10);
 
 	ImGui::SeparatorText("Light position");
 	ImGui::SliderFloat("X", &(staticLightPos[0]), -10.0f, 10.0f);
-	ImGui::SliderFloat("Y", &(staticLightPos[1]), 40.0f, 70.0f);
+	ImGui::SliderFloat("Y", &(staticLightPos[1]), 20.0f, 60.0f);
 	ImGui::SliderFloat("Z", &(staticLightPos[2]), -10.0f, 10.0f);
 
 	imguiPtr_->EndImGui();
@@ -254,6 +251,7 @@ void AppPBRShadowMapping::UpdateUI()
 	shadowUBO_.shadowMaxBias = staticShadowUBO.shadowMaxBias;
 	shadowUBO_.shadowNearPlane = staticShadowUBO.shadowNearPlane;
 	shadowUBO_.shadowFarPlane = staticShadowUBO.shadowFarPlane;
+	shadowUBO_.pcfScale = staticShadowUBO.pcfScale;
 	shadowUBO_.pcfIteration = staticPCFIteration;
 }
 

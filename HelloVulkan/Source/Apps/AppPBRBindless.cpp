@@ -38,10 +38,7 @@ void AppPBRBindless::Init()
 	glm::mat4 modelMatrix(1.f);
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.5f, 0.62f, 0.f));
-	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
-	{
-		scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, i, 1);
-	}
+	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 1);
 
 	// Pipelines
 	// This is responsible to clear swapchain image
@@ -160,9 +157,10 @@ void AppPBRBindless::UpdateUI()
 	imguiPtr_->StartImGui();
 
 	ImGui::SetNextWindowSize(ImVec2(525, 250));
-	ImGui::Begin(AppConfig::ScreenTitle.c_str());
+	ImGui::Begin("Bindless Rendering");
 	ImGui::SetWindowFontScale(1.25f);
 	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));
+	ImGui::Text("Vertices: %i, Indices: %i", scene_->vertices_.size(), scene_->indices_.size());
 	ImGui::Checkbox("Render Lights", &lightRender);
 	ImGui::SliderFloat("Light Falloff", &pbrPC.lightFalloff, 0.01f, 5.f);
 	ImGui::SliderFloat("Light Intensity", &pbrPC.lightIntensity, 0.1f, 100.f);

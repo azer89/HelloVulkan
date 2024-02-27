@@ -4,7 +4,7 @@
 #include "AppBase.h"
 #include "VulkanImage.h"
 #include "Light.h"
-#include "Model.h"
+#include "Scene.h"
 #include "IBLResources.h"
 
 // Pipelines
@@ -48,10 +48,9 @@ private:
 	std::unique_ptr<PipelineLightRender> lightPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
 
-	std::unique_ptr<Model> sponzaModel_;
-	std::unique_ptr<Model> tachikomaModel_;
+	std::unique_ptr<Scene> scene_;
 
-	Lights lights_;
+	Lights lights_; // TODO Set as unique_ptr
 	ShadowMapUBO shadowUBO_;
 
 	float cubemapMipmapCount_;

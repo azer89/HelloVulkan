@@ -181,13 +181,12 @@ void main()
 	// PBR + IBL, Material properties
 	vec3 albedo = pow(albedo4.rgb, vec3(2.2)); 
 	vec3 emissive = texture(textureEmissive, texCoord).rgb;
+	vec3 tangentNormal = texture(textureNormal, texCoord).xyz * 2.0 - 1.0;
 	float metallic = texture(textureMetalness, texCoord).b;
 	float roughness = texture(textureRoughness, texCoord).g;
 	float ao = texture(textureAO, texCoord).r;
-
 	float alphaRoughness = AlphaDirectLighting(roughness);
-	vec3 tangentNormal = texture(textureNormal, texCoord).xyz * 2.0 - 1.0;
-
+	
 	// Input lighting data
 	vec3 N = TangentNormalToWorld(tangentNormal, worldPos, normal, texCoord);
 	vec3 V = normalize(camUBO.position.xyz - worldPos);

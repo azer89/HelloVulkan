@@ -147,7 +147,6 @@ void main()
 {
 	MeshData mData = meshes[meshIndex];
 
-	//vec4 albedo4 = texture(textureAlbedo, texCoord).rgba;
 	vec4 albedo4 = texture(pbrTextures[nonuniformEXT(mData.albedo)], texCoord).rgba;
 
 	if (albedo4.a < 0.5)
@@ -158,12 +157,11 @@ void main()
 	// Material properties
 	vec3 albedo = pow(albedo4.rgb, vec3(2.2));
 	vec3 emissive = texture(pbrTextures[nonuniformEXT(mData.emissive)], texCoord).rgb;
+	vec3 tangentNormal = texture(pbrTextures[nonuniformEXT(mData.normal)], texCoord).xyz * 2.0 - 1.0;
 	float metallic = texture(pbrTextures[nonuniformEXT(mData.metalness)], texCoord).b;
 	float roughness = texture(pbrTextures[nonuniformEXT(mData.roughness)], texCoord).g;
 	float ao = texture(pbrTextures[nonuniformEXT(mData.ao)], texCoord).r;
-
 	float alphaRoughness = AlphaDirectLighting(roughness);
-	vec3 tangentNormal = texture(pbrTextures[nonuniformEXT(mData.normal)], texCoord).xyz * 2.0 - 1.0;
 
 	// Input lighting data
 	vec3 N = TangentNormalToWorld(tangentNormal, worldPos, normal, texCoord);

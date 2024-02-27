@@ -2,13 +2,13 @@
 #define PIPELINE_SHADOW_MAPPING
 
 #include "PipelineBase.h"
-#include "Model.h"
+#include "Scene.h"
 
 class PipelineShadow final : public PipelineBase
 {
 public:
 	PipelineShadow(VulkanContext& ctx,
-		const std::vector<Model*>& models,
+		Scene* scene,
 		VulkanImage* shadowMap);
 	~PipelineShadow();
 
@@ -26,11 +26,12 @@ private:
 	void CreateDescriptor(VulkanContext& ctx);
 
 private:
-	std::vector<Model*> models_;
+	Scene* scene_;
 	VulkanImage* shadowMap_;
 
 	std::vector<VulkanBuffer> shadowMapUBOBuffers_;
 	std::vector<VkDescriptorSet> descriptorSets_;
+	std::vector<VulkanBuffer> indirectBuffers_;
 };
 
 #endif

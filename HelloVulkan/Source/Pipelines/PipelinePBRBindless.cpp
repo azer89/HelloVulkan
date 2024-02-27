@@ -32,7 +32,7 @@ PipelinePBRBindless::PipelinePBRBindless(
 	// Per frame UBO
 	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
 
-	CreateIndirectBuffers(ctx);
+	CreateIndirectBuffers(ctx, scene_, indirectBuffers_);
 
 	CreateDescriptor(ctx);
 
@@ -109,38 +109,6 @@ void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 		sizeof(VkDrawIndirectCommand));
 	
 	vkCmdEndRenderPass(commandBuffer);
-}
-
-void PipelinePBRBindless::CreateIndirectBuffers(VulkanContext& ctx)
-{
-	const uint32_t meshSize = scene_->GetMeshCount();
-	const uint32_t indirectDataSize = meshSize * sizeof(VkDrawIndirectCommand);
-	constexpr size_t numFrames = AppConfig::FrameOverlapCount;
-
-	const std::vector<uint32_t> meshVertexCountArray = scene_->GetMeshVertexCountArray();
-	
-	indirectBuffers_.resize(numFrames);
-	for (size_t i = 0; i < numFrames; ++i)
-	{
-		// Create
-		indirectBuffers_[i].CreateIndirectBuffer(ctx, indirectDataSize);
-		// Map
-		VkDrawIndirectCommand* data = indirectBuffers_[i].MapIndirectBuffer();
-
-		for (uint32_t j = 0; j < meshSize; ++j)
-		{
-			data[j] =
-			{
-				.vertexCount = static_cast<uint32_t>(meshVertexCountArray[j]),
-				.instanceCount = 1u,
-				.firstVertex = 0,
-				.firstInstance = j
-			};
-		}
-
-		// Unmap
-		indirectBuffers_[i].UnmapIndirectBuffer();
-	}
 }
 
 // TODO Refactor VulkanDescriptor to make the code below simpler

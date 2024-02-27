@@ -9,6 +9,7 @@
 #include "VulkanFramebuffer.h"
 #include "VulkanDescriptor.h"
 #include "PipelineConfig.h"
+#include "Scene.h"
 #include "UBO.h"
 
 #include <string>
@@ -69,6 +70,11 @@ protected:
 		std::vector<VulkanBuffer>& buffers,
 		uint32_t dataSize,
 		size_t bufferCount);
+
+	void CreateIndirectBuffers(
+		VulkanContext& ctx,
+		Scene* scene,
+		std::vector<VulkanBuffer>& indirectBuffers);
 
 	void CreatePipelineLayout(VulkanContext& ctx,
 		VkDescriptorSetLayout dsLayout, 

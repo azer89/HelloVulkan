@@ -38,6 +38,8 @@ struct ShadowMapUBO
 	alignas(4)
 	float shadowFarPlane;
 	alignas(4)
+	float pcfScale;
+	alignas(4)
 	uint32_t pcfIteration;
 };
 

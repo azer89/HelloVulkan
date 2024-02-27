@@ -4,7 +4,7 @@ A real-time rendering engine built from scratch using Vulkan API and C++.
 
 ### Features
 * __Clustered forward shading__, no more deferred!
-* __Bindless rendering__, using draw indirect and descriptor indexing.
+* __Bindless rendering__, using indirect draw and descriptor indexing.
 * __Physically-Based Rendering__ (PBR) with Cook-Torrance BRDF.
 * __Image-Based Lighting__ (IBL) with offscreen pipelines that generate:
     * A cubemap from an equirectangular HDR image.
@@ -20,13 +20,17 @@ A real-time rendering engine built from scratch using Vulkan API and C++.
 
 ### Gallery
 
-The image below shows a demo of PBR, IBL, and Shadow mapping.
+The images below shows a demo of PBR, IBL, shadow mapping, and bindless rendering.
 
-<img width="850" alt="vulkan_tachikoma_shadow_mapping" src="https://github.com/azer89/HelloVulkan/assets/790432/9600c642-6331-43f8-80de-1967cd575f420">
+<img width="850" alt="bindless_shadow_mapping_1" src="https://github.com/azer89/HelloVulkan/assets/790432/37ee12b6-e676-438a-a80c-3d01519a3833">
+
+<img width="850" alt="bindless_shadow_mapping_2" src="https://github.com/azer89/HelloVulkan/assets/790432/6039e617-a1a0-482f-9d76-c670f1148585">
+
+Bindless rendering is implemented using indirect draw and descriptor indexing. Bindless rendering enables the storage of all scene textures inside an unbounded array, consequently eliminating the need for descriptor rebinding for each draw call.
 
 </br>
 </br>
-A realistic rendering of a helmet demonstrating PBR and IBL techniques.
+The image below is another example of realistic rendering of the damaged helmet demonstrating PBR and IBL techniques.
 
 https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d130bf910
 

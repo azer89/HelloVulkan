@@ -29,7 +29,6 @@ public:
 	void SetPBRPushConstants(const PushConstantPBR& pbrPC) { pc_ = pbrPC; };
 
 private:
-	void CreateIndirectBuffers(VulkanContext& ctx);
 	void CreateDescriptor(VulkanContext& ctx);
 
 	Scene* scene_;

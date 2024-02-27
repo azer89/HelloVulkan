@@ -1,7 +1,12 @@
 #version 460 core
+#extension GL_EXT_nonuniform_qualifier : require
 
 /*
-Fragment shader for PBR+IBL, naive forward shading with shadow mapping
+Fragment shader for 
+	* PBR+IBL
+	* Naive forward shading (non clustered)
+	* Shadow mapping
+	* Bindless
 */
 
 // Include files
@@ -14,32 +19,43 @@ layout(location = 0) in vec3 worldPos;
 layout(location = 1) in vec2 texCoord;
 layout(location = 2) in vec3 normal;
 layout(location = 3) in vec4 shadowPos;
+layout(location = 4) in flat uint meshIndex;
 
 layout(location = 0) out vec4 fragColor;
 
 layout(push_constant)
 #include <PBRPushConstants.glsl>
 
+// UBO
 layout(set = 0, binding = 0)
 #include <CameraUBO.glsl>
 
-layout(set = 0, binding = 2)
+// UBO
+layout(set = 0, binding = 1)
 #include <ShadowMapping//UBO.glsl>
 
 // SSBO
-layout(set = 0, binding = 3) readonly buffer Lights { LightData lights []; };
+#include <Bindless//MeshData.glsl>
+layout(set = 0, binding = 5) readonly buffer Meshes { MeshData meshes []; };
 
-layout(set = 0, binding = 4) uniform sampler2D textureAlbedo;
-layout(set = 0, binding = 5) uniform sampler2D textureNormal;
-layout(set = 0, binding = 6) uniform sampler2D textureMetalness;
-layout(set = 0, binding = 7) uniform sampler2D textureRoughness;
-layout(set = 0, binding = 8) uniform sampler2D textureAO;
-layout(set = 0, binding = 9) uniform sampler2D textureEmissive;
+// SSBO
+layout(set = 0, binding = 6) readonly buffer Lights { LightData lights []; };
 
-layout(set = 0, binding = 10) uniform samplerCube specularMap;
-layout(set = 0, binding = 11) uniform samplerCube diffuseMap;
-layout(set = 0, binding = 12) uniform sampler2D brdfLUT;
-layout(set = 0, binding = 13) uniform sampler2D shadowMap;
+layout(set = 0, binding = 7) uniform samplerCube specularMap;
+layout(set = 0, binding = 8) uniform samplerCube diffuseMap;
+layout(set = 0, binding = 9) uniform sampler2D brdfLUT;
+layout(set = 0, binding = 10) uniform sampler2D shadowMap;
+
+/*
+0 = albedo
+1 = normal
+2 = metalness
+3 = roughness
+4 = ao
+5 = emissive
+*/
+// NOTE This requires descriptor indexing feature
+layout(set = 0, binding = 11) uniform sampler2D pbrTextures[];
 
 // Shadow mapping functions
 #include <ShadowMapping//Header.glsl>
@@ -139,7 +155,9 @@ float LinearDepth(float z, float near, float far)
 
 void main()
 {
-	vec4 albedo4 = texture(textureAlbedo, texCoord).rgba;
+	MeshData mData = meshes[meshIndex];
+
+	vec4 albedo4 = texture(pbrTextures[nonuniformEXT(mData.albedo)], texCoord).rgba;
 
 	if (albedo4.a < 0.5)
 	{
@@ -147,15 +165,14 @@ void main()
 	}
 
 	// Material properties
-	vec3 albedo = pow(albedo4.rgb, vec3(2.2)); 
-	vec3 emissive = texture(textureEmissive, texCoord).rgb;
-	float metallic = texture(textureMetalness, texCoord).b;
-	float roughness = texture(textureRoughness, texCoord).g;
-	float ao = texture(textureAO, texCoord).r;
-
+	vec3 albedo = pow(albedo4.rgb, vec3(2.2));
+	vec3 emissive = texture(pbrTextures[nonuniformEXT(mData.emissive)], texCoord).rgb;
+	vec3 tangentNormal = texture(pbrTextures[nonuniformEXT(mData.normal)], texCoord).xyz * 2.0 - 1.0;
+	float metallic = texture(pbrTextures[nonuniformEXT(mData.metalness)], texCoord).b;
+	float roughness = texture(pbrTextures[nonuniformEXT(mData.roughness)], texCoord).g;
+	float ao = texture(pbrTextures[nonuniformEXT(mData.ao)], texCoord).r;
 	float alphaRoughness = AlphaDirectLighting(roughness);
-	vec3 tangentNormal = texture(textureNormal, texCoord).xyz * 2.0 - 1.0;
-
+	
 	// Input lighting data
 	vec3 N = TangentNormalToWorld(tangentNormal, worldPos, normal, texCoord);
 	vec3 V = normalize(camUBO.position.xyz - worldPos);

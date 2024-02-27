@@ -19,14 +19,15 @@ float TextureProj(vec4 shadowCoord, vec2 off)
 float FilterPCF(vec4 sc)
 {
 	ivec2 texDim = textureSize(shadowMap, 0);
-	float scale = 1.0;
+	float scale = shadowUBO.pcfScale;
 	float dx = scale * 1.0 / float(texDim.x);
 	float dy = scale * 1.0 / float(texDim.y);
 
 	float shadowFactor = 0.0;
 	int count = 0;
-	int range = int(shadowUBO.pcfIteration);
 
+	// TODO This is very slow
+	int range = int(shadowUBO.pcfIteration);
 	for (int x = -range; x <= range; x++)
 	{
 		for (int y = -range; y <= range; y++)
