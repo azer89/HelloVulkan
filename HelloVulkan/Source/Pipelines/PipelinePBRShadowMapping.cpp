@@ -81,6 +81,11 @@ PipelinePBRShadowMapping::~PipelinePBRShadowMapping()
 	{
 		uboBuffer.Destroy();
 	}
+
+	for (auto& buffer : indirectBuffers_)
+	{
+		buffer.Destroy();
+	}
 }
 
 void PipelinePBRShadowMapping::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
@@ -223,6 +228,8 @@ void PipelinePBRShadowMapping::CreateDescriptor(VulkanContext& ctx)
 			.imageInfoPtr_ = imageInfos.data(),
 			.descriptorCount_ = textureCount,
 			.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
+
+		descriptor_.CreateSet(ctx, writes, &(descriptorSets_[i]));
 	}
 
 	/*uint32_t numMeshes = 0u;

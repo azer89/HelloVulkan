@@ -61,6 +61,11 @@ PipelineShadow::~PipelineShadow()
 	{
 		buffer.Destroy();
 	}
+
+	for (auto& buffer : indirectBuffers_)
+	{
+		buffer.Destroy();
+	}
 }
 
 void PipelineShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
@@ -124,7 +129,6 @@ void PipelineShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comma
 
 void PipelineShadow::OnWindowResized(VulkanContext& ctx)
 {
-
 }
 
 void PipelineShadow::CreateDescriptor(VulkanContext& ctx)
