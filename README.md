@@ -22,9 +22,9 @@ A real-time rendering engine built from scratch using Vulkan API and C++.
 
 The images below shows a demo of PBR, IBL, shadow mapping, and bindless rendering.
 
-<img width="850" alt="bindless_shadow_mapping_1" src="https://github.com/azer89/HelloVulkan/assets/790432/37ee12b6-e676-438a-a80c-3d01519a3833">
+<img width="850" alt="bindless_shadow_mapping_1" src="https://github.com/azer89/HelloVulkan/assets/790432/c926d003-8df2-464e-a8f7-e04b66494214">
 
-<img width="850" alt="bindless_shadow_mapping_2" src="https://github.com/azer89/HelloVulkan/assets/790432/6039e617-a1a0-482f-9d76-c670f1148585">
+<img width="850" alt="bindless_shadow_mapping_2" src="https://github.com/azer89/HelloVulkan/assets/790432/7111e3f7-51e2-47fa-9fad-a0a19b4a1f1b">
 
 Bindless rendering is implemented using indirect draw and descriptor indexing. Bindless rendering enables the storage of all scene textures inside an unbounded array, consequently eliminating the need for descriptor rebinding for each draw call.
 
