@@ -24,7 +24,10 @@ public:
 	// TODO The interface is kinda weird
 	void UpdateModelMatrix(VulkanContext& ctx, 
 		ModelUBO modelUBO, 
-		uint32_t frameIndex, 
+		uint32_t modelIndex,
+		uint32_t frameIndex);
+	void UpdateModelMatrix(VulkanContext& ctx,
+		ModelUBO modelUBO,
 		uint32_t modelIndex);
 
 private:

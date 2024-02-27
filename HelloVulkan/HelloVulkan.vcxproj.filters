@@ -102,13 +102,13 @@
     <None Include="..\Shaders\SimpleRaytracing\RayGen.rgen">
       <Filter>Shaders\SimpleRaytracing</Filter>
     </None>
-    <None Include="..\Shaders\ShadowMapping\Mesh.frag">
+    <None Include="..\Shaders\ShadowMapping\Scene.frag">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
     <None Include="..\Shaders\ShadowMapping\Depth.vert">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
-    <None Include="..\Shaders\ShadowMapping\Mesh.vert">
+    <None Include="..\Shaders\ShadowMapping\Scene.vert">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
     <None Include="..\Shaders\ShadowMapping\Header.glsl">

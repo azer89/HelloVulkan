@@ -2,13 +2,14 @@
 
 PipelineShadow::PipelineShadow(
 	VulkanContext& ctx,
-	//const std::vector<Model*>& models,
 	Scene* scene,
 	VulkanImage* shadowMap) :
 	PipelineBase(ctx,
 		{
 			// Depth only and offscreen
 			.type_ = PipelineType::GraphicsOffScreen,
+
+			// If you use bindless, make sure this is false
 			.vertexBufferBind_ = false,
 
 			// Render using shadow map dimension
@@ -16,7 +17,6 @@ PipelineShadow::PipelineShadow(
 			.viewportWidth_ = static_cast<float>(shadowMap->width_),
 			.viewportHeight_ = static_cast<float>(shadowMap->height_)
 		}),
-	//models_(models),
 	scene_(scene),
 	shadowMap_(shadowMap)
 {
@@ -46,10 +46,8 @@ PipelineShadow::PipelineShadow(
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
+			// Just need a vertex shader
 			AppConfig::ShaderFolder + "ShadowMapping//Depth.vert",
-
-			// Not needed
-			//AppConfig::ShaderFolder + "ShadowMapping//Depth.frag"
 		},
 		&pipeline_
 	);
@@ -95,33 +93,6 @@ void PipelineShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comma
 		0, // offset
 		scene_->GetMeshCount(),
 		sizeof(VkDrawIndirectCommand));
-	
-	/*for (size_t i = 0; i < models_.size(); ++i)
-	{
-		size_t index = i * AppConfig::FrameOverlapCount;
-		vkCmdBindDescriptorSets(
-			commandBuffer,
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			pipelineLayout_,
-			0,
-			1,
-			&descriptorSets_[index + frameIndex],
-			0,
-			nullptr);
-		for (Mesh& mesh : models_[i]->meshes_)
-		{
-			// Bind vertex buffer
-			VkBuffer buffers[] = { mesh.vertexBuffer_.buffer_ };
-			VkDeviceSize offsets[] = { 0 };
-			vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
-
-			// Bind index buffer
-			vkCmdBindIndexBuffer(commandBuffer, mesh.indexBuffer_.buffer_, 0, VK_INDEX_TYPE_UINT32);
-
-			// Draw
-			vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBufferSize_ / (sizeof(unsigned int))), 1, 0, 0, 0);
-		}
-	}*/
 
 	vkCmdEndRenderPass(commandBuffer);
 }

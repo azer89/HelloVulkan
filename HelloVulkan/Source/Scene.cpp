@@ -88,7 +88,10 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 	}
 }
 
-void Scene::UpdateModelMatrix(VulkanContext& ctx, ModelUBO modelUBO, uint32_t frameIndex, uint32_t modelIndex)
+void Scene::UpdateModelMatrix(VulkanContext& ctx, 
+	ModelUBO modelUBO, 
+	uint32_t modelIndex,
+	uint32_t frameIndex)
 {
 	if (modelIndex < 0 || modelIndex >= models_.size())
 	{
@@ -105,6 +108,16 @@ void Scene::UpdateModelMatrix(VulkanContext& ctx, ModelUBO modelUBO, uint32_t fr
 		&modelUBO,
 		sizeof(ModelUBO) * modelIndex,
 		sizeof(ModelUBO));
+}
+
+void Scene::UpdateModelMatrix(VulkanContext& ctx,
+	ModelUBO modelUBO,
+	uint32_t modelIndex)
+{
+	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
+	{
+		UpdateModelMatrix(ctx, modelUBO, modelIndex, i);
+	}
 }
 
 // This is for descriptor indexing

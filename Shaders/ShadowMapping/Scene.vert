@@ -60,17 +60,11 @@ void main()
 	mat4 model = modelUBOs[meshData.modelMatrixIndex].model;
 	mat3 normalMatrix = transpose(inverse(mat3(model)));
 
-	//mat3 normalMatrix = transpose(inverse(mat3(modelUBO.model)));
-
-	/*texCoord = inUV.xy;
-	normal = normalMatrix * inNormal.xyz;
-	worldPos = (modelUBO.model * inPosition).xyz;
-	shadowPos = biasMat * shadowUBO.lightSpaceMatrix * modelUBO.model * inPosition;*/
+	// Output
 	worldPos = (model * vertexData.position).xyz;
 	texCoord = vertexData.uv.xy;
 	normal = normalMatrix * vertexData.normal.xyz;
 	meshIndex = gl_BaseInstance;
 	shadowPos = biasMat * shadowUBO.lightSpaceMatrix * model * vertexData.position;
-
 	gl_Position =  camUBO.projection * camUBO.view * vec4(worldPos, 1.0);
 }

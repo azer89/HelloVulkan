@@ -40,7 +40,7 @@ void AppPBRBindless::Init()
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.5f, 0.62f, 0.f));
 	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
 	{
-		scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, i, 1);
+		scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 1, i);
 	}
 
 	// Pipelines

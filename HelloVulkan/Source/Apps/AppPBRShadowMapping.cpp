@@ -37,18 +37,6 @@ void AppPBRShadowMapping::Init()
 	InitIBLResources(AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
-	// Models
-	/*sponzaModel_ = std::make_unique<Model>();
-	sponzaModel_->LoadSlotBased(vulkanContext_,
-		AppConfig::ModelFolder + "Sponza//Sponza.gltf");
-	tachikomaModel_ = std::make_unique<Model>();
-	tachikomaModel_->LoadSlotBased(vulkanContext_,
-		AppConfig::ModelFolder + "Tachikoma//Tachikoma.gltf");
-	hexapodModel_ = std::make_unique<Model>();
-	hexapodModel_->LoadSlotBased(vulkanContext_,
-		AppConfig::ModelFolder + "Hexapod//Hexapod.gltf");
-	std::vector<Model*> models = {sponzaModel_.get(), tachikomaModel_.get(), hexapodModel_.get()};*/
-
 	std::vector<std::string> modelFiles = {
 		AppConfig::ModelFolder + "Sponza//Sponza.gltf",
 		AppConfig::ModelFolder + "Tachikoma//Tachikoma.gltf",
@@ -63,14 +51,14 @@ void AppPBRShadowMapping::Init()
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.7f, 0.7f, 0.7f));
 	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
 	{
-		scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, i, 1);
+		scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 1, i);
 	}
 	modelMatrix = glm::mat4(1.f);
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.62f, -1.5f));
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f));
 	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
 	{
-		scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, i, 2);
+		scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 2, i);
 	}
 
 	// Pipelines

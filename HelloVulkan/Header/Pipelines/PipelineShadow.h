@@ -8,7 +8,6 @@ class PipelineShadow final : public PipelineBase
 {
 public:
 	PipelineShadow(VulkanContext& ctx,
-		//const std::vector<Model*>& models,
 		Scene* scene,
 		VulkanImage* shadowMap);
 	~PipelineShadow();
@@ -27,7 +26,6 @@ private:
 	void CreateDescriptor(VulkanContext& ctx);
 
 private:
-	//std::vector<Model*> models_;
 	Scene* scene_;
 	VulkanImage* shadowMap_;
 

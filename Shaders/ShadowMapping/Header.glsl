@@ -25,8 +25,9 @@ float FilterPCF(vec4 sc)
 
 	float shadowFactor = 0.0;
 	int count = 0;
-	int range = int(shadowUBO.pcfIteration);
 
+	// TODO This is very slow
+	int range = int(shadowUBO.pcfIteration);
 	for (int x = -range; x <= range; x++)
 	{
 		for (int y = -range; y <= range; y++)

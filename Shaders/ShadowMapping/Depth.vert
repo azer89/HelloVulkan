@@ -1,16 +1,7 @@
 #version 460 core
 
-//layout(location = 0) in vec4 inPosition;
-//layout(location = 1) in vec4 inNormal;
-//layout(location = 2) in vec4 inUV;
-
 layout(set = 0, binding = 0)
 #include <ShadowMapping//UBO.glsl>
-
-//layout(set = 0, binding = 1) uniform ModelUBO
-//{
-//	mat4 model;
-//};
 
 // SSBO
 struct ModelUBO
@@ -39,6 +30,6 @@ void main()
 	VertexData vertexData = vertices[vIndex];
 	mat4 model = modelUBOs[meshData.modelMatrixIndex].model;
 
+	// Output
 	gl_Position = shadowUBO.lightSpaceMatrix * model * vertexData.position;
-	//gl_Position = shadowUBO.lightSpaceMatrix * model * vec4(inPosition.xyz, 1.0);
 }
