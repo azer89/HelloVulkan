@@ -6,6 +6,7 @@ Models/*/*.gltf filter=lfs diff=lfs merge=lfs -text
 Models/*/*.jpg filter=lfs diff=lfs merge=lfs -text
 Models/*/*.obj filter=lfs diff=lfs merge=lfs -text
 Models/*/Textures/* filter=lfs diff=lfs merge=lfs -text
+Models/*/textures/* filter=lfs diff=lfs merge=lfs -text
 
 Textures/pbr/*/* filter=lfs diff=lfs merge=lfs -text
 Textures/*.hdr filter=lfs diff=lfs merge=lfs -text
