@@ -38,10 +38,7 @@ void AppPBRBindless::Init()
 	glm::mat4 modelMatrix(1.f);
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.5f, 0.62f, 0.f));
-	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
-	{
-		scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 1, i);
-	}
+	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 1);
 
 	// Pipelines
 	// This is responsible to clear swapchain image
