@@ -49,11 +49,8 @@ private:
 	std::unique_ptr<PipelineImGui> imguiPtr_;
 
 	std::unique_ptr<Scene> scene_;
-	//std::unique_ptr<Model> sponzaModel_;
-	//std::unique_ptr<Model> hexapodModel_;
-	//std::unique_ptr<Model> tachikomaModel_;
 
-	Lights lights_;
+	Lights lights_; // TODO Set as unique_ptr
 	ShadowMapUBO shadowUBO_;
 
 	float cubemapMipmapCount_;

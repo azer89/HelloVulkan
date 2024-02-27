@@ -44,22 +44,18 @@ void AppPBRShadowMapping::Init()
 	};
 	scene_ = std::make_unique<Scene>(vulkanContext_, modelFiles);
 
-	// Set model matrices
+	// Model matrix for Tachikoma
 	glm::mat4 modelMatrix(1.f);
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.15f, 0.35f, 1.5f));
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.7f, 0.7f, 0.7f));
-	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
-	{
-		scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 1, i);
-	}
+	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 1);
+
+	// Model matrix for Hexapod
 	modelMatrix = glm::mat4(1.f);
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.62f, -1.5f));
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f));
-	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
-	{
-		scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 2, i);
-	}
+	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 2);
 
 	// Pipelines
 	// This is responsible to clear swapchain image
@@ -147,12 +143,6 @@ void AppPBRShadowMapping::DestroyResources()
 
 	// Destroy meshes
 	scene_.reset();
-	/*sponzaModel_->Destroy();
-	sponzaModel_.reset();
-	tachikomaModel_->Destroy();
-	tachikomaModel_.reset();
-	hexapodModel_->Destroy();
-	hexapodModel_.reset();*/
 
 	// Lights
 	lights_.Destroy();
@@ -180,32 +170,6 @@ void AppPBRShadowMapping::UpdateUBOs()
 	CameraUBO skyboxUbo = ubo;
 	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view));
 	skyboxPtr_->SetCameraUBO(vulkanContext_, skyboxUbo);
-
-	// Sponza
-	/*glm::mat4 modelMatrix(1.f);
-	sponzaModel_->SetModelUBO(vulkanContext_, 
-	{
-		.model = modelMatrix
-	});
-
-	// Tachikoma
-	modelMatrix = glm::mat4(1.f);
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.15f, 0.35f, 1.5f));
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
-	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.7f, 0.7f, 0.7f));
-	tachikomaModel_->SetModelUBO(vulkanContext_, 
-	{
-		.model = modelMatrix
-	});
-
-	// Hexapod
-	modelMatrix = glm::mat4(1.f);
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.62f, -1.5f));
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f));
-	hexapodModel_->SetModelUBO(vulkanContext_,
-		{
-			.model = modelMatrix
-		});*/
 
 	// Shadow mapping
 	LightData light = lights_.lights_[0];
@@ -249,7 +213,7 @@ void AppPBRShadowMapping::UpdateUI()
 	imguiPtr_->StartImGui();
 
 	ImGui::SetNextWindowSize(ImVec2(525, 550));
-	ImGui::Begin(AppConfig::ScreenTitle.c_str());
+	ImGui::Begin("Bindless Shadow Mapping");
 	ImGui::SetWindowFontScale(1.25f);
 	
 	ImGui::Text("FPS : %.0f", (1.f / deltaTime_));
