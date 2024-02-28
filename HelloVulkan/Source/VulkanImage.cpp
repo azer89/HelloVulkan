@@ -416,10 +416,10 @@ void VulkanImage::TransitionImageLayout(VulkanContext& ctx,
 	VkImageLayout oldLayout,
 	VkImageLayout newLayout,
 	uint32_t layerCount,
-	uint32_t mipLevels)
+	uint32_t mipCount)
 {
 	VkCommandBuffer commandBuffer = ctx.BeginOneTimeGraphicsCommand();
-	TransitionImageLayoutCommand(commandBuffer, image_, format, oldLayout, newLayout, layerCount, mipLevels);
+	TransitionImageLayoutCommand(commandBuffer, image_, format, oldLayout, newLayout, layerCount, mipCount);
 	ctx.EndOneTimeGraphicsCommand(commandBuffer);
 }
 
@@ -430,7 +430,7 @@ void VulkanImage::TransitionImageLayoutCommand(
 	VkImageLayout oldLayout,
 	VkImageLayout newLayout,
 	uint32_t layerCount,
-	uint32_t mipLevels)
+	uint32_t mipCount)
 {
 
 	VkImageMemoryBarrier barrier = {
@@ -446,7 +446,7 @@ void VulkanImage::TransitionImageLayoutCommand(
 		.subresourceRange = VkImageSubresourceRange {
 			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
 			.baseMipLevel = 0,
-			.levelCount = mipLevels,
+			.levelCount = mipCount,
 			.baseArrayLayer = 0,
 			.layerCount = layerCount
 		}

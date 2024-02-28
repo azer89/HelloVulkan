@@ -165,7 +165,7 @@ public:
 		VkImageLayout oldLayout,
 		VkImageLayout newLayout,
 		uint32_t layerCount = 1,
-		uint32_t mipLevels = 1);
+		uint32_t mipCount = 1);
 
 	static void TransitionImageLayoutCommand(VkCommandBuffer commandBuffer,
 		VkImage image,
@@ -173,7 +173,7 @@ public:
 		VkImageLayout oldLayout,
 		VkImageLayout newLayout,
 		uint32_t layerCount = 1,
-		uint32_t mipLevels = 1);
+		uint32_t mipCount = 1);
 
 	// To create descriptor sets
 	VkDescriptorImageInfo GetDescriptorImageInfo();
