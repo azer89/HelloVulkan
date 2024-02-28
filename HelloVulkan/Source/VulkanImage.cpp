@@ -455,6 +455,7 @@ void VulkanImage::TransitionImageLayoutCommand(
 	VkPipelineStageFlags sourceStage = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
 	VkPipelineStageFlags destinationStage = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
 
+	// If depth
 	if (newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL ||
 		(format == VK_FORMAT_D16_UNORM) ||
 		(format == VK_FORMAT_X8_D24_UNORM_PACK32) ||
@@ -465,7 +466,8 @@ void VulkanImage::TransitionImageLayoutCommand(
 	{
 		barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
 
-		if (HasStencilComponent(format))
+		// If stencil
+		if (format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT)
 		{
 			barrier.subresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
 		}
@@ -772,11 +774,6 @@ void VulkanImage::CreateBarrier(ImageBarrierCreateInfo info, VkImageSubresourceR
 		1u, // imageMemoryBarrierCount
 		&barrier // pImageMemoryBarriers
 	);
-}
-
-bool VulkanImage::HasStencilComponent(VkFormat format)
-{
-	return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
 }
 
 uint32_t VulkanImage::BytesPerTexFormat(VkFormat fmt)

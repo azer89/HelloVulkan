@@ -191,8 +191,6 @@ private:
 		const void* imageData,
 		VkImageLayout sourceImageLayout = VK_IMAGE_LAYOUT_UNDEFINED);
 
-	static bool HasStencilComponent(VkFormat format);
-
 	uint32_t BytesPerTexFormat(VkFormat fmt);
 };
 
