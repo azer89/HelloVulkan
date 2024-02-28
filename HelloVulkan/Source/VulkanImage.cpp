@@ -543,11 +543,7 @@ void VulkanImage::TransitionImageLayoutCommand(
 	{
 		barrier.srcAccessMask = 0; // VK_ACCESS_SHADER_READ_BIT;
 		barrier.dstAccessMask = 0;
-		/*
-			sourceStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-			// destinationStage = VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT;
-			destinationStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		*/
+
 		sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 		destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
 	}
@@ -592,31 +588,6 @@ void VulkanImage::TransitionImageLayoutCommand(
 
 		sourceStage = VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
 		destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-	}
-	else if (oldLayout == VK_IMAGE_LAYOUT_GENERAL &&
-		newLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL)
-	{
-		barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
-	}
-
-	else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL &&
-		newLayout == VK_IMAGE_LAYOUT_GENERAL)
-	{
-		barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
-	}
-
-	else if (oldLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL &&
-		newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
-	{
-		barrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-		barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-	}
-
-	else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL &&
-		newLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
-	{
-		barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-		barrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 	}
 
 	vkCmdPipelineBarrier(
