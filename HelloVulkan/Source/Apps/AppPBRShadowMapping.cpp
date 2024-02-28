@@ -18,14 +18,15 @@ void AppPBRShadowMapping::Init()
 {
 	// Init shadow map
 	uint32_t shadowMapSize = 2048;
-	shadowMap_.CreateDepthResources(
+	shadowMap_ = std::make_unique<VulkanImage>();
+	shadowMap_->CreateDepthResources(
 		vulkanContext_,
 		shadowMapSize,
 		shadowMapSize,
 		VK_SAMPLE_COUNT_1_BIT,
 		VK_IMAGE_USAGE_SAMPLED_BIT);
-	shadowMap_.CreateDefaultSampler(vulkanContext_);
-	shadowMap_.SetDebugName(vulkanContext_, "Shadow_Map_Image");
+	shadowMap_->CreateDefaultSampler(vulkanContext_);
+	shadowMap_->SetDebugName(vulkanContext_, "Shadow_Map_Image");
 
 	// Initialize lights
 	InitLights();
@@ -65,8 +66,8 @@ void AppPBRShadowMapping::Init()
 	skyboxPtr_ = std::make_unique<PipelineSkybox>(
 		vulkanContext_,
 		&(iblResources_->environmentCubemap_),
-		&depthImage_,
-		&multiSampledColorImage_,
+		depthImage_.get(),
+		multiSampledColorImage_.get(),
 		// This is the first offscreen render pass so
 		// we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | 
@@ -75,26 +76,26 @@ void AppPBRShadowMapping::Init()
 	pbrPtr_ = std::make_unique<PipelinePBRShadowMapping>(
 		vulkanContext_,
 		scene_.get(),
-		&lights_,
+		lights_.get(),
 		iblResources_.get(),
-		&shadowMap_,
-		&depthImage_,
-		&multiSampledColorImage_);
-	shadowPtr_ = std::make_unique<PipelineShadow>(vulkanContext_, scene_.get(), &shadowMap_);
+		shadowMap_.get(),
+		depthImage_.get(),
+		multiSampledColorImage_.get());
+	shadowPtr_ = std::make_unique<PipelineShadow>(vulkanContext_, scene_.get(), shadowMap_.get());
 	lightPtr_ = std::make_unique<PipelineLightRender>(
 		vulkanContext_,
-		&lights_,
-		&depthImage_,
-		&multiSampledColorImage_
+		lights_.get(),
+		depthImage_.get(),
+		multiSampledColorImage_.get()
 	);
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
 	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(
-		vulkanContext_, &multiSampledColorImage_, &singleSampledColorImage_);
+		vulkanContext_, multiSampledColorImage_.get(), singleSampledColorImage_.get());
 	// This is on-screen render pass that transfers 
 	// singleSampledColorImage_ to swapchain image
 	tonemapPtr_ = std::make_unique<PipelineTonemap>(
 		vulkanContext_,
-		&singleSampledColorImage_
+		singleSampledColorImage_.get()
 	);
 	// ImGui here
 	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
@@ -120,7 +121,8 @@ void AppPBRShadowMapping::Init()
 void AppPBRShadowMapping::InitLights()
 {
 	// Lights (SSBO)
-	lights_.AddLights(vulkanContext_,
+	lights_ = std::make_unique<Lights>();
+	lights_->AddLights(vulkanContext_,
 	{
 		// The first light is used to generate the shadow map
 		// and its position is set by ImGui
@@ -136,8 +138,9 @@ void AppPBRShadowMapping::InitLights()
 
 void AppPBRShadowMapping::DestroyResources()
 {
-	shadowMap_.Destroy();
-
+	shadowMap_->Destroy();
+	shadowMap_.reset();
+	
 	// IBL Images
 	iblResources_.reset();
 
@@ -145,8 +148,9 @@ void AppPBRShadowMapping::DestroyResources()
 	scene_.reset();
 
 	// Lights
-	lights_.Destroy();
-
+	lights_->Destroy();
+	lights_.reset();
+	
 	// Destroy renderers
 	clearPtr_.reset();
 	finishPtr_.reset();
@@ -172,7 +176,7 @@ void AppPBRShadowMapping::UpdateUBOs()
 	skyboxPtr_->SetCameraUBO(vulkanContext_, skyboxUbo);
 
 	// Shadow mapping
-	LightData light = lights_.lights_[0];
+	LightData light = lights_->lights_[0];
 	glm::mat4 lightProjection = glm::perspective(glm::radians(45.f), 1.0f, shadowUBO_.shadowNearPlane, shadowUBO_.shadowFarPlane);
 	glm::mat4 lightView = glm::lookAt(glm::vec3(light.position_), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
@@ -242,7 +246,8 @@ void AppPBRShadowMapping::UpdateUI()
 
 	imguiPtr_->EndImGui();
 
-	lights_.UpdateLightPosition(vulkanContext_, 0, &(staticLightPos[0]));
+	// TODO Check if light position is changed 
+	lights_->UpdateLightPosition(vulkanContext_, 0, &(staticLightPos[0]));
 
 	lightPtr_->RenderEnable(staticLightRender);
 	pbrPtr_->SetPBRPushConstants(staticPBRPushConstants);

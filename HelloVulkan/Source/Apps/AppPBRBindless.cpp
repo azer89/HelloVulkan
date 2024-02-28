@@ -48,8 +48,8 @@ void AppPBRBindless::Init()
 	skyboxPtr_ = std::make_unique<PipelineSkybox>(
 		vulkanContext_,
 		&(iblResources_->environmentCubemap_),
-		&depthImage_,
-		&multiSampledColorImage_,
+		depthImage_.get(),
+		multiSampledColorImage_.get(),
 		// This is the first offscreen render pass so
 		// we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | 
@@ -58,24 +58,24 @@ void AppPBRBindless::Init()
 	pbrPtr_ = std::make_unique<PipelinePBRBindless>(
 		vulkanContext_,
 		scene_.get(),
-		&lights_,
+		lights_.get(),
 		iblResources_.get(),
-		&depthImage_,
-		&multiSampledColorImage_);
+		depthImage_.get(),
+		multiSampledColorImage_.get());
 	lightPtr_ = std::make_unique<PipelineLightRender>(
 		vulkanContext_,
-		&lights_,
-		&depthImage_,
-		&multiSampledColorImage_
+		lights_.get(),
+		depthImage_.get(),
+		multiSampledColorImage_.get()
 	);
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
 	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(
-		vulkanContext_, &multiSampledColorImage_, &singleSampledColorImage_);
+		vulkanContext_, multiSampledColorImage_.get(), singleSampledColorImage_.get());
 	// This is on-screen render pass that transfers 
 	// singleSampledColorImage_ to swapchain image
 	tonemapPtr_ = std::make_unique<PipelineTonemap>(
 		vulkanContext_,
-		&singleSampledColorImage_
+		singleSampledColorImage_.get()
 	);
 	// ImGui here
 	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
@@ -100,7 +100,8 @@ void AppPBRBindless::Init()
 void AppPBRBindless::InitLights()
 {
 	// Lights (SSBO)
-	lights_.AddLights(vulkanContext_,
+	lights_ = std::make_unique<Lights>();
+	lights_->AddLights(vulkanContext_,
 	{
 		{ .position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
 		{ .position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
@@ -118,7 +119,8 @@ void AppPBRBindless::DestroyResources()
 	scene_.reset();
 
 	// Lights
-	lights_.Destroy();
+	lights_->Destroy();
+	lights_.reset();
 
 	// Destroy renderers
 	clearPtr_.reset();

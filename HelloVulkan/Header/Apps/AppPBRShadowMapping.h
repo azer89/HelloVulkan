@@ -50,7 +50,7 @@ private:
 
 	std::unique_ptr<Scene> scene_;
 
-	Lights lights_; // TODO Set as unique_ptr
+	std::unique_ptr<Lights> lights_;
 	ShadowMapUBO shadowUBO_;
 
 	float cubemapMipmapCount_;
@@ -58,7 +58,7 @@ private:
 	float shadowNearPlane_;
 	float shadowFarPlane_;
 	uint32_t shadowMapSize_;
-	VulkanImage shadowMap_;
+	std::unique_ptr<VulkanImage> shadowMap_;
 };
 
 #endif
