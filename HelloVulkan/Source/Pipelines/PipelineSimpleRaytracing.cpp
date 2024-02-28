@@ -89,18 +89,14 @@ void PipelineSimpleRaytracing::FillCommandBuffer(VulkanContext& ctx, VkCommandBu
 		storageImage_.image_,
 		storageImage_.imageFormat_,
 		VK_IMAGE_LAYOUT_GENERAL,
-		VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-		1u,
-		1u);
+		VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
 
 	VulkanImage::TransitionImageLayoutCommand(
 		commandBuffer, 
 		ctx.GetSwapchainImage(swapchainIndex),
 		ctx.GetSwapchainImageFormat(),
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-		1u,
-		1u);
+		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 	
 	VkImageCopy copyRegion{};
 	copyRegion.srcSubresource = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1 };
@@ -121,9 +117,7 @@ void PipelineSimpleRaytracing::FillCommandBuffer(VulkanContext& ctx, VkCommandBu
 		ctx.GetSwapchainImage(swapchainIndex),
 		ctx.GetSwapchainImageFormat(),
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		1u,
-		1u);
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
 	VulkanImage::TransitionImageLayoutCommand(commandBuffer,
 		storageImage_.image_,

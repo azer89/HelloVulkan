@@ -160,20 +160,28 @@ public:
 
 	void CreateBarrier(ImageBarrierCreateInfo info, VkImageSubresourceRange subresourceRange);
 
-	void TransitionImageLayout(VulkanContext& ctx,
+	void TransitionImageLayout(
+		VulkanContext& ctx,
 		VkFormat format,
 		VkImageLayout oldLayout,
 		VkImageLayout newLayout,
-		uint32_t layerCount = 1,
-		uint32_t mipCount = 1);
+		uint32_t mipLevel = 0u,
+		uint32_t mipCount = 1u,
+		uint32_t layerLevel = 0u,
+		uint32_t layerCount = 1u
+	);
 
-	static void TransitionImageLayoutCommand(VkCommandBuffer commandBuffer,
+	static void TransitionImageLayoutCommand(
+		VkCommandBuffer commandBuffer,
 		VkImage image,
 		VkFormat format,
 		VkImageLayout oldLayout,
 		VkImageLayout newLayout,
-		uint32_t layerCount = 1,
-		uint32_t mipCount = 1);
+		uint32_t mipLevel = 0u,
+		uint32_t mipCount = 1u,
+		uint32_t layerLevel = 0u,
+		uint32_t layerCount = 1u
+	);
 
 	// To create descriptor sets
 	VkDescriptorImageInfo GetDescriptorImageInfo();

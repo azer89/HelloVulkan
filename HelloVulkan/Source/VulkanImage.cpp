@@ -404,9 +404,9 @@ void VulkanImage::UpdateImage(
 		VMA_MEMORY_USAGE_CPU_ONLY);
 
 	stagingBuffer.UploadBufferData(ctx, imageData, imageSize);
-	TransitionImageLayout(ctx, texFormat, sourceImageLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, layerCount);
+	TransitionImageLayout(ctx, texFormat, sourceImageLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 0u, 1u, 0u, layerCount);
 	CopyBufferToImage(ctx, stagingBuffer.buffer_, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight), layerCount);
-	TransitionImageLayout(ctx, texFormat, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, layerCount);
+	TransitionImageLayout(ctx, texFormat, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 0u, 1u, 0u, layerCount);
 
 	stagingBuffer.Destroy();
 }
@@ -415,11 +415,21 @@ void VulkanImage::TransitionImageLayout(VulkanContext& ctx,
 	VkFormat format,
 	VkImageLayout oldLayout,
 	VkImageLayout newLayout,
-	uint32_t layerCount,
-	uint32_t mipCount)
+	uint32_t mipLevel,
+	uint32_t mipCount,
+	uint32_t layerLevel,
+	uint32_t layerCount)
 {
 	VkCommandBuffer commandBuffer = ctx.BeginOneTimeGraphicsCommand();
-	TransitionImageLayoutCommand(commandBuffer, image_, format, oldLayout, newLayout, layerCount, mipCount);
+	TransitionImageLayoutCommand(commandBuffer, 
+		image_, 
+		format, 
+		oldLayout, 
+		newLayout, 
+		mipLevel, 
+		mipCount,
+		layerLevel,
+		layerCount);
 	ctx.EndOneTimeGraphicsCommand(commandBuffer);
 }
 
@@ -429,8 +439,10 @@ void VulkanImage::TransitionImageLayoutCommand(
 	VkFormat format,
 	VkImageLayout oldLayout,
 	VkImageLayout newLayout,
-	uint32_t layerCount,
-	uint32_t mipCount)
+	uint32_t mipLevel,
+	uint32_t mipCount,
+	uint32_t layerLevel,
+	uint32_t layerCount)
 {
 
 	VkImageMemoryBarrier barrier = {
@@ -445,9 +457,9 @@ void VulkanImage::TransitionImageLayoutCommand(
 		.image = image,
 		.subresourceRange = VkImageSubresourceRange {
 			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-			.baseMipLevel = 0,
+			.baseMipLevel = mipLevel,
 			.levelCount = mipCount,
-			.baseArrayLayer = 0,
+			.baseArrayLayer = layerLevel,
 			.layerCount = layerCount
 		}
 	};
