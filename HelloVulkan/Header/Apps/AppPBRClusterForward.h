@@ -60,7 +60,7 @@ private:
 
 	std::unique_ptr<Model> model_;
 
-	Lights lights_;
+	std::unique_ptr<Lights> lights_;
 
 	float cubemapMipmapCount_;
 };

@@ -45,7 +45,7 @@ private:
 	std::unique_ptr<PipelineImGui> imguiPtr_;
 
 	std::unique_ptr<Scene> scene_;
-	Lights lights_; // TODO Set as unique_ptr
+	std::unique_ptr<Lights> lights_; // TODO Set as unique_ptr
 
 	float cubemapMipmapCount_;
 	float modelRotation_;

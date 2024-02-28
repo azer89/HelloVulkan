@@ -69,7 +69,7 @@ protected:
 	float deltaTime_; // Time between current frame and last frame
 	float lastFrame_;
 
-	// Vulkan
+	// These two are not copyable or movable
 	VulkanInstance vulkanInstance_;
 	VulkanContext vulkanContext_;
 
@@ -83,9 +83,9 @@ protected:
 
 	// Shared by multiple render passes
 	// TODO Maybe group these inside a struct and use a unique_ptr
-	VulkanImage multiSampledColorImage_;
-	VulkanImage singleSampledColorImage_;
-	VulkanImage depthImage_;
+	std::unique_ptr<VulkanImage> multiSampledColorImage_;
+	std::unique_ptr<VulkanImage> singleSampledColorImage_;
+	std::unique_ptr<VulkanImage> depthImage_;
 
 	// Optional IBL images
 	std::unique_ptr<IBLResources> iblResources_;
