@@ -271,8 +271,8 @@ void PipelineEquirect2Cube::OffscreenRender(VulkanContext& ctx, VulkanImage* out
 		.commandBuffer = commandBuffer,
 		.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED, 
 		.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		.sourceStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-		.sourceAccess = VK_ACCESS_SHADER_READ_BIT,
+		.sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+		.sourceAccess = 0,
 		.destinationStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
 		.destinationAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT
 	});

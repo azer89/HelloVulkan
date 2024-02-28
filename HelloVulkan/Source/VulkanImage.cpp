@@ -540,7 +540,7 @@ void VulkanImage::TransitionImageLayoutCommand(
 	// Wait for render pass to complete
 	else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
 	{
-		barrier.srcAccessMask = 0; // VK_ACCESS_SHADER_READ_BIT;
+		barrier.srcAccessMask = 0; 
 		barrier.dstAccessMask = 0;
 
 		sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
