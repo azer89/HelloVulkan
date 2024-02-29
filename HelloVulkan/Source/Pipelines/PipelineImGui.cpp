@@ -1,5 +1,7 @@
 #include "PipelineImGui.h"
 #include "VulkanUtility.h"
+#include "FrameCounter.h"
+#include "PushConstants.h"
 #include "Configs.h"
 
 #include "imgui.h"
@@ -79,20 +81,50 @@ PipelineImGui::~PipelineImGui()
 	ImGui::DestroyContext();
 }
 
-void PipelineImGui::StartImGui()
+void PipelineImGui::ImGuiStart()
 {
 	ImGui_ImplVulkan_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 }
 
-void PipelineImGui::EndImGui()
+void PipelineImGui::ImGuiSetWindow(const char* title, int width, int height, float fontSize)
+{
+	ImGui::SetNextWindowSize(ImVec2(width, height));
+	ImGui::Begin(title);
+	ImGui::SetWindowFontScale(fontSize);
+}
+
+void PipelineImGui::ImGuiShowFrameData(FrameCounter* frameCounter)
+{
+	ImGui::Text("FPS: %.0f", frameCounter->GetCurrentFPS());
+	ImGui::Text("Delta: %.0f ms", frameCounter->GetDelayedDeltaMillisecond());
+	ImGui::PlotLines("FPS",
+		frameCounter->GetGraph(),
+		frameCounter->GetGraphLength(),
+		0,
+		nullptr,
+		FLT_MAX,
+		FLT_MAX,
+		ImVec2(450, 50));
+}
+
+void PipelineImGui::ImGuiShowPBRConfig(PushConstantPBR* pc, float mipmapCount)
+{
+	ImGui::SliderFloat("Light Falloff", &(pc->lightFalloff), 0.01f, 5.f);
+	ImGui::SliderFloat("Light Intensity", &(pc->lightIntensity), 0.1f, 20.f);
+	ImGui::SliderFloat("Albedo Multiplier", &(pc->albedoMultipler), 0.0f, 1.0f);
+	ImGui::SliderFloat("Base Reflectivity", &(pc->baseReflectivity), 0.01f, 1.f);
+	ImGui::SliderFloat("Max Mipmap Lod", &(pc->maxReflectionLod), 0.1f, mipmapCount);
+}
+
+void PipelineImGui::ImGuiEnd()
 {
 	ImGui::End();
 	ImGui::Render();
 }
 
-void PipelineImGui::DrawEmptyImGui()
+void PipelineImGui::ImGuiDrawEmpty()
 {
 	ImGui_ImplVulkan_NewFrame();
 	ImGui_ImplGlfw_NewFrame();

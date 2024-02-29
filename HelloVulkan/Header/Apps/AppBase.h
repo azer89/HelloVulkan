@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "PipelineBase.h"
 #include "IBLResources.h"
+#include "FrameCounter.h"
 
 #define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
@@ -39,7 +40,6 @@ protected:
 	void InitGLSLang();
 	void InitGLFW();
 	void InitCamera();
-	void InitTiming();
 
 	// Resources
 	void InitIBLResources(const std::string& hdrFile);
@@ -66,8 +66,7 @@ protected:
 	bool showImgui_;
 
 	// Timing
-	float deltaTime_; // Time between current frame and last frame
-	float lastFrame_;
+	FrameCounter frameCounter_;
 
 	// These two are not copyable or movable
 	VulkanInstance vulkanInstance_;

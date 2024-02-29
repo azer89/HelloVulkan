@@ -3,6 +3,9 @@
 
 #include "PipelineBase.h"
 
+class FrameCounter;
+struct PushConstantPBR;
+
 class PipelineImGui final : public PipelineBase
 {
 public:
@@ -12,9 +15,12 @@ public:
 		GLFWwindow* glfwWindow);
 	~PipelineImGui();
 
-	void StartImGui();
-	void EndImGui();
-	void DrawEmptyImGui();
+	void ImGuiStart();
+	void ImGuiSetWindow(const char* title, int width, int height, float fontSize = 1.25f);
+	void ImGuiShowFrameData(FrameCounter* frameCounter);
+	void ImGuiShowPBRConfig(PushConstantPBR* pc, float mipmapCount);
+	void ImGuiEnd();
+	void ImGuiDrawEmpty();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 };

@@ -293,6 +293,9 @@
     <ClInclude Include="Header\Apps\AppPBRSlotBased.h">
       <Filter>Header Files\Apps</Filter>
     </ClInclude>
+    <ClInclude Include="Header\FrameCounter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">
@@ -420,6 +423,9 @@
     </ClCompile>
     <ClCompile Include="Source\Apps\AppPBRSlotBased.cpp">
       <Filter>Source Files\Apps</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\FrameCounter.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
