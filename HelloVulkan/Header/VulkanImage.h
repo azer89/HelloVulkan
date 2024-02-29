@@ -158,9 +158,9 @@ public:
 		uint32_t height,
 		uint32_t layerCount = 1);
 
-	void CreateBarrier(ImageBarrierInfo info);
+	void CreateBarrier(const ImageBarrierInfo& info);
 
-	void CreateBarrier(ImageBarrierInfo info, VkImageSubresourceRange subresourceRange);
+	void CreateBarrier(const ImageBarrierInfo& info, const VkImageSubresourceRange& subresourceRange);
 
 	// This transitions all mip levels and all layers
 	void TransitionLayout(

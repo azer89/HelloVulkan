@@ -57,7 +57,7 @@ void VulkanImage::CreateImageResources(
 		width,
 		height,
 		Utility::MipMapCount(width, height),
-		1, // layerCount
+		1u, // layerCount
 		VK_FORMAT_R8G8B8A8_UNORM);
 	GenerateMipmap(ctx,
 		mipCount_,
@@ -107,10 +107,8 @@ void VulkanImage::CreateFromHDR(
 	const char* filename)
 {
 	stbi_set_flip_vertically_on_load(true);
-
 	int texWidth, texHeight, texChannels;
 	float* pixels = stbi_loadf(filename, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-
 	CreateImageFromData(
 		ctx,
 		pixels,
@@ -119,7 +117,6 @@ void VulkanImage::CreateFromHDR(
 		Utility::MipMapCount(texWidth, texHeight),
 		1,
 		VK_FORMAT_R32G32B32A32_SFLOAT);
-
 	stbi_image_free(pixels);
 }
 
@@ -129,21 +126,19 @@ void VulkanImage::CreateColorResources(
 	uint32_t height,
 	VkSampleCountFlagBits sampleCount)
 {
-	VkFormat format = ctx.GetSwapchainImageFormat();
-
+	const VkFormat format = ctx.GetSwapchainImageFormat();
 	CreateImage(
 		ctx,
 		width,
 		height,
-		1, // mip
-		1, // layer
+		1u, // mip
+		1u, // layer
 		format,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
 		VMA_MEMORY_USAGE_GPU_ONLY,
 		0u,
 		sampleCount);
-
 	CreateImageView(
 		ctx,
 		format,
@@ -158,8 +153,7 @@ void VulkanImage::CreateDepthResources(
 	VkSampleCountFlagBits sampleCount,
 	VkImageUsageFlags additionalUsage)
 {
-	VkFormat depthFormat = ctx.GetDepthFormat();
-
+	const VkFormat depthFormat = ctx.GetDepthFormat();
 	CreateImage(
 		ctx,
 		width,
@@ -172,12 +166,10 @@ void VulkanImage::CreateDepthResources(
 		VMA_MEMORY_USAGE_GPU_ONLY,
 		0u,
 		sampleCount);
-
 	CreateImageView(
 		ctx,
 		depthFormat,
 		VK_IMAGE_ASPECT_DEPTH_BIT);
-
 	TransitionLayout(
 		ctx, 
 		depthFormat, 
@@ -206,7 +198,6 @@ void VulkanImage::CreateImageFromData(
 		VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 		VMA_MEMORY_USAGE_GPU_ONLY,
 		flags);
-
 	UpdateImage(ctx, texWidth, texHeight, texFormat, layerCount, imageData);
 }
 
@@ -218,7 +209,6 @@ void VulkanImage::CopyBufferToImage(
 	uint32_t layerCount)
 {
 	VkCommandBuffer commandBuffer = ctx.BeginOneTimeGraphicsCommand();
-
 	const VkBufferImageCopy region = {
 		.bufferOffset = 0,
 		.bufferRowLength = 0,
@@ -232,9 +222,7 @@ void VulkanImage::CopyBufferToImage(
 		.imageOffset = VkOffset3D {.x = 0, .y = 0, .z = 0 },
 		.imageExtent = VkExtent3D {.width = width, .height = height, .depth = 1 }
 	};
-
 	vkCmdCopyBufferToImage(commandBuffer, buffer, image_, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
-
 	ctx.EndOneTimeGraphicsCommand(commandBuffer);
 }
 
@@ -278,7 +266,7 @@ void VulkanImage::CreateImage(
 
 	VmaAllocationCreateInfo allocinfo = {
 		.usage = VMA_MEMORY_USAGE_GPU_ONLY,
-		.requiredFlags = VkMemoryPropertyFlags(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT),
+		.requiredFlags = static_cast<VkMemoryPropertyFlags>(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT),
 	};
 
 	device_ = ctx.GetDevice();
@@ -325,7 +313,6 @@ void VulkanImage::CreateImageView(
 			.layerCount = layerCount
 		}
 	};
-
 	VK_CHECK(vkCreateImageView(ctx.GetDevice(), &viewInfo, nullptr, &imageView_));
 }
 
@@ -377,7 +364,6 @@ void VulkanImage::CreateSampler(
 		.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
 		.unnormalizedCoordinates = VK_FALSE
 	};
-
 	VK_CHECK(vkCreateSampler(ctx.GetDevice(), &samplerInfo, nullptr, &sampler));
 }
 
@@ -390,7 +376,7 @@ void VulkanImage::UpdateImage(
 	const void* imageData,
 	VkImageLayout sourceImageLayout)
 {
-	uint32_t bytesPerPixel = BytesPerTexFormat(texFormat);
+	const uint32_t bytesPerPixel = BytesPerTexFormat(texFormat);
 
 	const VkDeviceSize layerSize = texWidth * texHeight * bytesPerPixel;
 	const VkDeviceSize imageSize = layerSize * layerCount;
@@ -650,11 +636,14 @@ void VulkanImage::GenerateMipmap(
 {
 	VkCommandBuffer commandBuffer = ctx.BeginOneTimeGraphicsCommand();
 
-	VkImageSubresourceRange mipbaseRange{};
-	mipbaseRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	mipbaseRange.baseMipLevel = 0u;
-	mipbaseRange.levelCount = 1u; // The number of mipmap levels (starting from baseMipLevel) accessible to the view
-	mipbaseRange.layerCount = layerCount_;
+	VkImageSubresourceRange baseRange =
+	{
+		.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+		.baseMipLevel = 0u,
+		.levelCount = 1u, // The number of mipmap levels (starting from baseMipLevel) accessible to the view
+		.baseArrayLayer = 0,
+		.layerCount = layerCount_
+	};
 
 	CreateBarrier({
 		.commandBuffer = commandBuffer, // cmdBuffer
@@ -665,7 +654,7 @@ void VulkanImage::GenerateMipmap(
 		.destinationAccess = VK_ACCESS_TRANSFER_READ_BIT, // dstAccess
 		.destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT // dstStage
 		},
-		mipbaseRange);
+		baseRange);
 
 	for (uint32_t i = 1; i < maxMipLevels; ++i)
 	{
@@ -675,22 +664,23 @@ void VulkanImage::GenerateMipmap(
 		imageBlit.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 		imageBlit.srcSubresource.layerCount = layerCount_;
 		imageBlit.srcSubresource.mipLevel = i - 1;
-		imageBlit.srcOffsets[1].x = int32_t(width >> (i - 1));
-		imageBlit.srcOffsets[1].y = int32_t(height >> (i - 1));
+		imageBlit.srcOffsets[1].x = static_cast<int32_t>(width >> (i - 1));
+		imageBlit.srcOffsets[1].y = static_cast<int32_t>(height >> (i - 1));
 		imageBlit.srcOffsets[1].z = 1;
 
 		// Destination
 		imageBlit.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 		imageBlit.dstSubresource.layerCount = layerCount_;
 		imageBlit.dstSubresource.mipLevel = i;
-		imageBlit.dstOffsets[1].x = int32_t(width >> i);
-		imageBlit.dstOffsets[1].y = int32_t(height >> i);
+		imageBlit.dstOffsets[1].x = static_cast<int32_t>(width >> i);
+		imageBlit.dstOffsets[1].y = static_cast<int32_t>(height >> i);
 		imageBlit.dstOffsets[1].z = 1;
 
-		VkImageSubresourceRange mipSubRange = {
+		VkImageSubresourceRange subRange = {
 			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
 			.baseMipLevel = i,
 			.levelCount = 1,
+			.baseArrayLayer = 0,
 			.layerCount = layerCount_
 		};
 
@@ -703,7 +693,7 @@ void VulkanImage::GenerateMipmap(
 			.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 			.destinationAccess = VK_ACCESS_TRANSFER_WRITE_BIT,
 			.destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT},
-			mipSubRange);
+			subRange);
 
 		vkCmdBlitImage(
 			commandBuffer,
@@ -725,7 +715,7 @@ void VulkanImage::GenerateMipmap(
 			.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 			.destinationAccess = VK_ACCESS_TRANSFER_READ_BIT,
 			.destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT},
-			mipSubRange);
+			subRange);
 	}
 
 	// Convention is to change the layout to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
@@ -742,9 +732,9 @@ void VulkanImage::GenerateMipmap(
 	ctx.EndOneTimeGraphicsCommand(commandBuffer);
 }
 
-void VulkanImage::CreateBarrier(ImageBarrierInfo info)
+void VulkanImage::CreateBarrier(const ImageBarrierInfo& info)
 {
-	VkImageSubresourceRange subresourceRange =
+	const VkImageSubresourceRange subresourceRange =
 	{
 		.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
 		.baseMipLevel = 0u,
@@ -755,9 +745,9 @@ void VulkanImage::CreateBarrier(ImageBarrierInfo info)
 	CreateBarrier(info, subresourceRange);
 }
 
-void VulkanImage::CreateBarrier(ImageBarrierInfo info, VkImageSubresourceRange subresourceRange)
+void VulkanImage::CreateBarrier(const ImageBarrierInfo& info, const VkImageSubresourceRange& subresourceRange)
 {
-	VkImageMemoryBarrier barrier =
+	const VkImageMemoryBarrier barrier =
 	{
 		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
 		.srcAccessMask = info.sourceAccess,
@@ -794,15 +784,12 @@ uint32_t VulkanImage::BytesPerTexFormat(VkFormat fmt)
 	case VK_FORMAT_R16_SFLOAT:
 		return 2;
 	case VK_FORMAT_R16G16_SFLOAT:
+	case VK_FORMAT_R16G16_SNORM:
+	case VK_FORMAT_B8G8R8A8_UNORM:
+	case VK_FORMAT_R8G8B8A8_UNORM:
 		return 4;
 	case VK_FORMAT_R32G32_SFLOAT:
 		return 2 * sizeof(float);
-	case VK_FORMAT_R16G16_SNORM:
-		return 4;
-	case VK_FORMAT_B8G8R8A8_UNORM:
-		return 4;
-	case VK_FORMAT_R8G8B8A8_UNORM:
-		return 4;
 	case VK_FORMAT_R16G16B16A16_SFLOAT:
 		return 4 * sizeof(uint16_t);
 	case VK_FORMAT_R32G32B32A32_SFLOAT:
