@@ -639,6 +639,7 @@ void VulkanImage::TransitionImageLayoutCommand(
 	);
 }
 
+// TODO This function uses CreateBarrier() instead on TransitionLayout()
 void VulkanImage::GenerateMipmap(
 	VulkanContext& ctx,
 	uint32_t maxMipLevels,
@@ -656,13 +657,13 @@ void VulkanImage::GenerateMipmap(
 	mipbaseRange.layerCount = layerCount_;
 
 	CreateBarrier({
-		commandBuffer, // cmdBuffer
-		currentImageLayout, // oldLayout
-		VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, // newLayout
-		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, // srcStage
-		VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, // srcAccess
-		VK_PIPELINE_STAGE_TRANSFER_BIT, // dstStage
-		VK_ACCESS_TRANSFER_READ_BIT }, // dstAccess
+		.commandBuffer = commandBuffer, // cmdBuffer
+		.oldLayout = currentImageLayout, // oldLayout
+		.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, // newLayout
+		.sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, // srcStage
+		.sourceAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, // srcAccess
+		.destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT, // dstStage
+		.destinationAccess = VK_ACCESS_TRANSFER_READ_BIT }, // dstAccess
 		mipbaseRange);
 
 	for (uint32_t i = 1; i < maxMipLevels; ++i)
