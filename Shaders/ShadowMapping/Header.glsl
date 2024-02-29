@@ -1,21 +1,3 @@
-float TextureProj(vec4 shadowCoord, vec2 off)
-{
-	vec3 N = normalize(normal);
-	vec3 lightDir = normalize(shadowUBO.lightPosition.xyz - worldPos);
-	float bias = max(shadowUBO.shadowMaxBias * (1.0 - dot(N, lightDir)), shadowUBO.shadowMinBias);
-
-	float shadow = 1.0;
-	if (shadowCoord.z >= 0.0 && shadowCoord.z <= 1.0)
-	{
-		float dist = texture(shadowMap, shadowCoord.st + off).r;
-		if (shadowCoord.w > 0.0 && dist < (shadowCoord.z - bias))
-		{
-			shadow = 0.1;
-		}
-	}
-	return shadow;
-}
-
 float FilterPCF(vec4 sc)
 {
 	ivec2 texDim = textureSize(shadowMap, 0);
@@ -23,19 +5,24 @@ float FilterPCF(vec4 sc)
 	float dx = scale * 1.0 / float(texDim.x);
 	float dy = scale * 1.0 / float(texDim.y);
 
-	float shadowFactor = 0.0;
-	int count = 0;
+	vec3 N = normalize(normal);
+	vec3 lightDir = normalize(shadowUBO.lightPosition.xyz - worldPos);
+	float bias = max(shadowUBO.shadowMaxBias * (1.0 - dot(N, lightDir)), shadowUBO.shadowMinBias);
 
-	// TODO This is very slow
+	// TODO This is very slow, change to a constant for better performance
+	//const int range = 2;
 	int range = int(shadowUBO.pcfIteration);
+	float shadow = 0.0;
+	int count = 0;
 	for (int x = -range; x <= range; x++)
 	{
 		for (int y = -range; y <= range; y++)
 		{
-			shadowFactor += TextureProj(sc, vec2(dx*x, dy*y));
+			vec2 off = vec2(dx * x, dy * y);
+			float dist = texture(shadowMap, sc.st + off).r;
+			shadow += (sc.z - bias) > dist ? 0.1 : 1.0;
 			count++;
 		}
-
 	}
-	return shadowFactor / count;
+	return shadow / count;
 }
