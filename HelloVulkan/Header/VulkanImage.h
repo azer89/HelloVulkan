@@ -160,12 +160,12 @@ public:
 
 	void CreateBarrier(ImageBarrierCreateInfo info, VkImageSubresourceRange subresourceRange);
 
-	void TransitionImageLayout(
+	void TransitionLayout(
 		VulkanContext& ctx,
 		VkImageLayout oldLayout,
 		VkImageLayout newLayout);
 
-	void TransitionImageLayout(
+	void TransitionLayout(
 		VulkanContext& ctx,
 		VkFormat format,
 		VkImageLayout oldLayout,
@@ -176,7 +176,7 @@ public:
 		uint32_t layerCount = 1u
 	);
 
-	static void TransitionImageLayoutCommand(
+	static void TransitionLayoutCommand(
 		VkCommandBuffer commandBuffer,
 		VkImage image,
 		VkFormat format,

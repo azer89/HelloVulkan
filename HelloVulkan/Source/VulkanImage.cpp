@@ -178,7 +178,7 @@ void VulkanImage::CreateDepthResources(
 		depthFormat,
 		VK_IMAGE_ASPECT_DEPTH_BIT);
 
-	TransitionImageLayout(
+	TransitionLayout(
 		ctx, 
 		depthFormat, 
 		VK_IMAGE_LAYOUT_UNDEFINED, 
@@ -404,22 +404,22 @@ void VulkanImage::UpdateImage(
 		VMA_MEMORY_USAGE_CPU_ONLY);
 
 	stagingBuffer.UploadBufferData(ctx, imageData, imageSize);
-	TransitionImageLayout(ctx, texFormat, sourceImageLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 0u, 1u, 0u, layerCount);
+	TransitionLayout(ctx, texFormat, sourceImageLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 0u, 1u, 0u, layerCount);
 	CopyBufferToImage(ctx, stagingBuffer.buffer_, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight), layerCount);
-	TransitionImageLayout(ctx, texFormat, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 0u, 1u, 0u, layerCount);
+	TransitionLayout(ctx, texFormat, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 0u, 1u, 0u, layerCount);
 
 	stagingBuffer.Destroy();
 }
 
-void VulkanImage::TransitionImageLayout(
+void VulkanImage::TransitionLayout(
 	VulkanContext& ctx,
 	VkImageLayout oldLayout,
 	VkImageLayout newLayout)
 {
-	TransitionImageLayout(ctx, imageFormat_, oldLayout, newLayout, 0u, mipCount_, 0u, layerCount_);
+	TransitionLayout(ctx, imageFormat_, oldLayout, newLayout, 0u, mipCount_, 0u, layerCount_);
 }
 
-void VulkanImage::TransitionImageLayout(
+void VulkanImage::TransitionLayout(
 	VulkanContext& ctx,
 	VkFormat format,
 	VkImageLayout oldLayout,
@@ -430,7 +430,7 @@ void VulkanImage::TransitionImageLayout(
 	uint32_t layerCount)
 {
 	VkCommandBuffer commandBuffer = ctx.BeginOneTimeGraphicsCommand();
-	TransitionImageLayoutCommand(commandBuffer, 
+	TransitionLayoutCommand(commandBuffer, 
 		image_, 
 		format, 
 		oldLayout, 
@@ -442,7 +442,7 @@ void VulkanImage::TransitionImageLayout(
 	ctx.EndOneTimeGraphicsCommand(commandBuffer);
 }
 
-void VulkanImage::TransitionImageLayoutCommand(
+void VulkanImage::TransitionLayoutCommand(
 	VkCommandBuffer commandBuffer,
 	VkImage image,
 	VkFormat format,

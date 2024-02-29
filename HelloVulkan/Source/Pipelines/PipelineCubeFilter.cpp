@@ -321,7 +321,7 @@ void PipelineCubeFilter::OffscreenRender(VulkanContext& ctx,
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
-	VulkanImage::TransitionImageLayoutCommand(commandBuffer,
+	VulkanImage::TransitionLayoutCommand(commandBuffer,
 		outputCubemap->image_,
 		outputCubemap->imageFormat_,
 		VK_IMAGE_LAYOUT_UNDEFINED,
@@ -355,7 +355,7 @@ void PipelineCubeFilter::OffscreenRender(VulkanContext& ctx,
 	}
 
 	// Convention is to change the layout to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	VulkanImage::TransitionImageLayoutCommand(commandBuffer,
+	VulkanImage::TransitionLayoutCommand(commandBuffer,
 		outputCubemap->image_,
 		outputCubemap->imageFormat_,
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,

@@ -268,7 +268,7 @@ void PipelineEquirect2Cube::OffscreenRender(VulkanContext& ctx, VulkanImage* out
 	VkCommandBuffer commandBuffer = ctx.BeginOneTimeGraphicsCommand();
 
 	// Transition
-	outputEnvMap->TransitionImageLayout(ctx,
+	outputEnvMap->TransitionLayout(ctx,
 		VK_IMAGE_LAYOUT_UNDEFINED,
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
@@ -293,7 +293,7 @@ void PipelineEquirect2Cube::OffscreenRender(VulkanContext& ctx, VulkanImage* out
 	ctx.EndOneTimeGraphicsCommand(commandBuffer);
 
 	// Transition
-	outputEnvMap->TransitionImageLayout(ctx,
+	outputEnvMap->TransitionLayout(ctx,
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
