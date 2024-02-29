@@ -116,8 +116,8 @@ void PipelineLightRender::CreateDescriptor(VulkanContext& ctx)
 
 	for (size_t i = 0; i < frameCount; ++i)
 	{
-		VkDescriptorBufferInfo bufferInfo1 = {.buffer = cameraUBOBuffers_[i].buffer_, .offset = 0, .range = sizeof(CameraUBO)};
-		VkDescriptorBufferInfo bufferInfo2 = {.buffer = lights_->GetSSBOBuffer(), .offset = 0, .range = lights_->GetSSBOSize()};
+		VkDescriptorBufferInfo bufferInfo1 = cameraUBOBuffers_[i].GetBufferInfo();
+		VkDescriptorBufferInfo bufferInfo2 = lights_->GetBufferInfo();
 
 		descriptor_.CreateSet(
 			ctx, 

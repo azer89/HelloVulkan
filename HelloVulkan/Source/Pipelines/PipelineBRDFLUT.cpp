@@ -101,7 +101,7 @@ void PipelineBRDFLUT::Execute(VulkanContext& ctx)
 		static_cast<uint32_t>(IBLConfig::LUTHeight), // groupCountY
 		1u); // groupCountZ
 
-	// github.com/KhronosGroup/Vulkan-Docs/wiki/Synchronization-Examples-(Legacy-synchronization-APIs)#cpu-read-back-of-data-written-by-a-compute-shader
+	// TODO Use VkBufferMemoryBarrier
 	VkMemoryBarrier readoutBarrier = {
 		.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER,
 		.pNext = nullptr,

@@ -73,7 +73,7 @@ void PipelineLightCulling::Execute(VulkanContext& ctx, VkCommandBuffer commandBu
 		.dstQueueFamilyIndex = ctx.GetGraphicsFamily(),
 		.buffer = cfBuffers_->lightCellsBuffers_[frameIndex].buffer_,
 		.offset = 0,
-		.size = VK_WHOLE_SIZE
+		.size = cfBuffers_->lightCellsBuffers_[frameIndex].size_
 	};
 
 	const VkBufferMemoryBarrier lightIndicesBarrier =
@@ -86,7 +86,7 @@ void PipelineLightCulling::Execute(VulkanContext& ctx, VkCommandBuffer commandBu
 		.dstQueueFamilyIndex = ctx.GetGraphicsFamily(),
 		.buffer = cfBuffers_->lightIndicesBuffers_[frameIndex].buffer_,
 		.offset = 0,
-		.size = VK_WHOLE_SIZE,
+		.size = cfBuffers_->lightIndicesBuffers_[frameIndex].size_,
 	};
 
 	const std::array<VkBufferMemoryBarrier, 2> barriers =

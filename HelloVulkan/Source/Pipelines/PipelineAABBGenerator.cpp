@@ -72,7 +72,7 @@ void PipelineAABBGenerator::Execute(VulkanContext& ctx, VkCommandBuffer commandB
 		.dstQueueFamilyIndex = ctx.GetGraphicsFamily(),
 		.buffer = cfBuffers_->aabbBuffers_[frameIndex].buffer_,
 		.offset = 0,
-		.size = VK_WHOLE_SIZE };
+		.size = cfBuffers_->aabbBuffers_[frameIndex].size_ };
 	vkCmdPipelineBarrier(commandBuffer,
 		VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, //srcStageMask
 		VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, // dstStageMask
