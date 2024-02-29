@@ -36,19 +36,15 @@ private:
 public:
 	std::vector<MeshData> meshDataArray_ = {};
 	VulkanBuffer meshDataBuffer_;
-	VkDeviceSize meshDataBufferSize_;
 
 	std::vector<VertexData> vertices_ = {};
 	VulkanBuffer vertexBuffer_;
-	VkDeviceSize vertexBufferSize_;
 
 	std::vector<uint32_t> indices_ = {};
 	VulkanBuffer indexBuffer_;
-	VkDeviceSize indexBufferSize_;
 
 	// Per-frame buffer
 	std::vector<VulkanBuffer> modelUBOBuffers_;
-	VkDeviceSize modelUBOBufferSize_;
 
 	std::vector<Model> models_ = {};
 };
