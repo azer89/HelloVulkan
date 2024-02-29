@@ -216,13 +216,20 @@ void AppPBRShadowMapping::UpdateUI()
 
 	imguiPtr_->StartImGui();
 
-	ImGui::SetNextWindowSize(ImVec2(525, 560));
+	ImGui::SetNextWindowSize(ImVec2(525, 650));
 	ImGui::Begin("Bindless Shadow Mapping");
 	ImGui::SetWindowFontScale(1.25f);
-	
-	ImGui::Text("FPS: %.0f", (1.f / deltaTime_));
+	ImGui::Text("FPS: %.0f", frameCounter_.GetCurrentFPS());
+	ImGui::Text("Delta: %.0f ms", frameCounter_.GetDelayedDeltaTime());
+	ImGui::PlotLines("FPS", 
+		frameCounter_.GetGraph(), 
+		frameCounter_.GetGraphLength(),
+		0,
+		nullptr,
+		FLT_MAX,
+		FLT_MAX, 
+		ImVec2(450, 50));
 	ImGui::Text("Vertices: %i, Indices: %i", scene_->vertices_.size(), scene_->indices_.size());
-
 	ImGui::SeparatorText("Shading");
 	ImGui::Checkbox("Render Lights", &staticLightRender);
 	ImGui::SliderFloat("Light Falloff", &staticPBRPushConstants.lightFalloff, 0.01f, 5.f);

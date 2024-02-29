@@ -25,7 +25,7 @@ AppBase::AppBase() :
 	InitGLSLang();
 	InitImGui();
 	InitCamera();
-	InitTiming();
+	//InitTiming();
 }
 
 void AppBase::InitVulkan(ContextConfig config)
@@ -243,18 +243,19 @@ void AppBase::InitCamera()
 	firstMouse_ = true;
 }
 
-void AppBase::InitTiming()
+/*void AppBase::InitTiming()
 {
 	deltaTime_ = 0.0f;	// Time between current frame and last frame
 	lastFrame_ = 0.0f;
-}
+}*/
 
 void AppBase::ProcessTiming()
 {
 	// Per-frame time
-	const float currentFrame = static_cast<float>(glfwGetTime());
-	deltaTime_ = currentFrame - lastFrame_;
-	lastFrame_ = currentFrame;
+	float currentFrame = static_cast<float>(glfwGetTime());
+	frameCounter_.Update(currentFrame);
+	//deltaTime_ = currentFrame - lastFrame_;
+	//lastFrame_ = currentFrame;
 }
 
 int AppBase::GLFWWindowShouldClose()
@@ -362,22 +363,22 @@ void AppBase::ProcessInput()
 
 	if (glfwGetKey(glfwWindow_, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		camera_->ProcessKeyboard(CameraMovement::Forward, deltaTime_);
+		camera_->ProcessKeyboard(CameraMovement::Forward, frameCounter_.GetDeltaTime());
 	}
 
 	if (glfwGetKey(glfwWindow_, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		camera_->ProcessKeyboard(CameraMovement::Backward, deltaTime_);
+		camera_->ProcessKeyboard(CameraMovement::Backward, frameCounter_.GetDeltaTime());
 	}
 
 	if (glfwGetKey(glfwWindow_, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		camera_->ProcessKeyboard(CameraMovement::Left, deltaTime_);
+		camera_->ProcessKeyboard(CameraMovement::Left, frameCounter_.GetDeltaTime());
 	}
 
 	if (glfwGetKey(glfwWindow_, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		camera_->ProcessKeyboard(CameraMovement::Right, deltaTime_);
+		camera_->ProcessKeyboard(CameraMovement::Right, frameCounter_.GetDeltaTime());
 	}
 }
 
