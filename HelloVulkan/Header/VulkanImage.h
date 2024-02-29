@@ -8,12 +8,14 @@
 
 #include <string>
 
-struct ImageBarrierCreateInfo
+struct ImageBarrierInfo
 {
 	VkCommandBuffer commandBuffer;
+	
 	VkImageLayout oldLayout;
 	VkAccessFlags sourceAccess;
 	VkPipelineStageFlags sourceStage;
+
 	VkImageLayout newLayout;
 	VkAccessFlags destinationAccess;
 	VkPipelineStageFlags destinationStage;
@@ -156,20 +158,22 @@ public:
 		uint32_t height,
 		uint32_t layerCount = 1);
 
-	void CreateBarrier(ImageBarrierCreateInfo info);
+	void CreateBarrier(ImageBarrierInfo info);
 
-	void CreateBarrier(ImageBarrierCreateInfo info, VkImageSubresourceRange subresourceRange);
+	void CreateBarrier(ImageBarrierInfo info, VkImageSubresourceRange subresourceRange);
 
+	// This transitions all mip levels and all layers
 	void TransitionLayout(
 		VulkanContext& ctx,
 		VkImageLayout oldLayout,
 		VkImageLayout newLayout);
-
+	
 	void TransitionLayout(
 		VulkanContext& ctx,
 		VkFormat format,
 		VkImageLayout oldLayout,
 		VkImageLayout newLayout,
+		// By default, this transitions one mip level and one layers
 		uint32_t mipLevel = 0u,
 		uint32_t mipCount = 1u,
 		uint32_t layerLevel = 0u,
@@ -182,6 +186,7 @@ public:
 		VkFormat format,
 		VkImageLayout oldLayout,
 		VkImageLayout newLayout,
+		// By default, this transitions one mip level and one layers
 		uint32_t mipLevel = 0u,
 		uint32_t mipCount = 1u,
 		uint32_t layerLevel = 0u,

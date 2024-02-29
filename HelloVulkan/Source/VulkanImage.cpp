@@ -742,7 +742,7 @@ void VulkanImage::GenerateMipmap(
 	ctx.EndOneTimeGraphicsCommand(commandBuffer);
 }
 
-void VulkanImage::CreateBarrier(ImageBarrierCreateInfo info)
+void VulkanImage::CreateBarrier(ImageBarrierInfo info)
 {
 	VkImageSubresourceRange subresourceRange =
 	{
@@ -755,7 +755,7 @@ void VulkanImage::CreateBarrier(ImageBarrierCreateInfo info)
 	CreateBarrier(info, subresourceRange);
 }
 
-void VulkanImage::CreateBarrier(ImageBarrierCreateInfo info, VkImageSubresourceRange subresourceRange)
+void VulkanImage::CreateBarrier(ImageBarrierInfo info, VkImageSubresourceRange subresourceRange)
 {
 	VkImageMemoryBarrier barrier =
 	{
