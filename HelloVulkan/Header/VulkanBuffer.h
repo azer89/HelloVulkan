@@ -11,6 +11,7 @@ public:
 	VkBuffer buffer_;
 	VmaAllocation vmaAllocation_;
 	VmaAllocationInfo vmaInfo_;
+	VkDeviceSize size_;
 
 	// Only used for raytracing
 	uint64_t deviceAddress_;

@@ -10,6 +10,8 @@ void VulkanBuffer::CreateBuffer(
 	VmaMemoryUsage memoryUsage,
 	VmaAllocationCreateFlags flags)
 {
+	size_ = size;
+	
 	const VkBufferCreateInfo bufferInfo = {
 		.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
 		.pNext = nullptr,
@@ -45,7 +47,6 @@ void VulkanBuffer::CreateIndirectBuffer(
 		VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT,
 		VMA_MEMORY_USAGE_CPU_TO_GPU,
 		VMA_ALLOCATION_CREATE_MAPPED_BIT);
-
 	isIndirectBuffer_ = true;
 }
 
