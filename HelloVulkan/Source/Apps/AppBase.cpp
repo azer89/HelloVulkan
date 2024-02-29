@@ -363,22 +363,22 @@ void AppBase::ProcessInput()
 
 	if (glfwGetKey(glfwWindow_, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		camera_->ProcessKeyboard(CameraMovement::Forward, frameCounter_.GetDeltaTime());
+		camera_->ProcessKeyboard(CameraMovement::Forward, frameCounter_.GetDeltaSecond());
 	}
 
 	if (glfwGetKey(glfwWindow_, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		camera_->ProcessKeyboard(CameraMovement::Backward, frameCounter_.GetDeltaTime());
+		camera_->ProcessKeyboard(CameraMovement::Backward, frameCounter_.GetDeltaSecond());
 	}
 
 	if (glfwGetKey(glfwWindow_, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		camera_->ProcessKeyboard(CameraMovement::Left, frameCounter_.GetDeltaTime());
+		camera_->ProcessKeyboard(CameraMovement::Left, frameCounter_.GetDeltaSecond());
 	}
 
 	if (glfwGetKey(glfwWindow_, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		camera_->ProcessKeyboard(CameraMovement::Right, frameCounter_.GetDeltaTime());
+		camera_->ProcessKeyboard(CameraMovement::Right, frameCounter_.GetDeltaSecond());
 	}
 }
 

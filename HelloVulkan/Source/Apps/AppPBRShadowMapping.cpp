@@ -220,7 +220,7 @@ void AppPBRShadowMapping::UpdateUI()
 	ImGui::Begin("Bindless Shadow Mapping");
 	ImGui::SetWindowFontScale(1.25f);
 	ImGui::Text("FPS: %.0f", frameCounter_.GetCurrentFPS());
-	ImGui::Text("Delta: %.0f ms", frameCounter_.GetDelayedDeltaTime());
+	ImGui::Text("Delta: %.0f ms", frameCounter_.GetDelayedDeltaMillisecond());
 	ImGui::PlotLines("FPS", 
 		frameCounter_.GetGraph(), 
 		frameCounter_.GetGraphLength(),
