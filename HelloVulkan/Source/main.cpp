@@ -7,7 +7,7 @@
 // Entry point
 int main()
 {
-	// Bind resource once and render using draw indirect and dsecriptor indexing
+	// Bind resource once and render using draw indirect and descriptor indexing
 	AppPBRBindless app;
 
 	// The good ol resource binding per draw call

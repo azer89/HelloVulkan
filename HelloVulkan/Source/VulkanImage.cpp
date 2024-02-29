@@ -411,7 +411,16 @@ void VulkanImage::UpdateImage(
 	stagingBuffer.Destroy();
 }
 
-void VulkanImage::TransitionImageLayout(VulkanContext& ctx,
+void VulkanImage::TransitionImageLayout(
+	VulkanContext& ctx,
+	VkImageLayout oldLayout,
+	VkImageLayout newLayout)
+{
+	TransitionImageLayout(ctx, imageFormat_, oldLayout, newLayout, 0u, mipCount_, 0u, layerCount_);
+}
+
+void VulkanImage::TransitionImageLayout(
+	VulkanContext& ctx,
 	VkFormat format,
 	VkImageLayout oldLayout,
 	VkImageLayout newLayout,
@@ -683,7 +692,7 @@ void VulkanImage::GenerateMipmap(
 			.layerCount = layerCount_
 		};
 
-		//  Transiton current mip level to transfer dest
+		// Transition current mip level to transfer dest
 		CreateBarrier({
 			.commandBuffer = commandBuffer,
 			.oldLayout = currentImageLayout,

@@ -267,15 +267,10 @@ void PipelineEquirect2Cube::OffscreenRender(VulkanContext& ctx, VulkanImage* out
 
 	VkCommandBuffer commandBuffer = ctx.BeginOneTimeGraphicsCommand();
 
-	outputEnvMap->CreateBarrier({
-		.commandBuffer = commandBuffer,
-		.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED, 
-		.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		.sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-		.sourceAccess = 0,
-		.destinationStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-		.destinationAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT
-	});
+	// Transition
+	outputEnvMap->TransitionImageLayout(ctx,
+		VK_IMAGE_LAYOUT_UNDEFINED,
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
 	vkCmdBindDescriptorSets(
 		commandBuffer,
@@ -295,18 +290,12 @@ void PipelineEquirect2Cube::OffscreenRender(VulkanContext& ctx, VulkanImage* out
 
 	vkCmdEndRenderPass(commandBuffer);
 
-	// Convention is to change the layout to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	outputEnvMap->CreateBarrier({
-		.commandBuffer = commandBuffer,
-		.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 
-		.sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-		.sourceAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-		.destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-		.destinationAccess = VK_ACCESS_SHADER_READ_BIT
-	});
-
 	ctx.EndOneTimeGraphicsCommand(commandBuffer);
+
+	// Transition
+	outputEnvMap->TransitionImageLayout(ctx,
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 	// Create a sampler for the output cubemap
 	outputEnvMap->CreateDefaultSampler(ctx);

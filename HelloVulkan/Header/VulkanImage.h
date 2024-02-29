@@ -162,6 +162,11 @@ public:
 
 	void TransitionImageLayout(
 		VulkanContext& ctx,
+		VkImageLayout oldLayout,
+		VkImageLayout newLayout);
+
+	void TransitionImageLayout(
+		VulkanContext& ctx,
 		VkFormat format,
 		VkImageLayout oldLayout,
 		VkImageLayout newLayout,

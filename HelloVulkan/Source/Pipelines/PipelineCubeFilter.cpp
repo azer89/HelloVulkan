@@ -321,22 +321,19 @@ void PipelineCubeFilter::OffscreenRender(VulkanContext& ctx,
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
+	VulkanImage::TransitionImageLayoutCommand(commandBuffer,
+		outputCubemap->image_,
+		outputCubemap->imageFormat_,
+		VK_IMAGE_LAYOUT_UNDEFINED,
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		0u, 
+		outputCubemap->mipCount_,
+		0u, 
+		outputCubemap->layerCount_);
+
 	for (int i = static_cast<int>(outputMipMapCount - 1u); i >= 0; --i)
 	{
 		const uint32_t targetSize = outputSideLength >> i;
-
-		const VkImageSubresourceRange  subresourceRange =
-		{ VK_IMAGE_ASPECT_COLOR_BIT, static_cast<uint32_t>(i), 1u, 0u, 6u };
-
-		outputCubemap->CreateBarrier({
-			.commandBuffer = commandBuffer,
-			.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-			.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-			.sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-			.sourceAccess = 0,
-			.destinationStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-			.destinationAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT },
-			subresourceRange);
 
 		PushConstantCubeFilter pc =
 		{
@@ -358,14 +355,15 @@ void PipelineCubeFilter::OffscreenRender(VulkanContext& ctx,
 	}
 
 	// Convention is to change the layout to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	outputCubemap->CreateBarrier({ 
-		.commandBuffer = commandBuffer,
-		.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-		.sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-		.sourceAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-		.destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-		.destinationAccess = VK_ACCESS_SHADER_READ_BIT });
+	VulkanImage::TransitionImageLayoutCommand(commandBuffer,
+		outputCubemap->image_,
+		outputCubemap->imageFormat_,
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		0u,
+		outputCubemap->mipCount_,
+		0u,
+		outputCubemap->layerCount_);
 
 	ctx.EndOneTimeGraphicsCommand(commandBuffer);
 
