@@ -7,15 +7,15 @@ class FrameCounter
 {
 private:
 	float fpsCurr_;
-
 	float delayedDeltaMillisecond_;
 	float deltaSecond_; // Time between current frame and last frame
 	float lastFrame_;
 
-	static constexpr size_t LENGTH_FOR_GRAPH = 100;
-	static constexpr float GRAPH_DELAY = 0.2f;
 	std::vector<float> dataForGraph_;
 	float graphTimer_;
+
+	static constexpr size_t LENGTH_FOR_GRAPH = 100;
+	static constexpr float GRAPH_DELAY = 0.2f;
 
 public:
 	[[nodiscard]] float GetDeltaSecond() const { return deltaSecond_; }
