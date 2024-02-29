@@ -101,14 +101,13 @@ void PipelineBRDFLUT::Execute(VulkanContext& ctx)
 		static_cast<uint32_t>(IBLConfig::LUTHeight), // groupCountY
 		1u); // groupCountZ
 
-	// github.com/KhronosGroup/Vulkan-Docs/wiki/Synchronization-Examples-(Legacy-synchronization-APIs)#cpu-read-back-of-data-written-by-a-compute-shader
+	// TODO This is a global memory barrier
 	VkMemoryBarrier readoutBarrier = {
 		.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER,
 		.pNext = nullptr,
 		.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT, // Write access to SSBO
 		.dstAccessMask = VK_ACCESS_HOST_READ_BIT // Read SSBO by a host / CPU
 	};
-
 	vkCmdPipelineBarrier(
 		commandBuffer, // commandBuffer
 		// Compute shader
@@ -150,7 +149,7 @@ void PipelineBRDFLUT::CreateDescriptor(VulkanContext& ctx)
 	});
 
 	// Set
-	VkDescriptorBufferInfo outBufferInfo = { outBuffer_.buffer_, 0, VK_WHOLE_SIZE };
+	VkDescriptorBufferInfo outBufferInfo = outBuffer_.GetBufferInfo();
 
 	descriptor_.CreateSet(
 		ctx,

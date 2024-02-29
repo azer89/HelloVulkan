@@ -41,18 +41,18 @@ void Mesh::SetupSlotBased(VulkanContext& ctx)
 		return;
 	}
 
-	vertexBufferSize_ = static_cast< VkDeviceSize>(sizeof(VertexData) * vertices_.size());
+	VkDeviceSize vertexBufferSize = static_cast< VkDeviceSize>(sizeof(VertexData) * vertices_.size());
 	vertexBuffer_.CreateGPUOnlyBuffer(
 		ctx, 
-		vertexBufferSize_, 
+		vertexBufferSize, 
 		vertices_.data(), 
 		VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
 	);
 
-	indexBufferSize_ = static_cast<VkDeviceSize>(sizeof(uint32_t) * indices_.size());
+	VkDeviceSize indexBufferSize = static_cast<VkDeviceSize>(sizeof(uint32_t) * indices_.size());
 	indexBuffer_.CreateGPUOnlyBuffer(
 		ctx, 
-		indexBufferSize_, 
+		indexBufferSize, 
 		indices_.data(), 
 		VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
 	);

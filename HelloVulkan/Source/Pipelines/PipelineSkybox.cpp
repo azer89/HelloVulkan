@@ -109,7 +109,7 @@ void PipelineSkybox::CreateDescriptor(VulkanContext& ctx)
 
 	for (size_t i = 0; i < frameCount; i++)
 	{
-		VkDescriptorBufferInfo bufferInfo = { cameraUBOBuffers_[i].buffer_, 0, sizeof(CameraUBO) };
+		VkDescriptorBufferInfo bufferInfo = cameraUBOBuffers_[i].GetBufferInfo();
 
 		descriptor_.CreateSet(
 			ctx,

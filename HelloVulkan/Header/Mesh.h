@@ -40,8 +40,6 @@ class Mesh
 {
 public:
 	// Slot based
-	VkDeviceSize vertexBufferSize_;
-	VkDeviceSize indexBufferSize_;
 	VulkanBuffer vertexBuffer_;
 	VulkanBuffer indexBuffer_;
 

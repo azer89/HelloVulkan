@@ -72,7 +72,7 @@ void PipelineAABBGenerator::Execute(VulkanContext& ctx, VkCommandBuffer commandB
 		.dstQueueFamilyIndex = ctx.GetGraphicsFamily(),
 		.buffer = cfBuffers_->aabbBuffers_[frameIndex].buffer_,
 		.offset = 0,
-		.size = VK_WHOLE_SIZE };
+		.size = cfBuffers_->aabbBuffers_[frameIndex].size_ };
 	vkCmdPipelineBarrier(commandBuffer,
 		VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, //srcStageMask
 		VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, // dstStageMask
@@ -117,8 +117,8 @@ void PipelineAABBGenerator::CreateDescriptor(VulkanContext& ctx)
 	// Set
 	for (size_t i = 0; i < imageCount; ++i)
 	{
-		VkDescriptorBufferInfo bufferInfo1 = { cfBuffers_->aabbBuffers_[i].buffer_, 0, VK_WHOLE_SIZE};
-		VkDescriptorBufferInfo bufferInfo2 = { cfUBOBuffers_[i].buffer_, 0, VK_WHOLE_SIZE};
+		VkDescriptorBufferInfo bufferInfo1 = cfBuffers_->aabbBuffers_[i].GetBufferInfo();
+		VkDescriptorBufferInfo bufferInfo2 = cfUBOBuffers_[i].GetBufferInfo();
 
 		descriptor_.CreateSet(
 		ctx,
