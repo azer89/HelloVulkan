@@ -659,11 +659,12 @@ void VulkanImage::GenerateMipmap(
 	CreateBarrier({
 		.commandBuffer = commandBuffer, // cmdBuffer
 		.oldLayout = currentImageLayout, // oldLayout
-		.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, // newLayout
-		.sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, // srcStage
 		.sourceAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, // srcAccess
-		.destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT, // dstStage
-		.destinationAccess = VK_ACCESS_TRANSFER_READ_BIT }, // dstAccess
+		.sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, // srcStage
+		.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, // newLayout
+		.destinationAccess = VK_ACCESS_TRANSFER_READ_BIT, // dstAccess
+		.destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT // dstStage
+		},
 		mipbaseRange);
 
 	for (uint32_t i = 1; i < maxMipLevels; ++i)
@@ -697,11 +698,11 @@ void VulkanImage::GenerateMipmap(
 		CreateBarrier({
 			.commandBuffer = commandBuffer,
 			.oldLayout = currentImageLayout,
-			.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-			.sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
 			.sourceAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-			.destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT,
-			.destinationAccess = VK_ACCESS_TRANSFER_WRITE_BIT },
+			.sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+			.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+			.destinationAccess = VK_ACCESS_TRANSFER_WRITE_BIT,
+			.destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT},
 			mipSubRange);
 
 		vkCmdBlitImage(
@@ -719,11 +720,11 @@ void VulkanImage::GenerateMipmap(
 		CreateBarrier({
 			.commandBuffer = commandBuffer,
 			.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-			.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-			.sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT,
 			.sourceAccess = VK_ACCESS_TRANSFER_WRITE_BIT,
-			.destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT,
-			.destinationAccess = VK_ACCESS_TRANSFER_READ_BIT },
+			.sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT,
+			.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+			.destinationAccess = VK_ACCESS_TRANSFER_READ_BIT,
+			.destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT},
 			mipSubRange);
 	}
 
@@ -731,11 +732,11 @@ void VulkanImage::GenerateMipmap(
 	CreateBarrier({ 
 		.commandBuffer = commandBuffer,
 		.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-		.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-		.sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
 		.sourceAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-		.destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-		.destinationAccess = VK_ACCESS_SHADER_READ_BIT 
+		.sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+		.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		.destinationAccess = VK_ACCESS_SHADER_READ_BIT,
+		.destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT
 	});
 
 	ctx.EndOneTimeGraphicsCommand(commandBuffer);
