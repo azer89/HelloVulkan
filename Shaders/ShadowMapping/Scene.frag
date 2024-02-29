@@ -58,7 +58,7 @@ layout(set = 0, binding = 10) uniform sampler2D shadowMap;
 layout(set = 0, binding = 11) uniform sampler2D pbrTextures[];
 
 // Shadow mapping functions
-#include <ShadowMapping//Header.glsl>
+#include <ShadowMapping//PCF.glsl>
 
 vec3 Radiance(
 	vec3 albedo,
@@ -213,7 +213,7 @@ void main()
 		ao,
 		NoV);
 
-	float shadow = FilterPCF(shadowPos / shadowPos.w);
+	float shadow = ShadowPCF(shadowPos / shadowPos.w);
 
 	vec3 color = ambient + emissive + (Lo * shadow);
 

@@ -162,7 +162,7 @@
     <None Include="..\Shaders\Equirect2Cube.frag" />
     <None Include="..\Shaders\FullscreenTriangle.vert" />
     <None Include="..\Shaders\ShadowMapping\Depth.vert" />
-    <None Include="..\Shaders\ShadowMapping\Header.glsl" />
+    <None Include="..\Shaders\ShadowMapping\PCF.glsl" />
     <None Include="..\Shaders\ShadowMapping\Scene.frag" />
     <None Include="..\Shaders\ShadowMapping\Scene.vert" />
     <None Include="..\Shaders\SimpleRaytracing\ClosestHit.rchit" />

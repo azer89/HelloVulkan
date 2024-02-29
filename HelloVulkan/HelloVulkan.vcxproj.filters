@@ -111,7 +111,7 @@
     <None Include="..\Shaders\ShadowMapping\Scene.vert">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
-    <None Include="..\Shaders\ShadowMapping\Header.glsl">
+    <None Include="..\Shaders\ShadowMapping\PCF.glsl">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
     <None Include="..\Shaders\TangentNormalToWorld.glsl">

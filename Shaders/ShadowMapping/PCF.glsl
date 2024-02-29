@@ -1,4 +1,4 @@
-float FilterPCF(vec4 sc)
+float ShadowPCF(vec4 sc)
 {
 	ivec2 texDim = textureSize(shadowMap, 0);
 	float scale = shadowUBO.pcfScale;
@@ -9,7 +9,7 @@ float FilterPCF(vec4 sc)
 	vec3 lightDir = normalize(shadowUBO.lightPosition.xyz - worldPos);
 	float bias = max(shadowUBO.shadowMaxBias * (1.0 - dot(N, lightDir)), shadowUBO.shadowMinBias);
 
-	// TODO This is very slow, change to a constant for better performance
+	// TODO Very slow, consider change to a constant for better performance
 	//const int range = 2;
 	int range = int(shadowUBO.pcfIteration);
 	float shadow = 0.0;
