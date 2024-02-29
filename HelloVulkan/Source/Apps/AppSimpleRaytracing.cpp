@@ -37,17 +37,15 @@ void AppSimpleRaytracing::UpdateUI()
 {
 	if (!showImgui_)
 	{
-		imguiPtr_->DrawEmptyImGui();
+		imguiPtr_->ImGuiDrawEmpty();
 		return;
 	}
 
-	imguiPtr_->StartImGui();
-
+	imguiPtr_->ImGuiStart();
 	ImGui::SetNextWindowSize(ImVec2(525, 250));
-	ImGui::Begin("Raytracing");
-	ImGui::SetWindowFontScale(1.25f);
-
-	imguiPtr_->EndImGui();
+	imguiPtr_->ImGuiSetWindow("Raytracing", 525, 200);
+	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
+	imguiPtr_->ImGuiEnd();
 }
 
 void AppSimpleRaytracing::DestroyResources()

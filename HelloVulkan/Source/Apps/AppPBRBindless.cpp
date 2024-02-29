@@ -149,28 +149,20 @@ void AppPBRBindless::UpdateUI()
 {
 	if (!showImgui_)
 	{
-		imguiPtr_->DrawEmptyImGui();
+		imguiPtr_->ImGuiDrawEmpty();
 		return;
 	}
 
 	static bool lightRender = true;
 	static PushConstantPBR pbrPC;
 
-	imguiPtr_->StartImGui();
-
-	ImGui::SetNextWindowSize(ImVec2(525, 250));
-	ImGui::Begin("Bindless Rendering");
-	ImGui::SetWindowFontScale(1.25f);
-	ImGui::Text("FPS: %.0f", frameCounter_.GetCurrentFPS());
+	imguiPtr_->ImGuiStart();
+	imguiPtr_->ImGuiSetWindow("Bindless Rendering", 525, 350);
+	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 	ImGui::Text("Vertices: %i, Indices: %i", scene_->vertices_.size(), scene_->indices_.size());
 	ImGui::Checkbox("Render Lights", &lightRender);
-	ImGui::SliderFloat("Light Falloff", &pbrPC.lightFalloff, 0.01f, 5.f);
-	ImGui::SliderFloat("Light Intensity", &pbrPC.lightIntensity, 0.1f, 100.f);
-	ImGui::SliderFloat("Albedo Multiplier", &pbrPC.albedoMultipler, 0.0f, 1.0f);
-	ImGui::SliderFloat("Base Reflectivity", &pbrPC.baseReflectivity, 0.01f, 1.f);
-	ImGui::SliderFloat("Max Mipmap Lod", &pbrPC.maxReflectionLod, 0.1f, cubemapMipmapCount_);
-
-	imguiPtr_->EndImGui();
+	imguiPtr_->ImGuiShowPBRConfig(&pbrPC, cubemapMipmapCount_);
+	imguiPtr_->ImGuiEnd();
 
 	lightPtr_->RenderEnable(lightRender);
 	pbrPtr_->SetPBRPushConstants(pbrPC);

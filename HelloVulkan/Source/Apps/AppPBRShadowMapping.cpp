@@ -190,7 +190,7 @@ void AppPBRShadowMapping::UpdateUI()
 {
 	if (!showImgui_)
 	{
-		imguiPtr_->DrawEmptyImGui();
+		imguiPtr_->ImGuiDrawEmpty();
 		return;
 	}
 
@@ -214,29 +214,14 @@ void AppPBRShadowMapping::UpdateUI()
 	static float staticLightPos[3] = { -5.f, 30.0f, 5.0f};
 	static int staticPCFIteration = 2;
 
-	imguiPtr_->StartImGui();
+	imguiPtr_->ImGuiStart();
+	imguiPtr_->ImGuiSetWindow("Bindless Shadow Mapping", 525, 650);
+	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 
-	ImGui::SetNextWindowSize(ImVec2(525, 650));
-	ImGui::Begin("Bindless Shadow Mapping");
-	ImGui::SetWindowFontScale(1.25f);
-	ImGui::Text("FPS: %.0f", frameCounter_.GetCurrentFPS());
-	ImGui::Text("Delta: %.0f ms", frameCounter_.GetDelayedDeltaMillisecond());
-	ImGui::PlotLines("FPS", 
-		frameCounter_.GetGraph(), 
-		frameCounter_.GetGraphLength(),
-		0,
-		nullptr,
-		FLT_MAX,
-		FLT_MAX, 
-		ImVec2(450, 50));
 	ImGui::Text("Vertices: %i, Indices: %i", scene_->vertices_.size(), scene_->indices_.size());
 	ImGui::SeparatorText("Shading");
 	ImGui::Checkbox("Render Lights", &staticLightRender);
-	ImGui::SliderFloat("Light Falloff", &staticPBRPushConstants.lightFalloff, 0.01f, 5.f);
-	ImGui::SliderFloat("Light Intensity", &staticPBRPushConstants.lightIntensity, 0.1f, 100.f);
-	ImGui::SliderFloat("Albedo Multiplier", &staticPBRPushConstants.albedoMultipler, 0.0f, 1.0f);
-	ImGui::SliderFloat("Base Reflectivity", &staticPBRPushConstants.baseReflectivity, 0.01f, 1.f);
-	ImGui::SliderFloat("Max Mipmap Lod", &staticPBRPushConstants.maxReflectionLod, 0.1f, cubemapMipmapCount_);
+	imguiPtr_->ImGuiShowPBRConfig(&staticPBRPushConstants, cubemapMipmapCount_);
 
 	ImGui::SeparatorText("Shadow mapping");
 	ImGui::SliderFloat("Min Bias", &staticShadowUBO.shadowMinBias, 0.00001f, 0.01f);
@@ -251,7 +236,7 @@ void AppPBRShadowMapping::UpdateUI()
 	ImGui::SliderFloat("Y", &(staticLightPos[1]), 20.0f, 60.0f);
 	ImGui::SliderFloat("Z", &(staticLightPos[2]), -10.0f, 10.0f);
 
-	imguiPtr_->EndImGui();
+	imguiPtr_->ImGuiEnd();
 
 	// TODO Check if light position is changed 
 	lights_->UpdateLightPosition(vulkanContext_, 0, &(staticLightPos[0]));
