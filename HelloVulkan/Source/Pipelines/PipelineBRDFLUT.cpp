@@ -101,14 +101,13 @@ void PipelineBRDFLUT::Execute(VulkanContext& ctx)
 		static_cast<uint32_t>(IBLConfig::LUTHeight), // groupCountY
 		1u); // groupCountZ
 
-	// TODO Use VkBufferMemoryBarrier
+	// TODO This is a global memory barrier
 	VkMemoryBarrier readoutBarrier = {
 		.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER,
 		.pNext = nullptr,
 		.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT, // Write access to SSBO
 		.dstAccessMask = VK_ACCESS_HOST_READ_BIT // Read SSBO by a host / CPU
 	};
-
 	vkCmdPipelineBarrier(
 		commandBuffer, // commandBuffer
 		// Compute shader
