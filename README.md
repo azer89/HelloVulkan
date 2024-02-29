@@ -44,7 +44,7 @@ If too many lights end up inside the view frustum, especially when zooming out, 
 
 https://github.com/azer89/HelloVulkan/assets/790432/13a4426f-deec-40f5-816a-5594f8f0cbc0
 
-### [Link to some other cool results](https://github.com/azer89/HelloVulkan/blob/main/GALLERY.md)
+### [Link to some other cool results](https://github.com/azer89/HelloVulkan/wiki/Gallery)
 
 ### Build
 * C++20
