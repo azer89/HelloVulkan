@@ -8,15 +8,17 @@
 
 #include <string>
 
-struct ImageBarrierCreateInfo
+struct ImageBarrierInfo
 {
 	VkCommandBuffer commandBuffer;
+	
 	VkImageLayout oldLayout;
-	VkImageLayout newLayout;
-	VkPipelineStageFlags sourceStage;
 	VkAccessFlags sourceAccess;
-	VkPipelineStageFlags destinationStage;
+	VkPipelineStageFlags sourceStage;
+
+	VkImageLayout newLayout;
 	VkAccessFlags destinationAccess;
+	VkPipelineStageFlags destinationStage;
 };
 
 class VulkanImage
@@ -156,24 +158,40 @@ public:
 		uint32_t height,
 		uint32_t layerCount = 1);
 
-	void CreateBarrier(ImageBarrierCreateInfo info);
+	void CreateBarrier(const ImageBarrierInfo& info);
 
-	void CreateBarrier(ImageBarrierCreateInfo info, VkImageSubresourceRange subresourceRange);
+	void CreateBarrier(const ImageBarrierInfo& info, const VkImageSubresourceRange& subresourceRange);
 
-	void TransitionImageLayout(VulkanContext& ctx,
+	// This transitions all mip levels and all layers
+	void TransitionLayout(
+		VulkanContext& ctx,
+		VkImageLayout oldLayout,
+		VkImageLayout newLayout);
+	
+	void TransitionLayout(
+		VulkanContext& ctx,
 		VkFormat format,
 		VkImageLayout oldLayout,
 		VkImageLayout newLayout,
-		uint32_t layerCount = 1,
-		uint32_t mipLevels = 1);
+		// By default, this transitions one mip level and one layers
+		uint32_t mipLevel = 0u,
+		uint32_t mipCount = 1u,
+		uint32_t layerLevel = 0u,
+		uint32_t layerCount = 1u
+	);
 
-	static void TransitionImageLayoutCommand(VkCommandBuffer commandBuffer,
+	static void TransitionLayoutCommand(
+		VkCommandBuffer commandBuffer,
 		VkImage image,
 		VkFormat format,
 		VkImageLayout oldLayout,
 		VkImageLayout newLayout,
-		uint32_t layerCount = 1,
-		uint32_t mipLevels = 1);
+		// By default, this transitions one mip level and one layers
+		uint32_t mipLevel = 0u,
+		uint32_t mipCount = 1u,
+		uint32_t layerLevel = 0u,
+		uint32_t layerCount = 1u
+	);
 
 	// To create descriptor sets
 	VkDescriptorImageInfo GetDescriptorImageInfo();
@@ -190,8 +208,6 @@ private:
 		uint32_t layerCount,
 		const void* imageData,
 		VkImageLayout sourceImageLayout = VK_IMAGE_LAYOUT_UNDEFINED);
-
-	static bool HasStencilComponent(VkFormat format);
 
 	uint32_t BytesPerTexFormat(VkFormat fmt);
 };
