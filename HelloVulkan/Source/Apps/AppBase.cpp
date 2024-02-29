@@ -25,7 +25,6 @@ AppBase::AppBase() :
 	InitGLSLang();
 	InitImGui();
 	InitCamera();
-	//InitTiming();
 }
 
 void AppBase::InitVulkan(ContextConfig config)
@@ -243,19 +242,11 @@ void AppBase::InitCamera()
 	firstMouse_ = true;
 }
 
-/*void AppBase::InitTiming()
-{
-	deltaTime_ = 0.0f;	// Time between current frame and last frame
-	lastFrame_ = 0.0f;
-}*/
-
 void AppBase::ProcessTiming()
 {
 	// Per-frame time
 	float currentFrame = static_cast<float>(glfwGetTime());
 	frameCounter_.Update(currentFrame);
-	//deltaTime_ = currentFrame - lastFrame_;
-	//lastFrame_ = currentFrame;
 }
 
 int AppBase::GLFWWindowShouldClose()

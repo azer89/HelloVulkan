@@ -40,7 +40,6 @@ protected:
 	void InitGLSLang();
 	void InitGLFW();
 	void InitCamera();
-	//void InitTiming();
 
 	// Resources
 	void InitIBLResources(const std::string& hdrFile);
@@ -68,8 +67,6 @@ protected:
 
 	// Timing
 	FrameCounter frameCounter_;
-	//float deltaTime_; // Time between current frame and last frame
-	//float lastFrame_;
 
 	// These two are not copyable or movable
 	VulkanInstance vulkanInstance_;
