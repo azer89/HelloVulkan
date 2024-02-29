@@ -140,12 +140,12 @@ void PipelineLightCulling::CreateDescriptor(VulkanContext& ctx)
 	// Set
 	for (size_t i = 0; i < imageCount; ++i)
 	{
-		VkDescriptorBufferInfo bufferInfo1 = { cfBuffers_->aabbBuffers_[i].buffer_, 0, VK_WHOLE_SIZE };
-		VkDescriptorBufferInfo bufferInfo2 = { lights_->GetSSBOBuffer(), 0, lights_->GetSSBOSize()};
-		VkDescriptorBufferInfo bufferInfo3 = { cfBuffers_->globalIndexCountBuffers_[i].buffer_, 0, sizeof(uint32_t) };
-		VkDescriptorBufferInfo bufferInfo4 = { cfBuffers_->lightCellsBuffers_[i].buffer_, 0, VK_WHOLE_SIZE };
-		VkDescriptorBufferInfo bufferInfo5 = { cfBuffers_->lightIndicesBuffers_[i].buffer_, 0, VK_WHOLE_SIZE };
-		VkDescriptorBufferInfo bufferInfo6 = { cfUBOBuffers_[i].buffer_, 0, sizeof(ClusterForwardUBO) };
+		VkDescriptorBufferInfo bufferInfo1 = cfBuffers_->aabbBuffers_[i].GetBufferInfo();
+		VkDescriptorBufferInfo bufferInfo2 = lights_->GetBufferInfo();
+		VkDescriptorBufferInfo bufferInfo3 = cfBuffers_->globalIndexCountBuffers_[i].GetBufferInfo();
+		VkDescriptorBufferInfo bufferInfo4 = cfBuffers_->lightCellsBuffers_[i].GetBufferInfo();
+		VkDescriptorBufferInfo bufferInfo5 = cfBuffers_->lightIndicesBuffers_[i].GetBufferInfo();
+		VkDescriptorBufferInfo bufferInfo6 = cfUBOBuffers_[i].GetBufferInfo();
 
 		descriptor_.CreateSet(
 			ctx,

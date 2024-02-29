@@ -117,8 +117,8 @@ void PipelineAABBGenerator::CreateDescriptor(VulkanContext& ctx)
 	// Set
 	for (size_t i = 0; i < imageCount; ++i)
 	{
-		VkDescriptorBufferInfo bufferInfo1 = { cfBuffers_->aabbBuffers_[i].buffer_, 0, VK_WHOLE_SIZE};
-		VkDescriptorBufferInfo bufferInfo2 = { cfUBOBuffers_[i].buffer_, 0, VK_WHOLE_SIZE};
+		VkDescriptorBufferInfo bufferInfo1 = cfBuffers_->aabbBuffers_[i].GetBufferInfo();
+		VkDescriptorBufferInfo bufferInfo2 = cfUBOBuffers_[i].GetBufferInfo();
 
 		descriptor_.CreateSet(
 		ctx,

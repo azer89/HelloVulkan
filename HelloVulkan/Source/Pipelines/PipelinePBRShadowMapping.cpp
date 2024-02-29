@@ -167,10 +167,10 @@ void PipelinePBRShadowMapping::CreateDescriptor(VulkanContext& ctx)
 	});
 
 	// Set
-	/*3*/ VkDescriptorBufferInfo vertexBufferInfo = { scene_->vertexBuffer_.buffer_, 0, scene_->vertexBuffer_.size_ };
-	/*4*/ VkDescriptorBufferInfo indexBufferInfo = { scene_->indexBuffer_.buffer_, 0, scene_->indexBuffer_.size_ };
-	/*5*/ VkDescriptorBufferInfo meshBufferInfo = { scene_->meshDataBuffer_.buffer_, 0, scene_->meshDataBuffer_.size_ };
-	/*6*/ VkDescriptorBufferInfo lightBufferInfo = { lights_->GetSSBOBuffer(), 0, lights_->GetSSBOSize() };
+	/*3*/ VkDescriptorBufferInfo vertexBufferInfo = scene_->vertexBuffer_.GetBufferInfo();
+	/*4*/ VkDescriptorBufferInfo indexBufferInfo = scene_->indexBuffer_.GetBufferInfo();
+	/*5*/ VkDescriptorBufferInfo meshBufferInfo = scene_->meshDataBuffer_.GetBufferInfo();
+	/*6*/ VkDescriptorBufferInfo lightBufferInfo = lights_->GetBufferInfo();
 	/*7*/ VkDescriptorImageInfo specularImageInfo = iblResources_->specularCubemap_.GetDescriptorImageInfo();
 	/*8*/ VkDescriptorImageInfo diffuseImageInfo = iblResources_->diffuseCubemap_.GetDescriptorImageInfo();
 	/*9*/ VkDescriptorImageInfo lutImageInfo = iblResources_->brdfLut_.GetDescriptorImageInfo();
@@ -179,9 +179,9 @@ void PipelinePBRShadowMapping::CreateDescriptor(VulkanContext& ctx)
 	descriptorSets_.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
-		/*0*/ VkDescriptorBufferInfo camBufferInfo = { cameraUBOBuffers_[i].buffer_, 0, sizeof(CameraUBO) };
-		/*1*/ VkDescriptorBufferInfo shadowUBOBufferInfo = { shadowMapConfigUBOBuffers_[i].buffer_, 0, sizeof(ShadowMapUBO) };
-		/*2*/ VkDescriptorBufferInfo modelBufferInfo = { scene_->modelUBOBuffers_[i].buffer_, 0, scene_->modelUBOBuffers_[i].size_ };
+		/*0*/ VkDescriptorBufferInfo camBufferInfo = cameraUBOBuffers_[i].GetBufferInfo();
+		/*1*/ VkDescriptorBufferInfo shadowUBOBufferInfo = shadowMapConfigUBOBuffers_[i].GetBufferInfo();
+		/*2*/ VkDescriptorBufferInfo modelBufferInfo = scene_->modelUBOBuffers_[i].GetBufferInfo();
 		
 		std::vector<DescriptorSetWrite> writes;
 		/*0*/ writes.push_back({ .bufferInfoPtr_ = &camBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });

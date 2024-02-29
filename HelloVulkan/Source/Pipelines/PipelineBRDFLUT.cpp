@@ -150,7 +150,7 @@ void PipelineBRDFLUT::CreateDescriptor(VulkanContext& ctx)
 	});
 
 	// Set
-	VkDescriptorBufferInfo outBufferInfo = { outBuffer_.buffer_, 0, VK_WHOLE_SIZE };
+	VkDescriptorBufferInfo outBufferInfo = outBuffer_.GetBufferInfo();
 
 	descriptor_.CreateSet(
 		ctx,

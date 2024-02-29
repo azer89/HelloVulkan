@@ -51,6 +51,15 @@ public:
 	VkBuffer GetSSBOBuffer() const { return storageBuffer_.buffer_; }
 	size_t GetSSBOSize() const { return storageBufferSize_;  }
 	uint32_t GetLightCount() const { return lightCount_; }
+	VkDescriptorBufferInfo GetBufferInfo() const
+	{
+		return
+		{
+			.buffer = storageBuffer_.buffer_,
+			.offset = 0,
+			.range = storageBuffer_.size_
+		};
+	}
 
 public:
 	std::vector<LightData> lights_;

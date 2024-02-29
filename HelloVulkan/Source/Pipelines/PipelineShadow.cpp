@@ -133,15 +133,15 @@ void PipelineShadow::CreateDescriptor(VulkanContext& ctx)
 		});
 
 	// Sets
-	/*2*/ VkDescriptorBufferInfo vertexBufferInfo = { scene_->vertexBuffer_.buffer_, 0, scene_->vertexBuffer_.size_ };
-	/*3*/ VkDescriptorBufferInfo indexBufferInfo = { scene_->indexBuffer_.buffer_, 0, scene_->indexBuffer_.size_ };
-	/*4*/ VkDescriptorBufferInfo meshBufferInfo = { scene_->meshDataBuffer_.buffer_, 0, scene_->meshDataBuffer_.size_ };
+	/*2*/ VkDescriptorBufferInfo vertexBufferInfo = scene_->vertexBuffer_.GetBufferInfo();
+	/*3*/ VkDescriptorBufferInfo indexBufferInfo = scene_->indexBuffer_.GetBufferInfo();
+	/*4*/ VkDescriptorBufferInfo meshBufferInfo = scene_->meshDataBuffer_.GetBufferInfo();
 
 	descriptorSets_.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
-		/*0*/ VkDescriptorBufferInfo shadowBufferInfo = { shadowMapUBOBuffers_[i].buffer_, 0, sizeof(ShadowMapUBO) };
-		/*1*/ VkDescriptorBufferInfo modelBufferInfo = { scene_->modelUBOBuffers_[i].buffer_, 0, scene_->modelUBOBuffers_[i].size_ };
+		/*0*/ VkDescriptorBufferInfo shadowBufferInfo = shadowMapUBOBuffers_[i].GetBufferInfo();
+		/*1*/ VkDescriptorBufferInfo modelBufferInfo = scene_->modelUBOBuffers_[i].GetBufferInfo();
 	
 		std::vector<DescriptorSetWrite> writes;
 		/*0*/ writes.push_back({ .bufferInfoPtr_ = &shadowBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });

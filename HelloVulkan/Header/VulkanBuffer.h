@@ -87,5 +87,15 @@ public:
 		VulkanContext& ctx,
 		void* outData,
 		const size_t dataSize);
+
+	VkDescriptorBufferInfo GetBufferInfo() const
+	{
+		return
+		{
+			.buffer = buffer_,
+			.offset = 0,
+			.range = size_
+		};
+	}
 };
 #endif

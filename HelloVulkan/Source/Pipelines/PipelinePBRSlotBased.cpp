@@ -110,7 +110,7 @@ void PipelinePBRSlotBased::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer
 			vkCmdBindIndexBuffer(commandBuffer, mesh.indexBuffer_.buffer_, 0, VK_INDEX_TYPE_UINT32);
 
 			// Draw
-			vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBufferSize_ / (sizeof(unsigned int))), 1, 0, 0, 0);
+			vkCmdDrawIndexed(commandBuffer, mesh.GetNumIndices(), 1, 0, 0, 0);
 		}
 	}
 	
@@ -190,9 +190,9 @@ void PipelinePBRSlotBased::CreateDescriptorSet(VulkanContext& ctx, Model* parent
 
 	for (size_t i = 0; i < frameCount; i++)
 	{
-		VkDescriptorBufferInfo bufferInfo1 = { cameraUBOBuffers_[i].buffer_, 0, sizeof(CameraUBO) };
-		VkDescriptorBufferInfo bufferInfo2 = { parentModel->modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
-		VkDescriptorBufferInfo bufferInfo3 = { lights_->GetSSBOBuffer(), 0, lights_->GetSSBOSize() };
+		VkDescriptorBufferInfo bufferInfo1 = cameraUBOBuffers_[i].GetBufferInfo();
+		VkDescriptorBufferInfo bufferInfo2 = parentModel->modelBuffers_[i].GetBufferInfo();
+		VkDescriptorBufferInfo bufferInfo3 = lights_->GetBufferInfo();
 
 		std::vector<DescriptorSetWrite> writes;
 

@@ -115,7 +115,7 @@ void PipelinePBRClusterForward::FillCommandBuffer(VulkanContext& ctx, VkCommandB
 			vkCmdBindIndexBuffer(commandBuffer, mesh.indexBuffer_.buffer_, 0, VK_INDEX_TYPE_UINT32);
 
 			// Draw
-			vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBufferSize_ / (sizeof(unsigned int))), 1, 0, 0, 0);
+			vkCmdDrawIndexed(commandBuffer, mesh.GetNumIndices(), 1, 0, 0, 0);
 		}
 	}
 
@@ -199,13 +199,13 @@ void PipelinePBRClusterForward::CreateDescriptorSet(
 
 	for (size_t i = 0; i < frameCount; i++)
 	{
-		VkDescriptorBufferInfo bufferInfo1 = { cameraUBOBuffers_[i].buffer_, 0, sizeof(CameraUBO) };
-		VkDescriptorBufferInfo bufferInfo2 = { parentModel->modelBuffers_[i].buffer_, 0, sizeof(ModelUBO) };
-		VkDescriptorBufferInfo bufferInfo3 = { cfUBOBuffers_[i].buffer_, 0, sizeof(ClusterForwardUBO) };
-		VkDescriptorBufferInfo bufferInfo4 = { lights_->GetSSBOBuffer(), 0, lights_->GetSSBOSize() };
-		VkDescriptorBufferInfo bufferInfo5 = { cfBuffers_->lightCellsBuffers_[i].buffer_, 0, VK_WHOLE_SIZE };
-		VkDescriptorBufferInfo bufferInfo6 = { cfBuffers_->lightIndicesBuffers_[i].buffer_, 0, VK_WHOLE_SIZE };
-		VkDescriptorBufferInfo bufferInfo7 = { cfBuffers_->aabbBuffers_[i].buffer_, 0, VK_WHOLE_SIZE};
+		VkDescriptorBufferInfo bufferInfo1 = cameraUBOBuffers_[i].GetBufferInfo();
+		VkDescriptorBufferInfo bufferInfo2 = parentModel->modelBuffers_[i].GetBufferInfo();
+		VkDescriptorBufferInfo bufferInfo3 = cfUBOBuffers_[i].GetBufferInfo();
+		VkDescriptorBufferInfo bufferInfo4 = lights_->GetBufferInfo();
+		VkDescriptorBufferInfo bufferInfo5 = cfBuffers_->lightCellsBuffers_[i].GetBufferInfo();
+		VkDescriptorBufferInfo bufferInfo6 = cfBuffers_->lightIndicesBuffers_[i].GetBufferInfo();
+		VkDescriptorBufferInfo bufferInfo7 = cfBuffers_->aabbBuffers_[i].GetBufferInfo();
 
 		std::vector<DescriptorSetWrite> writes;
 
