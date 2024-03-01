@@ -1,8 +1,9 @@
-#ifndef DESCRIPTOR_INFO
-#define DESCRIPTOR_INFO
+#ifndef DESCRIPTOR_BUILD_INFO
+#define DESCRIPTOR_BUILD_INFO
 
 #include "volk.h"
 
+// TODO Create a .cpp and remove these
 #include "VulkanBuffer.h"
 #include "VulkanImage.h"
 
@@ -10,7 +11,7 @@
 #include <unordered_map>
 #include <iostream>
 
-struct WriteInfo
+struct DescriptorSetWrite
 {
 	// pNext_ is for raytracing pipeline
 	void* pNext_ = nullptr;
@@ -25,18 +26,20 @@ struct WriteInfo
 class DescriptorBuildInfo
 {
 public:
-	std::vector<WriteInfo> writes_;
+	std::vector<DescriptorSetWrite> writes_;
 
 private:
 	std::unordered_map<size_t, VkDescriptorBufferInfo> bufferMap_;
 	std::unordered_map<size_t, VkDescriptorImageInfo> imageMap_;
+
+	// Special case for descriptor indexing
+	std::vector<VkDescriptorImageInfo> imageArrays_;
 
 public:
 
 	void AddBuffer(
 		VulkanBuffer* buffer,
 		VkDescriptorType dsType,
-		uint32_t descriptorCount = 1u,
 		VkShaderStageFlags stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT
 		)
 	{
@@ -51,7 +54,7 @@ public:
 		writes_.push_back
 		({
 			.bufferInfoPtr_ = bufferInfo,
-			.descriptorCount_ = descriptorCount,
+			.descriptorCount_ = 1u,
 			.type_ = dsType,
 			.shaderFlags_ = stageFlags
 		});
@@ -59,8 +62,7 @@ public:
 
 	void AddImage(
 		VulkanImage* image,
-		VkDescriptorType dsType,
-		uint32_t descriptorCount,
+		VkDescriptorType dsType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 		VkShaderStageFlags stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT
 	)
 	{
@@ -75,7 +77,24 @@ public:
 		writes_.push_back
 		({
 			.imageInfoPtr_ = imageInfo,
-			.descriptorCount_ = descriptorCount,
+			.descriptorCount_ = 1u,
+			.type_ = dsType,
+			.shaderFlags_ = stageFlags
+			});
+	}
+
+	// Special case for descriptor indexing
+	void AddImageArray(
+		const std::vector<VkDescriptorImageInfo>& imageArrays,
+		VkDescriptorType dsType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+		VkShaderStageFlags stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT)
+	{
+		imageArrays_ = imageArrays;
+
+		writes_.push_back
+		({
+			.imageInfoPtr_ = imageArrays_.data(),
+			.descriptorCount_ = static_cast<uint32_t>(imageArrays_.size()),
 			.type_ = dsType,
 			.shaderFlags_ = stageFlags
 			});

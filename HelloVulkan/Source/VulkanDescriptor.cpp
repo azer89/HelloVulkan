@@ -13,7 +13,7 @@ void VulkanDescriptor::CreatePool(VulkanContext& ctx,
 		poolSizes.push_back(VkDescriptorPoolSize
 			{
 				.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.descriptorCount = createInfo.frameCount_ * createInfo.uboCount_
+				.descriptorCount = createInfo.uboCount_
 			});
 	}
 
@@ -22,7 +22,7 @@ void VulkanDescriptor::CreatePool(VulkanContext& ctx,
 		poolSizes.push_back(VkDescriptorPoolSize
 			{
 				.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-				.descriptorCount = createInfo.frameCount_ * createInfo.ssboCount_
+				.descriptorCount = createInfo.ssboCount_
 			});
 	}
 
@@ -31,7 +31,7 @@ void VulkanDescriptor::CreatePool(VulkanContext& ctx,
 		poolSizes.push_back(VkDescriptorPoolSize
 			{
 				.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-				.descriptorCount = createInfo.frameCount_ * createInfo.samplerCount_
+				.descriptorCount = createInfo.samplerCount_
 			});
 	}
 
@@ -40,7 +40,7 @@ void VulkanDescriptor::CreatePool(VulkanContext& ctx,
 		poolSizes.push_back(VkDescriptorPoolSize
 			{
 				.type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
-				.descriptorCount = createInfo.frameCount_ * createInfo.storageImageCount_
+				.descriptorCount = createInfo.storageImageCount_
 			});
 	}
 
@@ -49,7 +49,7 @@ void VulkanDescriptor::CreatePool(VulkanContext& ctx,
 		poolSizes.push_back(VkDescriptorPoolSize
 			{
 				.type = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
-				.descriptorCount = createInfo.frameCount_ * createInfo.accelerationStructureCount_
+				.descriptorCount = createInfo.accelerationStructureCount_
 			});
 	}
 
@@ -101,7 +101,8 @@ void VulkanDescriptor::CreateLayout(VulkanContext& ctx,
 
 void VulkanDescriptor::CreatePoolAndLayout(
 	VulkanContext& ctx, 
-	const std::vector<DescriptorSetWrite>& writes,
+	//const std::vector<DescriptorSetWrite>& writes,
+	DescriptorBuildInfo buildInfo,
 	uint32_t frameCount,
 	uint32_t setCountPerFrame,
 	VkDescriptorPoolCreateFlags poolFlags)
@@ -115,7 +116,7 @@ void VulkanDescriptor::CreatePoolAndLayout(
 	uint32_t accelerationStructureCount = 0;
 
 	// Create pool
-	for (auto& write : writes)
+	for (auto& write : buildInfo.writes_)
 	{
 		if (write.type_ == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
 		{
@@ -150,7 +151,7 @@ void VulkanDescriptor::CreatePoolAndLayout(
 		poolSizes.push_back(VkDescriptorPoolSize
 			{
 				.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.descriptorCount = frameCount * uboCount
+				.descriptorCount = uboCount
 			});
 	}
 
@@ -159,7 +160,7 @@ void VulkanDescriptor::CreatePoolAndLayout(
 		poolSizes.push_back(VkDescriptorPoolSize
 			{
 				.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-				.descriptorCount = frameCount * ssboCount
+				.descriptorCount = ssboCount
 			});
 	}
 
@@ -168,7 +169,7 @@ void VulkanDescriptor::CreatePoolAndLayout(
 		poolSizes.push_back(VkDescriptorPoolSize
 			{
 				.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-				.descriptorCount = frameCount * samplerCount
+				.descriptorCount = samplerCount
 			});
 	}
 
@@ -177,7 +178,7 @@ void VulkanDescriptor::CreatePoolAndLayout(
 		poolSizes.push_back(VkDescriptorPoolSize
 			{
 				.type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
-				.descriptorCount = frameCount * storageImageCount
+				.descriptorCount = storageImageCount
 			});
 	}
 
@@ -186,7 +187,7 @@ void VulkanDescriptor::CreatePoolAndLayout(
 		poolSizes.push_back(VkDescriptorPoolSize
 			{
 				.type = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
-				.descriptorCount = frameCount * accelerationStructureCount
+				.descriptorCount = accelerationStructureCount
 			});
 	}
 
@@ -204,7 +205,7 @@ void VulkanDescriptor::CreatePoolAndLayout(
 	// Create Layout
 	std::vector<VkDescriptorSetLayoutBinding> layoutBindings;
 	uint32_t bindingIndex = 0;
-	for (auto& write : writes)
+	for (auto& write : buildInfo.writes_)
 	{
 		layoutBindings.emplace_back(
 			CreateDescriptorSetLayoutBinding

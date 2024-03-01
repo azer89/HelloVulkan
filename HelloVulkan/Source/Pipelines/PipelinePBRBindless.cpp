@@ -1,5 +1,6 @@
 #include "PipelinePBRBindless.h"
 #include "VulkanUtility.h"
+#include "DescriptorBuildInfo.h"
 #include "Configs.h"
 
 #include <vector>
@@ -114,49 +115,29 @@ void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 // TODO Refactor VulkanDescriptor to make the code below simpler
 void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
 {
-	std::vector<VkDescriptorImageInfo> imageInfos = scene_->GetImageInfos(); // 9
-	
-	const uint32_t textureCount = static_cast<uint32_t>(imageInfos.size());
 	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
 
-	VkDescriptorBufferInfo vertexBufferInfo = scene_->vertexBuffer_.GetBufferInfo(); // 2
-	VkDescriptorBufferInfo indexBufferInfo = scene_->indexBuffer_.GetBufferInfo(); // 3
-	VkDescriptorBufferInfo meshBufferInfo = scene_->meshDataBuffer_.GetBufferInfo(); // 4
-	VkDescriptorBufferInfo lightBufferInfo = lights_->GetBufferInfo(); // 5
-	VkDescriptorImageInfo specularImageInfo = iblResources_->specularCubemap_.GetDescriptorImageInfo(); // 6
-	VkDescriptorImageInfo diffuseImageInfo = iblResources_->diffuseCubemap_.GetDescriptorImageInfo(); // 7
-	VkDescriptorImageInfo lutImageInfo = iblResources_->brdfLut_.GetDescriptorImageInfo(); // 8
-
-	constexpr size_t numWrites = 10;
-	std::vector<DescriptorSetWrite> writes(numWrites);
-	writes[0] = {.bufferInfoPtr_ = nullptr, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, .shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT };
-	writes[1] = {.bufferInfoPtr_ = nullptr, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, .shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT };
-	writes[2] = {.bufferInfoPtr_ = &vertexBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, .shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT };
-	writes[3] = {.bufferInfoPtr_ = &indexBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, .shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT };
-	writes[4] = {.bufferInfoPtr_ = &meshBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, .shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT };
-	writes[5] = {.bufferInfoPtr_ = &lightBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, .shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT };
-	writes[6] = {.imageInfoPtr_ = &specularImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, .shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT };
-	writes[7] = {.imageInfoPtr_ = &diffuseImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, .shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT };
-	writes[8] = {.imageInfoPtr_ = &lutImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, .shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT };
-	writes[9] = {
-		.imageInfoPtr_ = imageInfos.data(),
-		.descriptorCount_ = textureCount,
-		.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-		.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT };
+	DescriptorBuildInfo buildInfo;
+	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
+	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 1
+	buildInfo.AddBuffer(&(scene_->vertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 2
+	buildInfo.AddBuffer(&(scene_->indexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 3
+	buildInfo.AddBuffer(&(scene_->meshDataBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
+	buildInfo.AddBuffer(lights_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT); // 5
+	buildInfo.AddImage(&(iblResources_->specularCubemap_)); // 6
+	buildInfo.AddImage(&(iblResources_->diffuseCubemap_)); // 7
+	buildInfo.AddImage(&(iblResources_->brdfLut_)); // 8
+	buildInfo.AddImageArray(scene_->GetImageInfos()); // 9
 
 	// Create pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, writes, frameCount, 1u);
+	descriptor_.CreatePoolAndLayout(ctx, buildInfo, frameCount, 1u);
 
 	// Create sets
 	descriptorSets_.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
-		VkDescriptorBufferInfo camBufferInfo = cameraUBOBuffers_[i].GetBufferInfo(); // 0
-		VkDescriptorBufferInfo modelBufferInfo = scene_->modelUBOBuffers_[i].GetBufferInfo(); // 1
-
-		writes[0].bufferInfoPtr_ = &camBufferInfo;
-		writes[1].bufferInfoPtr_ = &modelBufferInfo;
-
-		descriptor_.CreateSet(ctx, writes, &(descriptorSets_[i]));
+		buildInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
+		buildInfo.UpdateBuffer(&(scene_->modelUBOBuffers_[i]), 1);
+		descriptor_.CreateSet(ctx, buildInfo.writes_, &(descriptorSets_[i]));
 	}
 }
