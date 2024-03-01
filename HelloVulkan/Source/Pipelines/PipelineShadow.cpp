@@ -113,10 +113,10 @@ void PipelineShadow::CreateDescriptor(VulkanContext& ctx)
 	buildInfo.AddBuffer(&(scene_->indexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 3
 	buildInfo.AddBuffer(&(scene_->meshDataBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
 
-	// Create pool and layout
+	// Pool and layout
 	descriptor_.CreatePoolAndLayout(ctx, buildInfo, frameCount, 1u);
 
-	// Create sets
+	// Sets
 	descriptorSets_.resize(frameCount); // TODO use std::array
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{

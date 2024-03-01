@@ -82,10 +82,10 @@ void PipelineSkybox::CreateDescriptor(VulkanContext& ctx)
 	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
 	buildInfo.AddImage(envCubemap_); // 1
 
-	// Create pool and layout
+	// Pool and layout
 	descriptor_.CreatePoolAndLayout(ctx, buildInfo, frameCount, 1u);
 
-	// Create sets
+	// Sets
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
 		buildInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);

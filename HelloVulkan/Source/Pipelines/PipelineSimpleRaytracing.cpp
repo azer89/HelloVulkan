@@ -153,9 +153,9 @@ void PipelineSimpleRaytracing::CreateDescriptor(VulkanContext& ctx)
 	UpdateDescriptor(ctx);
 }
 
+// Rebuild the entire descriptor sets
 void PipelineSimpleRaytracing::UpdateDescriptor(VulkanContext& ctx)
 {
-	// Rebuild the entire descriptor sets
 	VkWriteDescriptorSetAccelerationStructureKHR asInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_KHR,

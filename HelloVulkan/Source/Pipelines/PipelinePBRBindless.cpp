@@ -129,10 +129,10 @@ void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
 	buildInfo.AddImage(&(iblResources_->brdfLut_)); // 8
 	buildInfo.AddImageArray(scene_->GetImageInfos()); // 9
 
-	// Create pool and layout
+	// Pool and layout
 	descriptor_.CreatePoolAndLayout(ctx, buildInfo, frameCount, 1u);
 
-	// Create sets
+	// Sets
 	descriptorSets_.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{

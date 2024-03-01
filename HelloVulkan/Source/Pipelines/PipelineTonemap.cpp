@@ -60,10 +60,10 @@ void PipelineTonemap::CreateDescriptor(VulkanContext& ctx)
 
 	descriptorBuildInfo_.AddImage(nullptr);
 
-	// Create pool and layout
+	// Pool and layout
 	descriptor_.CreatePoolAndLayout(ctx, descriptorBuildInfo_, frameCount, 1u);
 
-	// Set
+	// Sets
 	AllocateDescriptorSets(ctx);
 	UpdateDescriptorSets(ctx);
 }

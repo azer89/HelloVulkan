@@ -92,9 +92,10 @@ void PipelineAABBGenerator::CreateDescriptor(VulkanContext& ctx)
 	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT); // 0
 	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT); // 1
 
-	// Create pool and layout
+	// Pool and layout
 	descriptor_.CreatePoolAndLayout(ctx, buildInfo, frameCount, 1u);
 
+	// Sets
 	for (size_t i = 0; i < frameCount; ++i)
 	{
 		buildInfo.UpdateBuffer(&(cfBuffers_->aabbBuffers_[i]), 0);

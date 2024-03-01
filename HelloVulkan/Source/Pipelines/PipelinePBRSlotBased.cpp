@@ -137,7 +137,7 @@ void PipelinePBRSlotBased::CreateDescriptor(VulkanContext& ctx)
 	buildInfo.AddImage(&(iblResources_->diffuseCubemap_));
 	buildInfo.AddImage(&(iblResources_->brdfLut_));
 
-	// Create pool and layout
+	// Pool and layout
 	descriptor_.CreatePoolAndLayout(ctx, buildInfo, AppConfig::FrameOverlapCount, numMeshes);
 
 	// Sets

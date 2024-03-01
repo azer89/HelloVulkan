@@ -30,6 +30,7 @@ PipelineImGui::PipelineImGui(
 	constexpr uint32_t imageCount = AppConfig::FrameOverlapCount;
 	DescriptorBuildInfo dsBuildInfo;
 	dsBuildInfo.AddImage(nullptr);
+	// TODO Layout is unused here
 	descriptor_.CreatePoolAndLayout(ctx, dsBuildInfo, imageCount, 1u, VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT);
 	
 	// ImGui

@@ -140,10 +140,10 @@ void PipelinePBRShadowMapping::CreateDescriptor(VulkanContext& ctx)
 	buildInfo.AddImage(shadowMap_); // 10
 	buildInfo.AddImageArray(scene_->GetImageInfos()); // 11
 
-	// Create pool and layout
+	// Pool and layout
 	descriptor_.CreatePoolAndLayout(ctx, buildInfo, frameCount, 1u);
 
-	// Create sets
+	// Sets
 	descriptorSets_.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
