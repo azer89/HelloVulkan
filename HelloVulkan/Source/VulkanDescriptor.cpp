@@ -1,99 +1,130 @@
 #include "VulkanDescriptor.h"
 #include "VulkanUtility.h"
 
-void VulkanDescriptor::CreatePool(VulkanContext& ctx,
-	DescriptorPoolCreateInfo createInfo)
+void VulkanDescriptor::CreatePoolAndLayout(
+	VulkanContext& ctx, 
+	const DescriptorBuildInfo& buildInfo,
+	uint32_t frameCount,
+	uint32_t setCountPerFrame,
+	VkDescriptorPoolCreateFlags poolFlags)
 {
 	device_ = ctx.GetDevice();
 
+	uint32_t uboCount = 0;
+	uint32_t ssboCount = 0;
+	uint32_t samplerCount = 0;
+	uint32_t storageImageCount = 0;
+	uint32_t accelerationStructureCount = 0;
+
+	// Create pool
+	for (auto& write : buildInfo.writes_)
+	{
+		if (write.type_ == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
+		{
+			uboCount++;
+		}
+		else if(write.type_ == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER)
+		{
+			ssboCount++;
+		}
+		else if (write.type_ == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER)
+		{
+			samplerCount++;
+		}
+		else if (write.type_ == VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR)
+		{
+			accelerationStructureCount++;
+		}
+		else if (write.type_ == VK_DESCRIPTOR_TYPE_STORAGE_IMAGE)
+		{
+			storageImageCount++;
+		}
+		else
+		{
+			std::cerr << "Descriptor type is currently not supported\n";
+		}
+	}
+
 	std::vector<VkDescriptorPoolSize> poolSizes;
 
-	if (createInfo.uboCount_)
+	if (uboCount)
 	{
 		poolSizes.push_back(VkDescriptorPoolSize
 			{
 				.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.descriptorCount = createInfo.frameCount_ * createInfo.uboCount_
+				.descriptorCount = uboCount
 			});
 	}
 
-	if (createInfo.ssboCount_)
+	if (ssboCount)
 	{
 		poolSizes.push_back(VkDescriptorPoolSize
 			{
 				.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-				.descriptorCount = createInfo.frameCount_ * createInfo.ssboCount_
+				.descriptorCount = ssboCount
 			});
 	}
 
-	if (createInfo.samplerCount_)
+	if (samplerCount)
 	{
 		poolSizes.push_back(VkDescriptorPoolSize
 			{
 				.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-				.descriptorCount = createInfo.frameCount_ * createInfo.samplerCount_
+				.descriptorCount = samplerCount
 			});
 	}
 
-	if (createInfo.storageImageCount_)
+	if (storageImageCount)
 	{
 		poolSizes.push_back(VkDescriptorPoolSize
 			{
 				.type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
-				.descriptorCount = createInfo.frameCount_ * createInfo.storageImageCount_
+				.descriptorCount = storageImageCount
 			});
 	}
 
-	if (createInfo.accelerationStructureCount_)
+	if (accelerationStructureCount)
 	{
 		poolSizes.push_back(VkDescriptorPoolSize
 			{
 				.type = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
-				.descriptorCount = createInfo.frameCount_ * createInfo.accelerationStructureCount_
+				.descriptorCount = accelerationStructureCount
 			});
 	}
 
 	const VkDescriptorPoolCreateInfo poolInfo = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
 		.pNext = nullptr,
-		.flags = createInfo.flags_,
-		.maxSets = static_cast<uint32_t>(createInfo.frameCount_ * createInfo.setCountPerFrame_),
+		.flags = poolFlags,
+		.maxSets = static_cast<uint32_t>(frameCount * setCountPerFrame),
 		.poolSizeCount = static_cast<uint32_t>(poolSizes.size()),
 		.pPoolSizes = poolSizes.data()
 	};
 
 	VK_CHECK(vkCreateDescriptorPool(ctx.GetDevice(), &poolInfo, nullptr, &pool_));
-}
-
-void VulkanDescriptor::CreateLayout(VulkanContext& ctx,
-	const std::vector<DescriptorLayoutBinding>& bindings)
-{
-	std::vector<VkDescriptorSetLayoutBinding> vulkanBindings;
-
+	
+	// Create Layout
+	std::vector<VkDescriptorSetLayoutBinding> layoutBindings;
 	uint32_t bindingIndex = 0;
-	for (size_t i = 0; i < bindings.size(); ++i)
+	for (auto& write : buildInfo.writes_)
 	{
-		for (size_t j = 0; j < bindings[i].bindingCount_; ++j)
-		{
-			vulkanBindings.emplace_back(
-				CreateDescriptorSetLayoutBinding
-				(
-					bindingIndex++,
-					bindings[i].type_,
-					bindings[i].shaderFlags_,
-					bindings[i].descriptorCount_
-				)
-			);
-		}
+		layoutBindings.emplace_back(
+			CreateDescriptorSetLayoutBinding
+			(
+				bindingIndex++,
+				write.type_,
+				write.shaderFlags_,
+				write.descriptorCount_
+			)
+		);
 	}
-
 	const VkDescriptorSetLayoutCreateInfo layoutInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.bindingCount = static_cast<uint32_t>(vulkanBindings.size()),
-		.pBindings = vulkanBindings.data()
+		.bindingCount = static_cast<uint32_t>(layoutBindings.size()),
+		.pBindings = layoutBindings.data()
 	};
 
 	VK_CHECK(vkCreateDescriptorSetLayout(ctx.GetDevice(), &layoutInfo, nullptr, &layout_));
@@ -101,12 +132,12 @@ void VulkanDescriptor::CreateLayout(VulkanContext& ctx,
 
 void VulkanDescriptor::CreateSet(
 	VulkanContext& ctx, 
-	const std::vector<DescriptorSetWrite>& writes,
+	const DescriptorBuildInfo& buildInfo,
 	VkDescriptorSet* set)
 {
 	AllocateSet(ctx, set);
 
-	UpdateSet(ctx, writes, set);
+	UpdateSet(ctx, buildInfo, set);
 }
 
 void VulkanDescriptor::AllocateSet(VulkanContext& ctx, VkDescriptorSet* set)
@@ -122,24 +153,27 @@ void VulkanDescriptor::AllocateSet(VulkanContext& ctx, VkDescriptorSet* set)
 	VK_CHECK(vkAllocateDescriptorSets(ctx.GetDevice(), &allocInfo, set));
 }
 
-void VulkanDescriptor::UpdateSet(VulkanContext& ctx, const std::vector<DescriptorSetWrite>& writes, VkDescriptorSet* set)
+void VulkanDescriptor::UpdateSet(
+	VulkanContext& ctx, 
+	const DescriptorBuildInfo& buildInfo,
+	VkDescriptorSet* set)
 {
 	std::vector<VkWriteDescriptorSet> descriptorWrites;
 
 	uint32_t bindIndex = 0;
 
-	for (size_t i = 0; i < writes.size(); ++i)
+	for (size_t i = 0; i < buildInfo.writes_.size(); ++i)
 	{
 		descriptorWrites.push_back({
 			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-			.pNext = writes[i].pNext_,
+			.pNext = buildInfo.writes_[i].pNext_,
 			.dstSet = *set, // Dereference
 			.dstBinding = bindIndex++,
 			.dstArrayElement = 0,
-			.descriptorCount = writes[i].descriptorCount_,
-			.descriptorType = writes[i].type_,
-			.pImageInfo = writes[i].imageInfoPtr_,
-			.pBufferInfo = writes[i].bufferInfoPtr_,
+			.descriptorCount = buildInfo.writes_[i].descriptorCount_,
+			.descriptorType = buildInfo.writes_[i].type_,
+			.pImageInfo = buildInfo.writes_[i].imageInfoPtr_,
+			.pBufferInfo = buildInfo.writes_[i].bufferInfoPtr_,
 			.pTexelBufferView = nullptr
 		});
 	}

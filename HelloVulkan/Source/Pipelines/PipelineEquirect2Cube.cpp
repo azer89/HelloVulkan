@@ -84,37 +84,10 @@ void PipelineEquirect2Cube::InitializeHDRImage(VulkanContext& ctx, const std::st
 
 void PipelineEquirect2Cube::CreateDescriptor(VulkanContext& ctx)
 {
-	// Pool
-	descriptor_.CreatePool(
-		ctx,
-		{
-			.uboCount_ = 0u,
-			.ssboCount_ = 0u,
-			.samplerCount_ = 1u,
-			.frameCount_ = 1u,
-			.setCountPerFrame_ = 1u,
-			.flags_ = 0
-		});
-
-	// Layout
-	descriptor_.CreateLayout(ctx,
-	{
-		{
-			.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
-			.bindingCount_ = 1
-		}
-	});
-
-	// Set
-	VkDescriptorImageInfo imageInfo = inputHDRImage_.GetDescriptorImageInfo();
-
-	descriptor_.CreateSet(
-		ctx,
-		{
-			{.imageInfoPtr_ = &imageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER }
-		},
-		&descriptorSet_);
+	DescriptorBuildInfo buildInfo;
+	buildInfo.AddImage(&inputHDRImage_);
+	descriptor_.CreatePoolAndLayout(ctx, buildInfo, 1u, 1u);
+	descriptor_.CreateSet(ctx, buildInfo, &descriptorSet_);
 }
 
 void PipelineEquirect2Cube::CreateOffscreenGraphicsPipeline(

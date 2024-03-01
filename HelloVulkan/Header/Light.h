@@ -48,8 +48,7 @@ public:
 
 	void UpdateLightPosition(VulkanContext& ctx, size_t index, float* position);
 
-	VkBuffer GetSSBOBuffer() const { return storageBuffer_.buffer_; }
-	size_t GetSSBOSize() const { return storageBufferSize_;  }
+	VulkanBuffer* GetVulkanBufferPtr() { return &storageBuffer_;  }
 	uint32_t GetLightCount() const { return lightCount_; }
 	VkDescriptorBufferInfo GetBufferInfo() const
 	{
@@ -66,10 +65,7 @@ public:
 
 private:
 	uint32_t lightCount_;
-
-	size_t storageBufferSize_;
 	VulkanBuffer storageBuffer_;
-
 	VkDevice device_;
 };
 

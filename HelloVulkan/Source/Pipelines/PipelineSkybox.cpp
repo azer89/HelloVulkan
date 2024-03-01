@@ -76,47 +76,19 @@ void PipelineSkybox::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comma
 
 void PipelineSkybox::CreateDescriptor(VulkanContext& ctx)
 {
-	// Pool
-	descriptor_.CreatePool(
-		ctx,
-		{
-			.uboCount_ = 1u,
-			.ssboCount_ = 0u,
-			.samplerCount_ = 1u,
-			.frameCount_ = AppConfig::FrameOverlapCount,
-			.setCountPerFrame_ = 1u,
-		});
+	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
 
-	// Layout
-	descriptor_.CreateLayout(ctx,
+	DescriptorBuildInfo buildInfo;
+	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
+	buildInfo.AddImage(envCubemap_); // 1
+
+	// Pool and layout
+	descriptor_.CreatePoolAndLayout(ctx, buildInfo, frameCount, 1u);
+
+	// Sets
+	for (uint32_t i = 0; i < frameCount; ++i)
 	{
-		{
-			.type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-			.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT,
-			.bindingCount_ = 1
-		},
-		{
-			.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
-			.bindingCount_ = 1
-		}
-	});
-
-	// Set
-	constexpr auto frameCount = AppConfig::FrameOverlapCount;
-
-	VkDescriptorImageInfo imageInfo = envCubemap_->GetDescriptorImageInfo();
-
-	for (size_t i = 0; i < frameCount; i++)
-	{
-		VkDescriptorBufferInfo bufferInfo = cameraUBOBuffers_[i].GetBufferInfo();
-
-		descriptor_.CreateSet(
-			ctx,
-			{
-				{.bufferInfoPtr_ = &bufferInfo, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER },
-				{.imageInfoPtr_ = &imageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER }
-			},
-			&(descriptorSets_[i]));
+		buildInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
+		descriptor_.CreateSet(ctx, buildInfo, &(descriptorSets_[i]));
 	}
 }

@@ -28,7 +28,7 @@ Scene::~Scene()
 	meshDataBuffer_.Destroy();
 	vertexBuffer_.Destroy();
 	indexBuffer_.Destroy();
-	for (auto& buffer : modelUBOBuffers_)
+	for (auto& buffer : modelSSBOBuffers_)
 	{
 		buffer.Destroy();
 	}
@@ -51,7 +51,7 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 		}
 		textureIndexOffset += models_[i].GetNumTextures();
 	}
-	VkDeviceSize meshDataBufferSize = static_cast<VkDeviceSize>(sizeof(MeshData) * meshDataArray_.size());
+	const VkDeviceSize meshDataBufferSize = static_cast<VkDeviceSize>(sizeof(MeshData) * meshDataArray_.size());
 	meshDataBuffer_.CreateGPUOnlyBuffer(
 		ctx, 
 		meshDataBufferSize,
@@ -59,7 +59,7 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT);
 	
 	// Vertices
-	VkDeviceSize vertexBufferSize = static_cast<VkDeviceSize>(sizeof(VertexData) * vertices_.size());
+	const VkDeviceSize vertexBufferSize = static_cast<VkDeviceSize>(sizeof(VertexData) * vertices_.size());
 	vertexBuffer_.CreateGPUOnlyBuffer(
 		ctx,
 		vertexBufferSize,
@@ -67,29 +67,29 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT);
 
 	// Indices
-	VkDeviceSize indexBufferSize = static_cast<VkDeviceSize>(sizeof(uint32_t) * indices_.size());
+	const VkDeviceSize indexBufferSize = static_cast<VkDeviceSize>(sizeof(uint32_t) * indices_.size());
 	indexBuffer_.CreateGPUOnlyBuffer(
 		ctx,
 		indexBufferSize,
 		indices_.data(),
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT);
 
-	// ModelUBO
+	// ModelUBO which is actually an SSBO
 	const std::vector<ModelUBO> initModelUBOs(models_.size(), { .model = glm::mat4(1.0f) });
-	VkDeviceSize modelUBOBufferSize = sizeof(ModelUBO) * models_.size();
+	const VkDeviceSize modelSSBOBufferSize = sizeof(ModelUBO) * models_.size();
 	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
-	modelUBOBuffers_.resize(frameCount);
+	modelSSBOBuffers_.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
-		modelUBOBuffers_[i].CreateBuffer(ctx, modelUBOBufferSize,
+		modelSSBOBuffers_[i].CreateBuffer(ctx, modelSSBOBufferSize,
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 			VMA_MEMORY_USAGE_CPU_TO_GPU);
-		modelUBOBuffers_[i].UploadBufferData(ctx, initModelUBOs.data(), modelUBOBufferSize);
+		modelSSBOBuffers_[i].UploadBufferData(ctx, initModelUBOs.data(), modelSSBOBufferSize);
 	}
 }
 
 void Scene::UpdateModelMatrix(VulkanContext& ctx, 
-	ModelUBO modelUBO, 
+	const ModelUBO& modelUBO, 
 	uint32_t modelIndex,
 	uint32_t frameIndex)
 {
@@ -103,7 +103,7 @@ void Scene::UpdateModelMatrix(VulkanContext& ctx,
 		std::cerr << "Cannot update ModelUBO because of invalid frameIndex " << frameIndex << "\n";
 		return;
 	}
-	modelUBOBuffers_[frameIndex].UploadOffsetBufferData(
+	modelSSBOBuffers_[frameIndex].UploadOffsetBufferData(
 		ctx,
 		&modelUBO,
 		sizeof(ModelUBO) * modelIndex,
@@ -111,7 +111,7 @@ void Scene::UpdateModelMatrix(VulkanContext& ctx,
 }
 
 void Scene::UpdateModelMatrix(VulkanContext& ctx,
-	ModelUBO modelUBO,
+	const ModelUBO& modelUBO,
 	uint32_t modelIndex)
 {
 	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
@@ -121,13 +121,11 @@ void Scene::UpdateModelMatrix(VulkanContext& ctx,
 }
 
 // This is for descriptor indexing
-std::vector<VkDescriptorImageInfo> Scene::GetImageInfos()
+std::vector<VkDescriptorImageInfo> Scene::GetImageInfos() const
 {
 	std::vector<VkDescriptorImageInfo> textureInfoArray;
-	//for (size_t i = 0; i < models_.size(); ++i)
 	for (auto& model : models_)
 	{
-		//for (size_t j = 0; j < model.textureList_.size(); ++j)
 		for (auto& texture : model.textureList_)
 		{
 			textureInfoArray.emplace_back(texture.GetDescriptorImageInfo());
@@ -137,14 +135,12 @@ std::vector<VkDescriptorImageInfo> Scene::GetImageInfos()
 }
 
 // This is for indirect draw
-std::vector<uint32_t> Scene::GetMeshVertexCountArray()
+std::vector<uint32_t> Scene::GetMeshVertexCountArray() const
 {
 	std::vector<uint32_t> vCountArray(GetMeshCount());
 	size_t counter = 0;
-	//for (size_t i = 0; i < models_.size(); ++i)
 	for (auto& model : models_)
 	{
-		//for (size_t j = 0; j < models_[i].meshes_.size(); ++j)
 		for (auto& mesh : model.meshes_)
 		{
 			// Note that we use the index count here

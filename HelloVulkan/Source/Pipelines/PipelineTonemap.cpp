@@ -56,28 +56,14 @@ void PipelineTonemap::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comm
 
 void PipelineTonemap::CreateDescriptor(VulkanContext& ctx)
 {
-	// Pool
-	descriptor_.CreatePool(
-		ctx,
-		{
-			.uboCount_ = 0u,
-			.ssboCount_ = 0u,
-			.samplerCount_ = 1u,
-			.frameCount_ = AppConfig::FrameOverlapCount,
-			.setCountPerFrame_ = 1u,
-		});
+	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
 
-	// Layout
-	descriptor_.CreateLayout(ctx,
-	{
-		{
-			.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
-			.bindingCount_ = 1
-		}
-	});
+	descriptorBuildInfo_.AddImage(nullptr);
 
-	// Set
+	// Pool and layout
+	descriptor_.CreatePoolAndLayout(ctx, descriptorBuildInfo_, frameCount, 1u);
+
+	// Sets
 	AllocateDescriptorSets(ctx);
 	UpdateDescriptorSets(ctx);
 }
@@ -94,16 +80,10 @@ void PipelineTonemap::AllocateDescriptorSets(VulkanContext& ctx)
 
 void PipelineTonemap::UpdateDescriptorSets(VulkanContext& ctx)
 {
-	VkDescriptorImageInfo imageInfo = singleSampledColorImage_->GetDescriptorImageInfo();
-
 	constexpr auto frameCount = AppConfig::FrameOverlapCount;
+	descriptorBuildInfo_.UpdateImage(singleSampledColorImage_, 0);
 	for (size_t i = 0; i < frameCount; ++i)
 	{
-		descriptor_.UpdateSet(
-			ctx,
-			{
-				{.imageInfoPtr_ = &imageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER }
-			},
-			&(descriptorSets_[i]));
+		descriptor_.UpdateSet(ctx, descriptorBuildInfo_, &(descriptorSets_[i]));
 	}
 }

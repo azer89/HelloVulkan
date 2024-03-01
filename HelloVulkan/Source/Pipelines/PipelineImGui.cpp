@@ -28,16 +28,10 @@ PipelineImGui::PipelineImGui(
 	framebuffer_.CreateResizeable(ctx, renderPass_.GetHandle(), {}, IsOffscreen());
 
 	constexpr uint32_t imageCount = AppConfig::FrameOverlapCount;
-	descriptor_.CreatePool(
-		ctx,
-		{
-			.uboCount_ = 0u,
-			.ssboCount_ = 0u,
-			.samplerCount_ = 1u,
-			.frameCount_ = imageCount,
-			.setCountPerFrame_ = 1u,
-			.flags_ = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT
-		});
+	DescriptorBuildInfo dsBuildInfo;
+	dsBuildInfo.AddImage(nullptr);
+	// TODO Layout is unused here
+	descriptor_.CreatePoolAndLayout(ctx, dsBuildInfo, imageCount, 1u, VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT);
 	
 	// ImGui
 	IMGUI_CHECKVERSION();

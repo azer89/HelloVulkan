@@ -109,54 +109,26 @@ void PipelineLightCulling::Execute(VulkanContext& ctx, VkCommandBuffer commandBu
 
 void PipelineLightCulling::CreateDescriptor(VulkanContext& ctx)
 {
-	const uint32_t imageCount = static_cast<uint32_t>(AppConfig::FrameOverlapCount);
+	const uint32_t frameCount = static_cast<uint32_t>(AppConfig::FrameOverlapCount);
+	constexpr VkShaderStageFlags stageFlag = VK_SHADER_STAGE_COMPUTE_BIT;
 
-	// Pool
-	descriptor_.CreatePool(
-		ctx,
-		{
-			.uboCount_ = 5u,
-			.ssboCount_ = 1u,
-			.samplerCount_ = 0u,
-			.frameCount_ = imageCount,
-			.setCountPerFrame_ = 1u
-		});
+	DescriptorBuildInfo buildInfo;
+	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 0
+	buildInfo.AddBuffer(lights_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 1
+	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 2
+	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 3
+	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 4
+	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, stageFlag); // 5
 
-	// Layout
-	descriptor_.CreateLayout(ctx,
-		{
-			{
-				.type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-				.shaderFlags_ = VK_SHADER_STAGE_COMPUTE_BIT,
-				.bindingCount_ = 5
-			},
-			{
-				.type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.shaderFlags_ = VK_SHADER_STAGE_COMPUTE_BIT,
-				.bindingCount_ = 1
-			}
-		});
+	descriptor_.CreatePoolAndLayout(ctx, buildInfo, frameCount, 1u);
 
-	// Set
-	for (size_t i = 0; i < imageCount; ++i)
+	for (size_t i = 0; i < frameCount; ++i)
 	{
-		VkDescriptorBufferInfo bufferInfo1 = cfBuffers_->aabbBuffers_[i].GetBufferInfo();
-		VkDescriptorBufferInfo bufferInfo2 = lights_->GetBufferInfo();
-		VkDescriptorBufferInfo bufferInfo3 = cfBuffers_->globalIndexCountBuffers_[i].GetBufferInfo();
-		VkDescriptorBufferInfo bufferInfo4 = cfBuffers_->lightCellsBuffers_[i].GetBufferInfo();
-		VkDescriptorBufferInfo bufferInfo5 = cfBuffers_->lightIndicesBuffers_[i].GetBufferInfo();
-		VkDescriptorBufferInfo bufferInfo6 = cfUBOBuffers_[i].GetBufferInfo();
-
-		descriptor_.CreateSet(
-			ctx,
-			{
-				{.bufferInfoPtr_ = &bufferInfo1, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER },
-				{.bufferInfoPtr_ = &bufferInfo2, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER },
-				{.bufferInfoPtr_ = &bufferInfo3, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER },
-				{.bufferInfoPtr_ = &bufferInfo4, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER },
-				{.bufferInfoPtr_ = &bufferInfo5, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER },
-				{.bufferInfoPtr_ = &bufferInfo6, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER }
-			},
-			&descriptorSets_[i]);
+		buildInfo.UpdateBuffer(&(cfBuffers_->aabbBuffers_[i]), 0);
+		buildInfo.UpdateBuffer(&(cfBuffers_->globalIndexCountBuffers_[i]), 2);
+		buildInfo.UpdateBuffer(&(cfBuffers_->lightCellsBuffers_[i]), 3);
+		buildInfo.UpdateBuffer(&(cfBuffers_->lightIndicesBuffers_[i]), 4);
+		buildInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 5);
+		descriptor_.CreateSet(ctx, buildInfo, &(descriptorSets_[i]));
 	}
 }

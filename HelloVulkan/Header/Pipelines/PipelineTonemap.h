@@ -29,6 +29,7 @@ private:
 private:
 	VulkanImage* singleSampledColorImage_;
 
+	DescriptorBuildInfo descriptorBuildInfo_;
 	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;
 };
 

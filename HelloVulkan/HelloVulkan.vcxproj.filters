@@ -296,6 +296,9 @@
     <ClInclude Include="Header\FrameCounter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Header\DescriptorBuildInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">
@@ -425,6 +428,9 @@
       <Filter>Source Files\Apps</Filter>
     </ClCompile>
     <ClCompile Include="Source\FrameCounter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DescriptorBuildInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

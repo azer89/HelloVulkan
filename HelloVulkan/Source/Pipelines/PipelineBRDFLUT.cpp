@@ -127,34 +127,8 @@ void PipelineBRDFLUT::Execute(VulkanContext& ctx)
 
 void PipelineBRDFLUT::CreateDescriptor(VulkanContext& ctx)
 {
-	// Pool
-	descriptor_.CreatePool(
-		ctx,
-		{
-			.uboCount_ = 0u,
-			.ssboCount_ = 1u,
-			.samplerCount_ = 0u,
-			.frameCount_ = 1u,
-			.setCountPerFrame_ = 1u
-		});
-
-	// Layout
-	descriptor_.CreateLayout(ctx,
-	{
-		{
-			.type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-			.shaderFlags_ = VK_SHADER_STAGE_COMPUTE_BIT,
-			.bindingCount_ = 1
-		}
-	});
-
-	// Set
-	VkDescriptorBufferInfo outBufferInfo = outBuffer_.GetBufferInfo();
-
-	descriptor_.CreateSet(
-		ctx,
-		{
-			{.bufferInfoPtr_ = &outBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER }
-		},
-		&descriptorSet_);
+	DescriptorBuildInfo buildInfo;
+	buildInfo.AddBuffer(&outBuffer_, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT);
+	descriptor_.CreatePoolAndLayout(ctx, buildInfo, 1u, 1u);
+	descriptor_.CreateSet(ctx, buildInfo, &descriptorSet_);
 }

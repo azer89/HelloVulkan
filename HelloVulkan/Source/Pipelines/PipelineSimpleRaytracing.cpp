@@ -135,78 +135,41 @@ void PipelineSimpleRaytracing::OnWindowResized(VulkanContext& ctx)
 
 void PipelineSimpleRaytracing::CreateDescriptor(VulkanContext& ctx)
 {
-	// Pool
-	descriptor_.CreatePool(
-		ctx,
-		{
-			.uboCount_ = 1u,
-			.storageImageCount_ = 1u,
-			.accelerationStructureCount_ = 1u,
-			.frameCount_ = AppConfig::FrameOverlapCount,
-			.setCountPerFrame_ = 1u,
-		});
+	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
 
-	// Layout 
-	descriptor_.CreateLayout(ctx,
-	{
-		{
-			.type_ = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
-			.shaderFlags_ = VK_SHADER_STAGE_RAYGEN_BIT_KHR,
-			.bindingCount_ = 1
-		},
-		{
-			.type_ = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
-			.shaderFlags_ = VK_SHADER_STAGE_RAYGEN_BIT_KHR,
-			.bindingCount_ = 1
-		},
-		{
-			.type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-			.shaderFlags_ = VK_SHADER_STAGE_RAYGEN_BIT_KHR,
-			.bindingCount_ = 1
-		}
-	});
+	descriptorBuildInfo_.AddAccelerationStructure();
+	descriptorBuildInfo_.AddImage(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
+	descriptorBuildInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
 
-	// Allocate descriptor sets
-	const auto frameCount = AppConfig::FrameOverlapCount;
+	// Create pool and layout
+	descriptor_.CreatePoolAndLayout(ctx, descriptorBuildInfo_, frameCount, 1u);
+
 	for (size_t i = 0; i < frameCount; i++)
 	{
 		descriptor_.AllocateSet(ctx, &(descriptorSets_[i]));
 	}
 
-	// Set up descriptor sets
+	// Rebuild descriptor sets
 	UpdateDescriptor(ctx);
 }
 
+// Rebuild the entire descriptor sets
 void PipelineSimpleRaytracing::UpdateDescriptor(VulkanContext& ctx)
 {
-	// Sets
-	constexpr auto frameCount = AppConfig::FrameOverlapCount;
-
 	VkWriteDescriptorSetAccelerationStructureKHR asInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_KHR,
 		.accelerationStructureCount = 1u,
 		.pAccelerationStructures = &tlas_.handle_,
 	};
+	descriptorBuildInfo_.UpdateAccelerationStructure(&asInfo, 0);
 
-	VkDescriptorImageInfo imageInfo =
-	{
-		.imageView = storageImage_.imageView_,
-		.imageLayout = VK_IMAGE_LAYOUT_GENERAL,
-	};
-
+	descriptorBuildInfo_.UpdateStorageImage(&storageImage_, 1);
+	constexpr auto frameCount = AppConfig::FrameOverlapCount;
 	for (size_t i = 0; i < frameCount; i++)
 	{
-		VkDescriptorBufferInfo bufferInfo = cameraUBOBuffers_[i].GetBufferInfo();
-
-		descriptor_.UpdateSet(
-			ctx,
-			{
-				{.pNext_ = &asInfo, .type_ = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR },
-				{.imageInfoPtr_ = &imageInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE },
-				{.bufferInfoPtr_ = &bufferInfo, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER }
-			},
-			&(descriptorSets_[i]));
+		descriptorBuildInfo_.UpdateBuffer(&(cameraUBOBuffers_[i]), 2);
+		descriptor_.UpdateSet(ctx, descriptorBuildInfo_, &(descriptorSets_[i]));
 	}
 }
 
