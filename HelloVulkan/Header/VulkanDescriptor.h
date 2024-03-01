@@ -14,7 +14,7 @@ struct DescriptorLayoutBinding
 	uint32_t bindingCount_ = 1u;
 };
 
-// FOr creating descriptor set
+// For creating descriptor set
 struct DescriptorSetWrite
 {
 	// pNext_ is for raytracing pipeline
@@ -24,6 +24,7 @@ struct DescriptorSetWrite
 	// If you have an array of buffers/images, descriptorCount_ must be bigger than one
 	uint32_t descriptorCount_ = 1u;
 	VkDescriptorType type_;
+	VkShaderStageFlags shaderFlags_;
 };
 
 struct DescriptorPoolCreateInfo
@@ -51,6 +52,13 @@ public:
 
 	void CreateLayout(VulkanContext& ctx, 
 		const std::vector<DescriptorLayoutBinding>& bindings);
+
+	void CreatePoolAndLayout(
+		VulkanContext& ctx, 
+		const std::vector<DescriptorSetWrite>& writes,
+		uint32_t frameCount,
+		uint32_t setCountPerFrame,
+		VkDescriptorPoolCreateFlags poolFlags = 0);
 
 	void CreateSet(VulkanContext& ctx, const std::vector<DescriptorSetWrite>& writes, VkDescriptorSet* set);
 

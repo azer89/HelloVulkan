@@ -114,79 +114,49 @@ void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 // TODO Refactor VulkanDescriptor to make the code below simpler
 void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
 {
-	/*9*/ std::vector<VkDescriptorImageInfo> imageInfos = scene_->GetImageInfos();
+	std::vector<VkDescriptorImageInfo> imageInfos = scene_->GetImageInfos(); // 9
 	
 	const uint32_t textureCount = static_cast<uint32_t>(imageInfos.size());
 	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
 
-	// Pool
-	descriptor_.CreatePool(
-		ctx,
-		{
-			.uboCount_ = UBO_COUNT,
-			.ssboCount_ = SSBO_COUNT,
-			.samplerCount_ = (textureCount + PBR_ENV_TEXTURE_COUNT),
-			.frameCount_ = AppConfig::FrameOverlapCount,
-			.setCountPerFrame_ = 1,
-		});
+	VkDescriptorBufferInfo vertexBufferInfo = scene_->vertexBuffer_.GetBufferInfo(); // 2
+	VkDescriptorBufferInfo indexBufferInfo = scene_->indexBuffer_.GetBufferInfo(); // 3
+	VkDescriptorBufferInfo meshBufferInfo = scene_->meshDataBuffer_.GetBufferInfo(); // 4
+	VkDescriptorBufferInfo lightBufferInfo = lights_->GetBufferInfo(); // 5
+	VkDescriptorImageInfo specularImageInfo = iblResources_->specularCubemap_.GetDescriptorImageInfo(); // 6
+	VkDescriptorImageInfo diffuseImageInfo = iblResources_->diffuseCubemap_.GetDescriptorImageInfo(); // 7
+	VkDescriptorImageInfo lutImageInfo = iblResources_->brdfLut_.GetDescriptorImageInfo(); // 8
 
-	// Layout
-	descriptor_.CreateLayout(ctx,
-	{
-		{
-			.type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-			.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-			.bindingCount_ = 1
-		},
-		{
-			.type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-			.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-			.bindingCount_ = 5
-		},
-		{
-			.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
-			.bindingCount_ = PBR_ENV_TEXTURE_COUNT
-		},
-		{
-			// NOTE Unbounded array should be the last
-			.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
-			.descriptorCount_ = textureCount,
-			.bindingCount_ = 1u
-		}
-	});
+	constexpr size_t numWrites = 10;
+	std::vector<DescriptorSetWrite> writes(numWrites);
+	writes[0] = {.bufferInfoPtr_ = nullptr, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, .shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT };
+	writes[1] = {.bufferInfoPtr_ = nullptr, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, .shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT };
+	writes[2] = {.bufferInfoPtr_ = &vertexBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, .shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT };
+	writes[3] = {.bufferInfoPtr_ = &indexBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, .shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT };
+	writes[4] = {.bufferInfoPtr_ = &meshBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, .shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT };
+	writes[5] = {.bufferInfoPtr_ = &lightBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, .shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT };
+	writes[6] = {.imageInfoPtr_ = &specularImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, .shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT };
+	writes[7] = {.imageInfoPtr_ = &diffuseImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, .shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT };
+	writes[8] = {.imageInfoPtr_ = &lutImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, .shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT };
+	writes[9] = {
+		.imageInfoPtr_ = imageInfos.data(),
+		.descriptorCount_ = textureCount,
+		.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+		.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT };
 
-	// Set
-	/*2*/ VkDescriptorBufferInfo vertexBufferInfo = scene_->vertexBuffer_.GetBufferInfo();
-	/*3*/ VkDescriptorBufferInfo indexBufferInfo = scene_->indexBuffer_.GetBufferInfo();
-	/*4*/ VkDescriptorBufferInfo meshBufferInfo = scene_->meshDataBuffer_.GetBufferInfo();
-	/*5*/ VkDescriptorBufferInfo lightBufferInfo = lights_->GetBufferInfo();
-	/*6*/ VkDescriptorImageInfo specularImageInfo = iblResources_->specularCubemap_.GetDescriptorImageInfo();
-	/*7*/ VkDescriptorImageInfo diffuseImageInfo = iblResources_->diffuseCubemap_.GetDescriptorImageInfo();
-	/*8*/ VkDescriptorImageInfo lutImageInfo = iblResources_->brdfLut_.GetDescriptorImageInfo();
+	// Create pool and layout
+	descriptor_.CreatePoolAndLayout(ctx, writes, frameCount, 1u);
 
+	// Create sets
 	descriptorSets_.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
-		/*0*/ VkDescriptorBufferInfo camBufferInfo = cameraUBOBuffers_[i].GetBufferInfo();
-		/*1*/ VkDescriptorBufferInfo modelBufferInfo = scene_->modelUBOBuffers_[i].GetBufferInfo();
+		VkDescriptorBufferInfo camBufferInfo = cameraUBOBuffers_[i].GetBufferInfo(); // 0
+		VkDescriptorBufferInfo modelBufferInfo = scene_->modelUBOBuffers_[i].GetBufferInfo(); // 1
 
-		std::vector<DescriptorSetWrite> writes;
-		/*0*/ writes.push_back({ .bufferInfoPtr_ = &camBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
-		/*1*/ writes.push_back({ .bufferInfoPtr_ = &modelBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-		/*2*/ writes.push_back({ .bufferInfoPtr_ = &vertexBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-		/*3*/ writes.push_back({ .bufferInfoPtr_ = &indexBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-		/*4*/ writes.push_back({ .bufferInfoPtr_ = &meshBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-		/*5*/ writes.push_back({ .bufferInfoPtr_ = &lightBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-		/*6*/ writes.push_back({ .imageInfoPtr_ = &specularImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
-		/*7*/ writes.push_back({ .imageInfoPtr_ = &diffuseImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
-		/*8*/ writes.push_back({ .imageInfoPtr_ = &lutImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
-		/*9*/ writes.push_back({
-			.imageInfoPtr_ = imageInfos.data(),
-			.descriptorCount_ = textureCount,
-			.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
-	
+		writes[0].bufferInfoPtr_ = &camBufferInfo;
+		writes[1].bufferInfoPtr_ = &modelBufferInfo;
+
 		descriptor_.CreateSet(ctx, writes, &(descriptorSets_[i]));
 	}
 }

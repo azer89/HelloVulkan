@@ -99,6 +99,135 @@ void VulkanDescriptor::CreateLayout(VulkanContext& ctx,
 	VK_CHECK(vkCreateDescriptorSetLayout(ctx.GetDevice(), &layoutInfo, nullptr, &layout_));
 }
 
+void VulkanDescriptor::CreatePoolAndLayout(
+	VulkanContext& ctx, 
+	const std::vector<DescriptorSetWrite>& writes,
+	uint32_t frameCount,
+	uint32_t setCountPerFrame,
+	VkDescriptorPoolCreateFlags poolFlags)
+{
+	device_ = ctx.GetDevice();
+
+	uint32_t uboCount = 0;
+	uint32_t ssboCount = 0;
+	uint32_t samplerCount = 0;
+	uint32_t storageImageCount = 0;
+	uint32_t accelerationStructureCount = 0;
+
+	// Create pool
+	for (auto& write : writes)
+	{
+		if (write.type_ == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
+		{
+			uboCount++;
+		}
+		else if(write.type_ == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER)
+		{
+			ssboCount++;
+		}
+		else if (write.type_ == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER)
+		{
+			samplerCount++;
+		}
+		else if (write.type_ == VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR)
+		{
+			accelerationStructureCount++;
+		}
+		else if (write.type_ == VK_DESCRIPTOR_TYPE_STORAGE_IMAGE)
+		{
+			storageImageCount++;
+		}
+		else
+		{
+			std::cerr << "Descriptor type is currently not supported\n";
+		}
+	}
+
+	std::vector<VkDescriptorPoolSize> poolSizes;
+
+	if (uboCount)
+	{
+		poolSizes.push_back(VkDescriptorPoolSize
+			{
+				.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+				.descriptorCount = frameCount * uboCount
+			});
+	}
+
+	if (ssboCount)
+	{
+		poolSizes.push_back(VkDescriptorPoolSize
+			{
+				.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+				.descriptorCount = frameCount * ssboCount
+			});
+	}
+
+	if (samplerCount)
+	{
+		poolSizes.push_back(VkDescriptorPoolSize
+			{
+				.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+				.descriptorCount = frameCount * samplerCount
+			});
+	}
+
+	if (storageImageCount)
+	{
+		poolSizes.push_back(VkDescriptorPoolSize
+			{
+				.type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
+				.descriptorCount = frameCount * storageImageCount
+			});
+	}
+
+	if (accelerationStructureCount)
+	{
+		poolSizes.push_back(VkDescriptorPoolSize
+			{
+				.type = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
+				.descriptorCount = frameCount * accelerationStructureCount
+			});
+	}
+
+	const VkDescriptorPoolCreateInfo poolInfo = {
+		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = poolFlags,
+		.maxSets = static_cast<uint32_t>(frameCount * setCountPerFrame),
+		.poolSizeCount = static_cast<uint32_t>(poolSizes.size()),
+		.pPoolSizes = poolSizes.data()
+	};
+
+	VK_CHECK(vkCreateDescriptorPool(ctx.GetDevice(), &poolInfo, nullptr, &pool_));
+	
+	// Create Layout
+	std::vector<VkDescriptorSetLayoutBinding> layoutBindings;
+	uint32_t bindingIndex = 0;
+	for (auto& write : writes)
+	{
+		layoutBindings.emplace_back(
+			CreateDescriptorSetLayoutBinding
+			(
+				bindingIndex++,
+				write.type_,
+				write.shaderFlags_,
+				write.descriptorCount_
+			)
+		);
+	}
+	const VkDescriptorSetLayoutCreateInfo layoutInfo =
+	{
+		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0,
+		.bindingCount = static_cast<uint32_t>(layoutBindings.size()),
+		.pBindings = layoutBindings.data()
+	};
+
+	VK_CHECK(vkCreateDescriptorSetLayout(ctx.GetDevice(), &layoutInfo, nullptr, &layout_));
+}
+
 void VulkanDescriptor::CreateSet(
 	VulkanContext& ctx, 
 	const std::vector<DescriptorSetWrite>& writes,
