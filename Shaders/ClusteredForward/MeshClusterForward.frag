@@ -43,7 +43,7 @@ cfUBO;
 layout(set = 0, binding = 3) readonly buffer Lights { LightData lights []; };
 layout(set = 0, binding = 4) readonly buffer LightCells { LightCell lightCells []; };
 layout(set = 0, binding = 5) readonly buffer LightIndices { uint lightIndices []; };
-layout(set = 0, binding = 6) readonly buffer Clusters { AABB data []; } clusters;
+layout(set = 0, binding = 6) readonly buffer Clusters { AABB data []; } clusters; // TODO Is this unused?
 
 layout(set = 0, binding = 7) uniform sampler2D textureAlbedo;
 layout(set = 0, binding = 8) uniform sampler2D textureNormal;

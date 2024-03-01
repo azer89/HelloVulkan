@@ -102,7 +102,7 @@ void PipelinePBRClusterForward::FillCommandBuffer(VulkanContext& ctx, VkCommandB
 				pipelineLayout_,
 				0,
 				1,
-				&(descriptorSets_[meshIndex++][frameIndex]),
+				&(descriptorSets_[frameIndex][meshIndex++]),
 				0,
 				nullptr);
 
@@ -130,100 +130,53 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 		numMeshes += model->NumMeshes();
 	}
 
-	// Pool
-	descriptor_.CreatePool(
-		ctx,
-		{
-			.uboCount_ = UBO_COUNT,
-			.ssboCount_ = SSBO_COUNT,
-			.samplerCount_ = PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT,
-			.frameCount_ = AppConfig::FrameOverlapCount,
-			.setCountPerFrame_ = numMeshes,
-		});
+	DescriptorBuildInfo buildInfo;
+	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+	buildInfo.AddBuffer(lights_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
+	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
+	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
+	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
+	for (size_t i = 0; i < PBR_MESH_TEXTURE_COUNT; ++i)
+	{
+		buildInfo.AddImage(nullptr);
+	}
+	buildInfo.AddImage(&(iblResources_->specularCubemap_));
+	buildInfo.AddImage(&(iblResources_->diffuseCubemap_));
+	buildInfo.AddImage(&(iblResources_->brdfLut_));
 
-	// Layout
-	descriptor_.CreateLayout(ctx,
+	// Create pool and layout
+	descriptor_.CreatePoolAndLayout(ctx, buildInfo, AppConfig::FrameOverlapCount, numMeshes);
+
+	// Sets
+	constexpr size_t bindingOffset = static_cast<size_t>(UBO_COUNT + SSBO_COUNT);
+	descriptorSets_.resize(AppConfig::FrameOverlapCount);
+	for (size_t i = 0; i < AppConfig::FrameOverlapCount; i++)
+	{
+		size_t meshIndex = 0;
+		descriptorSets_[i].resize(numMeshes);
+		buildInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
+		buildInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 2);
+		buildInfo.UpdateBuffer(&(cfBuffers_->lightCellsBuffers_[i]), 4);
+		buildInfo.UpdateBuffer(&(cfBuffers_->lightIndicesBuffers_[i]), 5);
+		buildInfo.UpdateBuffer(&(cfBuffers_->aabbBuffers_[i]), 6);
+		for (Model* model : models_)
 		{
+			buildInfo.UpdateBuffer(&(model->modelBuffers_[i]), 1);
+			for (Mesh& mesh : model->meshes_)
 			{
-				.type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-				.bindingCount_ = 3
-			},
-			{
-				.type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-				.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-				.bindingCount_ = 4
-			},
-			{
-				.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-				.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
-				.bindingCount_ = PBR_MESH_TEXTURE_COUNT + PBR_ENV_TEXTURE_COUNT
+				for (const auto& elem : mesh.textureIndices_)
+				{
+					// Should be ordered based on elem.first
+					size_t typeIndex = static_cast<size_t>(elem.first) - 1;
+					int textureIndex = elem.second;
+					VulkanImage* texture = model->GetTexture(textureIndex);
+					buildInfo.UpdateImage(texture, bindingOffset + typeIndex);
+				}
+				descriptor_.CreateSet(ctx, buildInfo.writes_, &(descriptorSets_[i][meshIndex]));
+				meshIndex++;
 			}
-		});
-
-	// Set
-	descriptorSets_.resize(numMeshes);
-	size_t meshIndex = 0;
-	for (Model* model : models_)
-	{
-		for (Mesh& mesh : model->meshes_)
-		{
-			CreateDescriptorSet(ctx, model, &mesh, meshIndex++);
 		}
-	}
-}
-
-void PipelinePBRClusterForward::CreateDescriptorSet(
-	VulkanContext& ctx, 
-	Model* parentModel, 
-	Mesh* mesh, 
-	const size_t meshIndex)
-{
-	VkDescriptorImageInfo specularImageInfo = iblResources_->specularCubemap_.GetDescriptorImageInfo();
-	VkDescriptorImageInfo diffuseImageInfo = iblResources_->diffuseCubemap_.GetDescriptorImageInfo();
-	VkDescriptorImageInfo lutImageInfo = iblResources_->brdfLut_.GetDescriptorImageInfo();
-
-	// PBR Textures
-	std::vector<VkDescriptorImageInfo> meshTextureInfos(PBR_MESH_TEXTURE_COUNT);
-	for (const auto& elem : mesh->textureIndices_)
-	{
-		// Should be ordered based on elem.first
-		uint32_t typeIndex = static_cast<uint32_t>(elem.first) - 1;
-		int textureIndex = elem.second;
-		VulkanImage* texture = parentModel->GetTexture(textureIndex);
-		meshTextureInfos[typeIndex] = texture->GetDescriptorImageInfo();
-	}
-
-	size_t frameCount = AppConfig::FrameOverlapCount;
-	descriptorSets_[meshIndex].resize(frameCount);
-
-	for (size_t i = 0; i < frameCount; i++)
-	{
-		VkDescriptorBufferInfo bufferInfo1 = cameraUBOBuffers_[i].GetBufferInfo();
-		VkDescriptorBufferInfo bufferInfo2 = parentModel->modelBuffers_[i].GetBufferInfo();
-		VkDescriptorBufferInfo bufferInfo3 = cfUBOBuffers_[i].GetBufferInfo();
-		VkDescriptorBufferInfo bufferInfo4 = lights_->GetBufferInfo();
-		VkDescriptorBufferInfo bufferInfo5 = cfBuffers_->lightCellsBuffers_[i].GetBufferInfo();
-		VkDescriptorBufferInfo bufferInfo6 = cfBuffers_->lightIndicesBuffers_[i].GetBufferInfo();
-		VkDescriptorBufferInfo bufferInfo7 = cfBuffers_->aabbBuffers_[i].GetBufferInfo();
-
-		std::vector<DescriptorSetWrite> writes;
-
-		writes.push_back({ .bufferInfoPtr_ = &bufferInfo1, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
-		writes.push_back({ .bufferInfoPtr_ = &bufferInfo2, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
-		writes.push_back({ .bufferInfoPtr_ = &bufferInfo3, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
-		writes.push_back({ .bufferInfoPtr_ = &bufferInfo4, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-		writes.push_back({ .bufferInfoPtr_ = &bufferInfo5, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-		writes.push_back({ .bufferInfoPtr_ = &bufferInfo6, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-		writes.push_back({ .bufferInfoPtr_ = &bufferInfo7, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-		for (auto& textureInfo : meshTextureInfos)
-		{
-			writes.push_back({ .imageInfoPtr_ = &textureInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
-		}
-		writes.push_back({ .imageInfoPtr_ = &specularImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
-		writes.push_back({ .imageInfoPtr_ = &diffuseImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
-		writes.push_back({ .imageInfoPtr_ = &lutImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
-
-		descriptor_.CreateSet(ctx, writes, &(descriptorSets_[meshIndex][i]));
 	}
 }
