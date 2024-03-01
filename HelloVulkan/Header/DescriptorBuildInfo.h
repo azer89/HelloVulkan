@@ -97,6 +97,29 @@ public:
 			.descriptorCount_ = static_cast<uint32_t>(imageArrays_.size()),
 			.type_ = dsType,
 			.shaderFlags_ = stageFlags
+		});
+	}
+
+	// Raytracing
+	void AddAccelerationStructure()
+	{
+		writes_.push_back
+		({
+			.descriptorCount_ = 1u,
+			.type_ = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
+			.shaderFlags_ = VK_SHADER_STAGE_RAYGEN_BIT_KHR
+			});
+	}
+
+	// Raytracing
+	void AddAccelerationStructure(VkWriteDescriptorSetAccelerationStructureKHR* asInfo)
+	{
+		writes_.push_back
+		({
+			.pNext_ = asInfo,
+			.descriptorCount_ = 1u,
+			.type_ = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
+			.shaderFlags_ = VK_SHADER_STAGE_RAYGEN_BIT_KHR
 			});
 	}
 
@@ -132,6 +155,38 @@ public:
 		}
 
 		writes_[bindingIndex].imageInfoPtr_ = imageInfo;
+	}
+
+	// Special case for raytracing
+	void UpdateStorageImage(VulkanImage* image, size_t bindingIndex)
+	{
+		if (bindingIndex < 0 || bindingIndex >= writes_.size())
+		{
+			std::cerr << "Invalid bindingIndex\n";
+		}
+
+		VkDescriptorImageInfo* imageInfo = nullptr;
+		if (image)
+		{
+			imageMap_[bindingIndex] = 
+			{
+				.imageView = image->imageView_,
+				.imageLayout = VK_IMAGE_LAYOUT_GENERAL,
+			};
+			imageInfo = &(imageMap_[bindingIndex]);
+		}
+
+		writes_[bindingIndex].imageInfoPtr_ = imageInfo;
+	}
+
+	// Special case for raytracing
+	void UpdateAccelerationStructure(VkWriteDescriptorSetAccelerationStructureKHR* asInfo, size_t bindingIndex)
+	{
+		if (bindingIndex < 0 || bindingIndex >= writes_.size())
+		{
+			std::cerr << "Invalid bindingIndex\n";
+		}
+		writes_[bindingIndex].pNext_ = asInfo;
 	}
 };
 

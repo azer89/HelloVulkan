@@ -135,8 +135,22 @@ void PipelineSimpleRaytracing::OnWindowResized(VulkanContext& ctx)
 
 void PipelineSimpleRaytracing::CreateDescriptor(VulkanContext& ctx)
 {
+	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
+
+	buildInfo_.AddAccelerationStructure();
+	buildInfo_.AddImage(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
+	buildInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
+
+	// Create pool and layout
+	descriptor_.CreatePoolAndLayout(ctx, buildInfo_, frameCount, 1u);
+
+	for (size_t i = 0; i < frameCount; i++)
+	{
+		descriptor_.AllocateSet(ctx, &(descriptorSets_[i]));
+	}
+
 	// Pool
-	descriptor_.CreatePool(
+	/*(descriptor_.CreatePool(
 		ctx,
 		{
 			.uboCount_ = 1u,
@@ -171,7 +185,7 @@ void PipelineSimpleRaytracing::CreateDescriptor(VulkanContext& ctx)
 	for (size_t i = 0; i < frameCount; i++)
 	{
 		descriptor_.AllocateSet(ctx, &(descriptorSets_[i]));
-	}
+	}*/
 
 	// Set up descriptor sets
 	UpdateDescriptor(ctx);
@@ -179,25 +193,27 @@ void PipelineSimpleRaytracing::CreateDescriptor(VulkanContext& ctx)
 
 void PipelineSimpleRaytracing::UpdateDescriptor(VulkanContext& ctx)
 {
-	// Sets
-	constexpr auto frameCount = AppConfig::FrameOverlapCount;
-
 	VkWriteDescriptorSetAccelerationStructureKHR asInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_KHR,
 		.accelerationStructureCount = 1u,
 		.pAccelerationStructures = &tlas_.handle_,
 	};
+	buildInfo_.UpdateAccelerationStructure(&asInfo, 0);
 
-	VkDescriptorImageInfo imageInfo =
+	/*VkDescriptorImageInfo imageInfo =
 	{
 		.imageView = storageImage_.imageView_,
 		.imageLayout = VK_IMAGE_LAYOUT_GENERAL,
-	};
-
+	};*/
+	buildInfo_.UpdateStorageImage(&storageImage_, 1);
+	constexpr auto frameCount = AppConfig::FrameOverlapCount;
 	for (size_t i = 0; i < frameCount; i++)
 	{
-		VkDescriptorBufferInfo bufferInfo = cameraUBOBuffers_[i].GetBufferInfo();
+		// TODO This should be set only once
+		buildInfo_.UpdateBuffer(&(cameraUBOBuffers_[i]), 2);
+		descriptor_.UpdateSet(ctx, buildInfo_.writes_, &(descriptorSets_[i]));
+		/*VkDescriptorBufferInfo bufferInfo = cameraUBOBuffers_[i].GetBufferInfo();
 
 		descriptor_.UpdateSet(
 			ctx,
@@ -206,7 +222,7 @@ void PipelineSimpleRaytracing::UpdateDescriptor(VulkanContext& ctx)
 				{.imageInfoPtr_ = &imageInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE },
 				{.bufferInfoPtr_ = &bufferInfo, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER }
 			},
-			&(descriptorSets_[i]));
+			&(descriptorSets_[i]));*/
 	}
 }
 
