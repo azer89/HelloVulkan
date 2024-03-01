@@ -42,7 +42,7 @@ private:
 
 private:
 	VulkanImage storageImage_;
-	DescriptorBuildInfo buildInfo_;
+	DescriptorBuildInfo descriptorBuildInfo_;
 	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;
 
 	// Acceleration structures
