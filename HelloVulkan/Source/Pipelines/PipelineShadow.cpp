@@ -106,50 +106,22 @@ void PipelineShadow::CreateDescriptor(VulkanContext& ctx)
 {
 	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
 
-	// Pool
-	descriptor_.CreatePool(
-		ctx,
-		{
-			.uboCount_ = 1u,
-			.ssboCount_ = 4u,
-			.frameCount_ = frameCount,
-			.setCountPerFrame_ = 1u
-		});
+	DescriptorBuildInfo buildInfo;
+	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
+	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 1
+	buildInfo.AddBuffer(&(scene_->vertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 2
+	buildInfo.AddBuffer(&(scene_->indexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 3
+	buildInfo.AddBuffer(&(scene_->meshDataBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
 
-	// Layout
-	descriptor_.CreateLayout(
-		ctx,
-		{
-			{
-				.type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT,
-				.bindingCount_ = 1
-			},
-			{
-				.type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-				.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT,
-				.bindingCount_ = 4
-			}
-		});
+	// Create pool and layout
+	descriptor_.CreatePoolAndLayout(ctx, buildInfo, frameCount, 1u);
 
-	// Sets
-	/*2*/ VkDescriptorBufferInfo vertexBufferInfo = scene_->vertexBuffer_.GetBufferInfo();
-	/*3*/ VkDescriptorBufferInfo indexBufferInfo = scene_->indexBuffer_.GetBufferInfo();
-	/*4*/ VkDescriptorBufferInfo meshBufferInfo = scene_->meshDataBuffer_.GetBufferInfo();
-
-	descriptorSets_.resize(frameCount);
+	// Create sets
+	descriptorSets_.resize(frameCount); // TODO use std::array
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
-		/*0*/ VkDescriptorBufferInfo shadowBufferInfo = shadowMapUBOBuffers_[i].GetBufferInfo();
-		/*1*/ VkDescriptorBufferInfo modelBufferInfo = scene_->modelUBOBuffers_[i].GetBufferInfo();
-	
-		std::vector<DescriptorSetWrite> writes;
-		/*0*/ writes.push_back({ .bufferInfoPtr_ = &shadowBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
-		/*1*/ writes.push_back({ .bufferInfoPtr_ = &modelBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-		/*2*/ writes.push_back({ .bufferInfoPtr_ = &vertexBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-		/*3*/ writes.push_back({ .bufferInfoPtr_ = &indexBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-		/*4*/ writes.push_back({ .bufferInfoPtr_ = &meshBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-
-		descriptor_.CreateSet(ctx, writes, &(descriptorSets_[i]));
+		buildInfo.UpdateBuffer(&(shadowMapUBOBuffers_[i]), 0);
+		buildInfo.UpdateBuffer(&(scene_->modelUBOBuffers_[i]), 1);
+		descriptor_.CreateSet(ctx, buildInfo.writes_, &(descriptorSets_[i]));
 	}
 }
