@@ -149,50 +149,13 @@ void PipelineSimpleRaytracing::CreateDescriptor(VulkanContext& ctx)
 		descriptor_.AllocateSet(ctx, &(descriptorSets_[i]));
 	}
 
-	// Pool
-	/*(descriptor_.CreatePool(
-		ctx,
-		{
-			.uboCount_ = 1u,
-			.storageImageCount_ = 1u,
-			.accelerationStructureCount_ = 1u,
-			.frameCount_ = AppConfig::FrameOverlapCount,
-			.setCountPerFrame_ = 1u,
-		});
-
-	// Layout 
-	descriptor_.CreateLayout(ctx,
-	{
-		{
-			.type_ = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
-			.shaderFlags_ = VK_SHADER_STAGE_RAYGEN_BIT_KHR,
-			.bindingCount_ = 1
-		},
-		{
-			.type_ = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
-			.shaderFlags_ = VK_SHADER_STAGE_RAYGEN_BIT_KHR,
-			.bindingCount_ = 1
-		},
-		{
-			.type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-			.shaderFlags_ = VK_SHADER_STAGE_RAYGEN_BIT_KHR,
-			.bindingCount_ = 1
-		}
-	});
-
-	// Allocate descriptor sets
-	const auto frameCount = AppConfig::FrameOverlapCount;
-	for (size_t i = 0; i < frameCount; i++)
-	{
-		descriptor_.AllocateSet(ctx, &(descriptorSets_[i]));
-	}*/
-
-	// Set up descriptor sets
+	// Rebuild descriptor sets
 	UpdateDescriptor(ctx);
 }
 
 void PipelineSimpleRaytracing::UpdateDescriptor(VulkanContext& ctx)
 {
+	// Rebuild the entire descriptor sets
 	VkWriteDescriptorSetAccelerationStructureKHR asInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_KHR,
@@ -201,28 +164,12 @@ void PipelineSimpleRaytracing::UpdateDescriptor(VulkanContext& ctx)
 	};
 	buildInfo_.UpdateAccelerationStructure(&asInfo, 0);
 
-	/*VkDescriptorImageInfo imageInfo =
-	{
-		.imageView = storageImage_.imageView_,
-		.imageLayout = VK_IMAGE_LAYOUT_GENERAL,
-	};*/
 	buildInfo_.UpdateStorageImage(&storageImage_, 1);
 	constexpr auto frameCount = AppConfig::FrameOverlapCount;
 	for (size_t i = 0; i < frameCount; i++)
 	{
-		// TODO This should be set only once
 		buildInfo_.UpdateBuffer(&(cameraUBOBuffers_[i]), 2);
 		descriptor_.UpdateSet(ctx, buildInfo_.writes_, &(descriptorSets_[i]));
-		/*VkDescriptorBufferInfo bufferInfo = cameraUBOBuffers_[i].GetBufferInfo();
-
-		descriptor_.UpdateSet(
-			ctx,
-			{
-				{.pNext_ = &asInfo, .type_ = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR },
-				{.imageInfoPtr_ = &imageInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE },
-				{.bufferInfoPtr_ = &bufferInfo, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER }
-			},
-			&(descriptorSets_[i]));*/
 	}
 }
 
