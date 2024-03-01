@@ -123,83 +123,33 @@ void PipelinePBRShadowMapping::FillCommandBuffer(VulkanContext& ctx, VkCommandBu
 
 void PipelinePBRShadowMapping::CreateDescriptor(VulkanContext& ctx)
 {
-	/*11*/ std::vector<VkDescriptorImageInfo> imageInfos = scene_->GetImageInfos();
-
-	const uint32_t textureCount = static_cast<uint32_t>(imageInfos.size());
 	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
+	DescriptorBuildInfo buildInfo;
+	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
+	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 1
+	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 2
 
-	// Pool
-	descriptor_.CreatePool(
-		ctx,
-		{
-			.uboCount_ = UBO_COUNT,
-			.ssboCount_ = SSBO_COUNT,
-			.samplerCount_ = (textureCount + ENV_TEXTURE_COUNT),
-			.frameCount_ = frameCount,
-			.setCountPerFrame_ = 1,
-		});
+	buildInfo.AddBuffer(&(scene_->vertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 3
+	buildInfo.AddBuffer(&(scene_->indexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
+	buildInfo.AddBuffer(&(scene_->meshDataBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 5
+	buildInfo.AddBuffer(lights_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 6
 
-	// Layout
-	descriptor_.CreateLayout(ctx,
-	{
-		{
-			.type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-			.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-			.bindingCount_ = 2u
-		},
-		{
-			.type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-			.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-			.bindingCount_ = 5u
-		},
-		{
-			.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
-			.bindingCount_ = ENV_TEXTURE_COUNT
-		},
-		{
-			// NOTE Unbounded array should be the last
-			.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
-			.descriptorCount_ = textureCount,
-			.bindingCount_ = 1u
-		}
-	});
+	buildInfo.AddImage(&(iblResources_->specularCubemap_)); // 7
+	buildInfo.AddImage(&(iblResources_->diffuseCubemap_)); // 8
+	buildInfo.AddImage(&(iblResources_->brdfLut_)); // 9
+	buildInfo.AddImage(shadowMap_); // 10
+	buildInfo.AddImageArray(scene_->GetImageInfos()); // 11
 
-	// Set
-	/*3*/ VkDescriptorBufferInfo vertexBufferInfo = scene_->vertexBuffer_.GetBufferInfo();
-	/*4*/ VkDescriptorBufferInfo indexBufferInfo = scene_->indexBuffer_.GetBufferInfo();
-	/*5*/ VkDescriptorBufferInfo meshBufferInfo = scene_->meshDataBuffer_.GetBufferInfo();
-	/*6*/ VkDescriptorBufferInfo lightBufferInfo = lights_->GetBufferInfo();
-	/*7*/ VkDescriptorImageInfo specularImageInfo = iblResources_->specularCubemap_.GetDescriptorImageInfo();
-	/*8*/ VkDescriptorImageInfo diffuseImageInfo = iblResources_->diffuseCubemap_.GetDescriptorImageInfo();
-	/*9*/ VkDescriptorImageInfo lutImageInfo = iblResources_->brdfLut_.GetDescriptorImageInfo();
-	/*10*/ VkDescriptorImageInfo shadowImageInfo = shadowMap_->GetDescriptorImageInfo();
+	// Create pool and layout
+	descriptor_.CreatePoolAndLayout(ctx, buildInfo, frameCount, 1u);
 
+	// Create sets
 	descriptorSets_.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
-		/*0*/ VkDescriptorBufferInfo camBufferInfo = cameraUBOBuffers_[i].GetBufferInfo();
-		/*1*/ VkDescriptorBufferInfo shadowUBOBufferInfo = shadowMapConfigUBOBuffers_[i].GetBufferInfo();
-		/*2*/ VkDescriptorBufferInfo modelBufferInfo = scene_->modelUBOBuffers_[i].GetBufferInfo();
-		
-		std::vector<DescriptorSetWrite> writes;
-		/*0*/ writes.push_back({ .bufferInfoPtr_ = &camBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
-		/*1*/ writes.push_back({ .bufferInfoPtr_ = &shadowUBOBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER });
-		/*2*/ writes.push_back({ .bufferInfoPtr_ = &modelBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-		/*3*/ writes.push_back({ .bufferInfoPtr_ = &vertexBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-		/*4*/ writes.push_back({ .bufferInfoPtr_ = &indexBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-		/*5*/ writes.push_back({ .bufferInfoPtr_ = &meshBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-		/*6*/ writes.push_back({ .bufferInfoPtr_ = &lightBufferInfo, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER });
-		/*7*/ writes.push_back({ .imageInfoPtr_ = &specularImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
-		/*8*/ writes.push_back({ .imageInfoPtr_ = &diffuseImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
-		/*9*/ writes.push_back({ .imageInfoPtr_ = &lutImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
-		/*10*/ writes.push_back({ .imageInfoPtr_ = &shadowImageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
-		/*11*/ writes.push_back({
-			.imageInfoPtr_ = imageInfos.data(),
-			.descriptorCount_ = textureCount,
-			.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER });
-
-		descriptor_.CreateSet(ctx, writes, &(descriptorSets_[i]));
+		buildInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
+		buildInfo.UpdateBuffer(&(shadowMapConfigUBOBuffers_[i]), 1);
+		buildInfo.UpdateBuffer(&(scene_->modelUBOBuffers_[i]), 2);
+		descriptor_.CreateSet(ctx, buildInfo.writes_, &(descriptorSets_[i]));
 	}
 }

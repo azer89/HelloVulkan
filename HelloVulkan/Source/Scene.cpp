@@ -75,6 +75,7 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT);
 
 	// ModelUBO
+	// TODO Rename to SSBO
 	const std::vector<ModelUBO> initModelUBOs(models_.size(), { .model = glm::mat4(1.0f) });
 	VkDeviceSize modelUBOBufferSize = sizeof(ModelUBO) * models_.size();
 	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
