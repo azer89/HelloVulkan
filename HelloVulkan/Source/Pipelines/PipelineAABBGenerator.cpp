@@ -100,6 +100,6 @@ void PipelineAABBGenerator::CreateDescriptor(VulkanContext& ctx)
 		buildInfo.UpdateBuffer(&(cfBuffers_->aabbBuffers_[i]), 0);
 		buildInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 1);
 
-		descriptor_.CreateSet(ctx, buildInfo.writes_, &descriptorSets_[i]);
+		descriptor_.CreateSet(ctx, buildInfo, &descriptorSets_[i]);
 	}
 }

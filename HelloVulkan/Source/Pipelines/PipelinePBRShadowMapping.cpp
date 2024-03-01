@@ -150,6 +150,6 @@ void PipelinePBRShadowMapping::CreateDescriptor(VulkanContext& ctx)
 		buildInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
 		buildInfo.UpdateBuffer(&(shadowMapConfigUBOBuffers_[i]), 1);
 		buildInfo.UpdateBuffer(&(scene_->modelUBOBuffers_[i]), 2);
-		descriptor_.CreateSet(ctx, buildInfo.writes_, &(descriptorSets_[i]));
+		descriptor_.CreateSet(ctx, buildInfo, &(descriptorSets_[i]));
 	}
 }

@@ -89,6 +89,6 @@ void PipelineSkybox::CreateDescriptor(VulkanContext& ctx)
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
 		buildInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
-		descriptor_.CreateSet(ctx, buildInfo.writes_, &(descriptorSets_[i]));
+		descriptor_.CreateSet(ctx, buildInfo, &(descriptorSets_[i]));
 	}
 }

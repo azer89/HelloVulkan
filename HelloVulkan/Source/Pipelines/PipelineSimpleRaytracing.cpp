@@ -169,7 +169,7 @@ void PipelineSimpleRaytracing::UpdateDescriptor(VulkanContext& ctx)
 	for (size_t i = 0; i < frameCount; i++)
 	{
 		buildInfo_.UpdateBuffer(&(cameraUBOBuffers_[i]), 2);
-		descriptor_.UpdateSet(ctx, buildInfo_.writes_, &(descriptorSets_[i]));
+		descriptor_.UpdateSet(ctx, buildInfo_, &(descriptorSets_[i]));
 	}
 }
 

@@ -84,6 +84,6 @@ void PipelineTonemap::UpdateDescriptorSets(VulkanContext& ctx)
 	buildInfo_.UpdateImage(singleSampledColorImage_, 0);
 	for (size_t i = 0; i < frameCount; ++i)
 	{
-		descriptor_.UpdateSet(ctx, buildInfo_.writes_, &(descriptorSets_[i]));
+		descriptor_.UpdateSet(ctx, buildInfo_, &(descriptorSets_[i]));
 	}
 }

@@ -87,7 +87,7 @@ void PipelineEquirect2Cube::CreateDescriptor(VulkanContext& ctx)
 	DescriptorBuildInfo buildInfo;
 	buildInfo.AddImage(&inputHDRImage_);
 	descriptor_.CreatePoolAndLayout(ctx, buildInfo, 1u, 1u);
-	descriptor_.CreateSet(ctx, buildInfo.writes_, &descriptorSet_);
+	descriptor_.CreateSet(ctx, buildInfo, &descriptorSet_);
 }
 
 void PipelineEquirect2Cube::CreateOffscreenGraphicsPipeline(

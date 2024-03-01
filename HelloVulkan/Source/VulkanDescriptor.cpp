@@ -132,12 +132,12 @@ void VulkanDescriptor::CreatePoolAndLayout(
 
 void VulkanDescriptor::CreateSet(
 	VulkanContext& ctx, 
-	const std::vector<DescriptorSetWrite>& writes,
+	const DescriptorBuildInfo& buildInfo,
 	VkDescriptorSet* set)
 {
 	AllocateSet(ctx, set);
 
-	UpdateSet(ctx, writes, set);
+	UpdateSet(ctx, buildInfo, set);
 }
 
 void VulkanDescriptor::AllocateSet(VulkanContext& ctx, VkDescriptorSet* set)
@@ -153,24 +153,27 @@ void VulkanDescriptor::AllocateSet(VulkanContext& ctx, VkDescriptorSet* set)
 	VK_CHECK(vkAllocateDescriptorSets(ctx.GetDevice(), &allocInfo, set));
 }
 
-void VulkanDescriptor::UpdateSet(VulkanContext& ctx, const std::vector<DescriptorSetWrite>& writes, VkDescriptorSet* set)
+void VulkanDescriptor::UpdateSet(
+	VulkanContext& ctx, 
+	const DescriptorBuildInfo& buildInfo,
+	VkDescriptorSet* set)
 {
 	std::vector<VkWriteDescriptorSet> descriptorWrites;
 
 	uint32_t bindIndex = 0;
 
-	for (size_t i = 0; i < writes.size(); ++i)
+	for (size_t i = 0; i < buildInfo.writes_.size(); ++i)
 	{
 		descriptorWrites.push_back({
 			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-			.pNext = writes[i].pNext_,
+			.pNext = buildInfo.writes_[i].pNext_,
 			.dstSet = *set, // Dereference
 			.dstBinding = bindIndex++,
 			.dstArrayElement = 0,
-			.descriptorCount = writes[i].descriptorCount_,
-			.descriptorType = writes[i].type_,
-			.pImageInfo = writes[i].imageInfoPtr_,
-			.pBufferInfo = writes[i].bufferInfoPtr_,
+			.descriptorCount = buildInfo.writes_[i].descriptorCount_,
+			.descriptorType = buildInfo.writes_[i].type_,
+			.pImageInfo = buildInfo.writes_[i].imageInfoPtr_,
+			.pBufferInfo = buildInfo.writes_[i].bufferInfoPtr_,
 			.pTexelBufferView = nullptr
 		});
 	}

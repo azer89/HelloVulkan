@@ -161,7 +161,7 @@ void PipelinePBRSlotBased::CreateDescriptor(VulkanContext& ctx)
 					VulkanImage* texture = model->GetTexture(textureIndex);
 					buildInfo.UpdateImage(texture, bindingOffset + typeIndex);
 				}
-				descriptor_.CreateSet(ctx, buildInfo.writes_, &(descriptorSets_[i][meshIndex]));
+				descriptor_.CreateSet(ctx, buildInfo, &(descriptorSets_[i][meshIndex]));
 				meshIndex++;
 			}
 		}

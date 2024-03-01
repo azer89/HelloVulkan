@@ -138,6 +138,6 @@ void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
 	{
 		buildInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
 		buildInfo.UpdateBuffer(&(scene_->modelUBOBuffers_[i]), 1);
-		descriptor_.CreateSet(ctx, buildInfo.writes_, &(descriptorSets_[i]));
+		descriptor_.CreateSet(ctx, buildInfo, &(descriptorSets_[i]));
 	}
 }

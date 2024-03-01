@@ -129,6 +129,6 @@ void PipelineLightCulling::CreateDescriptor(VulkanContext& ctx)
 		buildInfo.UpdateBuffer(&(cfBuffers_->lightCellsBuffers_[i]), 3);
 		buildInfo.UpdateBuffer(&(cfBuffers_->lightIndicesBuffers_[i]), 4);
 		buildInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 5);
-		descriptor_.CreateSet(ctx, buildInfo.writes_, &(descriptorSets_[i]));
+		descriptor_.CreateSet(ctx, buildInfo, &(descriptorSets_[i]));
 	}
 }

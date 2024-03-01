@@ -122,6 +122,6 @@ void PipelineShadow::CreateDescriptor(VulkanContext& ctx)
 	{
 		buildInfo.UpdateBuffer(&(shadowMapUBOBuffers_[i]), 0);
 		buildInfo.UpdateBuffer(&(scene_->modelUBOBuffers_[i]), 1);
-		descriptor_.CreateSet(ctx, buildInfo.writes_, &(descriptorSets_[i]));
+		descriptor_.CreateSet(ctx, buildInfo, &(descriptorSets_[i]));
 	}
 }

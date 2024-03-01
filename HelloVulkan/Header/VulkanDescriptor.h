@@ -16,11 +16,11 @@ public:
 		uint32_t setCountPerFrame,
 		VkDescriptorPoolCreateFlags poolFlags = 0);
 
-	void CreateSet(VulkanContext& ctx, const std::vector<DescriptorSetWrite>& writes, VkDescriptorSet* set);
+	void CreateSet(VulkanContext& ctx, const DescriptorBuildInfo& buildInfo, VkDescriptorSet* set);
 
 	void AllocateSet(VulkanContext& ctx, VkDescriptorSet* set);
 
-	void UpdateSet(VulkanContext& ctx, const std::vector<DescriptorSetWrite>& writes, VkDescriptorSet* set);
+	void UpdateSet(VulkanContext& ctx, const DescriptorBuildInfo& buildInfo, VkDescriptorSet* set);
 
 	void Destroy();
 
