@@ -1,6 +1,9 @@
 #version 460 core
 #extension GL_EXT_nonuniform_qualifier : require
 
+// www.khronos.org/opengl/wiki/Early_Fragment_Test 
+//layout(early_fragment_tests) in;
+
 /*
 Fragment shader for 
 	* PBR+IBL

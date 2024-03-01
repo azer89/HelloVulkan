@@ -1,5 +1,7 @@
 #version 460 core
 
+//layout(early_fragment_tests) in;
+
 /*
 Fragment shader for PBR+IBL, naive forward shading (non clustered)
 */
