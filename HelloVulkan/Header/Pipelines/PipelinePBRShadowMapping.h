@@ -10,6 +10,12 @@
 
 #include <vector>
 
+struct ShadowSpecializationConstants
+{
+	alignas(4)
+	uint32_t pcfIteration = 2u;
+};
+
 /*
 Render meshes using PBR materials, naive forward renderer with shadow mapping
 */
@@ -28,8 +34,8 @@ public:
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
+	void SetPCFIteration(uint32_t iter) { shadowSC_.pcfIteration = iter; }
 	void SetPBRPushConstants(const PushConstantPBR& pbrPC) { pc_ = pbrPC; };
-
 	void SetShadowMapConfigUBO(VulkanContext& ctx, ShadowMapUBO ubo)
 	{
 		uint32_t frameIndex = ctx.GetFrameIndex();
@@ -37,6 +43,7 @@ public:
 	}
 
 private:
+	void CreateSpecializationConstants();
 	void CreateDescriptor(VulkanContext& ctx);
 
 private:
@@ -48,6 +55,9 @@ private:
 	std::vector<VkDescriptorSet> descriptorSets_;
 	std::vector<VulkanBuffer> shadowMapConfigUBOBuffers_;
 	std::vector<VulkanBuffer> indirectBuffers_;
+
+	ShadowSpecializationConstants shadowSC_;
+	std::vector<VkSpecializationMapEntry> specializationEntries_;
 };
 
 #endif

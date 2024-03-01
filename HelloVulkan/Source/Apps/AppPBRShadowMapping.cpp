@@ -243,13 +243,14 @@ void AppPBRShadowMapping::UpdateUI()
 
 	lightPtr_->RenderEnable(staticLightRender);
 	pbrPtr_->SetPBRPushConstants(staticPBRPushConstants);
+	pbrPtr_->SetPCFIteration(staticPCFIteration);
 
 	shadowUBO_.shadowMinBias = staticShadowUBO.shadowMinBias;
 	shadowUBO_.shadowMaxBias = staticShadowUBO.shadowMaxBias;
 	shadowUBO_.shadowNearPlane = staticShadowUBO.shadowNearPlane;
 	shadowUBO_.shadowFarPlane = staticShadowUBO.shadowFarPlane;
 	shadowUBO_.pcfScale = staticShadowUBO.pcfScale;
-	shadowUBO_.pcfIteration = staticPCFIteration;
+	//shadowUBO_.pcfIteration = staticPCFIteration;
 }
 
 // This is called from main.cpp

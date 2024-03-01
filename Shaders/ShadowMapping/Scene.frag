@@ -57,6 +57,8 @@ layout(set = 0, binding = 10) uniform sampler2D shadowMap;
 // NOTE This requires descriptor indexing feature
 layout(set = 0, binding = 11) uniform sampler2D pbrTextures[];
 
+layout (constant_id = 0) const int PCF_ITERATION = 1;
+
 // Shadow mapping functions
 #include <ShadowMapping//PCF.glsl>
 

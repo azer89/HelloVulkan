@@ -11,12 +11,14 @@ float ShadowPCF(vec4 sc)
 
 	// TODO Very slow, consider change to a constant for better performance
 	//const int range = 2;
-	int range = int(shadowUBO.pcfIteration);
+	//int range = int(shadowUBO.pcfIteration);
 	float shadow = 0.0;
 	int count = 0;
-	for (int x = -range; x <= range; x++)
+
+	// NOTE Loops below use specialization constant
+	for (int x = -PCF_ITERATION; x <= PCF_ITERATION; x++)
 	{
-		for (int y = -range; y <= range; y++)
+		for (int y = -PCF_ITERATION; y <= PCF_ITERATION; y++)
 		{
 			vec2 off = vec2(dx * x, dy * y);
 			float dist = texture(shadowMap, sc.st + off).r;

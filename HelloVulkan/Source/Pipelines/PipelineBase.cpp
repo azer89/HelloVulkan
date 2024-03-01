@@ -176,6 +176,9 @@ void PipelineBase::CreateGraphicsPipeline(
 		shaderStages[i] = shaderModules[i].GetShaderStageInfo(stage, "main");
 	}
 
+	// Add specialization constants if any
+	specializationConstant_.Inject(shaderStages);
+
 	// Pipeline create info
 	PipelineCreateInfo pInfo(ctx);
 

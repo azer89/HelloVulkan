@@ -9,6 +9,7 @@
 #include "VulkanFramebuffer.h"
 #include "VulkanDescriptor.h"
 #include "PipelineConfig.h"
+#include "SpecializationConstants.h"
 #include "Scene.h"
 #include "UBO.h"
 
@@ -55,6 +56,8 @@ protected:
 	VulkanRenderPass renderPass_;
 	VkPipelineLayout pipelineLayout_ = nullptr;
 	VkPipeline pipeline_ = nullptr;
+
+	SpecializationConstants specializationConstant_;
 
 protected:
 	bool IsOffscreen() const
