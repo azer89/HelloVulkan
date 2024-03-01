@@ -35,15 +35,15 @@ private:
 
 public:
 	void AddBuffer(
-		VulkanBuffer* buffer,
+		const VulkanBuffer* buffer,
 		VkDescriptorType dsType,
 		VkShaderStageFlags stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT);
 	void AddImage(
-		VulkanImage* image,
+		const VulkanImage* image,
 		VkDescriptorType dsType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 		VkShaderStageFlags stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT);
-	void UpdateBuffer(VulkanBuffer* buffer, size_t bindingIndex);
-	void UpdateImage(VulkanImage* image, size_t bindingIndex);
+	void UpdateBuffer(const VulkanBuffer* buffer, size_t bindingIndex);
+	void UpdateImage(const VulkanImage* image, size_t bindingIndex);
 
 	// Descriptor indexing
 	void AddImageArray(
@@ -54,11 +54,11 @@ public:
 	// Raytracing
 	void AddAccelerationStructure();
 	void AddAccelerationStructure(VkWriteDescriptorSetAccelerationStructureKHR* asInfo);
-	void UpdateStorageImage(VulkanImage* image, size_t bindingIndex);
+	void UpdateStorageImage(const VulkanImage* image, size_t bindingIndex);
 	void UpdateAccelerationStructure(VkWriteDescriptorSetAccelerationStructureKHR* asInfo, size_t bindingIndex);
 
 private:
-	void CheckBound(size_t bindingIndex);
+	void CheckBound(size_t bindingIndex) const;
 };
 
 #endif

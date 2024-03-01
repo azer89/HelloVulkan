@@ -798,7 +798,7 @@ uint32_t VulkanImage::BytesPerTexFormat(VkFormat fmt)
 	return 0;
 }
 
-VkDescriptorImageInfo VulkanImage::GetDescriptorImageInfo()
+VkDescriptorImageInfo VulkanImage::GetDescriptorImageInfo() const
 {
 	return
 	{
