@@ -85,46 +85,19 @@ void PipelineLightRender::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 
 void PipelineLightRender::CreateDescriptor(VulkanContext& ctx)
 {
-	// Pool
-	descriptor_.CreatePool(
-		ctx,
-		{
-			.uboCount_ = 1u,
-			.ssboCount_ = 1u,
-			.samplerCount_ = 0u,
-			.frameCount_ = AppConfig::FrameOverlapCount,
-			.setCountPerFrame_ = 1u,
-		});
+	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
 
-	// Layout
-	descriptor_.CreateLayout(ctx,
-	{
-		{
-			.type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-			.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-			.bindingCount_ = 1
-		},
-		{
-			.type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-			.shaderFlags_ = VK_SHADER_STAGE_VERTEX_BIT,
-			.bindingCount_ = 1
-		}
-	});
+	DescriptorBuildInfo buildInfo;
+	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT); // 0
+	buildInfo.AddBuffer(lights_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT); // 1
 
-	// Set
-	constexpr size_t frameCount = AppConfig::FrameOverlapCount;
+	// Create pool and layout
+	descriptor_.CreatePoolAndLayout(ctx, buildInfo, frameCount, 1u);
 
+	// Create sets
 	for (size_t i = 0; i < frameCount; ++i)
 	{
-		VkDescriptorBufferInfo bufferInfo1 = cameraUBOBuffers_[i].GetBufferInfo();
-		VkDescriptorBufferInfo bufferInfo2 = lights_->GetBufferInfo();
-
-		descriptor_.CreateSet(
-			ctx, 
-			{
-				{.bufferInfoPtr_ = &bufferInfo1, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER },
-				{.bufferInfoPtr_ = &bufferInfo2, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER }
-			}, 
-			&(descriptorSets_[i]));
+		buildInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
+		descriptor_.CreateSet(ctx, buildInfo.writes_, &(descriptorSets_[i]));
 	}
 }
