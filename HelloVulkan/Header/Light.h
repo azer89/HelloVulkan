@@ -65,10 +65,7 @@ public:
 
 private:
 	uint32_t lightCount_;
-
-	size_t storageBufferSize_;
 	VulkanBuffer storageBuffer_;
-
 	VkDevice device_;
 };
 
