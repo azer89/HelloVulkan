@@ -24,16 +24,16 @@ public:
 
 	void Destroy();
 
-public:
-	VkDescriptorPool pool_ = nullptr;
-	VkDescriptorSetLayout layout_ = nullptr;
-
 private:
 	VkDescriptorSetLayoutBinding CreateDescriptorSetLayoutBinding(
 		uint32_t binding,
 		VkDescriptorType descriptorType,
 		VkShaderStageFlags stageFlags,
 		uint32_t descriptorCount);
+
+public:
+	VkDescriptorPool pool_ = nullptr;
+	VkDescriptorSetLayout layout_ = nullptr;
 
 private:
 	VkDevice device_ = nullptr;
