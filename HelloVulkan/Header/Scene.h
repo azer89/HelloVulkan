@@ -17,17 +17,15 @@ public:
 	~Scene();
 
 	uint32_t GetMeshCount() const { return static_cast<uint32_t>(meshDataArray_.size()); }
+	std::vector<VkDescriptorImageInfo> GetImageInfos() const;
+	std::vector<uint32_t> GetMeshVertexCountArray() const;
 
-	std::vector<VkDescriptorImageInfo> GetImageInfos();
-	std::vector<uint32_t> GetMeshVertexCountArray();
-
-	// TODO The interface is kinda weird
 	void UpdateModelMatrix(VulkanContext& ctx, 
-		ModelUBO modelUBO, 
+		const ModelUBO& modelUBO, 
 		uint32_t modelIndex,
 		uint32_t frameIndex);
 	void UpdateModelMatrix(VulkanContext& ctx,
-		ModelUBO modelUBO,
+		const ModelUBO& modelUBO,
 		uint32_t modelIndex);
 
 private:
@@ -44,7 +42,7 @@ public:
 	VulkanBuffer indexBuffer_;
 
 	// Per-frame buffer
-	std::vector<VulkanBuffer> modelUBOBuffers_;
+	std::vector<VulkanBuffer> modelSSBOBuffers_;
 
 	std::vector<Model> models_ = {};
 };

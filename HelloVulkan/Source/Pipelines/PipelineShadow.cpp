@@ -121,7 +121,7 @@ void PipelineShadow::CreateDescriptor(VulkanContext& ctx)
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
 		buildInfo.UpdateBuffer(&(shadowMapUBOBuffers_[i]), 0);
-		buildInfo.UpdateBuffer(&(scene_->modelUBOBuffers_[i]), 1);
+		buildInfo.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 1);
 		descriptor_.CreateSet(ctx, buildInfo, &(descriptorSets_[i]));
 	}
 }
