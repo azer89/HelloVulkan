@@ -86,46 +86,20 @@ void PipelineAABBGenerator::Execute(VulkanContext& ctx, VkCommandBuffer commandB
 
 void PipelineAABBGenerator::CreateDescriptor(VulkanContext& ctx)
 {
-	uint32_t imageCount = AppConfig::FrameOverlapCount;
+	uint32_t frameCount = AppConfig::FrameOverlapCount;
 
-	// Pool
-	descriptor_.CreatePool(
-		ctx,
-		{
-			.uboCount_ = 1u,
-			.ssboCount_ = 1u,
-			.samplerCount_ = 0u,
-			.frameCount_ = imageCount,
-			.setCountPerFrame_ = 1u
-		});
+	DescriptorBuildInfo buildInfo;
+	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT); // 0
+	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT); // 1
 
-	// Layout
-	descriptor_.CreateLayout(ctx,
+	// Create pool and layout
+	descriptor_.CreatePoolAndLayout(ctx, buildInfo, frameCount, 1u);
+
+	for (size_t i = 0; i < frameCount; ++i)
 	{
-		{
-			.type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-			.shaderFlags_ = VK_SHADER_STAGE_COMPUTE_BIT,
-			.bindingCount_ = 1
-		},
-		{
-			.type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-			.shaderFlags_ = VK_SHADER_STAGE_COMPUTE_BIT,
-			.bindingCount_ = 1
-		}
-	});
+		buildInfo.UpdateBuffer(&(cfBuffers_->aabbBuffers_[i]), 0);
+		buildInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 1);
 
-	// Set
-	for (size_t i = 0; i < imageCount; ++i)
-	{
-		VkDescriptorBufferInfo bufferInfo1 = cfBuffers_->aabbBuffers_[i].GetBufferInfo();
-		VkDescriptorBufferInfo bufferInfo2 = cfUBOBuffers_[i].GetBufferInfo();
-
-		descriptor_.CreateSet(
-		ctx,
-		{
-			{.bufferInfoPtr_ = &bufferInfo1, .type_ = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER },
-			{.bufferInfoPtr_ = &bufferInfo2, .type_ = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER }
-		},
-		&descriptorSets_[i]);
+		descriptor_.CreateSet(ctx, buildInfo.writes_, &descriptorSets_[i]);
 	}
 }
