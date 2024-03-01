@@ -120,41 +120,10 @@ void PipelineCubeFilter::InitializeOutputCubemap(
 
 void PipelineCubeFilter::CreateDescriptor(VulkanContext& ctx, VulkanImage* inputCubemap)
 {
-	// Pool
-	descriptor_.CreatePool(
-		ctx,
-		{
-			.uboCount_ = 0u,
-			.ssboCount_ = 0u,
-			.samplerCount_ = 1u,
-			.frameCount_ = 1u,
-			.setCountPerFrame_ = 1u
-		});
-
-	// Layout
-	descriptor_.CreateLayout(ctx,
-	{
-		{
-			.type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			.shaderFlags_ = VK_SHADER_STAGE_FRAGMENT_BIT,
-			.bindingCount_ = 1
-		}
-	});
-
-	// Set
-	VkDescriptorImageInfo imageInfo =
-	{
-		inputCubemapSampler_, // Local sampler created in the constructor
-		inputCubemap->imageView_,
-		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	};
-
-	descriptor_.CreateSet(
-		ctx,
-		{
-			{.imageInfoPtr_ = &imageInfo, .type_ = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER }
-		},
-		&descriptorSet_);
+	DescriptorBuildInfo buildInfo;
+	buildInfo.AddImage(inputCubemap);
+	descriptor_.CreatePoolAndLayout(ctx, buildInfo, 1u, 1u);
+	descriptor_.CreateSet(ctx, buildInfo.writes_, &descriptorSet_);
 }
 
 void PipelineCubeFilter::CreateOutputCubemapViews(VulkanContext& ctx,
