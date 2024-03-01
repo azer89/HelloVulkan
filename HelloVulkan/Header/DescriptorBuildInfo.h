@@ -56,6 +56,9 @@ public:
 	void AddAccelerationStructure(VkWriteDescriptorSetAccelerationStructureKHR* asInfo);
 	void UpdateStorageImage(VulkanImage* image, size_t bindingIndex);
 	void UpdateAccelerationStructure(VkWriteDescriptorSetAccelerationStructureKHR* asInfo, size_t bindingIndex);
+
+private:
+	void CheckBound(size_t bindingIndex);
 };
 
 #endif

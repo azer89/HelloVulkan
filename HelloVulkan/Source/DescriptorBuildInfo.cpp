@@ -13,7 +13,7 @@ void DescriptorBuildInfo::AddBuffer(
 	VkDescriptorBufferInfo* bufferInfo = nullptr;
 	if (buffer)
 	{
-		size_t index = writes_.size();
+		const size_t index = writes_.size();
 		bufferMap_[index] = buffer->GetBufferInfo();
 		bufferInfo = &(bufferMap_[index]);
 	}
@@ -36,7 +36,7 @@ void DescriptorBuildInfo::AddImage(
 	VkDescriptorImageInfo* imageInfo = nullptr;
 	if (image)
 	{
-		size_t index = writes_.size();
+		const size_t index = writes_.size();
 		imageMap_[index] = image->GetDescriptorImageInfo();
 		imageInfo = &(imageMap_[index]);
 	}
@@ -92,10 +92,7 @@ void DescriptorBuildInfo::AddAccelerationStructure(VkWriteDescriptorSetAccelerat
 
 void DescriptorBuildInfo::UpdateBuffer(VulkanBuffer* buffer, size_t bindingIndex)
 {
-	if (bindingIndex < 0 || bindingIndex >= writes_.size())
-	{
-		std::cerr << "Invalid bindingIndex\n";
-	}
+	CheckBound(bindingIndex);
 
 	VkDescriptorBufferInfo* bufferInfo = nullptr;
 	if (buffer)
@@ -109,10 +106,7 @@ void DescriptorBuildInfo::UpdateBuffer(VulkanBuffer* buffer, size_t bindingIndex
 
 void DescriptorBuildInfo::UpdateImage(VulkanImage* image, size_t bindingIndex)
 {
-	if (bindingIndex < 0 || bindingIndex >= writes_.size())
-	{
-		std::cerr << "Invalid bindingIndex\n";
-	}
+	CheckBound(bindingIndex);
 
 	VkDescriptorImageInfo* imageInfo = nullptr;
 	if (image)
@@ -127,10 +121,7 @@ void DescriptorBuildInfo::UpdateImage(VulkanImage* image, size_t bindingIndex)
 // Special case for raytracing
 void DescriptorBuildInfo::UpdateStorageImage(VulkanImage* image, size_t bindingIndex)
 {
-	if (bindingIndex < 0 || bindingIndex >= writes_.size())
-	{
-		std::cerr << "Invalid bindingIndex\n";
-	}
+	CheckBound(bindingIndex);
 
 	VkDescriptorImageInfo* imageInfo = nullptr;
 	if (image)
@@ -151,9 +142,14 @@ void DescriptorBuildInfo::UpdateAccelerationStructure(
 	VkWriteDescriptorSetAccelerationStructureKHR* asInfo, 
 	size_t bindingIndex)
 {
+	CheckBound(bindingIndex);
+	writes_[bindingIndex].pNext_ = asInfo;
+}
+
+void DescriptorBuildInfo::CheckBound(size_t bindingIndex)
+{
 	if (bindingIndex < 0 || bindingIndex >= writes_.size())
 	{
 		std::cerr << "Invalid bindingIndex\n";
 	}
-	writes_[bindingIndex].pNext_ = asInfo;
 }
