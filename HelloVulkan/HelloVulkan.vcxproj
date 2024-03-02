@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="..\Shaders\Ambient.glsl" />
     <None Include="..\Shaders\Bindless\Scene.frag" />
     <None Include="..\Shaders\Bindless\Scene.vert" />
     <None Include="..\Shaders\Bindless\MeshData.glsl" />
@@ -146,10 +147,12 @@
     <None Include="..\Shaders\ClusteredForward\LightCulling.comp" />
     <None Include="..\Shaders\ClusteredForward\LightCullingBatch.comp" />
     <None Include="..\Shaders\ClusteredForward\MeshClusterForward.frag" />
+    <None Include="..\Shaders\ClusteredForward\Radiance.glsl" />
     <None Include="..\Shaders\CubeFilterDiffuse.frag" />
     <None Include="..\Shaders\CubeFilterSpecular.frag" />
     <None Include="..\Shaders\LightData.glsl" />
     <None Include="..\Shaders\PBRPushConstants.glsl" />
+    <None Include="..\Shaders\Radiance.glsl" />
     <None Include="..\Shaders\SlotBased\Mesh.frag" />
     <None Include="..\Shaders\SlotBased\Mesh.vert" />
     <None Include="..\Shaders\TangentNormalToWorld.glsl" />

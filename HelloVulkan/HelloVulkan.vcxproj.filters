@@ -144,6 +144,15 @@
     <None Include="..\Shaders\LightData.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\Shaders\ClusteredForward\Radiance.glsl">
+      <Filter>Shaders\ClusteredForward</Filter>
+    </None>
+    <None Include="..\Shaders\Ambient.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\Radiance.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Camera.h">
