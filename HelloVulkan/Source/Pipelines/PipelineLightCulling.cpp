@@ -63,11 +63,13 @@ void PipelineLightCulling::Execute(VulkanContext& ctx, VkCommandBuffer commandBu
 		1,
 		6);*/
 
-	VkBufferMemoryBarrier lightGridBarrier =
+	VkBufferMemoryBarrier2 lightGridBarrier =
 	{
-		.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
+		.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER_2,
 		.pNext = nullptr,
+		.srcStageMask = VK_PIPELINE_STAGE_2_COMPUTE_SHADER_BIT,
 		.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT,
+		.dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
 		.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
 		.srcQueueFamilyIndex = ctx.GetComputeFamily(),
 		.dstQueueFamilyIndex = ctx.GetGraphicsFamily(),
@@ -75,12 +77,13 @@ void PipelineLightCulling::Execute(VulkanContext& ctx, VkCommandBuffer commandBu
 		.offset = 0,
 		.size = cfBuffers_->lightCellsBuffers_[frameIndex].size_
 	};
-
-	const VkBufferMemoryBarrier lightIndicesBarrier =
+	const VkBufferMemoryBarrier2 lightIndicesBarrier =
 	{
-		.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
+		.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER_2,
 		.pNext = nullptr,
+		.srcStageMask = VK_PIPELINE_STAGE_2_COMPUTE_SHADER_BIT,
 		.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT,
+		.dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
 		.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
 		.srcQueueFamilyIndex = ctx.GetComputeFamily(),
 		.dstQueueFamilyIndex = ctx.GetGraphicsFamily(),
@@ -88,23 +91,17 @@ void PipelineLightCulling::Execute(VulkanContext& ctx, VkCommandBuffer commandBu
 		.offset = 0,
 		.size = cfBuffers_->lightIndicesBuffers_[frameIndex].size_,
 	};
-
-	const std::array<VkBufferMemoryBarrier, 2> barriers =
+	const std::array<VkBufferMemoryBarrier2, 2> barriers =
 	{
 		lightGridBarrier,
 		lightIndicesBarrier
 	};
-
-	vkCmdPipelineBarrier(commandBuffer,
-		VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
-		VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-		0,
-		0,
-		nullptr,
-		static_cast<uint32_t>(barriers.size()),
-		barriers.data(),
-		0,
-		nullptr);
+	VkDependencyInfo dependencyInfo = {
+		.sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,
+		.bufferMemoryBarrierCount = static_cast<uint32_t>(barriers.size()),
+		.pBufferMemoryBarriers = barriers.data()
+	};
+	vkCmdPipelineBarrier2(commandBuffer, &dependencyInfo);
 }
 
 void PipelineLightCulling::CreateDescriptor(VulkanContext& ctx)
