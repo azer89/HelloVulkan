@@ -623,25 +623,25 @@ void VulkanImage::GenerateMipmap(
 {
 	VkCommandBuffer commandBuffer = ctx.BeginOneTimeGraphicsCommand();
 
-	VkImageSubresourceRange baseRange =
-	{
-		.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-		.baseMipLevel = 0u,
-		.levelCount = 1u, // The number of mipmap levels (starting from baseMipLevel) accessible to the view
-		.baseArrayLayer = 0,
-		.layerCount = layerCount_
-	};
-
-	CreateBarrier({
-		.commandBuffer = commandBuffer, // cmdBuffer
-		.oldLayout = currentImageLayout, // oldLayout
-		.sourceStage = VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT, // srcStage
-		.sourceAccess = VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT, // srcAccess
-		.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, // newLayout
-		.destinationStage = VK_PIPELINE_STAGE_2_TRANSFER_BIT, // dstStage
-		.destinationAccess = VK_ACCESS_2_TRANSFER_READ_BIT // dstAccess
+	VulkanBarrier::CreateImageBarrier(
+		{
+			.commandBuffer = commandBuffer,
+			.oldLayout = currentImageLayout,
+			.sourceStage = VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
+			.sourceAccess = VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT,
+			.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+			.destinationStage = VK_PIPELINE_STAGE_2_TRANSFER_BIT,
+			.destinationAccess = VK_ACCESS_2_TRANSFER_READ_BIT
 		},
-		baseRange);
+		{
+			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+			.baseMipLevel = 0u,
+			.levelCount = 1u, // The number of mipmap levels (starting from baseMipLevel) accessible to the view
+			.baseArrayLayer = 0,
+			.layerCount = layerCount_
+		},
+		image_
+		);
 
 	for (uint32_t i = 1; i < maxMipLevels; ++i)
 	{
@@ -673,15 +673,18 @@ void VulkanImage::GenerateMipmap(
 		};
 
 		// Transition current mip level to transfer dest
-		CreateBarrier({
-			.commandBuffer = commandBuffer,
-			.oldLayout = currentImageLayout,
-			.sourceStage = VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
-			.sourceAccess = VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT,
-			.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-			.destinationStage = VK_PIPELINE_STAGE_2_TRANSFER_BIT,
-			.destinationAccess = VK_ACCESS_2_TRANSFER_WRITE_BIT},
-			subRange);
+		VulkanBarrier::CreateImageBarrier(
+			{
+				.commandBuffer = commandBuffer,
+				.oldLayout = currentImageLayout,
+				.sourceStage = VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
+				.sourceAccess = VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT,
+				.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+				.destinationStage = VK_PIPELINE_STAGE_2_TRANSFER_BIT,
+				.destinationAccess = VK_ACCESS_2_TRANSFER_WRITE_BIT
+			},
+			subRange,
+			image_);
 
 		vkCmdBlitImage(
 			commandBuffer,
@@ -694,19 +697,22 @@ void VulkanImage::GenerateMipmap(
 			VK_FILTER_LINEAR);
 
 		// Transition back
-		CreateBarrier({
-			.commandBuffer = commandBuffer,
-			.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-			.sourceStage = VK_PIPELINE_STAGE_2_TRANSFER_BIT,
-			.sourceAccess = VK_ACCESS_2_TRANSFER_WRITE_BIT,
-			.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-			.destinationStage = VK_PIPELINE_STAGE_2_TRANSFER_BIT,
-			.destinationAccess = VK_ACCESS_2_TRANSFER_READ_BIT},
-			subRange);
+		VulkanBarrier::CreateImageBarrier(
+			{
+				.commandBuffer = commandBuffer,
+				.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+				.sourceStage = VK_PIPELINE_STAGE_2_TRANSFER_BIT,
+				.sourceAccess = VK_ACCESS_2_TRANSFER_WRITE_BIT,
+				.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+				.destinationStage = VK_PIPELINE_STAGE_2_TRANSFER_BIT,
+				.destinationAccess = VK_ACCESS_2_TRANSFER_READ_BIT
+			},
+			subRange,
+			image_);
 	}
 
 	// Convention is to change the layout to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	CreateBarrier({ 
+	VulkanBarrier::CreateImageBarrier({ 
 		.commandBuffer = commandBuffer,
 		.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 		.sourceStage = VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
@@ -714,42 +720,18 @@ void VulkanImage::GenerateMipmap(
 		.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 		.destinationStage = VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT,
 		.destinationAccess = VK_ACCESS_2_SHADER_READ_BIT
-	});
-
-	ctx.EndOneTimeGraphicsCommand(commandBuffer);
-}
-
-void VulkanImage::CreateBarrier(const ImageBarrierInfo& info)
-{
-	const VkImageSubresourceRange subresourceRange =
+	},
 	{
 		.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-		.baseMipLevel = 0u,
+		.baseMipLevel = 0,
 		.levelCount = mipCount_,
-		.baseArrayLayer = 0u,
+		.baseArrayLayer = 0,
 		.layerCount = layerCount_
-	};
-	CreateBarrier(info, subresourceRange);
-}
+	},
+	image_
+	);
 
-void VulkanImage::CreateBarrier(const ImageBarrierInfo& info, const VkImageSubresourceRange& subresourceRange)
-{
-	const VkImageMemoryBarrier2 barrier =
-	{
-		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2,
-		.srcStageMask = info.sourceStage,
-		.srcAccessMask = info.sourceAccess,
-		.dstStageMask = info.destinationStage,
-		.dstAccessMask = info.destinationAccess,
-		.oldLayout = info.oldLayout,
-		.newLayout = info.newLayout,
-		.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-		.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-		.image = image_,
-		.subresourceRange = subresourceRange
-	};
-
-	VulkanBarrier::CreateImageBarrier(info.commandBuffer, &barrier, 1u);
+	ctx.EndOneTimeGraphicsCommand(commandBuffer);
 }
 
 uint32_t VulkanImage::BytesPerTexFormat(VkFormat fmt)

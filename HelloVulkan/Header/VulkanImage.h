@@ -8,19 +8,6 @@
 
 #include <string>
 
-struct ImageBarrierInfo
-{
-	VkCommandBuffer commandBuffer;
-	
-	VkImageLayout oldLayout;
-	VkPipelineStageFlags2 sourceStage;
-	VkAccessFlags2 sourceAccess;
-	
-	VkImageLayout newLayout;
-	VkPipelineStageFlags2 destinationStage;
-	VkAccessFlags2 destinationAccess;
-};
-
 class VulkanImage
 {
 public:
@@ -157,10 +144,6 @@ public:
 		uint32_t width,
 		uint32_t height,
 		uint32_t layerCount = 1);
-
-	void CreateBarrier(const ImageBarrierInfo& info);
-
-	void CreateBarrier(const ImageBarrierInfo& info, const VkImageSubresourceRange& subresourceRange);
 
 	// This transitions all mip levels and all layers
 	void TransitionLayout(
