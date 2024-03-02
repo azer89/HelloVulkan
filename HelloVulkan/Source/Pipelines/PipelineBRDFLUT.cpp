@@ -100,27 +100,22 @@ void PipelineBRDFLUT::Execute(VulkanContext& ctx)
 		static_cast<uint32_t>(IBLConfig::LUTWidth), // groupCountX
 		static_cast<uint32_t>(IBLConfig::LUTHeight), // groupCountY
 		1u); // groupCountZ
-
-	// TODO This is a global memory barrier
-	VkMemoryBarrier readoutBarrier = {
-		.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER,
+	
+	// Set barrier
+	VkMemoryBarrier2 memoryBarrier = {
+		.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER_2,
 		.pNext = nullptr,
-		.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT, // Write access to SSBO
-		.dstAccessMask = VK_ACCESS_HOST_READ_BIT // Read SSBO by a host / CPU
+		.srcStageMask = VK_PIPELINE_STAGE_2_COMPUTE_SHADER_BIT,
+		.srcAccessMask = VK_ACCESS_2_SHADER_WRITE_BIT,
+		.dstStageMask = VK_PIPELINE_STAGE_2_HOST_BIT,
+		.dstAccessMask = VK_ACCESS_2_HOST_READ_BIT
 	};
-	vkCmdPipelineBarrier(
-		commandBuffer, // commandBuffer
-		// Compute shader
-		VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, // srcStageMask
-		// Host / CPU
-		VK_PIPELINE_STAGE_HOST_BIT, // dstStageMask
-		0, // dependencyFlags
-		1, // memoryBarrierCount
-		&readoutBarrier, // pMemoryBarriers
-		0, // bufferMemoryBarrierCount 
-		nullptr, // pBufferMemoryBarriers
-		0, // imageMemoryBarrierCount
-		nullptr); // pImageMemoryBarriers
+	VkDependencyInfo dependencyInfo = {
+		.sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,
+		.memoryBarrierCount = 1u,
+		.pMemoryBarriers = &memoryBarrier
+	};
+	vkCmdPipelineBarrier2(commandBuffer, &dependencyInfo);
 
 	ctx.EndOneTimeComputeCommand(commandBuffer);
 }
