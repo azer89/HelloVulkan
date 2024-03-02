@@ -1,6 +1,6 @@
 #include "PushConstants.h"
 #include "PipelineBRDFLUT.h"
-#include "VulkanShader.h"
+#include "VulkanBarrier.h"
 #include "Configs.h"
 
 PipelineBRDFLUT::PipelineBRDFLUT(
@@ -102,7 +102,7 @@ void PipelineBRDFLUT::Execute(VulkanContext& ctx)
 		1u); // groupCountZ
 	
 	// Set barrier
-	VkMemoryBarrier2 memoryBarrier = {
+	VkMemoryBarrier2 barrier = {
 		.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER_2,
 		.pNext = nullptr,
 		.srcStageMask = VK_PIPELINE_STAGE_2_COMPUTE_SHADER_BIT,
@@ -110,12 +110,7 @@ void PipelineBRDFLUT::Execute(VulkanContext& ctx)
 		.dstStageMask = VK_PIPELINE_STAGE_2_HOST_BIT,
 		.dstAccessMask = VK_ACCESS_2_HOST_READ_BIT
 	};
-	VkDependencyInfo dependencyInfo = {
-		.sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,
-		.memoryBarrierCount = 1u,
-		.pMemoryBarriers = &memoryBarrier
-	};
-	vkCmdPipelineBarrier2(commandBuffer, &dependencyInfo);
+	VulkanBarrier::CreateMemoryBarrier(commandBuffer, &barrier, 1u);
 
 	ctx.EndOneTimeComputeCommand(commandBuffer);
 }

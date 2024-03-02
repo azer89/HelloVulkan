@@ -1,4 +1,5 @@
 #include "PipelineLightCulling.h"
+#include "VulkanBarrier.h"
 #include "Configs.h"
 
 #include <array>
@@ -96,12 +97,7 @@ void PipelineLightCulling::Execute(VulkanContext& ctx, VkCommandBuffer commandBu
 		lightGridBarrier,
 		lightIndicesBarrier
 	};
-	VkDependencyInfo dependencyInfo = {
-		.sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,
-		.bufferMemoryBarrierCount = static_cast<uint32_t>(barriers.size()),
-		.pBufferMemoryBarriers = barriers.data()
-	};
-	vkCmdPipelineBarrier2(commandBuffer, &dependencyInfo);
+	VulkanBarrier::CreateBufferBarrier(commandBuffer, barriers.data(), static_cast<uint32_t>(barriers.size()));
 }
 
 void PipelineLightCulling::CreateDescriptor(VulkanContext& ctx)

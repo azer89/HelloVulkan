@@ -1,4 +1,5 @@
 #include "PipelineAABBGenerator.h"
+#include "VulkanBarrier.h"
 #include "Configs.h"
 
 #include <iostream>
@@ -63,7 +64,7 @@ void PipelineAABBGenerator::Execute(VulkanContext& ctx, VkCommandBuffer commandB
 		static_cast<uint32_t>(ClusterForwardConfig::sliceCountY), // groupCountY
 		static_cast<uint32_t>(ClusterForwardConfig::sliceCountZ)); // groupCountZ
 
-	VkBufferMemoryBarrier2 barrierInfo = {
+	VkBufferMemoryBarrier2 barrier = {
 		.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER_2,
 		.pNext = nullptr,
 		.srcStageMask = VK_PIPELINE_STAGE_2_COMPUTE_SHADER_BIT,
@@ -75,12 +76,7 @@ void PipelineAABBGenerator::Execute(VulkanContext& ctx, VkCommandBuffer commandB
 		.buffer = cfBuffers_->aabbBuffers_[frameIndex].buffer_,
 		.offset = 0,
 		.size = cfBuffers_->aabbBuffers_[frameIndex].size_ };
-	VkDependencyInfo dependencyInfo = {
-		.sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,
-		.bufferMemoryBarrierCount = 1u,
-		.pBufferMemoryBarriers = &barrierInfo
-	};
-	vkCmdPipelineBarrier2(commandBuffer, &dependencyInfo);
+	VulkanBarrier::CreateBufferBarrier(commandBuffer, &barrier, 1u);
 }
 
 void PipelineAABBGenerator::CreateDescriptor(VulkanContext& ctx)
