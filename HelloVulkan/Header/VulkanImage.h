@@ -1,9 +1,6 @@
 #ifndef VULKAN_IMAGE
 #define VULKAN_IMAGE
 
-#include "volk.h"
-#include "vk_mem_alloc.h"
-
 #include "VulkanContext.h"
 
 #include <string>

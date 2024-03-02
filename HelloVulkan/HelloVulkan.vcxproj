@@ -260,6 +260,7 @@
     <ClCompile Include="Source\Pipelines\PipelineTonemap.cpp" />
     <ClCompile Include="Source\AccelerationStructure.cpp" />
     <ClCompile Include="Source\Scene.cpp" />
+    <ClCompile Include="Source\VulkanBarrier.cpp" />
     <ClCompile Include="Source\VulkanBuffer.cpp" />
     <ClCompile Include="Source\VulkanDescriptor.cpp" />
     <ClCompile Include="Source\VulkanContext.cpp" />
