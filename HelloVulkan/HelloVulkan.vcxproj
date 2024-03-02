@@ -175,7 +175,7 @@
     <ClInclude Include="Header\Apps\AppBase.h" />
     <ClInclude Include="Header\Apps\AppPBRBindless.h" />
     <ClInclude Include="Header\Apps\AppPBRClusterForward.h" />
-    <ClInclude Include="Header\Apps\AppPBRShadowMapping.h" />
+    <ClInclude Include="Header\Apps\AppPBRShadow.h" />
     <ClInclude Include="Header\Apps\AppPBRSlotBased.h" />
     <ClInclude Include="Header\Apps\AppSimpleRaytracing.h" />
     <ClInclude Include="Header\Camera.h" />
@@ -202,7 +202,7 @@
     <ClInclude Include="Header\Pipelines\PipelinePBRSlotBased.h" />
     <ClInclude Include="Header\Pipelines\PipelinePBRBindless.h" />
     <ClInclude Include="Header\Pipelines\PipelinePBRClusterForward.h" />
-    <ClInclude Include="Header\Pipelines\PipelinePBRShadowMapping.h" />
+    <ClInclude Include="Header\Pipelines\PipelinePBRShadow.h" />
     <ClInclude Include="Header\Pipelines\PipelineResolveMS.h" />
     <ClInclude Include="Header\Pipelines\PipelineShadow.h" />
     <ClInclude Include="Header\Pipelines\PipelineSimpleRaytracing.h" />
@@ -228,7 +228,7 @@
     <ClCompile Include="Source\Apps\AppBase.cpp" />
     <ClCompile Include="Source\Apps\AppPBRBindless.cpp" />
     <ClCompile Include="Source\Apps\AppPBRClusterForward.cpp" />
-    <ClCompile Include="Source\Apps\AppPBRShadowMapping.cpp" />
+    <ClCompile Include="Source\Apps\AppPBRShadow.cpp" />
     <ClCompile Include="Source\Apps\AppPBRSlotBased.cpp" />
     <ClCompile Include="Source\Apps\AppSimpleRaytracing.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
@@ -252,7 +252,7 @@
     <ClCompile Include="Source\Pipelines\PipelinePBRSlotBased.cpp" />
     <ClCompile Include="Source\Pipelines\PipelinePBRBindless.cpp" />
     <ClCompile Include="Source\Pipelines\PipelinePBRClusterForward.cpp" />
-    <ClCompile Include="Source\Pipelines\PipelinePBRShadowMapping.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelinePBRShadow.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineResolveMS.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineShadow.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineSimpleRaytracing.cpp" />

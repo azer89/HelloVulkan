@@ -1,4 +1,4 @@
-#include "PipelinePBRShadowMapping.h"
+#include "PipelinePBRShadow.h"
 #include "VulkanUtility.h"
 #include "Configs.h"
 
@@ -9,7 +9,7 @@ constexpr uint32_t UBO_COUNT = 2;
 constexpr uint32_t SSBO_COUNT = 5;
 constexpr uint32_t ENV_TEXTURE_COUNT = 4; // Specular, diffuse, BRDF LUT, and shadow map
 
-PipelinePBRShadowMapping::PipelinePBRShadowMapping(
+PipelinePBRShadow::PipelinePBRShadow(
 	VulkanContext& ctx,
 	Scene* scene,
 	Lights* lights,
@@ -74,7 +74,7 @@ PipelinePBRShadowMapping::PipelinePBRShadowMapping(
 	);
 }
 
-PipelinePBRShadowMapping::~PipelinePBRShadowMapping()
+PipelinePBRShadow::~PipelinePBRShadow()
 {
 	for (auto uboBuffer : shadowMapConfigUBOBuffers_)
 	{
@@ -87,7 +87,7 @@ PipelinePBRShadowMapping::~PipelinePBRShadowMapping()
 	}
 }
 
-void PipelinePBRShadowMapping::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
+void PipelinePBRShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
 	uint32_t frameIndex = ctx.GetFrameIndex();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
@@ -121,7 +121,7 @@ void PipelinePBRShadowMapping::FillCommandBuffer(VulkanContext& ctx, VkCommandBu
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelinePBRShadowMapping::CreateDescriptor(VulkanContext& ctx)
+void PipelinePBRShadow::CreateDescriptor(VulkanContext& ctx)
 {
 	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
 	DescriptorBuildInfo buildInfo;

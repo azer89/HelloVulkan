@@ -5,7 +5,6 @@
 #include "VulkanImage.h"
 #include "PushConstants.h"
 #include "IBLResources.h"
-#include "Model.h"
 #include "Light.h"
 
 #include <vector>
@@ -13,10 +12,10 @@
 /*
 Render meshes using PBR materials, naive forward renderer with shadow mapping
 */
-class PipelinePBRShadowMapping final : public PipelineBase
+class PipelinePBRShadow final : public PipelineBase
 {
 public:
-	PipelinePBRShadowMapping(VulkanContext& ctx,
+	PipelinePBRShadow(VulkanContext& ctx,
 		Scene* scene,
 		Lights* lights,
 		IBLResources* iblResources,
@@ -24,7 +23,7 @@ public:
 		VulkanImage* depthImage,
 		VulkanImage* offscreenColorImage,
 		uint8_t renderBit = 0u);
-	 ~PipelinePBRShadowMapping();
+	 ~PipelinePBRShadow();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 

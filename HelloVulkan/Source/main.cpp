@@ -1,6 +1,6 @@
 #include "AppPBRSlotBased.h"
 #include "AppPBRBindless.h"
-#include "AppPBRShadowMapping.h"
+#include "AppPBRShadow.h"
 #include "AppPBRClusterForward.h"
 #include "AppSimpleRaytracing.h"
 
@@ -13,7 +13,7 @@ int main()
 	// The good ol resource binding per draw call
 	//AppPBRSlotBased app;
 	
-	//AppPBRShadowMapping app;
+	//AppPBRShadow app;
 	
 	//AppPBRClusterForward app;
 	

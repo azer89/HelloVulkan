@@ -1,4 +1,4 @@
-#include "AppPBRShadowMapping.h"
+#include "AppPBRShadow.h"
 #include "Configs.h"
 #include "VulkanUtility.h"
 #include "PipelineEquirect2Cube.h"
@@ -10,11 +10,11 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_volk.h"
 
-AppPBRShadowMapping::AppPBRShadowMapping()
+AppPBRShadow::AppPBRShadow()
 {
 }
 
-void AppPBRShadowMapping::Init()
+void AppPBRShadow::Init()
 {
 	// Init shadow map
 	uint32_t shadowMapSize = 2048;
@@ -74,7 +74,7 @@ void AppPBRShadowMapping::Init()
 		RenderPassBit::ColorClear | 
 		RenderPassBit::DepthClear
 	);
-	pbrPtr_ = std::make_unique<PipelinePBRShadowMapping>(
+	pbrPtr_ = std::make_unique<PipelinePBRShadow>(
 		vulkanContext_,
 		scene_.get(),
 		lights_.get(),
@@ -119,7 +119,7 @@ void AppPBRShadowMapping::Init()
 	};
 }
 
-void AppPBRShadowMapping::InitLights()
+void AppPBRShadow::InitLights()
 {
 	// Lights (SSBO)
 	lights_ = std::make_unique<Lights>();
@@ -137,7 +137,7 @@ void AppPBRShadowMapping::InitLights()
 	});
 }
 
-void AppPBRShadowMapping::DestroyResources()
+void AppPBRShadow::DestroyResources()
 {
 	shadowMap_->Destroy();
 	shadowMap_.reset();
@@ -164,7 +164,7 @@ void AppPBRShadowMapping::DestroyResources()
 	imguiPtr_.reset();
 }
 
-void AppPBRShadowMapping::UpdateUBOs()
+void AppPBRShadow::UpdateUBOs()
 {
 	// Camera matrices
 	CameraUBO ubo = camera_->GetCameraUBO();
@@ -187,7 +187,7 @@ void AppPBRShadowMapping::UpdateUBOs()
 	pbrPtr_->SetShadowMapConfigUBO(vulkanContext_, shadowUBO_);
 }
 
-void AppPBRShadowMapping::UpdateUI()
+void AppPBRShadow::UpdateUI()
 {
 	if (!showImgui_)
 	{
@@ -254,7 +254,7 @@ void AppPBRShadowMapping::UpdateUI()
 }
 
 // This is called from main.cpp
-int AppPBRShadowMapping::MainLoop()
+int AppPBRShadow::MainLoop()
 {
 	InitVulkan({
 		.supportRaytracing_ = false,
