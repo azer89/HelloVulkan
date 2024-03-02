@@ -43,18 +43,17 @@ cfUBO;
 layout(set = 0, binding = 3) readonly buffer Lights { LightData lights []; };
 layout(set = 0, binding = 4) readonly buffer LightCells { LightCell lightCells []; };
 layout(set = 0, binding = 5) readonly buffer LightIndices { uint lightIndices []; };
-layout(set = 0, binding = 6) readonly buffer Clusters { AABB data []; } clusters; // TODO Is this unused?
 
-layout(set = 0, binding = 7) uniform sampler2D textureAlbedo;
-layout(set = 0, binding = 8) uniform sampler2D textureNormal;
-layout(set = 0, binding = 9) uniform sampler2D textureMetalness;
-layout(set = 0, binding = 10) uniform sampler2D textureRoughness;
-layout(set = 0, binding = 11) uniform sampler2D textureAO;
-layout(set = 0, binding = 12) uniform sampler2D textureEmissive;
+layout(set = 0, binding = 6) uniform sampler2D textureAlbedo;
+layout(set = 0, binding = 7) uniform sampler2D textureNormal;
+layout(set = 0, binding = 8) uniform sampler2D textureMetalness;
+layout(set = 0, binding = 9) uniform sampler2D textureRoughness;
+layout(set = 0, binding = 10) uniform sampler2D textureAO;
+layout(set = 0, binding = 11) uniform sampler2D textureEmissive;
 
-layout(set = 0, binding = 13) uniform samplerCube specularMap;
-layout(set = 0, binding = 14) uniform samplerCube diffuseMap;
-layout(set = 0, binding = 15) uniform sampler2D brdfLUT;
+layout(set = 0, binding = 12) uniform samplerCube specularMap;
+layout(set = 0, binding = 13) uniform samplerCube diffuseMap;
+layout(set = 0, binding = 14) uniform sampler2D brdfLUT;
 
 vec3 Radiance(
 	vec3 albedo,
