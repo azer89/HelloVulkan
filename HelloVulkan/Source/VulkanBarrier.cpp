@@ -53,12 +53,12 @@ void VulkanBarrier::CreateImageBarrier(
 	uint32_t barrierCount
 )
 {
-	const VkDependencyInfo depInfo =
+	const VkDependencyInfo dependencyInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,
 		.pNext = nullptr ,
 		.imageMemoryBarrierCount = barrierCount,
 		.pImageMemoryBarriers = barriers
 	};
-	vkCmdPipelineBarrier2(commandBuffer, &depInfo);
+	vkCmdPipelineBarrier2(commandBuffer, &dependencyInfo);
 }

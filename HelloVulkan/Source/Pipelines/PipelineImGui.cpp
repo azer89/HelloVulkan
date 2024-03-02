@@ -84,7 +84,7 @@ void PipelineImGui::ImGuiStart()
 
 void PipelineImGui::ImGuiSetWindow(const char* title, int width, int height, float fontSize)
 {
-	ImGui::SetNextWindowSize(ImVec2(width, height));
+	ImGui::SetNextWindowSize(ImVec2(static_cast<float>(width), static_cast<float>(height)));
 	ImGui::Begin(title);
 	ImGui::SetWindowFontScale(fontSize);
 }
