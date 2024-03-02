@@ -646,16 +646,17 @@ void VulkanImage::GenerateMipmap(
 	CreateBarrier({
 		.commandBuffer = commandBuffer, // cmdBuffer
 		.oldLayout = currentImageLayout, // oldLayout
-		.sourceAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, // srcAccess
-		.sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, // srcStage
+		.sourceStage = VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT, // srcStage
+		.sourceAccess = VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT, // srcAccess
 		.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, // newLayout
-		.destinationAccess = VK_ACCESS_TRANSFER_READ_BIT, // dstAccess
-		.destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT // dstStage
+		.destinationStage = VK_PIPELINE_STAGE_2_TRANSFER_BIT, // dstStage
+		.destinationAccess = VK_ACCESS_2_TRANSFER_READ_BIT // dstAccess
 		},
 		baseRange);
 
 	for (uint32_t i = 1; i < maxMipLevels; ++i)
 	{
+		// TODO use VkImageBlit2
 		VkImageBlit imageBlit{};
 
 		// Source
@@ -686,11 +687,11 @@ void VulkanImage::GenerateMipmap(
 		CreateBarrier({
 			.commandBuffer = commandBuffer,
 			.oldLayout = currentImageLayout,
-			.sourceAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-			.sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+			.sourceStage = VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
+			.sourceAccess = VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT,
 			.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-			.destinationAccess = VK_ACCESS_TRANSFER_WRITE_BIT,
-			.destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT},
+			.destinationStage = VK_PIPELINE_STAGE_2_TRANSFER_BIT,
+			.destinationAccess = VK_ACCESS_2_TRANSFER_WRITE_BIT},
 			subRange);
 
 		vkCmdBlitImage(
@@ -708,11 +709,11 @@ void VulkanImage::GenerateMipmap(
 		CreateBarrier({
 			.commandBuffer = commandBuffer,
 			.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-			.sourceAccess = VK_ACCESS_TRANSFER_WRITE_BIT,
-			.sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT,
+			.sourceStage = VK_PIPELINE_STAGE_2_TRANSFER_BIT,
+			.sourceAccess = VK_ACCESS_2_TRANSFER_WRITE_BIT,
 			.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-			.destinationAccess = VK_ACCESS_TRANSFER_READ_BIT,
-			.destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT},
+			.destinationStage = VK_PIPELINE_STAGE_2_TRANSFER_BIT,
+			.destinationAccess = VK_ACCESS_2_TRANSFER_READ_BIT},
 			subRange);
 	}
 
@@ -720,11 +721,11 @@ void VulkanImage::GenerateMipmap(
 	CreateBarrier({ 
 		.commandBuffer = commandBuffer,
 		.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-		.sourceAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-		.sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+		.sourceStage = VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
+		.sourceAccess = VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT,
 		.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-		.destinationAccess = VK_ACCESS_SHADER_READ_BIT,
-		.destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT
+		.destinationStage = VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT,
+		.destinationAccess = VK_ACCESS_2_SHADER_READ_BIT
 	});
 
 	ctx.EndOneTimeGraphicsCommand(commandBuffer);
@@ -745,10 +746,12 @@ void VulkanImage::CreateBarrier(const ImageBarrierInfo& info)
 
 void VulkanImage::CreateBarrier(const ImageBarrierInfo& info, const VkImageSubresourceRange& subresourceRange)
 {
-	const VkImageMemoryBarrier barrier =
+	const VkImageMemoryBarrier2 barrier =
 	{
-		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2,
+		.srcStageMask = info.sourceStage,
 		.srcAccessMask = info.sourceAccess,
+		.dstStageMask = info.destinationStage,
 		.dstAccessMask = info.destinationAccess,
 		.oldLayout = info.oldLayout,
 		.newLayout = info.newLayout,
@@ -757,19 +760,14 @@ void VulkanImage::CreateBarrier(const ImageBarrierInfo& info, const VkImageSubre
 		.image = image_,
 		.subresourceRange = subresourceRange
 	};
-
-	vkCmdPipelineBarrier(
-		info.commandBuffer, // commandBuffer
-		info.sourceStage, // srcStageMask
-		info.destinationStage, // dstStageMask
-		0u, // dependencyFlags
-		0u, // memoryBarrierCount
-		nullptr, // pMemoryBarriers
-		0u, // bufferMemoryBarrierCount
-		nullptr, // pBufferMemoryBarriers
-		1u, // imageMemoryBarrierCount
-		&barrier // pImageMemoryBarriers
-	);
+	VkDependencyInfo depInfo =
+	{
+		.sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,
+		.pNext = nullptr ,
+		.imageMemoryBarrierCount = 1u,
+		.pImageMemoryBarriers = &barrier
+	};
+	vkCmdPipelineBarrier2(info.commandBuffer, &depInfo);
 }
 
 uint32_t VulkanImage::BytesPerTexFormat(VkFormat fmt)

@@ -13,12 +13,12 @@ struct ImageBarrierInfo
 	VkCommandBuffer commandBuffer;
 	
 	VkImageLayout oldLayout;
-	VkAccessFlags sourceAccess;
-	VkPipelineStageFlags sourceStage;
-
+	VkPipelineStageFlags2 sourceStage;
+	VkAccessFlags2 sourceAccess;
+	
 	VkImageLayout newLayout;
-	VkAccessFlags destinationAccess;
-	VkPipelineStageFlags destinationStage;
+	VkPipelineStageFlags2 destinationStage;
+	VkAccessFlags2 destinationAccess;
 };
 
 class VulkanImage
