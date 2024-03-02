@@ -1,25 +1,9 @@
 #ifndef VULKAN_IMAGE
 #define VULKAN_IMAGE
 
-#include "volk.h"
-#include "vk_mem_alloc.h"
-
 #include "VulkanContext.h"
 
 #include <string>
-
-struct ImageBarrierInfo
-{
-	VkCommandBuffer commandBuffer;
-	
-	VkImageLayout oldLayout;
-	VkAccessFlags sourceAccess;
-	VkPipelineStageFlags sourceStage;
-
-	VkImageLayout newLayout;
-	VkAccessFlags destinationAccess;
-	VkPipelineStageFlags destinationStage;
-};
 
 class VulkanImage
 {
@@ -157,10 +141,6 @@ public:
 		uint32_t width,
 		uint32_t height,
 		uint32_t layerCount = 1);
-
-	void CreateBarrier(const ImageBarrierInfo& info);
-
-	void CreateBarrier(const ImageBarrierInfo& info, const VkImageSubresourceRange& subresourceRange);
 
 	// This transitions all mip levels and all layers
 	void TransitionLayout(

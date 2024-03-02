@@ -299,6 +299,9 @@
     <ClInclude Include="Header\DescriptorBuildInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Header\VulkanBarrier.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">
@@ -431,6 +434,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\DescriptorBuildInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\VulkanBarrier.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

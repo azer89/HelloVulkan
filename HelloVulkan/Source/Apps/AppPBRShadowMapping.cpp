@@ -209,7 +209,7 @@ void AppPBRShadowMapping::UpdateUI()
 		.shadowMaxBias = 0.001f,
 		.shadowNearPlane = 10.0f,
 		.shadowFarPlane = 40.0f,
-		.pcfScale = 0.5
+		.pcfScale = 0.5f
 	};
 	static float staticLightPos[3] = { -5.f, 30.0f, 5.0f};
 	static int staticPCFIteration = 2;

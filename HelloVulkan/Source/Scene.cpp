@@ -47,7 +47,7 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 	{
 		for (size_t j = 0; j < models_[i].meshes_.size(); ++j)
 		{
-			meshDataArray_.emplace_back(models_[i].meshes_[j].GetMeshData(textureIndexOffset, i));
+			meshDataArray_.emplace_back(models_[i].meshes_[j].GetMeshData(textureIndexOffset, static_cast<uint32_t>(i)));
 		}
 		textureIndexOffset += models_[i].GetNumTextures();
 	}

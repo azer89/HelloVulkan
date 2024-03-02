@@ -128,8 +128,6 @@ void VulkanContext::GetRaytracingPropertiesAndFeatures()
 
 void VulkanContext::ChainFeatures()
 {
-	pNextChain_ = nullptr;
-
 	// This pointer is for chaining
 	void* chainPtr = nullptr;
 
@@ -185,8 +183,6 @@ void VulkanContext::ChainFeatures()
 
 		chainPtr = &rtASEnabledFeatures;
 	}
-
-	pNextChain_ = chainPtr;
 	
 	features_ = {};
 	if (config_.supportMSAA_)
@@ -201,15 +197,19 @@ void VulkanContext::ChainFeatures()
 		features_.shaderSampledImageArrayDynamicIndexing = VK_TRUE;
 	}
 
-	if (pNextChain_)
+	// NOTE features2_ and features13_ are always created
+	features13_ =
 	{
-		features2_ =
-		{
-			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2,
-			.pNext = pNextChain_,
-			.features = features_,
-		};
-	}
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES,
+		.pNext = chainPtr,
+		.synchronization2 = true,
+	};
+	features2_ =
+	{
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2,
+		.pNext = &features13_,
+		.features = features_,
+	};
 }
 
 VkResult VulkanContext::CreateDevice()
@@ -289,11 +289,9 @@ VkResult VulkanContext::CreateDevice()
 	};
 
 	// Chaining
-	if (pNextChain_)
-	{
-		devCreateInfo.pEnabledFeatures = nullptr;
-		devCreateInfo.pNext = &features2_;
-	}
+	devCreateInfo.pEnabledFeatures = nullptr;
+	// NOTE features2_ is always created
+	devCreateInfo.pNext = &features2_; // Features2 is always created
 
 	return vkCreateDevice(physicalDevice_, &devCreateInfo, nullptr, &device_);
 }
