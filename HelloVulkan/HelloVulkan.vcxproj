@@ -213,6 +213,7 @@
     <ClInclude Include="Header\Scene.h" />
     <ClInclude Include="Header\TextureMapper.h" />
     <ClInclude Include="Header\UBO.h" />
+    <ClInclude Include="Header\VulkanBarrier.h" />
     <ClInclude Include="Header\VulkanBuffer.h" />
     <ClInclude Include="Header\VulkanDescriptor.h" />
     <ClInclude Include="Header\VulkanContext.h" />

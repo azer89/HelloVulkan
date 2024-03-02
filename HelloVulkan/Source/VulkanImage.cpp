@@ -5,6 +5,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#include "VulkanBarrier.h"
+
 void VulkanImage::Destroy()
 {
 	if (defaultImageSampler_)
@@ -607,14 +609,7 @@ void VulkanImage::TransitionLayoutCommand(
 		barrier.dstStageMask = VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT;
 	}
 
-	VkDependencyInfo depInfo =
-	{
-		.sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,
-		.pNext = nullptr ,
-		.imageMemoryBarrierCount = 1u,
-		.pImageMemoryBarriers = &barrier
-	};
-	vkCmdPipelineBarrier2(commandBuffer, &depInfo);
+	VulkanBarrier::CreateImageBarrier(commandBuffer, &barrier, 1u);
 }
 
 // TODO This function uses CreateBarrier() instead on TransitionLayout()
@@ -753,14 +748,8 @@ void VulkanImage::CreateBarrier(const ImageBarrierInfo& info, const VkImageSubre
 		.image = image_,
 		.subresourceRange = subresourceRange
 	};
-	VkDependencyInfo depInfo =
-	{
-		.sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,
-		.pNext = nullptr ,
-		.imageMemoryBarrierCount = 1u,
-		.pImageMemoryBarriers = &barrier
-	};
-	vkCmdPipelineBarrier2(info.commandBuffer, &depInfo);
+
+	VulkanBarrier::CreateImageBarrier(info.commandBuffer, &barrier, 1u);
 }
 
 uint32_t VulkanImage::BytesPerTexFormat(VkFormat fmt)
