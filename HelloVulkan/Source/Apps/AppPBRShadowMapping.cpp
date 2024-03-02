@@ -23,6 +23,7 @@ void AppPBRShadowMapping::Init()
 		vulkanContext_,
 		shadowMapSize,
 		shadowMapSize,
+		1u,// layerCount
 		VK_SAMPLE_COUNT_1_BIT,
 		VK_IMAGE_USAGE_SAMPLED_BIT);
 	shadowMap_->CreateDefaultSampler(vulkanContext_);

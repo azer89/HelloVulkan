@@ -152,6 +152,7 @@ void VulkanImage::CreateDepthResources(
 	VulkanContext& ctx, 
 	uint32_t width, 
 	uint32_t height,
+	uint32_t layerCount,
 	VkSampleCountFlagBits sampleCount,
 	VkImageUsageFlags additionalUsage)
 {
@@ -160,8 +161,8 @@ void VulkanImage::CreateDepthResources(
 		ctx,
 		width,
 		height,
-		1, // mip
-		1, // layer
+		1u, // mip
+		layerCount, // layer
 		depthFormat,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | additionalUsage,
