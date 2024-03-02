@@ -150,12 +150,6 @@ vec3 Ambient(
 	return (kD * diffuse + specular) * ao;
 }
 
-// stackoverflow.com/questions/51108596/linearize-depth
-float LinearDepth(float z, float near, float far)
-{
-	return near * far / (far + z * (near - far));
-}
-
 void main()
 {
 	MeshData mData = meshes[meshIndex];
