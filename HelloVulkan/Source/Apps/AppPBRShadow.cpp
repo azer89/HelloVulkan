@@ -25,7 +25,13 @@ void AppPBRShadow::Init()
 		1u,// layerCount
 		VK_SAMPLE_COUNT_1_BIT,
 		VK_IMAGE_USAGE_SAMPLED_BIT);
-	shadowMap_->CreateDefaultSampler(vulkanContext_);
+	shadowMap_->CreateDefaultSampler(
+		vulkanContext_,
+		0.f,
+		1.f,
+		VK_FILTER_LINEAR,
+		VK_FILTER_LINEAR,
+		VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
 	shadowMap_->SetDebugName(vulkanContext_, "Shadow_Map_Image");
 
 	// Initialize lights
