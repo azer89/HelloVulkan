@@ -3,7 +3,7 @@
 
 // Constants
 constexpr uint32_t UBO_COUNT = 3;
-constexpr uint32_t SSBO_COUNT = 4;
+constexpr uint32_t SSBO_COUNT = 3;
 constexpr uint32_t PBR_MESH_TEXTURE_COUNT = 6;
 constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 
@@ -137,7 +137,6 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 	buildInfo.AddBuffer(lights_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
 	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
 	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
 	for (size_t i = 0; i < PBR_MESH_TEXTURE_COUNT; ++i)
 	{
 		buildInfo.AddImage(nullptr);
@@ -160,7 +159,6 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 		buildInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 2);
 		buildInfo.UpdateBuffer(&(cfBuffers_->lightCellsBuffers_[i]), 4);
 		buildInfo.UpdateBuffer(&(cfBuffers_->lightIndicesBuffers_[i]), 5);
-		buildInfo.UpdateBuffer(&(cfBuffers_->aabbBuffers_[i]), 6);
 		for (Model* model : models_)
 		{
 			buildInfo.UpdateBuffer(&(model->modelBuffers_[i]), 1);
