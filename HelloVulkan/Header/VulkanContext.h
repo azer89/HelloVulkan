@@ -75,7 +75,6 @@ public:
 		uint32_t height);
 	VkResult GetNextSwapchainImage(VkSemaphore nextSwapchainImageSemaphore);
 
-	// TODO Maybe these four functions can be simplified/combined
 	[[nodiscard]] VkCommandBuffer BeginOneTimeGraphicsCommand() const;
 	void EndOneTimeGraphicsCommand(VkCommandBuffer commandBuffer) const;
 	[[nodiscard]] VkCommandBuffer BeginOneTimeComputeCommand() const;
@@ -195,7 +194,6 @@ private:
 	// Raytracing
 	VkPhysicalDeviceRayTracingPipelinePropertiesKHR rtPipelineProperties_;
 	VkPhysicalDeviceAccelerationStructureFeaturesKHR rtASFeatures_;
-
 	VkPhysicalDeviceBufferDeviceAddressFeatures rtDevAddressEnabledFeatures_;
 	VkPhysicalDeviceRayTracingPipelineFeaturesKHR rtPipelineEnabledFeatures_;
 	VkPhysicalDeviceAccelerationStructureFeaturesKHR rtASEnabledFeatures;
@@ -205,12 +203,11 @@ private:
 	//VkPhysicalDeviceShaderDrawParametersFeatures shaderDrawFeatures_;
 
 	// Features
+	// NOTE features2_ and features13_ are always created
+	VkPhysicalDeviceVulkan13Features features13_;
 	VkPhysicalDeviceVulkan11Features features11_;
 	VkPhysicalDeviceFeatures2 features2_;
 	VkPhysicalDeviceFeatures features_;
-
-	// pNext structure for passing extension structures to device creation
-	void* pNextChain_ = nullptr;
 };
 
 #endif
