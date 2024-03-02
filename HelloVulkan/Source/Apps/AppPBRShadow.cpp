@@ -17,12 +17,11 @@ AppPBRShadow::AppPBRShadow()
 void AppPBRShadow::Init()
 {
 	// Init shadow map
-	uint32_t shadowMapSize = 2048;
 	shadowMap_ = std::make_unique<VulkanImage>();
 	shadowMap_->CreateDepthResources(
 		vulkanContext_,
-		shadowMapSize,
-		shadowMapSize,
+		ShadowConfig::DepthSize,
+		ShadowConfig::DepthSize,
 		1u,// layerCount
 		VK_SAMPLE_COUNT_1_BIT,
 		VK_IMAGE_USAGE_SAMPLED_BIT);
