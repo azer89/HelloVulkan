@@ -22,8 +22,8 @@ void DescriptorBuildInfo::AddBuffer(
 	({
 		.bufferInfoPtr_ = bufferInfo,
 		.descriptorCount_ = 1u,
-		.type_ = dsType,
-		.shaderFlags_ = stageFlags
+		.descriptorType_ = dsType,
+		.shaderStage_ = stageFlags
 		});
 }
 
@@ -45,25 +45,25 @@ void DescriptorBuildInfo::AddImage(
 	({
 		.imageInfoPtr_ = imageInfo,
 		.descriptorCount_ = 1u,
-		.type_ = dsType,
-		.shaderFlags_ = stageFlags
+		.descriptorType_ = dsType,
+		.shaderStage_ = stageFlags
 		});
 }
 
 // Special case for descriptor indexing
 void DescriptorBuildInfo::AddImageArray(
-	const std::vector<VkDescriptorImageInfo>& imageArrays,
+	const std::vector<VkDescriptorImageInfo>& imageArray,
 	VkDescriptorType dsType,
 	VkShaderStageFlags stageFlags)
 {
-	imageArrays_ = imageArrays;
+	imageArrays_ = imageArray;
 
 	writes_.push_back
 	({
 		.imageInfoPtr_ = imageArrays_.data(),
 		.descriptorCount_ = static_cast<uint32_t>(imageArrays_.size()),
-		.type_ = dsType,
-		.shaderFlags_ = stageFlags
+		.descriptorType_ = dsType,
+		.shaderStage_ = stageFlags
 		});
 }
 
@@ -73,8 +73,8 @@ void DescriptorBuildInfo::AddAccelerationStructure()
 	writes_.push_back
 	({
 		.descriptorCount_ = 1u,
-		.type_ = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
-		.shaderFlags_ = VK_SHADER_STAGE_RAYGEN_BIT_KHR
+		.descriptorType_ = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
+		.shaderStage_ = VK_SHADER_STAGE_RAYGEN_BIT_KHR
 		});
 }
 
@@ -85,8 +85,8 @@ void DescriptorBuildInfo::AddAccelerationStructure(VkWriteDescriptorSetAccelerat
 	({
 		.pNext_ = asInfo,
 		.descriptorCount_ = 1u,
-		.type_ = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
-		.shaderFlags_ = VK_SHADER_STAGE_RAYGEN_BIT_KHR
+		.descriptorType_ = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
+		.shaderStage_ = VK_SHADER_STAGE_RAYGEN_BIT_KHR
 		});
 }
 

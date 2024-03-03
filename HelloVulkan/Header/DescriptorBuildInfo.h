@@ -17,8 +17,8 @@ struct DescriptorSetWrite
 	VkDescriptorBufferInfo* bufferInfoPtr_ = nullptr;
 	// If you have an array of buffers/images, descriptorCount_ must be bigger than one
 	uint32_t descriptorCount_ = 1u;
-	VkDescriptorType type_;
-	VkShaderStageFlags shaderFlags_; // TODO rename to stageFlags_
+	VkDescriptorType descriptorType_;
+	VkShaderStageFlags shaderStage_;
 };
 
 class DescriptorBuildInfo
@@ -46,8 +46,9 @@ public:
 	void UpdateImage(const VulkanImage* image, size_t bindingIndex);
 
 	// Descriptor indexing
+	// TODO imageArrays is not stored so you need to supply it again if you update the descriptors
 	void AddImageArray(
-		const std::vector<VkDescriptorImageInfo>& imageArrays,
+		const std::vector<VkDescriptorImageInfo>& imageArray,
 		VkDescriptorType dsType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 		VkShaderStageFlags stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT);
 
@@ -55,6 +56,7 @@ public:
 	void AddAccelerationStructure();
 	void AddAccelerationStructure(VkWriteDescriptorSetAccelerationStructureKHR* asInfo);
 	void UpdateStorageImage(const VulkanImage* image, size_t bindingIndex);
+	// TODO asInfo is not stored so you need to supply it again if you update the descriptors
 	void UpdateAccelerationStructure(VkWriteDescriptorSetAccelerationStructureKHR* asInfo, size_t bindingIndex);
 
 private:

@@ -19,23 +19,23 @@ void VulkanDescriptor::CreatePoolAndLayout(
 	// Create pool
 	for (auto& write : buildInfo.writes_)
 	{
-		if (write.type_ == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
+		if (write.descriptorType_ == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
 		{
 			uboCount++;
 		}
-		else if(write.type_ == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER)
+		else if(write.descriptorType_ == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER)
 		{
 			ssboCount++;
 		}
-		else if (write.type_ == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER)
+		else if (write.descriptorType_ == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER)
 		{
 			samplerCount++;
 		}
-		else if (write.type_ == VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR)
+		else if (write.descriptorType_ == VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR)
 		{
 			accelerationStructureCount++;
 		}
-		else if (write.type_ == VK_DESCRIPTOR_TYPE_STORAGE_IMAGE)
+		else if (write.descriptorType_ == VK_DESCRIPTOR_TYPE_STORAGE_IMAGE)
 		{
 			storageImageCount++;
 		}
@@ -112,8 +112,8 @@ void VulkanDescriptor::CreatePoolAndLayout(
 			CreateDescriptorSetLayoutBinding
 			(
 				bindingIndex++,
-				write.type_,
-				write.shaderFlags_,
+				write.descriptorType_,
+				write.shaderStage_,
 				write.descriptorCount_
 			)
 		);
@@ -171,7 +171,7 @@ void VulkanDescriptor::UpdateSet(
 			.dstBinding = bindIndex++,
 			.dstArrayElement = 0,
 			.descriptorCount = buildInfo.writes_[i].descriptorCount_,
-			.descriptorType = buildInfo.writes_[i].type_,
+			.descriptorType = buildInfo.writes_[i].descriptorType_,
 			.pImageInfo = buildInfo.writes_[i].imageInfoPtr_,
 			.pBufferInfo = buildInfo.writes_[i].bufferInfoPtr_,
 			.pTexelBufferView = nullptr
