@@ -7,11 +7,6 @@
 struct ResourcesIBL
 {
 public:
-	VulkanImage environmentCubemap_;
-	VulkanImage diffuseCubemap_;
-	VulkanImage specularCubemap_;
-	VulkanImage brdfLut_;
-
 	ResourcesIBL() = default;
 	~ResourcesIBL()
 	{
@@ -33,6 +28,13 @@ public:
 		specularCubemap_.SetDebugName(ctx, "Specular_Cubemap");
 		brdfLut_.SetDebugName(ctx, "BRDF_LUT");
 	}
+
+public:
+	VulkanImage environmentCubemap_;
+	VulkanImage diffuseCubemap_;
+	VulkanImage specularCubemap_;
+	VulkanImage brdfLut_;
+
 };
 
 #endif

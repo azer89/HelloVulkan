@@ -40,6 +40,18 @@
     <Filter Include="Shaders\SlotBased">
       <UniqueIdentifier>{c9d188c8-c6c8-44ce-9761-a9e9047303d5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Resources">
+      <UniqueIdentifier>{4e6cdf49-794b-402a-8748-a418f5118a42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Resources">
+      <UniqueIdentifier>{78e4315e-6fb6-4fe6-9b08-c42a79f6a99c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Vulkan">
+      <UniqueIdentifier>{e20b68cd-198e-4595-a415-aa907855d39e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Vulkan">
+      <UniqueIdentifier>{71029f71-ee69-4504-93d7-80f232f96420}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\Cube.vert">
@@ -167,37 +179,7 @@
     <ClInclude Include="Header\Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\PipelineCreateInfo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Header\TextureMapper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\VulkanBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\VulkanContext.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\VulkanFramebuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\VulkanImage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\VulkanInstance.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\VulkanRenderPass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\VulkanShader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\VulkanUtility.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\Light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header\Apps\AppBase.h">
@@ -242,9 +224,6 @@
     <ClInclude Include="Header\Pipelines\PipelineTonemap.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
-    <ClInclude Include="Header\VulkanDescriptor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Pipelines\PipelineConfig.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
@@ -269,9 +248,6 @@
     <ClInclude Include="Header\Pipelines\PipelineSimpleRaytracing.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
-    <ClInclude Include="Header\AccelerationStructure.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Pipelines\PipelineShadow.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
@@ -290,32 +266,68 @@
     <ClInclude Include="Header\FrameCounter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\VulkanBarrier.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Apps\AppPBRShadow.h">
       <Filter>Header Files\Apps</Filter>
     </ClInclude>
     <ClInclude Include="Header\Pipelines\PipelinePBRShadow.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
-    <ClInclude Include="Header\ResourcesClusterForward.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\VulkanDescriptorInfo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\ResourcesIBL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Header\UBOs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\ResourcesShadow.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Header\Vulkan\AccelerationStructure.h">
+      <Filter>Header Files\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="Header\ResourcesShared.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Header\Vulkan\PipelineCreateInfo.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Vulkan\VulkanBarrier.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Vulkan\VulkanBuffer.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Vulkan\VulkanContext.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Vulkan\VulkanDescriptor.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Vulkan\VulkanDescriptorInfo.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Vulkan\VulkanFramebuffer.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Vulkan\VulkanImage.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Vulkan\VulkanInstance.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Vulkan\VulkanRenderPass.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Vulkan\VulkanShader.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Vulkan\VulkanUtility.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Resources\Light.h">
+      <Filter>Header Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Resources\ResourcesClusterForward.h">
+      <Filter>Header Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Resources\ResourcesIBL.h">
+      <Filter>Header Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Resources\ResourcesShadow.h">
+      <Filter>Header Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Resources\ResourcesShared.h">
+      <Filter>Header Files\Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -329,33 +341,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\VulkanBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\VulkanContext.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\VulkanFramebuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\VulkanImage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\VulkanInstance.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\VulkanRenderPass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\VulkanShader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\VulkanUtility.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Lights.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Apps\AppBase.cpp">
@@ -400,9 +385,6 @@
     <ClCompile Include="Source\Pipelines\PipelineTonemap.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
-    <ClCompile Include="Source\VulkanDescriptor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Pipelines\PipelineLightCulling.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
@@ -421,9 +403,6 @@
     <ClCompile Include="Source\Pipelines\PipelineSimpleRaytracing.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
-    <ClCompile Include="Source\AccelerationStructure.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Pipelines\PipelineShadow.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
@@ -439,20 +418,62 @@
     <ClCompile Include="Source\FrameCounter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\VulkanBarrier.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Apps\AppPBRShadow.cpp">
       <Filter>Source Files\Apps</Filter>
     </ClCompile>
     <ClCompile Include="Source\Pipelines\PipelinePBRShadow.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ResourcesClusterForward.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\Vulkan\AccelerationStructure.cpp">
+      <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="Source\VulkanDescriptorInfo.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\Vulkan\VulkanBarrier.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vulkan\VulkanBuffer.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vulkan\VulkanContext.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vulkan\VulkanDescriptor.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vulkan\VulkanDescriptorInfo.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vulkan\VulkanFramebuffer.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vulkan\VulkanImage.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vulkan\VulkanInstance.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vulkan\VulkanRenderPass.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vulkan\VulkanShader.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vulkan\VulkanUtility.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Resources\Lights.cpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Resources\ResourcesClusterForward.cpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Resources\ResourcesIBL.cpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Resources\ResourcesShadow.cpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Resources\ResourcesShared.cpp">
+      <Filter>Source Files\Resources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

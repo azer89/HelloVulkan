@@ -40,7 +40,10 @@ class Lights
 {
 public:
 	Lights() = default;
-	~Lights() = default;
+	~Lights()
+	{
+		Destroy();
+	}
 
 	void Destroy();
 

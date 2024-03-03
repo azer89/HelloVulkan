@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;GLM_FORCE_DEPTH_ZERO_TO_ONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Header;Header\Apps;Header\Pipelines;..\External\stb;..\External\assimp\include;..\External\VS_Projects\assimp\include;..\External\GLFW\include;..\External\GLM;..\External\GLI;..\External\ImGui;..\External\VS_Projects\ImGui;..\External\ImGui\backends;..\External\volk;..\External\VulkanMemoryAllocator\include;$(VULKAN_SDK)\Include;$(VULKAN_SDK)\Include\glslang\Include;$(VULKAN_SDK)\Include\glslang\MachineIndependent;$(VULKAN_SDK)\Include\glslang\Public;$(VULKAN_SDK)\Include\glslang\SPIRV;$(VULKAN_SDK)\Include\spirv_cross;$(VULKAN_SDK)\Include\spirv-tools;$(VULKAN_SDK)\Include\spirv-headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Header;Header\Apps;Header\Pipelines;Header\Resources;Header\Vulkan;..\External\stb;..\External\assimp\include;..\External\VS_Projects\assimp\include;..\External\GLFW\include;..\External\GLM;..\External\GLI;..\External\ImGui;..\External\VS_Projects\ImGui;..\External\ImGui\backends;..\External\volk;..\External\VulkanMemoryAllocator\include;$(VULKAN_SDK)\Include;$(VULKAN_SDK)\Include\glslang\Include;$(VULKAN_SDK)\Include\glslang\MachineIndependent;$(VULKAN_SDK)\Include\glslang\Public;$(VULKAN_SDK)\Include\glslang\SPIRV;$(VULKAN_SDK)\Include\spirv_cross;$(VULKAN_SDK)\Include\spirv-tools;$(VULKAN_SDK)\Include\spirv-headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -122,7 +122,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;GLM_FORCE_DEPTH_ZERO_TO_ONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Header;Header\Apps;Header\Pipelines;..\External\stb;..\External\assimp\include;..\External\VS_Projects\assimp\include;..\External\GLFW\include;..\External\GLM;..\External\GLI;..\External\ImGui;..\External\VS_Projects\ImGui;..\External\ImGui\backends;..\External\volk;..\External\VulkanMemoryAllocator\include;$(VULKAN_SDK)\Include;$(VULKAN_SDK)\Include\glslang\Include;$(VULKAN_SDK)\Include\glslang\MachineIndependent;$(VULKAN_SDK)\Include\glslang\Public;$(VULKAN_SDK)\Include\glslang\SPIRV;$(VULKAN_SDK)\Include\spirv_cross;$(VULKAN_SDK)\Include\spirv-tools;$(VULKAN_SDK)\Include\spirv-headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Header;Header\Apps;Header\Pipelines;Header\Resources;Header\Vulkan;..\External\stb;..\External\assimp\include;..\External\VS_Projects\assimp\include;..\External\GLFW\include;..\External\GLM;..\External\GLI;..\External\ImGui;..\External\VS_Projects\ImGui;..\External\ImGui\backends;..\External\volk;..\External\VulkanMemoryAllocator\include;$(VULKAN_SDK)\Include;$(VULKAN_SDK)\Include\glslang\Include;$(VULKAN_SDK)\Include\glslang\MachineIndependent;$(VULKAN_SDK)\Include\glslang\Public;$(VULKAN_SDK)\Include\glslang\SPIRV;$(VULKAN_SDK)\Include\spirv_cross;$(VULKAN_SDK)\Include\spirv-tools;$(VULKAN_SDK)\Include\spirv-headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -182,17 +182,10 @@
     <ClInclude Include="Header\Apps\AppPBRSlotBased.h" />
     <ClInclude Include="Header\Apps\AppSimpleRaytracing.h" />
     <ClInclude Include="Header\Camera.h" />
-    <ClInclude Include="Header\ResourcesClusterForward.h" />
     <ClInclude Include="Header\Configs.h" />
-    <ClInclude Include="Header\ResourcesShadow.h" />
-    <ClInclude Include="Header\ResourcesShared.h" />
-    <ClInclude Include="Header\VulkanDescriptorInfo.h" />
     <ClInclude Include="Header\FrameCounter.h" />
-    <ClInclude Include="Header\ResourcesIBL.h" />
-    <ClInclude Include="Header\Light.h" />
     <ClInclude Include="Header\Mesh.h" />
     <ClInclude Include="Header\Model.h" />
-    <ClInclude Include="Header\PipelineCreateInfo.h" />
     <ClInclude Include="Header\Pipelines\PipelineAABBGenerator.h" />
     <ClInclude Include="Header\Pipelines\PipelineBase.h" />
     <ClInclude Include="Header\Pipelines\PipelineBRDFLUT.h" />
@@ -214,20 +207,27 @@
     <ClInclude Include="Header\Pipelines\PipelineSkybox.h" />
     <ClInclude Include="Header\Pipelines\PipelineTonemap.h" />
     <ClInclude Include="Header\PushConstants.h" />
-    <ClInclude Include="Header\AccelerationStructure.h" />
+    <ClInclude Include="Header\Resources\Light.h" />
+    <ClInclude Include="Header\Resources\ResourcesClusterForward.h" />
+    <ClInclude Include="Header\Resources\ResourcesIBL.h" />
+    <ClInclude Include="Header\Resources\ResourcesShadow.h" />
+    <ClInclude Include="Header\Resources\ResourcesShared.h" />
     <ClInclude Include="Header\Scene.h" />
     <ClInclude Include="Header\TextureMapper.h" />
     <ClInclude Include="Header\UBOs.h" />
-    <ClInclude Include="Header\VulkanBarrier.h" />
-    <ClInclude Include="Header\VulkanBuffer.h" />
-    <ClInclude Include="Header\VulkanDescriptor.h" />
-    <ClInclude Include="Header\VulkanContext.h" />
-    <ClInclude Include="Header\VulkanFramebuffer.h" />
-    <ClInclude Include="Header\VulkanImage.h" />
-    <ClInclude Include="Header\VulkanInstance.h" />
-    <ClInclude Include="Header\VulkanRenderPass.h" />
-    <ClInclude Include="Header\VulkanShader.h" />
-    <ClInclude Include="Header\VulkanUtility.h" />
+    <ClInclude Include="Header\Vulkan\AccelerationStructure.h" />
+    <ClInclude Include="Header\Vulkan\PipelineCreateInfo.h" />
+    <ClInclude Include="Header\Vulkan\VulkanBarrier.h" />
+    <ClInclude Include="Header\Vulkan\VulkanBuffer.h" />
+    <ClInclude Include="Header\Vulkan\VulkanContext.h" />
+    <ClInclude Include="Header\Vulkan\VulkanDescriptor.h" />
+    <ClInclude Include="Header\Vulkan\VulkanDescriptorInfo.h" />
+    <ClInclude Include="Header\Vulkan\VulkanFramebuffer.h" />
+    <ClInclude Include="Header\Vulkan\VulkanImage.h" />
+    <ClInclude Include="Header\Vulkan\VulkanInstance.h" />
+    <ClInclude Include="Header\Vulkan\VulkanRenderPass.h" />
+    <ClInclude Include="Header\Vulkan\VulkanShader.h" />
+    <ClInclude Include="Header\Vulkan\VulkanUtility.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Apps\AppBase.cpp" />
@@ -237,10 +237,7 @@
     <ClCompile Include="Source\Apps\AppPBRSlotBased.cpp" />
     <ClCompile Include="Source\Apps\AppSimpleRaytracing.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
-    <ClCompile Include="Source\ResourcesClusterForward.cpp" />
-    <ClCompile Include="Source\VulkanDescriptorInfo.cpp" />
     <ClCompile Include="Source\FrameCounter.cpp" />
-    <ClCompile Include="Source\Lights.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
     <ClCompile Include="Source\Model.cpp" />
@@ -263,18 +260,24 @@
     <ClCompile Include="Source\Pipelines\PipelineSimpleRaytracing.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineSkybox.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineTonemap.cpp" />
-    <ClCompile Include="Source\AccelerationStructure.cpp" />
+    <ClCompile Include="Source\Resources\Lights.cpp" />
+    <ClCompile Include="Source\Resources\ResourcesClusterForward.cpp" />
+    <ClCompile Include="Source\Resources\ResourcesIBL.cpp" />
+    <ClCompile Include="Source\Resources\ResourcesShadow.cpp" />
+    <ClCompile Include="Source\Resources\ResourcesShared.cpp" />
     <ClCompile Include="Source\Scene.cpp" />
-    <ClCompile Include="Source\VulkanBarrier.cpp" />
-    <ClCompile Include="Source\VulkanBuffer.cpp" />
-    <ClCompile Include="Source\VulkanDescriptor.cpp" />
-    <ClCompile Include="Source\VulkanContext.cpp" />
-    <ClCompile Include="Source\VulkanFramebuffer.cpp" />
-    <ClCompile Include="Source\VulkanImage.cpp" />
-    <ClCompile Include="Source\VulkanInstance.cpp" />
-    <ClCompile Include="Source\VulkanRenderPass.cpp" />
-    <ClCompile Include="Source\VulkanShader.cpp" />
-    <ClCompile Include="Source\VulkanUtility.cpp" />
+    <ClCompile Include="Source\Vulkan\AccelerationStructure.cpp" />
+    <ClCompile Include="Source\Vulkan\VulkanBarrier.cpp" />
+    <ClCompile Include="Source\Vulkan\VulkanBuffer.cpp" />
+    <ClCompile Include="Source\Vulkan\VulkanContext.cpp" />
+    <ClCompile Include="Source\Vulkan\VulkanDescriptor.cpp" />
+    <ClCompile Include="Source\Vulkan\VulkanDescriptorInfo.cpp" />
+    <ClCompile Include="Source\Vulkan\VulkanFramebuffer.cpp" />
+    <ClCompile Include="Source\Vulkan\VulkanImage.cpp" />
+    <ClCompile Include="Source\Vulkan\VulkanInstance.cpp" />
+    <ClCompile Include="Source\Vulkan\VulkanRenderPass.cpp" />
+    <ClCompile Include="Source\Vulkan\VulkanShader.cpp" />
+    <ClCompile Include="Source\Vulkan\VulkanUtility.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

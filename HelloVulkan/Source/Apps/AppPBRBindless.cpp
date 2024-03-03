@@ -48,8 +48,8 @@ void AppPBRBindless::Init()
 	skyboxPtr_ = std::make_unique<PipelineSkybox>(
 		vulkanContext_,
 		&(resIBL_->environmentCubemap_),
-		depthImage_.get(),
-		multiSampledColorImage_.get(),
+		&(resShared_->depthImage_),
+		&(resShared_->multiSampledColorImage_),
 		// This is the first offscreen render pass so
 		// we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | 
@@ -60,22 +60,23 @@ void AppPBRBindless::Init()
 		scene_.get(),
 		lights_.get(),
 		resIBL_.get(),
-		depthImage_.get(),
-		multiSampledColorImage_.get());
+		&(resShared_->depthImage_),
+		&(resShared_->multiSampledColorImage_));
 	lightPtr_ = std::make_unique<PipelineLightRender>(
 		vulkanContext_,
 		lights_.get(),
-		depthImage_.get(),
-		multiSampledColorImage_.get()
-	);
+		&(resShared_->depthImage_),
+		&(resShared_->multiSampledColorImage_));
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
 	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(
-		vulkanContext_, multiSampledColorImage_.get(), singleSampledColorImage_.get());
+		vulkanContext_, 
+		&(resShared_->multiSampledColorImage_),
+		&(resShared_->singleSampledColorImage_));
 	// This is on-screen render pass that transfers 
 	// singleSampledColorImage_ to swapchain image
 	tonemapPtr_ = std::make_unique<PipelineTonemap>(
 		vulkanContext_,
-		singleSampledColorImage_.get()
+		&(resShared_->singleSampledColorImage_)
 	);
 	// ImGui here
 	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
@@ -112,15 +113,12 @@ void AppPBRBindless::InitLights()
 
 void AppPBRBindless::DestroyResources()
 {
-	// IBL Images
+	// Resources
 	resIBL_.reset();
+	lights_.reset();
 
 	// Destroy meshes
 	scene_.reset();
-
-	// Lights
-	lights_->Destroy();
-	lights_.reset();
 
 	// Destroy renderers
 	clearPtr_.reset();
@@ -191,7 +189,7 @@ int AppPBRBindless::MainLoop()
 	vkDeviceWaitIdle(vulkanContext_.GetDevice());
 
 	DestroyResources();
-	Terminate();
+	Destroy();
 
 	return 0;
 }

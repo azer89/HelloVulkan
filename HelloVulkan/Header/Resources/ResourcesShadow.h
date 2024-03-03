@@ -7,7 +7,11 @@
 struct ResourcesShadow
 {
 public:
-	VulkanImage shadowMap_;
+	ResourcesShadow() = default;
+	~ResourcesShadow()
+	{
+		Destroy();
+	}
 
 	void CreateSingleShadowMap(VulkanContext& ctx)
 	{
@@ -35,6 +39,9 @@ public:
 	{
 		shadowMap_.Destroy();
 	}
+
+public:
+	VulkanImage shadowMap_;
 
 private:
 	VkDevice device_;

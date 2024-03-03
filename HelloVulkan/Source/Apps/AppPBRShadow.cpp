@@ -17,22 +17,8 @@ AppPBRShadow::AppPBRShadow()
 void AppPBRShadow::Init()
 {
 	// Init shadow map
-	shadowMap_ = std::make_unique<VulkanImage>();
-	shadowMap_->CreateDepthResources(
-		vulkanContext_,
-		ShadowConfig::DepthSize,
-		ShadowConfig::DepthSize,
-		1u,// layerCount
-		VK_SAMPLE_COUNT_1_BIT,
-		VK_IMAGE_USAGE_SAMPLED_BIT);
-	shadowMap_->CreateDefaultSampler(
-		vulkanContext_,
-		0.f,
-		1.f,
-		VK_FILTER_LINEAR,
-		VK_FILTER_LINEAR,
-		VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
-	shadowMap_->SetDebugName(vulkanContext_, "Shadow_Map_Image");
+	resShadow_ = std::make_unique<ResourcesShadow>();
+	resShadow_->CreateSingleShadowMap(vulkanContext_);
 
 	// Initialize lights
 	InitLights();
@@ -72,8 +58,8 @@ void AppPBRShadow::Init()
 	skyboxPtr_ = std::make_unique<PipelineSkybox>(
 		vulkanContext_,
 		&(resIBL_->environmentCubemap_),
-		depthImage_.get(),
-		multiSampledColorImage_.get(),
+		&(resShared_->depthImage_),
+		&(resShared_->multiSampledColorImage_),
 		// This is the first offscreen render pass so
 		// we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | 
@@ -84,24 +70,24 @@ void AppPBRShadow::Init()
 		scene_.get(),
 		lights_.get(),
 		resIBL_.get(),
-		shadowMap_.get(),
-		depthImage_.get(),
-		multiSampledColorImage_.get());
-	shadowPtr_ = std::make_unique<PipelineShadow>(vulkanContext_, scene_.get(), shadowMap_.get());
+		&(resShadow_->shadowMap_),
+		&(resShared_->depthImage_),
+		&(resShared_->multiSampledColorImage_));
+	shadowPtr_ = std::make_unique<PipelineShadow>(vulkanContext_, scene_.get(), &(resShadow_->shadowMap_));
 	lightPtr_ = std::make_unique<PipelineLightRender>(
 		vulkanContext_,
 		lights_.get(),
-		depthImage_.get(),
-		multiSampledColorImage_.get()
+		&(resShared_->depthImage_),
+		&(resShared_->multiSampledColorImage_)
 	);
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
 	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(
-		vulkanContext_, multiSampledColorImage_.get(), singleSampledColorImage_.get());
+		vulkanContext_, &(resShared_->multiSampledColorImage_), &(resShared_->singleSampledColorImage_));
 	// This is on-screen render pass that transfers 
 	// singleSampledColorImage_ to swapchain image
 	tonemapPtr_ = std::make_unique<PipelineTonemap>(
 		vulkanContext_,
-		singleSampledColorImage_.get()
+		&(resShared_->singleSampledColorImage_)
 	);
 	// ImGui here
 	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
@@ -144,18 +130,13 @@ void AppPBRShadow::InitLights()
 
 void AppPBRShadow::DestroyResources()
 {
-	shadowMap_->Destroy();
-	shadowMap_.reset();
-	
-	// IBL Images
+	// Resources
+	resShadow_.reset();
 	resIBL_.reset();
+	lights_.reset();
 
 	// Destroy meshes
 	scene_.reset();
-
-	// Lights
-	lights_->Destroy();
-	lights_.reset();
 	
 	// Destroy renderers
 	clearPtr_.reset();
@@ -280,7 +261,7 @@ int AppPBRShadow::MainLoop()
 	vkDeviceWaitIdle(vulkanContext_.GetDevice());
 
 	DestroyResources();
-	Terminate();
+	Destroy();
 
 	return 0;
 }
