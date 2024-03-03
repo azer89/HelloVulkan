@@ -189,5 +189,5 @@ void AppPBRBindless::MainLoop()
 	vkDeviceWaitIdle(vulkanContext_.GetDevice());
 
 	DestroyResources();
-	Destroy();
+	DestroyInternal();
 }

@@ -260,7 +260,7 @@ void AppBase::PollEvents()
 	glfwPollEvents();
 }
 
-void AppBase::Destroy()
+void AppBase::DestroyInternal()
 {
 	glfwDestroyWindow(glfwWindow_);
 	glfwTerminate();

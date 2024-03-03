@@ -78,5 +78,5 @@ void AppSimpleRaytracing::MainLoop()
 	vkDeviceWaitIdle(vulkanContext_.GetDevice());
 
 	DestroyResources();
-	Destroy();
+	DestroyInternal();
 }

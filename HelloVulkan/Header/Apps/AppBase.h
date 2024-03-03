@@ -53,7 +53,7 @@ protected:
 	void ProcessInput();
 
 	// Should be used to destroy resources
-	void Destroy();
+	void DestroyInternal();
 
 protected:
 	GLFWwindow* glfwWindow_;
@@ -81,14 +81,7 @@ protected:
 	uint32_t windowHeight_;
 	bool shouldRecreateSwapchain_;
 
-	// Shared by multiple render passes
-	// TODO Maybe group these inside a struct called ResourcesShared
-	//std::unique_ptr<VulkanImage> multiSampledColorImage_;
-	//std::unique_ptr<VulkanImage> singleSampledColorImage_;
-	//std::unique_ptr<VulkanImage> depthImage_;
 	std::unique_ptr<ResourcesShared> resShared_;
-	
-	// Optional IBL images
 	std::unique_ptr<ResourcesIBL> resIBL_;
 };
 

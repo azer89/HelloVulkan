@@ -233,5 +233,5 @@ void AppPBRClusterForward::MainLoop()
 	vkDeviceWaitIdle(vulkanContext_.GetDevice());
 
 	DestroyResources();
-	Destroy();
+	DestroyInternal();
 }

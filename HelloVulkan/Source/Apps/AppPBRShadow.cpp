@@ -261,5 +261,5 @@ void AppPBRShadow::MainLoop()
 	vkDeviceWaitIdle(vulkanContext_.GetDevice());
 
 	DestroyResources();
-	Destroy();
+	DestroyInternal();
 }
