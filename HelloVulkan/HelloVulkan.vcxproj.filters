@@ -323,10 +323,10 @@
     <ClInclude Include="Header\Resources\ResourcesLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Vulkan\VulkanAccelerationStructure.h">
+    <ClInclude Include="Header\Vulkan\VulkanPipelineCreateInfo.h">
       <Filter>Header Files\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Vulkan\VulkanPipelineCreateInfo.h">
+    <ClInclude Include="Header\Vulkan\VulkanAccelStructure.h">
       <Filter>Header Files\Vulkan</Filter>
     </ClInclude>
   </ItemGroup>
@@ -472,7 +472,7 @@
     <ClCompile Include="Source\Resources\ResourcesLight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Vulkan\VulkanAccelerationStructure.cpp">
+    <ClCompile Include="Source\Vulkan\VulkanAccelStructure.cpp">
       <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
   </ItemGroup>
