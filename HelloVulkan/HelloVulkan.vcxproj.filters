@@ -173,9 +173,6 @@
     <ClInclude Include="Header\TextureMapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\UBO.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Header\VulkanBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -251,9 +248,6 @@
     <ClInclude Include="Header\Pipelines\PipelineConfig.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
-    <ClInclude Include="Header\ClusterForwardBuffers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Pipelines\PipelineAABBGenerator.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
@@ -284,9 +278,6 @@
     <ClInclude Include="..\Shaders\ShadowMapping\UBO.glsl">
       <Filter>Shaders\ShadowMapping</Filter>
     </ClInclude>
-    <ClInclude Include="Header\IBLResources.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Pipelines\PipelinePBRBindless.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
@@ -299,9 +290,6 @@
     <ClInclude Include="Header\FrameCounter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\DescriptorBuildInfo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Header\VulkanBarrier.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -310,6 +298,24 @@
     </ClInclude>
     <ClInclude Include="Header\Pipelines\PipelinePBRShadow.h">
       <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\ResourcesClusterForward.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\VulkanDescriptorInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\ResourcesIBL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\UBOs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\ResourcesShadow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\ResourcesShared.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -397,9 +403,6 @@
     <ClCompile Include="Source\VulkanDescriptor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ClusterForwardBuffers.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Pipelines\PipelineLightCulling.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
@@ -436,9 +439,6 @@
     <ClCompile Include="Source\FrameCounter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\DescriptorBuildInfo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\VulkanBarrier.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -447,6 +447,12 @@
     </ClCompile>
     <ClCompile Include="Source\Pipelines\PipelinePBRShadow.cpp">
       <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ResourcesClusterForward.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\VulkanDescriptorInfo.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

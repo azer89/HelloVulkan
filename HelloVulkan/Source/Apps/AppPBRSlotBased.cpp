@@ -39,7 +39,7 @@ void AppPBRSlotBased::Init()
 	// This draws a cube
 	skyboxPtr_ = std::make_unique<PipelineSkybox>(
 		vulkanContext_,
-		&(iblResources_->environmentCubemap_),
+		&(resIBL_->environmentCubemap_),
 		depthImage_.get(),
 		multiSampledColorImage_.get(),
 		// This is the first offscreen render pass so
@@ -51,7 +51,7 @@ void AppPBRSlotBased::Init()
 		vulkanContext_,
 		models,
 		lights_.get(),
-		iblResources_.get(),
+		resIBL_.get(),
 		depthImage_.get(),
 		multiSampledColorImage_.get());
 	lightPtr_ = std::make_unique<PipelineLightRender>(
@@ -105,7 +105,7 @@ void AppPBRSlotBased::InitLights()
 void AppPBRSlotBased::DestroyResources()
 {
 	// IBL Images
-	iblResources_.reset();
+	resIBL_.reset();
 
 	// Destroy meshes
 	model_->Destroy();

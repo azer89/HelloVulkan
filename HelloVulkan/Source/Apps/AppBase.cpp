@@ -426,7 +426,7 @@ void AppBase::InitSharedImageResources()
 
 void AppBase::InitIBLResources(const std::string& hdrFile)
 {
-	iblResources_ = std::make_unique<ResourcesIBL>();
+	resIBL_ = std::make_unique<ResourcesIBL>();
 
 	// Create a cubemap from the input HDR
 	{
@@ -434,27 +434,27 @@ void AppBase::InitIBLResources(const std::string& hdrFile)
 			vulkanContext_,
 			hdrFile);
 		e2c.OffscreenRender(vulkanContext_,
-			&(iblResources_->environmentCubemap_)); // Output
+			&(resIBL_->environmentCubemap_)); // Output
 	}
 
 	// Cube filtering
 	{
-		PipelineCubeFilter cubeFilter(vulkanContext_, &(iblResources_->environmentCubemap_));
+		PipelineCubeFilter cubeFilter(vulkanContext_, &(resIBL_->environmentCubemap_));
 		// Diffuse
 		cubeFilter.OffscreenRender(vulkanContext_,
-			&(iblResources_->diffuseCubemap_),
+			&(resIBL_->diffuseCubemap_),
 			CubeFilterType::Diffuse);
 		// Specular
 		cubeFilter.OffscreenRender(vulkanContext_,
-			&(iblResources_->specularCubemap_),
+			&(resIBL_->specularCubemap_),
 			CubeFilterType::Specular);
 	}
 
 	// BRDF look up table
 	{
 		PipelineBRDFLUT brdfLUTCompute(vulkanContext_);
-		brdfLUTCompute.CreateLUT(vulkanContext_, &(iblResources_->brdfLut_));
+		brdfLUTCompute.CreateLUT(vulkanContext_, &(resIBL_->brdfLut_));
 	}
 
-	iblResources_->SetDebugNames(vulkanContext_);
+	resIBL_->SetDebugNames(vulkanContext_);
 }

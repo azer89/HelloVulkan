@@ -47,7 +47,7 @@ void AppPBRBindless::Init()
 	// This draws a cube
 	skyboxPtr_ = std::make_unique<PipelineSkybox>(
 		vulkanContext_,
-		&(iblResources_->environmentCubemap_),
+		&(resIBL_->environmentCubemap_),
 		depthImage_.get(),
 		multiSampledColorImage_.get(),
 		// This is the first offscreen render pass so
@@ -59,7 +59,7 @@ void AppPBRBindless::Init()
 		vulkanContext_,
 		scene_.get(),
 		lights_.get(),
-		iblResources_.get(),
+		resIBL_.get(),
 		depthImage_.get(),
 		multiSampledColorImage_.get());
 	lightPtr_ = std::make_unique<PipelineLightRender>(
@@ -113,7 +113,7 @@ void AppPBRBindless::InitLights()
 void AppPBRBindless::DestroyResources()
 {
 	// IBL Images
-	iblResources_.reset();
+	resIBL_.reset();
 
 	// Destroy meshes
 	scene_.reset();

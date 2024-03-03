@@ -71,7 +71,7 @@ void AppPBRShadow::Init()
 	// This draws a cube
 	skyboxPtr_ = std::make_unique<PipelineSkybox>(
 		vulkanContext_,
-		&(iblResources_->environmentCubemap_),
+		&(resIBL_->environmentCubemap_),
 		depthImage_.get(),
 		multiSampledColorImage_.get(),
 		// This is the first offscreen render pass so
@@ -83,7 +83,7 @@ void AppPBRShadow::Init()
 		vulkanContext_,
 		scene_.get(),
 		lights_.get(),
-		iblResources_.get(),
+		resIBL_.get(),
 		shadowMap_.get(),
 		depthImage_.get(),
 		multiSampledColorImage_.get());
@@ -148,7 +148,7 @@ void AppPBRShadow::DestroyResources()
 	shadowMap_.reset();
 	
 	// IBL Images
-	iblResources_.reset();
+	resIBL_.reset();
 
 	// Destroy meshes
 	scene_.reset();

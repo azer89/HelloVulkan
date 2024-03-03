@@ -184,6 +184,8 @@
     <ClInclude Include="Header\Camera.h" />
     <ClInclude Include="Header\ResourcesClusterForward.h" />
     <ClInclude Include="Header\Configs.h" />
+    <ClInclude Include="Header\ResourcesShadow.h" />
+    <ClInclude Include="Header\ResourcesShared.h" />
     <ClInclude Include="Header\VulkanDescriptorInfo.h" />
     <ClInclude Include="Header\FrameCounter.h" />
     <ClInclude Include="Header\ResourcesIBL.h" />

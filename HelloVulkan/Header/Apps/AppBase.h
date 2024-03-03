@@ -81,13 +81,13 @@ protected:
 	bool shouldRecreateSwapchain_;
 
 	// Shared by multiple render passes
-	// TODO Maybe group these inside a struct and use a unique_ptr
+	// TODO Maybe group these inside a struct called ResourcesShared
 	std::unique_ptr<VulkanImage> multiSampledColorImage_;
 	std::unique_ptr<VulkanImage> singleSampledColorImage_;
 	std::unique_ptr<VulkanImage> depthImage_;
 
 	// Optional IBL images
-	std::unique_ptr<ResourcesIBL> iblResources_;
+	std::unique_ptr<ResourcesIBL> resIBL_;
 };
 
 #endif

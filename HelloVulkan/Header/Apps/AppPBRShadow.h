@@ -6,6 +6,7 @@
 #include "Light.h"
 #include "Scene.h"
 #include "ResourcesIBL.h"
+#include "ResourcesShadow.h"
 
 // Pipelines
 #include "PipelineSkybox.h"
@@ -49,8 +50,9 @@ private:
 	std::unique_ptr<PipelineImGui> imguiPtr_;
 
 	std::unique_ptr<Scene> scene_;
-
 	std::unique_ptr<Lights> lights_;
+	std::unique_ptr<ResourcesShadow> resourcesShadow_;
+
 	ShadowMapUBO shadowUBO_;
 
 	float cubemapMipmapCount_;
@@ -58,7 +60,7 @@ private:
 	float shadowNearPlane_;
 	float shadowFarPlane_;
 	uint32_t shadowMapSize_;
-	std::unique_ptr<VulkanImage> shadowMap_;
+	//std::unique_ptr<VulkanImage> shadowMap_;
 };
 
 #endif

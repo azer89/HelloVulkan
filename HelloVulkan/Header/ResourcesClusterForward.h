@@ -1,5 +1,5 @@
-#ifndef CLUSTER_FORWARD_BUFFERS
-#define CLUSTER_FORWARD_BUFFERS
+#ifndef RESOURCES_CLUSTER_FORWARD
+#define RESOURCES_CLUSTER_FORWARD
 
 #include "VulkanContext.h"
 #include "VulkanBuffer.h"
