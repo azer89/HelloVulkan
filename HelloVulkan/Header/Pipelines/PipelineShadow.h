@@ -2,6 +2,7 @@
 #define PIPELINE_SHADOW_MAPPING
 
 #include "PipelineBase.h"
+#include "ResourcesShadow.h"
 #include "Scene.h"
 
 class PipelineShadow final : public PipelineBase
@@ -9,7 +10,7 @@ class PipelineShadow final : public PipelineBase
 public:
 	PipelineShadow(VulkanContext& ctx,
 		Scene* scene,
-		VulkanImage* shadowMap);
+		ResourcesShadow* resShadow);
 	~PipelineShadow();
 
 	void SetShadowMapUBO(VulkanContext& ctx, ShadowMapUBO& ubo)
@@ -27,7 +28,7 @@ private:
 
 private:
 	Scene* scene_;
-	VulkanImage* shadowMap_;
+	ResourcesShadow* resShadow_;
 
 	std::vector<VulkanBuffer> shadowMapUBOBuffers_;
 	std::vector<VkDescriptorSet> descriptorSets_;

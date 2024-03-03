@@ -23,7 +23,7 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 			.vertexBufferBind_ = true,
 		}),
 	models_(models),
-	lights_(lights),
+	resLight_(lights),
 	resCF_(resCF),
 	iblResources_(iblResources)
 {
@@ -134,7 +134,7 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-	dsInfo.AddBuffer(lights_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
+	dsInfo.AddBuffer(resLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
 	for (size_t i = 0; i < PBR_MESH_TEXTURE_COUNT; ++i)

@@ -70,10 +70,10 @@ void AppPBRShadow::Init()
 		scene_.get(),
 		resLights_.get(),
 		resIBL_.get(),
-		&(resShadow_->shadowMap_),
+		resShadow_.get(),
 		&(resShared_->depthImage_),
 		&(resShared_->multiSampledColorImage_));
-	shadowPtr_ = std::make_unique<PipelineShadow>(vulkanContext_, scene_.get(), &(resShadow_->shadowMap_));
+	shadowPtr_ = std::make_unique<PipelineShadow>(vulkanContext_, scene_.get(), resShadow_.get());
 	lightPtr_ = std::make_unique<PipelineLightRender>(
 		vulkanContext_,
 		resLights_.get(),

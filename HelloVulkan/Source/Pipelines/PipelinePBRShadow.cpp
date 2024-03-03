@@ -12,9 +12,9 @@ constexpr uint32_t ENV_TEXTURE_COUNT = 4; // Specular, diffuse, BRDF LUT, and sh
 PipelinePBRShadow::PipelinePBRShadow(
 	VulkanContext& ctx,
 	Scene* scene,
-	ResourcesLight* lights,
+	ResourcesLight* resLight,
 	ResourcesIBL* iblResources,
-	VulkanImage* shadowMap,
+	ResourcesShadow* resShadow,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
@@ -28,9 +28,9 @@ PipelinePBRShadow::PipelinePBRShadow(
 		}
 	),
 	scene_(scene),
-	lights_(lights),
+	resLight_(resLight),
 	iblResources_(iblResources),
-	shadowMap_(shadowMap)
+	resShadow_(resShadow)
 {
 	// UBOs
 	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
@@ -132,12 +132,12 @@ void PipelinePBRShadow::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddBuffer(&(scene_->vertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 3
 	dsInfo.AddBuffer(&(scene_->indexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
 	dsInfo.AddBuffer(&(scene_->meshDataBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 5
-	dsInfo.AddBuffer(lights_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 6
+	dsInfo.AddBuffer(resLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 6
 
 	dsInfo.AddImage(&(iblResources_->specularCubemap_)); // 7
 	dsInfo.AddImage(&(iblResources_->diffuseCubemap_)); // 8
 	dsInfo.AddImage(&(iblResources_->brdfLut_)); // 9
-	dsInfo.AddImage(shadowMap_); // 10
+	dsInfo.AddImage(&(resShadow_->shadowMap_)); // 10
 	dsInfo.AddImageArray(scene_->GetImageInfos()); // 11
 
 	// Pool and layout

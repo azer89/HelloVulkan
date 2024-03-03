@@ -6,6 +6,7 @@
 #include "PushConstants.h"
 #include "ResourcesIBL.h"
 #include "ResourcesLight.h"
+#include "ResourcesShadow.h"
 
 #include <vector>
 
@@ -17,9 +18,9 @@ class PipelinePBRShadow final : public PipelineBase
 public:
 	PipelinePBRShadow(VulkanContext& ctx,
 		Scene* scene,
-		ResourcesLight* lights,
+		ResourcesLight* resLight,
 		ResourcesIBL* iblResources,
-		VulkanImage* shadowMap,
+		ResourcesShadow* resShadow,
 		VulkanImage* depthImage,
 		VulkanImage* offscreenColorImage,
 		uint8_t renderBit = 0u);
@@ -40,10 +41,10 @@ private:
 
 private:
 	PushConstPBR pc_;
-	ResourcesLight* lights_;
-	ResourcesIBL* iblResources_;
-	VulkanImage* shadowMap_;
 	Scene* scene_;
+	ResourcesLight* resLight_;
+	ResourcesIBL* iblResources_;
+	ResourcesShadow* resShadow_;
 	std::vector<VkDescriptorSet> descriptorSets_;
 	std::vector<VulkanBuffer> shadowMapConfigUBOBuffers_;
 	std::vector<VulkanBuffer> indirectBuffers_;

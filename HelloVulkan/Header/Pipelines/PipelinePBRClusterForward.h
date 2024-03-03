@@ -39,7 +39,7 @@ public:
 private:
 	PushConstPBR pc_;
 	ResourcesClusterForward* resCF_;
-	ResourcesLight* lights_;
+	ResourcesLight* resLight_;
 	ResourcesIBL* iblResources_;
 	std::vector<VulkanBuffer> cfUBOBuffers_;
 	std::vector<Model*> models_;

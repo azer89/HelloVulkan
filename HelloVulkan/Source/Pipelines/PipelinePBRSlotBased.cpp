@@ -13,7 +13,7 @@ constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 PipelinePBRSlotBased::PipelinePBRSlotBased(
 	VulkanContext& ctx,
 	const std::vector<Model*>& models,
-	ResourcesLight* lights,
+	ResourcesLight* resLight,
 	ResourcesIBL* iblResources,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
@@ -25,7 +25,7 @@ PipelinePBRSlotBased::PipelinePBRSlotBased(
 			.vertexBufferBind_ = true,
 		}
 	),
-	lights_(lights),
+	resLight_(resLight),
 	iblResources_(iblResources),
 	models_(models)
 {
@@ -128,7 +128,7 @@ void PipelinePBRSlotBased::CreateDescriptor(VulkanContext& ctx)
 	VulkanDescriptorInfo dsInfo;
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-	dsInfo.AddBuffer(lights_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
+	dsInfo.AddBuffer(resLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
 	for (size_t i = 0; i < PBR_MESH_TEXTURE_COUNT; ++i)
 	{
 		dsInfo.AddImage(nullptr);

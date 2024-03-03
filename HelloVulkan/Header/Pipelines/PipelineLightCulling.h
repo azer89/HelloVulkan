@@ -15,7 +15,7 @@ Clustered Forward
 class PipelineLightCulling final : public PipelineBase
 {
 public:
-	PipelineLightCulling(VulkanContext& ctx, ResourcesLight* lights, ResourcesClusterForward* resCF);
+	PipelineLightCulling(VulkanContext& ctx, ResourcesLight* resLight, ResourcesClusterForward* resCF);
 	~PipelineLightCulling();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
@@ -34,7 +34,7 @@ public:
 	}
 
 private:
-	ResourcesLight* lights_;
+	ResourcesLight* resLight_;
 	ResourcesClusterForward* resCF_;
 
 	std::vector<VulkanBuffer> cfUBOBuffers_;

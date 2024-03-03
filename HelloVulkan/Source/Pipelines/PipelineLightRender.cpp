@@ -7,7 +7,7 @@
 
 PipelineLightRender::PipelineLightRender(
 	VulkanContext& ctx,
-	ResourcesLight* lights,
+	ResourcesLight* resLights,
 	VulkanImage* depthImage, 
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
@@ -19,7 +19,7 @@ PipelineLightRender::PipelineLightRender(
 			.depthWrite_ = false // To "blend" the circles
 		}
 	), // Offscreen rendering
-	lights_(lights),
+	resLight_(resLights),
 	shouldRender_(true)
 {
 	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
@@ -77,7 +77,7 @@ void PipelineLightRender::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 	vkCmdDraw(
 		commandBuffer, 
 		6, // Draw a quad
-		lights_->GetLightCount(), 
+		resLight_->GetLightCount(), 
 		0, 
 		0);
 	vkCmdEndRenderPass(commandBuffer);
@@ -89,7 +89,7 @@ void PipelineLightRender::CreateDescriptor(VulkanContext& ctx)
 
 	VulkanDescriptorInfo dsInfo;
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT); // 0
-	dsInfo.AddBuffer(lights_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT); // 1
+	dsInfo.AddBuffer(resLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT); // 1
 
 	// Create pool and layout
 	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);

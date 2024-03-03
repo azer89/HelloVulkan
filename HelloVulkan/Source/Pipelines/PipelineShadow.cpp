@@ -3,7 +3,7 @@
 PipelineShadow::PipelineShadow(
 	VulkanContext& ctx,
 	Scene* scene,
-	VulkanImage* shadowMap) :
+	ResourcesShadow* resShadow) :
 	PipelineBase(ctx,
 		{
 			// Depth only and offscreen
@@ -14,11 +14,11 @@ PipelineShadow::PipelineShadow(
 
 			// Render using shadow map dimension
 			.customViewportSize_ = true,
-			.viewportWidth_ = static_cast<float>(shadowMap->width_),
-			.viewportHeight_ = static_cast<float>(shadowMap->height_)
+			.viewportWidth_ = static_cast<float>(resShadow->shadowMap_.width_),
+			.viewportHeight_ = static_cast<float>(resShadow->shadowMap_.height_)
 		}),
 	scene_(scene),
-	shadowMap_(shadowMap)
+	resShadow_(resShadow)
 {
 	CreateMultipleUniformBuffers(ctx, shadowMapUBOBuffers_, sizeof(ShadowMapUBO), AppConfig::FrameOverlapCount);
 
@@ -30,10 +30,10 @@ PipelineShadow::PipelineShadow(
 		renderPass_.GetHandle(),
 		{
 			// Use the shadow map as depth attachment
-			shadowMap_->imageView_
+			resShadow_->shadowMap_.imageView_
 		},
-		shadowMap_->width_,
-		shadowMap_->height_);
+		resShadow_->shadowMap_.width_,
+		resShadow_->shadowMap_.height_);
 
 	CreateIndirectBuffers(ctx, scene_, indirectBuffers_);
 
@@ -73,8 +73,8 @@ void PipelineShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comma
 		ctx, 
 		commandBuffer, 
 		framebuffer_.GetFramebuffer(), 
-		shadowMap_->width_,
-		shadowMap_->height_);
+		resShadow_->shadowMap_.width_,
+		resShadow_->shadowMap_.height_);
 	BindPipeline(ctx, commandBuffer);
 
 	vkCmdBindDescriptorSets(

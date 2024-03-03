@@ -18,7 +18,7 @@ class PipelinePBRSlotBased final : public PipelineBase
 public:
 	PipelinePBRSlotBased(VulkanContext& ctx,
 		const std::vector<Model*>& models,
-		ResourcesLight* lights,
+		ResourcesLight* resLight,
 		ResourcesIBL* iblResources,
 		VulkanImage* depthImage,
 		VulkanImage* offscreenColorImage,
@@ -33,7 +33,7 @@ private:
 	void CreateDescriptor(VulkanContext& ctx);
 
 	PushConstPBR pc_;
-	ResourcesLight* lights_;
+	ResourcesLight* resLight_;
 	ResourcesIBL* iblResources_;
 	std::vector<Model*> models_;
 	std::vector<std::vector<VkDescriptorSet>> descriptorSets_;

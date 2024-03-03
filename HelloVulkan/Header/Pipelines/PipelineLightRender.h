@@ -14,7 +14,7 @@ class PipelineLightRender final : public PipelineBase
 public:
 	PipelineLightRender(
 		VulkanContext& ctx,
-		ResourcesLight* lights,
+		ResourcesLight* resLights,
 		VulkanImage* depthImage,
 		VulkanImage* offscreenColorImage,
 		uint8_t renderBit = 0u
@@ -29,7 +29,7 @@ private:
 	void CreateDescriptor(VulkanContext& ctx);
 
 private:
-	ResourcesLight* lights_;
+	ResourcesLight* resLight_;
 	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;
 	bool shouldRender_;
 };

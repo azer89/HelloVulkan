@@ -18,7 +18,7 @@ class PipelinePBRBindless final : public PipelineBase
 public:
 	PipelinePBRBindless(VulkanContext& ctx,
 		Scene* scene,
-		ResourcesLight* lights,
+		ResourcesLight* resLight,
 		ResourcesIBL* iblResources,
 		VulkanImage* depthImage,
 		VulkanImage* offscreenColorImage,
@@ -32,7 +32,7 @@ private:
 	void CreateDescriptor(VulkanContext& ctx);
 
 	Scene* scene_;
-	ResourcesLight* lights_;
+	ResourcesLight* resLight_;
 	ResourcesIBL* iblResources_;
 	PushConstPBR pc_;
 	std::vector<VulkanBuffer> indirectBuffers_;

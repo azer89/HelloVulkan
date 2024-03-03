@@ -6,13 +6,13 @@
 
 PipelineLightCulling::PipelineLightCulling(
 	VulkanContext& ctx,
-	ResourcesLight* lights,
+	ResourcesLight* resLight,
 	ResourcesClusterForward* resCF) :
 	PipelineBase(ctx,
 		{
 			.type_ = PipelineType::Compute
 		}),
-	lights_(lights),
+	resLight_(resLight),
 	resCF_(resCF)
 {
 	CreateMultipleUniformBuffers(ctx, cfUBOBuffers_, sizeof(ClusterForwardUBO), AppConfig::FrameOverlapCount);
@@ -107,7 +107,7 @@ void PipelineLightCulling::CreateDescriptor(VulkanContext& ctx)
 
 	VulkanDescriptorInfo dsInfo;
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 0
-	dsInfo.AddBuffer(lights_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 1
+	dsInfo.AddBuffer(resLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 1
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 2
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 3
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 4
