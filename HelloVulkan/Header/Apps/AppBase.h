@@ -44,7 +44,7 @@ protected:
 
 	// Resources
 	void InitIBLResources(const std::string& hdrFile);
-	void InitSharedImageResources();
+	void InitSharedResources();
 	
 	// Functions related to the main loop
 	int GLFWWindowShouldClose();

@@ -21,7 +21,7 @@ void AppPBRSlotBased::Init()
 	InitLights();
 
 	// Initialize attachments
-	InitSharedImageResources();
+	InitSharedResources();
 
 	// Image-Based Lighting
 	InitIBLResources(AppConfig::TextureFolder + "piazza_bologni_1k.hdr");

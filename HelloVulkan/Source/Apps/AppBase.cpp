@@ -219,7 +219,7 @@ void AppBase::OnWindowResized()
 		windowHeight_
 	);
 
-	InitSharedImageResources();
+	InitSharedResources();
 
 	for (const auto& pip : pipelines_)
 	{
@@ -367,7 +367,7 @@ void AppBase::ProcessInput()
 	}
 }
 
-void AppBase::InitSharedImageResources()
+void AppBase::InitSharedResources()
 {
 	resShared_ = std::make_unique<ResourcesShared>();
 	resShared_->Create(vulkanContext_);

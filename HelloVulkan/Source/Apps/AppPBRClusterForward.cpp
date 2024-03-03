@@ -18,7 +18,7 @@ AppPBRClusterForward::AppPBRClusterForward()
 void AppPBRClusterForward::Init()
 {
 	// Initialize attachments
-	InitSharedImageResources();
+	InitSharedResources();
 
 	// Initialize lights
 	InitLights();
