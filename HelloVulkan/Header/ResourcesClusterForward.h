@@ -13,11 +13,11 @@ enum class AABBFlag : uint8_t
 	Dirty = 1u
 };
 
-struct ClusterForwardBuffers
+struct ResourcesClusterForward
 {
 public:
-	ClusterForwardBuffers() = default;
-	~ClusterForwardBuffers()
+	ResourcesClusterForward() = default;
+	~ResourcesClusterForward()
 	{
 		Destroy();
 	}

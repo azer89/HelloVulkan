@@ -6,7 +6,7 @@
 
 PipelineAABBGenerator::PipelineAABBGenerator(
 	VulkanContext& ctx, 
-	ClusterForwardBuffers* cfBuffers) :
+	ResourcesClusterForward* cfBuffers) :
 	PipelineBase(ctx,
 	{
 		.type_ = PipelineType::Compute

@@ -20,7 +20,7 @@
 #include "PipelinePBRClusterForward.h"
 #include "PipelineAABBGenerator.h"
 #include "PipelineLightCulling.h"
-#include "ClusterForwardBuffers.h"
+#include "ResourcesClusterForward.h"
 
 // STL
 #include <vector>
@@ -56,7 +56,7 @@ private:
 	std::unique_ptr<PipelineLightCulling> lightCullPtr_;
 
 	// Buffers for clustered forward shading
-	std::unique_ptr<ClusterForwardBuffers> cfBuffers_; 
+	std::unique_ptr<ResourcesClusterForward> cfBuffers_; 
 
 	std::unique_ptr<Model> model_;
 

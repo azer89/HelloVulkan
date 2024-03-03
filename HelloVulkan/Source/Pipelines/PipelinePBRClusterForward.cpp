@@ -11,7 +11,7 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 	VulkanContext& ctx,
 	std::vector<Model*> models,
 	Lights* lights,
-	ClusterForwardBuffers* cfBuffers,
+	ResourcesClusterForward* cfBuffers,
 	IBLResources* iblResources,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,

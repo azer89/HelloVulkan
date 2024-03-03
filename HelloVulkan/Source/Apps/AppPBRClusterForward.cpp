@@ -27,7 +27,7 @@ void AppPBRClusterForward::Init()
 	InitIBLResources(AppConfig::TextureFolder + "dikhololo_night_4k.hdr");
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
-	cfBuffers_ = std::make_unique<ClusterForwardBuffers>();
+	cfBuffers_ = std::make_unique<ResourcesClusterForward>();
 	cfBuffers_->CreateBuffers(vulkanContext_, lights_->GetLightCount());
 
 	// glTF model

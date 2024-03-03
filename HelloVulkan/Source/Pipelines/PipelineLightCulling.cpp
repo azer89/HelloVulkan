@@ -7,7 +7,7 @@
 PipelineLightCulling::PipelineLightCulling(
 	VulkanContext& ctx,
 	Lights* lights,
-	ClusterForwardBuffers* cfBuffers) :
+	ResourcesClusterForward* cfBuffers) :
 	PipelineBase(ctx,
 		{
 			.type_ = PipelineType::Compute

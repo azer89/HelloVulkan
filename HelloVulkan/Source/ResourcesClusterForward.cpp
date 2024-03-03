@@ -1,9 +1,9 @@
-#include "ClusterForwardBuffers.h"
+#include "ResourcesClusterForward.h"
 #include "Light.h"
 #include "Configs.h"
 
 // If window is resized, set the AABB buffers dirty
-void ClusterForwardBuffers::SetAABBDirty()
+void ResourcesClusterForward::SetAABBDirty()
 {
 	for (size_t i = 0; i < aabbDirtyFlags_.size(); ++i)
 	{
@@ -11,7 +11,7 @@ void ClusterForwardBuffers::SetAABBDirty()
 	}
 }
 
-void ClusterForwardBuffers::CreateBuffers(VulkanContext& ctx, uint32_t lightCount)
+void ResourcesClusterForward::CreateBuffers(VulkanContext& ctx, uint32_t lightCount)
 {
 	constexpr uint32_t bufferCount = AppConfig::FrameOverlapCount;
 
@@ -51,7 +51,7 @@ void ClusterForwardBuffers::CreateBuffers(VulkanContext& ctx, uint32_t lightCoun
 	}
 }
 
-void ClusterForwardBuffers::Destroy()
+void ResourcesClusterForward::Destroy()
 {
 	for (VulkanBuffer& buffer : aabbBuffers_)
 	{
