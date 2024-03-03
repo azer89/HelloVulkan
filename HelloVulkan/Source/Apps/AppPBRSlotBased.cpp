@@ -168,7 +168,7 @@ void AppPBRSlotBased::UpdateUI()
 }
 
 // This is called from main.cpp
-int AppPBRSlotBased::MainLoop()
+void AppPBRSlotBased::MainLoop()
 {
 	InitVulkan({
 		.supportRaytracing_ = false,
@@ -190,6 +190,4 @@ int AppPBRSlotBased::MainLoop()
 
 	DestroyResources();
 	Destroy();
-
-	return 0;
 }

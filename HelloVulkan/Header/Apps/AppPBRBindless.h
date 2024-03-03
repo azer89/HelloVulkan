@@ -25,7 +25,7 @@ class AppPBRBindless final : AppBase
 {
 public:
 	AppPBRBindless();
-	int MainLoop() override;
+	void MainLoop() override;
 	void UpdateUBOs() override;
 	void UpdateUI() override;
 

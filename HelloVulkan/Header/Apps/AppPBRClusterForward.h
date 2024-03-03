@@ -30,7 +30,7 @@ class AppPBRClusterForward final : AppBase
 {
 public:
 	AppPBRClusterForward();
-	int MainLoop() override;
+	void MainLoop() override;
 	void UpdateUBOs() override;
 	void UpdateUI() override;
 

@@ -167,7 +167,7 @@ void AppPBRBindless::UpdateUI()
 }
 
 // This is called from main.cpp
-int AppPBRBindless::MainLoop()
+void AppPBRBindless::MainLoop()
 {
 	InitVulkan({
 		.supportRaytracing_ = false,
@@ -190,6 +190,4 @@ int AppPBRBindless::MainLoop()
 
 	DestroyResources();
 	Destroy();
-
-	return 0;
 }

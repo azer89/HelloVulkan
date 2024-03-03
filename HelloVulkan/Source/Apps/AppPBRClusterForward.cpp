@@ -211,7 +211,7 @@ void AppPBRClusterForward::UpdateUI()
 }
 
 // This is called from main.cpp
-int AppPBRClusterForward::MainLoop()
+void AppPBRClusterForward::MainLoop()
 {
 	InitVulkan({
 		.supportRaytracing_ = false,
@@ -234,6 +234,4 @@ int AppPBRClusterForward::MainLoop()
 
 	DestroyResources();
 	Destroy();
-
-	return 0;
 }

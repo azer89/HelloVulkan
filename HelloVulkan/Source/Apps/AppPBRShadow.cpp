@@ -240,7 +240,7 @@ void AppPBRShadow::UpdateUI()
 }
 
 // This is called from main.cpp
-int AppPBRShadow::MainLoop()
+void AppPBRShadow::MainLoop()
 {
 	InitVulkan({
 		.supportRaytracing_ = false,
@@ -262,6 +262,4 @@ int AppPBRShadow::MainLoop()
 
 	DestroyResources();
 	Destroy();
-
-	return 0;
 }

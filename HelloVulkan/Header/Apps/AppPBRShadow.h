@@ -27,7 +27,7 @@ class AppPBRShadow final : AppBase
 {
 public:
 	AppPBRShadow();
-	int MainLoop() override;
+	void MainLoop() override;
 	void UpdateUBOs() override;
 	void UpdateUI() override;
 

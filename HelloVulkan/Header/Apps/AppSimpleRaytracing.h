@@ -17,7 +17,7 @@ class AppSimpleRaytracing final : AppBase
 public:
 	AppSimpleRaytracing();
 
-	int MainLoop() override;
+	void MainLoop() override;
 	void UpdateUBOs() override;
 	void UpdateUI() override;
 

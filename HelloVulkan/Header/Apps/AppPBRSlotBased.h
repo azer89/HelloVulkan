@@ -25,7 +25,7 @@ class AppPBRSlotBased final : AppBase
 {
 public:
 	AppPBRSlotBased();
-	int MainLoop() override;
+	void MainLoop() override;
 	void UpdateUBOs() override;
 	void UpdateUI() override;
 

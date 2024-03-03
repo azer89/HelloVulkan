@@ -18,7 +18,7 @@ class AppBase
 {
 public:
 	AppBase();
-	virtual int MainLoop() = 0; 
+	virtual void MainLoop() = 0; 
 
 protected:
 	virtual void UpdateUBOs() = 0;

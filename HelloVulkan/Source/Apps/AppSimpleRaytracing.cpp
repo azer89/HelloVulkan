@@ -56,7 +56,7 @@ void AppSimpleRaytracing::DestroyResources()
 	rtxPtr_.reset();
 }
 
-int AppSimpleRaytracing::MainLoop()
+void AppSimpleRaytracing::MainLoop()
 {
 	InitVulkan({
 		.supportRaytracing_ = true,
@@ -79,6 +79,4 @@ int AppSimpleRaytracing::MainLoop()
 
 	DestroyResources();
 	Destroy();
-
-	return 0;
 }
