@@ -249,10 +249,14 @@ void AppBase::ProcessTiming()
 	frameCounter_.Update(currentFrame);
 }
 
-int AppBase::GLFWWindowShouldClose()
+bool AppBase::StillRunning()
 {
-	// TODO Maybe you can call vkDeviceWaitIdle when the window is closed
-	return glfwWindowShouldClose(glfwWindow_);
+	if (glfwWindowShouldClose(glfwWindow_))
+	{
+		vkDeviceWaitIdle(vulkanContext_.GetDevice());
+		return false;
+	}
+	return true;
 }
 
 void AppBase::PollEvents()

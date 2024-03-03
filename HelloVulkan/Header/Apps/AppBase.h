@@ -47,7 +47,7 @@ protected:
 	void InitSharedResources();
 	
 	// Functions related to the main loop
-	int GLFWWindowShouldClose();
+	bool StillRunning();
 	void PollEvents();
 	void ProcessTiming();
 	void ProcessInput();

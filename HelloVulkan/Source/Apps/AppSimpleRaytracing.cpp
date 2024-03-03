@@ -66,16 +66,13 @@ void AppSimpleRaytracing::MainLoop()
 	Init();
 
 	// Main loop
-	while (!GLFWWindowShouldClose())
+	while (StillRunning())
 	{
 		PollEvents();
 		ProcessTiming();
 		ProcessInput();
 		DrawFrame();
 	}
-
-	// Wait until everything is finished
-	vkDeviceWaitIdle(vulkanContext_.GetDevice());
 
 	DestroyResources();
 	DestroyInternal();
