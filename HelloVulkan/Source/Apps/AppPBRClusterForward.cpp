@@ -28,7 +28,7 @@ void AppPBRClusterForward::Init()
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
 	resCF_ = std::make_unique<ResourcesClusterForward>();
-	resCF_->CreateBuffers(vulkanContext_, lights_->GetLightCount());
+	resCF_->CreateBuffers(vulkanContext_, resLight_->GetLightCount());
 
 	// glTF model
 	model_ = std::make_unique<Model>();
@@ -52,18 +52,18 @@ void AppPBRClusterForward::Init()
 		RenderPassBit::DepthClear
 	);
 	aabbPtr_ = std::make_unique<PipelineAABBGenerator>(vulkanContext_, resCF_.get());
-	lightCullPtr_ = std::make_unique<PipelineLightCulling>(vulkanContext_, lights_.get(), resCF_.get());
+	lightCullPtr_ = std::make_unique<PipelineLightCulling>(vulkanContext_, resLight_.get(), resCF_.get());
 	pbrPtr_ = std::make_unique<PipelinePBRClusterForward>(
 		vulkanContext_,
 		models,
-		lights_.get(),
+		resLight_.get(),
 		resCF_.get(),
 		resIBL_.get(),
 		&(resShared_->depthImage_),
 		&(resShared_->multiSampledColorImage_));
 	lightPtr_ = std::make_unique<PipelineLightRender>(
 		vulkanContext_,
-		lights_.get(),
+		resLight_.get(),
 		&(resShared_->depthImage_),
 		&(resShared_->multiSampledColorImage_)
 	);
@@ -133,8 +133,8 @@ void AppPBRClusterForward::InitLights()
 		lights.push_back(l);
 	}
 
-	lights_ = std::make_unique<ResourcesLight>();
-	lights_->AddLights(vulkanContext_, lights);
+	resLight_ = std::make_unique<ResourcesLight>();
+	resLight_->AddLights(vulkanContext_, lights);
 }
 
 void AppPBRClusterForward::DestroyResources()
@@ -142,7 +142,7 @@ void AppPBRClusterForward::DestroyResources()
 	// Resources
 	resIBL_.reset();
 	resCF_.reset();
-	lights_.reset();
+	resLight_.reset();
 
 	// Destroy meshes
 	model_->Destroy();

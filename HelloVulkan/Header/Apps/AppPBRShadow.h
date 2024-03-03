@@ -46,12 +46,12 @@ private:
 	std::unique_ptr<PipelineLightRender> lightPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
 
-	std::unique_ptr<Scene> scene_;
-	std::unique_ptr<ResourcesLight> lights_;
+	std::unique_ptr<ResourcesLight> resLights_;
 	std::unique_ptr<ResourcesShadow> resShadow_;
 
-	ShadowMapUBO shadowUBO_;
+	std::unique_ptr<Scene> scene_;
 
+	ShadowMapUBO shadowUBO_;
 	float cubemapMipmapCount_;
 
 	float shadowNearPlane_;

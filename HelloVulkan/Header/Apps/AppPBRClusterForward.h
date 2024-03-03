@@ -41,23 +41,19 @@ public:
 private:
 	std::unique_ptr<PipelineClear> clearPtr_;
 	std::unique_ptr<PipelineSkybox> skyboxPtr_;
-
 	std::unique_ptr<PipelineTonemap> tonemapPtr_;
 	std::unique_ptr<PipelineFinish> finishPtr_;
 	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;
 	std::unique_ptr<PipelineLightRender> lightPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
-
 	std::unique_ptr<PipelinePBRClusterForward> pbrPtr_;
 	std::unique_ptr<PipelineAABBGenerator> aabbPtr_;
 	std::unique_ptr<PipelineLightCulling> lightCullPtr_;
 
-	// Buffers for clustered forward shading
 	std::unique_ptr<ResourcesClusterForward> resCF_; 
+	std::unique_ptr<ResourcesLight> resLight_;
 
 	std::unique_ptr<Model> model_;
-
-	std::unique_ptr<ResourcesLight> lights_;
 
 	float cubemapMipmapCount_;
 };

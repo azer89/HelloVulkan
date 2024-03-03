@@ -68,7 +68,7 @@ void AppPBRShadow::Init()
 	pbrPtr_ = std::make_unique<PipelinePBRShadow>(
 		vulkanContext_,
 		scene_.get(),
-		lights_.get(),
+		resLights_.get(),
 		resIBL_.get(),
 		&(resShadow_->shadowMap_),
 		&(resShared_->depthImage_),
@@ -76,7 +76,7 @@ void AppPBRShadow::Init()
 	shadowPtr_ = std::make_unique<PipelineShadow>(vulkanContext_, scene_.get(), &(resShadow_->shadowMap_));
 	lightPtr_ = std::make_unique<PipelineLightRender>(
 		vulkanContext_,
-		lights_.get(),
+		resLights_.get(),
 		&(resShared_->depthImage_),
 		&(resShared_->multiSampledColorImage_)
 	);
@@ -113,8 +113,8 @@ void AppPBRShadow::Init()
 void AppPBRShadow::InitLights()
 {
 	// Lights (SSBO)
-	lights_ = std::make_unique<ResourcesLight>();
-	lights_->AddLights(vulkanContext_,
+	resLights_ = std::make_unique<ResourcesLight>();
+	resLights_->AddLights(vulkanContext_,
 	{
 		// The first light is used to generate the shadow map
 		// and its position is set by ImGui
@@ -133,7 +133,7 @@ void AppPBRShadow::DestroyResources()
 	// Resources
 	resShadow_.reset();
 	resIBL_.reset();
-	lights_.reset();
+	resLights_.reset();
 
 	// Destroy meshes
 	scene_.reset();
@@ -163,7 +163,7 @@ void AppPBRShadow::UpdateUBOs()
 	skyboxPtr_->SetCameraUBO(vulkanContext_, skyboxUbo);
 
 	// Shadow mapping
-	LightData light = lights_->lights_[0];
+	LightData light = resLights_->lights_[0];
 	glm::mat4 lightProjection = glm::perspective(glm::radians(45.f), 1.0f, shadowUBO_.shadowNearPlane, shadowUBO_.shadowFarPlane);
 	glm::mat4 lightView = glm::lookAt(glm::vec3(light.position_), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
@@ -226,7 +226,7 @@ void AppPBRShadow::UpdateUI()
 	imguiPtr_->ImGuiEnd();
 
 	// TODO Check if light position is changed 
-	lights_->UpdateLightPosition(vulkanContext_, 0, &(staticLightPos[0]));
+	resLights_->UpdateLightPosition(vulkanContext_, 0, &(staticLightPos[0]));
 
 	lightPtr_->RenderEnable(staticLightRender);
 	pbrPtr_->SetPBRPushConstants(staticPBRPushConstants);

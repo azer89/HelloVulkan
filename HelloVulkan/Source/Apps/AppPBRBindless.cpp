@@ -58,13 +58,13 @@ void AppPBRBindless::Init()
 	pbrPtr_ = std::make_unique<PipelinePBRBindless>(
 		vulkanContext_,
 		scene_.get(),
-		lights_.get(),
+		resourcesLight_.get(),
 		resIBL_.get(),
 		&(resShared_->depthImage_),
 		&(resShared_->multiSampledColorImage_));
 	lightPtr_ = std::make_unique<PipelineLightRender>(
 		vulkanContext_,
-		lights_.get(),
+		resourcesLight_.get(),
 		&(resShared_->depthImage_),
 		&(resShared_->multiSampledColorImage_));
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
@@ -101,8 +101,8 @@ void AppPBRBindless::Init()
 void AppPBRBindless::InitLights()
 {
 	// Lights (SSBO)
-	lights_ = std::make_unique<ResourcesLight>();
-	lights_->AddLights(vulkanContext_,
+	resourcesLight_ = std::make_unique<ResourcesLight>();
+	resourcesLight_->AddLights(vulkanContext_,
 	{
 		{ .position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
 		{ .position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
@@ -115,7 +115,7 @@ void AppPBRBindless::DestroyResources()
 {
 	// Resources
 	resIBL_.reset();
-	lights_.reset();
+	resourcesLight_.reset();
 
 	// Destroy meshes
 	scene_.reset();

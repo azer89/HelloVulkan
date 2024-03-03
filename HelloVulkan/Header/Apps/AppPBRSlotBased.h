@@ -36,7 +36,6 @@ public:
 private:
 	std::unique_ptr<PipelineClear> clearPtr_;
 	std::unique_ptr<PipelineSkybox> skyboxPtr_;
-
 	std::unique_ptr<PipelinePBRSlotBased> pbrPtr_;
 	std::unique_ptr<PipelineTonemap> tonemapPtr_;
 	std::unique_ptr<PipelineFinish> finishPtr_;
@@ -44,8 +43,8 @@ private:
 	std::unique_ptr<PipelineLightRender> lightPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
 
+	std::unique_ptr<ResourcesLight> resLights_;
 	std::unique_ptr<Model> model_;
-	std::unique_ptr<ResourcesLight> lights_;
 
 	float cubemapMipmapCount_;
 	float modelRotation_;

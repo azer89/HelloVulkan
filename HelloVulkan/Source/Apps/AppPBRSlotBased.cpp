@@ -50,13 +50,13 @@ void AppPBRSlotBased::Init()
 	pbrPtr_ = std::make_unique<PipelinePBRSlotBased>(
 		vulkanContext_,
 		models,
-		lights_.get(),
+		resLights_.get(),
 		resIBL_.get(),
 		&(resShared_->depthImage_),
 		&(resShared_->multiSampledColorImage_));
 	lightPtr_ = std::make_unique<PipelineLightRender>(
 		vulkanContext_,
-		lights_.get(),
+		resLights_.get(),
 		&(resShared_->depthImage_),
 		&(resShared_->multiSampledColorImage_)
 	);
@@ -91,8 +91,8 @@ void AppPBRSlotBased::Init()
 void AppPBRSlotBased::InitLights()
 {
 	// Lights (SSBO)
-	lights_ = std::make_unique<ResourcesLight>();
-	lights_->AddLights(vulkanContext_,
+	resLights_ = std::make_unique<ResourcesLight>();
+	resLights_->AddLights(vulkanContext_,
 		{
 			{.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
 			{.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
@@ -105,7 +105,7 @@ void AppPBRSlotBased::DestroyResources()
 {
 	// Resources
 	resIBL_.reset();
-	lights_.reset();
+	resLights_.reset();
 
 	// Destroy meshes
 	model_->Destroy();
