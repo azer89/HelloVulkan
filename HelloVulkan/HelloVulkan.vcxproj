@@ -215,7 +215,7 @@
     <ClInclude Include="Header\Scene.h" />
     <ClInclude Include="Header\TextureMapper.h" />
     <ClInclude Include="Header\UBOs.h" />
-    <ClInclude Include="Header\Vulkan\VulkanAccelerationStructure.h" />
+    <ClInclude Include="Header\Vulkan\VulkanAccelStructure.h" />
     <ClInclude Include="Header\Vulkan\VulkanPipelineCreateInfo.h" />
     <ClInclude Include="Header\Vulkan\VulkanBarrier.h" />
     <ClInclude Include="Header\Vulkan\VulkanBuffer.h" />
@@ -266,7 +266,7 @@
     <ClCompile Include="Source\Resources\ResourcesShadow.cpp" />
     <ClCompile Include="Source\Resources\ResourcesShared.cpp" />
     <ClCompile Include="Source\Scene.cpp" />
-    <ClCompile Include="Source\Vulkan\VulkanAccelerationStructure.cpp" />
+    <ClCompile Include="Source\Vulkan\VulkanAccelStructure.cpp" />
     <ClCompile Include="Source\Vulkan\VulkanBarrier.cpp" />
     <ClCompile Include="Source\Vulkan\VulkanBuffer.cpp" />
     <ClCompile Include="Source\Vulkan\VulkanContext.cpp" />
