@@ -275,12 +275,6 @@
     <ClInclude Include="Header\UBOs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Vulkan\AccelerationStructure.h">
-      <Filter>Header Files\Vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\Vulkan\PipelineCreateInfo.h">
-      <Filter>Header Files\Vulkan</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Vulkan\VulkanBarrier.h">
       <Filter>Header Files\Vulkan</Filter>
     </ClInclude>
@@ -314,9 +308,6 @@
     <ClInclude Include="Header\Vulkan\VulkanUtility.h">
       <Filter>Header Files\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Resources\Light.h">
-      <Filter>Header Files\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Resources\ResourcesClusterForward.h">
       <Filter>Header Files\Resources</Filter>
     </ClInclude>
@@ -328,6 +319,15 @@
     </ClInclude>
     <ClInclude Include="Header\Resources\ResourcesShared.h">
       <Filter>Header Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Resources\ResourcesLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Vulkan\VulkanAccelerationStructure.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Vulkan\VulkanPipelineCreateInfo.h">
+      <Filter>Header Files\Vulkan</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -424,9 +424,6 @@
     <ClCompile Include="Source\Pipelines\PipelinePBRShadow.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Vulkan\AccelerationStructure.cpp">
-      <Filter>Source Files\Vulkan</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Vulkan\VulkanBarrier.cpp">
       <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
@@ -460,9 +457,6 @@
     <ClCompile Include="Source\Vulkan\VulkanUtility.cpp">
       <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Resources\Lights.cpp">
-      <Filter>Source Files\Resources</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Resources\ResourcesClusterForward.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
@@ -474,6 +468,12 @@
     </ClCompile>
     <ClCompile Include="Source\Resources\ResourcesShared.cpp">
       <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Resources\ResourcesLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vulkan\VulkanAccelerationStructure.cpp">
+      <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
