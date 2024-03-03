@@ -5,7 +5,7 @@
 #include "VulkanImage.h"
 #include "Light.h"
 #include "Scene.h"
-#include "IBLResources.h"
+#include "ResourcesIBL.h"
 
 // Pipelines
 #include "PipelineSkybox.h"

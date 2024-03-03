@@ -426,7 +426,7 @@ void AppBase::InitSharedImageResources()
 
 void AppBase::InitIBLResources(const std::string& hdrFile)
 {
-	iblResources_ = std::make_unique<IBLResources>();
+	iblResources_ = std::make_unique<ResourcesIBL>();
 
 	// Create a cubemap from the input HDR
 	{

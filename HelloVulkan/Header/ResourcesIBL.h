@@ -4,7 +4,7 @@
 #include "VulkanContext.h"
 #include "VulkanImage.h"
 
-struct IBLResources
+struct ResourcesIBL
 {
 public:
 	VulkanImage environmentCubemap_;
@@ -12,8 +12,8 @@ public:
 	VulkanImage specularCubemap_;
 	VulkanImage brdfLut_;
 
-	IBLResources() = default;
-	~IBLResources()
+	ResourcesIBL() = default;
+	~ResourcesIBL()
 	{
 		Destroy();
 	}

@@ -27,8 +27,8 @@ void AppPBRClusterForward::Init()
 	InitIBLResources(AppConfig::TextureFolder + "dikhololo_night_4k.hdr");
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
-	cfBuffers_ = std::make_unique<ResourcesClusterForward>();
-	cfBuffers_->CreateBuffers(vulkanContext_, lights_->GetLightCount());
+	resCF_ = std::make_unique<ResourcesClusterForward>();
+	resCF_->CreateBuffers(vulkanContext_, lights_->GetLightCount());
 
 	// glTF model
 	model_ = std::make_unique<Model>();
@@ -51,13 +51,13 @@ void AppPBRClusterForward::Init()
 		RenderPassBit::ColorClear | 
 		RenderPassBit::DepthClear
 	);
-	aabbPtr_ = std::make_unique<PipelineAABBGenerator>(vulkanContext_, cfBuffers_.get());
-	lightCullPtr_ = std::make_unique<PipelineLightCulling>(vulkanContext_, lights_.get(), cfBuffers_.get());
+	aabbPtr_ = std::make_unique<PipelineAABBGenerator>(vulkanContext_, resCF_.get());
+	lightCullPtr_ = std::make_unique<PipelineLightCulling>(vulkanContext_, lights_.get(), resCF_.get());
 	pbrPtr_ = std::make_unique<PipelinePBRClusterForward>(
 		vulkanContext_,
 		models,
 		lights_.get(),
-		cfBuffers_.get(),
+		resCF_.get(),
 		iblResources_.get(),
 		depthImage_.get(),
 		multiSampledColorImage_.get());
@@ -150,7 +150,7 @@ void AppPBRClusterForward::DestroyResources()
 	lights_->Destroy();
 	lights_.reset();
 	
-	cfBuffers_.reset();
+	resCF_.reset();
 
 	// Destroy renderers
 	clearPtr_.reset();

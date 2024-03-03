@@ -13,7 +13,7 @@ PipelinePBRShadow::PipelinePBRShadow(
 	VulkanContext& ctx,
 	Scene* scene,
 	Lights* lights,
-	IBLResources* iblResources,
+	ResourcesIBL* iblResources,
 	VulkanImage* shadowMap,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,

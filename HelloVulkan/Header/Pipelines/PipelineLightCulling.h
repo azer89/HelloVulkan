@@ -15,7 +15,7 @@ Clustered Forward
 class PipelineLightCulling final : public PipelineBase
 {
 public:
-	PipelineLightCulling(VulkanContext& ctx, Lights* lights, ResourcesClusterForward* cfBuffers);
+	PipelineLightCulling(VulkanContext& ctx, Lights* lights, ResourcesClusterForward* resCF);
 	~PipelineLightCulling();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
@@ -24,7 +24,7 @@ public:
 	{
 		uint32_t zeroValue = 0u;
 		uint32_t frameIndex = ctx.GetFrameIndex();
-		cfBuffers_->globalIndexCountBuffers_[frameIndex].UploadBufferData(ctx, &zeroValue, sizeof(uint32_t));
+		resCF_->globalIndexCountBuffers_[frameIndex].UploadBufferData(ctx, &zeroValue, sizeof(uint32_t));
 	}
 
 	void SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO ubo)
@@ -35,7 +35,7 @@ public:
 
 private:
 	Lights* lights_;
-	ResourcesClusterForward* cfBuffers_;
+	ResourcesClusterForward* resCF_;
 
 	std::vector<VulkanBuffer> cfUBOBuffers_;
 	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;

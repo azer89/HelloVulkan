@@ -11,8 +11,8 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 	VulkanContext& ctx,
 	std::vector<Model*> models,
 	Lights* lights,
-	ResourcesClusterForward* cfBuffers,
-	IBLResources* iblResources,
+	ResourcesClusterForward* resCF,
+	ResourcesIBL* iblResources,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :
@@ -24,7 +24,7 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 		}),
 	models_(models),
 	lights_(lights),
-	cfBuffers_(cfBuffers),
+	resCF_(resCF),
 	iblResources_(iblResources)
 {
 	// Per frame UBO
@@ -157,8 +157,8 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 		descriptorSets_[i].resize(numMeshes);
 		buildInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
 		buildInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 2);
-		buildInfo.UpdateBuffer(&(cfBuffers_->lightCellsBuffers_[i]), 4);
-		buildInfo.UpdateBuffer(&(cfBuffers_->lightIndicesBuffers_[i]), 5);
+		buildInfo.UpdateBuffer(&(resCF_->lightCellsBuffers_[i]), 4);
+		buildInfo.UpdateBuffer(&(resCF_->lightIndicesBuffers_[i]), 5);
 		for (Model* model : models_)
 		{
 			buildInfo.UpdateBuffer(&(model->modelBuffers_[i]), 1);

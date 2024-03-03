@@ -7,13 +7,13 @@
 PipelineLightCulling::PipelineLightCulling(
 	VulkanContext& ctx,
 	Lights* lights,
-	ResourcesClusterForward* cfBuffers) :
+	ResourcesClusterForward* resCF) :
 	PipelineBase(ctx,
 		{
 			.type_ = PipelineType::Compute
 		}),
 	lights_(lights),
-	cfBuffers_(cfBuffers)
+	resCF_(resCF)
 {
 	CreateMultipleUniformBuffers(ctx, cfUBOBuffers_, sizeof(ClusterForwardUBO), AppConfig::FrameOverlapCount);
 	CreateDescriptor(ctx);
@@ -74,9 +74,9 @@ void PipelineLightCulling::Execute(VulkanContext& ctx, VkCommandBuffer commandBu
 		.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
 		.srcQueueFamilyIndex = ctx.GetComputeFamily(),
 		.dstQueueFamilyIndex = ctx.GetGraphicsFamily(),
-		.buffer = cfBuffers_->lightCellsBuffers_[frameIndex].buffer_,
+		.buffer = resCF_->lightCellsBuffers_[frameIndex].buffer_,
 		.offset = 0,
-		.size = cfBuffers_->lightCellsBuffers_[frameIndex].size_
+		.size = resCF_->lightCellsBuffers_[frameIndex].size_
 	};
 	const VkBufferMemoryBarrier2 lightIndicesBarrier =
 	{
@@ -88,9 +88,9 @@ void PipelineLightCulling::Execute(VulkanContext& ctx, VkCommandBuffer commandBu
 		.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
 		.srcQueueFamilyIndex = ctx.GetComputeFamily(),
 		.dstQueueFamilyIndex = ctx.GetGraphicsFamily(),
-		.buffer = cfBuffers_->lightIndicesBuffers_[frameIndex].buffer_,
+		.buffer = resCF_->lightIndicesBuffers_[frameIndex].buffer_,
 		.offset = 0,
-		.size = cfBuffers_->lightIndicesBuffers_[frameIndex].size_,
+		.size = resCF_->lightIndicesBuffers_[frameIndex].size_,
 	};
 	const std::array<VkBufferMemoryBarrier2, 2> barriers =
 	{
@@ -117,10 +117,10 @@ void PipelineLightCulling::CreateDescriptor(VulkanContext& ctx)
 
 	for (size_t i = 0; i < frameCount; ++i)
 	{
-		buildInfo.UpdateBuffer(&(cfBuffers_->aabbBuffers_[i]), 0);
-		buildInfo.UpdateBuffer(&(cfBuffers_->globalIndexCountBuffers_[i]), 2);
-		buildInfo.UpdateBuffer(&(cfBuffers_->lightCellsBuffers_[i]), 3);
-		buildInfo.UpdateBuffer(&(cfBuffers_->lightIndicesBuffers_[i]), 4);
+		buildInfo.UpdateBuffer(&(resCF_->aabbBuffers_[i]), 0);
+		buildInfo.UpdateBuffer(&(resCF_->globalIndexCountBuffers_[i]), 2);
+		buildInfo.UpdateBuffer(&(resCF_->lightCellsBuffers_[i]), 3);
+		buildInfo.UpdateBuffer(&(resCF_->lightIndicesBuffers_[i]), 4);
 		buildInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 5);
 		descriptor_.CreateSet(ctx, buildInfo, &(descriptorSets_[i]));
 	}

@@ -14,7 +14,7 @@ PipelinePBRSlotBased::PipelinePBRSlotBased(
 	VulkanContext& ctx,
 	const std::vector<Model*>& models,
 	Lights* lights,
-	IBLResources* iblResources,
+	ResourcesIBL* iblResources,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :

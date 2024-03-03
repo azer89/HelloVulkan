@@ -5,7 +5,7 @@
 #include "VulkanContext.h"
 #include "Camera.h"
 #include "PipelineBase.h"
-#include "IBLResources.h"
+#include "ResourcesIBL.h"
 #include "FrameCounter.h"
 
 #define GLFW_INCLUDE_VULKAN
@@ -87,7 +87,7 @@ protected:
 	std::unique_ptr<VulkanImage> depthImage_;
 
 	// Optional IBL images
-	std::unique_ptr<IBLResources> iblResources_;
+	std::unique_ptr<ResourcesIBL> iblResources_;
 };
 
 #endif

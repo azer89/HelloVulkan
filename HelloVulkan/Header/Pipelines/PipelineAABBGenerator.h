@@ -15,7 +15,7 @@ Clustered Forward
 class PipelineAABBGenerator final : public PipelineBase
 {
 public:
-	PipelineAABBGenerator(VulkanContext& ctx, ResourcesClusterForward* cfBuffers);
+	PipelineAABBGenerator(VulkanContext& ctx, ResourcesClusterForward* resCF);
 	~PipelineAABBGenerator();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
@@ -28,7 +28,7 @@ public:
 	}
 
 private:
-	ResourcesClusterForward* cfBuffers_;
+	ResourcesClusterForward* resCF_;
 
 	std::vector<VulkanBuffer> cfUBOBuffers_;
 	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;

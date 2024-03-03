@@ -186,7 +186,7 @@
     <ClInclude Include="Header\Configs.h" />
     <ClInclude Include="Header\DescriptorBuildInfo.h" />
     <ClInclude Include="Header\FrameCounter.h" />
-    <ClInclude Include="Header\IBLResources.h" />
+    <ClInclude Include="Header\ResourcesIBL.h" />
     <ClInclude Include="Header\Light.h" />
     <ClInclude Include="Header\Mesh.h" />
     <ClInclude Include="Header\Model.h" />

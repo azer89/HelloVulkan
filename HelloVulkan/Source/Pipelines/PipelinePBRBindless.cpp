@@ -15,7 +15,7 @@ PipelinePBRBindless::PipelinePBRBindless(
 	VulkanContext& ctx,
 	Scene* scene,
 	Lights* lights,
-	IBLResources* iblResources,
+	ResourcesIBL* iblResources,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :

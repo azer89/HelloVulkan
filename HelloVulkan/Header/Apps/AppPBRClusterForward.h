@@ -5,7 +5,7 @@
 #include "VulkanImage.h"
 #include "Light.h"
 #include "Model.h"
-#include "IBLResources.h"
+#include "ResourcesIBL.h"
 
 // Pipelines
 #include "PipelineSkybox.h"
@@ -56,7 +56,7 @@ private:
 	std::unique_ptr<PipelineLightCulling> lightCullPtr_;
 
 	// Buffers for clustered forward shading
-	std::unique_ptr<ResourcesClusterForward> cfBuffers_; 
+	std::unique_ptr<ResourcesClusterForward> resCF_; 
 
 	std::unique_ptr<Model> model_;
 
