@@ -83,7 +83,7 @@ void PipelineAABBGenerator::CreateDescriptor(VulkanContext& ctx)
 {
 	uint32_t frameCount = AppConfig::FrameOverlapCount;
 
-	DescriptorBuildInfo buildInfo;
+	VulkanDescriptorInfo buildInfo;
 	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT); // 0
 	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT); // 1
 

@@ -9,7 +9,7 @@
 class VulkanBuffer;
 class VulkanImage;
 
-struct DescriptorSetWrite
+struct DescriptorWrite
 {
 	// pNext_ is for raytracing pipeline
 	void* pNext_ = nullptr;
@@ -21,10 +21,10 @@ struct DescriptorSetWrite
 	VkShaderStageFlags shaderStage_;
 };
 
-class DescriptorBuildInfo
+class VulkanDescriptorInfo
 {
 public:
-	std::vector<DescriptorSetWrite> writes_;
+	std::vector<DescriptorWrite> writes_;
 
 private:
 	std::unordered_map<size_t, VkDescriptorBufferInfo> bufferMap_;

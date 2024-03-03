@@ -125,7 +125,7 @@ void PipelinePBRSlotBased::CreateDescriptor(VulkanContext& ctx)
 		numMeshes += model->NumMeshes();
 	}
 
-	DescriptorBuildInfo buildInfo;
+	VulkanDescriptorInfo buildInfo;
 	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 	buildInfo.AddBuffer(lights_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);

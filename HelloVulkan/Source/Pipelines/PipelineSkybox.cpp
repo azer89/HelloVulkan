@@ -1,7 +1,7 @@
 #include "PipelineSkybox.h"
 #include "VulkanUtility.h"
 #include "Configs.h"
-#include "UBO.h"
+#include "UBOs.h"
 
 #include "glm/glm.hpp"
 
@@ -78,7 +78,7 @@ void PipelineSkybox::CreateDescriptor(VulkanContext& ctx)
 {
 	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
 
-	DescriptorBuildInfo buildInfo;
+	VulkanDescriptorInfo buildInfo;
 	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
 	buildInfo.AddImage(envCubemap_); // 1
 

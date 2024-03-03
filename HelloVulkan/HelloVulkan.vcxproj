@@ -184,7 +184,7 @@
     <ClInclude Include="Header\Camera.h" />
     <ClInclude Include="Header\ResourcesClusterForward.h" />
     <ClInclude Include="Header\Configs.h" />
-    <ClInclude Include="Header\DescriptorBuildInfo.h" />
+    <ClInclude Include="Header\VulkanDescriptorInfo.h" />
     <ClInclude Include="Header\FrameCounter.h" />
     <ClInclude Include="Header\ResourcesIBL.h" />
     <ClInclude Include="Header\Light.h" />
@@ -215,7 +215,7 @@
     <ClInclude Include="Header\AccelerationStructure.h" />
     <ClInclude Include="Header\Scene.h" />
     <ClInclude Include="Header\TextureMapper.h" />
-    <ClInclude Include="Header\UBO.h" />
+    <ClInclude Include="Header\UBOs.h" />
     <ClInclude Include="Header\VulkanBarrier.h" />
     <ClInclude Include="Header\VulkanBuffer.h" />
     <ClInclude Include="Header\VulkanDescriptor.h" />
@@ -236,7 +236,7 @@
     <ClCompile Include="Source\Apps\AppSimpleRaytracing.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\ResourcesClusterForward.cpp" />
-    <ClCompile Include="Source\DescriptorBuildInfo.cpp" />
+    <ClCompile Include="Source\VulkanDescriptorInfo.cpp" />
     <ClCompile Include="Source\FrameCounter.cpp" />
     <ClCompile Include="Source\Lights.cpp" />
     <ClCompile Include="Source\main.cpp" />

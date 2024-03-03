@@ -3,7 +3,7 @@
 
 void VulkanDescriptor::CreatePoolAndLayout(
 	VulkanContext& ctx, 
-	const DescriptorBuildInfo& buildInfo,
+	const VulkanDescriptorInfo& buildInfo,
 	uint32_t frameCount,
 	uint32_t setCountPerFrame,
 	VkDescriptorPoolCreateFlags poolFlags)
@@ -132,7 +132,7 @@ void VulkanDescriptor::CreatePoolAndLayout(
 
 void VulkanDescriptor::CreateSet(
 	VulkanContext& ctx, 
-	const DescriptorBuildInfo& buildInfo,
+	const VulkanDescriptorInfo& buildInfo,
 	VkDescriptorSet* set)
 {
 	AllocateSet(ctx, set);
@@ -155,7 +155,7 @@ void VulkanDescriptor::AllocateSet(VulkanContext& ctx, VkDescriptorSet* set)
 
 void VulkanDescriptor::UpdateSet(
 	VulkanContext& ctx, 
-	const DescriptorBuildInfo& buildInfo,
+	const VulkanDescriptorInfo& buildInfo,
 	VkDescriptorSet* set)
 {
 	std::vector<VkWriteDescriptorSet> descriptorWrites;

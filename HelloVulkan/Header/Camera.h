@@ -5,7 +5,7 @@
 #include "glm/glm.hpp"
 
 #include "Configs.h"
-#include "UBO.h"
+#include "UBOs.h"
 
 // TODO convert this to enum class
 enum class CameraMovement : uint8_t
