@@ -201,7 +201,7 @@ void AppPBRClusterForward::UpdateUI()
 	}
 
 	static bool lightRender = true;
-	static PushConstantPBR pbrPC;
+	static PushConstPBR pbrPC;
 
 	imguiPtr_->ImGuiStart();
 	imguiPtr_->ImGuiSetWindow("Clustered Forward Shading", 525, 350);

@@ -52,7 +52,7 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 	{ {
 		.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
 		.offset = 0u,
-		.size = sizeof(PushConstantPBR),
+		.size = sizeof(PushConstPBR),
 	} };
 
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, ranges);
@@ -89,7 +89,7 @@ void PipelinePBRClusterForward::FillCommandBuffer(VulkanContext& ctx, VkCommandB
 		pipelineLayout_,
 		VK_SHADER_STAGE_FRAGMENT_BIT,
 		0,
-		sizeof(PushConstantPBR), &pc_);
+		sizeof(PushConstPBR), &pc_);
 
 	size_t meshIndex = 0;
 	for (Model* model : models_)

@@ -26,7 +26,7 @@ public:
 	 ~PipelinePBRBindless();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
-	void SetPBRPushConstants(const PushConstantPBR& pbrPC) { pc_ = pbrPC; };
+	void SetPBRPushConstants(const PushConstPBR& pbrPC) { pc_ = pbrPC; };
 
 private:
 	void CreateDescriptor(VulkanContext& ctx);
@@ -34,7 +34,7 @@ private:
 	Scene* scene_;
 	Lights* lights_;
 	ResourcesIBL* iblResources_;
-	PushConstantPBR pc_;
+	PushConstPBR pc_;
 	std::vector<VulkanBuffer> indirectBuffers_;
 	std::vector<VkDescriptorSet> descriptorSets_;
 };

@@ -154,7 +154,7 @@ void AppPBRBindless::UpdateUI()
 	}
 
 	static bool lightRender = true;
-	static PushConstantPBR pbrPC;
+	static PushConstPBR pbrPC;
 
 	imguiPtr_->ImGuiStart();
 	imguiPtr_->ImGuiSetWindow("Bindless Rendering", 525, 350);

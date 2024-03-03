@@ -28,7 +28,7 @@ public:
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
-	void SetPBRPushConstants(const PushConstantPBR& pbrPC) { pc_ = pbrPC; };
+	void SetPBRPushConstants(const PushConstPBR& pbrPC) { pc_ = pbrPC; };
 
 	void SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO ubo)
 	{
@@ -37,7 +37,7 @@ public:
 	}
 
 private:
-	PushConstantPBR pc_;
+	PushConstPBR pc_;
 	ResourcesClusterForward* resCF_;
 	Lights* lights_;
 	ResourcesIBL* iblResources_;

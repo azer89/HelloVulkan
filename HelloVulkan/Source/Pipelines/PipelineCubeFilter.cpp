@@ -39,7 +39,7 @@ PipelineCubeFilter::PipelineCubeFilter(
 	{{
 		.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
 		.offset = 0u,
-		.size = sizeof(PushConstantCubeFilter)
+		.size = sizeof(PushConstCubeFilter)
 	}};
 
 	// Pipeline layout
@@ -305,7 +305,7 @@ void PipelineCubeFilter::OffscreenRender(VulkanContext& ctx,
 	{
 		const uint32_t targetSize = outputSideLength >> i;
 
-		PushConstantCubeFilter pc =
+		PushConstCubeFilter pc =
 		{
 			.roughness = filterType == CubeFilterType::Diffuse || outputMipMapCount == 1 ?
 				0.f :
@@ -317,7 +317,7 @@ void PipelineCubeFilter::OffscreenRender(VulkanContext& ctx,
 			pipelineLayout_,
 			VK_SHADER_STAGE_FRAGMENT_BIT,
 			0,
-			sizeof(PushConstantCubeFilter), &pc);
+			sizeof(PushConstCubeFilter), &pc);
 
 		renderPass_.BeginCubemapRenderPass(commandBuffer, mipFramebuffers[i].GetFramebuffer(), targetSize);
 		vkCmdDraw(commandBuffer, 3, 1u, 0, 0);

@@ -21,7 +21,7 @@ PipelineBRDFLUT::PipelineBRDFLUT(
 	{{
 		.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT,
 		.offset = 0u,
-		.size = sizeof(PushConstantsBRDFLUT)
+		.size = sizeof(PushConstBRDFLUT)
 	}};
 
 	CreateDescriptor(ctx);
@@ -72,7 +72,7 @@ void PipelineBRDFLUT::Execute(VulkanContext& ctx)
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline_);
 
-	PushConstantsBRDFLUT pc =
+	PushConstBRDFLUT pc =
 	{
 		.width = IBLConfig::LUTWidth,
 		.height = IBLConfig::LUTHeight,
@@ -83,7 +83,7 @@ void PipelineBRDFLUT::Execute(VulkanContext& ctx)
 		pipelineLayout_,
 		VK_SHADER_STAGE_COMPUTE_BIT,
 		0,
-		sizeof(PushConstantsBRDFLUT), &pc);
+		sizeof(PushConstBRDFLUT), &pc);
 
 	vkCmdBindDescriptorSets(
 		commandBuffer,

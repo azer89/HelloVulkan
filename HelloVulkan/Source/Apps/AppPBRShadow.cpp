@@ -201,7 +201,7 @@ void AppPBRShadow::UpdateUI()
 	}
 
 	static bool staticLightRender = true;
-	static PushConstantPBR staticPBRPushConstants =
+	static PushConstPBR staticPBRPushConstants =
 	{
 		.lightIntensity = 1.5f,
 		.baseReflectivity = 0.01f,

@@ -158,7 +158,7 @@ void AppPBRSlotBased::UpdateUI()
 	}
 
 	static bool lightRender = true;
-	static PushConstantPBR pbrPC;
+	static PushConstPBR pbrPC;
 
 	imguiPtr_->ImGuiStart();
 	imguiPtr_->ImGuiSetWindow("PBR and IBL", 525, 350);

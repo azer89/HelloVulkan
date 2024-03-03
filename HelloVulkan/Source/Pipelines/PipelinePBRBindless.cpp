@@ -54,7 +54,7 @@ PipelinePBRBindless::PipelinePBRBindless(
 	{{
 		.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
 		.offset = 0u,
-		.size = sizeof(PushConstantPBR),
+		.size = sizeof(PushConstPBR),
 	}};
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, ranges);
 
@@ -90,7 +90,7 @@ void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 		pipelineLayout_,
 		VK_SHADER_STAGE_FRAGMENT_BIT,
 		0,
-		sizeof(PushConstantPBR), &pc_);
+		sizeof(PushConstPBR), &pc_);
 
 	vkCmdBindDescriptorSets(
 		commandBuffer,

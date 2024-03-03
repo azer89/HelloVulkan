@@ -27,12 +27,12 @@ public:
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
-	void SetPBRPushConstants(const PushConstantPBR& pbrPC) { pc_ = pbrPC; };
+	void SetPBRPushConstants(const PushConstPBR& pbrPC) { pc_ = pbrPC; };
 
 private:
 	void CreateDescriptor(VulkanContext& ctx);
 
-	PushConstantPBR pc_;
+	PushConstPBR pc_;
 	Lights* lights_;
 	ResourcesIBL* iblResources_;
 	std::vector<Model*> models_;

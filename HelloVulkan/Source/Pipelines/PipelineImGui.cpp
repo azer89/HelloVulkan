@@ -103,7 +103,7 @@ void PipelineImGui::ImGuiShowFrameData(FrameCounter* frameCounter)
 		ImVec2(450, 50));
 }
 
-void PipelineImGui::ImGuiShowPBRConfig(PushConstantPBR* pc, float mipmapCount)
+void PipelineImGui::ImGuiShowPBRConfig(PushConstPBR* pc, float mipmapCount)
 {
 	ImGui::SliderFloat("Light Falloff", &(pc->lightFalloff), 0.01f, 5.f);
 	ImGui::SliderFloat("Light Intensity", &(pc->lightIntensity), 0.1f, 20.f);
