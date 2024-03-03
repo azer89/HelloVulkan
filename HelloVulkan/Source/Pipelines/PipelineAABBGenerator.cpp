@@ -83,19 +83,19 @@ void PipelineAABBGenerator::CreateDescriptor(VulkanContext& ctx)
 {
 	uint32_t frameCount = AppConfig::FrameOverlapCount;
 
-	VulkanDescriptorInfo buildInfo;
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT); // 0
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT); // 1
+	VulkanDescriptorInfo dsInfo;
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT); // 0
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT); // 1
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, buildInfo, frameCount, 1u);
+	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 
 	// Sets
 	for (size_t i = 0; i < frameCount; ++i)
 	{
-		buildInfo.UpdateBuffer(&(resCF_->aabbBuffers_[i]), 0);
-		buildInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 1);
+		dsInfo.UpdateBuffer(&(resCF_->aabbBuffers_[i]), 0);
+		dsInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 1);
 
-		descriptor_.CreateSet(ctx, buildInfo, &descriptorSets_[i]);
+		descriptor_.CreateSet(ctx, dsInfo, &descriptorSets_[i]);
 	}
 }

@@ -11,16 +11,16 @@ class VulkanDescriptor
 public:
 	void CreatePoolAndLayout(
 		VulkanContext& ctx, 
-		const VulkanDescriptorInfo& buildInfo,
+		const VulkanDescriptorInfo& descriptorInfo,
 		uint32_t frameCount,
 		uint32_t setCountPerFrame,
 		VkDescriptorPoolCreateFlags poolFlags = 0);
 
-	void CreateSet(VulkanContext& ctx, const VulkanDescriptorInfo& buildInfo, VkDescriptorSet* set);
+	void CreateSet(VulkanContext& ctx, const VulkanDescriptorInfo& descriptorInfo, VkDescriptorSet* set);
 
 	void AllocateSet(VulkanContext& ctx, VkDescriptorSet* set);
 
-	void UpdateSet(VulkanContext& ctx, const VulkanDescriptorInfo& buildInfo, VkDescriptorSet* set);
+	void UpdateSet(VulkanContext& ctx, const VulkanDescriptorInfo& descriptorInfo, VkDescriptorSet* set);
 
 	void Destroy();
 

@@ -130,23 +130,23 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 		numMeshes += model->NumMeshes();
 	}
 
-	VulkanDescriptorInfo buildInfo;
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-	buildInfo.AddBuffer(lights_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
+	VulkanDescriptorInfo dsInfo;
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+	dsInfo.AddBuffer(lights_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
 	for (size_t i = 0; i < PBR_MESH_TEXTURE_COUNT; ++i)
 	{
-		buildInfo.AddImage(nullptr);
+		dsInfo.AddImage(nullptr);
 	}
-	buildInfo.AddImage(&(iblResources_->specularCubemap_));
-	buildInfo.AddImage(&(iblResources_->diffuseCubemap_));
-	buildInfo.AddImage(&(iblResources_->brdfLut_));
+	dsInfo.AddImage(&(iblResources_->specularCubemap_));
+	dsInfo.AddImage(&(iblResources_->diffuseCubemap_));
+	dsInfo.AddImage(&(iblResources_->brdfLut_));
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, buildInfo, AppConfig::FrameOverlapCount, numMeshes);
+	descriptor_.CreatePoolAndLayout(ctx, dsInfo, AppConfig::FrameOverlapCount, numMeshes);
 
 	// Sets
 	constexpr size_t bindingOffset = static_cast<size_t>(UBO_COUNT + SSBO_COUNT);
@@ -155,13 +155,13 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 	{
 		size_t meshIndex = 0;
 		descriptorSets_[i].resize(numMeshes);
-		buildInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
-		buildInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 2);
-		buildInfo.UpdateBuffer(&(resCF_->lightCellsBuffers_[i]), 4);
-		buildInfo.UpdateBuffer(&(resCF_->lightIndicesBuffers_[i]), 5);
+		dsInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
+		dsInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 2);
+		dsInfo.UpdateBuffer(&(resCF_->lightCellsBuffers_[i]), 4);
+		dsInfo.UpdateBuffer(&(resCF_->lightIndicesBuffers_[i]), 5);
 		for (Model* model : models_)
 		{
-			buildInfo.UpdateBuffer(&(model->modelBuffers_[i]), 1);
+			dsInfo.UpdateBuffer(&(model->modelBuffers_[i]), 1);
 			for (Mesh& mesh : model->meshes_)
 			{
 				for (const auto& elem : mesh.textureIndices_)
@@ -170,9 +170,9 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 					size_t typeIndex = static_cast<size_t>(elem.first) - 1;
 					int textureIndex = elem.second;
 					VulkanImage* texture = model->GetTexture(textureIndex);
-					buildInfo.UpdateImage(texture, bindingOffset + typeIndex);
+					dsInfo.UpdateImage(texture, bindingOffset + typeIndex);
 				}
-				descriptor_.CreateSet(ctx, buildInfo, &(descriptorSets_[i][meshIndex]));
+				descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i][meshIndex]));
 				meshIndex++;
 			}
 		}

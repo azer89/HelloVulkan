@@ -28,10 +28,10 @@ PipelineImGui::PipelineImGui(
 	framebuffer_.CreateResizeable(ctx, renderPass_.GetHandle(), {}, IsOffscreen());
 
 	constexpr uint32_t imageCount = AppConfig::FrameOverlapCount;
-	VulkanDescriptorInfo dsBuildInfo;
-	dsBuildInfo.AddImage(nullptr);
+	VulkanDescriptorInfo dsInfo;
+	dsInfo.AddImage(nullptr);
 	// TODO Layout is unused here
-	descriptor_.CreatePoolAndLayout(ctx, dsBuildInfo, imageCount, 1u, VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT);
+	descriptor_.CreatePoolAndLayout(ctx, dsInfo, imageCount, 1u, VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT);
 	
 	// ImGui
 	IMGUI_CHECKVERSION();

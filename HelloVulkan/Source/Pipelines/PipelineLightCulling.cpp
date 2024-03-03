@@ -105,23 +105,23 @@ void PipelineLightCulling::CreateDescriptor(VulkanContext& ctx)
 	const uint32_t frameCount = static_cast<uint32_t>(AppConfig::FrameOverlapCount);
 	constexpr VkShaderStageFlags stageFlag = VK_SHADER_STAGE_COMPUTE_BIT;
 
-	VulkanDescriptorInfo buildInfo;
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 0
-	buildInfo.AddBuffer(lights_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 1
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 2
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 3
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 4
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, stageFlag); // 5
+	VulkanDescriptorInfo dsInfo;
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 0
+	dsInfo.AddBuffer(lights_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 1
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 2
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 3
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 4
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, stageFlag); // 5
 
-	descriptor_.CreatePoolAndLayout(ctx, buildInfo, frameCount, 1u);
+	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 
 	for (size_t i = 0; i < frameCount; ++i)
 	{
-		buildInfo.UpdateBuffer(&(resCF_->aabbBuffers_[i]), 0);
-		buildInfo.UpdateBuffer(&(resCF_->globalIndexCountBuffers_[i]), 2);
-		buildInfo.UpdateBuffer(&(resCF_->lightCellsBuffers_[i]), 3);
-		buildInfo.UpdateBuffer(&(resCF_->lightIndicesBuffers_[i]), 4);
-		buildInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 5);
-		descriptor_.CreateSet(ctx, buildInfo, &(descriptorSets_[i]));
+		dsInfo.UpdateBuffer(&(resCF_->aabbBuffers_[i]), 0);
+		dsInfo.UpdateBuffer(&(resCF_->globalIndexCountBuffers_[i]), 2);
+		dsInfo.UpdateBuffer(&(resCF_->lightCellsBuffers_[i]), 3);
+		dsInfo.UpdateBuffer(&(resCF_->lightIndicesBuffers_[i]), 4);
+		dsInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 5);
+		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}
 }

@@ -120,10 +120,10 @@ void PipelineCubeFilter::InitializeOutputCubemap(
 
 void PipelineCubeFilter::CreateDescriptor(VulkanContext& ctx, VulkanImage* inputCubemap)
 {
-	VulkanDescriptorInfo buildInfo;
-	buildInfo.AddImage(inputCubemap);
-	descriptor_.CreatePoolAndLayout(ctx, buildInfo, 1u, 1u);
-	descriptor_.CreateSet(ctx, buildInfo, &descriptorSet_);
+	VulkanDescriptorInfo dsInfo;
+	dsInfo.AddImage(inputCubemap);
+	descriptor_.CreatePoolAndLayout(ctx, dsInfo, 1u, 1u);
+	descriptor_.CreateSet(ctx, dsInfo, &descriptorSet_);
 }
 
 void PipelineCubeFilter::CreateOutputCubemapViews(VulkanContext& ctx,

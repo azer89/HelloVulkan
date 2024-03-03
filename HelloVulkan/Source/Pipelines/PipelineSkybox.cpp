@@ -78,17 +78,17 @@ void PipelineSkybox::CreateDescriptor(VulkanContext& ctx)
 {
 	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
 
-	VulkanDescriptorInfo buildInfo;
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
-	buildInfo.AddImage(envCubemap_); // 1
+	VulkanDescriptorInfo dsInfo;
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
+	dsInfo.AddImage(envCubemap_); // 1
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, buildInfo, frameCount, 1u);
+	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 
 	// Sets
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
-		buildInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
-		descriptor_.CreateSet(ctx, buildInfo, &(descriptorSets_[i]));
+		dsInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
+		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}
 }

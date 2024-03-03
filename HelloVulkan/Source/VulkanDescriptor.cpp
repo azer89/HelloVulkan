@@ -3,7 +3,7 @@
 
 void VulkanDescriptor::CreatePoolAndLayout(
 	VulkanContext& ctx, 
-	const VulkanDescriptorInfo& buildInfo,
+	const VulkanDescriptorInfo& descriptorInfo,
 	uint32_t frameCount,
 	uint32_t setCountPerFrame,
 	VkDescriptorPoolCreateFlags poolFlags)
@@ -17,7 +17,7 @@ void VulkanDescriptor::CreatePoolAndLayout(
 	uint32_t accelerationStructureCount = 0;
 
 	// Create pool
-	for (auto& write : buildInfo.writes_)
+	for (auto& write : descriptorInfo.writes_)
 	{
 		if (write.descriptorType_ == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
 		{
@@ -106,7 +106,7 @@ void VulkanDescriptor::CreatePoolAndLayout(
 	// Create Layout
 	std::vector<VkDescriptorSetLayoutBinding> layoutBindings;
 	uint32_t bindingIndex = 0;
-	for (auto& write : buildInfo.writes_)
+	for (auto& write : descriptorInfo.writes_)
 	{
 		layoutBindings.emplace_back(
 			CreateDescriptorSetLayoutBinding
@@ -132,12 +132,12 @@ void VulkanDescriptor::CreatePoolAndLayout(
 
 void VulkanDescriptor::CreateSet(
 	VulkanContext& ctx, 
-	const VulkanDescriptorInfo& buildInfo,
+	const VulkanDescriptorInfo& descriptorInfo,
 	VkDescriptorSet* set)
 {
 	AllocateSet(ctx, set);
 
-	UpdateSet(ctx, buildInfo, set);
+	UpdateSet(ctx, descriptorInfo, set);
 }
 
 void VulkanDescriptor::AllocateSet(VulkanContext& ctx, VkDescriptorSet* set)
@@ -155,25 +155,25 @@ void VulkanDescriptor::AllocateSet(VulkanContext& ctx, VkDescriptorSet* set)
 
 void VulkanDescriptor::UpdateSet(
 	VulkanContext& ctx, 
-	const VulkanDescriptorInfo& buildInfo,
+	const VulkanDescriptorInfo& descriptorInfo,
 	VkDescriptorSet* set)
 {
 	std::vector<VkWriteDescriptorSet> descriptorWrites;
 
 	uint32_t bindIndex = 0;
 
-	for (size_t i = 0; i < buildInfo.writes_.size(); ++i)
+	for (size_t i = 0; i < descriptorInfo.writes_.size(); ++i)
 	{
 		descriptorWrites.push_back({
 			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-			.pNext = buildInfo.writes_[i].pNext_,
+			.pNext = descriptorInfo.writes_[i].pNext_,
 			.dstSet = *set, // Dereference
 			.dstBinding = bindIndex++,
 			.dstArrayElement = 0,
-			.descriptorCount = buildInfo.writes_[i].descriptorCount_,
-			.descriptorType = buildInfo.writes_[i].descriptorType_,
-			.pImageInfo = buildInfo.writes_[i].imageInfoPtr_,
-			.pBufferInfo = buildInfo.writes_[i].bufferInfoPtr_,
+			.descriptorCount = descriptorInfo.writes_[i].descriptorCount_,
+			.descriptorType = descriptorInfo.writes_[i].descriptorType_,
+			.pImageInfo = descriptorInfo.writes_[i].imageInfoPtr_,
+			.pBufferInfo = descriptorInfo.writes_[i].bufferInfoPtr_,
 			.pTexelBufferView = nullptr
 		});
 	}

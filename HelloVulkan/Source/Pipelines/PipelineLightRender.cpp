@@ -87,17 +87,17 @@ void PipelineLightRender::CreateDescriptor(VulkanContext& ctx)
 {
 	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
 
-	VulkanDescriptorInfo buildInfo;
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT); // 0
-	buildInfo.AddBuffer(lights_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT); // 1
+	VulkanDescriptorInfo dsInfo;
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT); // 0
+	dsInfo.AddBuffer(lights_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT); // 1
 
 	// Create pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, buildInfo, frameCount, 1u);
+	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 
 	// Create sets
 	for (size_t i = 0; i < frameCount; ++i)
 	{
-		buildInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
-		descriptor_.CreateSet(ctx, buildInfo, &(descriptorSets_[i]));
+		dsInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
+		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}
 }

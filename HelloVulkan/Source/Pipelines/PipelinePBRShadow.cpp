@@ -124,32 +124,32 @@ void PipelinePBRShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer co
 void PipelinePBRShadow::CreateDescriptor(VulkanContext& ctx)
 {
 	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
-	VulkanDescriptorInfo buildInfo;
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 1
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 2
+	VulkanDescriptorInfo dsInfo;
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 1
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 2
 
-	buildInfo.AddBuffer(&(scene_->vertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 3
-	buildInfo.AddBuffer(&(scene_->indexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
-	buildInfo.AddBuffer(&(scene_->meshDataBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 5
-	buildInfo.AddBuffer(lights_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 6
+	dsInfo.AddBuffer(&(scene_->vertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 3
+	dsInfo.AddBuffer(&(scene_->indexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
+	dsInfo.AddBuffer(&(scene_->meshDataBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 5
+	dsInfo.AddBuffer(lights_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 6
 
-	buildInfo.AddImage(&(iblResources_->specularCubemap_)); // 7
-	buildInfo.AddImage(&(iblResources_->diffuseCubemap_)); // 8
-	buildInfo.AddImage(&(iblResources_->brdfLut_)); // 9
-	buildInfo.AddImage(shadowMap_); // 10
-	buildInfo.AddImageArray(scene_->GetImageInfos()); // 11
+	dsInfo.AddImage(&(iblResources_->specularCubemap_)); // 7
+	dsInfo.AddImage(&(iblResources_->diffuseCubemap_)); // 8
+	dsInfo.AddImage(&(iblResources_->brdfLut_)); // 9
+	dsInfo.AddImage(shadowMap_); // 10
+	dsInfo.AddImageArray(scene_->GetImageInfos()); // 11
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, buildInfo, frameCount, 1u);
+	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 
 	// Sets
 	descriptorSets_.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
-		buildInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
-		buildInfo.UpdateBuffer(&(shadowMapConfigUBOBuffers_[i]), 1);
-		buildInfo.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 2);
-		descriptor_.CreateSet(ctx, buildInfo, &(descriptorSets_[i]));
+		dsInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
+		dsInfo.UpdateBuffer(&(shadowMapConfigUBOBuffers_[i]), 1);
+		dsInfo.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 2);
+		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}
 }
