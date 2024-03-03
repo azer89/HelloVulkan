@@ -2,10 +2,8 @@
 #define APP_PBR_CLUSTER_FORWARD
 
 #include "AppBase.h"
-#include "VulkanImage.h"
-#include "Light.h"
+#include "ResourcesLight.h"
 #include "Model.h"
-#include "ResourcesIBL.h"
 
 // Pipelines
 #include "PipelineSkybox.h"
@@ -23,7 +21,6 @@
 #include "ResourcesClusterForward.h"
 
 // STL
-#include <vector>
 #include <memory>
 
 /*
@@ -60,7 +57,7 @@ private:
 
 	std::unique_ptr<Model> model_;
 
-	std::unique_ptr<Lights> lights_;
+	std::unique_ptr<ResourcesLight> lights_;
 
 	float cubemapMipmapCount_;
 };

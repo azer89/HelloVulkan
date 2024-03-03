@@ -4,7 +4,7 @@
 #include "PipelineBase.h"
 #include "VulkanContext.h"
 #include "ResourcesClusterForward.h"
-#include "Light.h"
+#include "ResourcesLight.h"
 #include "Configs.h"
 
 #include <array>
@@ -15,7 +15,7 @@ Clustered Forward
 class PipelineLightCulling final : public PipelineBase
 {
 public:
-	PipelineLightCulling(VulkanContext& ctx, Lights* lights, ResourcesClusterForward* resCF);
+	PipelineLightCulling(VulkanContext& ctx, ResourcesLight* lights, ResourcesClusterForward* resCF);
 	~PipelineLightCulling();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
@@ -34,7 +34,7 @@ public:
 	}
 
 private:
-	Lights* lights_;
+	ResourcesLight* lights_;
 	ResourcesClusterForward* resCF_;
 
 	std::vector<VulkanBuffer> cfUBOBuffers_;

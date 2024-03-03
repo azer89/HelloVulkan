@@ -4,9 +4,9 @@
 #include "PipelineBase.h"
 #include "VulkanImage.h"
 #include "PushConstants.h"
-#include "ResourcesIBL.h"
 #include "Model.h"
-#include "Light.h"
+#include "ResourcesLight.h"
+#include "ResourcesIBL.h"
 
 #include <vector>
 
@@ -18,7 +18,7 @@ class PipelinePBRSlotBased final : public PipelineBase
 public:
 	PipelinePBRSlotBased(VulkanContext& ctx,
 		const std::vector<Model*>& models,
-		Lights* lights,
+		ResourcesLight* lights,
 		ResourcesIBL* iblResources,
 		VulkanImage* depthImage,
 		VulkanImage* offscreenColorImage,
@@ -33,7 +33,7 @@ private:
 	void CreateDescriptor(VulkanContext& ctx);
 
 	PushConstPBR pc_;
-	Lights* lights_;
+	ResourcesLight* lights_;
 	ResourcesIBL* iblResources_;
 	std::vector<Model*> models_;
 	std::vector<std::vector<VkDescriptorSet>> descriptorSets_;

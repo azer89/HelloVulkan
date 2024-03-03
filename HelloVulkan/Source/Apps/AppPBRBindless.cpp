@@ -101,7 +101,7 @@ void AppPBRBindless::Init()
 void AppPBRBindless::InitLights()
 {
 	// Lights (SSBO)
-	lights_ = std::make_unique<Lights>();
+	lights_ = std::make_unique<ResourcesLight>();
 	lights_->AddLights(vulkanContext_,
 	{
 		{ .position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },

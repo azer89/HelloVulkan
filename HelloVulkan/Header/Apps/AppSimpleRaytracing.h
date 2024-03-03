@@ -2,8 +2,6 @@
 #define APP_SIMPLE_RAYTRACING
 
 #include "AppBase.h"
-#include "VulkanImage.h"
-#include "Model.h"
 
 // Pipelines
 #include "PipelineClear.h"
@@ -12,7 +10,6 @@
 #include "PipelineSimpleRaytracing.h"
 
 // STL
-#include <vector>
 #include <memory>
 
 class AppSimpleRaytracing final : AppBase

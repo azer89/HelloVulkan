@@ -2,11 +2,9 @@
 #define APP_PBR_SHADOW_MAPPING
 
 #include "AppBase.h"
-#include "VulkanImage.h"
-#include "Light.h"
 #include "Scene.h"
-#include "ResourcesIBL.h"
 #include "ResourcesShadow.h"
+#include "ResourcesLight.h"
 
 // Pipelines
 #include "PipelineSkybox.h"
@@ -20,7 +18,6 @@
 #include "PipelineImGui.h"
 
 // STL
-#include <vector>
 #include <memory>
 
 /*
@@ -50,7 +47,7 @@ private:
 	std::unique_ptr<PipelineImGui> imguiPtr_;
 
 	std::unique_ptr<Scene> scene_;
-	std::unique_ptr<Lights> lights_;
+	std::unique_ptr<ResourcesLight> lights_;
 	std::unique_ptr<ResourcesShadow> resShadow_;
 
 	ShadowMapUBO shadowUBO_;

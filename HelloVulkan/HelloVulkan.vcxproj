@@ -207,7 +207,7 @@
     <ClInclude Include="Header\Pipelines\PipelineSkybox.h" />
     <ClInclude Include="Header\Pipelines\PipelineTonemap.h" />
     <ClInclude Include="Header\PushConstants.h" />
-    <ClInclude Include="Header\Resources\Light.h" />
+    <ClInclude Include="Header\Resources\ResourcesLight.h" />
     <ClInclude Include="Header\Resources\ResourcesClusterForward.h" />
     <ClInclude Include="Header\Resources\ResourcesIBL.h" />
     <ClInclude Include="Header\Resources\ResourcesShadow.h" />
@@ -215,8 +215,8 @@
     <ClInclude Include="Header\Scene.h" />
     <ClInclude Include="Header\TextureMapper.h" />
     <ClInclude Include="Header\UBOs.h" />
-    <ClInclude Include="Header\Vulkan\AccelerationStructure.h" />
-    <ClInclude Include="Header\Vulkan\PipelineCreateInfo.h" />
+    <ClInclude Include="Header\Vulkan\VulkanAccelerationStructure.h" />
+    <ClInclude Include="Header\Vulkan\VulkanPipelineCreateInfo.h" />
     <ClInclude Include="Header\Vulkan\VulkanBarrier.h" />
     <ClInclude Include="Header\Vulkan\VulkanBuffer.h" />
     <ClInclude Include="Header\Vulkan\VulkanContext.h" />
@@ -260,13 +260,13 @@
     <ClCompile Include="Source\Pipelines\PipelineSimpleRaytracing.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineSkybox.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineTonemap.cpp" />
-    <ClCompile Include="Source\Resources\Lights.cpp" />
+    <ClCompile Include="Source\Resources\ResourcesLight.cpp" />
     <ClCompile Include="Source\Resources\ResourcesClusterForward.cpp" />
     <ClCompile Include="Source\Resources\ResourcesIBL.cpp" />
     <ClCompile Include="Source\Resources\ResourcesShadow.cpp" />
     <ClCompile Include="Source\Resources\ResourcesShared.cpp" />
     <ClCompile Include="Source\Scene.cpp" />
-    <ClCompile Include="Source\Vulkan\AccelerationStructure.cpp" />
+    <ClCompile Include="Source\Vulkan\VulkanAccelerationStructure.cpp" />
     <ClCompile Include="Source\Vulkan\VulkanBarrier.cpp" />
     <ClCompile Include="Source\Vulkan\VulkanBuffer.cpp" />
     <ClCompile Include="Source\Vulkan\VulkanContext.cpp" />

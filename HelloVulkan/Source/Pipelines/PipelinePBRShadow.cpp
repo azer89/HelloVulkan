@@ -12,7 +12,7 @@ constexpr uint32_t ENV_TEXTURE_COUNT = 4; // Specular, diffuse, BRDF LUT, and sh
 PipelinePBRShadow::PipelinePBRShadow(
 	VulkanContext& ctx,
 	Scene* scene,
-	Lights* lights,
+	ResourcesLight* lights,
 	ResourcesIBL* iblResources,
 	VulkanImage* shadowMap,
 	VulkanImage* depthImage,

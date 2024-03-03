@@ -10,7 +10,7 @@ constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 PipelinePBRClusterForward::PipelinePBRClusterForward(
 	VulkanContext& ctx,
 	std::vector<Model*> models,
-	Lights* lights,
+	ResourcesLight* lights,
 	ResourcesClusterForward* resCF,
 	ResourcesIBL* iblResources,
 	VulkanImage* depthImage,

@@ -13,7 +13,7 @@ constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 PipelinePBRSlotBased::PipelinePBRSlotBased(
 	VulkanContext& ctx,
 	const std::vector<Model*>& models,
-	Lights* lights,
+	ResourcesLight* lights,
 	ResourcesIBL* iblResources,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,

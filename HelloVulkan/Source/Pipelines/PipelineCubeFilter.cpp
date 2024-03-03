@@ -1,5 +1,5 @@
 #include "PipelineCubeFilter.h"
-#include "PipelineCreateInfo.h"
+#include "VulkanPipelineCreateInfo.h"
 #include "VulkanUtility.h"
 #include "VulkanShader.h"
 #include "VulkanFramebuffer.h"
@@ -189,7 +189,7 @@ void PipelineCubeFilter::CreateOffscreenGraphicsPipeline(
 	}
 
 	// Pipeline create info
-	PipelineCreateInfo pInfo(ctx);
+	VulkanPipelineCreateInfo pInfo(ctx);
 	pInfo.viewport.width = static_cast<float>(viewportWidth);
 	pInfo.viewport.height = static_cast<float>(viewportHeight);
 	pInfo.scissor.extent = { viewportWidth, viewportHeight };

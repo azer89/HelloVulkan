@@ -2,10 +2,8 @@
 #define APP_PBR_SLOT_BASED
 
 #include "AppBase.h"
-#include "VulkanImage.h"
-#include "Light.h"
 #include "Model.h"
-#include "ResourcesIBL.h"
+#include "ResourcesLight.h"
 
 // Pipelines
 #include "PipelineSkybox.h"
@@ -18,7 +16,6 @@
 #include "PipelineImGui.h"
 
 // STL
-#include <vector>
 #include <memory>
 
 /*
@@ -48,7 +45,7 @@ private:
 	std::unique_ptr<PipelineImGui> imguiPtr_;
 
 	std::unique_ptr<Model> model_;
-	std::unique_ptr<Lights> lights_;
+	std::unique_ptr<ResourcesLight> lights_;
 
 	float cubemapMipmapCount_;
 	float modelRotation_;

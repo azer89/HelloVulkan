@@ -2,11 +2,11 @@
 #define PIPELINE_PBR_CLUSTER_FORWARD
 
 #include "PipelineBase.h"
-#include "ResourcesClusterForward.h"
 #include "PushConstants.h"
-#include "ResourcesIBL.h"
 #include "Model.h"
-#include "Light.h"
+#include "ResourcesClusterForward.h"
+#include "ResourcesLight.h"
+#include "ResourcesIBL.h"
 
 #include <vector>
 
@@ -18,7 +18,7 @@ class PipelinePBRClusterForward final : public PipelineBase
 public:
 	PipelinePBRClusterForward(VulkanContext& ctx,
 		std::vector<Model*> models,
-		Lights* lights,
+		ResourcesLight* lights,
 		ResourcesClusterForward* resCF,
 		ResourcesIBL* iblResources,
 		VulkanImage* depthImage,
@@ -39,7 +39,7 @@ public:
 private:
 	PushConstPBR pc_;
 	ResourcesClusterForward* resCF_;
-	Lights* lights_;
+	ResourcesLight* lights_;
 	ResourcesIBL* iblResources_;
 	std::vector<VulkanBuffer> cfUBOBuffers_;
 	std::vector<Model*> models_;

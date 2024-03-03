@@ -2,7 +2,7 @@
 #define APP_PBR_BINDLESS
 
 #include "AppBase.h"
-#include "Light.h"
+#include "ResourcesLight.h"
 #include "Scene.h"
 
 // Pipelines
@@ -16,7 +16,6 @@
 #include "PipelineImGui.h"
 
 // STL
-#include <vector>
 #include <memory>
 
 /*
@@ -45,7 +44,7 @@ private:
 	std::unique_ptr<PipelineImGui> imguiPtr_;
 
 	std::unique_ptr<Scene> scene_;
-	std::unique_ptr<Lights> lights_; // TODO Set as unique_ptr
+	std::unique_ptr<ResourcesLight> lights_; // TODO Set as unique_ptr
 
 	float cubemapMipmapCount_;
 	float modelRotation_;

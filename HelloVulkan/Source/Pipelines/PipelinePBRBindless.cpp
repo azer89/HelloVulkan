@@ -14,7 +14,7 @@ constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 PipelinePBRBindless::PipelinePBRBindless(
 	VulkanContext& ctx,
 	Scene* scene,
-	Lights* lights,
+	ResourcesLight* lights,
 	ResourcesIBL* iblResources,
 	VulkanImage* depthImage,
 	VulkanImage* offscreenColorImage,

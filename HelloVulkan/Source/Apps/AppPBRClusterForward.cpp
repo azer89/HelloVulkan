@@ -133,7 +133,7 @@ void AppPBRClusterForward::InitLights()
 		lights.push_back(l);
 	}
 
-	lights_ = std::make_unique<Lights>();
+	lights_ = std::make_unique<ResourcesLight>();
 	lights_->AddLights(vulkanContext_, lights);
 }
 

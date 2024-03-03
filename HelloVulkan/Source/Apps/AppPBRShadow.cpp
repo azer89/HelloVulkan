@@ -113,7 +113,7 @@ void AppPBRShadow::Init()
 void AppPBRShadow::InitLights()
 {
 	// Lights (SSBO)
-	lights_ = std::make_unique<Lights>();
+	lights_ = std::make_unique<ResourcesLight>();
 	lights_->AddLights(vulkanContext_,
 	{
 		// The first light is used to generate the shadow map

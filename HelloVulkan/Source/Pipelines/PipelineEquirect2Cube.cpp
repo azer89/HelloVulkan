@@ -1,5 +1,5 @@
 #include "PipelineEquirect2Cube.h"
-#include "PipelineCreateInfo.h"
+#include "VulkanPipelineCreateInfo.h"
 #include "VulkanUtility.h"
 #include "VulkanShader.h"
 #include "Configs.h"
@@ -112,7 +112,7 @@ void PipelineEquirect2Cube::CreateOffscreenGraphicsPipeline(
 	}
 
 	// Pipeline create info
-	PipelineCreateInfo pInfo(ctx);
+	VulkanPipelineCreateInfo pInfo(ctx);
 
 	pInfo.viewport.width = IBLConfig::InputCubeSideLength;
 	pInfo.viewport.height = IBLConfig::InputCubeSideLength;

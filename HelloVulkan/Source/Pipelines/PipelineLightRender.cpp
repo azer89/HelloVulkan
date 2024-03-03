@@ -7,7 +7,7 @@
 
 PipelineLightRender::PipelineLightRender(
 	VulkanContext& ctx,
-	Lights* lights,
+	ResourcesLight* lights,
 	VulkanImage* depthImage, 
 	VulkanImage* offscreenColorImage,
 	uint8_t renderBit) :

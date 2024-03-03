@@ -5,7 +5,7 @@
 #include "VulkanImage.h"
 #include "PushConstants.h"
 #include "ResourcesIBL.h"
-#include "Light.h"
+#include "ResourcesLight.h"
 
 #include <vector>
 
@@ -17,7 +17,7 @@ class PipelinePBRShadow final : public PipelineBase
 public:
 	PipelinePBRShadow(VulkanContext& ctx,
 		Scene* scene,
-		Lights* lights,
+		ResourcesLight* lights,
 		ResourcesIBL* iblResources,
 		VulkanImage* shadowMap,
 		VulkanImage* depthImage,
@@ -40,7 +40,7 @@ private:
 
 private:
 	PushConstPBR pc_;
-	Lights* lights_;
+	ResourcesLight* lights_;
 	ResourcesIBL* iblResources_;
 	VulkanImage* shadowMap_;
 	Scene* scene_;

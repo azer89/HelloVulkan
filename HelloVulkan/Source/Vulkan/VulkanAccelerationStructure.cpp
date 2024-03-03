@@ -1,7 +1,7 @@
-#include "AccelerationStructure.h"
+#include "VulkanAccelerationStructure.h"
 #include "VulkanUtility.h"
 
-void AccelerationStructure::Create(
+void VulkanAccelerationStructure::Create(
 	VulkanContext& ctx,
 	VkAccelerationStructureBuildSizesInfoKHR buildSizeInfo)
 {
@@ -28,7 +28,7 @@ void AccelerationStructure::Create(
 		&vmaInfo_));
 }
 
-void AccelerationStructure::Destroy()
+void VulkanAccelerationStructure::Destroy()
 {
 	if (vmaAllocation_)
 	{

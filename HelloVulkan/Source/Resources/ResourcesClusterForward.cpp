@@ -1,5 +1,5 @@
 #include "ResourcesClusterForward.h"
-#include "Light.h"
+#include "..\..\Header\Resources\ResourcesLight.h"
 #include "Configs.h"
 
 // If window is resized, set the AABB buffers dirty
