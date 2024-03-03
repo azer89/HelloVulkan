@@ -5,6 +5,7 @@ Resolves a multisampled color image to a singlesampled color image
 */
 PipelineResolveMS::PipelineResolveMS(
 	VulkanContext& ctx,
+	// Resolve multiSampledColorImage to singleSampledColorImage
 	VulkanImage* multiSampledColorImage, // Input
 	VulkanImage* singleSampledColorImage // Output
 ) :

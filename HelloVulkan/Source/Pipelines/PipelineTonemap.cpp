@@ -2,6 +2,7 @@
 #include "VulkanUtility.h"
 #include "Configs.h"
 
+// This is on-screen render pass that transfers singleSampledColorImage to swapchain image
 PipelineTonemap::PipelineTonemap(VulkanContext& ctx,
 	VulkanImage* singleSampledColorImage) :
 	PipelineBase(ctx,
