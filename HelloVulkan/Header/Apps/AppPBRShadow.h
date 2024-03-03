@@ -11,7 +11,7 @@
 #include "PipelineSkybox.h"
 #include "PipelineClear.h"
 #include "PipelineFinish.h"
-#include "PipelinePBRShadowMapping.h"
+#include "PipelinePBRShadow.h"
 #include "PipelineShadow.h"
 #include "PipelineTonemap.h"
 #include "PipelineResolveMS.h"
@@ -25,10 +25,10 @@
 /*
 Naive forward PBR
 */
-class AppPBRShadowMapping final : AppBase
+class AppPBRShadow final : AppBase
 {
 public:
-	AppPBRShadowMapping();
+	AppPBRShadow();
 	int MainLoop() override;
 	void UpdateUBOs() override;
 	void UpdateUI() override;
@@ -41,7 +41,7 @@ private:
 	std::unique_ptr<PipelineClear> clearPtr_;
 	std::unique_ptr<PipelineSkybox> skyboxPtr_;
 	std::unique_ptr<PipelineShadow> shadowPtr_;
-	std::unique_ptr<PipelinePBRShadowMapping> pbrPtr_;
+	std::unique_ptr<PipelinePBRShadow> pbrPtr_;
 	std::unique_ptr<PipelineTonemap> tonemapPtr_;
 	std::unique_ptr<PipelineFinish> finishPtr_;
 	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;

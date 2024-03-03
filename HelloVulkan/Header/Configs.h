@@ -63,4 +63,9 @@ namespace IBLConfig
 	constexpr uint32_t LUTBufferSize = 2 * sizeof(float) * LUTWidth * LUTHeight;
 }
 
+namespace ShadowConfig
+{
+	constexpr uint32_t DepthSize = 4096;
+}
+
 #endif

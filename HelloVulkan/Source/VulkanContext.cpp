@@ -367,7 +367,8 @@ uint32_t VulkanContext::FindQueueFamilies(VkQueueFlags desiredFlags)
 
 VkResult VulkanContext::CreateSwapchain(VkSurfaceKHR surface)
 {
-	// TODO We manually select a swapchain format
+	// TODO We manually select a swapchain format.
+	// Note that if you use VK_FORMAT_B8G8R8A8_SRGB you don't need to perform gamma correction.
 	swapchainImageFormat_ = VK_FORMAT_B8G8R8A8_UNORM;
 	const VkSurfaceFormatKHR surfaceFormat = { swapchainImageFormat_, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
 	const SwapchainSupportDetails swapchainSupport = QuerySwapchainSupport(surface);

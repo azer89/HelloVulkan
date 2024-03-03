@@ -403,6 +403,7 @@ void AppBase::InitSharedImageResources()
 		vulkanContext_,
 		width,
 		height,
+		1u, // layerCount
 		msaaSamples);
 	depthImage_->SetDebugName(vulkanContext_, "Depth_Image");
 

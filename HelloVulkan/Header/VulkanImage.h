@@ -117,6 +117,7 @@ public:
 		VulkanContext& ctx, 
 		uint32_t width, 
 		uint32_t height,
+		uint32_t layerCount,
 		VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT,
 		VkImageUsageFlags additionalUsage = 0);
 

@@ -152,6 +152,7 @@ void VulkanImage::CreateDepthResources(
 	VulkanContext& ctx, 
 	uint32_t width, 
 	uint32_t height,
+	uint32_t layerCount,
 	VkSampleCountFlagBits sampleCount,
 	VkImageUsageFlags additionalUsage)
 {
@@ -160,8 +161,8 @@ void VulkanImage::CreateDepthResources(
 		ctx,
 		width,
 		height,
-		1, // mip
-		1, // layer
+		1u, // mip
+		layerCount, // layer
 		depthFormat,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | additionalUsage,
@@ -353,12 +354,12 @@ void VulkanImage::CreateSampler(
 		.magFilter = VK_FILTER_LINEAR,
 		.minFilter = VK_FILTER_LINEAR,
 		.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
-		.addressModeU = addressMode, // VK_SAMPLER_ADDRESS_MODE_REPEAT,
-		.addressModeV = addressMode, // VK_SAMPLER_ADDRESS_MODE_REPEAT,
-		.addressModeW = addressMode, // VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE VK_SAMPLER_ADDRESS_MODE_REPEAT,
+		.addressModeU = addressMode,
+		.addressModeV = addressMode,
+		.addressModeW = addressMode,
 		.mipLodBias = 0.0f,
 		.anisotropyEnable = VK_FALSE,
-		.maxAnisotropy = 1,
+		.maxAnisotropy = 1.0f,
 		.compareEnable = VK_FALSE,
 		.compareOp = VK_COMPARE_OP_ALWAYS,
 		.minLod = minLod,
