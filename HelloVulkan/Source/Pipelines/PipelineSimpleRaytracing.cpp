@@ -137,12 +137,12 @@ void PipelineSimpleRaytracing::CreateDescriptor(VulkanContext& ctx)
 {
 	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
 
-	descriptorBuildInfo_.AddAccelerationStructure();
-	descriptorBuildInfo_.AddImage(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
-	descriptorBuildInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
+	descriptorInfo_.AddAccelerationStructure();
+	descriptorInfo_.AddImage(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
+	descriptorInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
 
 	// Create pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, descriptorBuildInfo_, frameCount, 1u);
+	descriptor_.CreatePoolAndLayout(ctx, descriptorInfo_, frameCount, 1u);
 
 	for (size_t i = 0; i < frameCount; i++)
 	{
@@ -162,14 +162,14 @@ void PipelineSimpleRaytracing::UpdateDescriptor(VulkanContext& ctx)
 		.accelerationStructureCount = 1u,
 		.pAccelerationStructures = &tlas_.handle_,
 	};
-	descriptorBuildInfo_.UpdateAccelerationStructure(&asInfo, 0);
+	descriptorInfo_.UpdateAccelerationStructure(&asInfo, 0);
 
-	descriptorBuildInfo_.UpdateStorageImage(&storageImage_, 1);
+	descriptorInfo_.UpdateStorageImage(&storageImage_, 1);
 	constexpr auto frameCount = AppConfig::FrameOverlapCount;
 	for (size_t i = 0; i < frameCount; i++)
 	{
-		descriptorBuildInfo_.UpdateBuffer(&(cameraUBOBuffers_[i]), 2);
-		descriptor_.UpdateSet(ctx, descriptorBuildInfo_, &(descriptorSets_[i]));
+		descriptorInfo_.UpdateBuffer(&(cameraUBOBuffers_[i]), 2);
+		descriptor_.UpdateSet(ctx, descriptorInfo_, &(descriptorSets_[i]));
 	}
 }
 

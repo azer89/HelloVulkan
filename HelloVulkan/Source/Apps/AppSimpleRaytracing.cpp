@@ -12,7 +12,7 @@ AppSimpleRaytracing::AppSimpleRaytracing()
 void AppSimpleRaytracing::Init()
 {
 	// Initialize attachments
-	InitSharedImageResources();
+	InitSharedResources();
 	clearPtr_ = std::make_unique<PipelineClear>(vulkanContext_);
 	rtxPtr_ = std::make_unique<PipelineSimpleRaytracing>(vulkanContext_);
 	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
@@ -56,7 +56,7 @@ void AppSimpleRaytracing::DestroyResources()
 	rtxPtr_.reset();
 }
 
-int AppSimpleRaytracing::MainLoop()
+void AppSimpleRaytracing::MainLoop()
 {
 	InitVulkan({
 		.supportRaytracing_ = true,
@@ -66,7 +66,7 @@ int AppSimpleRaytracing::MainLoop()
 	Init();
 
 	// Main loop
-	while (!GLFWWindowShouldClose())
+	while (StillRunning())
 	{
 		PollEvents();
 		ProcessTiming();
@@ -74,11 +74,6 @@ int AppSimpleRaytracing::MainLoop()
 		DrawFrame();
 	}
 
-	// Wait until everything is finished
-	vkDeviceWaitIdle(vulkanContext_.GetDevice());
-
 	DestroyResources();
-	Terminate();
-
-	return 0;
+	DestroyInternal();
 }

@@ -1,5 +1,5 @@
 #include "PipelineCubeFilter.h"
-#include "PipelineCreateInfo.h"
+#include "VulkanPipelineCreateInfo.h"
 #include "VulkanUtility.h"
 #include "VulkanShader.h"
 #include "VulkanFramebuffer.h"
@@ -39,7 +39,7 @@ PipelineCubeFilter::PipelineCubeFilter(
 	{{
 		.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
 		.offset = 0u,
-		.size = sizeof(PushConstantCubeFilter)
+		.size = sizeof(PushConstCubeFilter)
 	}};
 
 	// Pipeline layout
@@ -120,10 +120,10 @@ void PipelineCubeFilter::InitializeOutputCubemap(
 
 void PipelineCubeFilter::CreateDescriptor(VulkanContext& ctx, VulkanImage* inputCubemap)
 {
-	DescriptorBuildInfo buildInfo;
-	buildInfo.AddImage(inputCubemap);
-	descriptor_.CreatePoolAndLayout(ctx, buildInfo, 1u, 1u);
-	descriptor_.CreateSet(ctx, buildInfo, &descriptorSet_);
+	VulkanDescriptorInfo dsInfo;
+	dsInfo.AddImage(inputCubemap);
+	descriptor_.CreatePoolAndLayout(ctx, dsInfo, 1u, 1u);
+	descriptor_.CreateSet(ctx, dsInfo, &descriptorSet_);
 }
 
 void PipelineCubeFilter::CreateOutputCubemapViews(VulkanContext& ctx,
@@ -189,7 +189,7 @@ void PipelineCubeFilter::CreateOffscreenGraphicsPipeline(
 	}
 
 	// Pipeline create info
-	PipelineCreateInfo pInfo(ctx);
+	VulkanPipelineCreateInfo pInfo(ctx);
 	pInfo.viewport.width = static_cast<float>(viewportWidth);
 	pInfo.viewport.height = static_cast<float>(viewportHeight);
 	pInfo.scissor.extent = { viewportWidth, viewportHeight };
@@ -305,7 +305,7 @@ void PipelineCubeFilter::OffscreenRender(VulkanContext& ctx,
 	{
 		const uint32_t targetSize = outputSideLength >> i;
 
-		PushConstantCubeFilter pc =
+		PushConstCubeFilter pc =
 		{
 			.roughness = filterType == CubeFilterType::Diffuse || outputMipMapCount == 1 ?
 				0.f :
@@ -317,7 +317,7 @@ void PipelineCubeFilter::OffscreenRender(VulkanContext& ctx,
 			pipelineLayout_,
 			VK_SHADER_STAGE_FRAGMENT_BIT,
 			0,
-			sizeof(PushConstantCubeFilter), &pc);
+			sizeof(PushConstCubeFilter), &pc);
 
 		renderPass_.BeginCubemapRenderPass(commandBuffer, mipFramebuffers[i].GetFramebuffer(), targetSize);
 		vkCmdDraw(commandBuffer, 3, 1u, 0, 0);

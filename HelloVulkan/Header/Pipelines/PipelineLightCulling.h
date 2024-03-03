@@ -3,8 +3,8 @@
 
 #include "PipelineBase.h"
 #include "VulkanContext.h"
-#include "ClusterForwardBuffers.h"
-#include "Light.h"
+#include "ResourcesClusterForward.h"
+#include "ResourcesLight.h"
 #include "Configs.h"
 
 #include <array>
@@ -15,7 +15,7 @@ Clustered Forward
 class PipelineLightCulling final : public PipelineBase
 {
 public:
-	PipelineLightCulling(VulkanContext& ctx, Lights* lights, ClusterForwardBuffers* cfBuffers);
+	PipelineLightCulling(VulkanContext& ctx, ResourcesLight* resLight, ResourcesClusterForward* resCF);
 	~PipelineLightCulling();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
@@ -24,7 +24,7 @@ public:
 	{
 		uint32_t zeroValue = 0u;
 		uint32_t frameIndex = ctx.GetFrameIndex();
-		cfBuffers_->globalIndexCountBuffers_[frameIndex].UploadBufferData(ctx, &zeroValue, sizeof(uint32_t));
+		resCF_->globalIndexCountBuffers_[frameIndex].UploadBufferData(ctx, &zeroValue, sizeof(uint32_t));
 	}
 
 	void SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO ubo)
@@ -34,8 +34,8 @@ public:
 	}
 
 private:
-	Lights* lights_;
-	ClusterForwardBuffers* cfBuffers_;
+	ResourcesLight* resLight_;
+	ResourcesClusterForward* resCF_;
 
 	std::vector<VulkanBuffer> cfUBOBuffers_;
 	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;

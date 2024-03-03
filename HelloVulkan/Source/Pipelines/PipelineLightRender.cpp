@@ -7,19 +7,18 @@
 
 PipelineLightRender::PipelineLightRender(
 	VulkanContext& ctx,
-	Lights* lights,
-	VulkanImage* depthImage, 
-	VulkanImage* offscreenColorImage,
+	ResourcesLight* resLights,
+	ResourcesShared* resShared,
 	uint8_t renderBit) :
 	PipelineBase(ctx, 
 		{
 			.type_ = PipelineType::GraphicsOffScreen,
-			.msaaSamples_ = offscreenColorImage->multisampleCount_,
+			.msaaSamples_ = resShared->multiSampledColorImage_.multisampleCount_,
 			.depthTest_ = true,
 			.depthWrite_ = false // To "blend" the circles
 		}
 	), // Offscreen rendering
-	lights_(lights),
+	resLight_(resLights),
 	shouldRender_(true)
 {
 	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
@@ -30,8 +29,8 @@ PipelineLightRender::PipelineLightRender(
 		ctx,
 		renderPass_.GetHandle(),
 		{
-			offscreenColorImage,
-			depthImage
+			&(resShared->multiSampledColorImage_),
+			&(resShared->depthImage_)
 		},
 		IsOffscreen()
 	);
@@ -77,7 +76,7 @@ void PipelineLightRender::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 	vkCmdDraw(
 		commandBuffer, 
 		6, // Draw a quad
-		lights_->GetLightCount(), 
+		resLight_->GetLightCount(), 
 		0, 
 		0);
 	vkCmdEndRenderPass(commandBuffer);
@@ -87,17 +86,17 @@ void PipelineLightRender::CreateDescriptor(VulkanContext& ctx)
 {
 	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
 
-	DescriptorBuildInfo buildInfo;
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT); // 0
-	buildInfo.AddBuffer(lights_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT); // 1
+	VulkanDescriptorInfo dsInfo;
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT); // 0
+	dsInfo.AddBuffer(resLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT); // 1
 
 	// Create pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, buildInfo, frameCount, 1u);
+	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 
 	// Create sets
 	for (size_t i = 0; i < frameCount; ++i)
 	{
-		buildInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
-		descriptor_.CreateSet(ctx, buildInfo, &(descriptorSets_[i]));
+		dsInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
+		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}
 }

@@ -2,10 +2,8 @@
 #define APP_PBR_SLOT_BASED
 
 #include "AppBase.h"
-#include "VulkanImage.h"
-#include "Light.h"
 #include "Model.h"
-#include "IBLResources.h"
+#include "ResourcesLight.h"
 
 // Pipelines
 #include "PipelineSkybox.h"
@@ -18,7 +16,6 @@
 #include "PipelineImGui.h"
 
 // STL
-#include <vector>
 #include <memory>
 
 /*
@@ -28,7 +25,7 @@ class AppPBRSlotBased final : AppBase
 {
 public:
 	AppPBRSlotBased();
-	int MainLoop() override;
+	void MainLoop() override;
 	void UpdateUBOs() override;
 	void UpdateUI() override;
 
@@ -39,7 +36,6 @@ public:
 private:
 	std::unique_ptr<PipelineClear> clearPtr_;
 	std::unique_ptr<PipelineSkybox> skyboxPtr_;
-
 	std::unique_ptr<PipelinePBRSlotBased> pbrPtr_;
 	std::unique_ptr<PipelineTonemap> tonemapPtr_;
 	std::unique_ptr<PipelineFinish> finishPtr_;
@@ -47,8 +43,8 @@ private:
 	std::unique_ptr<PipelineLightRender> lightPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
 
+	std::unique_ptr<ResourcesLight> resLights_;
 	std::unique_ptr<Model> model_;
-	std::unique_ptr<Lights> lights_;
 
 	float cubemapMipmapCount_;
 	float modelRotation_;

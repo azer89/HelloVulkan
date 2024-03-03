@@ -4,8 +4,10 @@
 #include "PipelineBase.h"
 #include "VulkanImage.h"
 #include "PushConstants.h"
-#include "IBLResources.h"
-#include "Light.h"
+#include "ResourcesIBL.h"
+#include "ResourcesLight.h"
+#include "ResourcesShadow.h"
+#include "ResourcesShared.h"
 
 #include <vector>
 
@@ -17,17 +19,16 @@ class PipelinePBRShadow final : public PipelineBase
 public:
 	PipelinePBRShadow(VulkanContext& ctx,
 		Scene* scene,
-		Lights* lights,
-		IBLResources* iblResources,
-		VulkanImage* shadowMap,
-		VulkanImage* depthImage,
-		VulkanImage* offscreenColorImage,
+		ResourcesLight* resLight,
+		ResourcesIBL* iblResources,
+		ResourcesShadow* resShadow,
+		ResourcesShared* resShared,
 		uint8_t renderBit = 0u);
 	 ~PipelinePBRShadow();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
-	void SetPBRPushConstants(const PushConstantPBR& pbrPC) { pc_ = pbrPC; };
+	void SetPBRPushConstants(const PushConstPBR& pbrPC) { pc_ = pbrPC; };
 
 	void SetShadowMapConfigUBO(VulkanContext& ctx, ShadowMapUBO ubo)
 	{
@@ -39,11 +40,11 @@ private:
 	void CreateDescriptor(VulkanContext& ctx);
 
 private:
-	PushConstantPBR pc_;
-	Lights* lights_;
-	IBLResources* iblResources_;
-	VulkanImage* shadowMap_;
+	PushConstPBR pc_;
 	Scene* scene_;
+	ResourcesLight* resLight_;
+	ResourcesIBL* iblResources_;
+	ResourcesShadow* resShadow_;
 	std::vector<VkDescriptorSet> descriptorSets_;
 	std::vector<VulkanBuffer> shadowMapConfigUBOBuffers_;
 	std::vector<VulkanBuffer> indirectBuffers_;

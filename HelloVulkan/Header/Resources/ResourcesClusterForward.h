@@ -1,5 +1,5 @@
-#ifndef CLUSTER_FORWARD_BUFFERS
-#define CLUSTER_FORWARD_BUFFERS
+#ifndef RESOURCES_CLUSTER_FORWARD
+#define RESOURCES_CLUSTER_FORWARD
 
 #include "VulkanContext.h"
 #include "VulkanBuffer.h"
@@ -13,11 +13,11 @@ enum class AABBFlag : uint8_t
 	Dirty = 1u
 };
 
-struct ClusterForwardBuffers
+struct ResourcesClusterForward
 {
 public:
-	ClusterForwardBuffers() = default;
-	~ClusterForwardBuffers()
+	ResourcesClusterForward() = default;
+	~ResourcesClusterForward()
 	{
 		Destroy();
 	}

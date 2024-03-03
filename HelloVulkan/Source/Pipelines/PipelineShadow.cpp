@@ -3,7 +3,7 @@
 PipelineShadow::PipelineShadow(
 	VulkanContext& ctx,
 	Scene* scene,
-	VulkanImage* shadowMap) :
+	ResourcesShadow* resShadow) :
 	PipelineBase(ctx,
 		{
 			// Depth only and offscreen
@@ -14,11 +14,11 @@ PipelineShadow::PipelineShadow(
 
 			// Render using shadow map dimension
 			.customViewportSize_ = true,
-			.viewportWidth_ = static_cast<float>(shadowMap->width_),
-			.viewportHeight_ = static_cast<float>(shadowMap->height_)
+			.viewportWidth_ = static_cast<float>(resShadow->shadowMap_.width_),
+			.viewportHeight_ = static_cast<float>(resShadow->shadowMap_.height_)
 		}),
 	scene_(scene),
-	shadowMap_(shadowMap)
+	resShadow_(resShadow)
 {
 	CreateMultipleUniformBuffers(ctx, shadowMapUBOBuffers_, sizeof(ShadowMapUBO), AppConfig::FrameOverlapCount);
 
@@ -30,10 +30,10 @@ PipelineShadow::PipelineShadow(
 		renderPass_.GetHandle(),
 		{
 			// Use the shadow map as depth attachment
-			shadowMap_->imageView_
+			resShadow_->shadowMap_.imageView_
 		},
-		shadowMap_->width_,
-		shadowMap_->height_);
+		resShadow_->shadowMap_.width_,
+		resShadow_->shadowMap_.height_);
 
 	CreateIndirectBuffers(ctx, scene_, indirectBuffers_);
 
@@ -73,8 +73,8 @@ void PipelineShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comma
 		ctx, 
 		commandBuffer, 
 		framebuffer_.GetFramebuffer(), 
-		shadowMap_->width_,
-		shadowMap_->height_);
+		resShadow_->shadowMap_.width_,
+		resShadow_->shadowMap_.height_);
 	BindPipeline(ctx, commandBuffer);
 
 	vkCmdBindDescriptorSets(
@@ -106,22 +106,22 @@ void PipelineShadow::CreateDescriptor(VulkanContext& ctx)
 {
 	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
 
-	DescriptorBuildInfo buildInfo;
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 1
-	buildInfo.AddBuffer(&(scene_->vertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 2
-	buildInfo.AddBuffer(&(scene_->indexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 3
-	buildInfo.AddBuffer(&(scene_->meshDataBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
+	VulkanDescriptorInfo dsInfo;
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 1
+	dsInfo.AddBuffer(&(scene_->vertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 2
+	dsInfo.AddBuffer(&(scene_->indexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 3
+	dsInfo.AddBuffer(&(scene_->meshDataBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, buildInfo, frameCount, 1u);
+	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 
 	// Sets
 	descriptorSets_.resize(frameCount); // TODO use std::array
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
-		buildInfo.UpdateBuffer(&(shadowMapUBOBuffers_[i]), 0);
-		buildInfo.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 1);
-		descriptor_.CreateSet(ctx, buildInfo, &(descriptorSets_[i]));
+		dsInfo.UpdateBuffer(&(shadowMapUBOBuffers_[i]), 0);
+		dsInfo.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 1);
+		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}
 }

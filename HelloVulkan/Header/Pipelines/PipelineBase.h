@@ -10,7 +10,7 @@
 #include "VulkanDescriptor.h"
 #include "PipelineConfig.h"
 #include "Scene.h"
-#include "UBO.h"
+#include "UBOs.h"
 
 #include <string>
 

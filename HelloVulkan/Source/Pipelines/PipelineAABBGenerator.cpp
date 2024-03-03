@@ -6,12 +6,12 @@
 
 PipelineAABBGenerator::PipelineAABBGenerator(
 	VulkanContext& ctx, 
-	ClusterForwardBuffers* cfBuffers) :
+	ResourcesClusterForward* resCF) :
 	PipelineBase(ctx,
 	{
 		.type_ = PipelineType::Compute
 	}),
-	cfBuffers_(cfBuffers)
+	resCF_(resCF)
 {
 	CreateMultipleUniformBuffers(ctx, cfUBOBuffers_, sizeof(ClusterForwardUBO), AppConfig::FrameOverlapCount);
 	CreateDescriptor(ctx);
@@ -29,20 +29,20 @@ PipelineAABBGenerator::~PipelineAABBGenerator()
 
 void PipelineAABBGenerator::OnWindowResized(VulkanContext& ctx)
 {
-	cfBuffers_->SetAABBDirty();
+	resCF_->SetAABBDirty();
 }
 
 void PipelineAABBGenerator::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
 	uint32_t frameIndex = ctx.GetFrameIndex();
-	if (!cfBuffers_->IsAABBDirty(frameIndex))
+	if (!resCF_->IsAABBDirty(frameIndex))
 	{
 		return;
 	}
 
 	Execute(ctx, commandBuffer, frameIndex);
 
-	cfBuffers_->SetAABBClean(frameIndex);
+	resCF_->SetAABBClean(frameIndex);
 }
 
 void PipelineAABBGenerator::Execute(VulkanContext& ctx, VkCommandBuffer commandBuffer, uint32_t frameIndex)
@@ -73,9 +73,9 @@ void PipelineAABBGenerator::Execute(VulkanContext& ctx, VkCommandBuffer commandB
 		.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
 		.srcQueueFamilyIndex = ctx.GetComputeFamily(),
 		.dstQueueFamilyIndex = ctx.GetGraphicsFamily(),
-		.buffer = cfBuffers_->aabbBuffers_[frameIndex].buffer_,
+		.buffer = resCF_->aabbBuffers_[frameIndex].buffer_,
 		.offset = 0,
-		.size = cfBuffers_->aabbBuffers_[frameIndex].size_ };
+		.size = resCF_->aabbBuffers_[frameIndex].size_ };
 	VulkanBarrier::CreateBufferBarrier(commandBuffer, &barrier, 1u);
 }
 
@@ -83,19 +83,19 @@ void PipelineAABBGenerator::CreateDescriptor(VulkanContext& ctx)
 {
 	uint32_t frameCount = AppConfig::FrameOverlapCount;
 
-	DescriptorBuildInfo buildInfo;
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT); // 0
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT); // 1
+	VulkanDescriptorInfo dsInfo;
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT); // 0
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT); // 1
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, buildInfo, frameCount, 1u);
+	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 
 	// Sets
 	for (size_t i = 0; i < frameCount; ++i)
 	{
-		buildInfo.UpdateBuffer(&(cfBuffers_->aabbBuffers_[i]), 0);
-		buildInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 1);
+		dsInfo.UpdateBuffer(&(resCF_->aabbBuffers_[i]), 0);
+		dsInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 1);
 
-		descriptor_.CreateSet(ctx, buildInfo, &descriptorSets_[i]);
+		descriptor_.CreateSet(ctx, dsInfo, &descriptorSets_[i]);
 	}
 }

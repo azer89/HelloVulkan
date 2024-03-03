@@ -2,10 +2,9 @@
 #define APP_PBR_SHADOW_MAPPING
 
 #include "AppBase.h"
-#include "VulkanImage.h"
-#include "Light.h"
 #include "Scene.h"
-#include "IBLResources.h"
+#include "ResourcesShadow.h"
+#include "ResourcesLight.h"
 
 // Pipelines
 #include "PipelineSkybox.h"
@@ -19,7 +18,6 @@
 #include "PipelineImGui.h"
 
 // STL
-#include <vector>
 #include <memory>
 
 /*
@@ -29,7 +27,7 @@ class AppPBRShadow final : AppBase
 {
 public:
 	AppPBRShadow();
-	int MainLoop() override;
+	void MainLoop() override;
 	void UpdateUBOs() override;
 	void UpdateUI() override;
 
@@ -48,17 +46,17 @@ private:
 	std::unique_ptr<PipelineLightRender> lightPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
 
+	std::unique_ptr<ResourcesLight> resLights_;
+	std::unique_ptr<ResourcesShadow> resShadow_;
+
 	std::unique_ptr<Scene> scene_;
 
-	std::unique_ptr<Lights> lights_;
 	ShadowMapUBO shadowUBO_;
-
 	float cubemapMipmapCount_;
 
 	float shadowNearPlane_;
 	float shadowFarPlane_;
 	uint32_t shadowMapSize_;
-	std::unique_ptr<VulkanImage> shadowMap_;
 };
 
 #endif

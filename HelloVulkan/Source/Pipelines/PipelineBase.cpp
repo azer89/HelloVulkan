@@ -3,7 +3,7 @@
 #include "VulkanShader.h"
 #include "VulkanBuffer.h"
 #include "Mesh.h"
-#include "PipelineCreateInfo.h"
+#include "VulkanPipelineCreateInfo.h"
 
 #include <array>
 
@@ -177,7 +177,7 @@ void PipelineBase::CreateGraphicsPipeline(
 	}
 
 	// Pipeline create info
-	PipelineCreateInfo pInfo(ctx);
+	VulkanPipelineCreateInfo pInfo(ctx);
 
 	const std::vector<VkVertexInputBindingDescription> bindingDescriptions = Mesh::GetBindingDescriptions();
 	const std::vector<VkVertexInputAttributeDescription> attributeDescriptions = Mesh::GetAttributeDescriptions();

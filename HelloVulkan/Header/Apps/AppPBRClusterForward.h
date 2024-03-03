@@ -2,10 +2,8 @@
 #define APP_PBR_CLUSTER_FORWARD
 
 #include "AppBase.h"
-#include "VulkanImage.h"
-#include "Light.h"
+#include "ResourcesLight.h"
 #include "Model.h"
-#include "IBLResources.h"
 
 // Pipelines
 #include "PipelineSkybox.h"
@@ -20,10 +18,9 @@
 #include "PipelinePBRClusterForward.h"
 #include "PipelineAABBGenerator.h"
 #include "PipelineLightCulling.h"
-#include "ClusterForwardBuffers.h"
+#include "ResourcesClusterForward.h"
 
 // STL
-#include <vector>
 #include <memory>
 
 /*
@@ -33,7 +30,7 @@ class AppPBRClusterForward final : AppBase
 {
 public:
 	AppPBRClusterForward();
-	int MainLoop() override;
+	void MainLoop() override;
 	void UpdateUBOs() override;
 	void UpdateUI() override;
 
@@ -44,23 +41,19 @@ public:
 private:
 	std::unique_ptr<PipelineClear> clearPtr_;
 	std::unique_ptr<PipelineSkybox> skyboxPtr_;
-
 	std::unique_ptr<PipelineTonemap> tonemapPtr_;
 	std::unique_ptr<PipelineFinish> finishPtr_;
 	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;
 	std::unique_ptr<PipelineLightRender> lightPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
-
 	std::unique_ptr<PipelinePBRClusterForward> pbrPtr_;
 	std::unique_ptr<PipelineAABBGenerator> aabbPtr_;
 	std::unique_ptr<PipelineLightCulling> lightCullPtr_;
 
-	// Buffers for clustered forward shading
-	std::unique_ptr<ClusterForwardBuffers> cfBuffers_; 
+	std::unique_ptr<ResourcesClusterForward> resCF_; 
+	std::unique_ptr<ResourcesLight> resLight_;
 
 	std::unique_ptr<Model> model_;
-
-	std::unique_ptr<Lights> lights_;
 
 	float cubemapMipmapCount_;
 };

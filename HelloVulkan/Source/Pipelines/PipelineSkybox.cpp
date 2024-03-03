@@ -1,7 +1,7 @@
 #include "PipelineSkybox.h"
 #include "VulkanUtility.h"
 #include "Configs.h"
-#include "UBO.h"
+#include "UBOs.h"
 
 #include "glm/glm.hpp"
 
@@ -10,13 +10,12 @@
 
 PipelineSkybox::PipelineSkybox(VulkanContext& ctx, 
 	VulkanImage* envMap,
-	VulkanImage* depthImage,
-	VulkanImage* offscreenColorImage,
+	ResourcesShared* resShared,
 	uint8_t renderBit) :
 	PipelineBase(ctx,
 		{
 			.type_ = PipelineType::GraphicsOffScreen,
-			.msaaSamples_ = offscreenColorImage->multisampleCount_,
+			.msaaSamples_ = resShared->multiSampledColorImage_.multisampleCount_,
 			.vertexBufferBind_ = false,
 			.depthTest_ = true,
 			.depthWrite_ = false // Do not write to depth image
@@ -31,8 +30,8 @@ PipelineSkybox::PipelineSkybox(VulkanContext& ctx,
 		ctx,
 		renderPass_.GetHandle(),
 		{
-			offscreenColorImage,
-			depthImage
+			&(resShared->multiSampledColorImage_),
+			&(resShared->depthImage_)
 		},
 		IsOffscreen()
 	);
@@ -78,17 +77,17 @@ void PipelineSkybox::CreateDescriptor(VulkanContext& ctx)
 {
 	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
 
-	DescriptorBuildInfo buildInfo;
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
-	buildInfo.AddImage(envCubemap_); // 1
+	VulkanDescriptorInfo dsInfo;
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
+	dsInfo.AddImage(envCubemap_); // 1
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, buildInfo, frameCount, 1u);
+	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 
 	// Sets
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
-		buildInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
-		descriptor_.CreateSet(ctx, buildInfo, &(descriptorSets_[i]));
+		dsInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
+		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}
 }

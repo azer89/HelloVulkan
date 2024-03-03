@@ -4,9 +4,10 @@
 #include "PipelineBase.h"
 #include "VulkanImage.h"
 #include "PushConstants.h"
-#include "IBLResources.h"
 #include "Scene.h"
-#include "Light.h"
+#include "ResourcesShared.h"
+#include "ResourcesLight.h"
+#include "ResourcesIBL.h"
 
 #include <vector>
 
@@ -18,23 +19,22 @@ class PipelinePBRBindless final : public PipelineBase
 public:
 	PipelinePBRBindless(VulkanContext& ctx,
 		Scene* scene,
-		Lights* lights,
-		IBLResources* iblResources,
-		VulkanImage* depthImage,
-		VulkanImage* offscreenColorImage,
+		ResourcesLight* resLight,
+		ResourcesIBL* iblResources,
+		ResourcesShared* resShared,
 		uint8_t renderBit = 0u);
 	 ~PipelinePBRBindless();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
-	void SetPBRPushConstants(const PushConstantPBR& pbrPC) { pc_ = pbrPC; };
+	void SetPBRPushConstants(const PushConstPBR& pbrPC) { pc_ = pbrPC; };
 
 private:
 	void CreateDescriptor(VulkanContext& ctx);
 
 	Scene* scene_;
-	Lights* lights_;
-	IBLResources* iblResources_;
-	PushConstantPBR pc_;
+	ResourcesLight* resLight_;
+	ResourcesIBL* iblResources_;
+	PushConstPBR pc_;
 	std::vector<VulkanBuffer> indirectBuffers_;
 	std::vector<VkDescriptorSet> descriptorSets_;
 };

@@ -13,19 +13,18 @@ constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 PipelinePBRSlotBased::PipelinePBRSlotBased(
 	VulkanContext& ctx,
 	const std::vector<Model*>& models,
-	Lights* lights,
-	IBLResources* iblResources,
-	VulkanImage* depthImage,
-	VulkanImage* offscreenColorImage,
+	ResourcesLight* resLight,
+	ResourcesIBL* iblResources,
+	ResourcesShared* resShared,
 	uint8_t renderBit) :
 	PipelineBase(ctx, 
 		{
 			.type_ = PipelineType::GraphicsOffScreen,
-			.msaaSamples_ = offscreenColorImage->multisampleCount_,
+			.msaaSamples_ = resShared->multiSampledColorImage_.multisampleCount_,
 			.vertexBufferBind_ = true,
 		}
 	),
-	lights_(lights),
+	resLight_(resLight),
 	iblResources_(iblResources),
 	models_(models)
 {
@@ -39,8 +38,8 @@ PipelinePBRSlotBased::PipelinePBRSlotBased(
 		ctx, 
 		renderPass_.GetHandle(), 
 		{
-			offscreenColorImage,
-			depthImage
+			&(resShared->multiSampledColorImage_),
+			&(resShared->depthImage_)
 		}, 
 		IsOffscreen());
 
@@ -51,7 +50,7 @@ PipelinePBRSlotBased::PipelinePBRSlotBased(
 	{{
 		.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
 		.offset = 0u,
-		.size = sizeof(PushConstantPBR),
+		.size = sizeof(PushConstPBR),
 	}};
 	
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, ranges);
@@ -84,7 +83,7 @@ void PipelinePBRSlotBased::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer
 		pipelineLayout_,
 		VK_SHADER_STAGE_FRAGMENT_BIT,
 		0,
-		sizeof(PushConstantPBR), &pc_);
+		sizeof(PushConstPBR), &pc_);
 
 	size_t meshIndex = 0;
 	for (Model* model : models_)
@@ -125,20 +124,20 @@ void PipelinePBRSlotBased::CreateDescriptor(VulkanContext& ctx)
 		numMeshes += model->NumMeshes();
 	}
 
-	DescriptorBuildInfo buildInfo;
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-	buildInfo.AddBuffer(lights_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
+	VulkanDescriptorInfo dsInfo;
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+	dsInfo.AddBuffer(resLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
 	for (size_t i = 0; i < PBR_MESH_TEXTURE_COUNT; ++i)
 	{
-		buildInfo.AddImage(nullptr);
+		dsInfo.AddImage(nullptr);
 	}
-	buildInfo.AddImage(&(iblResources_->specularCubemap_));
-	buildInfo.AddImage(&(iblResources_->diffuseCubemap_));
-	buildInfo.AddImage(&(iblResources_->brdfLut_));
+	dsInfo.AddImage(&(iblResources_->specularCubemap_));
+	dsInfo.AddImage(&(iblResources_->diffuseCubemap_));
+	dsInfo.AddImage(&(iblResources_->brdfLut_));
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, buildInfo, AppConfig::FrameOverlapCount, numMeshes);
+	descriptor_.CreatePoolAndLayout(ctx, dsInfo, AppConfig::FrameOverlapCount, numMeshes);
 
 	// Sets
 	constexpr size_t bindingOffset = static_cast<size_t>(UBO_COUNT + SSBO_COUNT);
@@ -147,10 +146,10 @@ void PipelinePBRSlotBased::CreateDescriptor(VulkanContext& ctx)
 	{
 		size_t meshIndex = 0;
 		descriptorSets_[i].resize(numMeshes);
-		buildInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
+		dsInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
 		for (Model* model : models_)
 		{
-			buildInfo.UpdateBuffer(&(model->modelBuffers_[i]), 1);
+			dsInfo.UpdateBuffer(&(model->modelBuffers_[i]), 1);
 			for (Mesh& mesh : model->meshes_)
 			{
 				for (const auto& elem : mesh.textureIndices_)
@@ -159,9 +158,9 @@ void PipelinePBRSlotBased::CreateDescriptor(VulkanContext& ctx)
 					size_t typeIndex = static_cast<size_t>(elem.first) - 1;
 					int textureIndex = elem.second;
 					VulkanImage* texture = model->GetTexture(textureIndex);
-					buildInfo.UpdateImage(texture, bindingOffset + typeIndex);
+					dsInfo.UpdateImage(texture, bindingOffset + typeIndex);
 				}
-				descriptor_.CreateSet(ctx, buildInfo, &(descriptorSets_[i][meshIndex]));
+				descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i][meshIndex]));
 				meshIndex++;
 			}
 		}

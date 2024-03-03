@@ -20,6 +20,7 @@ int main()
 	// Currently can only draw a triangle
 	//AppSimpleRaytracing app;
 	
-	auto returnValue = app.MainLoop();
-	return returnValue;
+	app.MainLoop();
+
+	return 0;
 }

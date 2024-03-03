@@ -4,6 +4,7 @@
 #include "PipelineBase.h"
 #include "VulkanImage.h"
 #include "Configs.h"
+#include "ResourcesShared.h"
 
 #include <array>
 
@@ -12,8 +13,7 @@ class PipelineSkybox final : public PipelineBase
 public:
 	PipelineSkybox(VulkanContext& ctx, 
 		VulkanImage* envMap,
-		VulkanImage* depthImage,
-		VulkanImage* offscreenColorImage,
+		ResourcesShared* resShared,
 		uint8_t renderBit = 0u
 	);
 	~PipelineSkybox();

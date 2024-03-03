@@ -3,7 +3,7 @@
 
 #include "PipelineBase.h"
 #include "VulkanContext.h"
-#include "ClusterForwardBuffers.h"
+#include "ResourcesClusterForward.h"
 #include "Camera.h"
 #include "Configs.h"
 
@@ -15,7 +15,7 @@ Clustered Forward
 class PipelineAABBGenerator final : public PipelineBase
 {
 public:
-	PipelineAABBGenerator(VulkanContext& ctx, ClusterForwardBuffers* cfBuffers);
+	PipelineAABBGenerator(VulkanContext& ctx, ResourcesClusterForward* resCF);
 	~PipelineAABBGenerator();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
@@ -28,7 +28,7 @@ public:
 	}
 
 private:
-	ClusterForwardBuffers* cfBuffers_;
+	ResourcesClusterForward* resCF_;
 
 	std::vector<VulkanBuffer> cfUBOBuffers_;
 	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;

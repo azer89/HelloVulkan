@@ -4,7 +4,7 @@
 #include "PipelineBase.h"
 
 class FrameCounter;
-struct PushConstantPBR;
+struct PushConstPBR;
 
 class PipelineImGui final : public PipelineBase
 {
@@ -18,7 +18,7 @@ public:
 	void ImGuiStart();
 	void ImGuiSetWindow(const char* title, int width, int height, float fontSize = 1.25f);
 	void ImGuiShowFrameData(FrameCounter* frameCounter);
-	void ImGuiShowPBRConfig(PushConstantPBR* pc, float mipmapCount);
+	void ImGuiShowPBRConfig(PushConstPBR* pc, float mipmapCount);
 	void ImGuiEnd();
 	void ImGuiDrawEmpty();
 

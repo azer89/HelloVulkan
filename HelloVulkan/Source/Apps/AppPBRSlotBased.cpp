@@ -21,7 +21,7 @@ void AppPBRSlotBased::Init()
 	InitLights();
 
 	// Initialize attachments
-	InitSharedImageResources();
+	InitSharedResources();
 
 	// Image-Based Lighting
 	InitIBLResources(AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
@@ -34,41 +34,27 @@ void AppPBRSlotBased::Init()
 
 	// Pipelines
 	// This is responsible to clear swapchain image
-	clearPtr_ = std::make_unique<PipelineClear>(
-		vulkanContext_);
+	clearPtr_ = std::make_unique<PipelineClear>(vulkanContext_);
 	// This draws a cube
 	skyboxPtr_ = std::make_unique<PipelineSkybox>(
 		vulkanContext_,
-		&(iblResources_->environmentCubemap_),
-		depthImage_.get(),
-		multiSampledColorImage_.get(),
+		&(resIBL_->environmentCubemap_),
+		resShared_.get(),
 		// This is the first offscreen render pass so
 		// we need to clear the color attachment and depth attachment
-		RenderPassBit::ColorClear |
-		RenderPassBit::DepthClear
-	);
+		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
 	pbrPtr_ = std::make_unique<PipelinePBRSlotBased>(
 		vulkanContext_,
 		models,
-		lights_.get(),
-		iblResources_.get(),
-		depthImage_.get(),
-		multiSampledColorImage_.get());
-	lightPtr_ = std::make_unique<PipelineLightRender>(
-		vulkanContext_,
-		lights_.get(),
-		depthImage_.get(),
-		multiSampledColorImage_.get()
-	);
+		resLights_.get(),
+		resIBL_.get(),
+		resShared_.get());
+	lightPtr_ = std::make_unique<PipelineLightRender>(vulkanContext_, resLights_.get(), resShared_.get());
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
-	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(
-		vulkanContext_, multiSampledColorImage_.get(), singleSampledColorImage_.get());
+	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(vulkanContext_, resShared_.get());
 	// This is on-screen render pass that transfers 
 	// singleSampledColorImage_ to swapchain image
-	tonemapPtr_ = std::make_unique<PipelineTonemap>(
-		vulkanContext_,
-		singleSampledColorImage_.get()
-	);
+	tonemapPtr_ = std::make_unique<PipelineTonemap>(vulkanContext_, &(resShared_->singleSampledColorImage_));
 	// ImGui here
 	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
@@ -92,8 +78,8 @@ void AppPBRSlotBased::Init()
 void AppPBRSlotBased::InitLights()
 {
 	// Lights (SSBO)
-	lights_ = std::make_unique<Lights>();
-	lights_->AddLights(vulkanContext_,
+	resLights_ = std::make_unique<ResourcesLight>();
+	resLights_->AddLights(vulkanContext_,
 		{
 			{.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
 			{.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
@@ -104,16 +90,13 @@ void AppPBRSlotBased::InitLights()
 
 void AppPBRSlotBased::DestroyResources()
 {
-	// IBL Images
-	iblResources_.reset();
+	// Resources
+	resIBL_.reset();
+	resLights_.reset();
 
 	// Destroy meshes
 	model_->Destroy();
 	model_.reset();
-
-	// Lights
-	lights_->Destroy();
-	lights_.reset();
 	
 	// Destroy renderers
 	clearPtr_.reset();
@@ -158,7 +141,7 @@ void AppPBRSlotBased::UpdateUI()
 	}
 
 	static bool lightRender = true;
-	static PushConstantPBR pbrPC;
+	static PushConstPBR pbrPC;
 
 	imguiPtr_->ImGuiStart();
 	imguiPtr_->ImGuiSetWindow("PBR and IBL", 525, 350);
@@ -172,7 +155,7 @@ void AppPBRSlotBased::UpdateUI()
 }
 
 // This is called from main.cpp
-int AppPBRSlotBased::MainLoop()
+void AppPBRSlotBased::MainLoop()
 {
 	InitVulkan({
 		.supportRaytracing_ = false,
@@ -181,7 +164,7 @@ int AppPBRSlotBased::MainLoop()
 	Init();
 
 	// Main loop
-	while (!GLFWWindowShouldClose())
+	while (StillRunning())
 	{
 		PollEvents();
 		ProcessTiming();
@@ -189,11 +172,6 @@ int AppPBRSlotBased::MainLoop()
 		DrawFrame();
 	}
 
-	// Wait until everything is finished
-	vkDeviceWaitIdle(vulkanContext_.GetDevice());
-
 	DestroyResources();
-	Terminate();
-
-	return 0;
+	DestroyInternal();
 }

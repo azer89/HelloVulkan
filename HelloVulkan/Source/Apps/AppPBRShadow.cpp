@@ -17,28 +17,14 @@ AppPBRShadow::AppPBRShadow()
 void AppPBRShadow::Init()
 {
 	// Init shadow map
-	shadowMap_ = std::make_unique<VulkanImage>();
-	shadowMap_->CreateDepthResources(
-		vulkanContext_,
-		ShadowConfig::DepthSize,
-		ShadowConfig::DepthSize,
-		1u,// layerCount
-		VK_SAMPLE_COUNT_1_BIT,
-		VK_IMAGE_USAGE_SAMPLED_BIT);
-	shadowMap_->CreateDefaultSampler(
-		vulkanContext_,
-		0.f,
-		1.f,
-		VK_FILTER_LINEAR,
-		VK_FILTER_LINEAR,
-		VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
-	shadowMap_->SetDebugName(vulkanContext_, "Shadow_Map_Image");
+	resShadow_ = std::make_unique<ResourcesShadow>();
+	resShadow_->CreateSingleShadowMap(vulkanContext_);
 
 	// Initialize lights
 	InitLights();
 
 	// Initialize attachments
-	InitSharedImageResources();
+	InitSharedResources();
 
 	// Image-Based Lighting
 	InitIBLResources(AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
@@ -66,43 +52,29 @@ void AppPBRShadow::Init()
 
 	// Pipelines
 	// This is responsible to clear swapchain image
-	clearPtr_ = std::make_unique<PipelineClear>(
-		vulkanContext_);
+	clearPtr_ = std::make_unique<PipelineClear>(vulkanContext_);
 	// This draws a cube
 	skyboxPtr_ = std::make_unique<PipelineSkybox>(
 		vulkanContext_,
-		&(iblResources_->environmentCubemap_),
-		depthImage_.get(),
-		multiSampledColorImage_.get(),
+		&(resIBL_->environmentCubemap_),
+		resShared_.get(),
 		// This is the first offscreen render pass so
 		// we need to clear the color attachment and depth attachment
-		RenderPassBit::ColorClear | 
-		RenderPassBit::DepthClear
-	);
+		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
 	pbrPtr_ = std::make_unique<PipelinePBRShadow>(
 		vulkanContext_,
 		scene_.get(),
-		lights_.get(),
-		iblResources_.get(),
-		shadowMap_.get(),
-		depthImage_.get(),
-		multiSampledColorImage_.get());
-	shadowPtr_ = std::make_unique<PipelineShadow>(vulkanContext_, scene_.get(), shadowMap_.get());
-	lightPtr_ = std::make_unique<PipelineLightRender>(
-		vulkanContext_,
-		lights_.get(),
-		depthImage_.get(),
-		multiSampledColorImage_.get()
-	);
+		resLights_.get(),
+		resIBL_.get(),
+		resShadow_.get(),
+		resShared_.get());
+	shadowPtr_ = std::make_unique<PipelineShadow>(vulkanContext_, scene_.get(), resShadow_.get());
+	lightPtr_ = std::make_unique<PipelineLightRender>(vulkanContext_, resLights_.get(), resShared_.get());
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
-	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(
-		vulkanContext_, multiSampledColorImage_.get(), singleSampledColorImage_.get());
+	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(vulkanContext_, resShared_.get());
 	// This is on-screen render pass that transfers 
 	// singleSampledColorImage_ to swapchain image
-	tonemapPtr_ = std::make_unique<PipelineTonemap>(
-		vulkanContext_,
-		singleSampledColorImage_.get()
-	);
+	tonemapPtr_ = std::make_unique<PipelineTonemap>(vulkanContext_, &(resShared_->singleSampledColorImage_));
 	// ImGui here
 	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
@@ -127,8 +99,8 @@ void AppPBRShadow::Init()
 void AppPBRShadow::InitLights()
 {
 	// Lights (SSBO)
-	lights_ = std::make_unique<Lights>();
-	lights_->AddLights(vulkanContext_,
+	resLights_ = std::make_unique<ResourcesLight>();
+	resLights_->AddLights(vulkanContext_,
 	{
 		// The first light is used to generate the shadow map
 		// and its position is set by ImGui
@@ -144,18 +116,13 @@ void AppPBRShadow::InitLights()
 
 void AppPBRShadow::DestroyResources()
 {
-	shadowMap_->Destroy();
-	shadowMap_.reset();
-	
-	// IBL Images
-	iblResources_.reset();
+	// Resources
+	resShadow_.reset();
+	resIBL_.reset();
+	resLights_.reset();
 
 	// Destroy meshes
 	scene_.reset();
-
-	// Lights
-	lights_->Destroy();
-	lights_.reset();
 	
 	// Destroy renderers
 	clearPtr_.reset();
@@ -182,7 +149,7 @@ void AppPBRShadow::UpdateUBOs()
 	skyboxPtr_->SetCameraUBO(vulkanContext_, skyboxUbo);
 
 	// Shadow mapping
-	LightData light = lights_->lights_[0];
+	LightData light = resLights_->lights_[0];
 	glm::mat4 lightProjection = glm::perspective(glm::radians(45.f), 1.0f, shadowUBO_.shadowNearPlane, shadowUBO_.shadowFarPlane);
 	glm::mat4 lightView = glm::lookAt(glm::vec3(light.position_), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
@@ -201,7 +168,7 @@ void AppPBRShadow::UpdateUI()
 	}
 
 	static bool staticLightRender = true;
-	static PushConstantPBR staticPBRPushConstants =
+	static PushConstPBR staticPBRPushConstants =
 	{
 		.lightIntensity = 1.5f,
 		.baseReflectivity = 0.01f,
@@ -234,7 +201,7 @@ void AppPBRShadow::UpdateUI()
 	ImGui::SliderFloat("Max Bias", &staticShadowUBO.shadowMaxBias, 0.001f, 0.1f);
 	ImGui::SliderFloat("Near Plane", &staticShadowUBO.shadowNearPlane, 0.1f, 50.0f);
 	ImGui::SliderFloat("Far Plane", &staticShadowUBO.shadowFarPlane, 10.0f, 150.0f);
-	ImGui::SliderFloat("PCF Scale", &staticShadowUBO.pcfScale, 0.1, 1.0);
+	ImGui::SliderFloat("PCF Scale", &staticShadowUBO.pcfScale, 0.1f, 1.0f);
 	ImGui::SliderInt("PCF Iteration", &staticPCFIteration, 1, 10);
 
 	ImGui::SeparatorText("Light position");
@@ -245,7 +212,7 @@ void AppPBRShadow::UpdateUI()
 	imguiPtr_->ImGuiEnd();
 
 	// TODO Check if light position is changed 
-	lights_->UpdateLightPosition(vulkanContext_, 0, &(staticLightPos[0]));
+	resLights_->UpdateLightPosition(vulkanContext_, 0, &(staticLightPos[0]));
 
 	lightPtr_->RenderEnable(staticLightRender);
 	pbrPtr_->SetPBRPushConstants(staticPBRPushConstants);
@@ -259,7 +226,7 @@ void AppPBRShadow::UpdateUI()
 }
 
 // This is called from main.cpp
-int AppPBRShadow::MainLoop()
+void AppPBRShadow::MainLoop()
 {
 	InitVulkan({
 		.supportRaytracing_ = false,
@@ -268,7 +235,7 @@ int AppPBRShadow::MainLoop()
 	Init();
 
 	// Main loop
-	while (!GLFWWindowShouldClose())
+	while (StillRunning())
 	{
 		PollEvents();
 		ProcessTiming();
@@ -276,11 +243,6 @@ int AppPBRShadow::MainLoop()
 		DrawFrame();
 	}
 
-	// Wait until everything is finished
-	vkDeviceWaitIdle(vulkanContext_.GetDevice());
-
 	DestroyResources();
-	Terminate();
-
-	return 0;
+	DestroyInternal();
 }

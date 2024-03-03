@@ -18,7 +18,7 @@ AppPBRClusterForward::AppPBRClusterForward()
 void AppPBRClusterForward::Init()
 {
 	// Initialize attachments
-	InitSharedImageResources();
+	InitSharedResources();
 
 	// Initialize lights
 	InitLights();
@@ -27,8 +27,8 @@ void AppPBRClusterForward::Init()
 	InitIBLResources(AppConfig::TextureFolder + "dikhololo_night_4k.hdr");
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
-	cfBuffers_ = std::make_unique<ClusterForwardBuffers>();
-	cfBuffers_->CreateBuffers(vulkanContext_, lights_->GetLightCount());
+	resCF_ = std::make_unique<ResourcesClusterForward>();
+	resCF_->CreateBuffers(vulkanContext_, resLight_->GetLightCount());
 
 	// glTF model
 	model_ = std::make_unique<Model>();
@@ -38,44 +38,30 @@ void AppPBRClusterForward::Init()
 
 	// Pipelines
 	// This is responsible to clear swapchain image
-	clearPtr_ = std::make_unique<PipelineClear>(
-		vulkanContext_);
+	clearPtr_ = std::make_unique<PipelineClear>(vulkanContext_);
 	// This draws a cube
 	skyboxPtr_ = std::make_unique<PipelineSkybox>(
 		vulkanContext_,
-		&(iblResources_->environmentCubemap_),
-		depthImage_.get(),
-		multiSampledColorImage_.get(),
+		&(resIBL_->environmentCubemap_),
+		resShared_.get(),
 		// This is the first offscreen render pass so
 		// we need to clear the color attachment and depth attachment
-		RenderPassBit::ColorClear | 
-		RenderPassBit::DepthClear
-	);
-	aabbPtr_ = std::make_unique<PipelineAABBGenerator>(vulkanContext_, cfBuffers_.get());
-	lightCullPtr_ = std::make_unique<PipelineLightCulling>(vulkanContext_, lights_.get(), cfBuffers_.get());
+		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
+	aabbPtr_ = std::make_unique<PipelineAABBGenerator>(vulkanContext_, resCF_.get());
+	lightCullPtr_ = std::make_unique<PipelineLightCulling>(vulkanContext_, resLight_.get(), resCF_.get());
 	pbrPtr_ = std::make_unique<PipelinePBRClusterForward>(
 		vulkanContext_,
 		models,
-		lights_.get(),
-		cfBuffers_.get(),
-		iblResources_.get(),
-		depthImage_.get(),
-		multiSampledColorImage_.get());
-	lightPtr_ = std::make_unique<PipelineLightRender>(
-		vulkanContext_,
-		lights_.get(),
-		depthImage_.get(),
-		multiSampledColorImage_.get()
-	);
+		resLight_.get(),
+		resCF_.get(),
+		resIBL_.get(),
+		resShared_.get());
+	lightPtr_ = std::make_unique<PipelineLightRender>(vulkanContext_, resLight_.get(), resShared_.get());
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
-	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(
-		vulkanContext_, multiSampledColorImage_.get(), singleSampledColorImage_.get());
+	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(vulkanContext_, resShared_.get());
 	// This is on-screen render pass that transfers 
 	// singleSampledColorImage_ to swapchain image
-	tonemapPtr_ = std::make_unique<PipelineTonemap>(
-		vulkanContext_,
-		singleSampledColorImage_.get()
-	);
+	tonemapPtr_ = std::make_unique<PipelineTonemap>(vulkanContext_, &(resShared_->singleSampledColorImage_));
 	// ImGui here
 	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
@@ -133,24 +119,20 @@ void AppPBRClusterForward::InitLights()
 		lights.push_back(l);
 	}
 
-	lights_ = std::make_unique<Lights>();
-	lights_->AddLights(vulkanContext_, lights);
+	resLight_ = std::make_unique<ResourcesLight>();
+	resLight_->AddLights(vulkanContext_, lights);
 }
 
 void AppPBRClusterForward::DestroyResources()
 {
-	// IBL Images
-	iblResources_.reset();
+	// Resources
+	resIBL_.reset();
+	resCF_.reset();
+	resLight_.reset();
 
 	// Destroy meshes
 	model_->Destroy();
 	model_.reset();
-
-	// Lights
-	lights_->Destroy();
-	lights_.reset();
-	
-	cfBuffers_.reset();
 
 	// Destroy renderers
 	clearPtr_.reset();
@@ -201,7 +183,7 @@ void AppPBRClusterForward::UpdateUI()
 	}
 
 	static bool lightRender = true;
-	static PushConstantPBR pbrPC;
+	static PushConstPBR pbrPC;
 
 	imguiPtr_->ImGuiStart();
 	imguiPtr_->ImGuiSetWindow("Clustered Forward Shading", 525, 350);
@@ -215,7 +197,7 @@ void AppPBRClusterForward::UpdateUI()
 }
 
 // This is called from main.cpp
-int AppPBRClusterForward::MainLoop()
+void AppPBRClusterForward::MainLoop()
 {
 	InitVulkan({
 		.supportRaytracing_ = false,
@@ -225,7 +207,7 @@ int AppPBRClusterForward::MainLoop()
 	Init();
 
 	// Main loop
-	while (!GLFWWindowShouldClose())
+	while (StillRunning())
 	{
 		PollEvents();
 		ProcessTiming();
@@ -233,11 +215,6 @@ int AppPBRClusterForward::MainLoop()
 		DrawFrame();
 	}
 
-	// Wait until everything is finished
-	vkDeviceWaitIdle(vulkanContext_.GetDevice());
-
 	DestroyResources();
-	Terminate();
-
-	return 0;
+	DestroyInternal();
 }

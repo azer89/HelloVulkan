@@ -3,10 +3,11 @@
 
 #include "VulkanInstance.h"
 #include "VulkanContext.h"
-#include "Camera.h"
 #include "PipelineBase.h"
-#include "IBLResources.h"
+#include "ResourcesIBL.h"
+#include "ResourcesShared.h"
 #include "FrameCounter.h"
+#include "Camera.h"
 
 #define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
@@ -17,7 +18,7 @@ class AppBase
 {
 public:
 	AppBase();
-	virtual int MainLoop() = 0; 
+	virtual void MainLoop() = 0; 
 
 protected:
 	virtual void UpdateUBOs() = 0;
@@ -43,16 +44,16 @@ protected:
 
 	// Resources
 	void InitIBLResources(const std::string& hdrFile);
-	void InitSharedImageResources();
+	void InitSharedResources();
 	
 	// Functions related to the main loop
-	int GLFWWindowShouldClose();
+	bool StillRunning();
 	void PollEvents();
 	void ProcessTiming();
 	void ProcessInput();
 
 	// Should be used to destroy resources
-	void Terminate();
+	void DestroyInternal();
 
 protected:
 	GLFWwindow* glfwWindow_;
@@ -80,14 +81,8 @@ protected:
 	uint32_t windowHeight_;
 	bool shouldRecreateSwapchain_;
 
-	// Shared by multiple render passes
-	// TODO Maybe group these inside a struct and use a unique_ptr
-	std::unique_ptr<VulkanImage> multiSampledColorImage_;
-	std::unique_ptr<VulkanImage> singleSampledColorImage_;
-	std::unique_ptr<VulkanImage> depthImage_;
-
-	// Optional IBL images
-	std::unique_ptr<IBLResources> iblResources_;
+	std::unique_ptr<ResourcesShared> resShared_;
+	std::unique_ptr<ResourcesIBL> resIBL_;
 };
 
 #endif

@@ -4,7 +4,7 @@
 #include <cstdint>
 
 // For IBL Lookup Table
-struct PushConstantsBRDFLUT
+struct PushConstBRDFLUT
 {
 	uint32_t width;
 	uint32_t height;
@@ -12,14 +12,14 @@ struct PushConstantsBRDFLUT
 };
 
 // For generating specular and diffuse maps
-struct PushConstantCubeFilter
+struct PushConstCubeFilter
 {
 	float roughness = 0.f;
 	uint32_t outputDiffuseSampleCount = 1u;
 };
 
 // Additional customization for PBR
-struct PushConstantPBR
+struct PushConstPBR
 {
 	float lightIntensity = 1.f;
 	float baseReflectivity = 0.04f;

@@ -3,7 +3,8 @@
 
 #include "VulkanContext.h"
 #include "PipelineBase.h"
-#include "Light.h"
+#include "ResourcesLight.h"
+#include "ResourcesShared.h"
 #include "Configs.h"
 
 /*
@@ -14,9 +15,8 @@ class PipelineLightRender final : public PipelineBase
 public:
 	PipelineLightRender(
 		VulkanContext& ctx,
-		Lights* lights,
-		VulkanImage* depthImage,
-		VulkanImage* offscreenColorImage,
+		ResourcesLight* resLights,
+		ResourcesShared* resShared,
 		uint8_t renderBit = 0u
 	);
 	~PipelineLightRender();
@@ -29,7 +29,7 @@ private:
 	void CreateDescriptor(VulkanContext& ctx);
 
 private:
-	Lights* lights_;
+	ResourcesLight* resLight_;
 	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;
 	bool shouldRender_;
 };

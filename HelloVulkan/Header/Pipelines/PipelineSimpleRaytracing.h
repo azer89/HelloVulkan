@@ -2,7 +2,7 @@
 #define PIPELINE_SIMPLE_RAYTRACING
 
 #include "PipelineBase.h"
-#include "AccelerationStructure.h"
+#include "VulkanAccelStructure.h"
 #include "VulkanBuffer.h"
 #include "VulkanImage.h"
 #include "Configs.h"
@@ -42,12 +42,12 @@ private:
 
 private:
 	VulkanImage storageImage_;
-	DescriptorBuildInfo descriptorBuildInfo_;
+	VulkanDescriptorInfo descriptorInfo_;
 	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;
 
 	// Acceleration structures
-	AccelerationStructure blas_;
-	AccelerationStructure tlas_;
+	VulkanAccelStructure blas_;
+	VulkanAccelStructure tlas_;
 	VulkanBuffer vertexBuffer_;
 	VulkanBuffer indexBuffer_;
 	VulkanBuffer transformBuffer_;

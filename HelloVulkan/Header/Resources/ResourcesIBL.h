@@ -4,16 +4,11 @@
 #include "VulkanContext.h"
 #include "VulkanImage.h"
 
-struct IBLResources
+struct ResourcesIBL
 {
 public:
-	VulkanImage environmentCubemap_;
-	VulkanImage diffuseCubemap_;
-	VulkanImage specularCubemap_;
-	VulkanImage brdfLut_;
-
-	IBLResources() = default;
-	~IBLResources()
+	ResourcesIBL() = default;
+	~ResourcesIBL()
 	{
 		Destroy();
 	}
@@ -33,6 +28,13 @@ public:
 		specularCubemap_.SetDebugName(ctx, "Specular_Cubemap");
 		brdfLut_.SetDebugName(ctx, "BRDF_LUT");
 	}
+
+public:
+	VulkanImage environmentCubemap_;
+	VulkanImage diffuseCubemap_;
+	VulkanImage specularCubemap_;
+	VulkanImage brdfLut_;
+
 };
 
 #endif

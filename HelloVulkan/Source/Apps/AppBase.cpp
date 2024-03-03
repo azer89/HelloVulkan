@@ -219,7 +219,7 @@ void AppBase::OnWindowResized()
 		windowHeight_
 	);
 
-	InitSharedImageResources();
+	InitSharedResources();
 
 	for (const auto& pip : pipelines_)
 	{
@@ -249,10 +249,14 @@ void AppBase::ProcessTiming()
 	frameCounter_.Update(currentFrame);
 }
 
-int AppBase::GLFWWindowShouldClose()
+bool AppBase::StillRunning()
 {
-	// TODO Maybe you can call vkDeviceWaitIdle when the window is closed
-	return glfwWindowShouldClose(glfwWindow_);
+	if (glfwWindowShouldClose(glfwWindow_))
+	{
+		vkDeviceWaitIdle(vulkanContext_.GetDevice());
+		return false;
+	}
+	return true;
 }
 
 void AppBase::PollEvents()
@@ -260,18 +264,12 @@ void AppBase::PollEvents()
 	glfwPollEvents();
 }
 
-void AppBase::Terminate()
+void AppBase::DestroyInternal()
 {
 	glfwDestroyWindow(glfwWindow_);
 	glfwTerminate();
 
-	depthImage_->Destroy();
-	multiSampledColorImage_->Destroy();
-	singleSampledColorImage_->Destroy();
-
-	depthImage_.reset();
-	multiSampledColorImage_.reset();
-	singleSampledColorImage_.reset();
+	resShared_.reset();
 
 	vulkanContext_.Destroy();
 	vulkanInstance_.Destroy();
@@ -373,60 +371,15 @@ void AppBase::ProcessInput()
 	}
 }
 
-void AppBase::InitSharedImageResources()
+void AppBase::InitSharedResources()
 {
-	if (depthImage_ == nullptr)
-	{
-		depthImage_ = std::make_unique<VulkanImage>();
-	}
-
-	if (multiSampledColorImage_ == nullptr)
-	{
-		multiSampledColorImage_ = std::make_unique<VulkanImage>();
-	}
-
-	if (singleSampledColorImage_ == nullptr)
-	{
-		singleSampledColorImage_ = std::make_unique<VulkanImage>();
-	}
-
-	depthImage_->Destroy();
-	multiSampledColorImage_->Destroy();
-	singleSampledColorImage_->Destroy();
-
-	const VkSampleCountFlagBits msaaSamples = vulkanContext_.GetMSAASampleCount();
-	const uint32_t width = vulkanContext_.GetSwapchainWidth();
-	const uint32_t height = vulkanContext_.GetSwapchainHeight();
-
-	// Depth attachment (OnScreen and offscreen)
-	depthImage_->CreateDepthResources(
-		vulkanContext_,
-		width,
-		height,
-		1u, // layerCount
-		msaaSamples);
-	depthImage_->SetDebugName(vulkanContext_, "Depth_Image");
-
-	// Color attachments
-	// Multi-sampled (MSAA)
-	multiSampledColorImage_->CreateColorResources(
-		vulkanContext_,
-		width,
-		height,
-		msaaSamples);
-	multiSampledColorImage_->SetDebugName(vulkanContext_, "Multisampled_Color_Image");
-
-	// Single-sampled
-	singleSampledColorImage_->CreateColorResources(
-		vulkanContext_,
-		width,
-		height);
-	singleSampledColorImage_->SetDebugName(vulkanContext_, "Singlesampled_Color_Image");
+	resShared_ = std::make_unique<ResourcesShared>();
+	resShared_->Create(vulkanContext_);
 }
 
 void AppBase::InitIBLResources(const std::string& hdrFile)
 {
-	iblResources_ = std::make_unique<IBLResources>();
+	resIBL_ = std::make_unique<ResourcesIBL>();
 
 	// Create a cubemap from the input HDR
 	{
@@ -434,27 +387,27 @@ void AppBase::InitIBLResources(const std::string& hdrFile)
 			vulkanContext_,
 			hdrFile);
 		e2c.OffscreenRender(vulkanContext_,
-			&(iblResources_->environmentCubemap_)); // Output
+			&(resIBL_->environmentCubemap_)); // Output
 	}
 
 	// Cube filtering
 	{
-		PipelineCubeFilter cubeFilter(vulkanContext_, &(iblResources_->environmentCubemap_));
+		PipelineCubeFilter cubeFilter(vulkanContext_, &(resIBL_->environmentCubemap_));
 		// Diffuse
 		cubeFilter.OffscreenRender(vulkanContext_,
-			&(iblResources_->diffuseCubemap_),
+			&(resIBL_->diffuseCubemap_),
 			CubeFilterType::Diffuse);
 		// Specular
 		cubeFilter.OffscreenRender(vulkanContext_,
-			&(iblResources_->specularCubemap_),
+			&(resIBL_->specularCubemap_),
 			CubeFilterType::Specular);
 	}
 
 	// BRDF look up table
 	{
 		PipelineBRDFLUT brdfLUTCompute(vulkanContext_);
-		brdfLUTCompute.CreateLUT(vulkanContext_, &(iblResources_->brdfLut_));
+		brdfLUTCompute.CreateLUT(vulkanContext_, &(resIBL_->brdfLut_));
 	}
 
-	iblResources_->SetDebugNames(vulkanContext_);
+	resIBL_->SetDebugNames(vulkanContext_);
 }

@@ -4,7 +4,7 @@
 #include "VulkanContext.h"
 
 // Default pipeline create info
-struct PipelineCreateInfo
+struct VulkanPipelineCreateInfo
 {
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo;
 	VkPipelineInputAssemblyStateCreateInfo inputAssembly;
@@ -19,7 +19,7 @@ struct PipelineCreateInfo
 	VkPipelineDynamicStateCreateInfo dynamicState;
 	VkPipelineTessellationStateCreateInfo tessellationState;
 
-	PipelineCreateInfo(const VulkanContext& ctx) :
+	VulkanPipelineCreateInfo(const VulkanContext& ctx) :
 		vertexInputInfo({
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
 			.pNext = nullptr,

@@ -6,14 +6,14 @@
 
 PipelineLightCulling::PipelineLightCulling(
 	VulkanContext& ctx,
-	Lights* lights,
-	ClusterForwardBuffers* cfBuffers) :
+	ResourcesLight* resLight,
+	ResourcesClusterForward* resCF) :
 	PipelineBase(ctx,
 		{
 			.type_ = PipelineType::Compute
 		}),
-	lights_(lights),
-	cfBuffers_(cfBuffers)
+	resLight_(resLight),
+	resCF_(resCF)
 {
 	CreateMultipleUniformBuffers(ctx, cfUBOBuffers_, sizeof(ClusterForwardUBO), AppConfig::FrameOverlapCount);
 	CreateDescriptor(ctx);
@@ -74,9 +74,9 @@ void PipelineLightCulling::Execute(VulkanContext& ctx, VkCommandBuffer commandBu
 		.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
 		.srcQueueFamilyIndex = ctx.GetComputeFamily(),
 		.dstQueueFamilyIndex = ctx.GetGraphicsFamily(),
-		.buffer = cfBuffers_->lightCellsBuffers_[frameIndex].buffer_,
+		.buffer = resCF_->lightCellsBuffers_[frameIndex].buffer_,
 		.offset = 0,
-		.size = cfBuffers_->lightCellsBuffers_[frameIndex].size_
+		.size = resCF_->lightCellsBuffers_[frameIndex].size_
 	};
 	const VkBufferMemoryBarrier2 lightIndicesBarrier =
 	{
@@ -88,9 +88,9 @@ void PipelineLightCulling::Execute(VulkanContext& ctx, VkCommandBuffer commandBu
 		.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
 		.srcQueueFamilyIndex = ctx.GetComputeFamily(),
 		.dstQueueFamilyIndex = ctx.GetGraphicsFamily(),
-		.buffer = cfBuffers_->lightIndicesBuffers_[frameIndex].buffer_,
+		.buffer = resCF_->lightIndicesBuffers_[frameIndex].buffer_,
 		.offset = 0,
-		.size = cfBuffers_->lightIndicesBuffers_[frameIndex].size_,
+		.size = resCF_->lightIndicesBuffers_[frameIndex].size_,
 	};
 	const std::array<VkBufferMemoryBarrier2, 2> barriers =
 	{
@@ -105,23 +105,23 @@ void PipelineLightCulling::CreateDescriptor(VulkanContext& ctx)
 	const uint32_t frameCount = static_cast<uint32_t>(AppConfig::FrameOverlapCount);
 	constexpr VkShaderStageFlags stageFlag = VK_SHADER_STAGE_COMPUTE_BIT;
 
-	DescriptorBuildInfo buildInfo;
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 0
-	buildInfo.AddBuffer(lights_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 1
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 2
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 3
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 4
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, stageFlag); // 5
+	VulkanDescriptorInfo dsInfo;
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 0
+	dsInfo.AddBuffer(resLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 1
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 2
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 3
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 4
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, stageFlag); // 5
 
-	descriptor_.CreatePoolAndLayout(ctx, buildInfo, frameCount, 1u);
+	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 
 	for (size_t i = 0; i < frameCount; ++i)
 	{
-		buildInfo.UpdateBuffer(&(cfBuffers_->aabbBuffers_[i]), 0);
-		buildInfo.UpdateBuffer(&(cfBuffers_->globalIndexCountBuffers_[i]), 2);
-		buildInfo.UpdateBuffer(&(cfBuffers_->lightCellsBuffers_[i]), 3);
-		buildInfo.UpdateBuffer(&(cfBuffers_->lightIndicesBuffers_[i]), 4);
-		buildInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 5);
-		descriptor_.CreateSet(ctx, buildInfo, &(descriptorSets_[i]));
+		dsInfo.UpdateBuffer(&(resCF_->aabbBuffers_[i]), 0);
+		dsInfo.UpdateBuffer(&(resCF_->globalIndexCountBuffers_[i]), 2);
+		dsInfo.UpdateBuffer(&(resCF_->lightCellsBuffers_[i]), 3);
+		dsInfo.UpdateBuffer(&(resCF_->lightIndicesBuffers_[i]), 4);
+		dsInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 5);
+		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}
 }

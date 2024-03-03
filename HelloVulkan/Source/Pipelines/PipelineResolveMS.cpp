@@ -5,9 +5,7 @@ Resolves a multisampled color image to a singlesampled color image
 */
 PipelineResolveMS::PipelineResolveMS(
 	VulkanContext& ctx,
-	VulkanImage* multiSampledColorImage, // Input
-	VulkanImage* singleSampledColorImage // Output
-) :
+	ResourcesShared* resShared) :
 	PipelineBase(ctx, 
 		{ .type_ = PipelineType::GraphicsOffScreen }
 	)
@@ -15,14 +13,16 @@ PipelineResolveMS::PipelineResolveMS(
 	renderPass_.CreateResolveMSRenderPass(
 		ctx,
 		0u,
-		multiSampledColorImage->multisampleCount_);
+		resShared->multiSampledColorImage_.multisampleCount_);
 
 	framebuffer_.CreateResizeable(
 		ctx, 
 		renderPass_.GetHandle(),
 		{
-			multiSampledColorImage,
-			singleSampledColorImage
+			//multiSampledColorImage,
+			//singleSampledColorImage
+			&(resShared->multiSampledColorImage_),
+			&(resShared->singleSampledColorImage_)
 		},
 		IsOffscreen());
 }

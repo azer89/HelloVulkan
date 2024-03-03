@@ -1,11 +1,11 @@
-#include "Light.h"
+#include "..\..\Header\Resources\ResourcesLight.h"
 
-void Lights::Destroy()
+void ResourcesLight::Destroy()
 {
 	storageBuffer_.Destroy();
 }
 
-void Lights::AddLights(VulkanContext& ctx, const std::vector<LightData>& lights)
+void ResourcesLight::AddLights(VulkanContext& ctx, const std::vector<LightData>& lights)
 {
 	device_ = ctx.GetDevice();
 	lights_ = lights;
@@ -17,7 +17,7 @@ void Lights::AddLights(VulkanContext& ctx, const std::vector<LightData>& lights)
 	storageBuffer_.UploadBufferData(ctx, lights.data(), storageBufferSize);
 }
 
-void Lights::UpdateLightPosition(VulkanContext& ctx, size_t index, float* position)
+void ResourcesLight::UpdateLightPosition(VulkanContext& ctx, size_t index, float* position)
 {
 	if (index < 0 || index >= lights_.size())
 	{

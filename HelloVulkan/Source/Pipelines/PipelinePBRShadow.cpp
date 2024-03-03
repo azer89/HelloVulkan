@@ -12,25 +12,24 @@ constexpr uint32_t ENV_TEXTURE_COUNT = 4; // Specular, diffuse, BRDF LUT, and sh
 PipelinePBRShadow::PipelinePBRShadow(
 	VulkanContext& ctx,
 	Scene* scene,
-	Lights* lights,
-	IBLResources* iblResources,
-	VulkanImage* shadowMap,
-	VulkanImage* depthImage,
-	VulkanImage* offscreenColorImage,
+	ResourcesLight* resLight,
+	ResourcesIBL* iblResources,
+	ResourcesShadow* resShadow,
+	ResourcesShared* resShared,
 	uint8_t renderBit) :
 	PipelineBase(ctx, 
 		{
 			.type_ = PipelineType::GraphicsOffScreen,
-			.msaaSamples_ = offscreenColorImage->multisampleCount_,
+			.msaaSamples_ = resShared->multiSampledColorImage_.multisampleCount_,
 
 			// If you use bindless, make sure this is false
 			.vertexBufferBind_ = false,
 		}
 	),
 	scene_(scene),
-	lights_(lights),
+	resLight_(resLight),
 	iblResources_(iblResources),
-	shadowMap_(shadowMap)
+	resShadow_(resShadow)
 {
 	// UBOs
 	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
@@ -45,8 +44,8 @@ PipelinePBRShadow::PipelinePBRShadow(
 		ctx, 
 		renderPass_.GetHandle(), 
 		{
-			offscreenColorImage,
-			depthImage
+			&(resShared->multiSampledColorImage_),
+			&(resShared->depthImage_)
 		}, 
 		IsOffscreen());
 
@@ -57,7 +56,7 @@ PipelinePBRShadow::PipelinePBRShadow(
 	{{
 		.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
 		.offset = 0u,
-		.size = sizeof(PushConstantPBR),
+		.size = sizeof(PushConstPBR),
 	}};
 	
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, ranges);
@@ -99,7 +98,7 @@ void PipelinePBRShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer co
 		pipelineLayout_,
 		VK_SHADER_STAGE_FRAGMENT_BIT,
 		0,
-		sizeof(PushConstantPBR), &pc_);
+		sizeof(PushConstPBR), &pc_);
 
 	vkCmdBindDescriptorSets(
 		commandBuffer,
@@ -124,32 +123,32 @@ void PipelinePBRShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer co
 void PipelinePBRShadow::CreateDescriptor(VulkanContext& ctx)
 {
 	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
-	DescriptorBuildInfo buildInfo;
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 1
-	buildInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 2
+	VulkanDescriptorInfo dsInfo;
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 1
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 2
 
-	buildInfo.AddBuffer(&(scene_->vertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 3
-	buildInfo.AddBuffer(&(scene_->indexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
-	buildInfo.AddBuffer(&(scene_->meshDataBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 5
-	buildInfo.AddBuffer(lights_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 6
+	dsInfo.AddBuffer(&(scene_->vertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 3
+	dsInfo.AddBuffer(&(scene_->indexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
+	dsInfo.AddBuffer(&(scene_->meshDataBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 5
+	dsInfo.AddBuffer(resLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 6
 
-	buildInfo.AddImage(&(iblResources_->specularCubemap_)); // 7
-	buildInfo.AddImage(&(iblResources_->diffuseCubemap_)); // 8
-	buildInfo.AddImage(&(iblResources_->brdfLut_)); // 9
-	buildInfo.AddImage(shadowMap_); // 10
-	buildInfo.AddImageArray(scene_->GetImageInfos()); // 11
+	dsInfo.AddImage(&(iblResources_->specularCubemap_)); // 7
+	dsInfo.AddImage(&(iblResources_->diffuseCubemap_)); // 8
+	dsInfo.AddImage(&(iblResources_->brdfLut_)); // 9
+	dsInfo.AddImage(&(resShadow_->shadowMap_)); // 10
+	dsInfo.AddImageArray(scene_->GetImageInfos()); // 11
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, buildInfo, frameCount, 1u);
+	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 
 	// Sets
 	descriptorSets_.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
-		buildInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
-		buildInfo.UpdateBuffer(&(shadowMapConfigUBOBuffers_[i]), 1);
-		buildInfo.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 2);
-		descriptor_.CreateSet(ctx, buildInfo, &(descriptorSets_[i]));
+		dsInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
+		dsInfo.UpdateBuffer(&(shadowMapConfigUBOBuffers_[i]), 1);
+		dsInfo.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 2);
+		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}
 }
