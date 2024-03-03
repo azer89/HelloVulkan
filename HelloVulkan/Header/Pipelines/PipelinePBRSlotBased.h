@@ -5,6 +5,7 @@
 #include "VulkanImage.h"
 #include "PushConstants.h"
 #include "Model.h"
+#include "ResourcesShared.h"
 #include "ResourcesLight.h"
 #include "ResourcesIBL.h"
 
@@ -20,8 +21,7 @@ public:
 		const std::vector<Model*>& models,
 		ResourcesLight* resLight,
 		ResourcesIBL* iblResources,
-		VulkanImage* depthImage,
-		VulkanImage* offscreenColorImage,
+		ResourcesShared* resShared,
 		uint8_t renderBit = 0u);
 	 ~PipelinePBRSlotBased();
 

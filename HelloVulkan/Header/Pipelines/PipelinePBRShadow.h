@@ -7,6 +7,7 @@
 #include "ResourcesIBL.h"
 #include "ResourcesLight.h"
 #include "ResourcesShadow.h"
+#include "ResourcesShared.h"
 
 #include <vector>
 
@@ -21,8 +22,7 @@ public:
 		ResourcesLight* resLight,
 		ResourcesIBL* iblResources,
 		ResourcesShadow* resShadow,
-		VulkanImage* depthImage,
-		VulkanImage* offscreenColorImage,
+		ResourcesShared* resShared,
 		uint8_t renderBit = 0u);
 	 ~PipelinePBRShadow();
 

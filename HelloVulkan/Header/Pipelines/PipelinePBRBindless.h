@@ -5,6 +5,7 @@
 #include "VulkanImage.h"
 #include "PushConstants.h"
 #include "Scene.h"
+#include "ResourcesShared.h"
 #include "ResourcesLight.h"
 #include "ResourcesIBL.h"
 
@@ -20,8 +21,7 @@ public:
 		Scene* scene,
 		ResourcesLight* resLight,
 		ResourcesIBL* iblResources,
-		VulkanImage* depthImage,
-		VulkanImage* offscreenColorImage,
+		ResourcesShared* resShared,
 		uint8_t renderBit = 0u);
 	 ~PipelinePBRBindless();
 

@@ -4,6 +4,7 @@
 #include "VulkanContext.h"
 #include "PipelineBase.h"
 #include "ResourcesLight.h"
+#include "ResourcesShared.h"
 #include "Configs.h"
 
 /*
@@ -15,8 +16,7 @@ public:
 	PipelineLightRender(
 		VulkanContext& ctx,
 		ResourcesLight* resLights,
-		VulkanImage* depthImage,
-		VulkanImage* offscreenColorImage,
+		ResourcesShared* resShared,
 		uint8_t renderBit = 0u
 	);
 	~PipelineLightRender();

@@ -2,6 +2,7 @@
 #define PIPELINE_RESOLVE_MULTISAMPLING
 
 #include "PipelineBase.h"
+#include "ResourcesShared.h"
 
 /*
 This pipeline does not draw anything but it resolves 
@@ -11,9 +12,8 @@ class PipelineResolveMS final : public PipelineBase
 {
 public:
 	PipelineResolveMS(
-		VulkanContext& ctx, 
-		VulkanImage* multiSampledColorImage, // Input
-		VulkanImage* singleSampledColorImage // Output
+		VulkanContext& ctx,
+		ResourcesShared* resShared
 	);
 	~PipelineResolveMS();
 

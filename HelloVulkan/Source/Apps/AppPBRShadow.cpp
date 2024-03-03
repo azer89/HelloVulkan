@@ -58,37 +58,31 @@ void AppPBRShadow::Init()
 	skyboxPtr_ = std::make_unique<PipelineSkybox>(
 		vulkanContext_,
 		&(resIBL_->environmentCubemap_),
-		&(resShared_->depthImage_),
-		&(resShared_->multiSampledColorImage_),
+		resShared_.get(),
 		// This is the first offscreen render pass so
 		// we need to clear the color attachment and depth attachment
-		RenderPassBit::ColorClear | 
-		RenderPassBit::DepthClear
-	);
+		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
 	pbrPtr_ = std::make_unique<PipelinePBRShadow>(
 		vulkanContext_,
 		scene_.get(),
 		resLights_.get(),
 		resIBL_.get(),
 		resShadow_.get(),
-		&(resShared_->depthImage_),
-		&(resShared_->multiSampledColorImage_));
+		resShared_.get());
 	shadowPtr_ = std::make_unique<PipelineShadow>(vulkanContext_, scene_.get(), resShadow_.get());
 	lightPtr_ = std::make_unique<PipelineLightRender>(
 		vulkanContext_,
 		resLights_.get(),
-		&(resShared_->depthImage_),
-		&(resShared_->multiSampledColorImage_)
-	);
+		resShared_.get());
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
 	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(
-		vulkanContext_, &(resShared_->multiSampledColorImage_), &(resShared_->singleSampledColorImage_));
+		vulkanContext_, 
+		resShared_.get());
 	// This is on-screen render pass that transfers 
 	// singleSampledColorImage_ to swapchain image
 	tonemapPtr_ = std::make_unique<PipelineTonemap>(
 		vulkanContext_,
-		&(resShared_->singleSampledColorImage_)
-	);
+		&(resShared_->singleSampledColorImage_));
 	// ImGui here
 	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
@@ -215,7 +209,7 @@ void AppPBRShadow::UpdateUI()
 	ImGui::SliderFloat("Max Bias", &staticShadowUBO.shadowMaxBias, 0.001f, 0.1f);
 	ImGui::SliderFloat("Near Plane", &staticShadowUBO.shadowNearPlane, 0.1f, 50.0f);
 	ImGui::SliderFloat("Far Plane", &staticShadowUBO.shadowFarPlane, 10.0f, 150.0f);
-	ImGui::SliderFloat("PCF Scale", &staticShadowUBO.pcfScale, 0.1, 1.0);
+	ImGui::SliderFloat("PCF Scale", &staticShadowUBO.pcfScale, 0.1f, 1.0f);
 	ImGui::SliderInt("PCF Iteration", &staticPCFIteration, 1, 10);
 
 	ImGui::SeparatorText("Light position");

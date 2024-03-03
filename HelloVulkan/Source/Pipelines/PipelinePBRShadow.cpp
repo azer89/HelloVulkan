@@ -15,13 +15,12 @@ PipelinePBRShadow::PipelinePBRShadow(
 	ResourcesLight* resLight,
 	ResourcesIBL* iblResources,
 	ResourcesShadow* resShadow,
-	VulkanImage* depthImage,
-	VulkanImage* offscreenColorImage,
+	ResourcesShared* resShared,
 	uint8_t renderBit) :
 	PipelineBase(ctx, 
 		{
 			.type_ = PipelineType::GraphicsOffScreen,
-			.msaaSamples_ = offscreenColorImage->multisampleCount_,
+			.msaaSamples_ = resShared->multiSampledColorImage_.multisampleCount_,
 
 			// If you use bindless, make sure this is false
 			.vertexBufferBind_ = false,
@@ -45,8 +44,8 @@ PipelinePBRShadow::PipelinePBRShadow(
 		ctx, 
 		renderPass_.GetHandle(), 
 		{
-			offscreenColorImage,
-			depthImage
+			&(resShared->multiSampledColorImage_),
+			&(resShared->depthImage_)
 		}, 
 		IsOffscreen());
 
