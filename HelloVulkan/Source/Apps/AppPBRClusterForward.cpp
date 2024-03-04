@@ -24,7 +24,7 @@ void AppPBRClusterForward::Init()
 	InitLights();
 
 	// Image-Based Lighting
-	InitIBLResources(AppConfig::TextureFolder + "dikhololo_night_4k.hdr");
+	resIBL_ = std::make_unique<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
 	resCF_ = std::make_unique<ResourcesClusterForward>();
@@ -44,8 +44,7 @@ void AppPBRClusterForward::Init()
 		vulkanContext_,
 		&(resIBL_->environmentCubemap_),
 		resShared_.get(),
-		// This is the first offscreen render pass so
-		// we need to clear the color attachment and depth attachment
+		// This is the first offscreen render pass so we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
 	aabbPtr_ = std::make_unique<PipelineAABBGenerator>(vulkanContext_, resCF_.get());
 	lightCullPtr_ = std::make_unique<PipelineLightCulling>(vulkanContext_, resLight_.get(), resCF_.get());

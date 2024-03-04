@@ -2,11 +2,6 @@
 #include "Configs.h"
 #include "VulkanUtility.h"
 
-// IBL
-#include "PipelineEquirect2Cube.h"
-#include "PipelineCubeFilter.h"
-#include "PipelineBRDFLUT.h"
-
 #include "volk.h"
 
 // Init GLSLang
@@ -375,39 +370,4 @@ void AppBase::InitSharedResources()
 {
 	resShared_ = std::make_unique<ResourcesShared>();
 	resShared_->Create(vulkanContext_);
-}
-
-void AppBase::InitIBLResources(const std::string& hdrFile)
-{
-	resIBL_ = std::make_unique<ResourcesIBL>();
-
-	// Create a cubemap from the input HDR
-	{
-		PipelineEquirect2Cube e2c(
-			vulkanContext_,
-			hdrFile);
-		e2c.OffscreenRender(vulkanContext_,
-			&(resIBL_->environmentCubemap_)); // Output
-	}
-
-	// Cube filtering
-	{
-		PipelineCubeFilter cubeFilter(vulkanContext_, &(resIBL_->environmentCubemap_));
-		// Diffuse
-		cubeFilter.OffscreenRender(vulkanContext_,
-			&(resIBL_->diffuseCubemap_),
-			CubeFilterType::Diffuse);
-		// Specular
-		cubeFilter.OffscreenRender(vulkanContext_,
-			&(resIBL_->specularCubemap_),
-			CubeFilterType::Specular);
-	}
-
-	// BRDF look up table
-	{
-		PipelineBRDFLUT brdfLUTCompute(vulkanContext_);
-		brdfLUTCompute.CreateLUT(vulkanContext_, &(resIBL_->brdfLut_));
-	}
-
-	resIBL_->SetDebugNames(vulkanContext_);
 }

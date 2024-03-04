@@ -24,7 +24,7 @@ void AppPBRSlotBased::Init()
 	InitSharedResources();
 
 	// Image-Based Lighting
-	InitIBLResources(AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
+	resIBL_ = std::make_unique<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
 	model_ = std::make_unique<Model>();
@@ -40,8 +40,7 @@ void AppPBRSlotBased::Init()
 		vulkanContext_,
 		&(resIBL_->environmentCubemap_),
 		resShared_.get(),
-		// This is the first offscreen render pass so
-		// we need to clear the color attachment and depth attachment
+		// This is the first offscreen render pass so we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
 	pbrPtr_ = std::make_unique<PipelinePBRSlotBased>(
 		vulkanContext_,

@@ -7,10 +7,12 @@
 struct ResourcesIBL
 {
 public:
-	ResourcesIBL();
+	ResourcesIBL(VulkanContext& ctx, const std::string& hdrFile);
 	~ResourcesIBL();
-
 	void Destroy();
+
+private:
+	void Create(VulkanContext& ctx, const std::string& hdrFile);
 	void SetDebugNames(VulkanContext& ctx);
 
 public:

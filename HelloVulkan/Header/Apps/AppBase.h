@@ -43,7 +43,6 @@ protected:
 	void InitCamera();
 
 	// Resources
-	void InitIBLResources(const std::string& hdrFile);
 	void InitSharedResources();
 	
 	// Functions related to the main loop
