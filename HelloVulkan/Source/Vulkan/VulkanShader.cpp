@@ -38,6 +38,7 @@ void VulkanShader::Destroy()
 	if (shaderModule_)
 	{
 		vkDestroyShaderModule(device_, shaderModule_, nullptr);
+		shaderModule_ = nullptr;
 	}
 }
 

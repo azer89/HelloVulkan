@@ -33,10 +33,13 @@ void VulkanAccelStructure::Destroy()
 	if (vmaAllocation_)
 	{
 		vmaDestroyBuffer(vmaAllocator_, buffer_, vmaAllocation_);
+		buffer_ = nullptr;
+		vmaAllocation_ = nullptr;
 	}
 
 	if (handle_)
 	{
 		vkDestroyAccelerationStructureKHR(device_, handle_, nullptr);
+		handle_ = nullptr;
 	}
 }

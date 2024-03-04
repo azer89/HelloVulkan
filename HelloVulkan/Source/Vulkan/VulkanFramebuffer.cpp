@@ -64,9 +64,10 @@ void VulkanFramebuffer::CreateUnresizeable(
 
 void VulkanFramebuffer::Destroy()
 {
-	for (VkFramebuffer& f : framebuffers_)
+	for (size_t i = 0; i < framebuffers_.size(); ++i)
 	{
-		vkDestroyFramebuffer(device_, f, nullptr);
+		vkDestroyFramebuffer(device_, framebuffers_[i], nullptr);
+		framebuffers_[i] = nullptr;
 	}
 	// NOTE Don't clear because we may recreate
 	//framebuffers_.clear();

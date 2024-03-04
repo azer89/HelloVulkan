@@ -368,6 +368,9 @@ void AppBase::ProcessInput()
 
 void AppBase::InitSharedResources()
 {
-	resShared_ = std::make_unique<ResourcesShared>();
+	if (!resShared_)
+	{
+		resShared_ = std::make_unique<ResourcesShared>();
+	}
 	resShared_->Create(vulkanContext_);
 }
