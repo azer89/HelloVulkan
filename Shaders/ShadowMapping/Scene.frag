@@ -17,11 +17,13 @@ Fragment shader for
 #include <PBRHeader.glsl>
 #include <Hammersley.glsl>
 #include <TangentNormalToWorld.glsl>
+#include <ShadowMapping//UBO.glsl>
+#include <Bindless//MeshData.glsl>
 
 layout(location = 0) in vec3 worldPos;
-layout(location = 1) in vec2 texCoord;
-layout(location = 2) in vec3 normal;
-layout(location = 3) in vec4 shadowPos;
+layout(location = 1) in vec3 viewPos;
+layout(location = 2) in vec2 texCoord;
+layout(location = 3) in vec3 normal;
 layout(location = 4) in flat uint meshIndex;
 
 layout(location = 0) out vec4 fragColor;
@@ -34,11 +36,9 @@ layout(set = 0, binding = 0)
 #include <CameraUBO.glsl>
 
 // UBO
-layout(set = 0, binding = 1)
-#include <ShadowMapping//UBO.glsl>
+layout(set = 0, binding = 1) uniform ShadowBlock { ShadowUBO shadowUBO; };
 
 // SSBO
-#include <Bindless//MeshData.glsl>
 layout(set = 0, binding = 5) readonly buffer Meshes { MeshData meshes []; };
 
 // SSBO
@@ -47,16 +47,8 @@ layout(set = 0, binding = 6) readonly buffer Lights { LightData lights []; };
 layout(set = 0, binding = 7) uniform samplerCube specularMap;
 layout(set = 0, binding = 8) uniform samplerCube diffuseMap;
 layout(set = 0, binding = 9) uniform sampler2D brdfLUT;
-layout(set = 0, binding = 10) uniform sampler2D shadowMap;
+layout(set = 0, binding = 10) uniform sampler2DArray shadowMap;
 
-/*
-0 = albedo
-1 = normal
-2 = metalness
-3 = roughness
-4 = ao
-5 = emissive
-*/
 // NOTE This requires descriptor indexing feature
 layout(set = 0, binding = 11) uniform sampler2D pbrTextures[];
 
@@ -65,6 +57,12 @@ layout(set = 0, binding = 11) uniform sampler2D pbrTextures[];
 
 #include <Radiance.glsl>
 #include <Ambient.glsl>
+
+const mat4 biasMat = mat4(
+	0.5, 0.0, 0.0, 0.0,
+	0.0, 0.5, 0.0, 0.0,
+	0.0, 0.0, 1.0, 0.0,
+	0.5, 0.5, 0.0, 1.0);
 
 void main()
 {
@@ -126,9 +124,31 @@ void main()
 		ao,
 		NoV);
 
-	float shadow = ShadowPCF(shadowPos / shadowPos.w);
 
+	// Obtaining the cascadeIndex below is optimized for SHADOW_MAP_CASCADE_COUNT = 4
+	//vec4 res = step(viewPos.z, shadowUBO.splitDepths);
+	//uint cascadeIndex = uint(res.x + res.y + res.z + res.w);
+	uint cascadeIndex = 0;
+	for (uint i = 0; i < SHADOW_MAP_CASCADE_COUNT - 1; ++i)
+	{
+		if (viewPos.z < shadowUBO.splitDepths[i])
+		{
+			cascadeIndex = i + 1;
+		}
+	}
+
+	vec4 shadowPos = biasMat * shadowUBO.lightSpaceMatrices[cascadeIndex] * vec4(worldPos, 1.0);
+
+	float shadow = ShadowPCF(shadowPos / shadowPos.w, cascadeIndex);
 	vec3 color = ambient + emissive + (Lo * shadow);
-
 	fragColor = vec4(color, 1.0);
+
+	// For debugging
+	/*switch (cascadeIndex)
+	{
+		case 0: fragColor.rgb *= vec3(1.0f, 0.25f, 0.25f); break;
+		case 1: fragColor.rgb *= vec3(0.25f, 1.0f, 0.25f); break;
+		case 2: fragColor.rgb *= vec3(0.25f, 0.25f, 1.0f); break;
+		case 3: fragColor.rgb *= vec3(1.0f, 0.25f, 0.25f); break;
+	}*/
 }

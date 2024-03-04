@@ -32,12 +32,15 @@ public:
 	void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true);
 	void ProcessMouseScroll(float yoffset);
 
-	glm::mat4 GetProjectionMatrix() const;
-	glm::mat4 GetViewMatrix() const;
-	glm::vec3 Position() const;
-	CameraUBO GetCameraUBO() const;
-	ClusterForwardUBO GetClusterForwardUBO() const;
-	RaytracingCameraUBO GetRaytracingCameraUBO() const;
+	[[nodiscard]] glm::mat4 GetProjectionMatrix() const;
+	[[nodiscard]] glm::mat4 GetViewMatrix() const;
+	[[nodiscard]] glm::vec3 Position() const;
+	[[nodiscard]] CameraUBO GetCameraUBO() const;
+	[[nodiscard]] ClusterForwardUBO GetClusterForwardUBO() const;
+	[[nodiscard]] RaytracingCameraUBO GetRaytracingCameraUBO() const;
+
+private:
+	void UpdateInternal();
 
 private:
 	glm::mat4 projectionMatrix_;
@@ -64,9 +67,6 @@ private:
 	// Screen size
 	float screenWidth_;
 	float screenHeight_;
-
-private:
-	void UpdateInternal();
 };
 
 #endif

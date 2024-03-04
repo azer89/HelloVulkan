@@ -44,8 +44,10 @@ void VulkanImage::CreateImageResources(
 		VK_FORMAT_R8G8B8A8_UNORM,
 		VK_IMAGE_ASPECT_COLOR_BIT,
 		VK_IMAGE_VIEW_TYPE_2D,
-		layerCount_,
-		mipCount_);
+		0u,
+		mipCount_,
+		0u,
+		layerCount_);
 	CreateDefaultSampler(ctx,
 		0.f, // minLod
 		static_cast<float>(mipCount_)); // maxLod
@@ -75,8 +77,10 @@ void VulkanImage::CreateImageResources(
 		VK_FORMAT_R8G8B8A8_UNORM,
 		VK_IMAGE_ASPECT_COLOR_BIT,
 		VK_IMAGE_VIEW_TYPE_2D,
-		layerCount_,
-		mipCount_);
+		0u,
+		mipCount_,
+		0u,
+		layerCount_);
 	CreateDefaultSampler(ctx,
 		0.f, // minLod
 		static_cast<float>(mipCount_)); // maxLod
@@ -148,7 +152,12 @@ void VulkanImage::CreateColorResources(
 	CreateImageView(
 		ctx,
 		format,
-		VK_IMAGE_ASPECT_COLOR_BIT);
+		VK_IMAGE_ASPECT_COLOR_BIT,
+		VK_IMAGE_VIEW_TYPE_2D,
+		0u,
+		1u, // layerCount
+		0u,
+		1u);
 	CreateDefaultSampler(ctx);
 }
 
@@ -156,7 +165,6 @@ void VulkanImage::CreateDepthResources(
 	VulkanContext& ctx, 
 	uint32_t width, 
 	uint32_t height,
-	uint32_t layerCount,
 	VkSampleCountFlagBits sampleCount,
 	VkImageUsageFlags additionalUsage)
 {
@@ -166,7 +174,7 @@ void VulkanImage::CreateDepthResources(
 		width,
 		height,
 		1u, // mip
-		layerCount, // layer
+		1u, // layer
 		depthFormat,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | additionalUsage,
@@ -176,7 +184,12 @@ void VulkanImage::CreateDepthResources(
 	CreateImageView(
 		ctx,
 		depthFormat,
-		VK_IMAGE_ASPECT_DEPTH_BIT);
+		VK_IMAGE_ASPECT_DEPTH_BIT,
+		VK_IMAGE_VIEW_TYPE_2D,
+		0u,
+		1u, // layerCount
+		0u,
+		1u); // mipCount
 	TransitionLayout(
 		ctx, 
 		depthFormat, 
@@ -293,34 +306,51 @@ void VulkanImage::CreateImageView(
 	VkFormat format, 
 	VkImageAspectFlags aspectFlags, 
 	VkImageViewType viewType, 
-	uint32_t layerCount, 
-	uint32_t mipCount)
+	uint32_t mipLevel,
+	uint32_t mipCount,
+	uint32_t layerLevel,
+	uint32_t layerCount)
+{
+	CreateImageView(ctx, image_, imageView_, format, aspectFlags, viewType, mipLevel, mipCount, layerLevel, layerCount);
+}
+
+void VulkanImage::CreateImageView(
+	VulkanContext& ctx,
+	VkImage image,
+	VkImageView& view,
+	VkFormat format,
+	VkImageAspectFlags aspectFlags,
+	VkImageViewType viewType,
+	uint32_t mipLevel,
+	uint32_t mipCount,
+	uint32_t layerLevel,
+	uint32_t layerCount)
 {
 	const VkImageViewCreateInfo viewInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.image = image_,
+		.image = image,
 		.viewType = viewType,
 		.format = format,
-		.components = 
-		{ 
-			VK_COMPONENT_SWIZZLE_IDENTITY, 
+		.components =
+		{
 			VK_COMPONENT_SWIZZLE_IDENTITY,
 			VK_COMPONENT_SWIZZLE_IDENTITY,
-			VK_COMPONENT_SWIZZLE_IDENTITY 
+			VK_COMPONENT_SWIZZLE_IDENTITY,
+			VK_COMPONENT_SWIZZLE_IDENTITY
 		},
 		.subresourceRange =
 		{
 			.aspectMask = aspectFlags,
-			.baseMipLevel = 0,
+			.baseMipLevel = mipLevel,
 			.levelCount = mipCount,
-			.baseArrayLayer = 0,
+			.baseArrayLayer = layerLevel,
 			.layerCount = layerCount
 		}
 	};
-	VK_CHECK(vkCreateImageView(ctx.GetDevice(), &viewInfo, nullptr, &imageView_));
+	VK_CHECK(vkCreateImageView(ctx.GetDevice(), &viewInfo, nullptr, &view));
 }
 
 void VulkanImage::CreateDefaultSampler(
@@ -329,6 +359,7 @@ void VulkanImage::CreateDefaultSampler(
 	float maxLod,
 	VkFilter minFilter,
 	VkFilter maxFilter,
+	VkBool32 anisoptropy,
 	VkSamplerAddressMode addressMode)
 {
 	CreateSampler(
@@ -338,6 +369,7 @@ void VulkanImage::CreateDefaultSampler(
 		maxLod,
 		minFilter,
 		maxFilter,
+		anisoptropy,
 		addressMode
 	);
 }
@@ -349,6 +381,7 @@ void VulkanImage::CreateSampler(
 	float maxLod,
 	VkFilter minFilter,
 	VkFilter maxFilter,
+	VkBool32 anisoptropy,
 	VkSamplerAddressMode addressMode)
 {
 	const VkSamplerCreateInfo samplerInfo = {
@@ -362,13 +395,13 @@ void VulkanImage::CreateSampler(
 		.addressModeV = addressMode,
 		.addressModeW = addressMode,
 		.mipLodBias = 0.0f,
-		.anisotropyEnable = VK_FALSE,
+		.anisotropyEnable = anisoptropy,
 		.maxAnisotropy = 1.0f,
 		.compareEnable = VK_FALSE,
 		.compareOp = VK_COMPARE_OP_ALWAYS,
 		.minLod = minLod,
 		.maxLod = maxLod,
-		.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
+		.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE,
 		.unnormalizedCoordinates = VK_FALSE
 	};
 	VK_CHECK(vkCreateSampler(ctx.GetDevice(), &samplerInfo, nullptr, &sampler));

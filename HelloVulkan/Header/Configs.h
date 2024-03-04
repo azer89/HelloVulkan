@@ -32,7 +32,7 @@ namespace CameraConfig
 	constexpr float Zoom = 45.0f;
 
 	constexpr float Near = 0.1f;
-	constexpr float Far = 100.0f;
+	constexpr float Far = 50.0f;
 }
 
 namespace ClusterForwardConfig
@@ -66,6 +66,7 @@ namespace IBLConfig
 namespace ShadowConfig
 {
 	constexpr uint32_t DepthSize = 4096;
+	constexpr uint32_t CascadeCount = 4u;
 }
 
 #endif

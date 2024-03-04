@@ -1,6 +1,7 @@
 #ifndef UNIFORM_BUFFER_OBJECTS
 #define UNIFORM_BUFFER_OBJECTS
 
+#include "Configs.h"
 #include "glm/glm.hpp"
 
 // General-purpose
@@ -26,7 +27,9 @@ struct RaytracingCameraUBO
 struct ShadowMapUBO
 {
 	alignas(16)
-	glm::mat4 lightSpaceMatrix;
+	glm::mat4 lightSpaceMatrices[ShadowConfig::CascadeCount];
+	alignas(16)
+	glm::vec4 splitValues;
 	alignas(16)
 	glm::vec4 lightPosition;
 	alignas(4)
@@ -34,13 +37,11 @@ struct ShadowMapUBO
 	alignas(4)
 	float shadowMaxBias;
 	alignas(4)
-	float shadowNearPlane;
+	float cameraNearPlane;
 	alignas(4)
-	float shadowFarPlane;
+	float cameraFarPlane;
 	alignas(4)
-	float pcfScale;
-	alignas(4)
-	uint32_t pcfIteration;
+	float poissonSize;
 };
 
 // Per model transformation matrix

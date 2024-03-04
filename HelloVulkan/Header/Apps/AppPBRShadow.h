@@ -46,7 +46,7 @@ private:
 	std::unique_ptr<PipelineLightRender> lightPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
 
-	std::unique_ptr<ResourcesLight> resLights_;
+	std::unique_ptr<ResourcesLight> resLight_;
 	std::unique_ptr<ResourcesShadow> resShadow_;
 
 	std::unique_ptr<Scene> scene_;

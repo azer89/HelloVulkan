@@ -196,6 +196,10 @@ void VulkanContext::ChainFeatures()
 		features_.drawIndirectFirstInstance = VK_TRUE;
 		features_.shaderSampledImageArrayDynamicIndexing = VK_TRUE;
 	}
+	if (config_.supportAnisotropicFilterting)
+	{
+		features_.samplerAnisotropy = VK_TRUE;
+	}
 
 	// NOTE features2_ and features13_ are always created
 	features13_ =
