@@ -193,11 +193,13 @@ void VulkanDescriptor::Destroy()
 	if (layout_)
 	{
 		vkDestroyDescriptorSetLayout(device_, layout_, nullptr);
+		layout_ = nullptr;
 	}
 
 	if (pool_)
 	{
 		vkDestroyDescriptorPool(device_, pool_, nullptr);
+		pool_ = nullptr;
 	}
 }
 

@@ -12,16 +12,20 @@ void VulkanImage::Destroy()
 	if (defaultImageSampler_)
 	{
 		vkDestroySampler(device_, defaultImageSampler_, nullptr);
+		defaultImageSampler_ = nullptr;
 	}
 
 	if (imageView_)
 	{
 		vkDestroyImageView(device_, imageView_, nullptr);
+		imageView_ = nullptr;
 	}
 
 	if (vmaAllocation_)
 	{
 		vmaDestroyImage(vmaAllocator_, image_, vmaAllocation_);
+		image_ = nullptr;
+		vmaAllocation_ = nullptr;
 	}
 }
 

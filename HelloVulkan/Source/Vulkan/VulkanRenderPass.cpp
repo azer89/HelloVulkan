@@ -577,5 +577,6 @@ void VulkanRenderPass::Destroy()
 	if (handle_)
 	{
 		vkDestroyRenderPass(device_, handle_, nullptr);
+		handle_ = nullptr;
 	}
 }
