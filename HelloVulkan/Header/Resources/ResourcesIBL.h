@@ -7,27 +7,13 @@
 struct ResourcesIBL
 {
 public:
-	ResourcesIBL() = default;
-	~ResourcesIBL()
-	{
-		Destroy();
-	}
+	ResourcesIBL(VulkanContext& ctx, const std::string& hdrFile);
+	~ResourcesIBL();
+	void Destroy();
 
-	void Destroy()
-	{
-		environmentCubemap_.Destroy();
-		diffuseCubemap_.Destroy();
-		specularCubemap_.Destroy();
-		brdfLut_.Destroy();
-	}
-
-	void SetDebugNames(VulkanContext& ctx)
-	{
-		environmentCubemap_.SetDebugName(ctx, "Environment_Cubemap");
-		diffuseCubemap_.SetDebugName(ctx, "Diffuse_Cubemap");
-		specularCubemap_.SetDebugName(ctx, "Specular_Cubemap");
-		brdfLut_.SetDebugName(ctx, "BRDF_LUT");
-	}
+private:
+	void Create(VulkanContext& ctx, const std::string& hdrFile);
+	void SetDebugNames(VulkanContext& ctx);
 
 public:
 	VulkanImage environmentCubemap_;
