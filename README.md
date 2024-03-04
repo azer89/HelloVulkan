@@ -3,13 +3,13 @@
 A real-time rendering engine built from scratch using Vulkan API and C++.
 
 ### Features
-* __Clustered forward shading__, no more deferred!
-* __Bindless rendering__, using indirect draw and descriptor indexing.
+* __Clustered forward shading__.
 * __Physically-Based Rendering__ (PBR) with Cook-Torrance BRDF.
 * __Image-Based Lighting__ (IBL) with offscreen pipelines that generate:
     * A cubemap from an equirectangular HDR image.
     * Specular and diffuse cubemaps.
 * Compute shader to generate BRDF lookup table.
+* __Bindless rendering__, using indirect draw and descriptor indexing.
 * __Shadow mapping__.
 * Reinhard tonemap postprocessing.
 * glTF mesh/texture loading and rendering.
@@ -48,7 +48,7 @@ https://github.com/azer89/HelloVulkan/assets/790432/13a4426f-deec-40f5-816a-5594
 
 ### Build
 * C++20
-* Vulkan SDK (version 1.2 minimum)
+* Vulkan 1.3
 * Visual Studio 2022
 * Dependencies: glfw, ImGui, VMA, assimp, glm, stb, and volk.
 
