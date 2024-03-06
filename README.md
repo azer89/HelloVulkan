@@ -9,7 +9,7 @@ A real-time rendering engine built from scratch using Vulkan API and C++.
     * A cubemap from an equirectangular HDR image.
     * Specular and diffuse cubemaps.
 * Compute shader to generate BRDF lookup table.
-* Utilized descriptor indexing to store an array of textures, allowing one descriptor binding per indirect draw call.
+* Utilized descriptor indexing to store an array of textures, allowing only one descriptor binding per indirect draw call.
 * __Cascade Shadow Maps__.
 * Reinhard tonemap postprocessing.
 * glTF mesh/texture loading and rendering.
