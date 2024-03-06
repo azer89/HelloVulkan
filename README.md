@@ -9,7 +9,7 @@ A real-time rendering engine built from scratch using Vulkan API and C++.
     * A cubemap from an equirectangular HDR image.
     * Specular and diffuse cubemaps.
 * Compute shader to generate BRDF lookup table.
-* Utilized descriptor indexing to store an array of textures, allowing only one descriptor binding per indirect draw call.
+* Utilized descriptor indexing to store an array of textures, allowing descriptors to be bound once per __indirect draw__ call.
 * __Cascade Shadow Maps__.
 * Reinhard tonemap postprocessing.
 * glTF mesh/texture loading and rendering.
@@ -20,7 +20,7 @@ A real-time rendering engine built from scratch using Vulkan API and C++.
 
 ### Gallery
 
-The images below shows a demo of PBR, IBL, shadow mapping, and bindless rendering.
+The images below shows a demo of PBR, IBL, shadow mapping, and indirect draw.
 
 <img width="850" alt="bindless_shadow_mapping_1" src="https://github.com/azer89/HelloVulkan/assets/790432/c926d003-8df2-464e-a8f7-e04b66494214">
 
