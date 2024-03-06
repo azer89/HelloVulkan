@@ -10,7 +10,7 @@ A real-time rendering engine built from scratch using Vulkan API and C++.
     * Specular and diffuse cubemaps.
 * Compute shader to generate BRDF lookup table.
 * __Bindless rendering__, using indirect draw and descriptor indexing.
-* __Shadow mapping__.
+* __Cascade Shadow Maps__.
 * Reinhard tonemap postprocessing.
 * glTF mesh/texture loading and rendering.
 * Multisample anti-aliasing (MSAA).
