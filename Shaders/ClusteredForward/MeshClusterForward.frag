@@ -24,33 +24,16 @@ layout(location = 0) out vec4 fragColor;
 layout(push_constant) uniform PC { PBRPushConstant pc; };
 
 layout(set = 0, binding = 0) uniform CameraBlock { CameraUBO camUBO; };
-
-layout(set = 0, binding = 2) uniform ClusterForwardUBO
-{
-	mat4 cameraInverseProjection;
-	mat4 cameraView;
-	vec2 screenSize;
-	float sliceScaling;
-	float sliceBias;
-	float cameraNear;
-	float cameraFar;
-	uint sliceCountX;
-	uint sliceCountY;
-	uint sliceCountZ;
-}
-cfUBO;
-
+layout(set = 0, binding = 2) uniform CFUBO { ClusterForwardUBO cfUBO; };
 layout(set = 0, binding = 3) readonly buffer Lights { LightData lights []; };
 layout(set = 0, binding = 4) readonly buffer LightCells { LightCell lightCells []; };
 layout(set = 0, binding = 5) readonly buffer LightIndices { uint lightIndices []; };
-
 layout(set = 0, binding = 6) uniform sampler2D textureAlbedo;
 layout(set = 0, binding = 7) uniform sampler2D textureNormal;
 layout(set = 0, binding = 8) uniform sampler2D textureMetalness;
 layout(set = 0, binding = 9) uniform sampler2D textureRoughness;
 layout(set = 0, binding = 10) uniform sampler2D textureAO;
 layout(set = 0, binding = 11) uniform sampler2D textureEmissive;
-
 layout(set = 0, binding = 12) uniform samplerCube specularMap;
 layout(set = 0, binding = 13) uniform samplerCube diffuseMap;
 layout(set = 0, binding = 14) uniform sampler2D brdfLUT;
