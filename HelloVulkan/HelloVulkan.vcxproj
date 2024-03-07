@@ -148,8 +148,9 @@
     <None Include="..\Shaders\ClusteredForward\LightCullingBatch.comp" />
     <None Include="..\Shaders\ClusteredForward\Mesh.frag" />
     <None Include="..\Shaders\ClusteredForward\Radiance.glsl" />
-    <None Include="..\Shaders\CubeFilterDiffuse.frag" />
-    <None Include="..\Shaders\CubeFilterSpecular.frag" />
+    <None Include="..\Shaders\IBL\CubeFilterDiffuse.frag" />
+    <None Include="..\Shaders\IBL\CubeFilterSpecular.frag" />
+    <None Include="..\Shaders\IBL\Equirect2Cube.frag" />
     <None Include="..\Shaders\LightData.glsl" />
     <None Include="..\Shaders\ModelUBO.glsl" />
     <None Include="..\Shaders\PBRPushConstants.glsl" />
@@ -165,7 +166,6 @@
     <None Include="..\Shaders\PBRHeader.glsl" />
     <None Include="..\Shaders\Cube.frag" />
     <None Include="..\Shaders\Cube.vert" />
-    <None Include="..\Shaders\Equirect2Cube.frag" />
     <None Include="..\Shaders\FullscreenTriangle.vert" />
     <None Include="..\Shaders\ShadowMapping\Depth.vert" />
     <None Include="..\Shaders\ShadowMapping\Filter.glsl" />

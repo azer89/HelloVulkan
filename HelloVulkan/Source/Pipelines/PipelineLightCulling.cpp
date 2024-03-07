@@ -21,8 +21,8 @@ PipelineLightCulling::PipelineLightCulling(
 	CreateDescriptor(ctx);
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
 
-	std::string shaderFile = AppConfig::ShaderFolder + "ClusteredForward/LightCulling.comp";
-	//std::string shaderFile = AppConfig::ShaderFolder + "ClusteredForward/LightCullingBatch.comp";
+	//std::string shaderFile = AppConfig::ShaderFolder + "ClusteredForward/LightCulling.comp";
+	std::string shaderFile = AppConfig::ShaderFolder + "ClusteredForward/LightCullingBatch.comp";
 
 	CreateComputePipeline(ctx, shaderFile);
 }

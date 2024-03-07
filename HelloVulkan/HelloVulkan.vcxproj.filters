@@ -52,12 +52,12 @@
     <Filter Include="Source Files\Vulkan">
       <UniqueIdentifier>{71029f71-ee69-4504-93d7-80f232f96420}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\IBL">
+      <UniqueIdentifier>{16100ccf-b0a2-4f3b-a69e-87eefce983aa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\Cube.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\Equirect2Cube.frag">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\FullscreenTriangle.vert">
@@ -73,12 +73,6 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\Hammersley.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\CubeFilterDiffuse.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\CubeFilterSpecular.frag">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\Tonemap.frag">
@@ -173,6 +167,15 @@
     </None>
     <None Include="..\Shaders\ModelUBO.glsl">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\IBL\CubeFilterDiffuse.frag">
+      <Filter>Shaders\IBL</Filter>
+    </None>
+    <None Include="..\Shaders\IBL\CubeFilterSpecular.frag">
+      <Filter>Shaders\IBL</Filter>
+    </None>
+    <None Include="..\Shaders\IBL\Equirect2Cube.frag">
+      <Filter>Shaders\IBL</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
