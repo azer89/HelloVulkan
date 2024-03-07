@@ -63,12 +63,12 @@ void AppPBRShadow::Init()
 	pbrPtr_ = std::make_unique<PipelinePBRShadow>(
 		vulkanContext_,
 		scene_.get(),
-		resLights_.get(),
+		resLight_.get(),
 		resIBL_.get(),
 		resShadow_.get(),
 		resShared_.get());
 	shadowPtr_ = std::make_unique<PipelineShadow>(vulkanContext_, scene_.get(), resShadow_.get());
-	lightPtr_ = std::make_unique<PipelineLightRender>(vulkanContext_, resLights_.get(), resShared_.get());
+	lightPtr_ = std::make_unique<PipelineLightRender>(vulkanContext_, resLight_.get(), resShared_.get());
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
 	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(vulkanContext_, resShared_.get());
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
@@ -97,8 +97,8 @@ void AppPBRShadow::Init()
 void AppPBRShadow::InitLights()
 {
 	// Lights (SSBO)
-	resLights_ = std::make_unique<ResourcesLight>();
-	resLights_->AddLights(vulkanContext_,
+	resLight_ = std::make_unique<ResourcesLight>();
+	resLight_->AddLights(vulkanContext_,
 	{
 		// The first light is used to generate the shadow map
 		// and its position is set by ImGui
@@ -117,7 +117,7 @@ void AppPBRShadow::DestroyResources()
 	// Resources
 	resShadow_.reset();
 	resIBL_.reset();
-	resLights_.reset();
+	resLight_.reset();
 
 	// Destroy meshes
 	scene_.reset();
@@ -146,7 +146,7 @@ void AppPBRShadow::UpdateUBOs()
 	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view)); // Remove translation
 	skyboxPtr_->SetCameraUBO(vulkanContext_, skyboxUbo);
 
-	shadowPtr_->UpdateShadow(vulkanContext_, resShadow_.get(), resLights_->lights_[0].position_);
+	shadowPtr_->UpdateShadow(vulkanContext_, resShadow_.get(), resLight_->lights_[0].position_);
 
 	pbrPtr_->SetShadowMapConfigUBO(vulkanContext_, resShadow_->shadowUBO_);
 }
@@ -199,7 +199,7 @@ void AppPBRShadow::UpdateUI()
 	imguiPtr_->ImGuiEnd();
 
 	// TODO Check if light position is changed 
-	resLights_->UpdateLightPosition(vulkanContext_, 0, &(staticLightPos[0]));
+	resLight_->UpdateLightPosition(vulkanContext_, 0, &(staticLightPos[0]));
 
 	lightPtr_->RenderEnable(staticLightRender);
 	pbrPtr_->SetPBRPushConstants(staticPBRPushConstants);

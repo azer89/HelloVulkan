@@ -395,7 +395,7 @@ void VulkanImage::CreateSampler(
 		.addressModeV = addressMode,
 		.addressModeW = addressMode,
 		.mipLodBias = 0.0f,
-		.anisotropyEnable = VK_FALSE,
+		.anisotropyEnable = VK_FALSE, // Currently disabled
 		.maxAnisotropy = 1.0f,
 		.compareEnable = VK_FALSE,
 		.compareOp = VK_COMPARE_OP_ALWAYS,
