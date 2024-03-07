@@ -4,10 +4,10 @@
 #include "VulkanInstance.h"
 #include "VulkanContext.h"
 #include "PipelineBase.h"
-#include "ResourcesIBL.h"
-#include "ResourcesShared.h"
 #include "FrameCounter.h"
 #include "Camera.h"
+#include "ResourcesShared.h"
+#include "ResourcesIBL.h"
 
 #define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"

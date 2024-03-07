@@ -1,5 +1,5 @@
-#ifndef SCENE_BINDLESS
-#define SCENE_BINDLESS
+#ifndef SCENE_BINDLESS_TEXTURE
+#define SCENE_BINDLESS_TEXTURE
 
 #include "Model.h"
 #include "UBOs.h"
@@ -30,7 +30,7 @@ public:
 		uint32_t modelIndex);
 
 private:
-	void CreateBindlessResources(VulkanContext& ctx);
+	void CreateBindlessTextureResources(VulkanContext& ctx);
 
 public:
 	std::vector<MeshData> meshDataArray_ = {};

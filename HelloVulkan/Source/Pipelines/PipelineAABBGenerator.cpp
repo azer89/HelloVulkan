@@ -1,4 +1,5 @@
 #include "PipelineAABBGenerator.h"
+#include "ResourcesClusterForward.h"
 #include "VulkanBarrier.h"
 #include "Configs.h"
 

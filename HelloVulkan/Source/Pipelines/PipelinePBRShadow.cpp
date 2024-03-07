@@ -1,5 +1,10 @@
 #include "PipelinePBRShadow.h"
+#include "ResourcesLight.h"
+#include "ResourcesShadow.h"
+#include "ResourcesShared.h"
+#include "ResourcesIBL.h"
 #include "VulkanUtility.h"
+#include "Scene.h"
 #include "Configs.h"
 
 #include <vector>
@@ -22,7 +27,7 @@ PipelinePBRShadow::PipelinePBRShadow(
 			.type_ = PipelineType::GraphicsOffScreen,
 			.msaaSamples_ = resShared->multiSampledColorImage_.multisampleCount_,
 
-			// If you use bindless, make sure this is false
+			// If you use bindless texture, make sure this is false
 			.vertexBufferBind_ = false,
 		}
 	),

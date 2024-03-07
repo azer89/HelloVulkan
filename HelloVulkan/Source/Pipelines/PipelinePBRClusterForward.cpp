@@ -1,4 +1,8 @@
 #include "PipelinePBRClusterForward.h"
+#include "ResourcesClusterForward.h"
+#include "ResourcesShared.h"
+#include "ResourcesLight.h"
+#include "ResourcesIBL.h"
 #include "Configs.h"
 
 // Constants

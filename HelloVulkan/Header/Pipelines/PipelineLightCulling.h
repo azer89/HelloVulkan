@@ -3,11 +3,12 @@
 
 #include "PipelineBase.h"
 #include "VulkanContext.h"
-#include "ResourcesClusterForward.h"
-#include "ResourcesLight.h"
 #include "Configs.h"
 
 #include <array>
+
+struct ResourcesClusterForward;
+struct ResourcesLight;
 
 /*
 Clustered Forward
@@ -20,18 +21,9 @@ public:
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
-	void ResetGlobalIndex(VulkanContext& ctx)
-	{
-		uint32_t zeroValue = 0u;
-		uint32_t frameIndex = ctx.GetFrameIndex();
-		resCF_->globalIndexCountBuffers_[frameIndex].UploadBufferData(ctx, &zeroValue, sizeof(uint32_t));
-	}
+	void ResetGlobalIndex(VulkanContext& ctx);
 
-	void SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO ubo)
-	{
-		size_t frameIndex = ctx.GetFrameIndex();
-		cfUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ClusterForwardUBO));
-	}
+	void SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO ubo);
 
 private:
 	ResourcesLight* resLight_;

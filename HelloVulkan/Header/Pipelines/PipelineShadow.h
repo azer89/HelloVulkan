@@ -2,8 +2,9 @@
 #define PIPELINE_SHADOW_MAPPING
 
 #include "PipelineBase.h"
-#include "ResourcesShadow.h"
-#include "Scene.h"
+
+class Scene;
+struct ResourcesShadow;
 
 class PipelineShadow final : public PipelineBase
 {

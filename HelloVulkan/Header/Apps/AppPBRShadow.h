@@ -21,7 +21,7 @@
 #include <memory>
 
 /*
-Naive forward PBR
+Demo for shadow mapping with bindless textures
 */
 class AppPBRShadow final : AppBase
 {

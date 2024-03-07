@@ -20,7 +20,7 @@ Scene::Scene(VulkanContext& ctx, const std::vector<std::string>& modelFilenames)
 			indexOffset);
 		models_.push_back(m);
 	}
-	CreateBindlessResources(ctx);
+	CreateBindlessTextureResources(ctx);
 }
 
 Scene::~Scene()
@@ -39,7 +39,7 @@ Scene::~Scene()
 }
 
 // TODO Create GPU only buffers
-void Scene::CreateBindlessResources(VulkanContext& ctx)
+void Scene::CreateBindlessTextureResources(VulkanContext& ctx)
 {
 	// Mesh data
 	uint32_t textureIndexOffset = 0u;

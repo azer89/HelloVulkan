@@ -17,7 +17,7 @@ inline glm::mat4 CastToGLMMat4(const aiMatrix4x4& m)
 
 void Model::LoadSlotBased(VulkanContext& ctx, const std::string& path)
 {
-	bindless_ = false;
+	bindlessTexture_ = false;
 
 	// In case a texture type cannot be found, replace it with a black 1x1 texture
 	unsigned char black[4] = { 0, 0, 0, 255 };
@@ -48,7 +48,7 @@ void Model::LoadBindless(
 	uint32_t& globalVertexOffset,
 	uint32_t& globalIndexOffset)
 {
-	bindless_ = true;
+	bindlessTexture_ = true;
 
 	// In case a texture type cannot be found, replace it with a black 1x1 texture
 	unsigned char black[4] = { 0, 0, 0, 255 };
@@ -345,12 +345,12 @@ void Model::ProcessMesh(
 	uint32_t iOffset = static_cast<uint32_t>(indices.size());
 
 	// TODO This if-else statement is kinda dirty
-	if (bindless_)
+	if (bindlessTexture_)
 	{
 		globalVertices.insert(std::end(globalVertices), std::begin(vertices), std::end(vertices));
 		globalIndices.insert(std::end(globalIndices), std::begin(indices), std::end(indices));
 
-		// If Bindless, we do not move vertices and indices
+		// If Bindless textures, we do not move vertices and indices
 		meshes_.push_back({});
 		meshes_.back().InitBindless(
 			ctx,

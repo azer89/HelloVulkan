@@ -4,6 +4,8 @@
 #include "VulkanShader.h"
 #include "Configs.h"
 
+#include "VulkanImage.h"
+
 PipelineEquirect2Cube::PipelineEquirect2Cube(
 	VulkanContext& ctx, 
 	const std::string& hdrFile) :

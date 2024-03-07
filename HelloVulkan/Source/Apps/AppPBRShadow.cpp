@@ -2,12 +2,12 @@
 #include "Configs.h"
 #include "VulkanUtility.h"
 #include "PipelineEquirect2Cube.h"
-#include "PipelineCubeFilter.h"
 #include "PipelineBRDFLUT.h"
+#include "ResourcesShadow.h"
+#include "ResourcesIBL.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "imgui_impl_glfw.h"
 #include "imgui_impl_volk.h"
 
 AppPBRShadow::AppPBRShadow()
@@ -168,7 +168,7 @@ void AppPBRShadow::UpdateUI()
 		.lightFalloff = 0.1f,
 		.albedoMultipler = 0.5
 	};
-	static float staticLightPos[3] = { -5.f, 20.0f, 5.0f };
+	static float staticLightPos[3] = { -2.5f, 20.0f, 5.0f };
 	static float staticNearPlane = 0.1f;
 	static float staticFarPlane = staticLightPos[1] + 10;
 	static float staticOrthoSize = 10.0f;

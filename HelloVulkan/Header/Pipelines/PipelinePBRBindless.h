@@ -1,18 +1,18 @@
-#ifndef PIPELINE_PBR_BINDLESS
-#define PIPELINE_PBR_BINDLESS
+#ifndef PIPELINE_PBR_BINDLESS_TEXTURES
+#define PIPELINE_PBR_BINDLESS_TEXTURES
 
 #include "PipelineBase.h"
-#include "VulkanImage.h"
 #include "PushConstants.h"
-#include "Scene.h"
-#include "ResourcesShared.h"
-#include "ResourcesLight.h"
-#include "ResourcesIBL.h"
 
 #include <vector>
 
+class Scene;
+struct ResourcesLight;
+struct ResourcesIBL;
+struct ResourcesShared;
+
 /*
-Render a scene using PBR materials, naive forward renderer, bindless
+Render a scene using PBR materials, naive forward renderer, and bindless textures
 */
 class PipelinePBRBindless final : public PipelineBase
 {

@@ -2,14 +2,14 @@
 #define PIPELINE_PBR_SHADOW_MAPPING
 
 #include "PipelineBase.h"
-#include "VulkanImage.h"
 #include "PushConstants.h"
-#include "ResourcesIBL.h"
-#include "ResourcesLight.h"
-#include "ResourcesShadow.h"
-#include "ResourcesShared.h"
 
 #include <vector>
+
+struct ResourcesLight;
+struct ResourcesShadow;
+struct ResourcesShared;
+struct ResourcesIBL;
 
 /*
 Render meshes using PBR materials, naive forward renderer with shadow mapping
