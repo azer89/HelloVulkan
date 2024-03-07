@@ -15,51 +15,12 @@ layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 // it'll cause a flickering artifact.
 #define MAX_LIGHTS_PER_CLUSTER 150
 
-// SSBO (input)
-layout(set = 0, binding = 0) readonly buffer Clusters
-{
-	AABB clusters[];
-};
-
-// SSBO (input)
-layout(set = 0, binding = 1) readonly buffer Lights 
-{ 
-	LightData lights[]; 
-};
-
-// SSBO 
-layout(set = 0, binding = 2) buffer AtomicCounter
-{
-	uint globalIndex;
-};
-
-// SSBO (output)
-layout(set = 0, binding = 3) buffer LightCells
-{
-	LightCell lightCells[];
-};
-
-// SSBO (output)
-layout(set = 0, binding = 4) buffer LightIndices
-{
-	uint lightIndices[];
-};
-
-// UBO
-layout(set = 0, binding = 5) uniform ClusterForwardUBO
-{
-	mat4 cameraInverseProjection;
-	mat4 cameraView;
-	vec2 screenSize;
-	float sliceScaling;
-	float sliceBias;
-	float cameraNear;
-	float cameraFar;
-	uint sliceCountX;
-	uint sliceCountY;
-	uint sliceCountZ;
-}
-ubo;
+layout(set = 0, binding = 0) readonly buffer Clusters { AABB clusters[]; }; // SSBO (input)
+layout(set = 0, binding = 1) readonly buffer Lights { LightData lights[]; }; // SSBO (input)
+layout(set = 0, binding = 2) buffer AtomicCounter { uint globalIndex; }; // SSBO 
+layout(set = 0, binding = 3) buffer LightCells { LightCell lightCells[]; }; // SSBO (output)
+layout(set = 0, binding = 4) buffer LightIndices { uint lightIndices[]; }; // SSBO (output)
+layout(set = 0, binding = 5) uniform CFUBO { ClusterForwardUBO ubo; }; // UBO
 
 float SquaredDistancePointAABB(vec3 point, uint tile)
 {

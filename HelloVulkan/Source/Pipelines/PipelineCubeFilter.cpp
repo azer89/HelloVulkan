@@ -1,8 +1,10 @@
-#include "PipelineCubeFilter.h"
 #include "VulkanPipelineCreateInfo.h"
 #include "VulkanUtility.h"
 #include "VulkanShader.h"
+#include "VulkanImage.h"
 #include "VulkanFramebuffer.h"
+#include "PipelineCubeFilter.h"
+#include "PushConstants.h"
 #include "Configs.h"
 
 PipelineCubeFilter::PipelineCubeFilter(
@@ -53,7 +55,7 @@ PipelineCubeFilter::PipelineCubeFilter(
 		pipelineLayout_,
 		{
 			AppConfig::ShaderFolder + "FullscreenTriangle.vert",
-			AppConfig::ShaderFolder + "CubeFilterDiffuse.frag"
+			AppConfig::ShaderFolder + "IBL//CubeFilterDiffuse.frag"
 		},
 		IBLConfig::OutputDiffuseSideLength,
 		IBLConfig::OutputDiffuseSideLength,
@@ -68,7 +70,7 @@ PipelineCubeFilter::PipelineCubeFilter(
 		pipelineLayout_,
 		{
 			AppConfig::ShaderFolder + "FullscreenTriangle.vert",
-			AppConfig::ShaderFolder + "CubeFilterSpecular.frag"
+			AppConfig::ShaderFolder + "IBL//CubeFilterSpecular.frag"
 		},
 		IBLConfig::OutputSpecularSideLength,
 		IBLConfig::OutputSpecularSideLength,

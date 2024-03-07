@@ -2,12 +2,11 @@
 #include "Configs.h"
 #include "VulkanUtility.h"
 #include "PipelineEquirect2Cube.h"
-#include "PipelineCubeFilter.h"
 #include "PipelineBRDFLUT.h"
+#include "ResourcesIBL.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 
-#include "imgui_impl_glfw.h"
 #include "imgui_impl_volk.h"
 
 AppPBRBindless::AppPBRBindless() :

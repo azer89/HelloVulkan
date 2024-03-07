@@ -2,15 +2,20 @@
 #extension GL_EXT_nonuniform_qualifier : require
 
 /*
+Bindless/Scene.frag 
+
 Fragment shader for 
+	* Bindless textures
 	* PBR+IBL
 	* Naive forward shading (non clustered)
-	* Bindless textures
 */
 
 // Include files
+#include <CameraUBO.glsl>
 #include <LightData.glsl>
 #include <PBRHeader.glsl>
+#include <Bindless//MeshData.glsl>
+#include <PBRPushConstants.glsl>
 #include <Hammersley.glsl>
 #include <TangentNormalToWorld.glsl>
 
@@ -21,19 +26,11 @@ layout(location = 3) in flat uint meshIndex;
 
 layout(location = 0) out vec4 fragColor;
 
-layout(push_constant)
-#include <PBRPushConstants.glsl>
+layout(push_constant) uniform PC { PBRPushConstant pc; };
 
-// UBO
-layout(set = 0, binding = 0)
-#include <CameraUBO.glsl>
-
-// SSBO
-#include <Bindless//MeshData.glsl>
-layout(set = 0, binding = 4) readonly buffer Meshes { MeshData meshes []; };
-
-// SSBO
-layout(set = 0, binding = 5) readonly buffer Lights { LightData lights []; };
+layout(set = 0, binding = 0) uniform CameraBlock { CameraUBO camUBO; }; // UBO
+layout(set = 0, binding = 4) readonly buffer Meshes { MeshData meshes []; }; // SSBO
+layout(set = 0, binding = 5) readonly buffer Lights { LightData lights []; };// SSBO
 
 layout(set = 0, binding = 6) uniform samplerCube specularMap;
 layout(set = 0, binding = 7) uniform samplerCube diffuseMap;

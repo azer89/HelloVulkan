@@ -1,13 +1,13 @@
 #version 460 core
 #extension GL_ARB_separate_shader_objects : enable
 
+#include <CameraUBO.glsl>
+#include <LightData.glsl>
+
 layout(location = 0) out vec2 fragOffset;
 layout(location = 1) out vec4 circleColor;
 
-layout(set = 0, binding = 0)
-#include <CameraUBO.glsl>
-
-#include <LightData.glsl>
+layout(set = 0, binding = 0) uniform CameraBlock { CameraUBO camUBO; };
 layout(binding = 1) readonly buffer Lights { LightData lights []; };
 
 const vec2 OFFSETS[6] = vec2[](

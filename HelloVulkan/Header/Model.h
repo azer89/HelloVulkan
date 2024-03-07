@@ -16,7 +16,7 @@
 class Model
 {
 private:
-	bool bindless_;
+	bool bindlessTexture_;
 	VkDevice device_;
 	std::string directory_;
 
@@ -26,7 +26,7 @@ private:
 public:
 	std::vector<Mesh> meshes_;
 
-	// NOTE Textures are stored in Model regardless of Bindless or Slot-Based
+	// NOTE Textures are stored in Model regardless of bindless textures or Slot-Based
 	std::vector<VulkanImage> textureList_;
 
 	// Optional per-frame buffers for model matrix

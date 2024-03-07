@@ -4,12 +4,13 @@
 #include "PipelineBase.h"
 #include "PushConstants.h"
 #include "Model.h"
-#include "ResourcesClusterForward.h"
-#include "ResourcesShared.h"
-#include "ResourcesLight.h"
-#include "ResourcesIBL.h"
 
 #include <vector>
+
+struct ResourcesClusterForward;
+struct ResourcesShared;
+struct ResourcesLight;
+struct ResourcesIBL;
 
 /*
 Render meshes using PBR materials, clustered forward renderer

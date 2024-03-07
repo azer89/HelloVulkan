@@ -4,6 +4,8 @@
 #include "VulkanShader.h"
 #include "Configs.h"
 
+#include "VulkanImage.h"
+
 PipelineEquirect2Cube::PipelineEquirect2Cube(
 	VulkanContext& ctx, 
 	const std::string& hdrFile) :
@@ -27,7 +29,7 @@ PipelineEquirect2Cube::PipelineEquirect2Cube(
 		pipelineLayout_,
 		{
 			AppConfig::ShaderFolder + "FullscreenTriangle.vert",
-			AppConfig::ShaderFolder + "Equirect2Cube.frag"
+			AppConfig::ShaderFolder + "IBL//Equirect2Cube.frag"
 		},
 		&pipeline_
 	);

@@ -1,13 +1,14 @@
 ﻿#version 460 core
 
+#include <CameraUBO.glsl>
+
 /*
 Vertex shader to generate a cube
 */
 
 layout(location = 0) out vec3 direction;
 
-layout(set = 0, binding = 0)
-#include <CameraUBO.glsl>
+layout(set = 0, binding = 0)  uniform CameraBlock { CameraUBO camUBO; };
 
 const vec3 pos[8] = vec3[8]
 (

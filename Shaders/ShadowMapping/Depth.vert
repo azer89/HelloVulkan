@@ -1,25 +1,17 @@
 #version 460 core
 
-layout(set = 0, binding = 0)
+// ShadowMapping/Depth.vert 
+
+#include <ModelUBO.glsl>
 #include <ShadowMapping//UBO.glsl>
-
-// SSBO
-struct ModelUBO
-{
-	mat4 model;
-};
-layout(set = 0, binding = 1) readonly buffer ModelUBOs { ModelUBO modelUBOs []; };
-
-// SSBO
 #include <Bindless//VertexData.glsl>
-layout(set = 0, binding = 2) readonly buffer Vertices { VertexData vertices []; };
-
-// SSBO
-layout(set = 0, binding = 3) readonly buffer Indices { uint indices []; };
-
-// SSBO
 #include <Bindless//MeshData.glsl>
-layout(set = 0, binding = 4) readonly buffer Meshes { MeshData meshes []; };
+
+layout(set = 0, binding = 0) uniform UBOBlock { ShadowUBO shadowUBO; };
+layout(set = 0, binding = 1) readonly buffer ModelUBOs { ModelUBO modelUBOs []; }; // SSBO
+layout(set = 0, binding = 2) readonly buffer Vertices { VertexData vertices []; }; // SSBO
+layout(set = 0, binding = 3) readonly buffer Indices { uint indices []; }; // SSBO
+layout(set = 0, binding = 4) readonly buffer Meshes { MeshData meshes []; }; // SSBO
 
 void main()
 {

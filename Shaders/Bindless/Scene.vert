@@ -1,31 +1,23 @@
 #version 460 core
 
+// Bindless/Scene.vert
+// Bindless textures
+
+#include <ModelUBO.glsl>
+#include <CameraUBO.glsl>
+#include <Bindless//VertexData.glsl>
+#include <Bindless//MeshData.glsl>
+
 layout(location = 0) out vec3 worldPos;
 layout(location = 1) out vec2 texCoord;
 layout(location = 2) out vec3 normal;
 layout(location = 3) out flat uint meshIndex;
 
-// UBO
-layout(set = 0, binding = 0)
-#include <CameraUBO.glsl>
-
-// SSBO
-struct ModelUBO
-{
-	mat4 model;
-};
-layout(set = 0, binding = 1) readonly buffer ModelUBOs { ModelUBO modelUBOs[]; };
-
-// SSBO
-#include <Bindless//VertexData.glsl>
-layout(set = 0, binding = 2) readonly buffer Vertices { VertexData vertices[]; };
-
-// SSBO
-layout(set = 0, binding = 3) readonly buffer Indices { uint indices[]; };
-
-// SSBO
-#include <Bindless//MeshData.glsl>
-layout(set = 0, binding = 4) readonly buffer Meshes { MeshData meshes[]; };
+layout(set = 0, binding = 0) uniform CameraBlock { CameraUBO camUBO; }; // UBO
+layout(set = 0, binding = 1) readonly buffer ModelUBOs { ModelUBO modelUBOs[]; }; // SSBO
+layout(set = 0, binding = 2) readonly buffer Vertices { VertexData vertices[]; }; // SSBO
+layout(set = 0, binding = 3) readonly buffer Indices { uint indices[]; }; // SSBO
+layout(set = 0, binding = 4) readonly buffer Meshes { MeshData meshes[]; }; // SSBO
 
 void main()
 {

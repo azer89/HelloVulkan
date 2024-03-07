@@ -118,9 +118,9 @@ public:
 	void SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name) const;
 
 private:
+	void CreateDevice();
 	VkResult CreatePhysicalDevice(VkInstance instance);
 	uint32_t FindQueueFamilies(VkQueueFlags desiredFlags);
-	VkResult CreateDevice();
 	bool IsDeviceSuitable(VkPhysicalDevice d);
 	void CheckSurfaceSupport(VulkanInstance& instance);
 	VkSampleCountFlagBits GetMaxUsableSampleCount(VkPhysicalDevice d);
@@ -128,7 +128,7 @@ private:
 	// Swapchain
 	VkResult CreateSwapchain(VkSurfaceKHR surface);
 	size_t CreateSwapchainImages();
-	bool CreateSwapChainImageView(
+	void CreateSwapChainImageView(
 		size_t imageIndex,
 		VkFormat format, 
 		VkImageAspectFlags aspectFlags);

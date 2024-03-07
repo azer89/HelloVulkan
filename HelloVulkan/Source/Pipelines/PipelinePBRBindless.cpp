@@ -1,10 +1,13 @@
 #include "PipelinePBRBindless.h"
 #include "VulkanUtility.h"
 #include "VulkanDescriptorInfo.h"
+#include "ResourcesShared.h"
+#include "ResourcesLight.h"
+#include "ResourcesIBL.h"
+#include "Scene.h"
 #include "Configs.h"
 
 #include <vector>
-#include <array>
 
 // Constants
 constexpr uint32_t UBO_COUNT = 2;

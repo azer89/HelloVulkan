@@ -1,18 +1,17 @@
 #ifndef PIPELINE_BASE
 #define PIPELINE_BASE
 
-#include "volk.h"
-
 #include "VulkanContext.h"
 #include "VulkanBuffer.h"
 #include "VulkanRenderPass.h"
 #include "VulkanFramebuffer.h"
 #include "VulkanDescriptor.h"
 #include "PipelineConfig.h"
-#include "Scene.h"
 #include "UBOs.h"
 
 #include <string>
+
+class Scene;
 
 /*
 This mainly encapsulates a graphics pipeline, framebuffers, and a render pass.

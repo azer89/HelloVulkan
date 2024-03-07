@@ -10,7 +10,7 @@ void Mesh::InitSlotBased(
 	std::vector<uint32_t>&& _indices,
 	std::unordered_map<TextureType, uint32_t>&& textureIndices)
 {
-	bindless_ = false;
+	bindlessTexture_ = false;
 	vertexOffset_ = vertexOffset;
 	indexOffset_ = indexOffset; 
 	vertices_ = std::move(_vertices);
@@ -27,7 +27,7 @@ void Mesh::InitBindless(
 	uint32_t numIndices,
 	std::unordered_map<TextureType, uint32_t>&& textureIndices)
 {
-	bindless_ = true;
+	bindlessTexture_ = true;
 	vertexOffset_ = vertexOffset;
 	indexOffset_ = indexOffset;
 	numIndices_ = numIndices;
@@ -36,7 +36,7 @@ void Mesh::InitBindless(
 
 void Mesh::SetupSlotBased(VulkanContext& ctx)
 {
-	if (bindless_)
+	if (bindlessTexture_)
 	{
 		return;
 	}

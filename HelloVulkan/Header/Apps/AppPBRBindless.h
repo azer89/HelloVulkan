@@ -1,5 +1,5 @@
-#ifndef APP_PBR_BINDLESS
-#define APP_PBR_BINDLESS
+#ifndef APP_PBR_BINDLESS_TEXTURES
+#define APP_PBR_BINDLESS_TEXTURES
 
 #include "AppBase.h"
 #include "ResourcesLight.h"
@@ -19,7 +19,7 @@
 #include <memory>
 
 /*
-Naive forward PBR
+Demo for bindless textures
 */
 class AppPBRBindless final : AppBase
 {

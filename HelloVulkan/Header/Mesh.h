@@ -18,7 +18,7 @@ struct VertexData
 	glm::vec4 textureCoordinate_;
 };
 
-// For bindless
+// For bindless textures
 struct MeshData
 {
 	uint32_t vertexOffset_;
@@ -46,8 +46,7 @@ public:
 	std::unordered_map<TextureType, uint32_t> textureIndices_;
 
 private:
-	// TODO Rename to bool vertexPulling_;
-	bool bindless_;
+	bool bindlessTexture_;
 	uint32_t vertexOffset_;
 	uint32_t indexOffset_;
 

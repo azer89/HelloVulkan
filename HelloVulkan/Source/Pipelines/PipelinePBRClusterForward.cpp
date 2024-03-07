@@ -1,4 +1,8 @@
 #include "PipelinePBRClusterForward.h"
+#include "ResourcesClusterForward.h"
+#include "ResourcesShared.h"
+#include "ResourcesLight.h"
+#include "ResourcesIBL.h"
 #include "Configs.h"
 
 // Constants
@@ -62,7 +66,7 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 		pipelineLayout_,
 		{
 			AppConfig::ShaderFolder + "SlotBased//Mesh.vert",
-			AppConfig::ShaderFolder + "ClusteredForward//MeshClusterForward.frag"
+			AppConfig::ShaderFolder + "ClusteredForward//Mesh.frag"
 		},
 		&pipeline_
 	);

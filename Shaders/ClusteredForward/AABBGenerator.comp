@@ -1,6 +1,8 @@
 #version 460 core
 
 /*
+ClusteredForward/AABBGenerator.comp
+
 Based on www.aortiz.me/2018/12/21/CG.html
 */
 
@@ -8,24 +10,8 @@ layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
 #include <ClusteredForward//ClusterForwardHeader.glsl>
 
-// SSBO
-layout(set = 0, binding = 0) buffer Clusters { AABB clusters []; };
-
-// UBO
-layout(set = 0, binding = 1) uniform ClusterForwardUBO
-{
-	mat4 cameraInverseProjection;
-	mat4 cameraView;
-	vec2 screenSize;
-	float sliceScaling;
-	float sliceBias;
-	float cameraNear;
-	float cameraFar;
-	uint sliceCountX;
-	uint sliceCountY;
-	uint sliceCountZ;
-}
-ubo;
+layout(set = 0, binding = 0) buffer Clusters { AABB clusters []; }; // SSBO
+layout(set = 0, binding = 1) uniform CFUBO { ClusterForwardUBO ubo; }; // UBO
 
 // mynameismjp.wordpress.com/2009/03/10/reconstructing-position-from-depth/
 vec4 ScreenToView(vec4 screen)

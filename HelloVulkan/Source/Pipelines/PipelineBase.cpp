@@ -1,8 +1,10 @@
 #include "PipelineBase.h"
+#include "Mesh.h"
+#include "Scene.h"
+
 #include "VulkanUtility.h"
 #include "VulkanShader.h"
 #include "VulkanBuffer.h"
-#include "Mesh.h"
 #include "VulkanPipelineCreateInfo.h"
 
 #include <array>

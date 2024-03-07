@@ -15,10 +15,9 @@ void VulkanContext::Create(VulkanInstance& instance, ContextConfig config)
 	ChainFeatures();
 
 	VK_CHECK(CreatePhysicalDevice(instance.GetInstance()));
-
 	graphicsFamily_ = FindQueueFamilies(VK_QUEUE_GRAPHICS_BIT);
 	computeFamily_ = FindQueueFamilies(VK_QUEUE_COMPUTE_BIT);
-	VK_CHECK(CreateDevice());
+	CreateDevice();
 
 	GetRaytracingPropertiesAndFeatures();
 	
@@ -212,7 +211,7 @@ void VulkanContext::ChainFeatures()
 	};
 }
 
-VkResult VulkanContext::CreateDevice()
+void VulkanContext::CreateDevice()
 {
 	// Add raytracing extensions here
 	std::vector<const char*> extensions =
@@ -293,7 +292,7 @@ VkResult VulkanContext::CreateDevice()
 	// NOTE features2_ is always created
 	devCreateInfo.pNext = &features2_; // Features2 is always created
 
-	return vkCreateDevice(physicalDevice_, &devCreateInfo, nullptr, &device_);
+	VK_CHECK(vkCreateDevice(physicalDevice_, &devCreateInfo, nullptr, &device_));
 }
 
 VkSampleCountFlagBits VulkanContext::GetMaxUsableSampleCount(VkPhysicalDevice d)
@@ -444,15 +443,12 @@ size_t VulkanContext::CreateSwapchainImages()
 
 	for (uint32_t i = 0; i < imageCount; i++)
 	{
-		if (!CreateSwapChainImageView(i, swapchainImageFormat_, VK_IMAGE_ASPECT_COLOR_BIT))
-		{
-			throw std::runtime_error("Cannot create swapchain image view\n");
-		}
+		CreateSwapChainImageView(i, swapchainImageFormat_, VK_IMAGE_ASPECT_COLOR_BIT);
 	}
 	return static_cast<size_t>(imageCount);
 }
 
-bool VulkanContext::CreateSwapChainImageView(
+void VulkanContext::CreateSwapChainImageView(
 	size_t imageIndex,
 	VkFormat format,
 	VkImageAspectFlags aspectFlags)
@@ -475,7 +471,7 @@ bool VulkanContext::CreateSwapChainImageView(
 		}
 	};
 
-	return (vkCreateImageView(device_, &viewInfo, nullptr, &swapchainImageViews_[imageIndex]) == VK_SUCCESS);
+	VK_CHECK(vkCreateImageView(device_, &viewInfo, nullptr, &swapchainImageViews_[imageIndex]));
 }
 
 void VulkanContext::RecreateSwapchainResources(
@@ -602,7 +598,7 @@ VkCommandBuffer VulkanContext::BeginOneTimeGraphicsCommand() const
 		.pInheritanceInfo = nullptr
 	};
 
-	vkBeginCommandBuffer(commandBuffer, &beginInfo);
+	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
 
 	return commandBuffer;
 }
@@ -640,7 +636,8 @@ VkCommandBuffer VulkanContext::BeginOneTimeComputeCommand() const
 		.pInheritanceInfo = nullptr
 	};
 
-	vkBeginCommandBuffer(commandBuffer, &beginInfo);
+	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
+
 	return commandBuffer;
 }
 

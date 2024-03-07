@@ -1,4 +1,5 @@
 #include "PipelineTonemap.h"
+#include "VulkanImage.h"
 #include "VulkanUtility.h"
 #include "Configs.h"
 

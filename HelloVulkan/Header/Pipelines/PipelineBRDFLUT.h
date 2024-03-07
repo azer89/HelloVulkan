@@ -5,7 +5,6 @@
 #include "VulkanContext.h"
 #include "VulkanImage.h"
 #include "VulkanBuffer.h"
-#include "VulkanUtility.h"
 
 /*
 Compute pipeline to generate lookup table

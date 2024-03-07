@@ -1,4 +1,6 @@
 #include "PipelineShadow.h"
+#include "ResourcesShadow.h"
+#include "Scene.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -11,7 +13,7 @@ PipelineShadow::PipelineShadow(
 			// Depth only and offscreen
 			.type_ = PipelineType::GraphicsOffScreen,
 
-			// If you use bindless, make sure this is false
+			// If you use bindless texture, make sure this is false
 			.vertexBufferBind_ = false,
 
 			// Render using shadow map dimension

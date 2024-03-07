@@ -1,11 +1,16 @@
-# version 460 core
+#version 460 core
 
 /*
+SlotBased/Mesh.frag
+ 
 Fragment shader for PBR+IBL, naive forward shading (non clustered)
 */
 
 // Include files
+#include <LightData.glsl>
+#include <CameraUBO.glsl>
 #include <PBRHeader.glsl>
+#include <PBRPushConstants.glsl>
 #include <Hammersley.glsl>
 #include <TangentNormalToWorld.glsl>
 
@@ -15,23 +20,18 @@ layout(location = 2) in vec3 normal;
 
 layout(location = 0) out vec4 fragColor;
 
-layout(push_constant)
-#include <PBRPushConstants.glsl>
+layout(push_constant) uniform PC { PBRPushConstant pc; };
 
-layout(set = 0, binding = 0)
-#include <CameraUBO.glsl>
+layout(set = 0, binding = 0)  uniform CameraBlock { CameraUBO camUBO; };
 
-// SSBO
-#include <LightData.glsl>
+
 layout(set = 0, binding = 2) readonly buffer Lights { LightData lights []; };
-
 layout(set = 0, binding = 3) uniform sampler2D textureAlbedo;
 layout(set = 0, binding = 4) uniform sampler2D textureNormal;
 layout(set = 0, binding = 5) uniform sampler2D textureMetalness;
 layout(set = 0, binding = 6) uniform sampler2D textureRoughness;
 layout(set = 0, binding = 7) uniform sampler2D textureAO;
 layout(set = 0, binding = 8) uniform sampler2D textureEmissive;
-
 layout(set = 0, binding = 9) uniform samplerCube specularMap;
 layout(set = 0, binding = 10) uniform samplerCube diffuseMap;
 layout(set = 0, binding = 11) uniform sampler2D brdfLUT;

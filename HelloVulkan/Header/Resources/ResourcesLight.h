@@ -36,7 +36,7 @@ struct LightCell
 };
 
 // A collection of lights, including SSBO
-class ResourcesLight
+struct ResourcesLight
 {
 public:
 	ResourcesLight() = default;

@@ -52,12 +52,12 @@
     <Filter Include="Source Files\Vulkan">
       <UniqueIdentifier>{71029f71-ee69-4504-93d7-80f232f96420}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\IBL">
+      <UniqueIdentifier>{16100ccf-b0a2-4f3b-a69e-87eefce983aa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\Cube.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\Equirect2Cube.frag">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\FullscreenTriangle.vert">
@@ -75,12 +75,6 @@
     <None Include="..\Shaders\Hammersley.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\CubeFilterDiffuse.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\CubeFilterSpecular.frag">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\Shaders\Tonemap.frag">
       <Filter>Shaders</Filter>
     </None>
@@ -96,7 +90,7 @@
     <None Include="..\Shaders\ClusteredForward\ClusterForwardHeader.glsl">
       <Filter>Shaders\ClusteredForward</Filter>
     </None>
-    <None Include="..\Shaders\ClusteredForward\MeshClusterForward.frag">
+    <None Include="..\Shaders\ClusteredForward\Mesh.frag">
       <Filter>Shaders\ClusteredForward</Filter>
     </None>
     <None Include="..\Shaders\ClusteredForward\LightCulling.comp">
@@ -123,7 +117,7 @@
     <None Include="..\Shaders\ShadowMapping\Scene.vert">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
-    <None Include="..\Shaders\ShadowMapping\PCF.glsl">
+    <None Include="..\Shaders\ShadowMapping\Filter.glsl">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
     <None Include="..\Shaders\TangentNormalToWorld.glsl">
@@ -170,6 +164,18 @@
     </None>
     <None Include="..\Shaders\ShadowMapping\Depth.frag">
       <Filter>Shaders\ShadowMapping</Filter>
+    </None>
+    <None Include="..\Shaders\ModelUBO.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\IBL\CubeFilterDiffuse.frag">
+      <Filter>Shaders\IBL</Filter>
+    </None>
+    <None Include="..\Shaders\IBL\CubeFilterSpecular.frag">
+      <Filter>Shaders\IBL</Filter>
+    </None>
+    <None Include="..\Shaders\IBL\Equirect2Cube.frag">
+      <Filter>Shaders\IBL</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -326,14 +332,14 @@
     <ClInclude Include="Header\Resources\ResourcesShared.h">
       <Filter>Header Files\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Resources\ResourcesLight.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Vulkan\VulkanPipelineCreateInfo.h">
       <Filter>Header Files\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="Header\Vulkan\VulkanAccelStructure.h">
       <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Resources\ResourcesLight.h">
+      <Filter>Header Files\Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -475,11 +481,11 @@
     <ClCompile Include="Source\Resources\ResourcesShared.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Resources\ResourcesLight.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Vulkan\VulkanAccelStructure.cpp">
       <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Resources\ResourcesLight.cpp">
+      <Filter>Source Files\Resources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

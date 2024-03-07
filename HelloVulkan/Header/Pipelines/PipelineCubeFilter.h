@@ -2,10 +2,10 @@
 #define PIPELINE_CUBE_FILTER
 
 #include "PipelineBase.h"
-#include "VulkanImage.h"
-#include "PushConstants.h"
 
 #include <string>
+
+class VulkanImage;
 
 enum class CubeFilterType : uint8_t
 {

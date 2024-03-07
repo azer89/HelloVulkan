@@ -1,4 +1,6 @@
 #include "PipelineLightCulling.h"
+#include "ResourcesClusterForward.h"
+#include "ResourcesLight.h"
 #include "VulkanBarrier.h"
 #include "Configs.h"
 
@@ -19,8 +21,8 @@ PipelineLightCulling::PipelineLightCulling(
 	CreateDescriptor(ctx);
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
 
-	std::string shaderFile = AppConfig::ShaderFolder + "ClusteredForward/LightCulling.comp";
-	//std::string shaderFile = AppConfig::ShaderFolder + "ClusteredForward/LightCullingBatch.comp";
+	//std::string shaderFile = AppConfig::ShaderFolder + "ClusteredForward/LightCulling.comp";
+	std::string shaderFile = AppConfig::ShaderFolder + "ClusteredForward/LightCullingBatch.comp";
 
 	CreateComputePipeline(ctx, shaderFile);
 }
@@ -31,6 +33,19 @@ PipelineLightCulling::~PipelineLightCulling()
 	{
 		uboBuffer.Destroy();
 	}
+}
+
+void PipelineLightCulling::ResetGlobalIndex(VulkanContext& ctx)
+{
+	uint32_t zeroValue = 0u;
+	uint32_t frameIndex = ctx.GetFrameIndex();
+	resCF_->globalIndexCountBuffers_[frameIndex].UploadBufferData(ctx, &zeroValue, sizeof(uint32_t));
+}
+
+void PipelineLightCulling::SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO ubo)
+{
+	size_t frameIndex = ctx.GetFrameIndex();
+	cfUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ClusterForwardUBO));
 }
 
 void PipelineLightCulling::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)

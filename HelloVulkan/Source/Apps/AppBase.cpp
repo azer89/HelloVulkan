@@ -1,13 +1,12 @@
 #include "AppBase.h"
 #include "Configs.h"
+#include "ResourcesShared.h"
 #include "VulkanUtility.h"
 
 #include "volk.h"
 
 // Init GLSLang
 #include "glslang_c_interface.h" 
-
-#include "imgui_impl_glfw.h"
 #include "imgui_impl_volk.h"
 
 #include <iostream>
