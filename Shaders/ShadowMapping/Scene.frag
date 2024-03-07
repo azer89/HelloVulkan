@@ -13,6 +13,7 @@ Fragment shader for
 */
 
 // Include files
+#include <CameraUBO.glsl>
 #include <LightData.glsl>
 #include <PBRHeader.glsl>
 #include <Hammersley.glsl>
@@ -30,8 +31,7 @@ layout(push_constant)
 #include <PBRPushConstants.glsl>
 
 // UBO
-layout(set = 0, binding = 0)
-#include <CameraUBO.glsl>
+layout(set = 0, binding = 0) uniform CameraBlock { CameraUBO camUBO; };
 
 // UBO
 layout(set = 0, binding = 1)

@@ -7,6 +7,7 @@ Fragment shader for PBR+IBL, naive forward shading (non clustered)
 */
 
 // Include files
+#include <CameraUBO.glsl>
 #include <LightData.glsl>
 #include <PBRHeader.glsl>
 #include <Hammersley.glsl>
@@ -22,8 +23,7 @@ layout(location = 0) out vec4 fragColor;
 layout(push_constant)
 #include <PBRPushConstants.glsl>
 
-layout(set = 0, binding = 0)
-#include <CameraUBO.glsl>
+layout(set = 0, binding = 0) uniform CameraBlock { CameraUBO camUBO; };
 
 layout(set = 0, binding = 2) uniform ClusterForwardUBO
 {

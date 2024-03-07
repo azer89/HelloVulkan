@@ -151,6 +151,7 @@
     <None Include="..\Shaders\CubeFilterDiffuse.frag" />
     <None Include="..\Shaders\CubeFilterSpecular.frag" />
     <None Include="..\Shaders\LightData.glsl" />
+    <None Include="..\Shaders\ModelUBO.glsl" />
     <None Include="..\Shaders\PBRPushConstants.glsl" />
     <None Include="..\Shaders\Radiance.glsl" />
     <None Include="..\Shaders\ShadowMapping\Depth.frag" />

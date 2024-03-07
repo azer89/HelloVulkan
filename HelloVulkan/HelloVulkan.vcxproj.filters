@@ -171,6 +171,9 @@
     <None Include="..\Shaders\ShadowMapping\Depth.frag">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
+    <None Include="..\Shaders\ModelUBO.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Camera.h">

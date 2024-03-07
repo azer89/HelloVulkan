@@ -8,6 +8,8 @@ Vertex shader for
 	* Bindless textures
 */
 
+#include <CameraUBO.glsl>
+
 layout(location = 0) out vec3 worldPos;
 layout(location = 1) out vec2 texCoord;
 layout(location = 2) out vec3 normal;
@@ -15,8 +17,7 @@ layout(location = 3) out vec4 shadowPos;
 layout(location = 4) out flat uint meshIndex;
 
 // UBO
-layout(set = 0, binding = 0)
-#include <CameraUBO.glsl>
+layout(set = 0, binding = 0) uniform CameraBlock { CameraUBO camUBO; };
 
 // UBO
 layout(set = 0, binding = 1)
