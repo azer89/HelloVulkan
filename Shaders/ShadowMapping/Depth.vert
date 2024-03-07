@@ -1,7 +1,15 @@
 #version 460 core
 
-layout(set = 0, binding = 0)
 #include <ShadowMapping//UBO.glsl>
+
+layout(push_constant)
+uniform CascadePC
+{
+	uint cascadeIndex;
+}
+pc;
+
+layout(set = 0, binding = 0) uniform ShadowBlock { ShadowUBO shadowUBO; };
 
 // SSBO
 struct ModelUBO
@@ -30,6 +38,5 @@ void main()
 	VertexData vertexData = vertices[vIndex];
 	mat4 model = modelUBOs[meshData.modelMatrixIndex].model;
 
-	// Output
-	gl_Position = shadowUBO.lightSpaceMatrix * model * vertexData.position;
+	gl_Position = shadowUBO.lightSpaceMatrices[pc.cascadeIndex] * model * vertexData.position;
 }

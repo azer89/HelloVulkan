@@ -44,6 +44,8 @@ struct ContextConfig
 
 	bool supportBindlessRendering_ = true;
 
+	bool supportAnisotropicFilterting = false;
+
 	// TODO Set validation layer as optional
 };
 

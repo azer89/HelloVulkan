@@ -192,7 +192,9 @@ void PipelineSimpleRaytracing::CreateStorageImage(VulkanContext& ctx)
 		ctx.GetSwapchainImageFormat(),
 		VK_IMAGE_ASPECT_COLOR_BIT,
 		VK_IMAGE_VIEW_TYPE_2D,
+		0u,
 		1u,
+		0u,
 		1u);
 
 	storageImage_.TransitionLayout(ctx, 

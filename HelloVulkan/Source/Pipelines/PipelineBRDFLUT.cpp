@@ -60,8 +60,7 @@ void PipelineBRDFLUT::CreateLUT(VulkanContext& ctx, VulkanImage* outputLUT)
 	outputLUT->CreateImageView(
 		ctx,
 		VK_FORMAT_R32G32_SFLOAT,
-		VK_IMAGE_ASPECT_COLOR_BIT
-	);
+		VK_IMAGE_ASPECT_COLOR_BIT);
 
 	outputLUT->CreateDefaultSampler(ctx);
 }

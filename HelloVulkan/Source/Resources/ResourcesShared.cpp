@@ -24,7 +24,6 @@ void ResourcesShared::Create(VulkanContext& ctx)
 		ctx,
 		width,
 		height,
-		1u, // layerCount
 		msaaSamples);
 	depthImage_.SetDebugName(ctx, "Depth_Image");
 

@@ -153,6 +153,8 @@
     <None Include="..\Shaders\LightData.glsl" />
     <None Include="..\Shaders\PBRPushConstants.glsl" />
     <None Include="..\Shaders\Radiance.glsl" />
+    <None Include="..\Shaders\ShadowMapping\Depth.frag" />
+    <None Include="..\Shaders\ShadowMapping\Poisson.glsl" />
     <None Include="..\Shaders\SlotBased\Mesh.frag" />
     <None Include="..\Shaders\SlotBased\Mesh.vert" />
     <None Include="..\Shaders\TangentNormalToWorld.glsl" />

@@ -72,6 +72,7 @@ public:
 		float maxLod = 0.f,
 		VkFilter minFilter = VK_FILTER_LINEAR,
 		VkFilter maxFilter = VK_FILTER_LINEAR,
+		VkBool32 anisoptropy = VK_FALSE,
 		VkSamplerAddressMode addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
 
 	void CreateDefaultSampler(
@@ -80,6 +81,7 @@ public:
 		float maxLod = 0.f,
 		VkFilter minFilter = VK_FILTER_LINEAR,
 		VkFilter maxFilter = VK_FILTER_LINEAR,
+		VkBool32 anisoptropy = VK_FALSE,
 		VkSamplerAddressMode addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
 
 	void CreateImage(
@@ -117,7 +119,6 @@ public:
 		VulkanContext& ctx, 
 		uint32_t width, 
 		uint32_t height,
-		uint32_t layerCount,
 		VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT,
 		VkImageUsageFlags additionalUsage = 0);
 
@@ -133,8 +134,22 @@ public:
 		VkFormat format,
 		VkImageAspectFlags aspectFlags,
 		VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_2D,
-		uint32_t layerCount = 1,
-		uint32_t mipCount = 1);
+		uint32_t mipLevel = 0u,
+		uint32_t mipCount = 1u,
+		uint32_t layerLevel = 0u,
+		uint32_t layerCount = 1u);
+
+	static void CreateImageView(
+		VulkanContext& ctx,
+		VkImage image,
+		VkImageView& view,
+		VkFormat format,
+		VkImageAspectFlags aspectFlags,
+		VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_2D,
+		uint32_t mipLevel = 0u,
+		uint32_t mipCount = 1u,
+		uint32_t layerLevel = 0u,
+		uint32_t layerCount = 1u);
 
 	void CopyBufferToImage(
 		VulkanContext& ctx,

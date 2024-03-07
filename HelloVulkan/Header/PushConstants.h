@@ -28,4 +28,9 @@ struct PushConstPBR
 	float albedoMultipler = 0.0f; // Show albedo color if the scene is too dark, default value should be zero
 };
 
+struct PushConstCascadeShadow
+{
+	uint32_t cascadeIndex;
+};
+
 #endif

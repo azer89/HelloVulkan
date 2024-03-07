@@ -3,7 +3,12 @@
 
 #include "PipelineBase.h"
 #include "ResourcesShadow.h"
+#include "ResourcesLight.h"
+#include "Camera.h"
 #include "Scene.h"
+#include "Configs.h"
+
+#include <array>
 
 class PipelineShadow final : public PipelineBase
 {
@@ -13,11 +18,10 @@ public:
 		ResourcesShadow* resShadow);
 	~PipelineShadow();
 
-	void SetShadowMapUBO(VulkanContext& ctx, ShadowMapUBO& ubo)
-	{
-		const uint32_t frameIndex = ctx.GetFrameIndex();
-		shadowMapUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ShadowMapUBO));
-	}
+	void CalculateCascade(VulkanContext& ctx, 
+		const Camera* camera,
+		const LightData* light, 
+		ShadowMapUBO* ubo);
 
 	virtual void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
@@ -29,6 +33,8 @@ private:
 private:
 	Scene* scene_;
 	ResourcesShadow* resShadow_;
+
+	std::array<VulkanFramebuffer, ShadowConfig::CascadeCount> cascadeFramebuffers_;
 
 	std::vector<VulkanBuffer> shadowMapUBOBuffers_;
 	std::vector<VkDescriptorSet> descriptorSets_;
