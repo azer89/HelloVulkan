@@ -48,8 +48,8 @@ PipelineShadow::PipelineShadow(
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
-			// Just need a vertex shader
 			AppConfig::ShaderFolder + "ShadowMapping//Depth.vert",
+			AppConfig::ShaderFolder + "ShadowMapping//Depth.frag",
 		},
 		&pipeline_
 	);
