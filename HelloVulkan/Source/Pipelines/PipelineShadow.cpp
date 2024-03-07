@@ -1,5 +1,7 @@
 #include "PipelineShadow.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+
 PipelineShadow::PipelineShadow(
 	VulkanContext& ctx,
 	Scene* scene,
@@ -46,8 +48,8 @@ PipelineShadow::PipelineShadow(
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
-			// Just need a vertex shader
 			AppConfig::ShaderFolder + "ShadowMapping//Depth.vert",
+			AppConfig::ShaderFolder + "ShadowMapping//Depth.frag",
 		},
 		&pipeline_
 	);
@@ -64,6 +66,26 @@ PipelineShadow::~PipelineShadow()
 	{
 		buffer.Destroy();
 	}
+}
+
+void PipelineShadow::UpdateShadow(VulkanContext& ctx, ResourcesShadow* resShadow, glm::vec4 lightPosition)
+{
+	//glm::mat4 lightProjection = 
+	// glm::perspective(glm::radians(45.f), 1.0f, resShadow_.shadowNearPlane, resShadow_.shadowFarPlane);
+	glm::mat4 lightProjection = glm::ortho(
+		-resShadow_->orthoSize_,
+		resShadow_->orthoSize_,
+		-resShadow_->orthoSize_,
+		resShadow_->orthoSize_,
+		resShadow_->shadowNearPlane_,
+		resShadow_->shadowFarPlane_);
+	glm::mat4 lightView = glm::lookAt(glm::vec3(lightPosition), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
+	resShadow_->shadowUBO_.lightSpaceMatrix = lightSpaceMatrix;
+	resShadow_->shadowUBO_.lightPosition = lightPosition;
+
+	const uint32_t frameIndex = ctx.GetFrameIndex();
+	shadowMapUBOBuffers_[frameIndex].UploadBufferData(ctx, &(resShadow_->shadowUBO_), sizeof(ShadowMapUBO));
 }
 
 void PipelineShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)

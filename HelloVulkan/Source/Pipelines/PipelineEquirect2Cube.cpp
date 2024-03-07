@@ -65,8 +65,10 @@ void PipelineEquirect2Cube::InitializeCubemap(VulkanContext& ctx, VulkanImage* c
 		VK_FORMAT_R32G32B32A32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT,
 		VK_IMAGE_VIEW_TYPE_CUBE,
-		IBLConfig::LayerCount,
-		mipmapCount);
+		0u,
+		mipmapCount,
+		0u,
+		IBLConfig::LayerCount);
 }
 
 void PipelineEquirect2Cube::InitializeHDRImage(VulkanContext& ctx, const std::string& hdrFile)

@@ -46,7 +46,7 @@ public:
 	std::unordered_map<TextureType, uint32_t> textureIndices_;
 
 private:
-	// Bindless rendering
+	// TODO Rename to bool vertexPulling_;
 	bool bindless_;
 	uint32_t vertexOffset_;
 	uint32_t indexOffset_;

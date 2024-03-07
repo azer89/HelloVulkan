@@ -5,7 +5,7 @@
 Fragment shader for 
 	* PBR+IBL
 	* Naive forward shading (non clustered)
-	* Bindless
+	* Bindless textures
 */
 
 // Include files
@@ -39,14 +39,6 @@ layout(set = 0, binding = 6) uniform samplerCube specularMap;
 layout(set = 0, binding = 7) uniform samplerCube diffuseMap;
 layout(set = 0, binding = 8) uniform sampler2D brdfLUT;
 
-/*
-0 = albedo
-1 = normal
-2 = metalness
-3 = roughness
-4 = ao
-5 = emissive
-*/
 // NOTE This requires descriptor indexing feature
 layout(set = 0, binding = 9) uniform sampler2D pbrTextures[];
 

@@ -63,12 +63,12 @@ void AppPBRShadow::Init()
 	pbrPtr_ = std::make_unique<PipelinePBRShadow>(
 		vulkanContext_,
 		scene_.get(),
-		resLights_.get(),
+		resLight_.get(),
 		resIBL_.get(),
 		resShadow_.get(),
 		resShared_.get());
 	shadowPtr_ = std::make_unique<PipelineShadow>(vulkanContext_, scene_.get(), resShadow_.get());
-	lightPtr_ = std::make_unique<PipelineLightRender>(vulkanContext_, resLights_.get(), resShared_.get());
+	lightPtr_ = std::make_unique<PipelineLightRender>(vulkanContext_, resLight_.get(), resShared_.get());
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
 	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(vulkanContext_, resShared_.get());
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
@@ -97,8 +97,8 @@ void AppPBRShadow::Init()
 void AppPBRShadow::InitLights()
 {
 	// Lights (SSBO)
-	resLights_ = std::make_unique<ResourcesLight>();
-	resLights_->AddLights(vulkanContext_,
+	resLight_ = std::make_unique<ResourcesLight>();
+	resLight_->AddLights(vulkanContext_,
 	{
 		// The first light is used to generate the shadow map
 		// and its position is set by ImGui
@@ -117,7 +117,7 @@ void AppPBRShadow::DestroyResources()
 	// Resources
 	resShadow_.reset();
 	resIBL_.reset();
-	resLights_.reset();
+	resLight_.reset();
 
 	// Destroy meshes
 	scene_.reset();
@@ -143,18 +143,12 @@ void AppPBRShadow::UpdateUBOs()
 
 	// Skybox
 	CameraUBO skyboxUbo = ubo;
-	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view));
+	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view)); // Remove translation
 	skyboxPtr_->SetCameraUBO(vulkanContext_, skyboxUbo);
 
-	// Shadow mapping
-	LightData light = resLights_->lights_[0];
-	glm::mat4 lightProjection = glm::perspective(glm::radians(45.f), 1.0f, shadowUBO_.shadowNearPlane, shadowUBO_.shadowFarPlane);
-	glm::mat4 lightView = glm::lookAt(glm::vec3(light.position_), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
-	shadowUBO_.lightSpaceMatrix = lightSpaceMatrix;
-	shadowUBO_.lightPosition = light.position_;
-	shadowPtr_->SetShadowMapUBO(vulkanContext_, shadowUBO_);
-	pbrPtr_->SetShadowMapConfigUBO(vulkanContext_, shadowUBO_);
+	shadowPtr_->UpdateShadow(vulkanContext_, resShadow_.get(), resLight_->lights_[0].position_);
+
+	pbrPtr_->SetShadowMapConfigUBO(vulkanContext_, resShadow_->shadowUBO_);
 }
 
 void AppPBRShadow::UpdateUI()
@@ -174,19 +168,15 @@ void AppPBRShadow::UpdateUI()
 		.lightFalloff = 0.1f,
 		.albedoMultipler = 0.5
 	};
-	static ShadowMapUBO staticShadowUBO =
-	{
-		.shadowMinBias = 0.001f,
-		.shadowMaxBias = 0.001f,
-		.shadowNearPlane = 10.0f,
-		.shadowFarPlane = 40.0f,
-		.pcfScale = 0.5f
-	};
-	static float staticLightPos[3] = { -5.f, 30.0f, 5.0f};
-	static int staticPCFIteration = 2;
+	static float staticLightPos[3] = { -5.f, 20.0f, 5.0f };
+	static float staticNearPlane = 0.1f;
+	static float staticFarPlane = staticLightPos[1] + 10;
+	static float staticOrthoSize = 10.0f;
+	static float staticMinBias = 0.001f;
+	static float staticMaxBias = 0.001f;
 
 	imguiPtr_->ImGuiStart();
-	imguiPtr_->ImGuiSetWindow("Bindless Shadow Mapping", 525, 650);
+	imguiPtr_->ImGuiSetWindow("Shadow Mapping", 525, 600);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 
 	ImGui::Text("Vertices: %i, Indices: %i", scene_->vertices_.size(), scene_->indices_.size());
@@ -195,32 +185,30 @@ void AppPBRShadow::UpdateUI()
 	imguiPtr_->ImGuiShowPBRConfig(&staticPBRPushConstants, cubemapMipmapCount_);
 
 	ImGui::SeparatorText("Shadow mapping");
-	ImGui::SliderFloat("Min Bias", &staticShadowUBO.shadowMinBias, 0.00001f, 0.01f);
-	ImGui::SliderFloat("Max Bias", &staticShadowUBO.shadowMaxBias, 0.001f, 0.1f);
-	ImGui::SliderFloat("Near Plane", &staticShadowUBO.shadowNearPlane, 0.1f, 50.0f);
-	ImGui::SliderFloat("Far Plane", &staticShadowUBO.shadowFarPlane, 10.0f, 150.0f);
-	ImGui::SliderFloat("PCF Scale", &staticShadowUBO.pcfScale, 0.1f, 1.0f);
-	ImGui::SliderInt("PCF Iteration", &staticPCFIteration, 1, 10);
+	ImGui::SliderFloat("Min Bias", &staticMinBias, 0.f, 0.01f);
+	ImGui::SliderFloat("Max Bias", &staticMaxBias, 0.f, 0.01f);
+	ImGui::SliderFloat("Near Plane", &staticNearPlane, 0.1f, 50.0f);
+	ImGui::SliderFloat("Far Plane", &staticFarPlane, 10.0f, 150.0f);
+	ImGui::SliderFloat("Ortho Size", &staticOrthoSize, 10.0f, 30.0f);
 
 	ImGui::SeparatorText("Light position");
 	ImGui::SliderFloat("X", &(staticLightPos[0]), -10.0f, 10.0f);
-	ImGui::SliderFloat("Y", &(staticLightPos[1]), 20.0f, 60.0f);
+	ImGui::SliderFloat("Y", &(staticLightPos[1]), 15.0f, 60.0f);
 	ImGui::SliderFloat("Z", &(staticLightPos[2]), -10.0f, 10.0f);
 
 	imguiPtr_->ImGuiEnd();
 
 	// TODO Check if light position is changed 
-	resLights_->UpdateLightPosition(vulkanContext_, 0, &(staticLightPos[0]));
+	resLight_->UpdateLightPosition(vulkanContext_, 0, &(staticLightPos[0]));
 
 	lightPtr_->RenderEnable(staticLightRender);
 	pbrPtr_->SetPBRPushConstants(staticPBRPushConstants);
 
-	shadowUBO_.shadowMinBias = staticShadowUBO.shadowMinBias;
-	shadowUBO_.shadowMaxBias = staticShadowUBO.shadowMaxBias;
-	shadowUBO_.shadowNearPlane = staticShadowUBO.shadowNearPlane;
-	shadowUBO_.shadowFarPlane = staticShadowUBO.shadowFarPlane;
-	shadowUBO_.pcfScale = staticShadowUBO.pcfScale;
-	shadowUBO_.pcfIteration = staticPCFIteration;
+	resShadow_->shadowUBO_.shadowMinBias = staticMinBias;
+	resShadow_->shadowUBO_.shadowMaxBias = staticMaxBias;
+	resShadow_->shadowNearPlane_ = staticNearPlane;
+	resShadow_->shadowFarPlane_ = staticFarPlane;
+	resShadow_->orthoSize_ = staticOrthoSize;
 }
 
 // This is called from main.cpp

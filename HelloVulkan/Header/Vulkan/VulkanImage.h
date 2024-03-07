@@ -133,8 +133,23 @@ public:
 		VkFormat format,
 		VkImageAspectFlags aspectFlags,
 		VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_2D,
-		uint32_t layerCount = 1,
-		uint32_t mipCount = 1);
+		uint32_t mipLevel = 0u,
+		uint32_t mipCount = 1u,
+		uint32_t layerLevel = 0u,
+		uint32_t layerCount = 1u);
+
+	static void CreateImageView(
+		VulkanContext& ctx,
+		VkImage image,
+		VkImageView& view,
+		VkFormat format,
+		VkImageAspectFlags aspectFlags,
+		VkImageViewType viewType = VK_IMAGE_VIEW_TYPE_2D,
+		uint32_t mipLevel = 0u,
+		uint32_t mipCount = 1u,
+		uint32_t layerLevel = 0u,
+		uint32_t layerCount = 1u);
+
 
 	void CopyBufferToImage(
 		VulkanContext& ctx,

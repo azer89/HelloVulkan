@@ -4,9 +4,5 @@ uniform ShadowUBO
 	vec4 lightPosition;
 	float shadowMinBias;
 	float shadowMaxBias;
-	float shadowNearPlane;
-	float shadowFarPlane;
-	float pcfScale;
-	uint pcfIteration;
 }
 shadowUBO;

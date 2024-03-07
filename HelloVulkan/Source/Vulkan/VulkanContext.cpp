@@ -131,7 +131,7 @@ void VulkanContext::ChainFeatures()
 	// This pointer is for chaining
 	void* chainPtr = nullptr;
 
-	if (config_.supportBindlessRendering_)
+	if (config_.supportBindlessTextures_)
 	{
 		// Used for gl_BaseInstance that requires Vulkan 1.1
 		/*shaderDrawFeatures_ =
@@ -190,7 +190,7 @@ void VulkanContext::ChainFeatures()
 		features_.sampleRateShading = VK_TRUE;
 		features_.samplerAnisotropy = VK_TRUE;
 	}
-	if (config_.supportBindlessRendering_)
+	if (config_.supportBindlessTextures_)
 	{
 		features_.multiDrawIndirect = VK_TRUE;
 		features_.drawIndirectFirstInstance = VK_TRUE;
@@ -220,7 +220,7 @@ VkResult VulkanContext::CreateDevice()
 		VK_KHR_SWAPCHAIN_EXTENSION_NAME
 	};
 
-	if (config_.supportBindlessRendering_)
+	if (config_.supportBindlessTextures_)
 	{
 		extensions.push_back(VK_KHR_MAINTENANCE3_EXTENSION_NAME);
 		extensions.push_back(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);

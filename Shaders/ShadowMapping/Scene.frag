@@ -9,7 +9,7 @@ Fragment shader for
 	* PBR+IBL
 	* Naive forward shading (non clustered)
 	* Shadow mapping
-	* Bindless
+	* Bindless textures
 */
 
 // Include files
@@ -49,14 +49,6 @@ layout(set = 0, binding = 8) uniform samplerCube diffuseMap;
 layout(set = 0, binding = 9) uniform sampler2D brdfLUT;
 layout(set = 0, binding = 10) uniform sampler2D shadowMap;
 
-/*
-0 = albedo
-1 = normal
-2 = metalness
-3 = roughness
-4 = ao
-5 = emissive
-*/
 // NOTE This requires descriptor indexing feature
 layout(set = 0, binding = 11) uniform sampler2D pbrTextures[];
 
@@ -97,7 +89,6 @@ void main()
 	F0 = mix(F0, albedo, metallic);
 
 	// A little bit hacky
-	//vec3 Lo = vec3(0.0); // Original code
 	vec3 Lo =  albedo * pc.albedoMultipler;
 
 	for (int i = 0; i < lights.length(); ++i)
@@ -126,7 +117,7 @@ void main()
 		ao,
 		NoV);
 
-	float shadow = ShadowPCF(shadowPos / shadowPos.w);
+	float shadow = ShadowPoisson(shadowPos / shadowPos.w);
 
 	vec3 color = ambient + emissive + (Lo * shadow);
 
