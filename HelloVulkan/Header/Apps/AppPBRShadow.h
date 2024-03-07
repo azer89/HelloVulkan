@@ -53,10 +53,6 @@ private:
 
 	ShadowMapUBO shadowUBO_;
 	float cubemapMipmapCount_;
-
-	float shadowNearPlane_;
-	float shadowFarPlane_;
-	uint32_t shadowMapSize_;
 };
 
 #endif
