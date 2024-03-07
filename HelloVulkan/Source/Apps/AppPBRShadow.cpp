@@ -148,7 +148,8 @@ void AppPBRShadow::UpdateUBOs()
 
 	// Shadow mapping
 	LightData light = resLights_->lights_[0];
-	glm::mat4 lightProjection = glm::perspective(glm::radians(45.f), 1.0f, shadowUBO_.shadowNearPlane, shadowUBO_.shadowFarPlane);
+	//glm::mat4 lightProjection = glm::perspective(glm::radians(45.f), 1.0f, shadowUBO_.shadowNearPlane, shadowUBO_.shadowFarPlane);
+	glm::mat4 lightProjection = glm::ortho(-10.f, 10.f, -10.f, 10.f, shadowUBO_.shadowNearPlane, shadowUBO_.shadowFarPlane);
 	glm::mat4 lightView = glm::lookAt(glm::vec3(light.position_), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
 	shadowUBO_.lightSpaceMatrix = lightSpaceMatrix;
@@ -195,8 +196,8 @@ void AppPBRShadow::UpdateUI()
 	imguiPtr_->ImGuiShowPBRConfig(&staticPBRPushConstants, cubemapMipmapCount_);
 
 	ImGui::SeparatorText("Shadow mapping");
-	ImGui::SliderFloat("Min Bias", &staticShadowUBO.shadowMinBias, 0.00001f, 0.01f);
-	ImGui::SliderFloat("Max Bias", &staticShadowUBO.shadowMaxBias, 0.001f, 0.1f);
+	ImGui::SliderFloat("Min Bias", &staticShadowUBO.shadowMinBias, 0.00001f, 0.001f);
+	ImGui::SliderFloat("Max Bias", &staticShadowUBO.shadowMaxBias, 0.00001f, 0.001f);
 	ImGui::SliderFloat("Near Plane", &staticShadowUBO.shadowNearPlane, 0.1f, 50.0f);
 	ImGui::SliderFloat("Far Plane", &staticShadowUBO.shadowFarPlane, 10.0f, 150.0f);
 	ImGui::SliderFloat("PCF Scale", &staticShadowUBO.pcfScale, 0.1f, 1.0f);
