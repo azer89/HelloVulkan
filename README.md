@@ -9,7 +9,7 @@ A real-time rendering engine built from scratch using Vulkan API and C++.
     * A cubemap from an equirectangular HDR image.
     * Specular and diffuse cubemaps.
 * Compute shader to generate BRDF lookup table.
-* Utilized __Descriptor Indexing__ and __Draw Indirect__, allowing resources to be bound only once to render an entire scene.
+* __Bindless Textures__, all textures for the entire scene are bound once at the start of the frame.
 * __Cascade Shadow Maps__.
 * Reinhard tonemap postprocessing.
 * glTF mesh/texture loading and rendering.
@@ -20,13 +20,13 @@ A real-time rendering engine built from scratch using Vulkan API and C++.
 
 ### Gallery
 
-The images below shows a demo of PBR, IBL, and shadow mapping.
+The images below shows a demo of PBR, IBL, bindless textures, and shadow mapping.
 
 <img width="850" alt="bindless_shadow_mapping_1" src="https://github.com/azer89/HelloVulkan/assets/790432/c926d003-8df2-464e-a8f7-e04b66494214">
 
 <img width="850" alt="bindless_shadow_mapping_2" src="https://github.com/azer89/HelloVulkan/assets/790432/7111e3f7-51e2-47fa-9fad-a0a19b4a1f1b">
 
-The scene rendering utilizes Descriptor Indexing and Draw Indirect. This enables the storage of all scene textures inside an unbounded array, which allows the descriptors to be bound once at the start of a frame. The technique can be considered as __"bindless" rendering__ although the current implementation has yet to use buffer device address which can be used to access SSBOs directly.
+Bindless textures is achieved by using Descriptor Indexing and Draw Indirect. This enables the storage of all scene textures inside an unbounded array, which allows the descriptors to be bound once at the start of a frame. 
 
 </br>
 </br>
@@ -43,6 +43,12 @@ Preliminary testing using a 3070M graphics card shows the technique can render a
 If too many lights end up inside the view frustum, especially when zooming out, there may be a drop in frame rate, but still much faster than a naive forward shading.
 
 https://github.com/azer89/HelloVulkan/assets/790432/13a4426f-deec-40f5-816a-5594f8f0cbc0
+
+### Cascade Shadow Maps
+
+<img width="850" alt="cascade_shadow_mapping" src="https://github.com/azer89/HelloVulkan/assets/790432/1634a491-ea8f-49f0-8214-766a038bedd1">
+
+The rendering above uses four cascades which allow the shadows to be much sharper. Additionally, Poisson disk sampling is used to blur out jagged shadows found on the vertical surfaces. However, excessive blurring causes more noticeable seams between the cascades. On the right image, each individial cascade is color coded.
 
 ### [Link to some other cool results](https://github.com/azer89/HelloVulkan/wiki/Gallery)
 
