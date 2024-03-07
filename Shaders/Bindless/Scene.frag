@@ -12,6 +12,7 @@ Fragment shader for
 #include <CameraUBO.glsl>
 #include <LightData.glsl>
 #include <PBRHeader.glsl>
+#include <PBRPushConstants.glsl>
 #include <Hammersley.glsl>
 #include <TangentNormalToWorld.glsl>
 
@@ -22,8 +23,7 @@ layout(location = 3) in flat uint meshIndex;
 
 layout(location = 0) out vec4 fragColor;
 
-layout(push_constant)
-#include <PBRPushConstants.glsl>
+layout(push_constant) uniform PC { PBRPushConstant pc; };
 
 // UBO
 layout(set = 0, binding = 0) uniform CameraBlock { CameraUBO camUBO; };
