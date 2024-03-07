@@ -10,7 +10,7 @@ A real-time rendering engine built from scratch using Vulkan API and C++.
     * Specular and diffuse cubemaps.
 * Compute shader to generate BRDF lookup table.
 * __Bindless Textures__, all textures for the entire scene are bound once at the start of the frame.
-* __Cascade Shadow Maps__.
+* __Shadow Maps__ with Poisson Disk or PCF.
 * Reinhard tonemap postprocessing.
 * glTF mesh/texture loading and rendering.
 * Multisample anti-aliasing (MSAA).
@@ -20,7 +20,7 @@ A real-time rendering engine built from scratch using Vulkan API and C++.
 
 ### Gallery
 
-The images below shows a demo of PBR, IBL, bindless textures, and shadow mapping.
+The images below shows a demo of PBR, IBL, bindless textures, and PCF shadow mapping.
 
 <img width="850" alt="bindless_shadow_mapping_1" src="https://github.com/azer89/HelloVulkan/assets/790432/c926d003-8df2-464e-a8f7-e04b66494214">
 
@@ -48,7 +48,7 @@ https://github.com/azer89/HelloVulkan/assets/790432/13a4426f-deec-40f5-816a-5594
 
 <img width="850" alt="cascade_shadow_mapping" src="https://github.com/azer89/HelloVulkan/assets/790432/1634a491-ea8f-49f0-8214-766a038bedd1">
 
-The rendering above uses four cascades which allow the shadows to be much sharper. Additionally, Poisson disk sampling is used to blur out jagged shadows found on the vertical surfaces. However, excessive blurring causes more noticeable seams between the cascades. On the right image, each individial cascade is color coded.
+The rendering above uses four cascades which allow the shadows to be much sharper. Additionally, Poisson disk sampling is used to blur out jagged shadows found on the vertical surfaces. However, excessive blurring causes more noticeable seams between the cascades. On the right image, each individual cascade is color coded.
 
 ### [Link to some other cool results](https://github.com/azer89/HelloVulkan/wiki/Gallery)
 
