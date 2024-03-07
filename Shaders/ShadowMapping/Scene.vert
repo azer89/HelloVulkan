@@ -5,7 +5,7 @@ Vertex shader for
 	* PBR+IBL
 	* Naive forward shading (non clustered)
 	* Shadow mapping
-	* Bindless
+	* Bindless textures
 */
 
 layout(location = 0) out vec3 worldPos;

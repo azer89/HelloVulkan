@@ -165,6 +165,9 @@
     <None Include="..\Shaders\Radiance.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\Shaders\ShadowMapping\Poisson.glsl">
+      <Filter>Shaders\ShadowMapping</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Camera.h">

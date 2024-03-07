@@ -154,8 +154,8 @@ void AppPBRShadow::UpdateUBOs()
 		10.f, 
 		-10.f, 
 		10.f, 
-		resShadow_->shadowUBO_.shadowNearPlane, 
-		resShadow_->shadowUBO_.shadowFarPlane);
+		resShadow_->shadowNearPlane_, 
+		resShadow_->shadowFarPlane_);
 	glm::mat4 lightView = glm::lookAt(glm::vec3(light.position_), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
 	resShadow_->shadowUBO_.lightSpaceMatrix = lightSpaceMatrix;
@@ -182,14 +182,12 @@ void AppPBRShadow::UpdateUI()
 		.albedoMultipler = 0.5
 	};
 	static float staticLightPos[3] = { -5.f, 20.0f, 5.0f };
-	static int staticPCFIteration = 2;
+	static float staticNearPlane = 0.1f;
+	static float staticFarPlane = staticLightPos[1] + 10;
 	static ShadowMapUBO staticShadowUBO =
 	{
 		.shadowMinBias = 0.001f,
-		.shadowMaxBias = 0.001f,
-		.shadowNearPlane = 0.1f,
-		.shadowFarPlane = staticLightPos[1] + 10,
-		.pcfScale = 0.5f
+		.shadowMaxBias = 0.001f
 	};
 
 	imguiPtr_->ImGuiStart();
@@ -202,12 +200,10 @@ void AppPBRShadow::UpdateUI()
 	imguiPtr_->ImGuiShowPBRConfig(&staticPBRPushConstants, cubemapMipmapCount_);
 
 	ImGui::SeparatorText("Shadow mapping");
-	ImGui::SliderFloat("Min Bias", &staticShadowUBO.shadowMinBias, 0.0001f, 0.01f);
-	ImGui::SliderFloat("Max Bias", &staticShadowUBO.shadowMaxBias, 0.0001f, 0.01f);
-	ImGui::SliderFloat("Near Plane", &staticShadowUBO.shadowNearPlane, 0.1f, 50.0f);
-	ImGui::SliderFloat("Far Plane", &staticShadowUBO.shadowFarPlane, 10.0f, 150.0f);
-	ImGui::SliderFloat("PCF Scale", &staticShadowUBO.pcfScale, 0.1f, 1.0f);
-	ImGui::SliderInt("PCF Iteration", &staticPCFIteration, 1, 10);
+	ImGui::SliderFloat("Min Bias", &staticShadowUBO.shadowMinBias, 0.f, 0.01f);
+	ImGui::SliderFloat("Max Bias", &staticShadowUBO.shadowMaxBias, 0.f, 0.01f);
+	ImGui::SliderFloat("Near Plane", &staticNearPlane, 0.1f, 50.0f);
+	ImGui::SliderFloat("Far Plane", &staticFarPlane, 10.0f, 150.0f);
 
 	ImGui::SeparatorText("Light position");
 	ImGui::SliderFloat("X", &(staticLightPos[0]), -10.0f, 10.0f);
@@ -224,10 +220,8 @@ void AppPBRShadow::UpdateUI()
 
 	resShadow_->shadowUBO_.shadowMinBias = staticShadowUBO.shadowMinBias;
 	resShadow_->shadowUBO_.shadowMaxBias = staticShadowUBO.shadowMaxBias;
-	resShadow_->shadowUBO_.shadowNearPlane = staticShadowUBO.shadowNearPlane;
-	resShadow_->shadowUBO_.shadowFarPlane = staticShadowUBO.shadowFarPlane;
-	resShadow_->shadowUBO_.pcfScale = staticShadowUBO.pcfScale;
-	resShadow_->shadowUBO_.pcfIteration = staticPCFIteration;
+	resShadow_->shadowNearPlane_ = staticNearPlane;
+	resShadow_->shadowFarPlane_ = staticFarPlane;
 }
 
 // This is called from main.cpp

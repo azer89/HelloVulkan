@@ -33,14 +33,6 @@ struct ShadowMapUBO
 	float shadowMinBias;
 	alignas(4)
 	float shadowMaxBias;
-	alignas(4)
-	float shadowNearPlane;
-	alignas(4)
-	float shadowFarPlane;
-	alignas(4)
-	float pcfScale;
-	alignas(4)
-	uint32_t pcfIteration;
 };
 
 // Per model transformation matrix

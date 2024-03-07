@@ -158,7 +158,7 @@ void AppPBRBindless::MainLoop()
 	InitVulkan({
 		.supportRaytracing_ = false,
 		.supportMSAA_ = true,
-		.supportBindlessRendering_ = true,
+		.supportBindlessTextures_ = true,
 	});
 	Init();
 

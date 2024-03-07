@@ -18,6 +18,8 @@ public:
 	VulkanImage shadowMap_;
 
 	ShadowMapUBO shadowUBO_;
+	float shadowNearPlane_;
+	float shadowFarPlane_;
 
 private:
 	VkDevice device_;

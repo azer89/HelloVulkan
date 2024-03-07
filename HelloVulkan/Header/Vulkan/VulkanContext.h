@@ -42,7 +42,7 @@ struct ContextConfig
 	// This can be disabled but validation layer will complain a little bit
 	bool supportMSAA_ = true;
 
-	bool supportBindlessRendering_ = true;
+	bool supportBindlessTextures_ = true;
 
 	// TODO Set validation layer as optional
 };
