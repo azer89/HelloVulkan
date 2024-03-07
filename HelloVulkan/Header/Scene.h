@@ -8,7 +8,8 @@
 #include <string>
 
 /*
-A scene used for bindless rendering that contains huge SSBO buffers for vertices, indices, and mesh data.
+A scene used for indirect draw + bindless textures 
+that contains huge SSBO buffers for vertices, indices, and mesh data.
 */
 class Scene
 {
