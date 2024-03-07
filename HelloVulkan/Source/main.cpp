@@ -13,12 +13,12 @@ int main()
 	// The good ol resource binding per draw call
 	//AppPBRSlotBased app;
 	
-	//AppPBRShadow app;
+	AppPBRShadow app;
 	
 	//AppPBRClusterForward app;
 	
 	// Currently can only draw a triangle
-	AppSimpleRaytracing app;
+	//AppSimpleRaytracing app;
 	
 	app.MainLoop();
 

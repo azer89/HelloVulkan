@@ -14,6 +14,8 @@ Fragment shader for
 
 // Include files
 #include <CameraUBO.glsl>
+#include <Bindless//MeshData.glsl>
+#include <ShadowMapping//UBO.glsl>
 #include <LightData.glsl>
 #include <PBRHeader.glsl>
 #include <PBRPushConstants.glsl>
@@ -30,20 +32,10 @@ layout(location = 0) out vec4 fragColor;
 
 layout(push_constant) uniform PC { PBRPushConstant pc; };
 
-// UBO
-layout(set = 0, binding = 0) uniform CameraBlock { CameraUBO camUBO; };
-
-// UBO
-layout(set = 0, binding = 1)
-#include <ShadowMapping//UBO.glsl>
-
-// SSBO
-#include <Bindless//MeshData.glsl>
-layout(set = 0, binding = 5) readonly buffer Meshes { MeshData meshes []; };
-
-// SSBO
-layout(set = 0, binding = 6) readonly buffer Lights { LightData lights []; };
-
+layout(set = 0, binding = 0) uniform CameraBlock { CameraUBO camUBO; }; // UBO
+layout(set = 0, binding = 1) uniform UBOBlock { ShadowUBO shadowUBO; }; // UBO
+layout(set = 0, binding = 5) readonly buffer Meshes { MeshData meshes []; }; // SSBO
+layout(set = 0, binding = 6) readonly buffer Lights { LightData lights []; }; // SSBO
 layout(set = 0, binding = 7) uniform samplerCube specularMap;
 layout(set = 0, binding = 8) uniform samplerCube diffuseMap;
 layout(set = 0, binding = 9) uniform sampler2D brdfLUT;
@@ -52,8 +44,8 @@ layout(set = 0, binding = 10) uniform sampler2D shadowMap;
 // NOTE This requires descriptor indexing feature
 layout(set = 0, binding = 11) uniform sampler2D pbrTextures[];
 
-// Shadow mapping functions
-#include <ShadowMapping//PCF.glsl>
+// PCF or Poisson
+#include <ShadowMapping//Filter.glsl>
 
 #include <Radiance.glsl>
 #include <Ambient.glsl>

@@ -9,6 +9,10 @@ Vertex shader for
 */
 
 #include <CameraUBO.glsl>
+#include <ModelUBO.glsl>
+#include <Bindless//VertexData.glsl>
+#include <Bindless//MeshData.glsl>
+#include <ShadowMapping//UBO.glsl>
 
 layout(location = 0) out vec3 worldPos;
 layout(location = 1) out vec2 texCoord;
@@ -16,30 +20,12 @@ layout(location = 2) out vec3 normal;
 layout(location = 3) out vec4 shadowPos;
 layout(location = 4) out flat uint meshIndex;
 
-// UBO
-layout(set = 0, binding = 0) uniform CameraBlock { CameraUBO camUBO; };
-
-// UBO
-layout(set = 0, binding = 1)
-#include <ShadowMapping//UBO.glsl>
-
-// SSBO
-struct ModelUBO
-{
-	mat4 model;
-};
-layout(set = 0, binding = 2) readonly buffer ModelUBOs { ModelUBO modelUBOs []; };
-
-// SSBO
-#include <Bindless//VertexData.glsl>
-layout(set = 0, binding = 3) readonly buffer Vertices { VertexData vertices []; };
-
-// SSBO
-layout(set = 0, binding = 4) readonly buffer Indices { uint indices []; };
-
-// SSBO
-#include <Bindless//MeshData.glsl>
-layout(set = 0, binding = 5) readonly buffer Meshes { MeshData meshes []; };
+layout(set = 0, binding = 0) uniform CameraBlock { CameraUBO camUBO; }; // UBO
+layout(set = 0,binding = 1) uniform UBOBlock { ShadowUBO shadowUBO; }; // UBO
+layout(set = 0, binding = 2) readonly buffer ModelUBOs { ModelUBO modelUBOs []; }; // SSBO
+layout(set = 0, binding = 3) readonly buffer Vertices { VertexData vertices []; }; // SSBO
+layout(set = 0, binding = 4) readonly buffer Indices { uint indices []; }; // SSBO
+layout(set = 0, binding = 5) readonly buffer Meshes { MeshData meshes []; }; // SSBO
 
 const mat4 biasMat = mat4(
 	0.5, 0.0, 0.0, 0.0,
