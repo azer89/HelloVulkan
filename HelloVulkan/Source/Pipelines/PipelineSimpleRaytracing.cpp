@@ -388,7 +388,7 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 		.size = accelerationStructureBuildSizesInfo.accelerationStructureSize,
 		.type = VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR
 	};
-	vkCreateAccelerationStructureKHR(ctx.GetDevice(), &accelerationStructureCreateInfo, nullptr, &blas_.handle_);
+	VK_CHECK(vkCreateAccelerationStructureKHR(ctx.GetDevice(), &accelerationStructureCreateInfo, nullptr, &blas_.handle_));
 
 	// Create a small scratch buffer used during build of the bottom level acceleration structure
 	VulkanBuffer scratchBuffer;
@@ -516,7 +516,7 @@ void PipelineSimpleRaytracing::CreateTLAS(VulkanContext& ctx)
 		.size = accelerationStructureBuildSizesInfo.accelerationStructureSize,
 		.type = VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR
 	};
-	vkCreateAccelerationStructureKHR(ctx.GetDevice(), &accelerationStructureCreateInfo, nullptr, &tlas_.handle_);
+	VK_CHECK(vkCreateAccelerationStructureKHR(ctx.GetDevice(), &accelerationStructureCreateInfo, nullptr, &tlas_.handle_));
 
 	// Create a small scratch buffer used during build of the top level acceleration structure
 	VulkanBuffer scratchBuffer;
