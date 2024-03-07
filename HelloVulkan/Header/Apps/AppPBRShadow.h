@@ -51,7 +51,7 @@ private:
 
 	std::unique_ptr<Scene> scene_;
 
-	ShadowMapUBO shadowUBO_;
+	// TODO Move to ResourcesIBL
 	float cubemapMipmapCount_;
 };
 

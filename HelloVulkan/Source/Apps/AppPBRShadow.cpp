@@ -149,13 +149,19 @@ void AppPBRShadow::UpdateUBOs()
 	// Shadow mapping
 	LightData light = resLights_->lights_[0];
 	//glm::mat4 lightProjection = glm::perspective(glm::radians(45.f), 1.0f, shadowUBO_.shadowNearPlane, shadowUBO_.shadowFarPlane);
-	glm::mat4 lightProjection = glm::ortho(-10.f, 10.f, -10.f, 10.f, shadowUBO_.shadowNearPlane, shadowUBO_.shadowFarPlane);
+	glm::mat4 lightProjection = glm::ortho(
+		-10.f, 
+		10.f, 
+		-10.f, 
+		10.f, 
+		resShadow_->shadowUBO_.shadowNearPlane, 
+		resShadow_->shadowUBO_.shadowFarPlane);
 	glm::mat4 lightView = glm::lookAt(glm::vec3(light.position_), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
-	shadowUBO_.lightSpaceMatrix = lightSpaceMatrix;
-	shadowUBO_.lightPosition = light.position_;
-	shadowPtr_->SetShadowMapUBO(vulkanContext_, shadowUBO_);
-	pbrPtr_->SetShadowMapConfigUBO(vulkanContext_, shadowUBO_);
+	resShadow_->shadowUBO_.lightSpaceMatrix = lightSpaceMatrix;
+	resShadow_->shadowUBO_.lightPosition = light.position_;
+	shadowPtr_->SetShadowMapUBO(vulkanContext_, resShadow_->shadowUBO_);
+	pbrPtr_->SetShadowMapConfigUBO(vulkanContext_, resShadow_->shadowUBO_);
 }
 
 void AppPBRShadow::UpdateUI()
@@ -187,7 +193,7 @@ void AppPBRShadow::UpdateUI()
 	};
 
 	imguiPtr_->ImGuiStart();
-	imguiPtr_->ImGuiSetWindow("Bindless Shadow Mapping", 525, 650);
+	imguiPtr_->ImGuiSetWindow("Shadow Mapping", 525, 650);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 
 	ImGui::Text("Vertices: %i, Indices: %i", scene_->vertices_.size(), scene_->indices_.size());
@@ -216,12 +222,12 @@ void AppPBRShadow::UpdateUI()
 	lightPtr_->RenderEnable(staticLightRender);
 	pbrPtr_->SetPBRPushConstants(staticPBRPushConstants);
 
-	shadowUBO_.shadowMinBias = staticShadowUBO.shadowMinBias;
-	shadowUBO_.shadowMaxBias = staticShadowUBO.shadowMaxBias;
-	shadowUBO_.shadowNearPlane = staticShadowUBO.shadowNearPlane;
-	shadowUBO_.shadowFarPlane = staticShadowUBO.shadowFarPlane;
-	shadowUBO_.pcfScale = staticShadowUBO.pcfScale;
-	shadowUBO_.pcfIteration = staticPCFIteration;
+	resShadow_->shadowUBO_.shadowMinBias = staticShadowUBO.shadowMinBias;
+	resShadow_->shadowUBO_.shadowMaxBias = staticShadowUBO.shadowMaxBias;
+	resShadow_->shadowUBO_.shadowNearPlane = staticShadowUBO.shadowNearPlane;
+	resShadow_->shadowUBO_.shadowFarPlane = staticShadowUBO.shadowFarPlane;
+	resShadow_->shadowUBO_.pcfScale = staticShadowUBO.pcfScale;
+	resShadow_->shadowUBO_.pcfIteration = staticPCFIteration;
 }
 
 // This is called from main.cpp

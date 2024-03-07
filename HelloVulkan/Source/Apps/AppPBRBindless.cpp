@@ -141,7 +141,7 @@ void AppPBRBindless::UpdateUI()
 	static PushConstPBR pbrPC;
 
 	imguiPtr_->ImGuiStart();
-	imguiPtr_->ImGuiSetWindow("Bindless Rendering", 525, 350);
+	imguiPtr_->ImGuiSetWindow("Bindless Textures", 525, 350);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 	ImGui::Text("Vertices: %i, Indices: %i", scene_->vertices_.size(), scene_->indices_.size());
 	ImGui::Checkbox("Render Lights", &lightRender);

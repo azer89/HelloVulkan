@@ -3,6 +3,7 @@
 
 #include "VulkanContext.h"
 #include "VulkanImage.h"
+#include "UBOs.h"
 
 struct ResourcesShadow
 {
@@ -15,6 +16,8 @@ public:
 
 public:
 	VulkanImage shadowMap_;
+
+	ShadowMapUBO shadowUBO_;
 
 private:
 	VkDevice device_;
