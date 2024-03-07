@@ -13,11 +13,7 @@ public:
 		ResourcesShadow* resShadow);
 	~PipelineShadow();
 
-	void SetShadowMapUBO(VulkanContext& ctx, ShadowMapUBO& ubo)
-	{
-		const uint32_t frameIndex = ctx.GetFrameIndex();
-		shadowMapUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ShadowMapUBO));
-	}
+	void UpdateShadow(VulkanContext& ctx, ResourcesShadow* resShadow, glm::vec4 lightPosition);
 
 	virtual void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 

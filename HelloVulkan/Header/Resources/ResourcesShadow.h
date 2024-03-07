@@ -20,6 +20,7 @@ public:
 	ShadowMapUBO shadowUBO_;
 	float shadowNearPlane_;
 	float shadowFarPlane_;
+	float orthoSize_;
 
 private:
 	VkDevice device_;

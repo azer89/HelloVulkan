@@ -143,24 +143,11 @@ void AppPBRShadow::UpdateUBOs()
 
 	// Skybox
 	CameraUBO skyboxUbo = ubo;
-	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view));
+	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view)); // Remove translation
 	skyboxPtr_->SetCameraUBO(vulkanContext_, skyboxUbo);
 
-	// Shadow mapping
-	LightData light = resLights_->lights_[0];
-	//glm::mat4 lightProjection = glm::perspective(glm::radians(45.f), 1.0f, shadowUBO_.shadowNearPlane, shadowUBO_.shadowFarPlane);
-	glm::mat4 lightProjection = glm::ortho(
-		-10.f, 
-		10.f, 
-		-10.f, 
-		10.f, 
-		resShadow_->shadowNearPlane_, 
-		resShadow_->shadowFarPlane_);
-	glm::mat4 lightView = glm::lookAt(glm::vec3(light.position_), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
-	resShadow_->shadowUBO_.lightSpaceMatrix = lightSpaceMatrix;
-	resShadow_->shadowUBO_.lightPosition = light.position_;
-	shadowPtr_->SetShadowMapUBO(vulkanContext_, resShadow_->shadowUBO_);
+	shadowPtr_->UpdateShadow(vulkanContext_, resShadow_.get(), resLights_->lights_[0].position_);
+
 	pbrPtr_->SetShadowMapConfigUBO(vulkanContext_, resShadow_->shadowUBO_);
 }
 
@@ -184,14 +171,12 @@ void AppPBRShadow::UpdateUI()
 	static float staticLightPos[3] = { -5.f, 20.0f, 5.0f };
 	static float staticNearPlane = 0.1f;
 	static float staticFarPlane = staticLightPos[1] + 10;
-	static ShadowMapUBO staticShadowUBO =
-	{
-		.shadowMinBias = 0.001f,
-		.shadowMaxBias = 0.001f
-	};
+	static float staticOrthoSize = 10.0f;
+	static float staticMinBias = 0.001f;
+	static float staticMaxBias = 0.001f;
 
 	imguiPtr_->ImGuiStart();
-	imguiPtr_->ImGuiSetWindow("Shadow Mapping", 525, 650);
+	imguiPtr_->ImGuiSetWindow("Shadow Mapping", 525, 600);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 
 	ImGui::Text("Vertices: %i, Indices: %i", scene_->vertices_.size(), scene_->indices_.size());
@@ -200,10 +185,11 @@ void AppPBRShadow::UpdateUI()
 	imguiPtr_->ImGuiShowPBRConfig(&staticPBRPushConstants, cubemapMipmapCount_);
 
 	ImGui::SeparatorText("Shadow mapping");
-	ImGui::SliderFloat("Min Bias", &staticShadowUBO.shadowMinBias, 0.f, 0.01f);
-	ImGui::SliderFloat("Max Bias", &staticShadowUBO.shadowMaxBias, 0.f, 0.01f);
+	ImGui::SliderFloat("Min Bias", &staticMinBias, 0.f, 0.01f);
+	ImGui::SliderFloat("Max Bias", &staticMaxBias, 0.f, 0.01f);
 	ImGui::SliderFloat("Near Plane", &staticNearPlane, 0.1f, 50.0f);
 	ImGui::SliderFloat("Far Plane", &staticFarPlane, 10.0f, 150.0f);
+	ImGui::SliderFloat("Ortho Size", &staticOrthoSize, 10.0f, 30.0f);
 
 	ImGui::SeparatorText("Light position");
 	ImGui::SliderFloat("X", &(staticLightPos[0]), -10.0f, 10.0f);
@@ -218,10 +204,11 @@ void AppPBRShadow::UpdateUI()
 	lightPtr_->RenderEnable(staticLightRender);
 	pbrPtr_->SetPBRPushConstants(staticPBRPushConstants);
 
-	resShadow_->shadowUBO_.shadowMinBias = staticShadowUBO.shadowMinBias;
-	resShadow_->shadowUBO_.shadowMaxBias = staticShadowUBO.shadowMaxBias;
+	resShadow_->shadowUBO_.shadowMinBias = staticMinBias;
+	resShadow_->shadowUBO_.shadowMaxBias = staticMaxBias;
 	resShadow_->shadowNearPlane_ = staticNearPlane;
 	resShadow_->shadowFarPlane_ = staticFarPlane;
+	resShadow_->orthoSize_ = staticOrthoSize;
 }
 
 // This is called from main.cpp
