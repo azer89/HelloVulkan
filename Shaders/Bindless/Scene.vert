@@ -1,5 +1,8 @@
 #version 460 core
 
+// Bindless/Scene.vert
+// Bindless textures
+
 #include <ModelUBO.glsl>
 #include <CameraUBO.glsl>
 #include <Bindless//VertexData.glsl>

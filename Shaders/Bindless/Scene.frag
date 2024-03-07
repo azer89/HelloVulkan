@@ -2,10 +2,12 @@
 #extension GL_EXT_nonuniform_qualifier : require
 
 /*
+Bindless/Scene.frag 
+
 Fragment shader for 
+	* Bindless textures
 	* PBR+IBL
 	* Naive forward shading (non clustered)
-	* Bindless textures
 */
 
 // Include files

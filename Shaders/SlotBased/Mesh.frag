@@ -1,6 +1,8 @@
-# version 460 core
+#version 460 core
 
 /*
+SlotBased/Mesh.frag
+ 
 Fragment shader for PBR+IBL, naive forward shading (non clustered)
 */
 
