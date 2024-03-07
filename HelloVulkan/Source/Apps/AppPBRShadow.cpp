@@ -175,16 +175,16 @@ void AppPBRShadow::UpdateUI()
 		.lightFalloff = 0.1f,
 		.albedoMultipler = 0.5
 	};
+	static float staticLightPos[3] = { -5.f, 20.0f, 5.0f };
+	static int staticPCFIteration = 2;
 	static ShadowMapUBO staticShadowUBO =
 	{
 		.shadowMinBias = 0.001f,
 		.shadowMaxBias = 0.001f,
-		.shadowNearPlane = 10.0f,
-		.shadowFarPlane = 40.0f,
+		.shadowNearPlane = 0.1f,
+		.shadowFarPlane = staticLightPos[1] + 10,
 		.pcfScale = 0.5f
 	};
-	static float staticLightPos[3] = { -5.f, 30.0f, 5.0f};
-	static int staticPCFIteration = 2;
 
 	imguiPtr_->ImGuiStart();
 	imguiPtr_->ImGuiSetWindow("Bindless Shadow Mapping", 525, 650);
@@ -196,8 +196,8 @@ void AppPBRShadow::UpdateUI()
 	imguiPtr_->ImGuiShowPBRConfig(&staticPBRPushConstants, cubemapMipmapCount_);
 
 	ImGui::SeparatorText("Shadow mapping");
-	ImGui::SliderFloat("Min Bias", &staticShadowUBO.shadowMinBias, 0.00001f, 0.001f);
-	ImGui::SliderFloat("Max Bias", &staticShadowUBO.shadowMaxBias, 0.00001f, 0.001f);
+	ImGui::SliderFloat("Min Bias", &staticShadowUBO.shadowMinBias, 0.0001f, 0.01f);
+	ImGui::SliderFloat("Max Bias", &staticShadowUBO.shadowMaxBias, 0.0001f, 0.01f);
 	ImGui::SliderFloat("Near Plane", &staticShadowUBO.shadowNearPlane, 0.1f, 50.0f);
 	ImGui::SliderFloat("Far Plane", &staticShadowUBO.shadowFarPlane, 10.0f, 150.0f);
 	ImGui::SliderFloat("PCF Scale", &staticShadowUBO.pcfScale, 0.1f, 1.0f);
@@ -205,7 +205,7 @@ void AppPBRShadow::UpdateUI()
 
 	ImGui::SeparatorText("Light position");
 	ImGui::SliderFloat("X", &(staticLightPos[0]), -10.0f, 10.0f);
-	ImGui::SliderFloat("Y", &(staticLightPos[1]), 20.0f, 60.0f);
+	ImGui::SliderFloat("Y", &(staticLightPos[1]), 15.0f, 60.0f);
 	ImGui::SliderFloat("Z", &(staticLightPos[2]), -10.0f, 10.0f);
 
 	imguiPtr_->ImGuiEnd();

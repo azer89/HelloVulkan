@@ -114,8 +114,10 @@ void PipelineCubeFilter::InitializeOutputCubemap(
 		VK_FORMAT_R32G32B32A32_SFLOAT,
 		VK_IMAGE_ASPECT_COLOR_BIT,
 		VK_IMAGE_VIEW_TYPE_CUBE,
-		IBLConfig::LayerCount,
-		numMipmap);
+		0u,
+		numMipmap,
+		0u,
+		IBLConfig::LayerCount);
 }
 
 void PipelineCubeFilter::CreateDescriptor(VulkanContext& ctx, VulkanImage* inputCubemap)
