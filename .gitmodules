@@ -16,3 +16,6 @@
 [submodule "External/VulkanMemoryAllocator"]
 	path = External/VulkanMemoryAllocator
 	url = https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
+[submodule "External/tracy"]
+	path = External/tracy
+	url = https://github.com/wolfpld/tracy.git

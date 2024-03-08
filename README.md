@@ -60,7 +60,7 @@ On the right image above, each individual cascade is color coded.
 * C++20
 * Vulkan 1.3
 * Visual Studio 2022
-* Dependencies: glfw, ImGui, VMA, assimp, glm, stb, and volk.
+* Dependencies: assimp, glm, glfw, ImGui, stb, tracy, volk, and VMA.
 
 ### Credit
 * [learnopengl.com PBR](https://learnopengl.com/PBR/Theory)

@@ -672,6 +672,8 @@ void VulkanContext::AllocateFrameInFlightData()
 		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].graphicsQueueSemaphore_)));
 		VK_CHECK(CreateFence(&(frameDataArray_[i].queueSubmitFence_)));
 		VK_CHECK(CreateCommandBuffer(graphicsCommandPool_, &(frameDataArray_[i].graphicsCommandBuffer_)));
+		frameDataArray_[i].tracyContext_ = 
+			TracyVkContext(physicalDevice_, device_, graphicsQueue_, frameDataArray_[i].graphicsCommandBuffer_);
 	}
 }
 

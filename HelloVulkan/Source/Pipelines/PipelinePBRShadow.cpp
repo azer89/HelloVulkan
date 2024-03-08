@@ -93,6 +93,8 @@ PipelinePBRShadow::~PipelinePBRShadow()
 
 void PipelinePBRShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
+	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "PBR_Shadow_Mapping", tracy::Color::Aquamarine);
+
 	uint32_t frameIndex = ctx.GetFrameIndex();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
 

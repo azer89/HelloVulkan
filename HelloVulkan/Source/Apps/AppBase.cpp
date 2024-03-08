@@ -165,6 +165,8 @@ void AppBase::DrawFrame()
 
 	// Do this after the end of the draw
 	vulkanContext_.IncrementFrameIndex();
+
+	FrameMark;
 }
 
 void AppBase::UpdateUI()
@@ -190,6 +192,9 @@ void AppBase::FillCommandBuffer(VkCommandBuffer commandBuffer)
 	{
 		pip->FillCommandBuffer(vulkanContext_, commandBuffer);
 	}
+
+	// Tracy
+	TracyVkCollect(vulkanContext_.GetTracyContext(), commandBuffer);
 
 	VK_CHECK(vkEndCommandBuffer(commandBuffer));
 }

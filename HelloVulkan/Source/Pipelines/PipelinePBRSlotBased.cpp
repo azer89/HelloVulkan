@@ -77,6 +77,8 @@ PipelinePBRSlotBased::~PipelinePBRSlotBased()
 
 void PipelinePBRSlotBased::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
+	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "PBR_Slot_Based", tracy::Color::Orange4);
+
 	const uint32_t frameIndex = ctx.GetFrameIndex();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
 

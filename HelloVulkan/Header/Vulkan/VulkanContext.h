@@ -4,8 +4,10 @@
 #include "VulkanInstance.h"
 #include "Configs.h"
 
+// External dependencies
 #include "volk.h"
 #include "vk_mem_alloc.h"
+#include "TracyVulkan.hpp"
 
 #include <vector>
 #include <array>
@@ -22,16 +24,22 @@ Struct containing objects needed for every frame draw
 */
 struct FrameData
 {
-	VkSemaphore nextSwapchainImageSemaphore_;
-	VkSemaphore graphicsQueueSemaphore_;
-	VkFence queueSubmitFence_;
-	VkCommandBuffer graphicsCommandBuffer_;
+	VkSemaphore nextSwapchainImageSemaphore_ = nullptr;
+	VkSemaphore graphicsQueueSemaphore_ = nullptr;
+	VkFence queueSubmitFence_ = nullptr;
+	VkCommandBuffer graphicsCommandBuffer_ = nullptr;
+	TracyVkCtx tracyContext_ = nullptr;
 
 	void Destroy(VkDevice device)
 	{
 		vkDestroySemaphore(device, nextSwapchainImageSemaphore_, nullptr);
 		vkDestroySemaphore(device, graphicsQueueSemaphore_, nullptr);
 		vkDestroyFence(device, queueSubmitFence_, nullptr);
+		if (tracyContext_)
+		{
+			TracyVkDestroy(tracyContext_);
+			tracyContext_ = nullptr;
+		}
 	}
 };
 
@@ -94,7 +102,7 @@ public:
 	VkQueue GetComputeQueue() const { return computeQueue_; }
 	VkFormat GetDepthFormat() const { return depthFormat_; };
 	VmaAllocator GetVMAAllocator() const { return vmaAllocator_; }
-
+	
 	// Raytracing getters
 	VkPhysicalDeviceRayTracingPipelinePropertiesKHR GetRayTracingPipelineProperties() const { return rtPipelineProperties_; }
 
@@ -110,9 +118,10 @@ public:
 	VkSwapchainKHR* GetSwapchainPtr() { return &swapchain_; }
 
 	// Sync objects and render command buffer
-	FrameData& GetCurrentFrameData();
 	void IncrementFrameIndex();
+	FrameData& GetCurrentFrameData();
 	uint32_t GetFrameIndex() const;
+	TracyVkCtx GetTracyContext() const { return frameDataArray_[GetFrameIndex()].tracyContext_; }
 
 	// For debugging purpose
 	void SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name) const;
