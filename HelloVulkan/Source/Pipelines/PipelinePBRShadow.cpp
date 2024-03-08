@@ -8,7 +8,6 @@
 #include "Configs.h"
 
 #include <vector>
-#include <string>
 
 // Constants
 constexpr uint32_t UBO_COUNT = 2;
