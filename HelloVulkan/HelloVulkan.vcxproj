@@ -140,7 +140,6 @@
     <None Include="..\Shaders\Bindless\Scene.vert" />
     <None Include="..\Shaders\Bindless\MeshData.glsl" />
     <None Include="..\Shaders\Bindless\VertexData.glsl" />
-    <None Include="..\Shaders\BRDFLUT.comp" />
     <None Include="..\Shaders\CameraUBO.glsl" />
     <None Include="..\Shaders\ClusteredForward\AABBGenerator.comp" />
     <None Include="..\Shaders\ClusteredForward\ClusterForwardHeader.glsl" />
@@ -148,6 +147,7 @@
     <None Include="..\Shaders\ClusteredForward\LightCullingBatch.comp" />
     <None Include="..\Shaders\ClusteredForward\Mesh.frag" />
     <None Include="..\Shaders\ClusteredForward\Radiance.glsl" />
+    <None Include="..\Shaders\IBL\BRDFLUT.comp" />
     <None Include="..\Shaders\IBL\CubeFilterDiffuse.frag" />
     <None Include="..\Shaders\IBL\CubeFilterSpecular.frag" />
     <None Include="..\Shaders\IBL\Equirect2Cube.frag" />

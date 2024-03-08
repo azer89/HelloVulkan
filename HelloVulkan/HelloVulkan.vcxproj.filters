@@ -69,9 +69,6 @@
     <None Include="..\Shaders\PBRHeader.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\BRDFLUT.comp">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\Shaders\Hammersley.glsl">
       <Filter>Shaders</Filter>
     </None>
@@ -175,6 +172,9 @@
       <Filter>Shaders\IBL</Filter>
     </None>
     <None Include="..\Shaders\IBL\Equirect2Cube.frag">
+      <Filter>Shaders\IBL</Filter>
+    </None>
+    <None Include="..\Shaders\IBL\BRDFLUT.comp">
       <Filter>Shaders\IBL</Filter>
     </None>
   </ItemGroup>
