@@ -9,8 +9,8 @@ A real-time rendering engine built from scratch using Vulkan API and C++.
     * A cubemap from an equirectangular HDR image.
     * Specular and diffuse cubemaps.
 * Compute shader to generate BRDF lookup table.
-* __Bindless Textures__, all textures for the entire scene are bound once at the start of the frame.
-* __Shadow Maps__ with Poisson Disk or PCF.
+* __Bindless textures__, all textures needed for rendering the entire scene are bound only once at the start of the frame.
+* __Shadow maps__ with Poisson Disk or PCF.
 * Reinhard tonemap postprocessing.
 * glTF mesh/texture loading and rendering.
 * Multisample anti-aliasing (MSAA).
@@ -26,7 +26,9 @@ The images below shows a demo of PBR, IBL, bindless textures, and PCF shadow map
 
 <img width="850" alt="bindless_shadow_mapping_2" src="https://github.com/azer89/HelloVulkan/assets/790432/7111e3f7-51e2-47fa-9fad-a0a19b4a1f1b">
 
-Bindless textures is achieved by using Descriptor Indexing and Draw Indirect. This enables the storage of all scene textures inside an unbounded array, which allows the descriptors to be bound once at the start of a frame. 
+Bindless textures is achieved by utilizing __Descriptor Indexing__. This enables the storage of all scene textures inside an unbounded array, which allows the texture descriptors to be bound once at the start of a frame. 
+
+The rendering also uses __Draw Indirect__, which requires the vertices of all 3D objects to be stored inside a single buffer. This is also known as vertex pulling.
 
 </br>
 </br>
@@ -48,7 +50,9 @@ https://github.com/azer89/HelloVulkan/assets/790432/13a4426f-deec-40f5-816a-5594
 
 <img width="850" alt="cascade_shadow_mapping" src="https://github.com/azer89/HelloVulkan/assets/790432/1634a491-ea8f-49f0-8214-766a038bedd1">
 
-The rendering above uses four cascades which allow the shadows to be much sharper. Additionally, Poisson disk sampling is used to blur out jagged shadows found on the vertical surfaces. However, excessive blurring causes more noticeable seams between the cascades. On the right image, each individual cascade is color coded.
+The rendering above uses four cascades which allow the shadows to be much sharper. Additionally, Poisson disk sampling is used to blur out projective aliasing. However, excessive blurring causes more noticeable seams between the cascades. There is also an issue of the shimmering edge effect because the shadow maps constantly changing everytime the camera is moved.
+
+On the right image above, each individual cascade is color coded.
 
 ### [Link to some other cool results](https://github.com/azer89/HelloVulkan/wiki/Gallery)
 
