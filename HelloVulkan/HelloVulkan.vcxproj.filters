@@ -55,6 +55,12 @@
     <Filter Include="Shaders\IBL">
       <UniqueIdentifier>{16100ccf-b0a2-4f3b-a69e-87eefce983aa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Raytracing">
+      <UniqueIdentifier>{ee1397a6-a893-4ba6-86d4-e6ea2fd45fbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Raytracing">
+      <UniqueIdentifier>{6249d3ab-833a-460f-aada-7fe87fa967a9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\Cube.vert">
@@ -335,11 +341,11 @@
     <ClInclude Include="Header\Vulkan\VulkanPipelineCreateInfo.h">
       <Filter>Header Files\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Vulkan\VulkanAccelStructure.h">
-      <Filter>Header Files\Vulkan</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Resources\ResourcesLight.h">
       <Filter>Header Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Raytracing\AccelStructure.h">
+      <Filter>Header Files\Raytracing</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -481,11 +487,11 @@
     <ClCompile Include="Source\Resources\ResourcesShared.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Vulkan\VulkanAccelStructure.cpp">
-      <Filter>Source Files\Vulkan</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Resources\ResourcesLight.cpp">
       <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Raytracing\AccelStructure.cpp">
+      <Filter>Source Files\Raytracing</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
