@@ -5,7 +5,7 @@
 #include "vk_mem_alloc.h"
 
 // For TLAS and BLAS
-class VulkanAccelStructure
+class AccelStructure
 {
 public:
 	// TODO Create a function to create handle_
@@ -18,7 +18,7 @@ public:
 	VmaAllocationInfo vmaInfo_;
 	VkDevice device_;
 
-	VulkanAccelStructure() :
+	AccelStructure() :
 		handle_(nullptr),
 		deviceAddress_(0),
 		buffer_(nullptr),
