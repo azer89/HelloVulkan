@@ -21,8 +21,8 @@ PipelineLightCulling::PipelineLightCulling(
 	CreateDescriptor(ctx);
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
 
-	//std::string shaderFile = AppConfig::ShaderFolder + "ClusteredForward/LightCulling.comp";
-	std::string shaderFile = AppConfig::ShaderFolder + "ClusteredForward/LightCullingBatch.comp";
+	std::string shaderFile = AppConfig::ShaderFolder + "ClusteredForward/LightCulling.comp";
+	//std::string shaderFile = AppConfig::ShaderFolder + "ClusteredForward/LightCullingBatch.comp";
 
 	CreateComputePipeline(ctx, shaderFile);
 }
@@ -50,6 +50,7 @@ void PipelineLightCulling::SetClusterForwardUBO(VulkanContext& ctx, ClusterForwa
 
 void PipelineLightCulling::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
+	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "Light_Culling", tracy::Color::LawnGreen);
 	const uint32_t frameIndex = ctx.GetFrameIndex();
 	Execute(ctx, commandBuffer, frameIndex);
 }

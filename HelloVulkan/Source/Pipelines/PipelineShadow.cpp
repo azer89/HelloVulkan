@@ -92,6 +92,8 @@ void PipelineShadow::UpdateShadow(VulkanContext& ctx, ResourcesShadow* resShadow
 
 void PipelineShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
+	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "Render_Shadow_Map", tracy::Color::OrangeRed);
+
 	uint32_t frameIndex = ctx.GetFrameIndex();
 	renderPass_.BeginRenderPass(
 		ctx, 

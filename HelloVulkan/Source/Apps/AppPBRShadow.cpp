@@ -83,8 +83,8 @@ void AppPBRShadow::Init()
 	{
 		// Must be in order
 		clearPtr_.get(),
-		shadowPtr_.get(),
 		skyboxPtr_.get(),
+		shadowPtr_.get(),
 		pbrPtr_.get(),
 		lightPtr_.get(),
 		resolveMSPtr_.get(),

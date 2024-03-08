@@ -102,7 +102,7 @@ void AppBase::InitGLFW()
 
 void AppBase::DrawFrame()
 {
-	ZoneScopedC(tracy::Color::Aqua);
+	//ZoneScopedC(tracy::Color::Aqua);
 
 	FrameData& frameData = vulkanContext_.GetCurrentFrameData();
 
@@ -194,6 +194,9 @@ void AppBase::FillCommandBuffer(VkCommandBuffer commandBuffer)
 	{
 		pip->FillCommandBuffer(vulkanContext_, commandBuffer);
 	}
+
+	// Tracy
+	TracyVkCollect(vulkanContext_.GetTracyContext(), commandBuffer);
 
 	VK_CHECK(vkEndCommandBuffer(commandBuffer));
 }
