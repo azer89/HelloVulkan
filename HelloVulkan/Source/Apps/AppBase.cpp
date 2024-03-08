@@ -102,6 +102,8 @@ void AppBase::InitGLFW()
 
 void AppBase::DrawFrame()
 {
+	ZoneScopedC(tracy::Color::Aqua);
+
 	FrameData& frameData = vulkanContext_.GetCurrentFrameData();
 
 	vkWaitForFences(vulkanContext_.GetDevice(), 1, &(frameData.queueSubmitFence_), VK_TRUE, UINT64_MAX);
@@ -165,6 +167,8 @@ void AppBase::DrawFrame()
 
 	// Do this after the end of the draw
 	vulkanContext_.IncrementFrameIndex();
+
+	FrameMark;
 }
 
 void AppBase::UpdateUI()
