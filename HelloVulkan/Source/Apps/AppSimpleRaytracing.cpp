@@ -1,4 +1,5 @@
 #include "AppSimpleRaytracing.h"
+#include "Scene.h"
 
 #include "imgui_impl_volk.h"
 
@@ -10,8 +11,15 @@ void AppSimpleRaytracing::Init()
 {
 	// Initialize attachments
 	InitSharedResources();
+
+	// Scene
+	std::vector<std::string> modelFiles = {
+		AppConfig::ModelFolder + "Dragon//Dragon.obj"
+	};
+	scene_ = std::make_unique<Scene>(vulkanContext_, modelFiles);
+
 	clearPtr_ = std::make_unique<PipelineClear>(vulkanContext_);
-	rtxPtr_ = std::make_unique<PipelineSimpleRaytracing>(vulkanContext_);
+	rtxPtr_ = std::make_unique<PipelineSimpleRaytracing>(vulkanContext_, scene_.get());
 	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	finishPtr_ = std::make_unique<PipelineFinish>(vulkanContext_);
 
@@ -47,6 +55,8 @@ void AppSimpleRaytracing::UpdateUI()
 
 void AppSimpleRaytracing::DestroyResources()
 {
+	scene_.reset();
+
 	clearPtr_.reset();
 	finishPtr_.reset();
 	imguiPtr_.reset();
