@@ -2,6 +2,7 @@
 #include "AccelStructure.h"
 #include "VulkanUtility.h"
 
+// TODO Currently can only handle a single vertex buffer
 void RaytracingBuilder::CreateBLAS(VulkanContext& ctx, 
 	const VulkanBuffer& vertexBuffer,
 	const VulkanBuffer& indexBuffer,
@@ -119,7 +120,7 @@ void RaytracingBuilder::CreateBLAS(VulkanContext& ctx,
 
 void RaytracingBuilder::CreateTLAS(VulkanContext& ctx, 
 	VkTransformMatrixKHR& transformMatrix,
-	const AccelStructure* blas,
+	uint64_t blasDeviceAddress,
 	AccelStructure* tlas)
 {
 	VkAccelerationStructureInstanceKHR instance =
@@ -129,7 +130,7 @@ void RaytracingBuilder::CreateTLAS(VulkanContext& ctx,
 		.mask = 0xFF,
 		.instanceShaderBindingTableRecordOffset = 0,
 		.flags = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR,
-		.accelerationStructureReference = blas->deviceAddress_
+		.accelerationStructureReference = blasDeviceAddress
 	};
 
 	VulkanBuffer instancesBuffer;

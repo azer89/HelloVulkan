@@ -20,7 +20,7 @@ public:
 
 	static void CreateTLAS(VulkanContext& ctx, 
 		VkTransformMatrixKHR& transformMatrix,
-		const AccelStructure* blas,
+		uint64_t blasDeviceAddress,
 		AccelStructure* tlas);
 };
 
