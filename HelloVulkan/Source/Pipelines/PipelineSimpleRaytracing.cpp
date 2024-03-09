@@ -321,6 +321,10 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 		0.0f, 0.0f, 1.0f, 0.0f
 	};
 
+	uint32_t triangleCount = static_cast<uint32_t>(vertices.size()) / 3u;
+	uint32_t vertexCount = static_cast<uint32_t>(indices.size());
+	VkDeviceSize vertexStride = sizeof(Vertex);
+
 	/*vertexBuffer_.CreateBufferWithShaderDeviceAddress(
 		ctx,
 		scene_->vertices_.size() * sizeof(VertexData),
@@ -364,10 +368,6 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 	/*uint32_t triangleCount = scene_->vertices_.size();
 	uint32_t vertexCount = static_cast<uint32_t>(scene_->indices_.size()) / 3;
 	VkDeviceSize vertexStride = sizeof(VertexData);*/
-
-	uint32_t triangleCount = 3u;
-	uint32_t vertexCount = 9u;
-	VkDeviceSize vertexStride = sizeof(Vertex);
 
 	RaytracingBuilder::CreateBLAS(
 		ctx,
