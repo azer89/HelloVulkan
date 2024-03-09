@@ -5,7 +5,7 @@ A real-time rendering engine built from scratch using Vulkan API and C++.
 ### Features
 * __Clustered forward shading__.
 * __Physically-Based Rendering__ (PBR) with Cook-Torrance BRDF.
-* __Image-Based Lighting__ (IBL) with offscreen pipelines that generate:
+* __Image-Based Lighting__ (IBL) with offscreen pipelines to generate:
     * A cubemap from an equirectangular HDR image.
     * Specular and diffuse cubemaps.
 * Compute shader to generate BRDF lookup table.
@@ -14,9 +14,10 @@ A real-time rendering engine built from scratch using Vulkan API and C++.
 * Reinhard tonemap postprocessing.
 * glTF mesh/texture loading and rendering.
 * Multisample anti-aliasing (MSAA).
+* Simple __raytracing__ pipeline.
 * Automatic runtime compilation from GLSL to SPIR-V using `glslang`.
 * A a lightweight abstraction layer that encapsulates Vulkan API for rapid prototyping/development.
-* Minor features: Basic raytracing pipeline, skybox, instancing, ImGui, SSBOs, UBOs, and push constants.
+* Minor features: skybox, instancing, ImGui, SSBOs, UBOs, and push constants.
 
 ### Gallery
 
@@ -28,7 +29,7 @@ The images below shows a demo of PBR, IBL, bindless textures, and PCF shadow map
 
 Bindless textures is achieved by utilizing __Descriptor Indexing__. This enables the storage of all scene textures inside an unbounded array, which allows the texture descriptors to be bound once at the start of a frame. 
 
-The rendering also uses __Draw Indirect__, which requires the vertices of all 3D objects to be stored inside a single buffer. This is also known as vertex pulling.
+Additionally, the vertices of all 3D objects are stored inside a single buffer, which also bound in the beginning of the frame. This is known as vertex pulling.
 
 </br>
 </br>
@@ -53,6 +54,11 @@ https://github.com/azer89/HelloVulkan/assets/790432/13a4426f-deec-40f5-816a-5594
 The rendering above uses four cascades which allow the shadows to be much sharper. Additionally, Poisson disk sampling is used to blur out projective aliasing. However, excessive blurring causes more noticeable seams between the cascades. There is also an issue of the shimmering edge effect because the shadow maps constantly changing everytime the camera is moved.
 
 On the right image above, each individual cascade is color coded.
+
+### Hardware Raytracing
+<img width="425" alt="hardware_raytracing" src="https://github.com/azer89/HelloVulkan/assets/790432/7f6771b3-ab52-41c4-89d4-b3bed05e724e">
+
+A simple raytracing pipeline has also been added to the engine. This process begins with the creation of BLAS and TLAS. Subsequently, a single ray is generated for each pixel, followed by an intersection test to determine the color of the pixel. Note that light bouncing functionality is not currently implemented.
 
 ### [Link to some other cool results](https://github.com/azer89/HelloVulkan/wiki/Gallery)
 

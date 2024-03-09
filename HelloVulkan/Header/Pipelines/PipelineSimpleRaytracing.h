@@ -2,17 +2,19 @@
 #define PIPELINE_SIMPLE_RAYTRACING
 
 #include "PipelineBase.h"
-#include "VulkanAccelStructure.h"
+#include "AccelStructure.h"
 #include "VulkanBuffer.h"
 #include "VulkanImage.h"
 #include "Configs.h"
 
 #include <array>
 
+class Scene;
+
 class PipelineSimpleRaytracing final : public PipelineBase
 {
 public:
-	PipelineSimpleRaytracing(VulkanContext& ctx);
+	PipelineSimpleRaytracing(VulkanContext& ctx, Scene* scene);
 	~PipelineSimpleRaytracing();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
@@ -46,8 +48,9 @@ private:
 	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;
 
 	// Acceleration structures
-	VulkanAccelStructure blas_;
-	VulkanAccelStructure tlas_;
+	Scene* scene_;
+	AccelStructure blas_;
+	AccelStructure tlas_;
 	VulkanBuffer vertexBuffer_;
 	VulkanBuffer indexBuffer_;
 	VulkanBuffer transformBuffer_;

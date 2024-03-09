@@ -12,6 +12,8 @@
 // STL
 #include <memory>
 
+class Scene;
+
 class AppSimpleRaytracing final : AppBase
 {
 public:
@@ -29,6 +31,8 @@ private:
 	std::unique_ptr<PipelineFinish> finishPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
 	std::unique_ptr<PipelineSimpleRaytracing> rtxPtr_;
+
+	std::unique_ptr<Scene> scene_;
 };
 
 #endif
