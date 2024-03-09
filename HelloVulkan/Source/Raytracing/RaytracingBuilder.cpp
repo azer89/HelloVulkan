@@ -3,9 +3,9 @@
 #include "VulkanUtility.h"
 
 void RaytracingBuilder::CreateBLAS(VulkanContext& ctx, 
-	const VulkanBuffer* vertexBuffer,
-	const VulkanBuffer* indexBuffer,
-	const VulkanBuffer* transformBuffer,
+	const VulkanBuffer& vertexBuffer,
+	const VulkanBuffer& indexBuffer,
+	const VulkanBuffer& transformBuffer,
 	uint32_t triangleCount,
 	uint32_t vertexCount,
 	VkDeviceSize vertexStride,
@@ -15,9 +15,9 @@ void RaytracingBuilder::CreateBLAS(VulkanContext& ctx,
 	VkDeviceOrHostAddressConstKHR indexBufferDeviceAddress{};
 	VkDeviceOrHostAddressConstKHR transformBufferDeviceAddress{};
 
-	vertexBufferDeviceAddress.deviceAddress = vertexBuffer->deviceAddress_;
-	indexBufferDeviceAddress.deviceAddress = indexBuffer->deviceAddress_;
-	transformBufferDeviceAddress.deviceAddress = transformBuffer->deviceAddress_;
+	vertexBufferDeviceAddress.deviceAddress = vertexBuffer.deviceAddress_;
+	indexBufferDeviceAddress.deviceAddress = indexBuffer.deviceAddress_;
+	transformBufferDeviceAddress.deviceAddress = transformBuffer.deviceAddress_;
 
 	// Build
 	VkAccelerationStructureGeometryKHR accelerationStructureGeometry =

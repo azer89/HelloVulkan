@@ -342,9 +342,9 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 
 	RaytracingBuilder::CreateBLAS(
 		ctx,
-		&vertexBuffer_,
-		&indexBuffer_,
-		&transformBuffer_,
+		vertexBuffer_,
+		indexBuffer_,
+		transformBuffer_,
 		triangleCount,
 		vertexCount,
 		vertexStride,

@@ -10,9 +10,9 @@ class RaytracingBuilder
 {
 public:
 	static void CreateBLAS(VulkanContext& ctx, 
-		const VulkanBuffer* vertexBuffer,
-		const VulkanBuffer* indexBuffer,
-		const VulkanBuffer* transformBuffer,
+		const VulkanBuffer& vertexBuffer,
+		const VulkanBuffer& indexBuffer,
+		const VulkanBuffer& transformBuffer,
 		uint32_t triangleCount,
 		uint32_t vertexCount,
 		VkDeviceSize vertexStride,
