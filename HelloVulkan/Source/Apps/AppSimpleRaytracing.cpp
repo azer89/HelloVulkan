@@ -47,8 +47,7 @@ void AppSimpleRaytracing::UpdateUI()
 	}
 
 	imguiPtr_->ImGuiStart();
-	ImGui::SetNextWindowSize(ImVec2(525, 250));
-	imguiPtr_->ImGuiSetWindow("Raytracing", 525, 200);
+	imguiPtr_->ImGuiSetWindow("Raytracing", 525, 150);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 	imguiPtr_->ImGuiEnd();
 }

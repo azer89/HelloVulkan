@@ -21,61 +21,61 @@ void RaytracingBuilder::CreateBLAS(VulkanContext& ctx,
 	transformBufferDeviceAddress.deviceAddress = transformBuffer.deviceAddress_;
 
 	// Build
-	VkAccelerationStructureGeometryKHR accelerationStructureGeometry =
+	VkAccelerationStructureGeometryKHR accelStructureGeometry =
 	{
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR,
 		.geometryType = VK_GEOMETRY_TYPE_TRIANGLES_KHR,
 		.flags = VK_GEOMETRY_OPAQUE_BIT_KHR
 	};
-	accelerationStructureGeometry.geometry.triangles.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR;
-	accelerationStructureGeometry.geometry.triangles.vertexFormat = VK_FORMAT_R32G32B32_SFLOAT;
-	accelerationStructureGeometry.geometry.triangles.vertexData = vertexBufferDeviceAddress;
-	accelerationStructureGeometry.geometry.triangles.maxVertex = vertexCount - 1; // Highest index
-	accelerationStructureGeometry.geometry.triangles.vertexStride = vertexStride;
-	accelerationStructureGeometry.geometry.triangles.indexType = VK_INDEX_TYPE_UINT32;
-	accelerationStructureGeometry.geometry.triangles.indexData = indexBufferDeviceAddress;
-	accelerationStructureGeometry.geometry.triangles.transformData.deviceAddress = 0;
-	accelerationStructureGeometry.geometry.triangles.transformData.hostAddress = nullptr;
-	accelerationStructureGeometry.geometry.triangles.transformData = transformBufferDeviceAddress;
+	accelStructureGeometry.geometry.triangles.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR;
+	accelStructureGeometry.geometry.triangles.vertexFormat = VK_FORMAT_R32G32B32_SFLOAT;
+	accelStructureGeometry.geometry.triangles.vertexData = vertexBufferDeviceAddress;
+	accelStructureGeometry.geometry.triangles.maxVertex = vertexCount - 1; // Highest index
+	accelStructureGeometry.geometry.triangles.vertexStride = vertexStride;
+	accelStructureGeometry.geometry.triangles.indexType = VK_INDEX_TYPE_UINT32;
+	accelStructureGeometry.geometry.triangles.indexData = indexBufferDeviceAddress;
+	accelStructureGeometry.geometry.triangles.transformData.deviceAddress = 0;
+	accelStructureGeometry.geometry.triangles.transformData.hostAddress = nullptr;
+	accelStructureGeometry.geometry.triangles.transformData = transformBufferDeviceAddress;
 
 	// Get size info
-	VkAccelerationStructureBuildGeometryInfoKHR accelerationStructureBuildGeometryInfo =
+	VkAccelerationStructureBuildGeometryInfoKHR accelStructureBuildGeometryInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR,
 		.type = VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR,
 		.flags = VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR,
 		.geometryCount = 1,
-		.pGeometries = &accelerationStructureGeometry
+		.pGeometries = &accelStructureGeometry
 	};
 
-	VkAccelerationStructureBuildSizesInfoKHR accelerationStructureBuildSizesInfo{};
-	accelerationStructureBuildSizesInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR;
+	VkAccelerationStructureBuildSizesInfoKHR accelStructureBuildSizesInfo{};
+	accelStructureBuildSizesInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR;
 	vkGetAccelerationStructureBuildSizesKHR(
 		ctx.GetDevice(),
 		VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR,
-		&accelerationStructureBuildGeometryInfo,
+		&accelStructureBuildGeometryInfo,
 		&triangleCount,
-		&accelerationStructureBuildSizesInfo);
+		&accelStructureBuildSizesInfo);
 
-	blas->Create(ctx, accelerationStructureBuildSizesInfo);
+	blas->Create(ctx, accelStructureBuildSizesInfo);
 
-	VkAccelerationStructureCreateInfoKHR accelerationStructureCreateInfo =
+	VkAccelerationStructureCreateInfoKHR accelStructureCreateInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR,
 		.buffer = blas->buffer_,
-		.size = accelerationStructureBuildSizesInfo.accelerationStructureSize,
+		.size = accelStructureBuildSizesInfo.accelerationStructureSize,
 		.type = VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR
 	};
-	VK_CHECK(vkCreateAccelerationStructureKHR(ctx.GetDevice(), &accelerationStructureCreateInfo, nullptr, &(blas->handle_)));
+	VK_CHECK(vkCreateAccelerationStructureKHR(ctx.GetDevice(), &accelStructureCreateInfo, nullptr, &(blas->handle_)));
 
 	// Create a small scratch buffer used during build of the bottom level acceleration structure
 	VulkanBuffer scratchBuffer;
 	scratchBuffer.CreateBufferWithShaderDeviceAddress(ctx,
-		accelerationStructureBuildSizesInfo.buildScratchSize,
+		accelStructureBuildSizesInfo.buildScratchSize,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VMA_MEMORY_USAGE_GPU_ONLY);
 
-	VkAccelerationStructureBuildGeometryInfoKHR accelerationBuildGeometryInfo =
+	VkAccelerationStructureBuildGeometryInfoKHR accelBuildGeometryInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR,
 		.type = VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR,
@@ -83,19 +83,19 @@ void RaytracingBuilder::CreateBLAS(VulkanContext& ctx,
 		.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR,
 		.dstAccelerationStructure = blas->handle_,
 		.geometryCount = 1,
-		.pGeometries = &accelerationStructureGeometry
+		.pGeometries = &accelStructureGeometry
 	};
-	accelerationBuildGeometryInfo.scratchData.deviceAddress = scratchBuffer.deviceAddress_;
+	accelBuildGeometryInfo.scratchData.deviceAddress = scratchBuffer.deviceAddress_;
 
-	VkAccelerationStructureBuildRangeInfoKHR accelerationStructureBuildRangeInfo =
+	VkAccelerationStructureBuildRangeInfoKHR accelStructureBuildRangeInfo =
 	{
 		.primitiveCount = triangleCount,
 		.primitiveOffset = 0,
 		.firstVertex = 0,
 		.transformOffset = 0,
 	};
-	std::vector<VkAccelerationStructureBuildRangeInfoKHR*> accelerationBuildStructureRangeInfos =
-	{ &accelerationStructureBuildRangeInfo };
+	std::vector<VkAccelerationStructureBuildRangeInfoKHR*> accelBuildStructureRangeInfos =
+	{ &accelStructureBuildRangeInfo };
 
 	// Build the acceleration structure on the device via a one-time command buffer submission
 	// Some implementations may support acceleration structure building on the host (VkPhysicalDeviceAccelerationStructureFeaturesKHR->accelerationStructureHostCommands), 
@@ -104,8 +104,8 @@ void RaytracingBuilder::CreateBLAS(VulkanContext& ctx,
 	vkCmdBuildAccelerationStructuresKHR(
 		commandBuffer,
 		1,
-		&accelerationBuildGeometryInfo,
-		accelerationBuildStructureRangeInfos.data());
+		&accelBuildGeometryInfo,
+		accelBuildStructureRangeInfos.data());
 	ctx.EndOneTimeGraphicsCommand(commandBuffer);
 
 	VkAccelerationStructureDeviceAddressInfoKHR accelerationDeviceAddressInfo =
@@ -145,15 +145,15 @@ void RaytracingBuilder::CreateTLAS(VulkanContext& ctx,
 		.deviceAddress = instancesBuffer.deviceAddress_
 	};
 
-	VkAccelerationStructureGeometryKHR accelerationStructureGeometry =
+	VkAccelerationStructureGeometryKHR accelStructureGeometry =
 	{
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR,
 		.geometryType = VK_GEOMETRY_TYPE_INSTANCES_KHR,
 		.flags = VK_GEOMETRY_OPAQUE_BIT_KHR
 	};
-	accelerationStructureGeometry.geometry.instances.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_INSTANCES_DATA_KHR;
-	accelerationStructureGeometry.geometry.instances.arrayOfPointers = VK_FALSE;
-	accelerationStructureGeometry.geometry.instances.data = instanceDataDeviceAddress;
+	accelStructureGeometry.geometry.instances.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_INSTANCES_DATA_KHR;
+	accelStructureGeometry.geometry.instances.arrayOfPointers = VK_FALSE;
+	accelStructureGeometry.geometry.instances.data = instanceDataDeviceAddress;
 
 	// Get size info
 	/*
@@ -162,50 +162,50 @@ void RaytracingBuilder::CreateTLAS(VulkanContext& ctx,
 	the hostAddress member of VkAccelerationStructureGeometryTrianglesDataKHR::transformData will
 	be examined to check if it is NULL.
 	*/
-	VkAccelerationStructureBuildGeometryInfoKHR accelerationStructureBuildGeometryInfo =
+	VkAccelerationStructureBuildGeometryInfoKHR accelStructureBuildGeometryInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR,
 		.type = VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR,
 		.flags = VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR,
 		.geometryCount = 1,
-		.pGeometries = &accelerationStructureGeometry
+		.pGeometries = &accelStructureGeometry
 	};
 	uint32_t primitive_count = 1;
 
-	VkAccelerationStructureBuildSizesInfoKHR accelerationStructureBuildSizesInfo =
+	VkAccelerationStructureBuildSizesInfoKHR accelStructureBuildSizesInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR
 	};
 	vkGetAccelerationStructureBuildSizesKHR(
 		ctx.GetDevice(),
 		VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR,
-		&accelerationStructureBuildGeometryInfo,
+		&accelStructureBuildGeometryInfo,
 		&primitive_count,
-		&accelerationStructureBuildSizesInfo);
+		&accelStructureBuildSizesInfo);
 
-	tlas->Create(ctx, accelerationStructureBuildSizesInfo);
+	tlas->Create(ctx, accelStructureBuildSizesInfo);
 
-	VkAccelerationStructureCreateInfoKHR accelerationStructureCreateInfo =
+	VkAccelerationStructureCreateInfoKHR accelStructureCreateInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR,
 		.buffer = tlas->buffer_,
-		.size = accelerationStructureBuildSizesInfo.accelerationStructureSize,
+		.size = accelStructureBuildSizesInfo.accelerationStructureSize,
 		.type = VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR
 	};
 	VK_CHECK(vkCreateAccelerationStructureKHR(
 		ctx.GetDevice(), 
-		&accelerationStructureCreateInfo, 
+		&accelStructureCreateInfo, 
 		nullptr, 
 		&(tlas->handle_)));
 
 	// Create a small scratch buffer used during build of the top level acceleration structure
 	VulkanBuffer scratchBuffer;
 	scratchBuffer.CreateBufferWithShaderDeviceAddress(ctx,
-		accelerationStructureBuildSizesInfo.buildScratchSize,
+		accelStructureBuildSizesInfo.buildScratchSize,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VMA_MEMORY_USAGE_GPU_ONLY);
 
-	VkAccelerationStructureBuildGeometryInfoKHR accelerationBuildGeometryInfo =
+	VkAccelerationStructureBuildGeometryInfoKHR accelBuildGeometryInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR,
 		.type = VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR,
@@ -213,18 +213,18 @@ void RaytracingBuilder::CreateTLAS(VulkanContext& ctx,
 		.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR,
 		.dstAccelerationStructure = tlas->handle_,
 		.geometryCount = 1,
-		.pGeometries = &accelerationStructureGeometry,
+		.pGeometries = &accelStructureGeometry,
 	};
-	accelerationBuildGeometryInfo.scratchData.deviceAddress = scratchBuffer.deviceAddress_;
+	accelBuildGeometryInfo.scratchData.deviceAddress = scratchBuffer.deviceAddress_;
 
-	VkAccelerationStructureBuildRangeInfoKHR accelerationStructureBuildRangeInfo =
+	VkAccelerationStructureBuildRangeInfoKHR accelStructureBuildRangeInfo =
 	{
 		.primitiveCount = 1,
 		.primitiveOffset = 0,
 		.firstVertex = 0,
 		.transformOffset = 0,
 	};
-	std::vector<VkAccelerationStructureBuildRangeInfoKHR*> accelerationBuildStructureRangeInfos = { &accelerationStructureBuildRangeInfo };
+	std::vector<VkAccelerationStructureBuildRangeInfoKHR*> accelerationBuildStructureRangeInfos = { &accelStructureBuildRangeInfo };
 
 	// Build the acceleration structure on the device via a one-time command buffer submission
 	// Some implementations may support acceleration structure building on the host (VkPhysicalDeviceAccelerationStructureFeaturesKHR->accelerationStructureHostCommands), 
@@ -233,7 +233,7 @@ void RaytracingBuilder::CreateTLAS(VulkanContext& ctx,
 	vkCmdBuildAccelerationStructuresKHR(
 		commandBuffer,
 		1,
-		&accelerationBuildGeometryInfo,
+		&accelBuildGeometryInfo,
 		accelerationBuildStructureRangeInfos.data());
 	ctx.EndOneTimeGraphicsCommand(commandBuffer);
 

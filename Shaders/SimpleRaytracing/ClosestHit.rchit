@@ -11,7 +11,7 @@ layout(set = 0, binding = 3) readonly buffer Vertices { VertexData vertices []; 
 layout(set = 0, binding = 4) readonly buffer Indices { uint indices []; }; // SSBO
 
 const vec3 LIGHT_POS = vec3(-1.5, 0.7, 1.5);
-const vec3 DEFAULT_COLOR = vec3(1.0, 0.2, 0.2);
+const vec3 DEFAULT_COLOR = vec3(0.447, 0.741, 0.639);
 
 void main()
 {
