@@ -213,6 +213,7 @@
     <ClInclude Include="Header\Pipelines\PipelineTonemap.h" />
     <ClInclude Include="Header\PushConstants.h" />
     <ClInclude Include="Header\Raytracing\AccelStructure.h" />
+    <ClInclude Include="Header\Raytracing\RaytracingBuilder.h" />
     <ClInclude Include="Header\Resources\ResourcesLight.h" />
     <ClInclude Include="Header\Resources\ResourcesClusterForward.h" />
     <ClInclude Include="Header\Resources\ResourcesIBL.h" />
@@ -266,6 +267,7 @@
     <ClCompile Include="Source\Pipelines\PipelineSkybox.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineTonemap.cpp" />
     <ClCompile Include="Source\Raytracing\AccelStructure.cpp" />
+    <ClCompile Include="Source\Raytracing\RaytracingBuilder.cpp" />
     <ClCompile Include="Source\Resources\ResourcesLight.cpp" />
     <ClCompile Include="Source\Resources\ResourcesClusterForward.cpp" />
     <ClCompile Include="Source\Resources\ResourcesIBL.cpp" />

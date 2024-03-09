@@ -293,7 +293,7 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 	// Setup vertices for a single triangle
 	struct Vertex
 	{
-		float pos[3];
+		float pos[5];
 	};
 	std::vector<Vertex> vertices = {
 		{ {  1.0f, -1.0f, 0.0f } },
@@ -335,6 +335,10 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 	);
 	transformBuffer_.UploadBufferData(ctx, &transformMatrix, sizeof(VkTransformMatrixKHR));
 
+	uint32_t triangleCount = 1u;
+	uint32_t vertexCount = 3u;
+	VkDeviceSize vertexStride = sizeof(Vertex);
+
 	VkDeviceOrHostAddressConstKHR vertexBufferDeviceAddress{};
 	VkDeviceOrHostAddressConstKHR indexBufferDeviceAddress{};
 	VkDeviceOrHostAddressConstKHR transformBufferDeviceAddress{};
@@ -353,8 +357,8 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 	accelerationStructureGeometry.geometry.triangles.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR;
 	accelerationStructureGeometry.geometry.triangles.vertexFormat = VK_FORMAT_R32G32B32_SFLOAT;
 	accelerationStructureGeometry.geometry.triangles.vertexData = vertexBufferDeviceAddress;
-	accelerationStructureGeometry.geometry.triangles.maxVertex = 2; // Highest index
-	accelerationStructureGeometry.geometry.triangles.vertexStride = sizeof(Vertex);
+	accelerationStructureGeometry.geometry.triangles.maxVertex = vertexCount - 1; // Highest index
+	accelerationStructureGeometry.geometry.triangles.vertexStride = vertexStride;
 	accelerationStructureGeometry.geometry.triangles.indexType = VK_INDEX_TYPE_UINT32;
 	accelerationStructureGeometry.geometry.triangles.indexData = indexBufferDeviceAddress;
 	accelerationStructureGeometry.geometry.triangles.transformData.deviceAddress = 0;
@@ -371,14 +375,13 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 		.pGeometries = &accelerationStructureGeometry
 	};
 
-	const uint32_t numTriangles = 1;
 	VkAccelerationStructureBuildSizesInfoKHR accelerationStructureBuildSizesInfo{};
 	accelerationStructureBuildSizesInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR;
 	vkGetAccelerationStructureBuildSizesKHR(
 		ctx.GetDevice(),
 		VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR,
 		&accelerationStructureBuildGeometryInfo,
-		&numTriangles,
+		&triangleCount,
 		&accelerationStructureBuildSizesInfo);
 
 	blas_.Create(ctx, accelerationStructureBuildSizesInfo);
@@ -413,7 +416,7 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 
 	VkAccelerationStructureBuildRangeInfoKHR accelerationStructureBuildRangeInfo =
 	{
-		.primitiveCount = numTriangles,
+		.primitiveCount = triangleCount,
 		.primitiveOffset = 0,
 		.firstVertex = 0,
 		.transformOffset = 0,
