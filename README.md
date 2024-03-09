@@ -14,7 +14,7 @@ A real-time rendering engine built from scratch using Vulkan API and C++.
 * Reinhard tonemap postprocessing.
 * glTF mesh/texture loading and rendering.
 * Multisample anti-aliasing (MSAA).
-* Simple raytracing pipeline.
+* Simple __raytracing__ pipeline.
 * Automatic runtime compilation from GLSL to SPIR-V using `glslang`.
 * A a lightweight abstraction layer that encapsulates Vulkan API for rapid prototyping/development.
 * Minor features: skybox, instancing, ImGui, SSBOs, UBOs, and push constants.
