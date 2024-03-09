@@ -293,7 +293,7 @@ void PipelineSimpleRaytracing::CreateRayTracingPipeline(VulkanContext& ctx)
 void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 {
 	// Setup vertices for a single triangle
-	struct Vertex
+	/*struct Vertex
 	{
 		float pos[3];
 	};
@@ -325,22 +325,6 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 	uint32_t vertexCount = static_cast<uint32_t>(indices.size());
 	VkDeviceSize vertexStride = sizeof(Vertex);
 
-	/*vertexBuffer_.CreateBufferWithShaderDeviceAddress(
-		ctx,
-		scene_->vertices_.size() * sizeof(VertexData),
-		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
-		VMA_MEMORY_USAGE_CPU_TO_GPU
-	);
-	vertexBuffer_.UploadBufferData(ctx, scene_->vertices_.data(), scene_->vertices_.size() * sizeof(VertexData));
-
-	indexBuffer_.CreateBufferWithShaderDeviceAddress(
-		ctx,
-		scene_->indices_.size() * sizeof(uint32_t),
-		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
-		VMA_MEMORY_USAGE_CPU_TO_GPU
-	);
-	indexBuffer_.UploadBufferData(ctx, scene_->indices_.data(), scene_->indices_.size() * sizeof(uint32_t));
-	*/
 	vertexBuffer_.CreateBufferWithShaderDeviceAddress(
 		ctx,
 		vertices.size() * sizeof(Vertex),
@@ -356,7 +340,42 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 		VMA_MEMORY_USAGE_CPU_TO_GPU
 	);
 	indexBuffer_.UploadBufferData(ctx, indices.data(), indices.size() * sizeof(uint32_t));
+
+	transformBuffer_.CreateBufferWithShaderDeviceAddress(
+		ctx,
+		sizeof(VkTransformMatrixKHR),
+	VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
+		VMA_MEMORY_USAGE_CPU_TO_GPU
+	);
+	transformBuffer_.UploadBufferData(ctx, &transformMatrix, sizeof(VkTransformMatrixKHR));*/
 	
+	// Setup identity transform matrix
+	VkTransformMatrixKHR transformMatrix = {
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f
+	};
+	
+	uint32_t triangleCount = static_cast<uint32_t>(scene_->indices_.size()) / 3;
+	uint32_t vertexCount = static_cast<uint32_t>(scene_->vertices_.size());
+	VkDeviceSize vertexStride = sizeof(VertexData);
+	
+	vertexBuffer_.CreateBufferWithShaderDeviceAddress(
+		ctx,
+		scene_->vertices_.size() * sizeof(VertexData),
+		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
+		VMA_MEMORY_USAGE_CPU_TO_GPU
+	);
+	vertexBuffer_.UploadBufferData(ctx, scene_->vertices_.data(), scene_->vertices_.size() * sizeof(VertexData));
+
+	indexBuffer_.CreateBufferWithShaderDeviceAddress(
+		ctx,
+		scene_->indices_.size() * sizeof(uint32_t),
+		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
+		VMA_MEMORY_USAGE_CPU_TO_GPU
+	);
+	indexBuffer_.UploadBufferData(ctx, scene_->indices_.data(), scene_->indices_.size() * sizeof(uint32_t));
+
 	transformBuffer_.CreateBufferWithShaderDeviceAddress(
 		ctx,
 		sizeof(VkTransformMatrixKHR),
@@ -364,10 +383,6 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 		VMA_MEMORY_USAGE_CPU_TO_GPU
 	);
 	transformBuffer_.UploadBufferData(ctx, &transformMatrix, sizeof(VkTransformMatrixKHR));
-
-	/*uint32_t triangleCount = scene_->vertices_.size();
-	uint32_t vertexCount = static_cast<uint32_t>(scene_->indices_.size()) / 3;
-	VkDeviceSize vertexStride = sizeof(VertexData);*/
 
 	RaytracingBuilder::CreateBLAS(
 		ctx,
