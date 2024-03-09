@@ -10,15 +10,18 @@ class RaytracingBuilder
 {
 public:
 	static void CreateBLAS(VulkanContext& ctx, 
-		VulkanBuffer* vertexBuffer,
-		VulkanBuffer* indexBuffer,
-		VulkanBuffer* transformBuffer,
+		const VulkanBuffer* vertexBuffer,
+		const VulkanBuffer* indexBuffer,
+		const VulkanBuffer* transformBuffer,
 		uint32_t triangleCount,
 		uint32_t vertexCount,
 		VkDeviceSize vertexStride,
 		AccelStructure* blas);
 
-	static void CreateTLAS(VulkanContext& ctx, AccelStructure* tlas);
+	static void CreateTLAS(VulkanContext& ctx, 
+		VkTransformMatrixKHR& transformMatrix,
+		const AccelStructure* blas,
+		AccelStructure* tlas);
 };
 
 #endif
