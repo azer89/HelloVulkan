@@ -144,6 +144,8 @@ void PipelineSimpleRaytracing::CreateDescriptor(VulkanContext& ctx)
 	descriptorInfo_.AddAccelerationStructure();
 	descriptorInfo_.AddImage(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
 	descriptorInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
+	descriptorInfo_.AddBuffer(&(scene_->vertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
+	descriptorInfo_.AddBuffer(&(scene_->indexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
 
 	// Create pool and layout
 	descriptor_.CreatePoolAndLayout(ctx, descriptorInfo_, frameCount, 1u);
@@ -169,6 +171,7 @@ void PipelineSimpleRaytracing::UpdateDescriptor(VulkanContext& ctx)
 	descriptorInfo_.UpdateAccelerationStructure(&asInfo, 0);
 
 	descriptorInfo_.UpdateStorageImage(&storageImage_, 1);
+
 	constexpr auto frameCount = AppConfig::FrameOverlapCount;
 	for (size_t i = 0; i < frameCount; i++)
 	{
