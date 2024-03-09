@@ -1,4 +1,5 @@
 #include "PipelineSimpleRaytracing.h"
+#include "RaytracingBuilder.h"
 #include "VulkanShader.h"
 #include "VulkanUtility.h"
 #include "Configs.h"
@@ -339,7 +340,17 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 	uint32_t vertexCount = 3u;
 	VkDeviceSize vertexStride = sizeof(Vertex);
 
-	VkDeviceOrHostAddressConstKHR vertexBufferDeviceAddress{};
+	RaytracingBuilder::CreateBLAS(
+		ctx,
+		&vertexBuffer_,
+		&indexBuffer_,
+		&transformBuffer_,
+		triangleCount,
+		vertexCount,
+		vertexStride,
+		&blas_);
+
+	/*VkDeviceOrHostAddressConstKHR vertexBufferDeviceAddress{};
 	VkDeviceOrHostAddressConstKHR indexBufferDeviceAddress{};
 	VkDeviceOrHostAddressConstKHR transformBufferDeviceAddress{};
 
@@ -442,7 +453,7 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 	};
 	blas_.deviceAddress_ = vkGetAccelerationStructureDeviceAddressKHR(ctx.GetDevice(), &accelerationDeviceAddressInfo);
 
-	scratchBuffer.Destroy();
+	scratchBuffer.Destroy();*/
 }
 
 void PipelineSimpleRaytracing::CreateTLAS(VulkanContext& ctx)
