@@ -4,10 +4,11 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-struct PushConstVIM
+struct VIMData
 {
-	uint64_t vertexBufferAddress;
-	uint64_t indexBufferAddress;
+	uint64_t vertexBufferAddress; // V
+	uint64_t indexBufferAddress; // I
+	uint64_t meshDataBufferAddress; // M
 };
 
 PipelineShadow::PipelineShadow(
@@ -54,7 +55,7 @@ PipelineShadow::PipelineShadow(
 	{ {
 		.stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
 		.offset = 0u,
-		.size = sizeof(PushConstVIM),
+		.size = sizeof(VIMData),
 	} };
 
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, ranges);
@@ -117,15 +118,18 @@ void PipelineShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comma
 		resShadow_->shadowMap_.height_);
 	BindPipeline(ctx, commandBuffer);
 
-	PushConstVIM pc = { 
+	// TODO Move this to constructor
+	VIMData pc = {
 		.vertexBufferAddress = scene_->vertexBuffer_.deviceAddress_,
-		.indexBufferAddress = scene_->indexBuffer_.deviceAddress_};
+		.indexBufferAddress = scene_->indexBuffer_.deviceAddress_,
+		.meshDataBufferAddress = scene_->meshDataBuffer_.deviceAddress_
+	};
 	vkCmdPushConstants(
 		commandBuffer,
 		pipelineLayout_,
 		VK_SHADER_STAGE_VERTEX_BIT,
 		0,
-		sizeof(PushConstVIM), &pc);
+		sizeof(VIMData), &pc);
 
 	vkCmdBindDescriptorSets(
 		commandBuffer,
@@ -160,8 +164,8 @@ void PipelineShadow::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 1
 	//dsInfo.AddBuffer(&(scene_->vertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 2
-	dsInfo.AddBuffer(&(scene_->indexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 3
-	dsInfo.AddBuffer(&(scene_->meshDataBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
+	//dsInfo.AddBuffer(&(scene_->indexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 3
+	//dsInfo.AddBuffer(&(scene_->meshDataBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
 
 	// Pool and layout
 	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
