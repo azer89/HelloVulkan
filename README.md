@@ -15,7 +15,7 @@ A real-time rendering engine built from scratch using Vulkan API and C++.
 * glTF mesh/texture loading and rendering.
 * Multisample anti-aliasing (MSAA).
 * Simple __raytracing__ pipeline.
-* __Buffer device address__, shaders can now has direct access to buffers without creating descriptors.
+* __Buffer device address__, shaders now has direct access to buffers without creating descriptors.
 * Automatic runtime compilation from GLSL to SPIR-V using `glslang`.
 * A a lightweight abstraction layer that encapsulates Vulkan API for rapid prototyping/development.
 * Minor features: skybox, instancing, ImGui, SSBOs, UBOs, and push constants.
