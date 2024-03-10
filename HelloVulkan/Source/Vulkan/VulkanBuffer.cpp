@@ -98,7 +98,7 @@ void VulkanBuffer::CreateGPUOnlyBuffer
 	VulkanContext& ctx,
 	VkDeviceSize bufferSize_,
 	const void* bufferData,
-	VkMemoryPropertyFlags flags
+	VkBufferUsageFlags bufferUsage
 )
 {
 	VulkanBuffer stagingBuffer;
@@ -117,7 +117,7 @@ void VulkanBuffer::CreateGPUOnlyBuffer
 	CreateBuffer(
 		ctx,
 		bufferSize_,
-		flags,
+		bufferUsage,
 		VMA_MEMORY_USAGE_GPU_ONLY); // TODO Deprecated flag
 	CopyFrom(ctx, stagingBuffer.buffer_, bufferSize_);
 

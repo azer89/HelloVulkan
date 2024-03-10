@@ -66,7 +66,7 @@ public:
 		VulkanContext& ctx,
 		VkDeviceSize bufferSize_,
 		const void* bufferData,
-		VkMemoryPropertyFlags flags
+		VkBufferUsageFlags bufferUsage
 	);
 
 	void CopyFrom(
