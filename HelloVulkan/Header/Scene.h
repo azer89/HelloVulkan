@@ -3,6 +3,7 @@
 
 #include "Model.h"
 #include "UBOs.h"
+#include "VIM.h"
 
 #include <vector>
 #include <string>
@@ -28,6 +29,16 @@ public:
 	void UpdateModelMatrix(VulkanContext& ctx,
 		const ModelUBO& modelUBO,
 		uint32_t modelIndex);
+
+	VIM GetVIM() const
+	{
+		return
+		{
+			.vertexBufferAddress = vertexBuffer_.deviceAddress_,
+			.indexBufferAddress = indexBuffer_.deviceAddress_,
+			.meshDataBufferAddress = meshDataBuffer_.deviceAddress_
+		};
+	}
 
 private:
 	void CreateBindlessTextureResources(VulkanContext& ctx);

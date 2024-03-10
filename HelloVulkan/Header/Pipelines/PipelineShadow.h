@@ -2,6 +2,7 @@
 #define PIPELINE_SHADOW_MAPPING
 
 #include "PipelineBase.h"
+#include "VIM.h"
 
 class Scene;
 struct ResourcesShadow;
@@ -24,6 +25,7 @@ private:
 	void CreateDescriptor(VulkanContext& ctx);
 
 private:
+	VIM vim_;
 	Scene* scene_;
 	ResourcesShadow* resShadow_;
 

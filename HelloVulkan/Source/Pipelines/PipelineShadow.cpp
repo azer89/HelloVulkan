@@ -4,13 +4,6 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-struct VIMData
-{
-	uint64_t vertexBufferAddress; // V
-	uint64_t indexBufferAddress; // I
-	uint64_t meshDataBufferAddress; // M
-};
-
 PipelineShadow::PipelineShadow(
 	VulkanContext& ctx,
 	Scene* scene,
@@ -20,7 +13,6 @@ PipelineShadow::PipelineShadow(
 			// Depth only and offscreen
 			.type_ = PipelineType::GraphicsOffScreen,
 
-			// If you use bindless texture, make sure this is false
 			.vertexBufferBind_ = false,
 
 			// Render using shadow map dimension
@@ -29,7 +21,8 @@ PipelineShadow::PipelineShadow(
 			.viewportHeight_ = static_cast<float>(resShadow->shadowMap_.height_)
 		}),
 	scene_(scene),
-	resShadow_(resShadow)
+	resShadow_(resShadow),
+	vim_(scene->GetVIM())
 {
 	CreateMultipleUniformBuffers(ctx, shadowMapUBOBuffers_, sizeof(ShadowMapUBO), AppConfig::FrameOverlapCount);
 
@@ -55,7 +48,7 @@ PipelineShadow::PipelineShadow(
 	{ {
 		.stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
 		.offset = 0u,
-		.size = sizeof(VIMData),
+		.size = sizeof(VIM),
 	} };
 
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, ranges);
@@ -118,18 +111,12 @@ void PipelineShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comma
 		resShadow_->shadowMap_.height_);
 	BindPipeline(ctx, commandBuffer);
 
-	// TODO Move this to constructor
-	VIMData pc = {
-		.vertexBufferAddress = scene_->vertexBuffer_.deviceAddress_,
-		.indexBufferAddress = scene_->indexBuffer_.deviceAddress_,
-		.meshDataBufferAddress = scene_->meshDataBuffer_.deviceAddress_
-	};
 	vkCmdPushConstants(
 		commandBuffer,
 		pipelineLayout_,
 		VK_SHADER_STAGE_VERTEX_BIT,
 		0,
-		sizeof(VIMData), &pc);
+		sizeof(VIM), &vim_);
 
 	vkCmdBindDescriptorSets(
 		commandBuffer,
@@ -163,9 +150,6 @@ void PipelineShadow::CreateDescriptor(VulkanContext& ctx)
 	VulkanDescriptorInfo dsInfo;
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 1
-	//dsInfo.AddBuffer(&(scene_->vertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 2
-	//dsInfo.AddBuffer(&(scene_->indexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 3
-	//dsInfo.AddBuffer(&(scene_->meshDataBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
 
 	// Pool and layout
 	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);

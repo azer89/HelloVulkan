@@ -183,6 +183,9 @@
     <None Include="..\Shaders\IBL\BRDFLUT.comp">
       <Filter>Shaders\IBL</Filter>
     </None>
+    <None Include="..\Shaders\Bindless\VIM.glsl">
+      <Filter>Shaders\Bindless</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Camera.h">
@@ -349,6 +352,9 @@
     </ClInclude>
     <ClInclude Include="Header\Raytracing\RaytracingBuilder.h">
       <Filter>Header Files\Raytracing</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\VIM.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
