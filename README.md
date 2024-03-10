@@ -15,6 +15,7 @@ A real-time rendering engine built from scratch using Vulkan API and C++.
 * glTF mesh/texture loading and rendering.
 * Multisample anti-aliasing (MSAA).
 * Simple __raytracing__ pipeline.
+* __Buffer device address__, shaders can now has direct access to buffers without creating descriptors.
 * Automatic runtime compilation from GLSL to SPIR-V using `glslang`.
 * A a lightweight abstraction layer that encapsulates Vulkan API for rapid prototyping/development.
 * Minor features: skybox, instancing, ImGui, SSBOs, UBOs, and push constants.
@@ -27,9 +28,7 @@ The images below shows a demo of PBR, IBL, bindless textures, and PCF shadow map
 
 <img width="850" alt="bindless_shadow_mapping_2" src="https://github.com/azer89/HelloVulkan/assets/790432/7111e3f7-51e2-47fa-9fad-a0a19b4a1f1b">
 
-Bindless textures is achieved by utilizing __Descriptor Indexing__. This enables the storage of all scene textures inside an unbounded array, which allows the texture descriptors to be bound once at the start of a frame. 
-
-Additionally, the vertices of all 3D objects are stored inside a single buffer, which also bound in the beginning of the frame. This is known as vertex pulling.
+Bindless textures is achieved by utilizing __Descriptor Indexing__. This enables the storage of all scene textures inside an unbounded array, which allows the texture descriptors to be bound once at the start of a frame. To push the "bindless" approach further, the rendering uses a feature called __buffer device address__. Instead of creating descriptors, these device addresses act as _pointers_ so that the shaders can directly access the required buffers.
 
 </br>
 </br>
