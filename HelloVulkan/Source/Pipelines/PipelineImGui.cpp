@@ -6,10 +6,7 @@
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
-
-// Known issue when using both ImGui and volk
-// https://github.com/ocornut/imgui/issues/4854
-#include "imgui_impl_volk.h"
+#include "imgui_impl_vulkan.h"
 
 PipelineImGui::PipelineImGui(
 	VulkanContext& ctx,

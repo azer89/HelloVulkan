@@ -6,8 +6,7 @@
 #include "ResourcesIBL.h"
 
 #include "glm/gtc/matrix_transform.hpp"
-
-#include "imgui_impl_volk.h"
+#include "imgui_impl_vulkan.h"
 
 AppPBRSlotBased::AppPBRSlotBased() :
 	modelRotation_(0.f)
