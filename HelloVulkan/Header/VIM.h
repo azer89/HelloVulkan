@@ -1,7 +1,7 @@
 #ifndef VERTEX_INDEX_MESH
 #define VERTEX_INDEX_MESH
 
-#include "glm/glm.hpp"
+#include <cstdint>
 
 struct VIM
 {
