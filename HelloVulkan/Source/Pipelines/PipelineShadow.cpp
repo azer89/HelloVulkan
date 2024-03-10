@@ -4,6 +4,11 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+struct PushConstShadow
+{
+	uint64_t vertexBufferAddress;
+};
+
 PipelineShadow::PipelineShadow(
 	VulkanContext& ctx,
 	Scene* scene,
@@ -43,7 +48,15 @@ PipelineShadow::PipelineShadow(
 
 	CreateDescriptor(ctx);
 
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
+	// Push constants
+	std::vector<VkPushConstantRange> ranges =
+	{ {
+		.stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+		.offset = 0u,
+		.size = sizeof(PushConstShadow),
+	} };
+
+	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, ranges);
 
 	CreateGraphicsPipeline(
 		ctx,
@@ -102,6 +115,14 @@ void PipelineShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comma
 		resShadow_->shadowMap_.width_,
 		resShadow_->shadowMap_.height_);
 	BindPipeline(ctx, commandBuffer);
+
+	PushConstShadow pc = { .vertexBufferAddress = scene_->vertexBuffer_.deviceAddress_ };
+	vkCmdPushConstants(
+		commandBuffer,
+		pipelineLayout_,
+		VK_SHADER_STAGE_VERTEX_BIT,
+		0,
+		sizeof(PushConstShadow), &pc);
 
 	vkCmdBindDescriptorSets(
 		commandBuffer,

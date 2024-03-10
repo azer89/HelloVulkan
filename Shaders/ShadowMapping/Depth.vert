@@ -1,4 +1,5 @@
 #version 460 core
+#extension GL_EXT_buffer_reference : require
 
 // ShadowMapping/Depth.vert 
 
@@ -6,6 +7,22 @@
 #include <ShadowMapping//UBO.glsl>
 #include <Bindless//VertexData.glsl>
 #include <Bindless//MeshData.glsl>
+
+//layout(std430, buffer_reference, buffer_reference_align = 4) readonly buffer VertexDataBlock
+//{
+//	VertexData vertex;
+//};
+
+layout(std430, buffer_reference, buffer_reference_align = 4) readonly buffer VertexDataArray
+{
+	VertexData vertexArray[];
+};
+
+layout(push_constant) uniform Registers
+{
+	VertexDataArray vertexReference;
+};
+//registers;
 
 layout(set = 0, binding = 0) uniform UBOBlock { ShadowUBO shadowUBO; };
 layout(set = 0, binding = 1) readonly buffer ModelUBOs { ModelUBO modelUBOs []; }; // SSBO
@@ -19,7 +36,10 @@ void main()
 	uint vOffset = meshData.vertexOffset;
 	uint iOffset = meshData.indexOffset;
 	uint vIndex = indices[iOffset + gl_VertexIndex] + vOffset;
-	VertexData vertexData = vertices[vIndex];
+
+	restrict VertexData vertexData = vertexReference.vertexArray[vIndex];
+
+	//VertexData vertexData = vertices[vIndex];
 	mat4 model = modelUBOs[meshData.modelMatrixIndex].model;
 
 	// Output
