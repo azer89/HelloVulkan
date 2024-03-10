@@ -4,7 +4,8 @@
 
 #include <iostream>
 
-Scene::Scene(VulkanContext& ctx, const std::vector<std::string>& modelFilenames)
+Scene::Scene(VulkanContext& ctx, const std::vector<std::string>& modelFilenames, bool supportDeviceAddress) :
+	supportDeviceAddress_(supportDeviceAddress)
 {
 	uint32_t vertexOffset = 0u;
 	uint32_t indexOffset = 0u;
@@ -58,13 +59,20 @@ void Scene::CreateBindlessTextureResources(VulkanContext& ctx)
 		meshDataArray_.data(), 
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT);
 	
+	// Support for bindless rendering
+	VkBufferUsageFlags bufferUsage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+	if (supportDeviceAddress_)
+	{
+		bufferUsage != VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT;
+	}
+
 	// Vertices
 	const VkDeviceSize vertexBufferSize = static_cast<VkDeviceSize>(sizeof(VertexData) * vertices_.size());
 	vertexBuffer_.CreateGPUOnlyBuffer(
 		ctx,
 		vertexBufferSize,
 		vertices_.data(),
-		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT);
+		bufferUsage);
 
 	// Indices
 	const VkDeviceSize indexBufferSize = static_cast<VkDeviceSize>(sizeof(uint32_t) * indices_.size());
@@ -72,7 +80,7 @@ void Scene::CreateBindlessTextureResources(VulkanContext& ctx)
 		ctx,
 		indexBufferSize,
 		indices_.data(),
-		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT);
+		bufferUsage);
 
 	// ModelUBO which is actually an SSBO
 	const std::vector<ModelUBO> initModelUBOs(models_.size(), { .model = glm::mat4(1.0f) });

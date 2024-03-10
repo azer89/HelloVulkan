@@ -45,7 +45,10 @@ struct FrameData
 
 struct ContextConfig
 {
+	// If raytracing is enabled then buffer device address is also enabled
 	bool supportRaytracing_ = false;
+
+	bool suportBufferDeviceAddress_ = false;
 	
 	// This can be disabled but validation layer will complain a little bit
 	bool supportMSAA_ = true;
@@ -102,7 +105,7 @@ public:
 	VkQueue GetComputeQueue() const { return computeQueue_; }
 	VkFormat GetDepthFormat() const { return depthFormat_; };
 	VmaAllocator GetVMAAllocator() const { return vmaAllocator_; }
-	
+
 	// Raytracing getters
 	VkPhysicalDeviceRayTracingPipelinePropertiesKHR GetRayTracingPipelineProperties() const { return rtPipelineProperties_; }
 
@@ -200,10 +203,13 @@ private:
 
 	ContextConfig config_;
 
+	// Raytracing and bindless
+	VkPhysicalDeviceBufferDeviceAddressFeatures deviceAddressEnabledFeatures_;
+
 	// Raytracing
 	VkPhysicalDeviceRayTracingPipelinePropertiesKHR rtPipelineProperties_;
 	VkPhysicalDeviceAccelerationStructureFeaturesKHR rtASFeatures_;
-	VkPhysicalDeviceBufferDeviceAddressFeatures rtDevAddressEnabledFeatures_;
+	
 	VkPhysicalDeviceRayTracingPipelineFeaturesKHR rtPipelineEnabledFeatures_;
 	VkPhysicalDeviceAccelerationStructureFeaturesKHR rtASEnabledFeatures;
 

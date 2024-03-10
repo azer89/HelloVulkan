@@ -81,10 +81,16 @@ void VulkanContext::AllocateVMA(VulkanInstance& instance)
 		.vkGetDeviceProcAddr = vkGetDeviceProcAddr,
 	};
 
+	VmaAllocatorCreateFlags flags = 0u;
+	if (config_.supportRaytracing_ || config_.suportBufferDeviceAddress_)
+	{
+		// Activate buffer address
+		flags |= VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT;
+	}
+
 	const VmaAllocatorCreateInfo allocatorInfo =
 	{
-		// Only activate buffer address if raytracing is on
-		.flags = config_.supportRaytracing_ ? VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT : 0u,
+		.flags = flags,
 		.physicalDevice = physicalDevice_,
 		.device = device_,
 		.pVulkanFunctions = (const VmaVulkanFunctions*)&vulkanFunctions,
@@ -157,19 +163,24 @@ void VulkanContext::ChainFeatures()
 		chainPtr = &descriptorIndexingFeatures_;
 	}
 
-	if (config_.supportRaytracing_)
+	if (config_.supportRaytracing_ || config_.suportBufferDeviceAddress_)
 	{
-		rtDevAddressEnabledFeatures_ =
+		deviceAddressEnabledFeatures_ =
 		{
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES,
 			.pNext = chainPtr,
 			.bufferDeviceAddress = VK_TRUE
 		};
 
+		chainPtr = &deviceAddressEnabledFeatures_;
+	}
+
+	if (config_.supportRaytracing_)
+	{
 		rtPipelineEnabledFeatures_ =
 		{
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR,
-			.pNext = &rtDevAddressEnabledFeatures_,
+			.pNext = chainPtr,
 			.rayTracingPipeline = VK_TRUE,
 		};
 

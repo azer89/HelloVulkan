@@ -14,7 +14,7 @@ that contains huge SSBO buffers for vertices, indices, and mesh data.
 class Scene
 {
 public:
-	Scene(VulkanContext& ctx, const std::vector<std::string>& modelFilenames);
+	Scene(VulkanContext& ctx, const std::vector<std::string>& modelFilenames, bool supportDeviceAddress = false);
 	~Scene();
 
 	uint32_t GetMeshCount() const { return static_cast<uint32_t>(meshDataArray_.size()); }
@@ -46,6 +46,9 @@ public:
 	std::vector<VulkanBuffer> modelSSBOBuffers_;
 
 	std::vector<Model> models_ = {};
+
+private:
+	bool supportDeviceAddress_;
 };
 
 #endif
