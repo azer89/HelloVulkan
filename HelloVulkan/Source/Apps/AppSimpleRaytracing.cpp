@@ -1,7 +1,7 @@
 #include "AppSimpleRaytracing.h"
 #include "Scene.h"
 
-#include "imgui_impl_volk.h"
+#include "imgui_impl_vulkan.h"
 
 AppSimpleRaytracing::AppSimpleRaytracing()
 {
