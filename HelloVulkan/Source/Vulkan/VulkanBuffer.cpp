@@ -36,6 +36,17 @@ void VulkanBuffer::CreateBuffer(
 		&buffer_, 
 		&vmaAllocation_,
 		&vmaInfo_));
+
+	if (bufferUsage & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT)
+	{
+		VkBufferDeviceAddressInfoKHR bufferDeviceAddressInfo =
+		{
+			.sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO,
+			.buffer = buffer_
+		};
+
+		deviceAddress_ = vkGetBufferDeviceAddressKHR(ctx.GetDevice(), &bufferDeviceAddressInfo);
+	}
 }
 
 void VulkanBuffer::CreateIndirectBuffer(
@@ -84,13 +95,13 @@ void VulkanBuffer::CreateBufferWithShaderDeviceAddress(VulkanContext& ctx,
 		memoryUsage,
 		flags);
 
-	VkBufferDeviceAddressInfoKHR bufferDeviceAddressInfo =
+	/*VkBufferDeviceAddressInfoKHR bufferDeviceAddressInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO,
 		.buffer = buffer_
 	};
 
-	deviceAddress_ = vkGetBufferDeviceAddressKHR(ctx.GetDevice(), &bufferDeviceAddressInfo);
+	deviceAddress_ = vkGetBufferDeviceAddressKHR(ctx.GetDevice(), &bufferDeviceAddressInfo);*/
 }
 
 void VulkanBuffer::CreateGPUOnlyBuffer

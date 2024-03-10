@@ -233,23 +233,27 @@ void VulkanContext::CreateDevice()
 	if (config_.supportBindlessTextures_)
 	{
 		extensions.push_back(VK_KHR_MAINTENANCE3_EXTENSION_NAME);
-		extensions.push_back(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
 		extensions.push_back(VK_KHR_DRAW_INDIRECT_COUNT_EXTENSION_NAME);
 		// Used for gl_BaseInstance but deprecated
 		//extensions.push_back(VK_KHR_SHADER_DRAW_PARAMETERS_EXTENSION_NAME);
+	}
+
+	if (config_.suportBufferDeviceAddress_ || config_.supportRaytracing_)
+	{
+		extensions.push_back(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME);
+	}
+
+	if (config_.supportBindlessTextures_ || config_.supportRaytracing_)
+	{
+		extensions.push_back(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
 	}
 
 	if (config_.supportRaytracing_)
 	{
 		extensions.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);
 		extensions.push_back(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME);
-		// Required by VK_KHR_acceleration_structure
-		extensions.push_back(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME);
 		extensions.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);
-		extensions.push_back(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
-		// Required for VK_KHR_ray_tracing_pipeline
 		extensions.push_back(VK_KHR_SPIRV_1_4_EXTENSION_NAME);
-		// Required by VK_KHR_spirv_1_4
 		extensions.push_back(VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME);
 	}
 
