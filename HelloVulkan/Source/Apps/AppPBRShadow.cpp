@@ -35,7 +35,8 @@ void AppPBRShadow::Init()
 		AppConfig::ModelFolder + "Tachikoma//Tachikoma.gltf",
 		AppConfig::ModelFolder + "Hexapod//Hexapod.gltf"
 	};
-	scene_ = std::make_unique<Scene>(vulkanContext_, modelFiles);
+	bool supportDeviceAddress = true;
+	scene_ = std::make_unique<Scene>(vulkanContext_, modelFiles, supportDeviceAddress);
 
 	// Model matrix for Tachikoma
 	glm::mat4 modelMatrix(1.f);
@@ -216,6 +217,7 @@ void AppPBRShadow::MainLoop()
 {
 	InitVulkan({
 		.supportRaytracing_ = false,
+		.suportBufferDeviceAddress_ = true,
 		.supportMSAA_ = true
 	});
 	Init();

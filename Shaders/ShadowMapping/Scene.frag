@@ -1,5 +1,6 @@
 #version 460 core
 #extension GL_EXT_nonuniform_qualifier : require
+#extension GL_EXT_buffer_reference : require
 
 // www.khronos.org/opengl/wiki/Early_Fragment_Test 
 //layout(early_fragment_tests) in;
@@ -12,17 +13,20 @@ Fragment shader for
 	* Naive forward shading (non clustered)
 	* Shadow mapping
 	* Bindless textures
+	* Buffer device address
 */
 
 // Include files
 #include <CameraUBO.glsl>
-#include <Bindless//MeshData.glsl>
-#include <ShadowMapping//UBO.glsl>
 #include <LightData.glsl>
 #include <PBRHeader.glsl>
 #include <PBRPushConstants.glsl>
 #include <Hammersley.glsl>
 #include <TangentNormalToWorld.glsl>
+#include <Bindless//VertexData.glsl>
+#include <Bindless//MeshData.glsl>
+#include <ShadowMapping//UBO.glsl>
+#include <Bindless//VIM.glsl>
 
 layout(location = 0) in vec3 worldPos;
 layout(location = 1) in vec2 texCoord;
@@ -36,25 +40,27 @@ layout(push_constant) uniform PC { PBRPushConstant pc; };
 
 layout(set = 0, binding = 0) uniform CameraBlock { CameraUBO camUBO; }; // UBO
 layout(set = 0, binding = 1) uniform UBOBlock { ShadowUBO shadowUBO; }; // UBO
-layout(set = 0, binding = 5) readonly buffer Meshes { MeshData meshes []; }; // SSBO
-layout(set = 0, binding = 6) readonly buffer Lights { LightData lights []; }; // SSBO
-layout(set = 0, binding = 7) uniform samplerCube specularMap;
-layout(set = 0, binding = 8) uniform samplerCube diffuseMap;
-layout(set = 0, binding = 9) uniform sampler2D brdfLUT;
-layout(set = 0, binding = 10) uniform sampler2D shadowMap;
+layout(set = 0, binding = 3) uniform VIMBlock { VIM vim; };
+layout(set = 0, binding = 4) readonly buffer Lights { LightData lights []; }; // SSBO
+layout(set = 0, binding = 5) uniform samplerCube specularMap;
+layout(set = 0, binding = 6) uniform samplerCube diffuseMap;
+layout(set = 0, binding = 7) uniform sampler2D brdfLUT;
+layout(set = 0, binding = 8) uniform sampler2D shadowMap;
 
 // NOTE This requires descriptor indexing feature
-layout(set = 0, binding = 11) uniform sampler2D pbrTextures[];
+layout(set = 0, binding = 9) uniform sampler2D pbrTextures[];
 
 // PCF or Poisson
 #include <ShadowMapping//Filter.glsl>
 
+// PBR and IBL
 #include <Radiance.glsl>
 #include <Ambient.glsl>
 
 void main()
 {
-	MeshData mData = meshes[meshIndex];
+	// This uses buffer device address
+	MeshData mData = vim.meshReference.meshes[meshIndex];
 
 	vec4 albedo4 = texture(pbrTextures[nonuniformEXT(mData.albedo)], texCoord).rgba;
 

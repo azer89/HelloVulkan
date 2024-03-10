@@ -81,10 +81,16 @@ void VulkanContext::AllocateVMA(VulkanInstance& instance)
 		.vkGetDeviceProcAddr = vkGetDeviceProcAddr,
 	};
 
+	VmaAllocatorCreateFlags flags = 0u;
+	if (config_.supportRaytracing_ || config_.suportBufferDeviceAddress_)
+	{
+		// Activate buffer address
+		flags |= VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT;
+	}
+
 	const VmaAllocatorCreateInfo allocatorInfo =
 	{
-		// Only activate buffer address if raytracing is on
-		.flags = config_.supportRaytracing_ ? VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT : 0u,
+		.flags = flags,
 		.physicalDevice = physicalDevice_,
 		.device = device_,
 		.pVulkanFunctions = (const VmaVulkanFunctions*)&vulkanFunctions,
@@ -157,19 +163,24 @@ void VulkanContext::ChainFeatures()
 		chainPtr = &descriptorIndexingFeatures_;
 	}
 
-	if (config_.supportRaytracing_)
+	if (config_.supportRaytracing_ || config_.suportBufferDeviceAddress_)
 	{
-		rtDevAddressEnabledFeatures_ =
+		deviceAddressEnabledFeatures_ =
 		{
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES,
 			.pNext = chainPtr,
 			.bufferDeviceAddress = VK_TRUE
 		};
 
+		chainPtr = &deviceAddressEnabledFeatures_;
+	}
+
+	if (config_.supportRaytracing_)
+	{
 		rtPipelineEnabledFeatures_ =
 		{
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR,
-			.pNext = &rtDevAddressEnabledFeatures_,
+			.pNext = chainPtr,
 			.rayTracingPipeline = VK_TRUE,
 		};
 
@@ -222,23 +233,27 @@ void VulkanContext::CreateDevice()
 	if (config_.supportBindlessTextures_)
 	{
 		extensions.push_back(VK_KHR_MAINTENANCE3_EXTENSION_NAME);
-		extensions.push_back(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
 		extensions.push_back(VK_KHR_DRAW_INDIRECT_COUNT_EXTENSION_NAME);
 		// Used for gl_BaseInstance but deprecated
 		//extensions.push_back(VK_KHR_SHADER_DRAW_PARAMETERS_EXTENSION_NAME);
+	}
+
+	if (config_.suportBufferDeviceAddress_ || config_.supportRaytracing_)
+	{
+		extensions.push_back(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME);
+	}
+
+	if (config_.supportBindlessTextures_ || config_.supportRaytracing_)
+	{
+		extensions.push_back(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
 	}
 
 	if (config_.supportRaytracing_)
 	{
 		extensions.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);
 		extensions.push_back(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME);
-		// Required by VK_KHR_acceleration_structure
-		extensions.push_back(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME);
 		extensions.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);
-		extensions.push_back(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
-		// Required for VK_KHR_ray_tracing_pipeline
 		extensions.push_back(VK_KHR_SPIRV_1_4_EXTENSION_NAME);
-		// Required by VK_KHR_spirv_1_4
 		extensions.push_back(VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME);
 	}
 

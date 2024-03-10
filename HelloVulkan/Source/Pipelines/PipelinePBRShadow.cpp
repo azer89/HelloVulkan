@@ -54,6 +54,8 @@ PipelinePBRShadow::PipelinePBRShadow(
 		}, 
 		IsOffscreen());
 
+	PrepareVIM(ctx);
+
 	CreateDescriptor(ctx);
 
 	// Push constants
@@ -89,6 +91,8 @@ PipelinePBRShadow::~PipelinePBRShadow()
 	{
 		buffer.Destroy();
 	}
+
+	vimBuffer_.Destroy();
 }
 
 void PipelinePBRShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
@@ -127,6 +131,19 @@ void PipelinePBRShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer co
 	vkCmdEndRenderPass(commandBuffer);
 }
 
+void PipelinePBRShadow::PrepareVIM(VulkanContext& ctx)
+{
+	VIM vim = scene_->GetVIM();
+	VkDeviceSize vimSize = sizeof(VIM);
+	vimBuffer_.CreateBuffer(
+		ctx,
+		vimSize,
+		VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+		VMA_MEMORY_USAGE_CPU_TO_GPU
+	);
+	vimBuffer_.UploadBufferData(ctx, &vim, vimSize);
+}
+
 void PipelinePBRShadow::CreateDescriptor(VulkanContext& ctx)
 {
 	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
@@ -135,16 +152,14 @@ void PipelinePBRShadow::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 1
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 2
 
-	dsInfo.AddBuffer(&(scene_->vertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 3
-	dsInfo.AddBuffer(&(scene_->indexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
-	dsInfo.AddBuffer(&(scene_->meshDataBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 5
-	dsInfo.AddBuffer(resLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 6
+	dsInfo.AddBuffer(&vimBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 3
+	dsInfo.AddBuffer(resLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
 
-	dsInfo.AddImage(&(iblResources_->specularCubemap_)); // 7
-	dsInfo.AddImage(&(iblResources_->diffuseCubemap_)); // 8
-	dsInfo.AddImage(&(iblResources_->brdfLut_)); // 9
-	dsInfo.AddImage(&(resShadow_->shadowMap_)); // 10
-	dsInfo.AddImageArray(scene_->GetImageInfos()); // 11
+	dsInfo.AddImage(&(iblResources_->specularCubemap_)); // 5
+	dsInfo.AddImage(&(iblResources_->diffuseCubemap_)); // 6
+	dsInfo.AddImage(&(iblResources_->brdfLut_)); // 7
+	dsInfo.AddImage(&(resShadow_->shadowMap_)); // 8
+	dsInfo.AddImageArray(scene_->GetImageInfos()); // 9
 
 	// Pool and layout
 	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
