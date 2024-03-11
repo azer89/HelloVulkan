@@ -15,4 +15,6 @@ struct VIM
 	VertexArray vertexReference;
 	IndexArray indexReference;
 	MeshDataArray meshReference;
+	uint _pad1;
+	uint _pad2;
 };
