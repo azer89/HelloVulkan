@@ -35,7 +35,7 @@ PipelineLine::PipelineLine(
 	);
 
 	ProcessScene(ctx);
-	/*CreateDescriptor(ctx);
+	CreateDescriptor(ctx);
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
 	CreateGraphicsPipeline(ctx,
 		renderPass_.GetHandle(),
@@ -45,7 +45,7 @@ PipelineLine::PipelineLine(
 			AppConfig::ShaderFolder + "Line.frag",
 		},
 		&pipeline_
-		);*/
+	);
 }
 
 PipelineLine::~PipelineLine()
@@ -63,6 +63,7 @@ void PipelineLine::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer command
 
 void PipelineLine::ProcessScene(VulkanContext& ctx)
 {
+	// Build bounding boxes
 	for (size_t i = 0; i < scene_->boundingBoxes_.size(); ++i)
 	{
 		const MeshData& mData = scene_->meshDataArray_[i];
@@ -73,6 +74,15 @@ void PipelineLine::ProcessScene(VulkanContext& ctx)
 			0.5f * glm::vec3(box.max_ - box.min_), // size
 			BOX_COLOR);
 	}
+
+	// Create buffer
+	VkDeviceSize bufferSize = lineDataArray_.size() * sizeof(PointColor);
+	lineBuffer_.CreateBuffer(
+		ctx,
+		bufferSize,
+		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+		VMA_MEMORY_USAGE_CPU_TO_GPU);
+	lineBuffer_.UploadBufferData(ctx, lineDataArray_.data(), bufferSize);
 }
 
 void PipelineLine::AddBox(const glm::mat4& mat, const glm::vec3& size, const glm::vec4& color)
@@ -117,4 +127,12 @@ void PipelineLine::AddLine(const glm::vec3& p1, const glm::vec3& p2, const glm::
 
 void PipelineLine::CreateDescriptor(VulkanContext& ctx)
 {
+	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
+
+	VulkanDescriptorInfo dsInfo;
+
+	for (size_t i = 0; i < frameCount; ++i)
+	{
+
+	}
 }

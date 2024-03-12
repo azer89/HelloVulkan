@@ -189,6 +189,9 @@
     <None Include="..\Shaders\Line.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\Shaders\LightData.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Camera.h">

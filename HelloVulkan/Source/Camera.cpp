@@ -3,7 +3,7 @@
 
 // WARNING Need to set GLM_FORCE_DEPTH_ZERO_TO_ONE in the vcxproj config
 #include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
+#include "glm/ext.hpp"
 
 Camera::Camera(
 	glm::vec3 position, 

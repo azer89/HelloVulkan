@@ -6,7 +6,7 @@
 #include "ResourcesShadow.h"
 #include "ResourcesIBL.h"
 
-#include "glm/gtc/matrix_transform.hpp"
+#include "glm/ext.hpp"
 #include "imgui_impl_vulkan.h"
 
 AppPBRShadow::AppPBRShadow()
