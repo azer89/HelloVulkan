@@ -154,7 +154,6 @@
     <None Include="..\Shaders\IBL\CubeFilterDiffuse.frag" />
     <None Include="..\Shaders\IBL\CubeFilterSpecular.frag" />
     <None Include="..\Shaders\IBL\Equirect2Cube.frag" />
-    <None Include="..\Shaders\LightData.glsl" />
     <None Include="..\Shaders\Line.frag" />
     <None Include="..\Shaders\Line.vert" />
     <None Include="..\Shaders\ModelUBO.glsl" />

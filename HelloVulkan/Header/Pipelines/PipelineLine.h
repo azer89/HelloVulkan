@@ -3,6 +3,7 @@
 
 #include "PipelineBase.h"
 #include "VulkanBuffer.h"
+#include "BoundingBox.h"
 #include "Configs.h"
 
 #include <array>
@@ -11,7 +12,7 @@
 class Scene;
 struct ResourcesShared;
 
-struct LineData
+struct PointColor
 {
 	glm::vec4 position;
 	glm::vec4 color;
@@ -33,12 +34,14 @@ public:
 
 private:
 	void CreateDescriptor(VulkanContext& ctx);
-	void CreateLines(VulkanContext& ctx);
+	void ProcessScene(VulkanContext& ctx);
+	void AddBox(const glm::mat4& mat, const glm::vec3& size, const glm::vec4& color);
+	void AddLine(const glm::vec3& p1, const glm::vec3& p2, const glm::vec4& color);
 
 private:
 	bool shouldRender_;
 	Scene* scene_;
-	std::vector<LineData> lineDataArray_;
+	std::vector<PointColor> lineDataArray_;
 	VulkanBuffer lineBuffer_;
 	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;
 };
