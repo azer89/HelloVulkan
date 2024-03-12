@@ -22,5 +22,5 @@ void main()
 	mat4 model = modelUBOs[meshData.modelMatrixIndex].model;
 
 	// Output
-	gl_Position = shadowUBO.lightSpaceMatrix * model * vertexData.position;
+	gl_Position = shadowUBO.lightSpaceMatrix * model * vec4(vertexData.position, 1.0);
 }

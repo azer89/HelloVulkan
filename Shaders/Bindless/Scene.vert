@@ -30,9 +30,9 @@ void main()
 	mat3 normalMatrix = transpose(inverse(mat3(model)));
 
 	// Output
-	worldPos = (model * vertexData.position).xyz;
-	texCoord = vertexData.uv.xy;
-	normal = normalMatrix * vertexData.normal.xyz;
+	worldPos = (model * vec4(vertexData.position, 1.0)).xyz;
+	texCoord = vec2(vertexData.uvX,vertexData.uvY);
+	normal = normalMatrix * vertexData.normal;
 	meshIndex = gl_BaseInstance;
 	gl_Position =  camUBO.projection * camUBO.view * vec4(worldPos, 1.0);
 }
