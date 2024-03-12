@@ -3,7 +3,7 @@
 
 #include "glm/ext.hpp"
 
-BoundingBox::BoundingBox(const glm::vec3& min, const glm::vec3& max) : 
+/*BoundingBox::BoundingBox(const glm::vec3& min, const glm::vec3& max) :
 	min_(glm::min(min, max)), 
 	max_(glm::max(min, max))
 {
@@ -21,7 +21,7 @@ BoundingBox::BoundingBox(const VertexData* vertices, size_t vertextCount)
 	}
 	min_ = vmin;
 	max_ = vmax;
-}
+}*/
 
 BoundingBox::BoundingBox(const glm::vec3* points, size_t pointCount)
 {
@@ -30,7 +30,6 @@ BoundingBox::BoundingBox(const glm::vec3* points, size_t pointCount)
 
 	for (size_t i = 0; i != pointCount; i++)
 	{
-		// TODO Remove casting from v4 to vec3
 		vmin = glm::min(vmin, points[i]);
 		vmax = glm::max(vmax, points[i]);
 	}

@@ -36,7 +36,6 @@ public:
 private:
 	void CreateBindlessTextureResources(VulkanContext& ctx);
 	void BuildBoundingBoxes(VulkanContext& ctx);
-	void UpdateBoundingBox(VulkanContext& ctx);
 
 public:
 	std::vector<MeshData> meshDataArray_ = {};
@@ -52,6 +51,7 @@ public:
 	VulkanBuffer boundingBoxBuffer_;
 
 	// Per-frame buffer
+	std::vector<ModelUBO> modelUBOs_;
 	std::vector<VulkanBuffer> modelSSBOBuffers_;
 
 	std::vector<Model> models_ = {};
