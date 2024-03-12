@@ -1,5 +1,5 @@
 #include "PipelineBase.h"
-#include "Mesh.h"
+#include "VertexData.h"
 #include "Scene.h"
 
 #include "VulkanUtility.h"
@@ -181,15 +181,14 @@ void PipelineBase::CreateGraphicsPipeline(
 	// Pipeline create info
 	VulkanPipelineCreateInfo pInfo(ctx);
 
-	const std::vector<VkVertexInputBindingDescription> bindingDescriptions = Mesh::GetBindingDescriptions();
-	const std::vector<VkVertexInputAttributeDescription> attributeDescriptions = Mesh::GetAttributeDescriptions();
-
+	VkVertexInputBindingDescription bindingDescription = VertexUtility::GetBindingDescription();
+	const std::vector<VkVertexInputAttributeDescription> attributeDescriptions = VertexUtility::GetAttributeDescriptions();
 	if (config_.vertexBufferBind_)
 	{
 		pInfo.vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
-		pInfo.vertexInputInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(bindingDescriptions.size());
 		pInfo.vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
-		pInfo.vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
+		pInfo.vertexInputInfo.vertexBindingDescriptionCount = 1u;
+		pInfo.vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
 	}
 	
 	pInfo.inputAssembly.topology = config_.topology_;

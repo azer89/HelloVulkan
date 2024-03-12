@@ -5,9 +5,15 @@
 #include <CameraUBO.glsl>
 #include <ModelUBO.glsl>
 
-layout(location = 0) in vec4 inPosition;
-layout(location = 1) in vec4 inNormal;
-layout(location = 2) in vec4 inUV;
+//layout(location = 0) in vec4 inPosition;
+//layout(location = 1) in vec4 inNormal;
+//layout(location = 2) in vec4 inUV;
+
+layout(location = 0) in vec3 inPosition;
+layout(location = 1) in float inUVX;
+layout(location = 2) in vec3 inNormal;
+layout(location = 3) in float inUVY;
+layout(location = 4) in vec4 inColor;
 
 layout(location = 0) out vec3 worldPos;
 layout(location = 1) out vec2 texCoord;
@@ -20,8 +26,9 @@ void main()
 {
 	mat3 normalMatrix = transpose(inverse(mat3(modelUBO.model)));
 
-	texCoord = inUV.xy;
-	normal = normalMatrix * inNormal.xyz;
-	worldPos = (modelUBO.model * inPosition).xyz;
+	//texCoord = inUV.xy;
+	texCoord = vec2(inUVX, inUVY);
+	normal = normalMatrix * inNormal;
+	worldPos = (modelUBO.model * vec4(inPosition, 1.0)).xyz;
 	gl_Position =  camUBO.projection * camUBO.view * vec4(worldPos, 1.0);
 }

@@ -1,6 +1,8 @@
 struct VertexData
 {
-	vec4 position;
-	vec4 normal;
-	vec4 uv;
+	vec3 position;
+	float uvX;
+	vec3 normal;
+	float uvY;
+	vec4 color;
 };

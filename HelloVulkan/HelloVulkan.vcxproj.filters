@@ -356,6 +356,12 @@
     <ClInclude Include="Header\VIM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Header\BoundingBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\VertexData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">
@@ -504,6 +510,9 @@
     </ClCompile>
     <ClCompile Include="Source\Raytracing\RaytracingBuilder.cpp">
       <Filter>Source Files\Raytracing</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BoundingBox.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

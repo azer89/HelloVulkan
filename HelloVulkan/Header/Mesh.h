@@ -4,19 +4,11 @@
 #include "VulkanContext.h"
 #include "VulkanBuffer.h"
 #include "TextureMapper.h"
+#include "VertexData.h"
 #include "UBOs.h"
 
 #include <vector>
 #include <unordered_map>
-
-struct VertexData
-{
-	// TODO add color
-	// TODO use alignas
-	glm::vec4 position_;
-	glm::vec4 normal_;
-	glm::vec4 textureCoordinate_;
-};
 
 // For bindless textures
 struct MeshData
@@ -102,42 +94,6 @@ public:
 			.ao_ = textureIndices_[TextureType::AmbientOcclusion] + textureIndexOffset,
 			.emissive_ = textureIndices_[TextureType::Emissive] + textureIndexOffset,
 		};
-	}
-
-	static std::vector<VkVertexInputBindingDescription> GetBindingDescriptions()
-	{
-		std::vector<VkVertexInputBindingDescription> bindingDescriptions(1);
-		bindingDescriptions[0].binding = 0;
-		bindingDescriptions[0].stride = sizeof(VertexData);
-		bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-		return bindingDescriptions;
-	}
-
-	static std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions()
-	{
-		std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
-		attributeDescriptions.push_back(
-		{
-			.location = 0,
-			.binding = 0,
-			.format = VK_FORMAT_R32G32B32A32_SFLOAT,
-			.offset = offsetof(VertexData, position_)
-		});
-		attributeDescriptions.push_back(
-		{
-			.location = 1,
-			.binding = 0,
-			.format = VK_FORMAT_R32G32B32A32_SFLOAT,
-			.offset = offsetof(VertexData, normal_)
-		});
-		attributeDescriptions.push_back(
-		{
-			.location = 2,
-			.binding = 0,
-			.format = VK_FORMAT_R32G32B32A32_SFLOAT,
-			.offset = offsetof(VertexData, textureCoordinate_)
-		});
-		return attributeDescriptions;
 	}
 };
 

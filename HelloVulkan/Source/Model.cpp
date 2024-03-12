@@ -235,18 +235,18 @@ void Model::ProcessMesh(
 		// Positions
 		VertexData vertex =
 		{
-			.position_ = transform * 
+			.position = glm::vec3(transform * 
 				glm::vec4(
 					mesh->mVertices[i].x,
 					mesh->mVertices[i].y,
 					mesh->mVertices[i].z,
-					1)
+					1))
 		};
 
 		// Normals
 		if (mesh->HasNormals())
 		{
-			vertex.normal_ = transform * 
+			vertex.normal = transform * 
 				glm::vec4(
 					mesh->mNormals[i].x,
 					mesh->mNormals[i].y,
@@ -256,20 +256,23 @@ void Model::ProcessMesh(
 		}
 
 		// UV
+		vertex.uvX = 0.f;
+		vertex.uvY = 0.f;
 		if (mesh->mTextureCoords[0])
 		{
 			// A vertex can contain up to 8 different texture coordinates. 
 			// We thus make the assumption that we won't use models where a vertex 
 			// can have multiple texture coordinates so we always take the first set (0).
-			vertex.textureCoordinate_ = glm::vec4(
-				mesh->mTextureCoords[0][i].x, 
-				mesh->mTextureCoords[0][i].y, 
-				0, 
-				0);
+			vertex.uvX = mesh->mTextureCoords[0][i].x;
+			vertex.uvY = mesh->mTextureCoords[0][i].y;
 		}
-		else
+
+		// Color
+		vertex.color = glm::vec4(0.f);
+		if (mesh->mColors[0])
 		{
-			vertex.textureCoordinate_ = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+			auto color = mesh->mColors[0][i];
+			vertex.color = glm::vec4(color.r, color.g, color.b, color.a);
 		}
 
 		vertices.push_back(vertex);
