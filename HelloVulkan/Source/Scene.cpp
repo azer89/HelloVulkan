@@ -113,7 +113,7 @@ void Scene::CreateBindlessTextureResources(VulkanContext& ctx)
 void Scene::BuildBoundingBoxes(VulkanContext& ctx)
 {
 	// Create bounding boxes
-	boundingBoxes_.resize(models_.size());
+	boundingBoxes_.resize(meshDataArray_.size());
 	size_t iter = 0;
 	for (Model& model : models_)
 	{
@@ -130,10 +130,10 @@ void Scene::BuildBoundingBoxes(VulkanContext& ctx)
 				vmin = glm::min(vmin, v);
 				vmax = glm::max(vmax, v);
 			}
+			boundingBoxes_[iter].min_ = vmin;
+			boundingBoxes_[iter].max_ = vmax;
+			++iter;
 		}
-		boundingBoxes_[iter].min_ = vmin;
-		boundingBoxes_[iter].max_ = vmax;
-		++iter;
 	}
 
 	// Buffer

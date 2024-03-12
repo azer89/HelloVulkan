@@ -155,6 +155,8 @@
     <None Include="..\Shaders\IBL\CubeFilterSpecular.frag" />
     <None Include="..\Shaders\IBL\Equirect2Cube.frag" />
     <None Include="..\Shaders\LightData.glsl" />
+    <None Include="..\Shaders\Line.frag" />
+    <None Include="..\Shaders\Line.vert" />
     <None Include="..\Shaders\ModelUBO.glsl" />
     <None Include="..\Shaders\PBRPushConstants.glsl" />
     <None Include="..\Shaders\Radiance.glsl" />
@@ -204,6 +206,7 @@
     <ClInclude Include="Header\Pipelines\PipelineImGui.h" />
     <ClInclude Include="Header\Pipelines\PipelineLightRender.h" />
     <ClInclude Include="Header\Pipelines\PipelineLightCulling.h" />
+    <ClInclude Include="Header\Pipelines\PipelineLine.h" />
     <ClInclude Include="Header\Pipelines\PipelinePBRSlotBased.h" />
     <ClInclude Include="Header\Pipelines\PipelinePBRBindless.h" />
     <ClInclude Include="Header\Pipelines\PipelinePBRClusterForward.h" />
@@ -262,6 +265,7 @@
     <ClCompile Include="Source\Pipelines\PipelineImGui.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineLightRender.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineLightCulling.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelineLine.cpp" />
     <ClCompile Include="Source\Pipelines\PipelinePBRSlotBased.cpp" />
     <ClCompile Include="Source\Pipelines\PipelinePBRBindless.cpp" />
     <ClCompile Include="Source\Pipelines\PipelinePBRClusterForward.cpp" />

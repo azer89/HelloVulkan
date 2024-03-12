@@ -186,6 +186,12 @@
     <None Include="..\Shaders\Bindless\VIM.glsl">
       <Filter>Shaders\Bindless</Filter>
     </None>
+    <None Include="..\Shaders\Line.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\Line.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Camera.h">
@@ -362,6 +368,9 @@
     <ClInclude Include="Header\VertexData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineLine.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">
@@ -513,6 +522,9 @@
     </ClCompile>
     <ClCompile Include="Source\BoundingBox.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineLine.cpp">
+      <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
