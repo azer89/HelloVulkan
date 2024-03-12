@@ -11,9 +11,9 @@ int main()
 	//AppPBRBindless app;
 
 	// The good ol resource binding per draw call
-	//AppPBRSlotBased app;
+	AppPBRSlotBased app;
 	
-	AppPBRShadow app;
+	//AppPBRShadow app;
 	
 	//AppPBRClusterForward app;
 	

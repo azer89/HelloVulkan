@@ -5,10 +5,6 @@
 #include <CameraUBO.glsl>
 #include <ModelUBO.glsl>
 
-//layout(location = 0) in vec4 inPosition;
-//layout(location = 1) in vec4 inNormal;
-//layout(location = 2) in vec4 inUV;
-
 layout(location = 0) in vec3 inPosition;
 layout(location = 1) in float inUVX;
 layout(location = 2) in vec3 inNormal;
@@ -26,7 +22,6 @@ void main()
 {
 	mat3 normalMatrix = transpose(inverse(mat3(modelUBO.model)));
 
-	//texCoord = inUV.xy;
 	texCoord = vec2(inUVX, inUVY);
 	normal = normalMatrix * inNormal;
 	worldPos = (modelUBO.model * vec4(inPosition, 1.0)).xyz;
