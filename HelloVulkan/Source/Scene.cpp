@@ -39,6 +39,16 @@ Scene::~Scene()
 	}
 }
 
+VIM Scene::GetVIM() const
+{
+	return
+	{
+		.vertexBufferAddress = vertexBuffer_.deviceAddress_,
+		.indexBufferAddress = indexBuffer_.deviceAddress_,
+		.meshDataBufferAddress = meshDataBuffer_.deviceAddress_
+	};
+}
+
 // TODO Create GPU only buffers
 void Scene::CreateBindlessTextureResources(VulkanContext& ctx)
 {
@@ -94,6 +104,25 @@ void Scene::CreateBindlessTextureResources(VulkanContext& ctx)
 			VMA_MEMORY_USAGE_CPU_TO_GPU);
 		modelSSBOBuffers_[i].UploadBufferData(ctx, initModelUBOs.data(), modelSSBOBufferSize);
 	}
+}
+
+void Scene::BuildBoundingBoxes(VulkanContext& ctx)
+{
+	boundingBoxes_.resize(models_.size());
+	for (Model& model : models_)
+	{
+		glm::vec3 vmin(std::numeric_limits<float>::max());
+		glm::vec3 vmax(std::numeric_limits<float>::lowest());
+
+		for (Mesh& mesh : model.meshes_)
+		{
+		}
+	}
+}
+
+void Scene::UpdateBoundingBox(VulkanContext& ctx)
+{
+
 }
 
 void Scene::UpdateModelMatrix(VulkanContext& ctx, 
@@ -152,8 +181,8 @@ std::vector<uint32_t> Scene::GetMeshVertexCountArray() const
 		for (auto& mesh : model.meshes_)
 		{
 			// Note that we use the index count here
-			uint32_t numIndices = static_cast<uint32_t>(mesh.GetNumIndices());
-			vCountArray[counter++] = numIndices;
+			uint32_t indexCount = static_cast<uint32_t>(mesh.GetIndexCount());
+			vCountArray[counter++] = indexCount;
 		}
 	}
 	return vCountArray;

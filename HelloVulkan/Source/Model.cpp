@@ -359,6 +359,7 @@ void Model::ProcessMesh(
 			ctx,
 			globalVertexOffset,
 			globalIndexOffset,
+			static_cast<uint32_t>(vertices.size()),
 			static_cast<uint32_t>(indices.size()),
 			std::move(textures));
 
