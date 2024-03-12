@@ -20,7 +20,7 @@ PipelineLine::PipelineLine(
 			.depthWrite_ = false // Do not write to depth image
 		}),
 	scene_(scene),
-	shouldRender_(false)
+	shouldRender_(true)
 {
 	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
 	renderPass_.CreateOffScreenRenderPass(ctx, renderBit);
@@ -130,9 +130,15 @@ void PipelineLine::CreateDescriptor(VulkanContext& ctx)
 	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
 
 	VulkanDescriptorInfo dsInfo;
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT); // 0
+	dsInfo.AddBuffer(&lineBuffer_, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT); // 1
+
+	// Create pool and layout
+	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 
 	for (size_t i = 0; i < frameCount; ++i)
 	{
-
+		dsInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
+		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}
 }

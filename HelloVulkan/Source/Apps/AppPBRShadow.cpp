@@ -160,6 +160,7 @@ void AppPBRShadow::UpdateUI()
 	}
 
 	static bool staticLightRender = true;
+	static bool staticDebugRender = true;
 	static PushConstPBR staticPBRPushConstants =
 	{
 		.lightIntensity = 1.5f,
@@ -176,12 +177,13 @@ void AppPBRShadow::UpdateUI()
 	static float staticMaxBias = 0.001f;
 
 	imguiPtr_->ImGuiStart();
-	imguiPtr_->ImGuiSetWindow("Shadow Mapping", 525, 600);
+	imguiPtr_->ImGuiSetWindow("Shadow Mapping", 525, 650);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 
 	ImGui::Text("Vertices: %i, Indices: %i", scene_->vertices_.size(), scene_->indices_.size());
-	ImGui::SeparatorText("Shading");
 	ImGui::Checkbox("Render Lights", &staticLightRender);
+	ImGui::Checkbox("Render Bounding Box", &staticDebugRender);
+	ImGui::SeparatorText("Shading");
 	imguiPtr_->ImGuiShowPBRConfig(&staticPBRPushConstants, cubemapMipmapCount_);
 
 	ImGui::SeparatorText("Shadow mapping");
