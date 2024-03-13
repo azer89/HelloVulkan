@@ -24,7 +24,7 @@ public:
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
-	void RenderEnable(bool enable) { shouldRender_ = enable; }
+	void ShouldRender(bool shouldRender) { shouldRender_ = shouldRender; }
 
 private:
 	void CreateDescriptor(VulkanContext& ctx);

@@ -14,7 +14,9 @@ PipelineLine::PipelineLine(
 	PipelineBase(ctx,
 		{
 			.type_ = PipelineType::GraphicsOffScreen,
+			.msaaSamples_ = resShared->multiSampledColorImage_.multisampleCount_,
 			.topology_ = VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
+
 			.vertexBufferBind_ = false,
 			.depthTest_ = true,
 			.depthWrite_ = false // Do not write to depth image
@@ -23,7 +25,7 @@ PipelineLine::PipelineLine(
 	shouldRender_(true)
 {
 	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
-	renderPass_.CreateOffScreenRenderPass(ctx, renderBit);
+	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
 	framebuffer_.CreateResizeable(
 		ctx,
 		renderPass_.GetHandle(),
@@ -59,6 +61,23 @@ void PipelineLine::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer command
 	{
 		return;
 	}
+
+	const uint32_t frameIndex = ctx.GetFrameIndex();
+	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
+	BindPipeline(ctx, commandBuffer);
+	vkCmdBindDescriptorSets(
+		commandBuffer,
+		VK_PIPELINE_BIND_POINT_GRAPHICS,
+		pipelineLayout_,
+		0,
+		1,
+		&descriptorSets_[frameIndex],
+		0,
+		nullptr);
+
+	vkCmdDraw(commandBuffer, static_cast<uint32_t>(lineDataArray_.size()), 1, 0, 0);
+
+	vkCmdEndRenderPass(commandBuffer);
 }
 
 void PipelineLine::ProcessScene(VulkanContext& ctx)

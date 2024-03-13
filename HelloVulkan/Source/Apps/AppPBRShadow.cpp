@@ -69,6 +69,7 @@ void AppPBRShadow::Init()
 		resShared_.get());
 	shadowPtr_ = std::make_unique<PipelineShadow>(vulkanContext_, scene_.get(), resShadow_.get());
 	lightPtr_ = std::make_unique<PipelineLightRender>(vulkanContext_, resLight_.get(), resShared_.get());
+	linePtr_ = std::make_unique<PipelineLine>(vulkanContext_, resShared_.get(), scene_.get());
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
 	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(vulkanContext_, resShared_.get());
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
@@ -87,6 +88,7 @@ void AppPBRShadow::Init()
 		shadowPtr_.get(),
 		pbrPtr_.get(),
 		lightPtr_.get(),
+		linePtr_.get(),
 		resolveMSPtr_.get(),
 		tonemapPtr_.get(),
 		imguiPtr_.get(),
@@ -132,6 +134,7 @@ void AppPBRShadow::DestroyResources()
 	resolveMSPtr_.reset();
 	tonemapPtr_.reset();
 	imguiPtr_.reset();
+	linePtr_.reset();
 }
 
 void AppPBRShadow::UpdateUBOs()
@@ -140,6 +143,7 @@ void AppPBRShadow::UpdateUBOs()
 	CameraUBO ubo = camera_->GetCameraUBO();
 	lightPtr_->SetCameraUBO(vulkanContext_, ubo);
 	pbrPtr_->SetCameraUBO(vulkanContext_, ubo);
+	linePtr_->SetCameraUBO(vulkanContext_, ubo);
 
 	// Skybox
 	CameraUBO skyboxUbo = ubo;
@@ -203,7 +207,8 @@ void AppPBRShadow::UpdateUI()
 	// TODO Check if light position is changed 
 	resLight_->UpdateLightPosition(vulkanContext_, 0, &(staticLightPos[0]));
 
-	lightPtr_->RenderEnable(staticLightRender);
+	lightPtr_->ShouldRender(staticLightRender);
+	linePtr_->ShouldRender(staticDebugRender);
 	pbrPtr_->SetPBRPushConstants(staticPBRPushConstants);
 
 	resShadow_->shadowUBO_.shadowMinBias = staticMinBias;

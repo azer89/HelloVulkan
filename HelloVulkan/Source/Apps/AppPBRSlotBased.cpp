@@ -146,7 +146,7 @@ void AppPBRSlotBased::UpdateUI()
 	imguiPtr_->ImGuiShowPBRConfig(&pbrPC, cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
-	lightPtr_->RenderEnable(lightRender);
+	lightPtr_->ShouldRender(lightRender);
 	pbrPtr_->SetPBRPushConstants(pbrPC);
 }
 
