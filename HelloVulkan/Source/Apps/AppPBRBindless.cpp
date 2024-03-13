@@ -5,7 +5,7 @@
 #include "PipelineBRDFLUT.h"
 #include "ResourcesIBL.h"
 
-#include "glm/gtc/matrix_transform.hpp"
+#include "glm/ext.hpp"
 #include "imgui_impl_vulkan.h"
 
 AppPBRBindless::AppPBRBindless() :
@@ -146,7 +146,7 @@ void AppPBRBindless::UpdateUI()
 	imguiPtr_->ImGuiShowPBRConfig(&pbrPC, cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
-	lightPtr_->RenderEnable(lightRender);
+	lightPtr_->ShouldRender(lightRender);
 	pbrPtr_->SetPBRPushConstants(pbrPC);
 }
 

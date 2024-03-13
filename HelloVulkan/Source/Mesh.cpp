@@ -16,6 +16,8 @@ void Mesh::InitSlotBased(
 	vertices_ = std::move(_vertices);
 	indices_ = std::move(_indices);
 	textureIndices_ = std::move(textureIndices);
+	vertexCount_ = vertices_.size();
+	indexCount_ = indices_.size();
 
 	SetupSlotBased(ctx);
 }
@@ -24,13 +26,15 @@ void Mesh::InitBindless(
 	VulkanContext& ctx,
 	uint32_t vertexOffset,
 	uint32_t indexOffset,
+	uint32_t numVertices,
 	uint32_t numIndices,
 	std::unordered_map<TextureType, uint32_t>&& textureIndices)
 {
 	bindlessTexture_ = true;
 	vertexOffset_ = vertexOffset;
 	indexOffset_ = indexOffset;
-	numIndices_ = numIndices;
+	vertexCount_ = numVertices;
+	indexCount_ = numIndices;
 	textureIndices_ = std::move(textureIndices);
 }
 
@@ -56,7 +60,7 @@ void Mesh::SetupSlotBased(VulkanContext& ctx)
 		indices_.data(), 
 		VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
 	);
-	numIndices_ = static_cast<uint32_t>(indices_.size());
+	indexCount_ = static_cast<uint32_t>(indices_.size());
 }
 
 void Mesh::Destroy()

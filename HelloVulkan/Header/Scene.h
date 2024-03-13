@@ -3,13 +3,14 @@
 
 #include "Model.h"
 #include "UBOs.h"
+#include "BoundingBox.h"
 #include "VIM.h"
 
 #include <vector>
 #include <string>
 
 /*
-A scene used for indirect draw + bindless textures 
+A scene used for indirect draw + bindless resources 
 that contains huge SSBO buffers for vertices, indices, and mesh data.
 */
 class Scene
@@ -30,18 +31,11 @@ public:
 		const ModelUBO& modelUBO,
 		uint32_t modelIndex);
 
-	VIM GetVIM() const
-	{
-		return
-		{
-			.vertexBufferAddress = vertexBuffer_.deviceAddress_,
-			.indexBufferAddress = indexBuffer_.deviceAddress_,
-			.meshDataBufferAddress = meshDataBuffer_.deviceAddress_
-		};
-	}
+	VIM GetVIM() const;
 
 private:
 	void CreateBindlessTextureResources(VulkanContext& ctx);
+	void BuildBoundingBoxes(VulkanContext& ctx);
 
 public:
 	std::vector<MeshData> meshDataArray_ = {};
@@ -53,7 +47,11 @@ public:
 	std::vector<uint32_t> indices_ = {};
 	VulkanBuffer indexBuffer_;
 
+	std::vector<BoundingBox> boundingBoxes_;
+	VulkanBuffer boundingBoxBuffer_;
+
 	// Per-frame buffer
+	std::vector<ModelUBO> modelUBOs_;
 	std::vector<VulkanBuffer> modelSSBOBuffers_;
 
 	std::vector<Model> models_ = {};

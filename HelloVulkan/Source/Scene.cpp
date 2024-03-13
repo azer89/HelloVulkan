@@ -29,6 +29,7 @@ Scene::~Scene()
 	meshDataBuffer_.Destroy();
 	vertexBuffer_.Destroy();
 	indexBuffer_.Destroy();
+	boundingBoxBuffer_.Destroy();
 	for (auto& buffer : modelSSBOBuffers_)
 	{
 		buffer.Destroy();
@@ -37,6 +38,16 @@ Scene::~Scene()
 	{
 		model.Destroy();
 	}
+}
+
+VIM Scene::GetVIM() const
+{
+	return
+	{
+		.vertexBufferAddress = vertexBuffer_.deviceAddress_,
+		.indexBufferAddress = indexBuffer_.deviceAddress_,
+		.meshDataBufferAddress = meshDataBuffer_.deviceAddress_
+	};
 }
 
 // TODO Create GPU only buffers
@@ -83,7 +94,7 @@ void Scene::CreateBindlessTextureResources(VulkanContext& ctx)
 		bufferUsage);
 
 	// ModelUBO which is actually an SSBO
-	const std::vector<ModelUBO> initModelUBOs(models_.size(), { .model = glm::mat4(1.0f) });
+	modelUBOs_ = std::vector<ModelUBO>(models_.size(), { .model = glm::mat4(1.0f) });
 	const VkDeviceSize modelSSBOBufferSize = sizeof(ModelUBO) * models_.size();
 	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
 	modelSSBOBuffers_.resize(frameCount);
@@ -92,8 +103,46 @@ void Scene::CreateBindlessTextureResources(VulkanContext& ctx)
 		modelSSBOBuffers_[i].CreateBuffer(ctx, modelSSBOBufferSize,
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 			VMA_MEMORY_USAGE_CPU_TO_GPU);
-		modelSSBOBuffers_[i].UploadBufferData(ctx, initModelUBOs.data(), modelSSBOBufferSize);
+		modelSSBOBuffers_[i].UploadBufferData(ctx, modelUBOs_.data(), modelSSBOBufferSize);
 	}
+
+	// Bounding boxes
+	BuildBoundingBoxes(ctx);
+}
+
+void Scene::BuildBoundingBoxes(VulkanContext& ctx)
+{
+	// Create bounding boxes
+	boundingBoxes_.resize(meshDataArray_.size());
+	size_t iter = 0;
+	for (Model& model : models_)
+	{
+		glm::vec3 vmin(std::numeric_limits<float>::max());
+		glm::vec3 vmax(std::numeric_limits<float>::lowest());
+
+		for (Mesh& mesh : model.meshes_)
+		{
+			uint32_t vertexStart = mesh.GetVertexOffset();
+			uint32_t vertexEnd = vertexStart + mesh.GetVertexCount();
+			for (uint32_t i = vertexStart; i < vertexEnd; ++i)
+			{
+				const glm::vec3& v = vertices_[i].position;
+				vmin = glm::min(vmin, v);
+				vmax = glm::max(vmax, v);
+			}
+			boundingBoxes_[iter].min_ = vmin;
+			boundingBoxes_[iter].max_ = vmax;
+			++iter;
+		}
+	}
+
+	// Buffer
+	VkDeviceSize bufferSize = boundingBoxes_.size() * sizeof(BoundingBox);
+	boundingBoxBuffer_.CreateBuffer(ctx, 
+		bufferSize, 
+		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+		VMA_MEMORY_USAGE_CPU_TO_GPU);
+	boundingBoxBuffer_.UploadBufferData(ctx, boundingBoxes_.data(), bufferSize);
 }
 
 void Scene::UpdateModelMatrix(VulkanContext& ctx, 
@@ -111,6 +160,7 @@ void Scene::UpdateModelMatrix(VulkanContext& ctx,
 		std::cerr << "Cannot update ModelUBO because of invalid frameIndex " << frameIndex << "\n";
 		return;
 	}
+	modelUBOs_[modelIndex] = modelUBO; // TODO Ugly code, this can be executed multiple times
 	modelSSBOBuffers_[frameIndex].UploadOffsetBufferData(
 		ctx,
 		&modelUBO,
@@ -152,8 +202,8 @@ std::vector<uint32_t> Scene::GetMeshVertexCountArray() const
 		for (auto& mesh : model.meshes_)
 		{
 			// Note that we use the index count here
-			uint32_t numIndices = static_cast<uint32_t>(mesh.GetNumIndices());
-			vCountArray[counter++] = numIndices;
+			uint32_t indexCount = static_cast<uint32_t>(mesh.GetIndexCount());
+			vCountArray[counter++] = indexCount;
 		}
 	}
 	return vCountArray;

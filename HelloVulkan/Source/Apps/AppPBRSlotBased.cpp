@@ -5,7 +5,7 @@
 #include "PipelineBRDFLUT.h"
 #include "ResourcesIBL.h"
 
-#include "glm/gtc/matrix_transform.hpp"
+#include "glm/ext.hpp"
 #include "imgui_impl_vulkan.h"
 
 AppPBRSlotBased::AppPBRSlotBased() :
@@ -140,13 +140,13 @@ void AppPBRSlotBased::UpdateUI()
 	static PushConstPBR pbrPC;
 
 	imguiPtr_->ImGuiStart();
-	imguiPtr_->ImGuiSetWindow("PBR and IBL", 525, 350);
+	imguiPtr_->ImGuiSetWindow("PBR and IBL", 525, 325);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 	ImGui::Checkbox("Render Lights", &lightRender);
 	imguiPtr_->ImGuiShowPBRConfig(&pbrPC, cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
-	lightPtr_->RenderEnable(lightRender);
+	lightPtr_->ShouldRender(lightRender);
 	pbrPtr_->SetPBRPushConstants(pbrPC);
 }
 

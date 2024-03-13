@@ -46,7 +46,8 @@ private:
 	std::vector<VertexData> vertices_;
 	std::vector<uint32_t> indices_;
 
-	uint32_t numIndices_;
+	uint32_t vertexCount_;
+	uint32_t indexCount_;
 
 public:
 	// TODO Create a default constructor
@@ -66,10 +67,11 @@ public:
 		VulkanContext& ctx,
 		uint32_t vertexOffset,
 		uint32_t indexOffset,
+		uint32_t numVertices,
 		uint32_t numIndices,
 		std::unordered_map<TextureType, uint32_t>&& textureIndices);
 
-	uint32_t GetNumIndices() const { return numIndices_; };
+	uint32_t GetIndexCount() const { return indexCount_; };
 
 	// TODO Implement this function
 	//void AddTexture(VulkanContext& ctx, uint32_t textureIndex);
@@ -78,15 +80,16 @@ public:
 
 	void Destroy();
 
-	MeshData GetMeshData(uint32_t textureIndexOffset, uint32_t modelIndex)
+	uint32_t GetVertexOffset() const { return vertexOffset_; }
+	uint32_t GetVertexCount() const { return vertexCount_; }
+
+	[[nodiscard]] MeshData GetMeshData(uint32_t textureIndexOffset, uint32_t modelIndex)
 	{
 		return
 		{
 			.vertexOffset_ = vertexOffset_,
 			.indexOffset_ = indexOffset_,
-
 			.modelIndex = modelIndex,
-
 			.albedo_ = textureIndices_[TextureType::Albedo] + textureIndexOffset,
 			.normal_ = textureIndices_[TextureType::Normal] + textureIndexOffset,
 			.metalness_ = textureIndices_[TextureType::Metalness] + textureIndexOffset,

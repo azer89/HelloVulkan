@@ -150,9 +150,6 @@
     <None Include="..\Shaders\SlotBased\Mesh.vert">
       <Filter>Shaders\SlotBased</Filter>
     </None>
-    <None Include="..\Shaders\LightData.glsl">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\Shaders\ClusteredForward\Radiance.glsl">
       <Filter>Shaders\ClusteredForward</Filter>
     </None>
@@ -185,6 +182,15 @@
     </None>
     <None Include="..\Shaders\Bindless\VIM.glsl">
       <Filter>Shaders\Bindless</Filter>
+    </None>
+    <None Include="..\Shaders\Line.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\Line.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\LightData.glsl">
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -362,6 +368,9 @@
     <ClInclude Include="Header\VertexData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineLine.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">
@@ -513,6 +522,9 @@
     </ClCompile>
     <ClCompile Include="Source\BoundingBox.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineLine.cpp">
+      <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

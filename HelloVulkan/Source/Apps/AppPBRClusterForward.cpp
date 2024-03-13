@@ -6,7 +6,7 @@
 #include "PushConstants.h"
 #include "VulkanUtility.h"
 
-#include "glm/gtc/matrix_transform.hpp"
+#include "glm/ext.hpp"
 #include "imgui_impl_vulkan.h"
 
 AppPBRClusterForward::AppPBRClusterForward() 
@@ -182,13 +182,13 @@ void AppPBRClusterForward::UpdateUI()
 	static PushConstPBR pbrPC;
 
 	imguiPtr_->ImGuiStart();
-	imguiPtr_->ImGuiSetWindow("Clustered Forward Shading", 525, 350);
+	imguiPtr_->ImGuiSetWindow("Clustered Forward Shading", 525, 325);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 	ImGui::Checkbox("Render Lights", &lightRender);
 	imguiPtr_->ImGuiShowPBRConfig(&pbrPC, cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
-	lightPtr_->RenderEnable(lightRender);
+	lightPtr_->ShouldRender(lightRender);
 	pbrPtr_->SetPBRPushConstants(pbrPC);
 }
 
