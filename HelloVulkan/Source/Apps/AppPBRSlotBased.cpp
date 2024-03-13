@@ -51,7 +51,7 @@ void AppPBRSlotBased::Init()
 	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(vulkanContext_, resShared_.get());
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
 	tonemapPtr_ = std::make_unique<PipelineTonemap>(vulkanContext_, &(resShared_->singleSampledColorImage_));
-	infGridPtr_ = std::make_unique<PipelineInfiniteGrid>(vulkanContext_, resShared_.get());
+	infGridPtr_ = std::make_unique<PipelineInfiniteGrid>(vulkanContext_, resShared_.get(), -1.0f);
 	// ImGui here
 	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image

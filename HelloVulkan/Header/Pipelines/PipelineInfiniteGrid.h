@@ -11,6 +11,7 @@ public:
 	PipelineInfiniteGrid(
 		VulkanContext& ctx,
 		ResourcesShared* resShared,
+		float yPosition,
 		uint8_t renderBit = 0);
 	~PipelineInfiniteGrid();
 
@@ -22,6 +23,7 @@ private:
 	void CreateDescriptor(VulkanContext& ctx);
 
 private:
+	float yPosition_;
 	bool shouldRender_;
 	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;
 };

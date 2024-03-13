@@ -87,8 +87,8 @@ void AppPBRShadow::Init()
 		skyboxPtr_.get(),
 		shadowPtr_.get(),
 		pbrPtr_.get(),
-		lightPtr_.get(),
 		linePtr_.get(),
+		lightPtr_.get(), // Should be the last
 		resolveMSPtr_.get(),
 		tonemapPtr_.get(),
 		imguiPtr_.get(),
@@ -186,7 +186,7 @@ void AppPBRShadow::UpdateUI()
 
 	ImGui::Text("Vertices: %i, Indices: %i", scene_->vertices_.size(), scene_->indices_.size());
 	ImGui::Checkbox("Render Lights", &staticLightRender);
-	ImGui::Checkbox("Render Bounding Box", &staticLineRender);
+	ImGui::Checkbox("Render Grid", &staticLineRender);
 	ImGui::SeparatorText("Shading");
 	imguiPtr_->ImGuiShowPBRConfig(&staticPBRPushConstants, cubemapMipmapCount_);
 

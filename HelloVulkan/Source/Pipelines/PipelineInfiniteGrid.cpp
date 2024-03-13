@@ -5,6 +5,7 @@
 PipelineInfiniteGrid::PipelineInfiniteGrid(
 	VulkanContext& ctx,
 	ResourcesShared* resShared,
+	float yPosition,
 	uint8_t renderBit) :
 	PipelineBase(ctx,
 		{
@@ -13,7 +14,8 @@ PipelineInfiniteGrid::PipelineInfiniteGrid(
 			.depthTest_ = true,
 			.depthWrite_ = false // Do not write to depth image
 		}),
-	shouldRender_(true) // TODO
+	yPosition_(yPosition),
+	shouldRender_(true)
 {
 	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
 	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
@@ -27,7 +29,13 @@ PipelineInfiniteGrid::PipelineInfiniteGrid(
 		IsOffscreen()
 	);
 	CreateDescriptor(ctx);
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
+	std::vector<VkPushConstantRange> ranges =
+	{ {
+		.stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+		.offset = 0u,
+		.size = sizeof(float),
+	} };
+	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, ranges);
 	CreateGraphicsPipeline(ctx,
 		renderPass_.GetHandle(),
 		pipelineLayout_,
@@ -54,6 +62,12 @@ void PipelineInfiniteGrid::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer
 	const uint32_t frameIndex = ctx.GetFrameIndex();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
 	BindPipeline(ctx, commandBuffer);
+	vkCmdPushConstants(
+		commandBuffer,
+		pipelineLayout_,
+		VK_SHADER_STAGE_VERTEX_BIT,
+		0,
+		sizeof(float), &yPosition_);
 	vkCmdBindDescriptorSets(
 		commandBuffer,
 		VK_PIPELINE_BIND_POINT_GRAPHICS,
