@@ -8,9 +8,7 @@ struct VertexData;
 struct BoundingBox
 {
 public:
-	alignas(16)
 	glm::vec3 min_;
-	alignas(16)
 	glm::vec3 max_;
 	
 public:

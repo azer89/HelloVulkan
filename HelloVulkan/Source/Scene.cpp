@@ -160,7 +160,7 @@ void Scene::UpdateModelMatrix(VulkanContext& ctx,
 		std::cerr << "Cannot update ModelUBO because of invalid frameIndex " << frameIndex << "\n";
 		return;
 	}
-	modelUBOs_[modelIndex] = modelUBO; // TODO Ugly code
+	modelUBOs_[modelIndex] = modelUBO; // TODO Ugly code, this can be executed multiple times
 	modelSSBOBuffers_[frameIndex].UploadOffsetBufferData(
 		ctx,
 		&modelUBO,
