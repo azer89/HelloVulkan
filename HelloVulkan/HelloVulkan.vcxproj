@@ -154,6 +154,10 @@
     <None Include="..\Shaders\IBL\CubeFilterDiffuse.frag" />
     <None Include="..\Shaders\IBL\CubeFilterSpecular.frag" />
     <None Include="..\Shaders\IBL\Equirect2Cube.frag" />
+    <None Include="..\Shaders\InfiniteGrid\Grid.frag" />
+    <None Include="..\Shaders\InfiniteGrid\Grid.vert" />
+    <None Include="..\Shaders\InfiniteGrid\Header.glsl" />
+    <None Include="..\Shaders\InfiniteGrid\Params.glsl" />
     <None Include="..\Shaders\LightData.glsl" />
     <None Include="..\Shaders\Line.frag" />
     <None Include="..\Shaders\Line.vert" />
@@ -204,6 +208,7 @@
     <ClInclude Include="Header\Pipelines\PipelineEquirect2Cube.h" />
     <ClInclude Include="Header\Pipelines\PipelineFinish.h" />
     <ClInclude Include="Header\Pipelines\PipelineImGui.h" />
+    <ClInclude Include="Header\Pipelines\PipelineInfiniteGrid.h" />
     <ClInclude Include="Header\Pipelines\PipelineLightRender.h" />
     <ClInclude Include="Header\Pipelines\PipelineLightCulling.h" />
     <ClInclude Include="Header\Pipelines\PipelineLine.h" />
@@ -263,6 +268,7 @@
     <ClCompile Include="Source\Pipelines\PipelineEquirect2Cube.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineFinish.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineImGui.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelineInfiniteGrid.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineLightRender.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineLightCulling.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineLine.cpp" />
