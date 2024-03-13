@@ -22,7 +22,7 @@ PipelineLine::PipelineLine(
 			.depthWrite_ = false // Do not write to depth image
 		}),
 	scene_(scene),
-	shouldRender_(true)
+	shouldRender_(false)
 {
 	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
 	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);

@@ -10,7 +10,7 @@
 #include <string>
 
 /*
-A scene used for indirect draw + bindless textures 
+A scene used for indirect draw + bindless resources 
 that contains huge SSBO buffers for vertices, indices, and mesh data.
 */
 class Scene

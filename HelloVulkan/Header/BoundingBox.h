@@ -16,9 +16,7 @@ public:
 public:
 
 	BoundingBox() = default;
-	//BoundingBox(const glm::vec3& min, const glm::vec3& max);
 	BoundingBox(const glm::vec3* points, size_t pointCount);
-	//BoundingBox(const VertexData* vertices, size_t vertextCount);
 
 	[[nodiscard]] glm::vec3 GetSize() const { return glm::vec3(max_[0] - min_[0], max_[1] - min_[1], max_[2] - min_[2]); }
 	[[nodiscard]] glm::vec3 GetCenter() const { return 0.5f * glm::vec3(max_[0] + min_[0], max_[1] + min_[1], max_[2] + min_[2]); }

@@ -164,7 +164,7 @@ void AppPBRShadow::UpdateUI()
 	}
 
 	static bool staticLightRender = true;
-	static bool staticDebugRender = true;
+	static bool staticLineRender = false;
 	static PushConstPBR staticPBRPushConstants =
 	{
 		.lightIntensity = 1.5f,
@@ -186,7 +186,7 @@ void AppPBRShadow::UpdateUI()
 
 	ImGui::Text("Vertices: %i, Indices: %i", scene_->vertices_.size(), scene_->indices_.size());
 	ImGui::Checkbox("Render Lights", &staticLightRender);
-	ImGui::Checkbox("Render Bounding Box", &staticDebugRender);
+	ImGui::Checkbox("Render Bounding Box", &staticLineRender);
 	ImGui::SeparatorText("Shading");
 	imguiPtr_->ImGuiShowPBRConfig(&staticPBRPushConstants, cubemapMipmapCount_);
 
@@ -208,7 +208,7 @@ void AppPBRShadow::UpdateUI()
 	resLight_->UpdateLightPosition(vulkanContext_, 0, &(staticLightPos[0]));
 
 	lightPtr_->ShouldRender(staticLightRender);
-	linePtr_->ShouldRender(staticDebugRender);
+	linePtr_->ShouldRender(staticLineRender);
 	pbrPtr_->SetPBRPushConstants(staticPBRPushConstants);
 
 	resShadow_->shadowUBO_.shadowMinBias = staticMinBias;
