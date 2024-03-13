@@ -35,7 +35,7 @@ void PipelineResolveMS::FillCommandBuffer(
 	VulkanContext& ctx,
 	VkCommandBuffer commandBuffer)
 {
-	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "Resolve_Multisample", tracy::Color::GreenYellow);
+	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "Multisample_Resolve", tracy::Color::GreenYellow);
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
 	vkCmdEndRenderPass(commandBuffer);
 }

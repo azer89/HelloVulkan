@@ -82,7 +82,7 @@ PipelinePBRBindless::~PipelinePBRBindless()
 
 void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
-	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "PBR_Bindless_Textures", tracy::Color::LimeGreen);
+	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "PBR_Bindless", tracy::Color::LimeGreen);
 
 	const uint32_t frameIndex = ctx.GetFrameIndex();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());

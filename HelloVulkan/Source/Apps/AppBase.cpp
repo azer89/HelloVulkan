@@ -108,12 +108,12 @@ void AppBase::DrawFrame()
 
 	FrameData& frameData = vulkanContext_.GetCurrentFrameData();
 	{
-		ZoneScopedNC("vkWaitForFences", tracy::Color::ForestGreen);
+		ZoneScopedNC("WaitForFences", tracy::Color::GreenYellow);
 		vkWaitForFences(vulkanContext_.GetDevice(), 1, &(frameData.queueSubmitFence_), VK_TRUE, UINT64_MAX);
 	}
 
 	{
-		ZoneScopedNC("vkAcquireNextImageKHR", tracy::Color::PaleGreen);
+		ZoneScopedNC("AcquireNextImageKHR", tracy::Color::PaleGreen);
 		VkResult result = vulkanContext_.GetNextSwapchainImage(frameData.nextSwapchainImageSemaphore_);
 		if (result == VK_ERROR_OUT_OF_DATE_KHR)
 		{
@@ -125,7 +125,7 @@ void AppBase::DrawFrame()
 	uint32_t swapchainImageIndex = vulkanContext_.GetCurrentSwapchainImageIndex();
 	
 	{
-		ZoneScopedNC("vkResetFences and vkResetCommandBuffer", tracy::Color::Orange);
+		ZoneScopedNC("ResetFences_ResetCommandBuffer", tracy::Color::Orange);
 		vkResetFences(vulkanContext_.GetDevice(), 1, &(frameData.queueSubmitFence_));
 		vkResetCommandBuffer(frameData.graphicsCommandBuffer_, 0);
 	}
@@ -142,11 +142,14 @@ void AppBase::DrawFrame()
 		UpdateUBOs();
 	}
 
-	// Start recording command buffers
-	FillCommandBuffer(frameData.graphicsCommandBuffer_);
+	{
+		ZoneScopedNC("RecordCommandBuffer", tracy::Color::OrangeRed);
+		// Start recording command buffers
+		FillCommandBuffer(frameData.graphicsCommandBuffer_);
+	}
 
 	{
-		ZoneScopedNC("vkQueueSubmit", tracy::Color::VioletRed);
+		ZoneScopedNC("QueueSubmit", tracy::Color::VioletRed);
 
 		constexpr VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 		std::array<VkSemaphore, 1> waitSemaphores{ frameData.nextSwapchainImageSemaphore_ };
@@ -170,7 +173,7 @@ void AppBase::DrawFrame()
 	}
 	
 	{
-		ZoneScopedNC("vkQueuePresentKHR", tracy::Color::VioletRed1);
+		ZoneScopedNC("QueuePresentKHR", tracy::Color::VioletRed1);
 		// Present
 		// TODO Set code below as a function in VulkanContext
 		const VkPresentInfoKHR presentInfo =
@@ -216,7 +219,7 @@ void AppBase::FillCommandBuffer(VkCommandBuffer commandBuffer)
 	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
 	
 	{
-		TracyVkZoneC(vulkanContext_.GetTracyContext(), commandBuffer, "FillCommandBuffer", tracy::Color::PaleVioletRed);
+		TracyVkZoneC(vulkanContext_.GetTracyContext(), commandBuffer, "Render", tracy::Color::OrangeRed);
 
 		// Iterate through all pipelines to fill the command buffer
 		for (const auto& pip : pipelines_)
