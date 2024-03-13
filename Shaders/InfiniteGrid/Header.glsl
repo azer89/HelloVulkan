@@ -25,7 +25,7 @@ float max2(vec2 v)
 	return max(v.x, v.y);
 }
 
-vec4 gridColor(vec2 uv,vec2 camPos)
+vec4 gridColor(vec2 uv, vec2 camPos)
 {
 	vec2 dudv = vec2(
 		length(vec2(dFdx(uv.x), dFdy(uv.x))),

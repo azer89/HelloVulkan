@@ -10,9 +10,6 @@ PipelineInfiniteGrid::PipelineInfiniteGrid(
 		{
 			.type_ = PipelineType::GraphicsOffScreen,
 			.msaaSamples_ = resShared->multiSampledColorImage_.multisampleCount_,
-			//.topology_ = VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
-
-			.vertexBufferBind_ = false,
 			.depthTest_ = true,
 			.depthWrite_ = false // Do not write to depth image
 		}),

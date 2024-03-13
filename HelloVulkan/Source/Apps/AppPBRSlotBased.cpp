@@ -27,7 +27,7 @@ void AppPBRSlotBased::Init()
 
 	model_ = std::make_unique<Model>();
 	model_->LoadSlotBased(vulkanContext_,
-		AppConfig::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
+		AppConfig::ModelFolder + "Tachikoma//Tachikoma.gltf");
 	std::vector<Model*> models = { model_.get() };
 
 	// Pipelines
@@ -64,8 +64,8 @@ void AppPBRSlotBased::Init()
 		clearPtr_.get(),
 		skyboxPtr_.get(),
 		pbrPtr_.get(),
-		lightPtr_.get(),
 		infGridPtr_.get(),
+		lightPtr_.get(),
 		resolveMSPtr_.get(),
 		tonemapPtr_.get(),
 		imguiPtr_.get(),
