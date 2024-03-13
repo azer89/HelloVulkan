@@ -125,6 +125,7 @@ void PipelineImGui::ImGuiDrawEmpty()
 
 void PipelineImGui::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
+	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "ImGui", tracy::Color::DarkSeaGreen);
 	uint32_t swapchainImageIndex = ctx.GetCurrentSwapchainImageIndex();
 	ImDrawData* draw_data = ImGui::GetDrawData();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));

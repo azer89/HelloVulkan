@@ -101,67 +101,97 @@ void AppBase::InitGLFW()
 	glfwSetKeyCallback(glfwWindow_, FuncKey);
 }
 
+// TODO Analyzie this function for possible performance improvement
 void AppBase::DrawFrame()
 {
+	//ZoneScopedC(tracy::Color::LawnGreen);
+
 	FrameData& frameData = vulkanContext_.GetCurrentFrameData();
-
-	vkWaitForFences(vulkanContext_.GetDevice(), 1, &(frameData.queueSubmitFence_), VK_TRUE, UINT64_MAX);
-
-	VkResult result = vulkanContext_.GetNextSwapchainImage(frameData.nextSwapchainImageSemaphore_);
-	if (result == VK_ERROR_OUT_OF_DATE_KHR)
 	{
-		OnWindowResized();
-		return;
+		ZoneScopedNC("WaitForFences", tracy::Color::GreenYellow);
+		vkWaitForFences(vulkanContext_.GetDevice(), 1, &(frameData.queueSubmitFence_), VK_TRUE, UINT64_MAX);
 	}
+
+	{
+		ZoneScopedNC("AcquireNextImageKHR", tracy::Color::PaleGreen);
+		VkResult result = vulkanContext_.GetNextSwapchainImage(frameData.nextSwapchainImageSemaphore_);
+		if (result == VK_ERROR_OUT_OF_DATE_KHR)
+		{
+			OnWindowResized();
+			return;
+		}
+	}
+
 	uint32_t swapchainImageIndex = vulkanContext_.GetCurrentSwapchainImageIndex();
-
-	vkResetFences(vulkanContext_.GetDevice(), 1, &(frameData.queueSubmitFence_));
-	vkResetCommandBuffer(frameData.graphicsCommandBuffer_, 0);
-
-	// ImGui first then UBOs, because ImGui sets a few UBO values
-	UpdateUI();
-
-	// Send UBOs to buffers
-	UpdateUBOs();
-
-	// Start recording command buffers
-	FillCommandBuffer(frameData.graphicsCommandBuffer_);
-
-	constexpr VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-	std::array<VkSemaphore, 1> waitSemaphores{ frameData.nextSwapchainImageSemaphore_ };
-
-	// Submit Queue
-	// TODO Set code below as a function in VulkanDevice
-	const VkSubmitInfo submitInfo =
+	
 	{
-		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-		.pNext = nullptr,
-		.waitSemaphoreCount = static_cast<uint32_t>(waitSemaphores.size()),
-		.pWaitSemaphores = waitSemaphores.data(),
-		.pWaitDstStageMask = waitStages,
-		.commandBufferCount = 1u,
-		.pCommandBuffers = &(frameData.graphicsCommandBuffer_),
-		.signalSemaphoreCount = 1u,
-		.pSignalSemaphores = &(frameData.graphicsQueueSemaphore_)
-	};
-	VK_CHECK(vkQueueSubmit(vulkanContext_.GetGraphicsQueue(), 1, &submitInfo, frameData.queueSubmitFence_));
+		ZoneScopedNC("ResetFences_ResetCommandBuffer", tracy::Color::Orange);
+		vkResetFences(vulkanContext_.GetDevice(), 1, &(frameData.queueSubmitFence_));
+		vkResetCommandBuffer(frameData.graphicsCommandBuffer_, 0);
+	}
+	
+	{
+		ZoneScopedNC("UpdateUI", tracy::Color::Aquamarine1);
+		// ImGui first then UBOs, because ImGui sets a few UBO values
+		UpdateUI();
+	}
 
-	// Present
-	// TODO Set code below as a function in VulkanDevice
-	const VkPresentInfoKHR presentInfo =
 	{
-		.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
-		.pNext = nullptr,
-		.waitSemaphoreCount = 1u,
-		.pWaitSemaphores = &(frameData.graphicsQueueSemaphore_),
-		.swapchainCount = 1u,
-		.pSwapchains = vulkanContext_.GetSwapchainPtr(),
-		.pImageIndices = &swapchainImageIndex
-	};
-	result = vkQueuePresentKHR(vulkanContext_.GetGraphicsQueue(), &presentInfo);
-	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || shouldRecreateSwapchain_)
+		ZoneScopedNC("UpdateUBOs", tracy::Color::Aquamarine2);
+		// Send UBOs to buffers
+		UpdateUBOs();
+	}
+
 	{
-		OnWindowResized();
+		ZoneScopedNC("RecordCommandBuffer", tracy::Color::OrangeRed);
+		// Start recording command buffers
+		FillCommandBuffer(frameData.graphicsCommandBuffer_);
+	}
+
+	{
+		ZoneScopedNC("QueueSubmit", tracy::Color::VioletRed);
+
+		constexpr VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+		std::array<VkSemaphore, 1> waitSemaphores{ frameData.nextSwapchainImageSemaphore_ };
+
+		// Submit Queue
+		// TODO Set code below as a function in VulkanDevice
+		const VkSubmitInfo submitInfo =
+		{
+			.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+			.pNext = nullptr,
+			.waitSemaphoreCount = static_cast<uint32_t>(waitSemaphores.size()),
+			.pWaitSemaphores = waitSemaphores.data(),
+			.pWaitDstStageMask = waitStages,
+			.commandBufferCount = 1u,
+			.pCommandBuffers = &(frameData.graphicsCommandBuffer_),
+			.signalSemaphoreCount = 1u,
+			.pSignalSemaphores = &(frameData.graphicsQueueSemaphore_)
+		};
+	
+		VK_CHECK(vkQueueSubmit(vulkanContext_.GetGraphicsQueue(), 1, &submitInfo, frameData.queueSubmitFence_));
+	}
+	
+	{
+		ZoneScopedNC("QueuePresentKHR", tracy::Color::VioletRed1);
+		// Present
+		// TODO Set code below as a function in VulkanContext
+		const VkPresentInfoKHR presentInfo =
+		{
+			.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+			.pNext = nullptr,
+			.waitSemaphoreCount = 1u,
+			.pWaitSemaphores = &(frameData.graphicsQueueSemaphore_),
+			.swapchainCount = 1u,
+			.pSwapchains = vulkanContext_.GetSwapchainPtr(),
+			.pImageIndices = &swapchainImageIndex
+		};
+
+		VkResult result = vkQueuePresentKHR(vulkanContext_.GetGraphicsQueue(), &presentInfo);
+		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || shouldRecreateSwapchain_)
+		{
+			OnWindowResized();
+		}
 	}
 
 	// Do this after the end of the draw
@@ -185,16 +215,19 @@ void AppBase::FillCommandBuffer(VkCommandBuffer commandBuffer)
 		.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT,
 		.pInheritanceInfo = nullptr
 	};
-
+	
 	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
-
-	// Iterate through all pipelines to fill the command buffer
-	for (const auto& pip : pipelines_)
+	
 	{
-		pip->FillCommandBuffer(vulkanContext_, commandBuffer);
+		TracyVkZoneC(vulkanContext_.GetTracyContext(), commandBuffer, "Render", tracy::Color::OrangeRed);
+
+		// Iterate through all pipelines to fill the command buffer
+		for (const auto& pip : pipelines_)
+		{
+			pip->FillCommandBuffer(vulkanContext_, commandBuffer);
+		}
 	}
 
-	// Tracy
 	TracyVkCollect(vulkanContext_.GetTracyContext(), commandBuffer);
 
 	VK_CHECK(vkEndCommandBuffer(commandBuffer));

@@ -38,6 +38,7 @@ void PipelineTonemap::OnWindowResized(VulkanContext& ctx)
 
 void PipelineTonemap::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
+	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "Tonemap", tracy::Color::MediumVioletRed);
 	const uint32_t frameIndex = ctx.GetFrameIndex();
 	const uint32_t swapchainImageIndex = ctx.GetCurrentSwapchainImageIndex();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));

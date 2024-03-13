@@ -56,6 +56,7 @@ PipelineSkybox::~PipelineSkybox()
 
 void PipelineSkybox::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
+	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "Skybox", tracy::Color::BlueViolet);
 	const uint32_t frameIndex = ctx.GetFrameIndex();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
 	BindPipeline(ctx, commandBuffer);

@@ -62,6 +62,8 @@ void PipelineLine::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer command
 		return;
 	}
 
+	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "Lines", tracy::Color::PaleVioletRed);
+
 	const uint32_t frameIndex = ctx.GetFrameIndex();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
 	BindPipeline(ctx, commandBuffer);
