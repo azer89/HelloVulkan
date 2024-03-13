@@ -27,7 +27,7 @@ void AppPBRSlotBased::Init()
 
 	model_ = std::make_unique<Model>();
 	model_->LoadSlotBased(vulkanContext_,
-		AppConfig::ModelFolder + "Tachikoma//Tachikoma.gltf");
+		AppConfig::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
 	std::vector<Model*> models = { model_.get() };
 
 	// Pipelines
@@ -141,16 +141,19 @@ void AppPBRSlotBased::UpdateUI()
 	}
 
 	static bool lightRender = true;
+	static bool gridRender = true;
 	static PushConstPBR pbrPC;
 
 	imguiPtr_->ImGuiStart();
 	imguiPtr_->ImGuiSetWindow("PBR and IBL", 525, 325);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 	ImGui::Checkbox("Render Lights", &lightRender);
+	ImGui::Checkbox("Render Grid", &gridRender);
 	imguiPtr_->ImGuiShowPBRConfig(&pbrPC, cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
 	lightPtr_->ShouldRender(lightRender);
+	infGridPtr_->ShouldRender(gridRender);
 	pbrPtr_->SetPBRPushConstants(pbrPC);
 }
 

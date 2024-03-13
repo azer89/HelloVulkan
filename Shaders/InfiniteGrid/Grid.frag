@@ -9,5 +9,5 @@ layout (location = 0) out vec4 fragColor;
 
 void main()
 {
-	fragColor = gridColor(inUV, inCameraPos);
+	fragColor = GridColor(inUV, inCameraPos);
 }

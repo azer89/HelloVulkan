@@ -11,15 +11,11 @@ layout(set = 0, binding = 0) uniform CameraBlock { CameraUBO camUBO; };
 void main()
 {
 	mat4 mvp = camUBO.projection * camUBO.view;
-	int idx = indices[gl_VertexIndex];
-	vec3 position = VERTEX_POS[idx] * gridSize;
-	mat4 invView = inverse(camUBO.view);
-	//outCameraPos = vec2(invView[3][0], invView[3][2]);
+	int idx = VERTEX_INDICES[gl_VertexIndex];
+	vec3 position = VERTEX_POS[idx] * GRID_SIZE;
 	outCameraPos = camUBO.position.xy;
-	//position.x += outCameraPos.x;
-	//position.z += outCameraPos.y;
+	position.y = -1; // TODO Hack
 	outUV = position.xz;
-	position.y = -1;
 	gl_Position = mvp * vec4(position, 1.0);
 	
 
