@@ -5,8 +5,8 @@
 
 #include <ModelUBO.glsl>
 #include <CameraUBO.glsl>
-#include <Bindless//VertexData.glsl>
-#include <Bindless//MeshData.glsl>
+#include <Bindless/VertexData.glsl>
+#include <Bindless/MeshData.glsl>
 
 layout(location = 0) out vec3 worldPos;
 layout(location = 1) out vec2 texCoord;

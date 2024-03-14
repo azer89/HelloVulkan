@@ -1,4 +1,4 @@
-#include <ShadowMapping//Poisson.glsl>
+#include <ShadowMapping/Poisson.glsl>
 
 const float SHADOW_AMBIENT = 0.1;
 const float PCF_SCALE = 0.5;

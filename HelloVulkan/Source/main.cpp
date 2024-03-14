@@ -8,12 +8,12 @@
 int main()
 {
 	// Bindless textures using draw indirect and descriptor indexing
-	//AppPBRBindless app;
+	AppPBRBindless app;
 
 	// The good ol resource binding per draw call
 	//AppPBRSlotBased app;
 	
-	AppPBRShadow app;
+	//AppPBRShadow app;
 	
 	//AppPBRClusterForward app;
 	

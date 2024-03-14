@@ -9,7 +9,7 @@ Brute force version of light culling for clustered forward shading.
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
 #include <LightData.glsl>
-#include <ClusteredForward//ClusterForwardHeader.glsl>
+#include <ClusteredForward/ClusterForwardHeader.glsl>
 
 // Note that if the number of intersecting lights is greater than this limit,
 // it'll cause a flickering artifact.

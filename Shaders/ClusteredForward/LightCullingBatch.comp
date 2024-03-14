@@ -10,7 +10,7 @@ This should be a wee bit faster than the brute force version.
 layout(local_size_x = 16, local_size_y = 9, local_size_z = 4) in;
 
 #include <LightData.glsl>
-#include <ClusteredForward//ClusterForwardHeader.glsl>
+#include <ClusteredForward/ClusterForwardHeader.glsl>
 
 // Note that if the number of intersecting lights is greater than this limit,
 // it'll cause a flickering artifact.

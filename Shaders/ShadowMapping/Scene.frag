@@ -23,10 +23,10 @@ Fragment shader for
 #include <PBRPushConstants.glsl>
 #include <Hammersley.glsl>
 #include <TangentNormalToWorld.glsl>
-#include <Bindless//VertexData.glsl>
-#include <Bindless//MeshData.glsl>
-#include <ShadowMapping//UBO.glsl>
-#include <Bindless//VIM.glsl>
+#include <Bindless/VertexData.glsl>
+#include <Bindless/MeshData.glsl>
+#include <ShadowMapping/UBO.glsl>
+#include <Bindless/VIM.glsl>
 
 layout(location = 0) in vec3 worldPos;
 layout(location = 1) in vec2 texCoord;
@@ -51,7 +51,7 @@ layout(set = 0, binding = 8) uniform sampler2D shadowMap;
 layout(set = 0, binding = 9) uniform sampler2D pbrTextures[];
 
 // PCF or Poisson
-#include <ShadowMapping//Filter.glsl>
+#include <ShadowMapping/Filter.glsl>
 
 // PBR and IBL
 #include <Radiance.glsl>

@@ -8,7 +8,7 @@ Based on www.aortiz.me/2018/12/21/CG.html
 
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
-#include <ClusteredForward//ClusterForwardHeader.glsl>
+#include <ClusteredForward/ClusterForwardHeader.glsl>
 
 layout(set = 0, binding = 0) buffer Clusters { AABB clusters []; }; // SSBO
 layout(set = 0, binding = 1) uniform CFUBO { ClusterForwardUBO ubo; }; // UBO
