@@ -27,6 +27,15 @@ if(MSVC)
 endif()  
 
 target_include_directories(HelloVulkan PRIVATE
+    "${CMAKE_CURRENT_LIST_DIR}/Header"
+    "${CMAKE_CURRENT_LIST_DIR}/Header/Apps"
+    "${CMAKE_CURRENT_LIST_DIR}/Header/Pipelines"
+    "${CMAKE_CURRENT_LIST_DIR}/Header/Raytracing"
+    "${CMAKE_CURRENT_LIST_DIR}/Header/Resources"
+    "${CMAKE_CURRENT_LIST_DIR}/Header/Vulkan"
+)
+
+target_include_directories(HelloVulkan PRIVATE
     "${PROJECT_SOURCE_DIR}/External/stb"
     "${PROJECT_SOURCE_DIR}/External/assimp/include"
     "${PROJECT_SOURCE_DIR}/External/glfw/include"
@@ -40,6 +49,7 @@ target_include_directories(HelloVulkan PRIVATE
     "${PROJECT_SOURCE_DIR}/External/Binaries/assimp/include"
 )
 
+# TODO Build glslang manually
 target_include_directories(HelloVulkan PRIVATE 
     "$ENV{VULKAN_SDK}/Include"
     "$ENV{VULKAN_SDK}/Include/glslang/Include"
@@ -51,9 +61,9 @@ target_include_directories(HelloVulkan PRIVATE
     "$ENV{VULKAN_SDK}/Include/spirv-headers"
 )
 
-target_link_libraries(HelloVulkan PRIVATE volk glfw tracy assimp imgui)
+target_link_libraries(HelloVulkan PRIVATE volk glfw TracyClient assimp imgui)
 
-# TODO Build glslang from git module
+# TODO Build glslang manually
 target_link_libraries(HelloVulkan PRIVATE
     $<$<CONFIG:Debug>:
         "$ENV{VULKAN_SDK}/Lib/GenericCodeGend.lib"

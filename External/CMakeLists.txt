@@ -20,7 +20,11 @@ set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE BOOL "")
 add_subdirectory(assimp)
 
 add_library(imgui STATIC)
-target_include_directories(imgui PRIVATE imgui)
+target_include_directories(imgui PRIVATE 
+    "$ENV{VULKAN_SDK}/Include"
+    "${CMAKE_CURRENT_LIST_DIR}/glfw/include"
+    "${CMAKE_CURRENT_LIST_DIR}/imgui"
+)
 target_compile_definitions(imgui PRIVATE VK_NO_PROTOTYPES)
 target_sources(imgui PRIVATE 
 	"${CMAKE_CURRENT_LIST_DIR}/ImGui/imgui.h"
