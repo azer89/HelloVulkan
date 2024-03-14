@@ -22,10 +22,10 @@ add_subdirectory(assimp)
 add_library(imgui STATIC)
 target_include_directories(imgui PRIVATE 
     "$ENV{VULKAN_SDK}/Include"
+	"${CMAKE_CURRENT_LIST_DIR}/imgui"
     "${CMAKE_CURRENT_LIST_DIR}/glfw/include"
-    "${CMAKE_CURRENT_LIST_DIR}/imgui"
 )
-target_compile_definitions(imgui PRIVATE VK_NO_PROTOTYPES)
+target_compile_definitions(imgui PRIVATE VK_NO_PROTOTYPES)  # This is very important because of volk
 target_sources(imgui PRIVATE 
 	"${CMAKE_CURRENT_LIST_DIR}/ImGui/imgui.h"
     "${CMAKE_CURRENT_LIST_DIR}/ImGui/backends/imgui_impl_glfw.h"
@@ -34,17 +34,18 @@ target_sources(imgui PRIVATE
 	"${CMAKE_CURRENT_LIST_DIR}/ImGui/imgui.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/ImGui/imgui_demo.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/ImGui/imgui_draw.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/ImGui/imgui_widgets.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/ImGui/imgui_tables.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/ImGui/imgui_widgets.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/ImGui/backends/imgui_impl_glfw.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/ImGui/backends/imgui_impl_vulkan.cpp"
 )
 
-set_property(TARGET glfw PROPERTY FOLDER "ThirdPartyLibraries")
-set_property(TARGET volk PROPERTY FOLDER "ThirdPartyLibraries")
-set_property(TARGET assimp PROPERTY FOLDER "ThirdPartyLibraries")
-set_property(TARGET imgui PROPERTY FOLDER "ThirdPartyLibraries")
-set_property(TARGET zlibstatic PROPERTY FOLDER "ThirdPartyLibraries")
-set_property(TARGET TracyClient PROPERTY FOLDER "ThirdPartyLibraries")
-set_property(TARGET update_mappings PROPERTY FOLDER "ThirdPartyLibraries") # glfw
-set_property(TARGET UpdateAssimpLibsDebugSymbolsAndDLLs PROPERTY FOLDER "ThirdPartyLibraries")
+# Group external libraries into a folder
+set_property(TARGET glfw PROPERTY FOLDER "External")
+set_property(TARGET volk PROPERTY FOLDER "External")
+set_property(TARGET assimp PROPERTY FOLDER "External")
+set_property(TARGET imgui PROPERTY FOLDER "External")
+set_property(TARGET zlibstatic PROPERTY FOLDER "External")
+set_property(TARGET TracyClient PROPERTY FOLDER "External")
+set_property(TARGET update_mappings PROPERTY FOLDER "External") # glfw
+set_property(TARGET UpdateAssimpLibsDebugSymbolsAndDLLs PROPERTY FOLDER "External")

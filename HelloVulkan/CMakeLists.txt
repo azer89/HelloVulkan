@@ -1,6 +1,8 @@
+# This CMake file has only been tested on Windows 11 and Visual Studio 2022 
+
+file(GLOB_RECURSE SHADER_FILES CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/Shaders/*")
 file(GLOB_RECURSE H_FILES CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/Header/*.h")
 file(GLOB_RECURSE CPP_FILES CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/Source/*.cpp")
-file(GLOB_RECURSE SHADER_FILES CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/Shaders/*")
 
 add_executable(HelloVulkan 
     ${H_FILES}
@@ -8,9 +10,9 @@ add_executable(HelloVulkan
     ${SHADER_FILES}
 )
 
+source_group(TREE "${PROJECT_SOURCE_DIR}/Shaders" PREFIX "Shaders" FILES ${SHADER_FILES})
 source_group(TREE "${CMAKE_CURRENT_LIST_DIR}/Header" PREFIX "Header Files" FILES ${H_FILES})
 source_group(TREE "${CMAKE_CURRENT_LIST_DIR}/Source" PREFIX "Source Files" FILES ${CPP_FILES})
-source_group(TREE "${PROJECT_SOURCE_DIR}/Shaders" PREFIX "Shaders" FILES ${SHADER_FILES})
 
 target_compile_definitions(HelloVulkan PRIVATE
     $<$<CONFIG:Debug>:_DEBUG>
@@ -23,6 +25,7 @@ target_compile_definitions(HelloVulkan PRIVATE
 )
 
 if(MSVC)
+    # Tracy does not like /ZI
     target_compile_options(HelloVulkan PRIVATE "/Zi")
 endif()  
 
@@ -63,26 +66,28 @@ target_include_directories(HelloVulkan PRIVATE
 
 target_link_libraries(HelloVulkan PRIVATE volk glfw TracyClient assimp imgui)
 
-# TODO Build glslang manually
-target_link_libraries(HelloVulkan PRIVATE
-    $<$<CONFIG:Debug>:
-        "$ENV{VULKAN_SDK}/Lib/GenericCodeGend.lib"
-        "$ENV{VULKAN_SDK}/Lib/glslangd.lib"
-        "$ENV{VULKAN_SDK}/Lib/glslang-default-resource-limitsd.lib"
-        "$ENV{VULKAN_SDK}/Lib/MachineIndependentd.lib"
-        "$ENV{VULKAN_SDK}/Lib/SPIRVd.lib"
-        "$ENV{VULKAN_SDK}/Lib/SPIRV-Toolsd.lib"
-        "$ENV{VULKAN_SDK}/Lib/SPIRV-Tools-optd.lib"
-        "$ENV{VULKAN_SDK}/Lib/OSDependentd.lib"
-    >
-    $<$<CONFIG:Release>:
-        "$ENV{VULKAN_SDK}/Lib/GenericCodeGen.lib"
-        "$ENV{VULKAN_SDK}/Lib/glslang.lib"
-        "$ENV{VULKAN_SDK}/Lib/glslang-default-resource-limits.lib"
-        "$ENV{VULKAN_SDK}/Lib/MachineIndependent.lib"
-        "$ENV{VULKAN_SDK}/Lib/SPIRV.lib"
-        "$ENV{VULKAN_SDK}/Lib/SPIRV-Tools.lib"
-        "$ENV{VULKAN_SDK}/Lib/SPIRV-Tools-opt.lib"
-        "$ENV{VULKAN_SDK}/Lib/OSDependent.lib"
-    >
-)
+# If you are not on Windows you need to somehow modify code below
+if(MSVC)
+    target_link_libraries(HelloVulkan PRIVATE
+        $<$<CONFIG:Debug>:
+            "$ENV{VULKAN_SDK}/Lib/GenericCodeGend.lib"
+            "$ENV{VULKAN_SDK}/Lib/glslangd.lib"
+            "$ENV{VULKAN_SDK}/Lib/glslang-default-resource-limitsd.lib"
+            "$ENV{VULKAN_SDK}/Lib/MachineIndependentd.lib"
+            "$ENV{VULKAN_SDK}/Lib/SPIRVd.lib"
+            "$ENV{VULKAN_SDK}/Lib/SPIRV-Toolsd.lib"
+            "$ENV{VULKAN_SDK}/Lib/SPIRV-Tools-optd.lib"
+            "$ENV{VULKAN_SDK}/Lib/OSDependentd.lib"
+        >
+        $<$<CONFIG:Release>:
+            "$ENV{VULKAN_SDK}/Lib/GenericCodeGen.lib"
+            "$ENV{VULKAN_SDK}/Lib/glslang.lib"
+            "$ENV{VULKAN_SDK}/Lib/glslang-default-resource-limits.lib"
+            "$ENV{VULKAN_SDK}/Lib/MachineIndependent.lib"
+            "$ENV{VULKAN_SDK}/Lib/SPIRV.lib"
+            "$ENV{VULKAN_SDK}/Lib/SPIRV-Tools.lib"
+            "$ENV{VULKAN_SDK}/Lib/SPIRV-Tools-opt.lib"
+            "$ENV{VULKAN_SDK}/Lib/OSDependent.lib"
+        >
+    )
+endif()
