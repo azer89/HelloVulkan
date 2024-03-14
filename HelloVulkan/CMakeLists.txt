@@ -7,9 +7,12 @@ add_executable(HelloVulkan
 )
 
 source_group(TREE "${CMAKE_CURRENT_LIST_DIR}/Header" PREFIX "Header Files" FILES ${H_FILES})
-source_group(TREE "${CMAKE_CURRENT_LIST_DIR}/Source" PREFIX "Source Files" FILES ${CPP_FILES}) 
+source_group(TREE "${CMAKE_CURRENT_LIST_DIR}/Source" PREFIX "Source Files" FILES ${CPP_FILES})
 
 target_compile_definitions(HelloVulkan PRIVATE
+    $<$<CONFIG:Debug>:_DEBUG>
+    $<$<CONFIG:Release>:>
+
     _CONSOLE
     _CRT_SECURE_NO_WARNINGS
     TRACY_ENABLE
