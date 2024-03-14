@@ -51,6 +51,7 @@ void AppPBRSlotBased::Init()
 	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(vulkanContext_, resShared_.get());
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
 	tonemapPtr_ = std::make_unique<PipelineTonemap>(vulkanContext_, &(resShared_->singleSampledColorImage_));
+	infGridPtr_ = std::make_unique<PipelineInfiniteGrid>(vulkanContext_, resShared_.get(), -1.0f);
 	// ImGui here
 	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
@@ -63,6 +64,7 @@ void AppPBRSlotBased::Init()
 		clearPtr_.get(),
 		skyboxPtr_.get(),
 		pbrPtr_.get(),
+		infGridPtr_.get(),
 		lightPtr_.get(),
 		resolveMSPtr_.get(),
 		tonemapPtr_.get(),
@@ -103,6 +105,7 @@ void AppPBRSlotBased::DestroyResources()
 	resolveMSPtr_.reset();
 	tonemapPtr_.reset();
 	imguiPtr_.reset();
+	infGridPtr_.reset();
 }
 
 void AppPBRSlotBased::UpdateUBOs()
@@ -110,6 +113,7 @@ void AppPBRSlotBased::UpdateUBOs()
 	CameraUBO ubo = camera_->GetCameraUBO();
 	lightPtr_->SetCameraUBO(vulkanContext_, ubo);
 	pbrPtr_->SetCameraUBO(vulkanContext_, ubo);
+	infGridPtr_->SetCameraUBO(vulkanContext_, ubo);
 
 	// Remove translation
 	CameraUBO skyboxUbo = ubo;
@@ -137,16 +141,19 @@ void AppPBRSlotBased::UpdateUI()
 	}
 
 	static bool lightRender = true;
+	static bool gridRender = true;
 	static PushConstPBR pbrPC;
 
 	imguiPtr_->ImGuiStart();
 	imguiPtr_->ImGuiSetWindow("PBR and IBL", 525, 325);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 	ImGui::Checkbox("Render Lights", &lightRender);
+	ImGui::Checkbox("Render Grid", &gridRender);
 	imguiPtr_->ImGuiShowPBRConfig(&pbrPC, cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
 	lightPtr_->ShouldRender(lightRender);
+	infGridPtr_->ShouldRender(gridRender);
 	pbrPtr_->SetPBRPushConstants(pbrPC);
 }
 

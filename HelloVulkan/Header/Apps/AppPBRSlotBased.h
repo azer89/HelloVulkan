@@ -13,6 +13,7 @@
 #include "PipelineTonemap.h"
 #include "PipelineResolveMS.h"
 #include "PipelineLightRender.h"
+#include "PipelineInfiniteGrid.h"
 #include "PipelineImGui.h"
 
 // STL
@@ -42,6 +43,7 @@ private:
 	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;
 	std::unique_ptr<PipelineLightRender> lightPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
+	std::unique_ptr<PipelineInfiniteGrid> infGridPtr_;
 
 	std::unique_ptr<ResourcesLight> resLights_;
 	std::unique_ptr<Model> model_;

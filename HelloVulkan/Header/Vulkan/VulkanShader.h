@@ -14,7 +14,7 @@ VkShaderStageFlagBits GetShaderStageFlagBits(const char* file);
 Adapted from
 	3D Graphics Rendering Cookbook
 	by Sergey Kosarevsky & Viktor Latypov
-	https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook
+	github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook
 */
 
 class VulkanShader

@@ -87,8 +87,8 @@ void AppPBRShadow::Init()
 		skyboxPtr_.get(),
 		shadowPtr_.get(),
 		pbrPtr_.get(),
-		lightPtr_.get(),
 		linePtr_.get(),
+		lightPtr_.get(), // Should be the last
 		resolveMSPtr_.get(),
 		tonemapPtr_.get(),
 		imguiPtr_.get(),
