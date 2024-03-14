@@ -18,9 +18,12 @@ void main()
 {
 	mat4 mvp = camUBO.projection * camUBO.view;
 	int idx = VERTEX_INDICES[gl_VertexIndex];
+	
 	vec3 position = VERTEX_POS[idx] * GRID_SIZE;
+	position.y = yPosition;
+	
 	outCameraPos = camUBO.position.xy;
-	position.y = yPosition; // Need to adjust because Blender grid is off
+	
 	outUV = position.xz;
 	gl_Position = mvp * vec4(position, 1.0);
 	
