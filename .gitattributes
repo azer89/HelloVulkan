@@ -5,6 +5,7 @@
 
 *TracyClient.lib filter=lfs diff=lfs merge=lfs -text
 *volk.lib filter=lfs diff=lfs merge=lfs -text
+*ImGui.lib filter=lfs diff=lfs merge=lfs -text
 
 Models/*/*.bin filter=lfs diff=lfs merge=lfs -text
 Models/*/*.gltf filter=lfs diff=lfs merge=lfs -text
