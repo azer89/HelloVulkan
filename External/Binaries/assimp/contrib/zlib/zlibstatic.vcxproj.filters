@@ -48,7 +48,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\contrib\zlib\zconf.h">
+    <ClInclude Include="C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\contrib\zlib\zconf.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib\zlib.h">
@@ -87,10 +87,10 @@
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{1A2F2F15-6213-35DB-BE8F-932CCE7362FE}</UniqueIdentifier>
+      <UniqueIdentifier>{0FCF3B59-4900-37D7-A165-A3C4B18506EF}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{8C6DCFEF-430D-3826-BB61-49D837FDDF5C}</UniqueIdentifier>
+      <UniqueIdentifier>{048A203F-7919-37AC-9739-C6ABB9F6C630}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
