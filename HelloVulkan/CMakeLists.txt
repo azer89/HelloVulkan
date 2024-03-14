@@ -50,3 +50,5 @@ target_include_directories(HelloVulkan PRIVATE
     "$ENV{VULKAN_SDK}/Include/spirv-tools"
     "$ENV{VULKAN_SDK}/Include/spirv-headers"
 )
+
+# TODO add libs from glslang

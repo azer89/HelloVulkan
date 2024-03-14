@@ -1,8 +1,16 @@
 find_package(Vulkan REQUIRED)
 
 add_subdirectory(volk)
+add_subdirectory(glfw)
 add_subdirectory(tracy)
 add_subdirectory(assimp)
+
+#[[
+add_library(volk STATIC)
+add_library(glfw STATIC)
+add_library(tracy STATIC)
+add_library(assimp STATIC)
+]]
 
 add_library(imgui STATIC)
 target_include_directories(imgui PRIVATE imgui)
