@@ -11,13 +11,16 @@ set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin")
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/HelloVulkan")
 
+#[[
 target_compile_definitions(HelloVulkan PUBLIC
     _CONSOLE
     _CRT_SECURE_NO_WARNINGS
     TRACY_ENABLE
     GLM_FORCE_DEPTH_ZERO_TO_ONE
 )
+]]
 
+#[[
 target_include_directories(HelloVulkan PUBLIC 
     "${PROJECT_SOURCE_DIR}/External/stb"
     "${PROJECT_SOURCE_DIR}/External/assimp/include"
@@ -40,7 +43,9 @@ target_include_directories(HelloVulkan PUBLIC
     "$(VULKAN_SDK)/Include/spirv-tools"
     "$(VULKAN_SDK)/Include/spirv-headers"
 )
+]]
 
+#[[
 target_link_libraries(HelloVulkan PUBLIC
 	"$(VULKAN_SDK)/Lib/GenericCodeGen.lib"
 	"$(VULKAN_SDK)/Lib/glslang.lib"
@@ -51,22 +56,25 @@ target_link_libraries(HelloVulkan PUBLIC
 	"$(VULKAN_SDK)/Lib/SPIRV-Tools-opt.lib"
 	"$(VULKAN_SDK)/Lib/OSDependent.lib"
 )
+]]
 
+#target_link_libraries(HelloVulkan PUBLIC glfw assimp volk tracy)
+
+#[[
 SET(GLFW_INSTALL            OFF CACHE BOOL "" FORCE) 
 SET(GLFW_BUILD_DOCS         OFF CACHE BOOL "" FORCE) 
 SET(GLFW_BUILD_TESTS        OFF CACHE BOOL "" FORCE) 
 SET(GLFW_BUILD_EXAMPLES     OFF CACHE BOOL "" FORCE) 
+]]
 
 #add_subdirectory("${PROJECT_SOURCE_DIR}/External/glfw")
 #add_subdirectory("${PROJECT_SOURCE_DIR}/External/assimp")
 
+#[[
 add_library(glfw STATIC)
 add_library(assimp STATIC)
 add_library(volk STATIC)
 add_library(tracy STATIC)
-
-target_link_libraries(HelloVulkan PUBLIC glfw assimp volk tracy)
-
 add_library(imgui STATIC)
 
 target_compile_definitions(imgui PRIVATE VK_NO_PROTOTYPES)
@@ -84,3 +92,4 @@ target_sources(imgui PRIVATE
 	"External/ImGui/backends/imgui_impl_vulkan.cpp"
 	"External/ImGui/backends/imgui_impl_glfw.cpp"
 )
+]]
