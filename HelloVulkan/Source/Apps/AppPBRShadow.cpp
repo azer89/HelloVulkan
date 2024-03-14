@@ -186,7 +186,7 @@ void AppPBRShadow::UpdateUI()
 
 	ImGui::Text("Vertices: %i, Indices: %i", scene_->vertices_.size(), scene_->indices_.size());
 	ImGui::Checkbox("Render Lights", &staticLightRender);
-	ImGui::Checkbox("Render Grid", &staticLineRender);
+	ImGui::Checkbox("Render Bounding Box", &staticLineRender);
 	ImGui::SeparatorText("Shading");
 	imguiPtr_->ImGuiShowPBRConfig(&staticPBRPushConstants, cubemapMipmapCount_);
 
