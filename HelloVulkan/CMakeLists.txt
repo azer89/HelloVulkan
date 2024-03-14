@@ -9,14 +9,14 @@ add_executable(HelloVulkan
 source_group(TREE "${CMAKE_CURRENT_LIST_DIR}/Header" PREFIX "Header Files" FILES ${H_FILES})
 source_group(TREE "${CMAKE_CURRENT_LIST_DIR}/Source" PREFIX "Source Files" FILES ${CPP_FILES}) 
 
-target_compile_definitions(HelloVulkan PUBLIC
+target_compile_definitions(HelloVulkan PRIVATE
     _CONSOLE
     _CRT_SECURE_NO_WARNINGS
     TRACY_ENABLE
     GLM_FORCE_DEPTH_ZERO_TO_ONE
 )
 
-target_include_directories(HelloVulkan PUBLIC 
+target_include_directories(HelloVulkan PRIVATE 
     "${PROJECT_SOURCE_DIR}/External/stb"
     "${PROJECT_SOURCE_DIR}/External/assimp/include"
     "${PROJECT_SOURCE_DIR}/External/glfw/include"
@@ -30,7 +30,7 @@ target_include_directories(HelloVulkan PUBLIC
     "${PROJECT_SOURCE_DIR}/External/Binaries/assimp/include"
 )
 
-target_include_directories(HelloVulkan PUBLIC 
+target_include_directories(HelloVulkan PRIVATE 
     "$ENV{VULKAN_SDK}/Include"
     "$ENV{VULKAN_SDK}/Include/glslang/Include"
     "$ENV{VULKAN_SDK}/Include/glslang/MachineIndependent"
