@@ -44,20 +44,4 @@ add_library(assimp STATIC)
 add_library(volk STATIC)
 add_library(tracy STATIC)
 add_library(imgui STATIC)
-
-target_compile_definitions(imgui PRIVATE VK_NO_PROTOTYPES)
-
-target_sources(imgui PRIVATE 
-	"External/ImGui/imgui.h"
-	"External/ImGui/backends/ImGui/imgui_impl_vulkan.h"
-	"External/ImGui/backends/ImGui/imgui_impl_glfw.h"
-	"External/ImGui/imgui.cpp"
-
-	"External/ImGui/imgui_demo.cpp"
-	"External/ImGui/imgui_draw.cpp"
-	"External/ImGui/imgui_widgets.cpp"
-	"External/ImGui/imgui_tables.cpp"
-	"External/ImGui/backends/imgui_impl_vulkan.cpp"
-	"External/ImGui/backends/imgui_impl_glfw.cpp"
-)
 ]]
