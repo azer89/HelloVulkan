@@ -10,35 +10,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED on)
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin")
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/HelloVulkan")
-add_subdirectory("${PROJECT_SOURCE_DIR}/HelloVulkan/Header")
-add_subdirectory("${PROJECT_SOURCE_DIR}/HelloVulkan/Header/Apps")
-add_subdirectory("${PROJECT_SOURCE_DIR}/HelloVulkan/Header/Pipelines")
-add_subdirectory("${PROJECT_SOURCE_DIR}/HelloVulkan/Header/Raytracing")
-add_subdirectory("${PROJECT_SOURCE_DIR}/HelloVulkan/Header/Resources")
-add_subdirectory("${PROJECT_SOURCE_DIR}/HelloVulkan/Header/Vulkan")
-add_subdirectory("${PROJECT_SOURCE_DIR}/HelloVulkan/Source")
-add_subdirectory("${PROJECT_SOURCE_DIR}/HelloVulkan/Source/Apps")
-add_subdirectory("${PROJECT_SOURCE_DIR}/HelloVulkan/Source/Pipelines")
-add_subdirectory("${PROJECT_SOURCE_DIR}/HelloVulkan/Source/Raytracing")
-add_subdirectory("${PROJECT_SOURCE_DIR}/HelloVulkan/Source/Resources")
-add_subdirectory("${PROJECT_SOURCE_DIR}/HelloVulkan/Source/Vulkan")
 
-
-SET(GLFW_INSTALL                   OFF CACHE BOOL "" FORCE) 
-SET(GLFW_BUILD_DOCS                OFF CACHE BOOL "" FORCE) 
-SET(GLFW_BUILD_TESTS               OFF CACHE BOOL "" FORCE) 
-SET(GLFW_BUILD_EXAMPLES            OFF CACHE BOOL "" FORCE)  
-add_subdirectory("${PROJECT_SOURCE_DIR}/External/glfw")
-add_subdirectory("${PROJECT_SOURCE_DIR}/External/assimp")
+target_compile_definitions(HelloVulkan PUBLIC
+    _CONSOLE
+    _CRT_SECURE_NO_WARNINGS
+    TRACY_ENABLE
+    GLM_FORCE_DEPTH_ZERO_TO_ONE
+)
 
 target_include_directories(HelloVulkan PUBLIC 
-    "${PROJECT_SOURCE_DIR}/HelloVulkan/Header"
-    "${PROJECT_SOURCE_DIR}/HelloVulkan/Header/Apps"
-    "${PROJECT_SOURCE_DIR}/HelloVulkan/Header/Pipelines"
-    "${PROJECT_SOURCE_DIR}/HelloVulkan/Header/Raytracing"
-    "${PROJECT_SOURCE_DIR}/HelloVulkan/Header/Resources"
-    "${PROJECT_SOURCE_DIR}/HelloVulkan/Header/Vulkan"
-
     "${PROJECT_SOURCE_DIR}/External/stb"
     "${PROJECT_SOURCE_DIR}/External/assimp/include"
     "${PROJECT_SOURCE_DIR}/External/glfw/include"
@@ -72,6 +52,14 @@ target_link_libraries(HelloVulkan PUBLIC
 	"$(VULKAN_SDK)/Lib/OSDependent.lib"
 )
 
+SET(GLFW_INSTALL            OFF CACHE BOOL "" FORCE) 
+SET(GLFW_BUILD_DOCS         OFF CACHE BOOL "" FORCE) 
+SET(GLFW_BUILD_TESTS        OFF CACHE BOOL "" FORCE) 
+SET(GLFW_BUILD_EXAMPLES     OFF CACHE BOOL "" FORCE) 
+
+#add_subdirectory("${PROJECT_SOURCE_DIR}/External/glfw")
+#add_subdirectory("${PROJECT_SOURCE_DIR}/External/assimp")
+
 add_library(glfw STATIC)
 add_library(assimp STATIC)
 add_library(volk STATIC)
@@ -81,7 +69,7 @@ target_link_libraries(HelloVulkan PUBLIC glfw assimp volk tracy)
 
 add_library(imgui STATIC)
 
-target_include_directories(imgui PUBLIC imgui)
+target_compile_definitions(imgui PRIVATE VK_NO_PROTOTYPES)
 
 target_sources(imgui PRIVATE 
 	"External/ImGui/imgui.h"
@@ -96,5 +84,3 @@ target_sources(imgui PRIVATE
 	"External/ImGui/backends/imgui_impl_vulkan.cpp"
 	"External/ImGui/backends/imgui_impl_glfw.cpp"
 )
-
-target_link_libraries(imgui PUBLIC Vulkan::Vulkan SDL2::SDL2)
