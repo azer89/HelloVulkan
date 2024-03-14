@@ -22,7 +22,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{D6BFF680-930E-367A-A456-BFCB3EF3CAF2}</ProjectGuid>
+    <ProjectGuid>{B237ABA5-DA08-3216-A677-D9B4F79720D5}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
     <Platform>x64</Platform>
@@ -66,7 +66,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\contrib\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\contrib\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -76,7 +76,7 @@
     <PostBuildEvent>
       <Message>							</Message>
       <Command>setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Release/assimp-vc143-mt.dll C:/Users/azer/workspace/HelloVulkan/External/assimp/bin64/assimp-vc143-mt.dll
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Release/assimp-vc143-mt.dll C:/Users/azer/workspace/HelloVulkan/External/assimp/bin64/assimp-vc143-mt.dll
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -85,7 +85,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Release/assimp-vc143-mt.exp C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mt.exp
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Release/assimp-vc143-mt.exp C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mt.exp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -94,7 +94,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Release/assimp-vc143-mt.lib C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mt.lib
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Release/assimp-vc143-mt.lib C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mt.lib
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -103,7 +103,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Debug/assimp-vc143-mtd.dll C:/Users/azer/workspace/HelloVulkan/External/assimp/bin64/assimp-vc143-mtd.dll
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Debug/assimp-vc143-mtd.dll C:/Users/azer/workspace/HelloVulkan/External/assimp/bin64/assimp-vc143-mtd.dll
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -112,7 +112,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Debug/assimp-vc143-mtd.exp C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.exp
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Debug/assimp-vc143-mtd.exp C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.exp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -121,7 +121,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Debug/assimp-vc143-mtd.ilk C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.ilk
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Debug/assimp-vc143-mtd.ilk C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.ilk
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -130,7 +130,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Debug/assimp-vc143-mtd.lib C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.lib
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Debug/assimp-vc143-mtd.lib C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.lib
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -139,7 +139,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Debug/assimp-vc143-mtd.pdb C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.pdb
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Debug/assimp-vc143-mtd.pdb C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.pdb
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -151,7 +151,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\contrib\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\contrib\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -161,7 +161,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <PostBuildEvent>
       <Message>							</Message>
       <Command>setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Release/assimp-vc143-mt.dll C:/Users/azer/workspace/HelloVulkan/External/assimp/bin64/assimp-vc143-mt.dll
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Release/assimp-vc143-mt.dll C:/Users/azer/workspace/HelloVulkan/External/assimp/bin64/assimp-vc143-mt.dll
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -170,7 +170,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Release/assimp-vc143-mt.exp C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mt.exp
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Release/assimp-vc143-mt.exp C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mt.exp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -179,7 +179,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Release/assimp-vc143-mt.lib C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mt.lib
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Release/assimp-vc143-mt.lib C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mt.lib
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -188,7 +188,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Debug/assimp-vc143-mtd.dll C:/Users/azer/workspace/HelloVulkan/External/assimp/bin64/assimp-vc143-mtd.dll
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Debug/assimp-vc143-mtd.dll C:/Users/azer/workspace/HelloVulkan/External/assimp/bin64/assimp-vc143-mtd.dll
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -197,7 +197,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Debug/assimp-vc143-mtd.exp C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.exp
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Debug/assimp-vc143-mtd.exp C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.exp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -206,7 +206,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Debug/assimp-vc143-mtd.ilk C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.ilk
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Debug/assimp-vc143-mtd.ilk C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.ilk
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -215,7 +215,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Debug/assimp-vc143-mtd.lib C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.lib
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Debug/assimp-vc143-mtd.lib C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.lib
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -224,7 +224,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Debug/assimp-vc143-mtd.pdb C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.pdb
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Debug/assimp-vc143-mtd.pdb C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.pdb
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -236,7 +236,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\contrib\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\contrib\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -246,7 +246,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <PostBuildEvent>
       <Message>							</Message>
       <Command>setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Release/assimp-vc143-mt.dll C:/Users/azer/workspace/HelloVulkan/External/assimp/bin64/assimp-vc143-mt.dll
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Release/assimp-vc143-mt.dll C:/Users/azer/workspace/HelloVulkan/External/assimp/bin64/assimp-vc143-mt.dll
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -255,7 +255,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Release/assimp-vc143-mt.exp C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mt.exp
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Release/assimp-vc143-mt.exp C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mt.exp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -264,7 +264,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Release/assimp-vc143-mt.lib C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mt.lib
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Release/assimp-vc143-mt.lib C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mt.lib
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -273,7 +273,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Debug/assimp-vc143-mtd.dll C:/Users/azer/workspace/HelloVulkan/External/assimp/bin64/assimp-vc143-mtd.dll
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Debug/assimp-vc143-mtd.dll C:/Users/azer/workspace/HelloVulkan/External/assimp/bin64/assimp-vc143-mtd.dll
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -282,7 +282,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Debug/assimp-vc143-mtd.exp C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.exp
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Debug/assimp-vc143-mtd.exp C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.exp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -291,7 +291,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Debug/assimp-vc143-mtd.ilk C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.ilk
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Debug/assimp-vc143-mtd.ilk C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.ilk
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -300,7 +300,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Debug/assimp-vc143-mtd.lib C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.lib
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Debug/assimp-vc143-mtd.lib C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.lib
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -309,7 +309,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Debug/assimp-vc143-mtd.pdb C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.pdb
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Debug/assimp-vc143-mtd.pdb C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.pdb
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -321,7 +321,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\contrib\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\contrib\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -331,7 +331,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <PostBuildEvent>
       <Message>							</Message>
       <Command>setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Release/assimp-vc143-mt.dll C:/Users/azer/workspace/HelloVulkan/External/assimp/bin64/assimp-vc143-mt.dll
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Release/assimp-vc143-mt.dll C:/Users/azer/workspace/HelloVulkan/External/assimp/bin64/assimp-vc143-mt.dll
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -340,7 +340,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Release/assimp-vc143-mt.exp C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mt.exp
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Release/assimp-vc143-mt.exp C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mt.exp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -349,7 +349,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Release/assimp-vc143-mt.lib C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mt.lib
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Release/assimp-vc143-mt.lib C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mt.lib
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -358,7 +358,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Debug/assimp-vc143-mtd.dll C:/Users/azer/workspace/HelloVulkan/External/assimp/bin64/assimp-vc143-mtd.dll
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Debug/assimp-vc143-mtd.dll C:/Users/azer/workspace/HelloVulkan/External/assimp/bin64/assimp-vc143-mtd.dll
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -367,7 +367,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Debug/assimp-vc143-mtd.exp C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.exp
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Debug/assimp-vc143-mtd.exp C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.exp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -376,7 +376,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Debug/assimp-vc143-mtd.ilk C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.ilk
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Debug/assimp-vc143-mtd.ilk C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.ilk
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -385,7 +385,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Debug/assimp-vc143-mtd.lib C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.lib
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Debug/assimp-vc143-mtd.lib C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.lib
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -394,7 +394,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/code/Debug/assimp-vc143-mtd.pdb C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.pdb
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/code/Debug/assimp-vc143-mtd.pdb C:/Users/azer/workspace/HelloVulkan/External/assimp/lib64/assimp-vc143-mtd.pdb
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -409,7 +409,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <UseUtf8Encoding>Always</UseUtf8Encoding>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/azer/workspace/HelloVulkan/External/assimp/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/azer/workspace/HelloVulkan/External/assimp -BC:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp --check-stamp-file C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/azer/workspace/HelloVulkan/External/assimp -BC:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp --check-stamp-file C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -417,12 +417,12 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-3.28\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakePackageConfigHelpers.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckFunctionExists.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckTypeSize.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\WriteBasicConfigVersionFile.cmake;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\CMakeFiles\3.28.1\CMakeCCompiler.cmake;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\CMakeFiles\3.28.1\CMakeCXXCompiler.cmake;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\CMakeFiles\3.28.1\CMakeRCCompiler.cmake;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\CMakeFiles\3.28.1\CMakeSystem.cmake;C:\Users\azer\workspace\HelloVulkan\External\assimp\assimp.pc.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\FindPkgMacros.cmake;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\PrecompiledHeader.cmake;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\assimp-plain-config.cmake.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\cmake_uninstall.cmake.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\include\assimp\config.h.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\revision.h.in;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-3.28\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakePackageConfigHelpers.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckFunctionExists.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckTypeSize.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\WriteBasicConfigVersionFile.cmake;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\CMakeFiles\3.28.1\CMakeCCompiler.cmake;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\CMakeFiles\3.28.1\CMakeCXXCompiler.cmake;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\CMakeFiles\3.28.1\CMakeRCCompiler.cmake;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\CMakeFiles\3.28.1\CMakeSystem.cmake;C:\Users\azer\workspace\HelloVulkan\External\assimp\assimp.pc.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\FindPkgMacros.cmake;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\PrecompiledHeader.cmake;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\assimp-plain-config.cmake.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\cmake_uninstall.cmake.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\include\assimp\config.h.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\revision.h.in;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/azer/workspace/HelloVulkan/External/assimp/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/azer/workspace/HelloVulkan/External/assimp -BC:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp --check-stamp-file C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/azer/workspace/HelloVulkan/External/assimp -BC:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp --check-stamp-file C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -430,12 +430,12 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-3.28\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakePackageConfigHelpers.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckFunctionExists.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckTypeSize.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\WriteBasicConfigVersionFile.cmake;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\CMakeFiles\3.28.1\CMakeCCompiler.cmake;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\CMakeFiles\3.28.1\CMakeCXXCompiler.cmake;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\CMakeFiles\3.28.1\CMakeRCCompiler.cmake;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\CMakeFiles\3.28.1\CMakeSystem.cmake;C:\Users\azer\workspace\HelloVulkan\External\assimp\assimp.pc.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\FindPkgMacros.cmake;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\PrecompiledHeader.cmake;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\assimp-plain-config.cmake.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\cmake_uninstall.cmake.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\include\assimp\config.h.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\revision.h.in;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-3.28\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakePackageConfigHelpers.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckFunctionExists.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckTypeSize.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\WriteBasicConfigVersionFile.cmake;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\CMakeFiles\3.28.1\CMakeCCompiler.cmake;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\CMakeFiles\3.28.1\CMakeCXXCompiler.cmake;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\CMakeFiles\3.28.1\CMakeRCCompiler.cmake;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\CMakeFiles\3.28.1\CMakeSystem.cmake;C:\Users\azer\workspace\HelloVulkan\External\assimp\assimp.pc.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\FindPkgMacros.cmake;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\PrecompiledHeader.cmake;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\assimp-plain-config.cmake.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\cmake_uninstall.cmake.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\include\assimp\config.h.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\revision.h.in;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/azer/workspace/HelloVulkan/External/assimp/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/azer/workspace/HelloVulkan/External/assimp -BC:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp --check-stamp-file C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/azer/workspace/HelloVulkan/External/assimp -BC:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp --check-stamp-file C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -443,12 +443,12 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Program Files\CMake\share\cmake-3.28\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakePackageConfigHelpers.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckFunctionExists.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckTypeSize.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\WriteBasicConfigVersionFile.cmake;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\CMakeFiles\3.28.1\CMakeCCompiler.cmake;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\CMakeFiles\3.28.1\CMakeCXXCompiler.cmake;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\CMakeFiles\3.28.1\CMakeRCCompiler.cmake;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\CMakeFiles\3.28.1\CMakeSystem.cmake;C:\Users\azer\workspace\HelloVulkan\External\assimp\assimp.pc.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\FindPkgMacros.cmake;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\PrecompiledHeader.cmake;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\assimp-plain-config.cmake.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\cmake_uninstall.cmake.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\include\assimp\config.h.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\revision.h.in;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Program Files\CMake\share\cmake-3.28\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakePackageConfigHelpers.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckFunctionExists.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckTypeSize.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\WriteBasicConfigVersionFile.cmake;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\CMakeFiles\3.28.1\CMakeCCompiler.cmake;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\CMakeFiles\3.28.1\CMakeCXXCompiler.cmake;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\CMakeFiles\3.28.1\CMakeRCCompiler.cmake;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\CMakeFiles\3.28.1\CMakeSystem.cmake;C:\Users\azer\workspace\HelloVulkan\External\assimp\assimp.pc.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\FindPkgMacros.cmake;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\PrecompiledHeader.cmake;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\assimp-plain-config.cmake.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\cmake_uninstall.cmake.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\include\assimp\config.h.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\revision.h.in;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/azer/workspace/HelloVulkan/External/assimp/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/azer/workspace/HelloVulkan/External/assimp -BC:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp --check-stamp-file C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/azer/workspace/HelloVulkan/External/assimp -BC:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp --check-stamp-file C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -456,16 +456,16 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Program Files\CMake\share\cmake-3.28\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakePackageConfigHelpers.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckFunctionExists.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckTypeSize.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\WriteBasicConfigVersionFile.cmake;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\CMakeFiles\3.28.1\CMakeCCompiler.cmake;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\CMakeFiles\3.28.1\CMakeCXXCompiler.cmake;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\CMakeFiles\3.28.1\CMakeRCCompiler.cmake;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\CMakeFiles\3.28.1\CMakeSystem.cmake;C:\Users\azer\workspace\HelloVulkan\External\assimp\assimp.pc.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\FindPkgMacros.cmake;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\PrecompiledHeader.cmake;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\assimp-plain-config.cmake.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\cmake_uninstall.cmake.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\include\assimp\config.h.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\revision.h.in;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Program Files\CMake\share\cmake-3.28\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakePackageConfigHelpers.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckFunctionExists.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckTypeSize.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\WriteBasicConfigVersionFile.cmake;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\CMakeFiles\3.28.1\CMakeCCompiler.cmake;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\CMakeFiles\3.28.1\CMakeCXXCompiler.cmake;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\CMakeFiles\3.28.1\CMakeRCCompiler.cmake;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\CMakeFiles\3.28.1\CMakeSystem.cmake;C:\Users\azer\workspace\HelloVulkan\External\assimp\assimp.pc.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\FindPkgMacros.cmake;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\PrecompiledHeader.cmake;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\assimp-plain-config.cmake.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\cmake-modules\cmake_uninstall.cmake.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\include\assimp\config.h.in;C:\Users\azer\workspace\HelloVulkan\External\assimp\revision.h.in;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\ZERO_CHECK.vcxproj">
-      <Project>{47A83E71-9611-3584-81C5-9FDA0ADA25F5}</Project>
+    <ProjectReference Include="C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\ZERO_CHECK.vcxproj">
+      <Project>{6D7BAABD-D808-3844-A414-3A2D396E2ABF}</Project>
       <Name>ZERO_CHECK</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

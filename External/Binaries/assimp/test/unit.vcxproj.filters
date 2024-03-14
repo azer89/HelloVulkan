@@ -396,31 +396,31 @@
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{8C6DCFEF-430D-3826-BB61-49D837FDDF5C}</UniqueIdentifier>
+      <UniqueIdentifier>{048A203F-7919-37AC-9739-C6ABB9F6C630}</UniqueIdentifier>
     </Filter>
     <Filter Include="UnitTests">
-      <UniqueIdentifier>{46DBDF8D-B684-3067-AACE-FE1D13098BC1}</UniqueIdentifier>
+      <UniqueIdentifier>{5FA561A3-A4DB-33FE-9BFC-8E7D647498ED}</UniqueIdentifier>
     </Filter>
     <Filter Include="UnitTests\Common">
-      <UniqueIdentifier>{2257EC33-2D6F-3F26-967B-8CDB70B1E443}</UniqueIdentifier>
+      <UniqueIdentifier>{8FEF2A2E-82CC-3743-8A43-841353B1922C}</UniqueIdentifier>
     </Filter>
     <Filter Include="UnitTests\Compiler">
-      <UniqueIdentifier>{C3D88D5E-C29D-3289-9825-B9C00952AFFC}</UniqueIdentifier>
+      <UniqueIdentifier>{51A8D8E3-58F9-3A06-80E9-B61132CE4A33}</UniqueIdentifier>
     </Filter>
     <Filter Include="UnitTests\GeometryTools">
-      <UniqueIdentifier>{C7096FD9-BE55-3236-8917-7E5A715E3B9C}</UniqueIdentifier>
+      <UniqueIdentifier>{3876A5B0-85BE-34FA-AC12-60F537901735}</UniqueIdentifier>
     </Filter>
     <Filter Include="UnitTests\ImportExport">
-      <UniqueIdentifier>{670AE4A0-B910-3F19-94B8-7C0E4BAF1410}</UniqueIdentifier>
+      <UniqueIdentifier>{5FE89B23-43A8-3C07-8EC2-B71B62A78154}</UniqueIdentifier>
     </Filter>
     <Filter Include="UnitTests\Material">
-      <UniqueIdentifier>{08F0CA0D-96F2-3E02-AB1A-D02FA3316AD0}</UniqueIdentifier>
+      <UniqueIdentifier>{CDC4A3DB-986D-3B5F-B74A-1C31D2A83F6A}</UniqueIdentifier>
     </Filter>
     <Filter Include="UnitTests\Math">
-      <UniqueIdentifier>{80A9E154-0571-398C-AC34-C87587DDD90B}</UniqueIdentifier>
+      <UniqueIdentifier>{E6514587-1083-3C8E-9E49-CCCDAAE40775}</UniqueIdentifier>
     </Filter>
     <Filter Include="UnitTests\PostProcess">
-      <UniqueIdentifier>{0A73FE15-79E5-355A-80CD-C76127FE7002}</UniqueIdentifier>
+      <UniqueIdentifier>{EC6986A5-07E0-3A38-88BE-96DC47C3AFE5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

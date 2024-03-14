@@ -22,7 +22,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{76604CDA-8122-337C-97EB-123503CAFCAF}</ProjectGuid>
+    <ProjectGuid>{D854C0CD-440D-3441-8FCF-34A5A1324FA8}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
     <Platform>x64</Platform>
@@ -59,25 +59,25 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\bin\Debug\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\bin\Debug\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">unit.dir\Debug\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">unit</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\bin\Release\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\bin\Release\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">unit.dir\Release\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">unit</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\bin\MinSizeRel\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\bin\MinSizeRel\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">unit.dir\MinSizeRel\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">unit</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\bin\RelWithDebInfo\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\bin\RelWithDebInfo\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">unit.dir\RelWithDebInfo\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">unit</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.exe</TargetExt>
@@ -86,7 +86,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\pugixml\src;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\..\contrib\rapidjson\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code\..\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\code\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\pugixml\src;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\..\contrib\rapidjson\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code\..\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\code\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /bigobj</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -108,10 +108,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;ASSIMP_BUILD_NO_M3D_IMPORTER;ASSIMP_BUILD_NO_M3D_EXPORTER;WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE;ASSIMP_BUILD_NO_C4D_IMPORTER;RAPIDJSON_HAS_STDSTRING=1;RAPIDJSON_NOMEMBERITERATORCLASS;ASSIMP_TEST_MODELS_DIR=\"C:/Users/azer/workspace/HelloVulkan/External/assimp/test/models\";ASSIMP_TEST_MODELS_NONBSD_DIR=\"C:/Users/azer/workspace/HelloVulkan/External/assimp/test/models-nonbsd\";_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\pugixml\src;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\..\contrib\rapidjson\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code\..\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\code\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\pugixml\src;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\..\contrib\rapidjson\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code\..\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\code\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\pugixml\src;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\..\contrib\rapidjson\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code\..\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\code\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\pugixml\src;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\..\contrib\rapidjson\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code\..\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\code\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -120,12 +120,12 @@
     </Midl>
     <Link>
       <AdditionalDependencies>..\lib\Debug\assimp-vc143-mtd.lib;..\contrib\zlib\Debug\zlibstaticd.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp;C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/$(Configuration);/lib;/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp;C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/$(Configuration);/lib;/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/lib/Debug/unit.lib</ImportLibrary>
-      <ProgramDataBaseFile>C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/bin/Debug/unit.pdb</ProgramDataBaseFile>
+      <ImportLibrary>C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/lib/Debug/unit.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/bin/Debug/unit.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
     </Link>
     <ProjectReference>
@@ -134,7 +134,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\pugixml\src;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\..\contrib\rapidjson\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code\..\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\code\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\pugixml\src;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\..\contrib\rapidjson\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code\..\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\code\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /bigobj</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
@@ -156,10 +156,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;NDEBUG;ASSIMP_BUILD_NO_M3D_IMPORTER;ASSIMP_BUILD_NO_M3D_EXPORTER;WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE;ASSIMP_BUILD_NO_C4D_IMPORTER;RAPIDJSON_HAS_STDSTRING=1;RAPIDJSON_NOMEMBERITERATORCLASS;ASSIMP_TEST_MODELS_DIR=\"C:/Users/azer/workspace/HelloVulkan/External/assimp/test/models\";ASSIMP_TEST_MODELS_NONBSD_DIR=\"C:/Users/azer/workspace/HelloVulkan/External/assimp/test/models-nonbsd\";_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\pugixml\src;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\..\contrib\rapidjson\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code\..\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\code\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\pugixml\src;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\..\contrib\rapidjson\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code\..\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\code\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\pugixml\src;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\..\contrib\rapidjson\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code\..\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\code\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\pugixml\src;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\..\contrib\rapidjson\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code\..\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\code\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -168,12 +168,12 @@
     </Midl>
     <Link>
       <AdditionalDependencies>..\lib\Release\assimp-vc143-mt.lib;..\contrib\zlib\Release\zlibstatic.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp;C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/$(Configuration);/lib;/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp;C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/$(Configuration);/lib;/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/lib/Release/unit.lib</ImportLibrary>
-      <ProgramDataBaseFile>C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/bin/Release/unit.pdb</ProgramDataBaseFile>
+      <ImportLibrary>C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/lib/Release/unit.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/bin/Release/unit.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
     </Link>
     <ProjectReference>
@@ -182,7 +182,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\pugixml\src;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\..\contrib\rapidjson\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code\..\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\code\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\pugixml\src;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\..\contrib\rapidjson\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code\..\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\code\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /bigobj</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <DisableSpecificWarnings>4244</DisableSpecificWarnings>
@@ -204,10 +204,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;NDEBUG;ASSIMP_BUILD_NO_M3D_IMPORTER;ASSIMP_BUILD_NO_M3D_EXPORTER;WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE;ASSIMP_BUILD_NO_C4D_IMPORTER;RAPIDJSON_HAS_STDSTRING=1;RAPIDJSON_NOMEMBERITERATORCLASS;ASSIMP_TEST_MODELS_DIR=\"C:/Users/azer/workspace/HelloVulkan/External/assimp/test/models\";ASSIMP_TEST_MODELS_NONBSD_DIR=\"C:/Users/azer/workspace/HelloVulkan/External/assimp/test/models-nonbsd\";_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\pugixml\src;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\..\contrib\rapidjson\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code\..\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\code\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\pugixml\src;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\..\contrib\rapidjson\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code\..\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\code\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\pugixml\src;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\..\contrib\rapidjson\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code\..\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\code\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\pugixml\src;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\..\contrib\rapidjson\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code\..\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\code\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -216,12 +216,12 @@
     </Midl>
     <Link>
       <AdditionalDependencies>..\lib\MinSizeRel\assimp-vc143-mt.lib;..\contrib\zlib\MinSizeRel\zlibstatic.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp;C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/$(Configuration);/lib;/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp;C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/$(Configuration);/lib;/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/lib/MinSizeRel/unit.lib</ImportLibrary>
-      <ProgramDataBaseFile>C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/bin/MinSizeRel/unit.pdb</ProgramDataBaseFile>
+      <ImportLibrary>C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/lib/MinSizeRel/unit.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/bin/MinSizeRel/unit.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
     </Link>
     <ProjectReference>
@@ -230,7 +230,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\pugixml\src;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\..\contrib\rapidjson\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code\..\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\code\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\pugixml\src;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\..\contrib\rapidjson\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code\..\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\code\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /bigobj</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -251,10 +251,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;NDEBUG;ASSIMP_BUILD_NO_M3D_IMPORTER;ASSIMP_BUILD_NO_M3D_EXPORTER;WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE;ASSIMP_BUILD_NO_C4D_IMPORTER;RAPIDJSON_HAS_STDSTRING=1;RAPIDJSON_NOMEMBERITERATORCLASS;ASSIMP_TEST_MODELS_DIR=\"C:/Users/azer/workspace/HelloVulkan/External/assimp/test/models\";ASSIMP_TEST_MODELS_NONBSD_DIR=\"C:/Users/azer/workspace/HelloVulkan/External/assimp/test/models-nonbsd\";_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\pugixml\src;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\..\contrib\rapidjson\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code\..\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\code\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\pugixml\src;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\..\contrib\rapidjson\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code\..\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\code\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\pugixml\src;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\..\contrib\rapidjson\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code\..\include;C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\code\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp;C:\Users\azer\workspace\HelloVulkan\External\assimp\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code;C:\Users\azer\workspace\HelloVulkan\External\assimp\.;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\contrib\zlib;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\unit;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest;C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\pugixml\src;C:\Users\azer\workspace\HelloVulkan\External\assimp\test\..\contrib\rapidjson\include;C:\Users\azer\workspace\HelloVulkan\External\assimp\code\..\include;C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\code\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -263,12 +263,12 @@
     </Midl>
     <Link>
       <AdditionalDependencies>..\lib\RelWithDebInfo\assimp-vc143-mt.lib;..\contrib\zlib\RelWithDebInfo\zlibstatic.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp;C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/$(Configuration);/lib;/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp;C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/$(Configuration);/lib;/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/lib/RelWithDebInfo/unit.lib</ImportLibrary>
-      <ProgramDataBaseFile>C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/bin/RelWithDebInfo/unit.pdb</ProgramDataBaseFile>
+      <ImportLibrary>C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/lib/RelWithDebInfo/unit.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/bin/RelWithDebInfo/unit.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
     </Link>
     <ProjectReference>
@@ -280,7 +280,7 @@
       <UseUtf8Encoding>Always</UseUtf8Encoding>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/azer/workspace/HelloVulkan/External/assimp/test/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/azer/workspace/HelloVulkan/External/assimp -BC:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp --check-stamp-file C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/test/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/azer/workspace/HelloVulkan/External/assimp -BC:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp --check-stamp-file C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/test/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -289,11 +289,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\test\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\test\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/azer/workspace/HelloVulkan/External/assimp/test/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/azer/workspace/HelloVulkan/External/assimp -BC:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp --check-stamp-file C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/test/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/azer/workspace/HelloVulkan/External/assimp -BC:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp --check-stamp-file C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/test/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -302,11 +302,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\test\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\test\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/azer/workspace/HelloVulkan/External/assimp/test/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/azer/workspace/HelloVulkan/External/assimp -BC:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp --check-stamp-file C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/test/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/azer/workspace/HelloVulkan/External/assimp -BC:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp --check-stamp-file C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/test/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -315,11 +315,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\test\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\test\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/azer/workspace/HelloVulkan/External/assimp/test/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/azer/workspace/HelloVulkan/External/assimp -BC:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp --check-stamp-file C:/Users/azer/workspace/HelloVulkan/External/VS_Projects/assimp/test/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/azer/workspace/HelloVulkan/External/assimp -BC:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp --check-stamp-file C:/Users/azer/workspace/HelloVulkan/External/Binaries/assimp/test/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -328,7 +328,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\test\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\test\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
@@ -464,18 +464,18 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\azer\workspace\HelloVulkan\External\assimp\contrib\googletest\googletest\src\gtest-all.cc" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\ZERO_CHECK.vcxproj">
-      <Project>{47A83E71-9611-3584-81C5-9FDA0ADA25F5}</Project>
+    <ProjectReference Include="C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\ZERO_CHECK.vcxproj">
+      <Project>{6D7BAABD-D808-3844-A414-3A2D396E2ABF}</Project>
       <Name>ZERO_CHECK</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ProjectReference>
-    <ProjectReference Include="C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\code\assimp.vcxproj">
-      <Project>{04AB4F07-9F8C-3BDA-9785-98C674035DDC}</Project>
+    <ProjectReference Include="C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\code\assimp.vcxproj">
+      <Project>{906D9B31-0998-3A8E-8AD1-D44529B3DC8F}</Project>
       <Name>assimp</Name>
     </ProjectReference>
-    <ProjectReference Include="C:\Users\azer\workspace\HelloVulkan\External\VS_Projects\assimp\contrib\zlib\zlibstatic.vcxproj">
-      <Project>{E2A2842E-2803-3D57-8A63-FFC7B3B51B12}</Project>
+    <ProjectReference Include="C:\Users\azer\workspace\HelloVulkan\External\Binaries\assimp\contrib\zlib\zlibstatic.vcxproj">
+      <Project>{868D2E3A-CB49-3A63-BB54-92CD86845C28}</Project>
       <Name>zlibstatic</Name>
     </ProjectReference>
   </ItemGroup>

@@ -400,10 +400,6 @@ MigrationBackup/
 #imgui
 */imgui.ini
 
-# Module binaries
-#External/VS_Projects/assimp/*
-#External/VS_Projects/volk/*
-
 #CMake files
 CMakeFiles/
 *.cmake
