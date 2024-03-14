@@ -18,9 +18,11 @@ namespace AppConfig
 	constexpr VkPresentModeKHR PresentMode = VK_PRESENT_MODE_FIFO_KHR;
 	
 	const std::string ScreenTitle = "Hello Vulkan";
-	const std::string ShaderFolder = "C://Users//azer//workspace//HelloVulkan//Shaders//";
-	const std::string ModelFolder = "C://Users//azer//workspace//HelloVulkan//Models//";
-	const std::string TextureFolder = "C://Users//azer//workspace//HelloVulkan//Textures//";
+
+	// If the program is error because it cannot find these, you prolly need to change them into absolute paths
+	const std::string ShaderFolder = "../Shaders/";
+	const std::string ModelFolder = "../Models/";
+	const std::string TextureFolder = "../Textures/";
 };
 
 namespace CameraConfig
