@@ -8,42 +8,10 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED on)
 
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin")
+set (CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin")
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/HelloVulkan")
-
-#[[
-target_compile_definitions(HelloVulkan PUBLIC
-    _CONSOLE
-    _CRT_SECURE_NO_WARNINGS
-    TRACY_ENABLE
-    GLM_FORCE_DEPTH_ZERO_TO_ONE
-)
-]]
-
-#[[
-target_include_directories(HelloVulkan PUBLIC 
-    "${PROJECT_SOURCE_DIR}/External/stb"
-    "${PROJECT_SOURCE_DIR}/External/assimp/include"
-    "${PROJECT_SOURCE_DIR}/External/glfw/include"
-    "${PROJECT_SOURCE_DIR}/External/glm"
-    "${PROJECT_SOURCE_DIR}/External/gli"
-    "${PROJECT_SOURCE_DIR}/External/ImGui"
-    "${PROJECT_SOURCE_DIR}/External/ImGui/backends"
-    "${PROJECT_SOURCE_DIR}/External/volk"
-    "${PROJECT_SOURCE_DIR}/External/VulkanMemoryAllocator/include"
-    "${PROJECT_SOURCE_DIR}/External/tracy/public/tracy"
-    "${PROJECT_SOURCE_DIR}/External/Binaries/assimp/include"
-
-    "$(VULKAN_SDK)/Include"
-    "$(VULKAN_SDK)/Include/glslang/Include"
-    "$(VULKAN_SDK)/Include/glslang/MachineIndependent"
-    "$(VULKAN_SDK)/Include/glslang/Public"
-    "$(VULKAN_SDK)/Include/glslang/SPIRV"
-    "$(VULKAN_SDK)/Include/spirv_cross"
-    "$(VULKAN_SDK)/Include/spirv-tools"
-    "$(VULKAN_SDK)/Include/spirv-headers"
-)
-]]
+add_subdirectory("${PROJECT_SOURCE_DIR}/External")
 
 #[[
 target_link_libraries(HelloVulkan PUBLIC
