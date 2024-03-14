@@ -19,3 +19,6 @@
 [submodule "External/tracy"]
 	path = External/tracy
 	url = https://github.com/wolfpld/tracy.git
+[submodule "External/glfw"]
+	path = External/glfw
+	url = https://github.com/glfw/glfw.git
