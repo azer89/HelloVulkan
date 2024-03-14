@@ -19,7 +19,11 @@ target_compile_definitions(HelloVulkan PRIVATE
     GLM_FORCE_DEPTH_ZERO_TO_ONE
 )
 
-target_include_directories(HelloVulkan PRIVATE 
+if(MSVC)
+    target_compile_options(HelloVulkan PRIVATE "/Zi")
+endif()  
+
+target_include_directories(HelloVulkan PRIVATE
     "${PROJECT_SOURCE_DIR}/External/stb"
     "${PROJECT_SOURCE_DIR}/External/assimp/include"
     "${PROJECT_SOURCE_DIR}/External/glfw/include"
