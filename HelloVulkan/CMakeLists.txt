@@ -51,4 +51,6 @@ target_include_directories(HelloVulkan PRIVATE
     "$ENV{VULKAN_SDK}/Include/spirv-headers"
 )
 
+target_link_libraries(HelloVulkan PRIVATE volk glfw tracy assimp imgui)
+
 # TODO add libs from glslang
