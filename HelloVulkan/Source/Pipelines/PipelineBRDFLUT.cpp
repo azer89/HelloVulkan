@@ -26,7 +26,7 @@ PipelineBRDFLUT::PipelineBRDFLUT(
 
 	CreateDescriptor(ctx);
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, ranges);
-	CreateComputePipeline(ctx, AppConfig::ShaderFolder + "IBL//BRDFLUT.comp");
+	CreateComputePipeline(ctx, AppConfig::ShaderFolder + "IBL/BRDFLUT.comp");
 }
 
 PipelineBRDFLUT::~PipelineBRDFLUT()

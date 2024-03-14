@@ -27,8 +27,8 @@ void AppPBRBindless::Init()
 
 	// Scene
 	std::vector<std::string> modelFiles = { 
-		AppConfig::ModelFolder + "Sponza//Sponza.gltf",
-		AppConfig::ModelFolder + "Tachikoma//Tachikoma.gltf",
+		AppConfig::ModelFolder + "Sponza/Sponza.gltf",
+		AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf",
 	};
 	scene_ = std::make_unique<Scene>(vulkanContext_, modelFiles);
 

@@ -58,8 +58,8 @@ PipelineShadow::PipelineShadow(
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
-			AppConfig::ShaderFolder + "ShadowMapping//Depth.vert",
-			AppConfig::ShaderFolder + "ShadowMapping//Depth.frag",
+			AppConfig::ShaderFolder + "ShadowMapping/Depth.vert",
+			AppConfig::ShaderFolder + "ShadowMapping/Depth.frag",
 		},
 		&pipeline_
 	);

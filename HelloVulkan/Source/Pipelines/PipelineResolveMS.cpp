@@ -19,8 +19,6 @@ PipelineResolveMS::PipelineResolveMS(
 		ctx, 
 		renderPass_.GetHandle(),
 		{
-			//multiSampledColorImage,
-			//singleSampledColorImage
 			&(resShared->multiSampledColorImage_),
 			&(resShared->singleSampledColorImage_)
 		},

@@ -27,7 +27,7 @@ void AppPBRSlotBased::Init()
 
 	model_ = std::make_unique<Model>();
 	model_->LoadSlotBased(vulkanContext_,
-		AppConfig::ModelFolder + "DamagedHelmet//DamagedHelmet.gltf");
+		AppConfig::ModelFolder + "DamagedHelmet/DamagedHelmet.gltf");
 	std::vector<Model*> models = { model_.get() };
 
 	// Pipelines

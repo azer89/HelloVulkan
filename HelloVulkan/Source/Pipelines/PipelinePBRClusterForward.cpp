@@ -65,8 +65,8 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
-			AppConfig::ShaderFolder + "SlotBased//Mesh.vert",
-			AppConfig::ShaderFolder + "ClusteredForward//Mesh.frag"
+			AppConfig::ShaderFolder + "SlotBased/Mesh.vert",
+			AppConfig::ShaderFolder + "ClusteredForward/Mesh.frag"
 		},
 		&pipeline_
 	);

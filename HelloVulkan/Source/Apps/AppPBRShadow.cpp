@@ -30,9 +30,9 @@ void AppPBRShadow::Init()
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
 	std::vector<std::string> modelFiles = {
-		AppConfig::ModelFolder + "Sponza//Sponza.gltf",
-		AppConfig::ModelFolder + "Tachikoma//Tachikoma.gltf",
-		AppConfig::ModelFolder + "Hexapod//Hexapod.gltf"
+		AppConfig::ModelFolder + "Sponza/Sponza.gltf",
+		AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf",
+		AppConfig::ModelFolder + "Hexapod/Hexapod.gltf"
 	};
 	bool supportDeviceAddress = true;
 	scene_ = std::make_unique<Scene>(vulkanContext_, modelFiles, supportDeviceAddress);
