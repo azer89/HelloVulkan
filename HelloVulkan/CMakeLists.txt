@@ -59,13 +59,15 @@ target_include_directories(HelloVulkan PUBLIC
     "${PROJECT_SOURCE_DIR}/External/VulkanMemoryAllocator/include"
     "${PROJECT_SOURCE_DIR}/External/tracy/public/tracy"
     "${PROJECT_SOURCE_DIR}/External/Binaries/assimp/include"
+)
 
-    "$(VULKAN_SDK)/Include"
-    "$(VULKAN_SDK)/Include/glslang/Include"
-    "$(VULKAN_SDK)/Include/glslang/MachineIndependent"
-    "$(VULKAN_SDK)/Include/glslang/Public"
-    "$(VULKAN_SDK)/Include/glslang/SPIRV"
-    "$(VULKAN_SDK)/Include/spirv_cross"
-    "$(VULKAN_SDK)/Include/spirv-tools"
-    "$(VULKAN_SDK)/Include/spirv-headers"
+target_include_directories(HelloVulkan PUBLIC 
+    "$ENV{VULKAN_SDK}/Include"
+    "$ENV{VULKAN_SDK}/Include/glslang/Include"
+    "$ENV{VULKAN_SDK}/Include/glslang/MachineIndependent"
+    "$ENV{VULKAN_SDK}/Include/glslang/Public"
+    "$ENV{VULKAN_SDK}/Include/glslang/SPIRV"
+    "$ENV{VULKAN_SDK}/Include/spirv_cross"
+    "$ENV{VULKAN_SDK}/Include/spirv-tools"
+    "$ENV{VULKAN_SDK}/Include/spirv-headers"
 )
