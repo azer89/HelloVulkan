@@ -19,13 +19,6 @@ set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "")
 set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE BOOL "")
 add_subdirectory(assimp)
 
-#[[
-add_library(volk STATIC)
-add_library(glfw STATIC)
-add_library(tracy STATIC)
-add_library(assimp STATIC)
-]]
-
 add_library(imgui STATIC)
 target_include_directories(imgui PRIVATE imgui)
 target_compile_definitions(imgui PRIVATE VK_NO_PROTOTYPES)

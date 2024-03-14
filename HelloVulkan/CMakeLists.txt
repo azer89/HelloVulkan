@@ -53,4 +53,26 @@ target_include_directories(HelloVulkan PRIVATE
 
 target_link_libraries(HelloVulkan PRIVATE volk glfw tracy assimp imgui)
 
-# TODO add libs from glslang
+# TODO Build glslang from git module
+target_link_libraries(HelloVulkan PRIVATE
+    $<$<CONFIG:Debug>:
+        "$ENV{VULKAN_SDK}/Lib/GenericCodeGend.lib"
+        "$ENV{VULKAN_SDK}/Lib/glslangd.lib"
+        "$ENV{VULKAN_SDK}/Lib/glslang-default-resource-limitsd.lib"
+        "$ENV{VULKAN_SDK}/Lib/MachineIndependentd.lib"
+        "$ENV{VULKAN_SDK}/Lib/SPIRVd.lib"
+        "$ENV{VULKAN_SDK}/Lib/SPIRV-Toolsd.lib"
+        "$ENV{VULKAN_SDK}/Lib/SPIRV-Tools-optd.lib"
+        "$ENV{VULKAN_SDK}/Lib/OSDependentd.lib"
+    >
+    $<$<CONFIG:Release>:
+        "$ENV{VULKAN_SDK}/Lib/GenericCodeGen.lib"
+        "$ENV{VULKAN_SDK}/Lib/glslang.lib"
+        "$ENV{VULKAN_SDK}/Lib/glslang-default-resource-limits.lib"
+        "$ENV{VULKAN_SDK}/Lib/MachineIndependent.lib"
+        "$ENV{VULKAN_SDK}/Lib/SPIRV.lib"
+        "$ENV{VULKAN_SDK}/Lib/SPIRV-Tools.lib"
+        "$ENV{VULKAN_SDK}/Lib/SPIRV-Tools-opt.lib"
+        "$ENV{VULKAN_SDK}/Lib/OSDependent.lib"
+    >
+)
