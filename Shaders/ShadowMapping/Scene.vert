@@ -14,10 +14,10 @@ Vertex shader for
 
 #include <CameraUBO.glsl>
 #include <ModelUBO.glsl>
-#include <ShadowMapping//UBO.glsl>
-#include <Bindless//VertexData.glsl>
-#include <Bindless//MeshData.glsl>
-#include <Bindless//VIM.glsl>
+#include <ShadowMapping/UBO.glsl>
+#include <Bindless/VertexData.glsl>
+#include <Bindless/MeshData.glsl>
+#include <Bindless/VIM.glsl>
 
 layout(location = 0) out vec3 worldPos;
 layout(location = 1) out vec2 texCoord;

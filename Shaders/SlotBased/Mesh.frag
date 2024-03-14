@@ -24,7 +24,6 @@ layout(push_constant) uniform PC { PBRPushConstant pc; };
 
 layout(set = 0, binding = 0)  uniform CameraBlock { CameraUBO camUBO; };
 
-
 layout(set = 0, binding = 2) readonly buffer Lights { LightData lights []; };
 layout(set = 0, binding = 3) uniform sampler2D textureAlbedo;
 layout(set = 0, binding = 4) uniform sampler2D textureNormal;

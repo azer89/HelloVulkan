@@ -1,7 +1,7 @@
 #version 460 core
 
-#include <InfiniteGrid//Params.glsl>
-#include <InfiniteGrid//Header.glsl>
+#include <InfiniteGrid/Params.glsl>
+#include <InfiniteGrid/Header.glsl>
 
 layout (location = 0) in vec2 inUV;
 layout (location = 1) in vec2 inCameraPos;

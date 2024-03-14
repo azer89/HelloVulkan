@@ -64,8 +64,8 @@ PipelinePBRSlotBased::PipelinePBRSlotBased(
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
-			AppConfig::ShaderFolder + "SlotBased//Mesh.vert",
-			AppConfig::ShaderFolder + "SlotBased//Mesh.frag"
+			AppConfig::ShaderFolder + "SlotBased/Mesh.vert",
+			AppConfig::ShaderFolder + "SlotBased/Mesh.frag"
 		},
 		&pipeline_
 	);

@@ -14,7 +14,7 @@ Fragment shader for
 #include <CameraUBO.glsl>
 #include <LightData.glsl>
 #include <PBRHeader.glsl>
-#include <Bindless//MeshData.glsl>
+#include <Bindless/MeshData.glsl>
 #include <PBRPushConstants.glsl>
 #include <Hammersley.glsl>
 #include <TangentNormalToWorld.glsl>

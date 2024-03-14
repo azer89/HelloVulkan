@@ -39,7 +39,7 @@ PipelineImGui::PipelineImGui(
 	ImGui::StyleColorsDark();
 
 	// Known issue when using both ImGui and volk
-	// https://github.com/ocornut/imgui/issues/4854
+	// github.com/ocornut/imgui/issues/4854
 	ImGui_ImplVulkan_LoadFunctions([](const char* functionName, void* vulkanInstance)
 	{
 		return vkGetInstanceProcAddr(*(reinterpret_cast<VkInstance*>(vulkanInstance)), functionName);

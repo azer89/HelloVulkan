@@ -29,7 +29,7 @@ PipelineEquirect2Cube::PipelineEquirect2Cube(
 		pipelineLayout_,
 		{
 			AppConfig::ShaderFolder + "FullscreenTriangle.vert",
-			AppConfig::ShaderFolder + "IBL//Equirect2Cube.frag"
+			AppConfig::ShaderFolder + "IBL/Equirect2Cube.frag"
 		},
 		&pipeline_
 	);

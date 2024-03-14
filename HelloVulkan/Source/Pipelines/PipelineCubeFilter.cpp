@@ -55,7 +55,7 @@ PipelineCubeFilter::PipelineCubeFilter(
 		pipelineLayout_,
 		{
 			AppConfig::ShaderFolder + "FullscreenTriangle.vert",
-			AppConfig::ShaderFolder + "IBL//CubeFilterDiffuse.frag"
+			AppConfig::ShaderFolder + "IBL/CubeFilterDiffuse.frag"
 		},
 		IBLConfig::OutputDiffuseSideLength,
 		IBLConfig::OutputDiffuseSideLength,
@@ -70,7 +70,7 @@ PipelineCubeFilter::PipelineCubeFilter(
 		pipelineLayout_,
 		{
 			AppConfig::ShaderFolder + "FullscreenTriangle.vert",
-			AppConfig::ShaderFolder + "IBL//CubeFilterSpecular.frag"
+			AppConfig::ShaderFolder + "IBL/CubeFilterSpecular.frag"
 		},
 		IBLConfig::OutputSpecularSideLength,
 		IBLConfig::OutputSpecularSideLength,

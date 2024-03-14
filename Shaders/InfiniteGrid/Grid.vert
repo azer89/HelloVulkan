@@ -1,7 +1,7 @@
 #version 460 core
 
 #include <CameraUBO.glsl>
-#include <InfiniteGrid//Params.glsl>
+#include <InfiniteGrid/Params.glsl>
 
 layout (location = 0) out vec2 outUV;
 layout (location = 1) out vec2 outCameraPos;
