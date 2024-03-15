@@ -179,8 +179,10 @@ void Scene::UpdateModelMatrix(VulkanContext& ctx,
 		return;
 	}
 
+	// Update transformation matrix
 	modelUBOs_[modelIndex] = modelUBO;
 
+	// Update SSBO
 	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
 	{
 		modelSSBOBuffers_[i].UploadOffsetBufferData(
@@ -188,6 +190,24 @@ void Scene::UpdateModelMatrix(VulkanContext& ctx,
 			&modelUBO,
 			sizeof(ModelUBO) * modelIndex,
 			sizeof(ModelUBO));
+	}
+	
+	// Update bounding boxes
+	std::vector<int>& meshIndices = modelToMeshDataMap_[modelIndex];
+	if (meshIndices.size() > 0)
+	{
+		for (int i : meshIndices)
+		{
+			transformedBoundingBoxes_[i] = originalBoundingBoxes_[i].GetTransformed(modelUBO.model);
+		}
+
+		// Update bounding box buffers
+		int firstIndex = meshIndices[0];
+		transformedBoundingBoxBuffer_.UploadOffsetBufferData(
+			ctx,
+			transformedBoundingBoxes_.data() + firstIndex,
+			sizeof(BoundingBox) * firstIndex,
+			sizeof(BoundingBox) * meshIndices.size());
 	}
 }
 
