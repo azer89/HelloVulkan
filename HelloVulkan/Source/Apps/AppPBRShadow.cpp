@@ -30,7 +30,7 @@ void AppPBRShadow::Init()
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
 	std::vector<std::string> modelFiles = {
-		AppConfig::ModelFolder + "Sponza/Sponza.gltf",
+		//AppConfig::ModelFolder + "Sponza/Sponza.gltf",
 		AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf",
 		AppConfig::ModelFolder + "Hexapod/Hexapod.gltf"
 	};
@@ -39,16 +39,16 @@ void AppPBRShadow::Init()
 
 	// Model matrix for Tachikoma
 	glm::mat4 modelMatrix(1.f);
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.15f, 0.35f, 1.5f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.15f, 0.35f, 2.5f));
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.7f, 0.7f, 0.7f));
-	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 1);
+	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 0);
 
 	// Model matrix for Hexapod
 	modelMatrix = glm::mat4(1.f);
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.62f, -1.5f));
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f));
-	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 2);
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.62f, -2.5f));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(135.f), glm::vec3(0.f, 1.f, 0.f));
+	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 1);
 
 	// Pipelines
 	// This is responsible to clear swapchain image
