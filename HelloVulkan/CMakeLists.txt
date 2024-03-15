@@ -20,8 +20,8 @@ target_compile_definitions(HelloVulkan PRIVATE
 
     _CONSOLE
     _CRT_SECURE_NO_WARNINGS
-    TRACY_ENABLE
-    GLM_FORCE_DEPTH_ZERO_TO_ONE
+    TRACY_ENABLE # Disable this if tracy is not needed
+    GLM_FORCE_DEPTH_ZERO_TO_ONE # This is needed for clustered forward demo
 )
 
 if(MSVC)
@@ -29,6 +29,7 @@ if(MSVC)
     target_compile_options(HelloVulkan PRIVATE "/Zi")
 endif()  
 
+# TODO Use a FOR loop
 target_include_directories(HelloVulkan PRIVATE
     "${CMAKE_CURRENT_LIST_DIR}/Header"
     "${CMAKE_CURRENT_LIST_DIR}/Header/Apps"
@@ -52,7 +53,7 @@ target_include_directories(HelloVulkan PRIVATE
     "${PROJECT_SOURCE_DIR}/External/Binaries/assimp/include"
 )
 
-# TODO Build glslang manually
+# All include directories for glslang
 target_include_directories(HelloVulkan PRIVATE 
     "$ENV{VULKAN_SDK}/Include"
     "$ENV{VULKAN_SDK}/Include/glslang/Include"
@@ -64,9 +65,11 @@ target_include_directories(HelloVulkan PRIVATE
     "$ENV{VULKAN_SDK}/Include/spirv-headers"
 )
 
-target_link_libraries(HelloVulkan PRIVATE volk glfw TracyClient assimp imgui)
+# Set dependencies
+target_link_libraries(HelloVulkan PRIVATE assimp imgui glfw TracyClient volk)
 
-# If you are not on Windows you need to somehow modify code below
+# These libraries are needed for runtime glsl compilation.
+# If you are not on Windows you need to change the filenames below and remove the IF statement.
 if(MSVC)
     target_link_libraries(HelloVulkan PRIVATE
         $<$<CONFIG:Debug>:
