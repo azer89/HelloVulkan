@@ -21,8 +21,8 @@ namespace AppConfig
 
 	// Need to change these absolute paths
 	const std::string ShaderFolder = "C:/Users/azer/workspace/HelloVulkan/Shaders/";
-	const std::string ModelFolder = "C:/Users/azer/workspace/HelloVulkan/Models/";
-	const std::string TextureFolder = "C:/Users/azer/workspace/HelloVulkan/Textures/";
+	const std::string ModelFolder = "C:/Users/azer/workspace/HelloVulkan/Assets/Models/";
+	const std::string TextureFolder = "C:/Users/azer/workspace/HelloVulkan/Assets/Textures/";
 };
 
 namespace CameraConfig
