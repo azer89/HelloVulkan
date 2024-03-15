@@ -47,8 +47,9 @@ public:
 	std::vector<uint32_t> indices_ = {};
 	VulkanBuffer indexBuffer_;
 
-	std::vector<BoundingBox> boundingBoxes_;
-	VulkanBuffer boundingBoxBuffer_;
+	std::vector<BoundingBox> originalBoundingBoxes_;
+	std::vector<BoundingBox> transformedBoundingBoxes_;
+	VulkanBuffer transformedBoundingBoxBuffer_;
 
 	// Per-frame buffer
 	std::vector<ModelUBO> modelUBOs_;

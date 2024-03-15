@@ -85,11 +85,11 @@ void PipelineLine::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer command
 void PipelineLine::ProcessScene(VulkanContext& ctx)
 {
 	// Build bounding boxes
-	for (size_t i = 0; i < scene_->boundingBoxes_.size(); ++i)
+	for (size_t i = 0; i < scene_->originalBoundingBoxes_.size(); ++i)
 	{
 		const MeshData& mData = scene_->meshDataArray_[i];
 		const glm::mat4& mat = scene_->modelUBOs_[mData.modelIndex].model;
-		const BoundingBox& box = scene_->boundingBoxes_[i];
+		const BoundingBox& box = scene_->originalBoundingBoxes_[i];
 		AddBox(
 			mat * glm::translate(glm::mat4(1.f), 0.5f * (box.min_ + box.max_)), // mat
 			0.5f * glm::vec3(box.max_ - box.min_), // size

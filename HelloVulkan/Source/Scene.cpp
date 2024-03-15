@@ -29,7 +29,7 @@ Scene::~Scene()
 	meshDataBuffer_.Destroy();
 	vertexBuffer_.Destroy();
 	indexBuffer_.Destroy();
-	boundingBoxBuffer_.Destroy();
+	transformedBoundingBoxBuffer_.Destroy();
 	for (auto& buffer : modelSSBOBuffers_)
 	{
 		buffer.Destroy();
@@ -113,7 +113,8 @@ void Scene::CreateBindlessTextureResources(VulkanContext& ctx)
 void Scene::BuildBoundingBoxes(VulkanContext& ctx)
 {
 	// Create bounding boxes
-	boundingBoxes_.resize(meshDataArray_.size());
+	originalBoundingBoxes_.resize(meshDataArray_.size());
+	transformedBoundingBoxes_.resize(meshDataArray_.size());
 	size_t iter = 0;
 	for (Model& model : models_)
 	{
@@ -130,19 +131,25 @@ void Scene::BuildBoundingBoxes(VulkanContext& ctx)
 				vmin = glm::min(vmin, v);
 				vmax = glm::max(vmax, v);
 			}
-			boundingBoxes_[iter].min_ = vmin;
-			boundingBoxes_[iter].max_ = vmax;
+
+			originalBoundingBoxes_[iter].min_ = vmin;
+			originalBoundingBoxes_[iter].max_ = vmax;
+
+			const MeshData& mData = meshDataArray_[iter];
+			const glm::mat4& mat = modelUBOs_[mData.modelIndex].model;
+			transformedBoundingBoxes_[iter] = originalBoundingBoxes_[iter].GetTransformed(mat);
+
 			++iter;
 		}
 	}
 
 	// Buffer
-	VkDeviceSize bufferSize = boundingBoxes_.size() * sizeof(BoundingBox);
-	boundingBoxBuffer_.CreateBuffer(ctx, 
+	VkDeviceSize bufferSize = transformedBoundingBoxes_.size() * sizeof(BoundingBox);
+	transformedBoundingBoxBuffer_.CreateBuffer(ctx, 
 		bufferSize, 
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VMA_MEMORY_USAGE_CPU_TO_GPU);
-	boundingBoxBuffer_.UploadBufferData(ctx, boundingBoxes_.data(), bufferSize);
+	transformedBoundingBoxBuffer_.UploadBufferData(ctx, transformedBoundingBoxes_.data(), bufferSize);
 }
 
 void Scene::UpdateModelMatrix(VulkanContext& ctx, 
