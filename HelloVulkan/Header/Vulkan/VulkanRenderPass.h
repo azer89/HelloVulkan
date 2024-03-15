@@ -84,8 +84,8 @@ private:
 	void CreateBeginInfo();
 
 private:
-	VkDevice device_;
-	VkRenderPass handle_;
+	VkDevice device_ = nullptr;
+	VkRenderPass handle_ = nullptr;
 	uint8_t renderPassBit_;
 
 	// Cache for starting the render pass
