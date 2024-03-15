@@ -106,8 +106,25 @@ void Scene::CreateBindlessTextureResources(VulkanContext& ctx)
 		modelSSBOBuffers_[i].UploadBufferData(ctx, modelUBOs_.data(), modelSSBOBufferSize);
 	}
 
+	BuildModelToMeshDataMapping();
+
 	// Bounding boxes
 	BuildBoundingBoxes(ctx);
+}
+
+void Scene::BuildModelToMeshDataMapping()
+{
+	modelToMeshDataMap_.resize(models_.size());
+	int iter = 0;
+	for (size_t i = 0; i < models_.size(); ++i)
+	{
+		size_t meshCount = models_[i].NumMeshes();
+		modelToMeshDataMap_[i].resize(meshCount);
+		for (size_t j = 0; j < meshCount; ++j)
+		{
+			modelToMeshDataMap_[i][j] = iter++;
+		}
+	}
 }
 
 void Scene::BuildBoundingBoxes(VulkanContext& ctx)
@@ -152,36 +169,25 @@ void Scene::BuildBoundingBoxes(VulkanContext& ctx)
 	transformedBoundingBoxBuffer_.UploadBufferData(ctx, transformedBoundingBoxes_.data(), bufferSize);
 }
 
-void Scene::UpdateModelMatrix(VulkanContext& ctx, 
-	const ModelUBO& modelUBO, 
-	uint32_t modelIndex,
-	uint32_t frameIndex)
+void Scene::UpdateModelMatrix(VulkanContext& ctx,
+	const ModelUBO& modelUBO,
+	uint32_t modelIndex)
 {
 	if (modelIndex < 0 || modelIndex >= models_.size())
 	{
 		std::cerr << "Cannot update ModelUBO because of invalid modelIndex " << modelIndex << "\n";
 		return;
 	}
-	if (frameIndex < 0 || frameIndex >= AppConfig::FrameOverlapCount)
-	{
-		std::cerr << "Cannot update ModelUBO because of invalid frameIndex " << frameIndex << "\n";
-		return;
-	}
-	modelUBOs_[modelIndex] = modelUBO; // TODO Ugly code, this can be executed multiple times
-	modelSSBOBuffers_[frameIndex].UploadOffsetBufferData(
-		ctx,
-		&modelUBO,
-		sizeof(ModelUBO) * modelIndex,
-		sizeof(ModelUBO));
-}
 
-void Scene::UpdateModelMatrix(VulkanContext& ctx,
-	const ModelUBO& modelUBO,
-	uint32_t modelIndex)
-{
+	modelUBOs_[modelIndex] = modelUBO;
+
 	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
 	{
-		UpdateModelMatrix(ctx, modelUBO, modelIndex, i);
+		modelSSBOBuffers_[i].UploadOffsetBufferData(
+			ctx,
+			&modelUBO,
+			sizeof(ModelUBO) * modelIndex,
+			sizeof(ModelUBO));
 	}
 }
 

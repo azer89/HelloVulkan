@@ -23,10 +23,6 @@ public:
 	std::vector<VkDescriptorImageInfo> GetImageInfos() const;
 	std::vector<uint32_t> GetMeshVertexCountArray() const;
 
-	void UpdateModelMatrix(VulkanContext& ctx, 
-		const ModelUBO& modelUBO, 
-		uint32_t modelIndex,
-		uint32_t frameIndex);
 	void UpdateModelMatrix(VulkanContext& ctx,
 		const ModelUBO& modelUBO,
 		uint32_t modelIndex);
@@ -35,7 +31,10 @@ public:
 
 private:
 	void CreateBindlessTextureResources(VulkanContext& ctx);
+
 	void BuildBoundingBoxes(VulkanContext& ctx);
+
+	void BuildModelToMeshDataMapping();
 
 public:
 	std::vector<MeshData> meshDataArray_ = {};
@@ -56,6 +55,9 @@ public:
 	std::vector<VulkanBuffer> modelSSBOBuffers_;
 
 	std::vector<Model> models_ = {};
+
+	// Mapping from models_ to meshDataArray_
+	std::vector<std::vector<int>> modelToMeshDataMap_;
 
 private:
 	bool supportDeviceAddress_;
