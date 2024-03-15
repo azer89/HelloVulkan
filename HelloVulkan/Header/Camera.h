@@ -1,13 +1,12 @@
 #ifndef CAMERA
 #define CAMERA
 
-// WARNING Need to set GLM_FORCE_DEPTH_ZERO_TO_ONE in the vcxproj config
+// NOTE Need to set GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include "glm/glm.hpp"
 
 #include "Configs.h"
 #include "UBOs.h"
 
-// TODO convert this to enum class
 enum class CameraMovement : uint8_t
 {
 	Forward = 0u,
