@@ -12,3 +12,5 @@ set (CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin")
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/External")
 add_subdirectory("${PROJECT_SOURCE_DIR}/HelloVulkan")
+
+set_property(TARGET uninstall PROPERTY FOLDER "CMakePredefinedTargets")

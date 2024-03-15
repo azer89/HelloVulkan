@@ -25,7 +25,7 @@ target_compile_definitions(HelloVulkan PRIVATE
 )
 
 if(MSVC)
-    # Tracy does not like /ZI
+    # Tracy does not like /ZI so set it to /Zi
     target_compile_options(HelloVulkan PRIVATE "/Zi")
 endif()  
 
