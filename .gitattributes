@@ -1,19 +1,18 @@
 *assimp-vc143-mtd.dll binary
 *assimp-vc143-mt.dll binary
 *assimp-vc143-mtd.lib binary
-*assimp-vc143-mt.lib binary
+*assimp-vc143-mt.lib filter=lfs diff=lfs merge=lfs -text
 
-*TracyClient.lib binary
-*volk.lib binary
-*ImGui.lib binary
-*glfw3.lib binary
+*TracyClient.lib filter=lfs diff=lfs merge=lfs -text
+*volk.lib filter=lfs diff=lfs merge=lfs -text
+*ImGui.lib filter=lfs diff=lfs merge=lfs -text
+*glfw3.lib filter=lfs diff=lfs merge=lfs -text
 
-Models/*/*.bin binary
-Models/*/*.gltf binary
-Models/*/*.jpg binary
-Models/*/*.obj binary
-Models/*/Textures/* binary
-Models/*/textures/* binary
+Assets/Models/*/*.bin filter=lfs diff=lfs merge=lfs -text
+Assets/Models/*/*.gltf filter=lfs diff=lfs merge=lfs -text
+Assets/Models/*/*.jpg filter=lfs diff=lfs merge=lfs -text
+Assets/Models/*/*.obj filter=lfs diff=lfs merge=lfs -text
+Assets/Models/*/Textures/* filter=lfs diff=lfs merge=lfs -text
 
-Textures/pbr/*/* binary
-Textures/*.hdr binary
+Assets/Textures/pbr/*/*.png filter=lfs diff=lfs merge=lfs -text
+Assets/Textures/*.hdr filter=lfs diff=lfs merge=lfs -text
