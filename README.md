@@ -65,6 +65,7 @@ The engine also features a basic ray tracing pipeline. This process begins with 
 * Vulkan 1.3
 * Visual Studio 2022
 * Dependencies: assimp, glm, glfw, ImGui, stb, tracy, volk, and VMA.
+* [Link to build instruction](https://github.com/azer89/HelloVulkan/wiki/Build-Instruction)
 
 ### Credit
 * [learnopengl.com PBR](https://learnopengl.com/PBR/Theory)
