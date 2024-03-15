@@ -17,7 +17,7 @@ PipelineInfiniteGrid::PipelineInfiniteGrid(
 	yPosition_(yPosition),
 	shouldRender_(true)
 {
-	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
+	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
 	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
 	framebuffer_.CreateResizeable(
 		ctx,
@@ -83,7 +83,7 @@ void PipelineInfiniteGrid::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer
 
 void PipelineInfiniteGrid::CreateDescriptor(VulkanContext& ctx)
 {
-	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
+	constexpr uint32_t frameCount = AppConfig::FrameCount;
 	VulkanDescriptorInfo dsInfo;
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
 	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);

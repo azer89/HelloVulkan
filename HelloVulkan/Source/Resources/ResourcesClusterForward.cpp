@@ -13,7 +13,7 @@ void ResourcesClusterForward::SetAABBDirty()
 
 void ResourcesClusterForward::CreateBuffers(VulkanContext& ctx, uint32_t lightCount)
 {
-	constexpr uint32_t bufferCount = AppConfig::FrameOverlapCount;
+	constexpr uint32_t bufferCount = AppConfig::FrameCount;
 
 	// AABB
 	constexpr uint32_t aabbBufferSize = ClusterForwardConfig::numClusters * sizeof(AABB);

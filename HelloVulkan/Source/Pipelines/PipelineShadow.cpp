@@ -24,7 +24,7 @@ PipelineShadow::PipelineShadow(
 	resShadow_(resShadow),
 	vim_(scene->GetVIM())
 {
-	CreateMultipleUniformBuffers(ctx, shadowMapUBOBuffers_, sizeof(ShadowMapUBO), AppConfig::FrameOverlapCount);
+	CreateMultipleUniformBuffers(ctx, shadowMapUBOBuffers_, sizeof(ShadowMapUBO), AppConfig::FrameCount);
 
 	renderPass_.CreateDepthOnlyRenderPass(ctx, 
 		RenderPassBit::DepthClear | RenderPassBit::DepthShaderReadOnly);
@@ -39,7 +39,7 @@ PipelineShadow::PipelineShadow(
 		resShadow_->shadowMap_.width_,
 		resShadow_->shadowMap_.height_);
 
-	CreateIndirectBuffers(ctx, scene_, indirectBuffers_);
+	scene_->CreateIndirectBuffers(ctx, indirectBuffers_);
 
 	CreateDescriptor(ctx);
 
@@ -71,7 +71,6 @@ PipelineShadow::~PipelineShadow()
 	{
 		buffer.Destroy();
 	}
-
 	for (auto& buffer : indirectBuffers_)
 	{
 		buffer.Destroy();
@@ -145,7 +144,7 @@ void PipelineShadow::OnWindowResized(VulkanContext& ctx)
 
 void PipelineShadow::CreateDescriptor(VulkanContext& ctx)
 {
-	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
+	constexpr uint32_t frameCount = AppConfig::FrameCount;
 
 	VulkanDescriptorInfo dsInfo;
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0

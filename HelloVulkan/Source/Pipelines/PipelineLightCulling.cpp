@@ -17,7 +17,7 @@ PipelineLightCulling::PipelineLightCulling(
 	resLight_(resLight),
 	resCF_(resCF)
 {
-	CreateMultipleUniformBuffers(ctx, cfUBOBuffers_, sizeof(ClusterForwardUBO), AppConfig::FrameOverlapCount);
+	CreateMultipleUniformBuffers(ctx, cfUBOBuffers_, sizeof(ClusterForwardUBO), AppConfig::FrameCount);
 	CreateDescriptor(ctx);
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
 
@@ -118,7 +118,7 @@ void PipelineLightCulling::Execute(VulkanContext& ctx, VkCommandBuffer commandBu
 
 void PipelineLightCulling::CreateDescriptor(VulkanContext& ctx)
 {
-	const uint32_t frameCount = static_cast<uint32_t>(AppConfig::FrameOverlapCount);
+	const uint32_t frameCount = static_cast<uint32_t>(AppConfig::FrameCount);
 	constexpr VkShaderStageFlags stageFlag = VK_SHADER_STAGE_COMPUTE_BIT;
 
 	VulkanDescriptorInfo dsInfo;

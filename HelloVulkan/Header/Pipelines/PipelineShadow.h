@@ -31,6 +31,8 @@ private:
 
 	std::vector<VulkanBuffer> shadowMapUBOBuffers_;
 	std::vector<VkDescriptorSet> descriptorSets_;
+
+	// Has its own buffers so that the buffers don't get culled
 	std::vector<VulkanBuffer> indirectBuffers_;
 };
 

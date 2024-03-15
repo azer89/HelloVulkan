@@ -33,9 +33,7 @@ PipelinePBRBindless::PipelinePBRBindless(
 	iblResources_(iblResources)
 {
 	// Per frame UBO
-	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
-
-	CreateIndirectBuffers(ctx, scene_, indirectBuffers_);
+	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
 
 	CreateDescriptor(ctx);
 
@@ -74,10 +72,6 @@ PipelinePBRBindless::PipelinePBRBindless(
 
 PipelinePBRBindless::~PipelinePBRBindless()
 {
-	for (auto& buffer : indirectBuffers_)
-	{
-		buffer.Destroy();
-	}
 }
 
 void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
@@ -108,7 +102,7 @@ void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 
 	vkCmdDrawIndirect(
 		commandBuffer, 
-		indirectBuffers_[frameIndex].buffer_, 
+		scene_->indirectBuffers_[frameIndex].buffer_, 
 		0, // offset
 		scene_->GetMeshCount(),
 		sizeof(VkDrawIndirectCommand));
@@ -119,7 +113,7 @@ void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 // TODO Refactor VulkanDescriptor to make the code below simpler
 void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
 {
-	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
+	constexpr uint32_t frameCount = AppConfig::FrameCount;
 
 	VulkanDescriptorInfo dsInfo;
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0

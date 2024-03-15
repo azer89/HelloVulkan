@@ -70,11 +70,6 @@ protected:
 		uint32_t dataSize,
 		size_t bufferCount);
 
-	void CreateIndirectBuffers(
-		VulkanContext& ctx,
-		Scene* scene,
-		std::vector<VulkanBuffer>& indirectBuffers);
-
 	void CreatePipelineLayout(VulkanContext& ctx,
 		VkDescriptorSetLayout dsLayout, 
 		VkPipelineLayout* pipelineLayout,

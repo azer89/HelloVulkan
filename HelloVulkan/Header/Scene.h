@@ -22,12 +22,15 @@ public:
 	uint32_t GetMeshCount() const { return static_cast<uint32_t>(meshDataArray_.size()); }
 	std::vector<VkDescriptorImageInfo> GetImageInfos() const;
 	std::vector<uint32_t> GetMeshVertexCountArray() const;
+	VIM GetVIM() const;
 
 	void UpdateModelMatrix(VulkanContext& ctx,
 		const ModelUBO& modelUBO,
 		uint32_t modelIndex);
 
-	VIM GetVIM() const;
+	void CreateIndirectBuffers(
+		VulkanContext& ctx,
+		std::vector<VulkanBuffer>& indirectBuffers);
 
 private:
 	void CreateBindlessTextureResources(VulkanContext& ctx);
@@ -58,6 +61,8 @@ public:
 
 	// Mapping from models_ to meshDataArray_
 	std::vector<std::vector<int>> modelToMeshDataMap_;
+
+	std::vector<VulkanBuffer> indirectBuffers_;
 
 private:
 	bool supportDeviceAddress_;

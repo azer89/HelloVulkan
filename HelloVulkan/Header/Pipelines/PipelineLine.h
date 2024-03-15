@@ -43,7 +43,7 @@ private:
 	Scene* scene_;
 	std::vector<PointColor> lineDataArray_;
 	VulkanBuffer lineBuffer_;
-	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;
+	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;
 };
 
 #endif

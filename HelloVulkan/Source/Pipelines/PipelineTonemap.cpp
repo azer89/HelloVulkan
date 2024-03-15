@@ -58,7 +58,7 @@ void PipelineTonemap::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comm
 
 void PipelineTonemap::CreateDescriptor(VulkanContext& ctx)
 {
-	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
+	constexpr uint32_t frameCount = AppConfig::FrameCount;
 
 	descriptorInfo_.AddImage(nullptr);
 
@@ -72,7 +72,7 @@ void PipelineTonemap::CreateDescriptor(VulkanContext& ctx)
 
 void PipelineTonemap::AllocateDescriptorSets(VulkanContext& ctx)
 {
-	constexpr auto frameCount = AppConfig::FrameOverlapCount;
+	constexpr auto frameCount = AppConfig::FrameCount;
 
 	for (size_t i = 0; i < frameCount; i++)
 	{
@@ -82,7 +82,7 @@ void PipelineTonemap::AllocateDescriptorSets(VulkanContext& ctx)
 
 void PipelineTonemap::UpdateDescriptorSets(VulkanContext& ctx)
 {
-	constexpr auto frameCount = AppConfig::FrameOverlapCount;
+	constexpr auto frameCount = AppConfig::FrameCount;
 	descriptorInfo_.UpdateImage(singleSampledColorImage_, 0);
 	for (size_t i = 0; i < frameCount; ++i)
 	{

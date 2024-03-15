@@ -31,7 +31,7 @@ private:
 
 private:
 	ResourcesLight* resLight_;
-	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;
+	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;
 	bool shouldRender_;
 };
 

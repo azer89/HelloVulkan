@@ -35,7 +35,6 @@ private:
 	ResourcesLight* resLight_;
 	ResourcesIBL* iblResources_;
 	PushConstPBR pc_;
-	std::vector<VulkanBuffer> indirectBuffers_;
 	std::vector<VkDescriptorSet> descriptorSets_;
 };
 

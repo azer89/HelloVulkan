@@ -34,6 +34,10 @@ Scene::~Scene()
 	{
 		buffer.Destroy();
 	}
+	for (auto& buffer : indirectBuffers_)
+	{
+		buffer.Destroy();
+	}
 	for (auto& model : models_)
 	{
 		model.Destroy();
@@ -96,7 +100,7 @@ void Scene::CreateBindlessTextureResources(VulkanContext& ctx)
 	// ModelUBO which is actually an SSBO
 	modelUBOs_ = std::vector<ModelUBO>(models_.size(), { .model = glm::mat4(1.0f) });
 	const VkDeviceSize modelSSBOBufferSize = sizeof(ModelUBO) * models_.size();
-	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
+	constexpr uint32_t frameCount = AppConfig::FrameCount;
 	modelSSBOBuffers_.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
@@ -110,6 +114,9 @@ void Scene::CreateBindlessTextureResources(VulkanContext& ctx)
 
 	// Bounding boxes
 	BuildBoundingBoxes(ctx);
+
+	// Indirect buffers
+	CreateIndirectBuffers(ctx, indirectBuffers_);
 }
 
 void Scene::BuildModelToMeshDataMapping()
@@ -169,6 +176,36 @@ void Scene::BuildBoundingBoxes(VulkanContext& ctx)
 	transformedBoundingBoxBuffer_.UploadBufferData(ctx, transformedBoundingBoxes_.data(), bufferSize);
 }
 
+void Scene::CreateIndirectBuffers(
+	VulkanContext& ctx,
+	std::vector<VulkanBuffer>& indirectBuffers)
+{
+	const uint32_t meshSize = GetMeshCount();
+	const uint32_t indirectDataSize = meshSize * sizeof(VkDrawIndirectCommand);
+	constexpr size_t numFrames = AppConfig::FrameCount;
+
+	const std::vector<uint32_t> meshVertexCountArray = GetMeshVertexCountArray();
+
+	indirectBuffers.resize(numFrames);
+	for (size_t i = 0; i < numFrames; ++i)
+	{
+		indirectBuffers[i].CreateIndirectBuffer(ctx, indirectDataSize); // Create
+		VkDrawIndirectCommand* data = indirectBuffers[i].MapIndirectBuffer(); // Map
+
+		for (uint32_t j = 0; j < meshSize; ++j)
+		{
+			data[j] =
+			{
+				.vertexCount = static_cast<uint32_t>(meshVertexCountArray[j]),
+				.instanceCount = 1u,
+				.firstVertex = 0,
+				.firstInstance = j
+			};
+		}
+		indirectBuffers[i].UnmapIndirectBuffer(); // Unmap
+	}
+}
+
 void Scene::UpdateModelMatrix(VulkanContext& ctx,
 	const ModelUBO& modelUBO,
 	uint32_t modelIndex)
@@ -183,7 +220,7 @@ void Scene::UpdateModelMatrix(VulkanContext& ctx,
 	modelUBOs_[modelIndex] = modelUBO;
 
 	// Update SSBO
-	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
+	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
 	{
 		modelSSBOBuffers_[i].UploadOffsetBufferData(
 			ctx,
@@ -191,7 +228,7 @@ void Scene::UpdateModelMatrix(VulkanContext& ctx,
 			sizeof(ModelUBO) * modelIndex,
 			sizeof(ModelUBO));
 	}
-	
+
 	// Update bounding boxes
 	std::vector<int>& meshIndices = modelToMeshDataMap_[modelIndex];
 	if (meshIndices.size() > 0)

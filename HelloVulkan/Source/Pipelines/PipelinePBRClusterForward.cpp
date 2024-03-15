@@ -31,10 +31,10 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 	iblResources_(iblResources)
 {
 	// Per frame UBO
-	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
+	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
 
 	// Cluster forward UBO
-	CreateMultipleUniformBuffers(ctx, cfUBOBuffers_, sizeof(ClusterForwardUBO), AppConfig::FrameOverlapCount);
+	CreateMultipleUniformBuffers(ctx, cfUBOBuffers_, sizeof(ClusterForwardUBO), AppConfig::FrameCount);
 
 	// Note that this pipeline is offscreen rendering
 	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
@@ -151,12 +151,12 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddImage(&(iblResources_->brdfLut_));
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, dsInfo, AppConfig::FrameOverlapCount, numMeshes);
+	descriptor_.CreatePoolAndLayout(ctx, dsInfo, AppConfig::FrameCount, numMeshes);
 
 	// Sets
 	constexpr size_t bindingOffset = static_cast<size_t>(UBO_COUNT + SSBO_COUNT);
-	descriptorSets_.resize(AppConfig::FrameOverlapCount);
-	for (size_t i = 0; i < AppConfig::FrameOverlapCount; i++)
+	descriptorSets_.resize(AppConfig::FrameCount);
+	for (size_t i = 0; i < AppConfig::FrameCount; i++)
 	{
 		size_t meshIndex = 0;
 		descriptorSets_[i].resize(numMeshes);

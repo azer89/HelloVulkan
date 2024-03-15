@@ -49,7 +49,6 @@ private:
 	ResourcesShadow* resShadow_;
 	std::vector<VkDescriptorSet> descriptorSets_;
 	std::vector<VulkanBuffer> shadowMapConfigUBOBuffers_;
-	std::vector<VulkanBuffer> indirectBuffers_;
 };
 
 #endif
