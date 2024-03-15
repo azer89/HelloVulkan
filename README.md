@@ -15,7 +15,7 @@ A real-time rendering engine built from scratch using Vulkan API and C++.
 * Multisample anti-aliasing (MSAA).
 * Simple __raytracing__ pipeline with basic intersection testing.
 * __Buffer device address__ for direct shader access to buffers without the need to create descriptors.
-* Vertex pulling.
+* Programmable vertex pulling.
 * Reinhard tonemap postprocessing.
 * Automatic runtime compilation from GLSL to SPIR-V using `glslang`.
 * Lightweight abstraction layer on top of Vulkan for faster development.
@@ -63,7 +63,6 @@ The engine also features a basic ray tracing pipeline. This process begins with 
 ### Build
 * C++20
 * Vulkan 1.3
-* Visual Studio 2022
 * Dependencies: assimp, glm, glfw, ImGui, stb, tracy, volk, and VMA.
 * [Link to build instruction](https://github.com/azer89/HelloVulkan/wiki/Build-Instruction)
 
