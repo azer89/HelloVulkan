@@ -13,7 +13,6 @@ Assets/Models/*/*.gltf filter=lfs diff=lfs merge=lfs -text
 Assets/Models/*/*.jpg filter=lfs diff=lfs merge=lfs -text
 Assets/Models/*/*.obj filter=lfs diff=lfs merge=lfs -text
 Assets/Models/*/Textures/* filter=lfs diff=lfs merge=lfs -text
-Assets/Models/*/textures/* filter=lfs diff=lfs merge=lfs -text
 
 Assets/Textures/pbr/*/*.png filter=lfs diff=lfs merge=lfs -text
 Assets/Textures/*.hdr filter=lfs diff=lfs merge=lfs -text
