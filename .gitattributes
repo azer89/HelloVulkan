@@ -1,6 +1,8 @@
-*assimp-vc143-mtd.dll binary
-*assimp-vc143-mt.dll binary
-*assimp-vc143-mtd.lib binary
+# Note that "-text" means these files are not text files 
+
+*assimp-vc143-mtd.dll filter=lfs diff=lfs merge=lfs -text
+*assimp-vc143-mt.dll filter=lfs diff=lfs merge=lfs -text
+*assimp-vc143-mtd.lib filter=lfs diff=lfs merge=lfs -text
 *assimp-vc143-mt.lib filter=lfs diff=lfs merge=lfs -text
 
 *TracyClient.lib filter=lfs diff=lfs merge=lfs -text
