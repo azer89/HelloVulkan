@@ -56,7 +56,7 @@ void AppPBRShadow::Init()
 	// This draws a cube
 	skyboxPtr_ = std::make_unique<PipelineSkybox>(
 		vulkanContext_,
-		&(resIBL_->environmentCubemap_),
+		&(resIBL_->diffuseCubemap_),
 		resShared_.get(),
 		// This is the first offscreen render pass so we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);

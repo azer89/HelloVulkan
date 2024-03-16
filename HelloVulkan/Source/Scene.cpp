@@ -121,15 +121,15 @@ void Scene::CreateBindlessTextureResources(VulkanContext& ctx)
 
 void Scene::BuildModelToMeshDataMapping()
 {
-	modelToMeshDataMap_.resize(models_.size());
+	modelToMeshMap_.resize(models_.size());
 	int iter = 0;
 	for (size_t i = 0; i < models_.size(); ++i)
 	{
 		size_t meshCount = models_[i].GetMeshCount();
-		modelToMeshDataMap_[i].resize(meshCount);
+		modelToMeshMap_[i].resize(meshCount);
 		for (size_t j = 0; j < meshCount; ++j)
 		{
-			modelToMeshDataMap_[i][j] = iter++;
+			modelToMeshMap_[i][j] = iter++;
 		}
 	}
 }
@@ -230,7 +230,7 @@ void Scene::UpdateModelMatrix(VulkanContext& ctx,
 	}
 
 	// Update bounding boxes
-	std::vector<int>& meshIndices = modelToMeshDataMap_[modelIndex];
+	std::vector<int>& meshIndices = modelToMeshMap_[modelIndex];
 	if (meshIndices.size() > 0)
 	{
 		for (int i : meshIndices)

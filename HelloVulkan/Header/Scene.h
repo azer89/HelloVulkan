@@ -10,8 +10,8 @@
 #include <string>
 
 /*
-A scene used for indirect draw + bindless resources 
-that contains huge SSBO buffers for vertices, indices, and mesh data.
+A scene used for indirect draw + bindless resources that contains 
+SSBO buffers for vertices, indices, and mesh data.
 */
 class Scene
 {
@@ -34,9 +34,7 @@ public:
 
 private:
 	void CreateBindlessTextureResources(VulkanContext& ctx);
-
 	void BuildBoundingBoxes(VulkanContext& ctx);
-
 	void BuildModelToMeshDataMapping();
 
 public:
@@ -49,20 +47,22 @@ public:
 	std::vector<uint32_t> indices_ = {};
 	VulkanBuffer indexBuffer_;
 
-	std::vector<BoundingBox> originalBoundingBoxes_;
-	std::vector<BoundingBox> transformedBoundingBoxes_;
-	VulkanBuffer transformedBoundingBoxBuffer_;
+	// For indirect draw
+	std::vector<VulkanBuffer> indirectBuffers_ = {};
 
 	// Per-frame buffer
-	std::vector<ModelUBO> modelUBOs_;
-	std::vector<VulkanBuffer> modelSSBOBuffers_;
+	std::vector<ModelUBO> modelUBOs_ = {};
+	std::vector<VulkanBuffer> modelSSBOBuffers_ = {};
 
 	std::vector<Model> models_ = {};
 
-	// Mapping from models_ to meshDataArray_
-	std::vector<std::vector<int>> modelToMeshDataMap_;
+	// For compute-based culling
+	std::vector<BoundingBox> originalBoundingBoxes_ = {};
+	std::vector<BoundingBox> transformedBoundingBoxes_ = {};
+	VulkanBuffer transformedBoundingBoxBuffer_;
 
-	std::vector<VulkanBuffer> indirectBuffers_;
+	// Mapping from Model to Mesh
+	std::vector<std::vector<int>> modelToMeshMap_ = {};
 
 private:
 	bool supportDeviceAddress_;
