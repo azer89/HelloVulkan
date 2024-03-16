@@ -8,7 +8,7 @@ layout (location = 1) out vec2 outCameraPos;
 
 layout(push_constant) uniform PC
 {
-	// Need to adjust because Blender grid is off
+	// This sets the height of the grid
 	float yPosition;
 };
 
