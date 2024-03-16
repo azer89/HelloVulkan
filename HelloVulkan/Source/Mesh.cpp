@@ -26,15 +26,15 @@ void Mesh::InitBindless(
 	VulkanContext& ctx,
 	uint32_t vertexOffset,
 	uint32_t indexOffset,
-	uint32_t numVertices,
-	uint32_t numIndices,
+	uint32_t vertexCount,
+	uint32_t indexCount,
 	std::unordered_map<TextureType, uint32_t>&& textureIndices)
 {
 	bindlessTexture_ = true;
 	vertexOffset_ = vertexOffset;
 	indexOffset_ = indexOffset;
-	vertexCount_ = numVertices;
-	indexCount_ = numIndices;
+	vertexCount_ = vertexCount;
+	indexCount_ = indexCount;
 	textureIndices_ = std::move(textureIndices);
 }
 

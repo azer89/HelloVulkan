@@ -124,10 +124,10 @@ void PipelinePBRSlotBased::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer
 
 void PipelinePBRSlotBased::CreateDescriptor(VulkanContext& ctx)
 {
-	uint32_t numMeshes = 0u;
+	uint32_t meshCount = 0u;
 	for (Model* model : models_)
 	{
-		numMeshes += model->GetMeshCount();
+		meshCount += model->GetMeshCount();
 	}
 
 	VulkanDescriptorInfo dsInfo;
@@ -143,7 +143,7 @@ void PipelinePBRSlotBased::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddImage(&(iblResources_->brdfLut_));
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, dsInfo, AppConfig::FrameCount, numMeshes);
+	descriptor_.CreatePoolAndLayout(ctx, dsInfo, AppConfig::FrameCount, meshCount);
 
 	// Sets
 	constexpr size_t bindingOffset = static_cast<size_t>(UBO_COUNT + SSBO_COUNT);
@@ -151,7 +151,7 @@ void PipelinePBRSlotBased::CreateDescriptor(VulkanContext& ctx)
 	for (size_t i = 0; i < AppConfig::FrameCount; i++)
 	{
 		size_t meshIndex = 0;
-		descriptorSets_[i].resize(numMeshes);
+		descriptorSets_[i].resize(meshCount);
 		dsInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
 		for (Model* model : models_)
 		{

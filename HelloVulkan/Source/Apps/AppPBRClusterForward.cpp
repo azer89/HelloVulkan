@@ -22,7 +22,7 @@ void AppPBRClusterForward::Init()
 	InitLights();
 
 	// Image-Based Lighting
-	resIBL_ = std::make_unique<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
+	resIBL_ = std::make_unique<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "dikhololo_night_4k.hdr");
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
 	resCF_ = std::make_unique<ResourcesClusterForward>();

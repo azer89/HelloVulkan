@@ -1,4 +1,4 @@
-#include "..\..\Header\Resources\ResourcesLight.h"
+#include "ResourcesLight.h"
 
 void ResourcesLight::Destroy()
 {

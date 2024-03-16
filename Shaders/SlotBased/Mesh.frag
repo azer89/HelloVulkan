@@ -48,6 +48,7 @@ void main()
 {
 	vec4 albedo4 = texture(textureAlbedo, texCoord).rgba;
 
+	// TODO This kills performance
 	if (albedo4.a < 0.5)
 	{
 		discard;

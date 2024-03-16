@@ -186,8 +186,8 @@ void Model::ProcessNode(
 	const aiScene* scene, 
 	const glm::mat4& parentTransform)
 {
-	glm::mat4 nodeTransform = CastToGLMMat4(node->mTransformation);
-	glm::mat4 totalTransform = parentTransform * nodeTransform;
+	const glm::mat4 nodeTransform = CastToGLMMat4(node->mTransformation);
+	const glm::mat4 totalTransform = parentTransform * nodeTransform;
 
 	// Process each mesh located at the current node
 	for (unsigned int i = 0; i < node->mNumMeshes; ++i)
