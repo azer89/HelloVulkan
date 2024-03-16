@@ -1,6 +1,6 @@
 # 🌋Hello Engine🖖🏽
 
-A real-time rendering engine built from scratch using Vulkan API and C++.
+A 3D rendering engine built from scratch using Vulkan API and C++.
 
 </br>
 
