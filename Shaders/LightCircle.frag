@@ -10,27 +10,13 @@ void main()
 {
 	float dist = sqrt(dot(fragOffset, fragOffset));
 
-	/*float alpha = 1.0 - pow(dist, 5.0);
-	//float alpha = 1.0;
-	if (dist >= 1.0)
-	{
-		alpha = 0;
-	}
-
-	float glow = clamp(0.2 / dist, 0.0, 0.45);
-
-	vec4 finalColor = vec4(circleColor.xyz + glow, alpha);
-
-	fragColor = finalColor;*/
-
 	vec4 finalColor = circleColor;
 	if (dist >= 0.8)
 	{
 		finalColor.a = 0;
 	}
 
-	//float glow = clamp(0.2 / dist, 0.0, 0.45);
-	float glow = max(1.0 - dist, 0.0) * 0.75;
+	float glow = max(1.0 - dist, 0.0) * 0.5;
 
 	finalColor += glow;
 
