@@ -6,7 +6,7 @@ PipelineAABBRender::PipelineAABBRender(
 	VulkanContext& ctx,
 	Scene* scene,
 	ResourcesShared* resShared,
-	uint8_t renderBit = 0u) :
+	uint8_t renderBit) :
 	PipelineBase(ctx,
 	{
 		.type_ = PipelineType::GraphicsOffScreen,

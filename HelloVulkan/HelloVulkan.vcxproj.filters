@@ -66,13 +66,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Shaders\Cube.vert">
+    <None Include="..\Shaders\Skybox.vert">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\FullscreenTriangle.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\Cube.frag">
+    <None Include="..\Shaders\Skybox.frag">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\PBRHeader.glsl">
@@ -206,6 +206,15 @@
     </None>
     <None Include="..\Shaders\InfiniteGrid\Params.glsl">
       <Filter>Shaders\InfiniteGrid</Filter>
+    </None>
+    <None Include="..\Shaders\AABBRender.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\AABBRender.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\Cube.glsl">
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -389,6 +398,9 @@
     <ClInclude Include="Header\Pipelines\PipelineInfiniteGrid.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineAABBRender.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">
@@ -545,6 +557,9 @@
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
     <ClCompile Include="Source\Pipelines\PipelineInfiniteGrid.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineAABBRender.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
   </ItemGroup>
