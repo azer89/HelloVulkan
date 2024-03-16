@@ -7,12 +7,16 @@
 layout(set = 0, binding = 0)  uniform CameraBlock { CameraUBO camUBO; };
 layout(set = 0, binding = 1) buffer Boxes { AABB boxes[]; };
 
+// Render an AABB (not rotated)
 void main()
 {
 	AABB box = boxes[gl_InstanceIndex];
-	float extents = length(box.maxPoint - box.minPoint) * 0.5;
+	vec3 extents = (box.maxPoint - box.minPoint).xyz * 0.5;
+	vec3 boxPos = (box.maxPoint + box.minPoint).xyz * 0.5;
 	int idx = CUBE_INDICES[gl_VertexIndex];
-	vec4 pos4 = vec4(CUBE_POS[idx] * extents, 1.0);
-	gl_Position = camUBO.projection * camUBO.view * pos4;
+	vec3 cubePos = CUBE_POS[idx];
+	cubePos = vec3(cubePos.x * extents.x, cubePos.y * extents.y, cubePos.z * extents.z);
+	cubePos += boxPos;
+	gl_Position = camUBO.projection * camUBO.view * vec4(cubePos, 1.0);
 
 }

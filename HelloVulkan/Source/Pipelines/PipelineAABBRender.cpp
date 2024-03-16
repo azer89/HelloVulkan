@@ -4,8 +4,8 @@
 
 PipelineAABBRender::PipelineAABBRender(
 	VulkanContext& ctx,
-	Scene* scene,
 	ResourcesShared* resShared,
+	Scene* scene,
 	uint8_t renderBit) :
 	PipelineBase(ctx,
 	{
@@ -34,8 +34,8 @@ PipelineAABBRender::PipelineAABBRender(
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
-			AppConfig::ShaderFolder + "AABB/AABB.vert",
-			AppConfig::ShaderFolder + "AABB/AABB.frag",
+			AppConfig::ShaderFolder + "AABB/AABBRender.vert",
+			AppConfig::ShaderFolder + "AABB/AABBRender.frag",
 		},
 		&pipeline_
 	);

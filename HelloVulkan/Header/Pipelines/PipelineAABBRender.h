@@ -13,8 +13,8 @@ class PipelineAABBRender final : public PipelineBase
 public:
 	PipelineAABBRender(
 		VulkanContext& ctx,
-		Scene* scene,
 		ResourcesShared* resShared,
+		Scene* scene,
 		uint8_t renderBit = 0u
 	);
 	~PipelineAABBRender();

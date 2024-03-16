@@ -91,7 +91,7 @@ void PipelineLine::ProcessScene(VulkanContext& ctx)
 		const glm::mat4& mat = scene_->modelUBOs_[mData.modelIndex].model;
 		const BoundingBox& box = scene_->originalBoundingBoxes_[i];
 		AddBox(
-			mat * glm::translate(glm::mat4(1.f), 0.5f * (box.min_ + box.max_)), // mat
+			mat * glm::translate(glm::mat4(1.f), 0.5f * glm::vec3(box.min_ + box.max_)), // mat
 			0.5f * glm::vec3(box.max_ - box.min_), // size
 			BOX_COLOR);
 	}
