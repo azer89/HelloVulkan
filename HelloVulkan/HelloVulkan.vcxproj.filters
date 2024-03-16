@@ -84,10 +84,10 @@
     <None Include="..\Shaders\Tonemap.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\LightCircle.frag">
+    <None Include="..\Shaders\LightOrb.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\LightCircle.vert">
+    <None Include="..\Shaders\LightOrb.vert">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\ClusteredForward\AABBGenerator.comp">
