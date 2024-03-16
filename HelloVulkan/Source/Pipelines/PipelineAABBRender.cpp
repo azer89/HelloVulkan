@@ -13,8 +13,8 @@ PipelineAABBRender::PipelineAABBRender(
 		.msaaSamples_ = resShared->multiSampledColorImage_.multisampleCount_,
 		.depthTest_ = true,
 		.depthWrite_ = false
-	}
-	)
+	}),
+	scene_(scene)
 {
 
 }

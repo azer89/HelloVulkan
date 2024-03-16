@@ -145,8 +145,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="..\Shaders\AABBRender.frag" />
-    <None Include="..\Shaders\AABBRender.vert" />
+    <None Include="..\Shaders\AABB\AABB.glsl" />
+    <None Include="..\Shaders\AABB\AABBRender.frag" />
+    <None Include="..\Shaders\AABB\AABBRender.vert" />
     <None Include="..\Shaders\Ambient.glsl" />
     <None Include="..\Shaders\Bindless\Scene.frag" />
     <None Include="..\Shaders\Bindless\Scene.vert" />
@@ -155,7 +156,7 @@
     <None Include="..\Shaders\Bindless\VIM.glsl" />
     <None Include="..\Shaders\CameraUBO.glsl" />
     <None Include="..\Shaders\ClusteredForward\AABBGenerator.comp" />
-    <None Include="..\Shaders\ClusteredForward\ClusterForwardHeader.glsl" />
+    <None Include="..\Shaders\ClusteredForward\Header.glsl" />
     <None Include="..\Shaders\ClusteredForward\LightCulling.comp" />
     <None Include="..\Shaders\ClusteredForward\LightCullingBatch.comp" />
     <None Include="..\Shaders\ClusteredForward\Mesh.frag" />

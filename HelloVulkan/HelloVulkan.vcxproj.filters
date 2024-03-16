@@ -64,6 +64,9 @@
     <Filter Include="Shaders\InfiniteGrid">
       <UniqueIdentifier>{93001017-7acc-40ab-8616-9016818ab7d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\AABB">
+      <UniqueIdentifier>{c3440f13-1025-405e-b306-41a5fc8e7ba1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\Skybox.vert">
@@ -93,7 +96,7 @@
     <None Include="..\Shaders\ClusteredForward\AABBGenerator.comp">
       <Filter>Shaders\ClusteredForward</Filter>
     </None>
-    <None Include="..\Shaders\ClusteredForward\ClusterForwardHeader.glsl">
+    <None Include="..\Shaders\ClusteredForward\Header.glsl">
       <Filter>Shaders\ClusteredForward</Filter>
     </None>
     <None Include="..\Shaders\ClusteredForward\Mesh.frag">
@@ -207,14 +210,17 @@
     <None Include="..\Shaders\InfiniteGrid\Params.glsl">
       <Filter>Shaders\InfiniteGrid</Filter>
     </None>
-    <None Include="..\Shaders\AABBRender.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\AABBRender.vert">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\Shaders\Cube.glsl">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\AABB\AABB.glsl">
+      <Filter>Shaders\AABB</Filter>
+    </None>
+    <None Include="..\Shaders\AABB\AABBRender.frag">
+      <Filter>Shaders\AABB</Filter>
+    </None>
+    <None Include="..\Shaders\AABB\AABBRender.vert">
+      <Filter>Shaders\AABB</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
