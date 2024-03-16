@@ -30,7 +30,7 @@ void AppPBRShadow::Init()
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
 	std::vector<std::string> modelFiles = {
-		//AppConfig::ModelFolder + "Sponza/Sponza.gltf",
+		AppConfig::ModelFolder + "Sponza/Sponza.gltf",
 		AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf",
 		AppConfig::ModelFolder + "Hexapod/Hexapod.gltf"
 	};
@@ -39,16 +39,16 @@ void AppPBRShadow::Init()
 
 	// Model matrix for Tachikoma
 	glm::mat4 modelMatrix(1.f);
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.15f, 0.35f, 2.5f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.15f, 0.35f, 1.5f));
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.7f, 0.7f, 0.7f));
-	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 0);
+	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 1);
 
 	// Model matrix for Hexapod
 	modelMatrix = glm::mat4(1.f);
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.62f, -2.5f));
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(135.f), glm::vec3(0.f, 1.f, 0.f));
-	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 1);
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.62f, -1.5f));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f));
+	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 2);
 
 	// Pipelines
 	// This is responsible to clear swapchain image
@@ -104,7 +104,7 @@ void AppPBRShadow::InitLights()
 	{
 		// The first light is used to generate the shadow map
 		// and its position is set by ImGui
-		{ .color_ = glm::vec4(1.f), .radius_ = 1.0f },
+		{.color_ = glm::vec4(1.f), .radius_ = 1.0f },
 
 		// Add additional lights so that the scene is not too dark
 		{.position_ = glm::vec4(-1.5f, 2.5f,  5.f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
@@ -123,7 +123,7 @@ void AppPBRShadow::DestroyResources()
 
 	// Destroy meshes
 	scene_.reset();
-	
+
 	// Destroy renderers
 	clearPtr_.reset();
 	finishPtr_.reset();
@@ -225,7 +225,7 @@ void AppPBRShadow::MainLoop()
 		.supportRaytracing_ = false,
 		.suportBufferDeviceAddress_ = true,
 		.supportMSAA_ = true
-	});
+		});
 	Init();
 
 	// Main loop
