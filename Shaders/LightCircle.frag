@@ -6,9 +6,9 @@ layout(location = 1) in vec4 circleColor;
 
 layout(location = 0) out vec4 fragColor;
 
-const float ORB_SIZE = 0.8;
-const float GLOW_FALLOFF = 3.0;
-const float GLOW_STRENGTH = 0.2;
+const float ORB_SIZE = 0.7;
+const float GLOW_FALLOFF = 2.0;
+const float GLOW_STRENGTH = 0.5;
 
 void main()
 {
@@ -21,7 +21,8 @@ void main()
 		finalColor.a = 0;
 	}
 
-	float glow = max(1.0 - pow(dist, GLOW_FALLOFF), 0.0) * GLOW_STRENGTH;
+	float glow = pow(max(1.0 - pow(dist, GLOW_FALLOFF), 0.0), 2.0) * GLOW_STRENGTH;
+
 
 	finalColor += glow;
 
