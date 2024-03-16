@@ -72,7 +72,7 @@ void Scene::CreateBindlessTextureResources(VulkanContext& ctx)
 		{
 			meshDataArray_.emplace_back(models_[i].meshes_[j].GetMeshData(textureIndexOffset, static_cast<uint32_t>(i)));
 		}
-		textureIndexOffset += models_[i].GetNumTextures();
+		textureIndexOffset += models_[i].GetTextureCount();
 	}
 	const VkDeviceSize meshDataBufferSize = static_cast<VkDeviceSize>(sizeof(MeshData) * meshDataArray_.size());
 	meshDataBuffer_.CreateGPUOnlyBuffer(
@@ -125,7 +125,7 @@ void Scene::BuildModelToMeshDataMapping()
 	int iter = 0;
 	for (size_t i = 0; i < models_.size(); ++i)
 	{
-		size_t meshCount = models_[i].NumMeshes();
+		size_t meshCount = models_[i].GetMeshCount();
 		modelToMeshDataMap_[i].resize(meshCount);
 		for (size_t j = 0; j < meshCount; ++j)
 		{

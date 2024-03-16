@@ -16,16 +16,16 @@ void ResourcesClusterForward::CreateBuffers(VulkanContext& ctx, uint32_t lightCo
 	constexpr uint32_t bufferCount = AppConfig::FrameCount;
 
 	// AABB
-	constexpr uint32_t aabbBufferSize = ClusterForwardConfig::numClusters * sizeof(AABB);
+	constexpr uint32_t aabbBufferSize = ClusterForwardConfig::ClusterCount * sizeof(AABB);
 	SetAABBDirty();
 
 	// LightCell
-	constexpr uint32_t lightCellsBufferSize = ClusterForwardConfig::numClusters * sizeof(LightCell);
+	constexpr uint32_t lightCellsBufferSize = ClusterForwardConfig::ClusterCount * sizeof(LightCell);
 
 	// Light Indices
 	constexpr uint32_t lightIndicesBufferSize =
 		ClusterForwardConfig::maxLightPerCluster *
-		ClusterForwardConfig::numClusters *
+		ClusterForwardConfig::ClusterCount *
 		sizeof(uint32_t);
 
 	for (uint32_t i = 0; i < bufferCount; ++i)

@@ -70,9 +70,9 @@ void PipelineLightCulling::Execute(VulkanContext& ctx, VkCommandBuffer commandBu
 		0); // pDynamicOffsets
 
 	vkCmdDispatch(commandBuffer,
-		static_cast<uint32_t>(ClusterForwardConfig::sliceCountX), // groupCountX
-		static_cast<uint32_t>(ClusterForwardConfig::sliceCountY), // groupCountY
-		static_cast<uint32_t>(ClusterForwardConfig::sliceCountZ)); // groupCountZ
+		static_cast<uint32_t>(ClusterForwardConfig::SliceCountX), // groupCountX
+		static_cast<uint32_t>(ClusterForwardConfig::SliceCountY), // groupCountY
+		static_cast<uint32_t>(ClusterForwardConfig::SliceCountZ)); // groupCountZ
 	
 	// Batched version
 	/*vkCmdDispatch(commandBuffer,

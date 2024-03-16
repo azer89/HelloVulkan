@@ -132,7 +132,7 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 	uint32_t numMeshes = 0u;
 	for (Model* model : models_)
 	{
-		numMeshes += model->NumMeshes();
+		numMeshes += model->GetMeshCount();
 	}
 
 	VulkanDescriptorInfo dsInfo;

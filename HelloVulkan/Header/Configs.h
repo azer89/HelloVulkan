@@ -40,10 +40,10 @@ namespace CameraConfig
 namespace ClusterForwardConfig
 {
 	// Parameters similar to Doom 2016
-	constexpr uint32_t sliceCountX = 16;
-	constexpr uint32_t sliceCountY = 9;
-	constexpr uint32_t sliceCountZ = 24;
-	constexpr uint32_t numClusters = sliceCountX * sliceCountY * sliceCountZ;
+	constexpr uint32_t SliceCountX = 16;
+	constexpr uint32_t SliceCountY = 9;
+	constexpr uint32_t SliceCountZ = 24;
+	constexpr uint32_t ClusterCount = SliceCountX * SliceCountY * SliceCountZ;
 
 	// Note that this also has to be set inside the compute shader
 	constexpr uint32_t maxLightPerCluster = 150;
