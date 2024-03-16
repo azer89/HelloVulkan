@@ -9,13 +9,13 @@ layout(location = 0) out vec4 fragColor;
 void main()
 {
 	float dist = sqrt(dot(fragOffset, fragOffset));
-	if (dist >= 1.0)
-	{
-		discard;
-	}
-
+	
 	// Blurry edge
 	float alpha = 1.0 - pow(dist, 5.0);
+	if (dist >= 1.0)
+	{
+		alpha = 0;
+	}
 
 	fragColor = vec4(circleColor.xyz, alpha);
 }
