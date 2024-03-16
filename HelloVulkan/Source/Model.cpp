@@ -84,7 +84,7 @@ void Model::Destroy()
 
 void Model::CreateModelUBOBuffers(VulkanContext& ctx)
 {
-	uint32_t frameCount = AppConfig::FrameOverlapCount;
+	uint32_t frameCount = AppConfig::FrameCount;
 	modelBuffers_.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{

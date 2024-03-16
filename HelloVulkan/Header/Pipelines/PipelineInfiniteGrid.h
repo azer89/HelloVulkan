@@ -25,7 +25,7 @@ private:
 private:
 	float yPosition_;
 	bool shouldRender_;
-	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;
+	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;
 };
 
 #endif

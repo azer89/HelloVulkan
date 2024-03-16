@@ -42,7 +42,7 @@ void VulkanContext::Create(VulkanInstance& instance, ContextConfig config)
 
 void VulkanContext::Destroy()
 {
-	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
+	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
 	{
 		frameDataArray_[i].Destroy(device_);
 	}
@@ -681,7 +681,7 @@ void VulkanContext::AllocateFrameInFlightData()
 {
 	// Frame in flight
 	frameIndex_ = 0;
-	for (uint32_t i = 0; i < AppConfig::FrameOverlapCount; ++i)
+	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
 	{
 		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].nextSwapchainImageSemaphore_)));
 		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].graphicsQueueSemaphore_)));
@@ -699,7 +699,7 @@ FrameData& VulkanContext::GetCurrentFrameData()
 
 void VulkanContext::IncrementFrameIndex() 
 { 
-	frameIndex_ = (frameIndex_ + 1u) % AppConfig::FrameOverlapCount; 
+	frameIndex_ = (frameIndex_ + 1u) % AppConfig::FrameCount; 
 }
 
 uint32_t VulkanContext::GetFrameIndex() const 

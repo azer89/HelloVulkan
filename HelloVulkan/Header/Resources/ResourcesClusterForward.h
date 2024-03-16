@@ -29,11 +29,11 @@ public:
 	void SetAABBClean(uint32_t frameIndex) { aabbDirtyFlags_[frameIndex] = AABBFlag::Clean; }
 	
 public:
-	std::array<AABBFlag, AppConfig::FrameOverlapCount> aabbDirtyFlags_; // For window resizing
-	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> aabbBuffers_;
-	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> globalIndexCountBuffers_; // Atomic counter
-	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> lightCellsBuffers_;
-	std::array<VulkanBuffer, AppConfig::FrameOverlapCount> lightIndicesBuffers_;
+	std::array<AABBFlag, AppConfig::FrameCount> aabbDirtyFlags_; // For window resizing
+	std::array<VulkanBuffer, AppConfig::FrameCount> aabbBuffers_;
+	std::array<VulkanBuffer, AppConfig::FrameCount> globalIndexCountBuffers_; // Atomic counter
+	std::array<VulkanBuffer, AppConfig::FrameCount> lightCellsBuffers_;
+	std::array<VulkanBuffer, AppConfig::FrameCount> lightIndicesBuffers_;
 };
 
 #endif

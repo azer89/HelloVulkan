@@ -24,7 +24,7 @@ PipelineImGui::PipelineImGui(
 	// Create framebuffer
 	framebuffer_.CreateResizeable(ctx, renderPass_.GetHandle(), {}, IsOffscreen());
 
-	constexpr uint32_t imageCount = AppConfig::FrameOverlapCount;
+	constexpr uint32_t imageCount = AppConfig::FrameCount;
 	VulkanDescriptorInfo dsInfo;
 	dsInfo.AddImage(nullptr);
 	// TODO Layout is unused here

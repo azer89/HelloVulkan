@@ -51,8 +51,8 @@ public:
 
 	void AddTextureIfEmpty(TextureType tType, const std::string& filePath);
 
-	uint32_t GetNumTextures() const { return static_cast<uint32_t>(textureList_.size()); } // TODO Rename to GetTextureCount
-	uint32_t NumMeshes() const { return static_cast<uint32_t>(meshes_.size()); } // TODO Rename to GetMeshCount
+	uint32_t GetTextureCount() const { return static_cast<uint32_t>(textureList_.size()); }
+	uint32_t GetMeshCount() const { return static_cast<uint32_t>(meshes_.size()); }
 
 	void CreateModelUBOBuffers(VulkanContext& ctx);
 	void SetModelUBO(VulkanContext& ctx, ModelUBO ubo);

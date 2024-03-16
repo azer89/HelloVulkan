@@ -10,8 +10,8 @@ namespace AppConfig
 	constexpr uint32_t InitialScreenWidth = 1600;
 	constexpr uint32_t InitialScreenHeight = 1200;
 
-	// Number of overlapping frames (Frame in flight)
-	constexpr uint32_t FrameOverlapCount = 2;
+	// Number of frame in flight
+	constexpr uint32_t FrameCount = 2;
 
 	// VK_PRESENT_MODE_FIFO_KHR --> Lock to screen FPS
 	// VK_PRESENT_MODE_MAILBOX_KHR --> Triple buffering
@@ -40,10 +40,10 @@ namespace CameraConfig
 namespace ClusterForwardConfig
 {
 	// Parameters similar to Doom 2016
-	constexpr uint32_t sliceCountX = 16;
-	constexpr uint32_t sliceCountY = 9;
-	constexpr uint32_t sliceCountZ = 24;
-	constexpr uint32_t numClusters = sliceCountX * sliceCountY * sliceCountZ;
+	constexpr uint32_t SliceCountX = 16;
+	constexpr uint32_t SliceCountY = 9;
+	constexpr uint32_t SliceCountZ = 24;
+	constexpr uint32_t ClusterCount = SliceCountX * SliceCountY * SliceCountZ;
 
 	// Note that this also has to be set inside the compute shader
 	constexpr uint32_t maxLightPerCluster = 150;

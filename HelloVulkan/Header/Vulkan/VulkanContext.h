@@ -197,7 +197,7 @@ private:
 	std::vector<uint32_t> deviceQueueIndices_;
 
 	uint32_t frameIndex_;
-	std::array<FrameData, AppConfig::FrameOverlapCount> frameDataArray_;
+	std::array<FrameData, AppConfig::FrameCount> frameDataArray_;
 
 	VmaAllocator vmaAllocator_;
 

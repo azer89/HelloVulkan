@@ -152,7 +152,7 @@ RaytracingCameraUBO Camera::GetRaytracingCameraUBO() const
 
 ClusterForwardUBO Camera::GetClusterForwardUBO() const
 {
-	float zFloat = static_cast<float>(ClusterForwardConfig::sliceCountZ);
+	float zFloat = static_cast<float>(ClusterForwardConfig::SliceCountZ);
 	float log2FarDivNear = glm::log2(CameraConfig::Far / CameraConfig::Near);
 	float log2Near = glm::log2(CameraConfig::Near);
 
@@ -165,8 +165,8 @@ ClusterForwardUBO Camera::GetClusterForwardUBO() const
 		.sliceBias = -(zFloat * log2Near / log2FarDivNear),
 		.cameraNear = CameraConfig::Near,
 		.cameraFar = CameraConfig::Far,
-		.sliceCountX = ClusterForwardConfig::sliceCountX,
-		.sliceCountY = ClusterForwardConfig::sliceCountY,
-		.sliceCountZ = ClusterForwardConfig::sliceCountZ
+		.sliceCountX = ClusterForwardConfig::SliceCountX,
+		.sliceCountY = ClusterForwardConfig::SliceCountY,
+		.sliceCountZ = ClusterForwardConfig::SliceCountZ
 	};
 }

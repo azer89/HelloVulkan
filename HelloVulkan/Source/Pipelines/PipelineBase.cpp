@@ -52,41 +52,6 @@ void PipelineBase::CreateMultipleUniformBuffers(
 	}
 }
 
-void PipelineBase::CreateIndirectBuffers(
-	VulkanContext& ctx,
-	Scene* scene,
-	std::vector<VulkanBuffer>& indirectBuffers)
-{
-	const uint32_t meshSize = scene->GetMeshCount();
-	const uint32_t indirectDataSize = meshSize * sizeof(VkDrawIndirectCommand);
-	constexpr size_t numFrames = AppConfig::FrameOverlapCount;
-
-	const std::vector<uint32_t> meshVertexCountArray = scene->GetMeshVertexCountArray();
-
-	indirectBuffers.resize(numFrames);
-	for (size_t i = 0; i < numFrames; ++i)
-	{
-		// Create
-		indirectBuffers[i].CreateIndirectBuffer(ctx, indirectDataSize);
-		// Map
-		VkDrawIndirectCommand* data = indirectBuffers[i].MapIndirectBuffer();
-
-		for (uint32_t j = 0; j < meshSize; ++j)
-		{
-			data[j] =
-			{
-				.vertexCount = static_cast<uint32_t>(meshVertexCountArray[j]),
-				.instanceCount = 1u,
-				.firstVertex = 0,
-				.firstInstance = j
-			};
-		}
-
-		// Unmap
-		indirectBuffers[i].UnmapIndirectBuffer();
-	}
-}
-
 void PipelineBase::BindPipeline(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_);

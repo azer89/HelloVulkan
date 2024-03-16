@@ -24,7 +24,7 @@ PipelineLine::PipelineLine(
 	scene_(scene),
 	shouldRender_(false)
 {
-	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
+	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
 	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
 	framebuffer_.CreateResizeable(
 		ctx,
@@ -148,7 +148,7 @@ void PipelineLine::AddLine(const glm::vec3& p1, const glm::vec3& p2, const glm::
 
 void PipelineLine::CreateDescriptor(VulkanContext& ctx)
 {
-	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
+	constexpr uint32_t frameCount = AppConfig::FrameCount;
 
 	VulkanDescriptorInfo dsInfo;
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT); // 0

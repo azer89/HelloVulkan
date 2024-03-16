@@ -56,7 +56,7 @@ void AppPBRShadow::Init()
 	// This draws a cube
 	skyboxPtr_ = std::make_unique<PipelineSkybox>(
 		vulkanContext_,
-		&(resIBL_->environmentCubemap_),
+		&(resIBL_->diffuseCubemap_),
 		resShared_.get(),
 		// This is the first offscreen render pass so we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
@@ -104,7 +104,7 @@ void AppPBRShadow::InitLights()
 	{
 		// The first light is used to generate the shadow map
 		// and its position is set by ImGui
-		{ .color_ = glm::vec4(1.f), .radius_ = 1.0f },
+		{.color_ = glm::vec4(1.f), .radius_ = 1.0f },
 
 		// Add additional lights so that the scene is not too dark
 		{.position_ = glm::vec4(-1.5f, 2.5f,  5.f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
@@ -123,7 +123,7 @@ void AppPBRShadow::DestroyResources()
 
 	// Destroy meshes
 	scene_.reset();
-	
+
 	// Destroy renderers
 	clearPtr_.reset();
 	finishPtr_.reset();
@@ -225,7 +225,7 @@ void AppPBRShadow::MainLoop()
 		.supportRaytracing_ = false,
 		.suportBufferDeviceAddress_ = true,
 		.supportMSAA_ = true
-	});
+		});
 	Init();
 
 	// Main loop

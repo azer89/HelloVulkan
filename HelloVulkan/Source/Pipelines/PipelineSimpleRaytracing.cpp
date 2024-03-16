@@ -13,7 +13,7 @@ PipelineSimpleRaytracing::PipelineSimpleRaytracing(VulkanContext& ctx, Scene* sc
 		}),
 	scene_(scene)
 {
-	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(RaytracingCameraUBO), AppConfig::FrameOverlapCount);
+	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(RaytracingCameraUBO), AppConfig::FrameCount);
 
 	CreateBLAS(ctx);
 	CreateTLAS(ctx);
@@ -139,7 +139,7 @@ void PipelineSimpleRaytracing::OnWindowResized(VulkanContext& ctx)
 
 void PipelineSimpleRaytracing::CreateDescriptor(VulkanContext& ctx)
 {
-	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
+	constexpr uint32_t frameCount = AppConfig::FrameCount;
 
 	descriptorInfo_.AddAccelerationStructure();
 	descriptorInfo_.AddImage(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
@@ -172,7 +172,7 @@ void PipelineSimpleRaytracing::UpdateDescriptor(VulkanContext& ctx)
 
 	descriptorInfo_.UpdateStorageImage(&storageImage_, 1);
 
-	constexpr auto frameCount = AppConfig::FrameOverlapCount;
+	constexpr auto frameCount = AppConfig::FrameCount;
 	for (size_t i = 0; i < frameCount; i++)
 	{
 		descriptorInfo_.UpdateBuffer(&(cameraUBOBuffers_[i]), 2);

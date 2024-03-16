@@ -30,7 +30,7 @@ private:
 	ResourcesClusterForward* resCF_;
 
 	std::vector<VulkanBuffer> cfUBOBuffers_;
-	std::array<VkDescriptorSet, AppConfig::FrameOverlapCount> descriptorSets_;
+	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;
 
 private:
 	void Execute(VulkanContext& ctx, VkCommandBuffer commandBuffer, uint32_t frameIndex);

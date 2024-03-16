@@ -37,10 +37,8 @@ PipelinePBRShadow::PipelinePBRShadow(
 	resShadow_(resShadow)
 {
 	// UBOs
-	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
-	CreateMultipleUniformBuffers(ctx, shadowMapConfigUBOBuffers_, sizeof(ShadowMapUBO), AppConfig::FrameOverlapCount);
-
-	CreateIndirectBuffers(ctx, scene_, indirectBuffers_);
+	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
+	CreateMultipleUniformBuffers(ctx, shadowMapConfigUBOBuffers_, sizeof(ShadowMapUBO), AppConfig::FrameCount);
 
 	// Note that this pipeline is offscreen rendering
 	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
@@ -86,12 +84,6 @@ PipelinePBRShadow::~PipelinePBRShadow()
 	{
 		uboBuffer.Destroy();
 	}
-
-	for (auto& buffer : indirectBuffers_)
-	{
-		buffer.Destroy();
-	}
-
 	vimBuffer_.Destroy();
 }
 
@@ -123,7 +115,7 @@ void PipelinePBRShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer co
 
 	vkCmdDrawIndirect(
 		commandBuffer,
-		indirectBuffers_[frameIndex].buffer_,
+		scene_->indirectBuffers_[frameIndex].buffer_,
 		0, // offset
 		scene_->GetMeshCount(),
 		sizeof(VkDrawIndirectCommand));
@@ -146,7 +138,7 @@ void PipelinePBRShadow::PrepareVIM(VulkanContext& ctx)
 
 void PipelinePBRShadow::CreateDescriptor(VulkanContext& ctx)
 {
-	constexpr uint32_t frameCount = AppConfig::FrameOverlapCount;
+	constexpr uint32_t frameCount = AppConfig::FrameCount;
 	VulkanDescriptorInfo dsInfo;
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 1

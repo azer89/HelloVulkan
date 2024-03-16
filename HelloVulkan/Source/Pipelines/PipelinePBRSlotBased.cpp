@@ -33,7 +33,7 @@ PipelinePBRSlotBased::PipelinePBRSlotBased(
 	models_(models)
 {
 	// Per frame UBO
-	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameOverlapCount);
+	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
 
 	// Note that this pipeline is offscreen rendering
 	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
@@ -127,7 +127,7 @@ void PipelinePBRSlotBased::CreateDescriptor(VulkanContext& ctx)
 	uint32_t numMeshes = 0u;
 	for (Model* model : models_)
 	{
-		numMeshes += model->NumMeshes();
+		numMeshes += model->GetMeshCount();
 	}
 
 	VulkanDescriptorInfo dsInfo;
@@ -143,12 +143,12 @@ void PipelinePBRSlotBased::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddImage(&(iblResources_->brdfLut_));
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, dsInfo, AppConfig::FrameOverlapCount, numMeshes);
+	descriptor_.CreatePoolAndLayout(ctx, dsInfo, AppConfig::FrameCount, numMeshes);
 
 	// Sets
 	constexpr size_t bindingOffset = static_cast<size_t>(UBO_COUNT + SSBO_COUNT);
-	descriptorSets_.resize(AppConfig::FrameOverlapCount);
-	for (size_t i = 0; i < AppConfig::FrameOverlapCount; i++)
+	descriptorSets_.resize(AppConfig::FrameCount);
+	for (size_t i = 0; i < AppConfig::FrameCount; i++)
 	{
 		size_t meshIndex = 0;
 		descriptorSets_[i].resize(numMeshes);
