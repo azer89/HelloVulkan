@@ -66,6 +66,7 @@ struct ClusterForwardUBO
 	uint32_t sliceCountZ;
 };
 
+// For compute-based frustum culling
 struct FrustumUBO
 {
 	alignas(16)

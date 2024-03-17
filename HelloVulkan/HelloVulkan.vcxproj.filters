@@ -225,7 +225,7 @@
     <None Include="..\Shaders\FrustumCulling.comp">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\Indirect.glsl">
+    <None Include="..\Shaders\DrawIndirectCommand.glsl">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\Frustum.glsl">

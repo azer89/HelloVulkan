@@ -183,7 +183,6 @@ void Scene::CreateIndirectBuffers(
 	const uint32_t meshSize = GetMeshCount();
 	const uint32_t indirectDataSize = meshSize * sizeof(VkDrawIndirectCommand);
 	constexpr size_t numFrames = AppConfig::FrameCount;
-
 	const std::vector<uint32_t> meshVertexCountArray = GetMeshVertexCountArray();
 
 	indirectBuffers.resize(numFrames);

@@ -12,7 +12,7 @@
 // Constants
 constexpr uint32_t UBO_COUNT = 2;
 constexpr uint32_t SSBO_COUNT = 2;
-constexpr uint32_t IBL_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
+constexpr uint32_t ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 
 PipelinePBRBindless::PipelinePBRBindless(
 	VulkanContext& ctx,

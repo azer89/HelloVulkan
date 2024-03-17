@@ -168,7 +168,7 @@
     <None Include="..\Shaders\IBL\CubeFilterDiffuse.frag" />
     <None Include="..\Shaders\IBL\CubeFilterSpecular.frag" />
     <None Include="..\Shaders\IBL\Equirect2Cube.frag" />
-    <None Include="..\Shaders\Indirect.glsl" />
+    <None Include="..\Shaders\DrawIndirectCommand.glsl" />
     <None Include="..\Shaders\InfiniteGrid\Grid.frag" />
     <None Include="..\Shaders\InfiniteGrid\Grid.vert" />
     <None Include="..\Shaders\InfiniteGrid\Header.glsl" />
