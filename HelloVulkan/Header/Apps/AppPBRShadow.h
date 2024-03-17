@@ -4,9 +4,8 @@
 #include "AppBase.h"
 #include "Scene.h"
 #include "ResourcesShadow.h"
+#include "ResourcesShadow.h"
 #include "ResourcesLight.h"
-
-// Pipelines
 #include "PipelineSkybox.h"
 #include "PipelineClear.h"
 #include "PipelineFinish.h"

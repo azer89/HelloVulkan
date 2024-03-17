@@ -1,6 +1,4 @@
 #include "AppPBRShadow.h"
-#include "ResourcesShadow.h"
-#include "ResourcesIBL.h"
 #include "VulkanUtility.h"
 #include "Configs.h"
 

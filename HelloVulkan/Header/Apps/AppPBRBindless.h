@@ -2,10 +2,8 @@
 #define APP_PBR_BINDLESS_TEXTURES
 
 #include "AppBase.h"
-#include "ResourcesLight.h"
 #include "Scene.h"
-
-// Pipelines
+#include "ResourcesLight.h"
 #include "PipelineSkybox.h"
 #include "PipelineClear.h"
 #include "PipelineFinish.h"

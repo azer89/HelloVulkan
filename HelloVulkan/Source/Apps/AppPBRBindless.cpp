@@ -1,5 +1,4 @@
 #include "AppPBRBindless.h"
-#include "ResourcesIBL.h"
 #include "VulkanUtility.h"
 #include "Configs.h"
 

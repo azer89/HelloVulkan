@@ -1,5 +1,4 @@
 #include "AppPBRSlotBased.h"
-#include "ResourcesIBL.h"
 #include "VulkanUtility.h"
 #include "Configs.h"
 

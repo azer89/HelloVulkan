@@ -1,5 +1,4 @@
 #include "AppPBRClusterForward.h"
-#include "ResourcesIBL.h"
 #include "PushConstants.h"
 #include "VulkanUtility.h"
 #include "Configs.h"

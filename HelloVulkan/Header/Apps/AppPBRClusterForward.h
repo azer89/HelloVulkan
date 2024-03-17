@@ -2,10 +2,9 @@
 #define APP_PBR_CLUSTER_FORWARD
 
 #include "AppBase.h"
-#include "ResourcesLight.h"
 #include "Model.h"
-
-// Pipelines
+#include "ResourcesLight.h"
+#include "ResourcesClusterForward.h"
 #include "PipelineSkybox.h"
 #include "PipelineClear.h"
 #include "PipelineFinish.h"
@@ -13,12 +12,9 @@
 #include "PipelineResolveMS.h"
 #include "PipelineLightRender.h"
 #include "PipelineImGui.h"
-
-// Clustered forward
 #include "PipelinePBRClusterForward.h"
 #include "PipelineAABBGenerator.h"
 #include "PipelineLightCulling.h"
-#include "ResourcesClusterForward.h"
 
 // STL
 #include <memory>

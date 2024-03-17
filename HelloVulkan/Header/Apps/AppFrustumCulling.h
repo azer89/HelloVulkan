@@ -3,8 +3,7 @@
 
 #include "AppBase.h"
 #include "Scene.h"
-
-// Pipelines
+#include "ResourcesLight.h"
 #include "PipelineSkybox.h"
 #include "PipelineClear.h"
 #include "PipelineFinish.h"
@@ -14,10 +13,6 @@
 #include "PipelineLightRender.h"
 #include "PipelineInfiniteGrid.h"
 #include "PipelineImGui.h"
-
-// Resources
-#include "ResourcesIBL.h"
-#include "ResourcesLight.h"
 
 #include <memory>
 

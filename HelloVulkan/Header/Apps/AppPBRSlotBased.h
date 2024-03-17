@@ -4,8 +4,6 @@
 #include "AppBase.h"
 #include "Model.h"
 #include "ResourcesLight.h"
-
-// Pipelines
 #include "PipelineSkybox.h"
 #include "PipelineClear.h"
 #include "PipelineFinish.h"
