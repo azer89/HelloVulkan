@@ -6,7 +6,7 @@ Adapted from
 */
 
 // Extents of grid in world coordinates
-const float GRID_SIZE = 50.0;
+const float GRID_EXTENTS = 50.0;
 
 // Size of one cell
 const float GRID_CELL_SIZE = 0.2;
