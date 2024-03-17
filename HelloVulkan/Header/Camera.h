@@ -37,6 +37,7 @@ public:
 	[[nodiscard]] CameraUBO GetCameraUBO() const;
 	[[nodiscard]] ClusterForwardUBO GetClusterForwardUBO() const;
 	[[nodiscard]] RaytracingCameraUBO GetRaytracingCameraUBO() const;
+	[[nodiscard]] FrustumUBO GetFrustumUBO() const;
 
 private:
 	glm::mat4 projectionMatrix_;

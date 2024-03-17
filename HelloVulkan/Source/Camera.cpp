@@ -170,3 +170,40 @@ ClusterForwardUBO Camera::GetClusterForwardUBO() const
 		.sliceCountZ = ClusterForwardConfig::SliceCountZ
 	};
 }
+
+FrustumUBO Camera::GetFrustumUBO() const
+{
+	glm::mat4 projView = projectionMatrix_ * viewMatrix_;
+	glm::mat4 t = glm::transpose(projView);
+
+	FrustumUBO ubo =
+	{
+		.planes =
+		{
+			glm::vec4(t[3] + t[0]), // left
+			glm::vec4(t[3] - t[0]), // right
+			glm::vec4(t[3] + t[1]), // bottom
+			glm::vec4(t[3] - t[1]), // top
+			glm::vec4(t[3] + t[2]), // near
+			glm::vec4(t[3] - t[2])  // far
+		}
+	};
+
+	glm::mat4 invProjView = glm::inverse(projView);
+
+	const glm::vec4 corners[8] =
+	{
+		glm::vec4(-1, -1, -1, 1), glm::vec4( 1, -1, -1, 1),
+		glm::vec4( 1,  1, -1, 1), glm::vec4(-1,  1, -1, 1),
+		glm::vec4(-1, -1,  1, 1), glm::vec4( 1, -1,  1, 1),
+		glm::vec4( 1,  1,  1, 1), glm::vec4(-1,  1,  1, 1)
+	};
+
+	for (int i = 0; i < 8; i++)
+	{
+		const glm::vec4 q = invProjView * corners[i];
+		ubo.corners[i] = q / q.w;
+	}
+
+	return ubo;
+}
