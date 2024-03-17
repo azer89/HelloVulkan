@@ -68,7 +68,7 @@ The left image is a rendering that uses four cascade shadow maps, resulting in s
 ### Hardware Raytracing
 <img width="425" alt="hardware_raytracing" src="https://github.com/azer89/HelloVulkan/assets/790432/7f6771b3-ab52-41c4-89d4-b3bed05e724e">
 
-The engine also features a basic ray tracing pipeline. This process begins with building Bottom Level Acceleration Structures (BLAS) and Top Level Acceleration Structures (TLAS). For each pixel on the screen, a ray is cast and intersected with the acceleration structures to determine the final color. However, light bouncing, a key feature for realistic lighting effects, is not yet implemented.
+The engine also features a basic ray tracing pipeline. This process begins with building Bottom Level Acceleration Structures (BLAS) and Top Level Acceleration Structures (TLAS). For each pixel on the screen, a ray is cast and intersected with the acceleration structures to determine the final color.
 
 </br>
 
