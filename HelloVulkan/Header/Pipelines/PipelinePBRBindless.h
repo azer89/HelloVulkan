@@ -29,12 +29,14 @@ public:
 	void SetPBRPushConstants(const PushConstPBR& pbrPC) { pc_ = pbrPC; };
 
 private:
+	void PrepareVIM(VulkanContext& ctx);
 	void CreateDescriptor(VulkanContext& ctx);
 
 	Scene* scene_;
 	ResourcesLight* resLight_;
 	ResourcesIBL* iblResources_;
 	PushConstPBR pc_;
+	VulkanBuffer vimBuffer_;
 	std::vector<VkDescriptorSet> descriptorSets_;
 };
 

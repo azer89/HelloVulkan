@@ -7,17 +7,17 @@
 // Entry point
 int main()
 {
-	// Bindless textures using draw indirect and descriptor indexing
-	//AppPBRBindless app;
+	// Bindless, using draw indirect, buffer device address, and descriptor indexing
+	AppPBRBindless app;
+
+	// Shadow demo, using draw indirect, buffer device address, and descriptor indexing
+	//AppPBRShadow app;
 
 	// The good ol resource binding per draw call
 	//AppPBRSlotBased app;
 	
-	AppPBRShadow app;
-	
 	//AppPBRClusterForward app;
 	
-	// Currently can only draw a triangle
 	//AppSimpleRaytracing app;
 	
 	app.MainLoop();

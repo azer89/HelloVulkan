@@ -222,7 +222,6 @@ void AppPBRShadow::UpdateUI()
 void AppPBRShadow::MainLoop()
 {
 	InitVulkan({
-		.supportRaytracing_ = false,
 		.suportBufferDeviceAddress_ = true,
 		.supportMSAA_ = true
 		});

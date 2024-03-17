@@ -35,6 +35,8 @@ PipelinePBRBindless::PipelinePBRBindless(
 	// Per frame UBO
 	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
 
+	PrepareVIM(ctx);
+
 	CreateDescriptor(ctx);
 
 	// Note that this pipeline is offscreen rendering
@@ -72,6 +74,7 @@ PipelinePBRBindless::PipelinePBRBindless(
 
 PipelinePBRBindless::~PipelinePBRBindless()
 {
+	vimBuffer_.Destroy();
 }
 
 void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
@@ -110,7 +113,19 @@ void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-// TODO Refactor VulkanDescriptor to make the code below simpler
+void PipelinePBRBindless::PrepareVIM(VulkanContext& ctx)
+{
+	VIM vim = scene_->GetVIM();
+	VkDeviceSize vimSize = sizeof(VIM);
+	vimBuffer_.CreateBuffer(
+		ctx,
+		vimSize,
+		VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+		VMA_MEMORY_USAGE_CPU_TO_GPU
+	);
+	vimBuffer_.UploadBufferData(ctx, &vim, vimSize);
+}
+
 void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
 {
 	constexpr uint32_t frameCount = AppConfig::FrameCount;
@@ -118,14 +133,15 @@ void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
 	VulkanDescriptorInfo dsInfo;
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 1
-	dsInfo.AddBuffer(&(scene_->vertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 2
-	dsInfo.AddBuffer(&(scene_->indexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 3
-	dsInfo.AddBuffer(&(scene_->meshDataBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
-	dsInfo.AddBuffer(resLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT); // 5
-	dsInfo.AddImage(&(iblResources_->specularCubemap_)); // 6
-	dsInfo.AddImage(&(iblResources_->diffuseCubemap_)); // 7
-	dsInfo.AddImage(&(iblResources_->brdfLut_)); // 8
-	dsInfo.AddImageArray(scene_->GetImageInfos()); // 9
+	dsInfo.AddBuffer(&vimBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 2
+	//dsInfo.AddBuffer(&(scene_->vertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 2
+	//dsInfo.AddBuffer(&(scene_->indexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 3
+	//dsInfo.AddBuffer(&(scene_->meshDataBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
+	dsInfo.AddBuffer(resLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT); // 3
+	dsInfo.AddImage(&(iblResources_->specularCubemap_)); // 4
+	dsInfo.AddImage(&(iblResources_->diffuseCubemap_)); // 5
+	dsInfo.AddImage(&(iblResources_->brdfLut_)); // 6
+	dsInfo.AddImageArray(scene_->GetImageInfos()); // 7
 
 	// Pool and layout
 	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);

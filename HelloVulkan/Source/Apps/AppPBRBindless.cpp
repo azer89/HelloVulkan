@@ -1,9 +1,7 @@
 #include "AppPBRBindless.h"
-#include "Configs.h"
-#include "VulkanUtility.h"
-#include "PipelineEquirect2Cube.h"
-#include "PipelineBRDFLUT.h"
 #include "ResourcesIBL.h"
+#include "VulkanUtility.h"
+#include "Configs.h"
 
 #include "glm/ext.hpp"
 #include "imgui_impl_vulkan.h"
@@ -30,7 +28,8 @@ void AppPBRBindless::Init()
 		AppConfig::ModelFolder + "Sponza/Sponza.gltf",
 		AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf",
 	};
-	scene_ = std::make_unique<Scene>(vulkanContext_, modelFiles);
+	bool supportDeviceAddress = true;
+	scene_ = std::make_unique<Scene>(vulkanContext_, modelFiles, supportDeviceAddress);
 
 	// Tachikoma model matrix
 	glm::mat4 modelMatrix(1.f);
@@ -154,7 +153,7 @@ void AppPBRBindless::UpdateUI()
 void AppPBRBindless::MainLoop()
 {
 	InitVulkan({
-		.supportRaytracing_ = false,
+		.suportBufferDeviceAddress_ = true,
 		.supportMSAA_ = true,
 		.supportBindlessTextures_ = true,
 	});
