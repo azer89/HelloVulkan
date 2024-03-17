@@ -2,7 +2,8 @@
 #define PIPELINE_RESOLVE_MULTISAMPLING
 
 #include "PipelineBase.h"
-#include "ResourcesShared.h"
+
+struct ResourcesShared;
 
 /*
 This pipeline does not draw anything but it resolves 
