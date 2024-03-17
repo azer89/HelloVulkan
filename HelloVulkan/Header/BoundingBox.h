@@ -8,8 +8,8 @@ struct VertexData;
 struct BoundingBox
 {
 public:
-	glm::vec3 min_;
-	glm::vec3 max_;
+	glm::vec4 min_;
+	glm::vec4 max_;
 	
 public:
 

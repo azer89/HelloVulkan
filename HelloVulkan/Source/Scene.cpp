@@ -156,8 +156,8 @@ void Scene::BuildBoundingBoxes(VulkanContext& ctx)
 				vmax = glm::max(vmax, v);
 			}
 
-			originalBoundingBoxes_[iter].min_ = vmin;
-			originalBoundingBoxes_[iter].max_ = vmax;
+			originalBoundingBoxes_[iter].min_ = glm::vec4(vmin, 1.0);
+			originalBoundingBoxes_[iter].max_ = glm::vec4(vmax, 1.0);
 
 			const MeshData& mData = meshDataArray_[iter];
 			const glm::mat4& mat = modelUBOs_[mData.modelIndex].model;
@@ -168,7 +168,7 @@ void Scene::BuildBoundingBoxes(VulkanContext& ctx)
 	}
 
 	// Buffer
-	VkDeviceSize bufferSize = transformedBoundingBoxes_.size() * sizeof(BoundingBox);
+	VkDeviceSize bufferSize = static_cast<VkDeviceSize>(transformedBoundingBoxes_.size() * sizeof(BoundingBox));
 	transformedBoundingBoxBuffer_.CreateBuffer(ctx, 
 		bufferSize, 
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,

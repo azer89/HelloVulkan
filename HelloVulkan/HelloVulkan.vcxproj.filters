@@ -64,15 +64,18 @@
     <Filter Include="Shaders\InfiniteGrid">
       <UniqueIdentifier>{93001017-7acc-40ab-8616-9016818ab7d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\AABB">
+      <UniqueIdentifier>{c3440f13-1025-405e-b306-41a5fc8e7ba1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Shaders\Cube.vert">
+    <None Include="..\Shaders\Skybox.vert">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\FullscreenTriangle.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\Cube.frag">
+    <None Include="..\Shaders\Skybox.frag">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\PBRHeader.glsl">
@@ -93,7 +96,7 @@
     <None Include="..\Shaders\ClusteredForward\AABBGenerator.comp">
       <Filter>Shaders\ClusteredForward</Filter>
     </None>
-    <None Include="..\Shaders\ClusteredForward\ClusterForwardHeader.glsl">
+    <None Include="..\Shaders\ClusteredForward\Header.glsl">
       <Filter>Shaders\ClusteredForward</Filter>
     </None>
     <None Include="..\Shaders\ClusteredForward\Mesh.frag">
@@ -206,6 +209,18 @@
     </None>
     <None Include="..\Shaders\InfiniteGrid\Params.glsl">
       <Filter>Shaders\InfiniteGrid</Filter>
+    </None>
+    <None Include="..\Shaders\Cube.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\AABB\AABB.glsl">
+      <Filter>Shaders\AABB</Filter>
+    </None>
+    <None Include="..\Shaders\AABB\AABBRender.frag">
+      <Filter>Shaders\AABB</Filter>
+    </None>
+    <None Include="..\Shaders\AABB\AABBRender.vert">
+      <Filter>Shaders\AABB</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -389,6 +404,9 @@
     <ClInclude Include="Header\Pipelines\PipelineInfiniteGrid.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineAABBRender.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">
@@ -545,6 +563,9 @@
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
     <ClCompile Include="Source\Pipelines\PipelineInfiniteGrid.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineAABBRender.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
   </ItemGroup>

@@ -145,6 +145,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="..\Shaders\AABB\AABB.glsl" />
+    <None Include="..\Shaders\AABB\AABBRender.frag" />
+    <None Include="..\Shaders\AABB\AABBRender.vert" />
     <None Include="..\Shaders\Ambient.glsl" />
     <None Include="..\Shaders\Bindless\Scene.frag" />
     <None Include="..\Shaders\Bindless\Scene.vert" />
@@ -153,11 +156,12 @@
     <None Include="..\Shaders\Bindless\VIM.glsl" />
     <None Include="..\Shaders\CameraUBO.glsl" />
     <None Include="..\Shaders\ClusteredForward\AABBGenerator.comp" />
-    <None Include="..\Shaders\ClusteredForward\ClusterForwardHeader.glsl" />
+    <None Include="..\Shaders\ClusteredForward\Header.glsl" />
     <None Include="..\Shaders\ClusteredForward\LightCulling.comp" />
     <None Include="..\Shaders\ClusteredForward\LightCullingBatch.comp" />
     <None Include="..\Shaders\ClusteredForward\Mesh.frag" />
     <None Include="..\Shaders\ClusteredForward\Radiance.glsl" />
+    <None Include="..\Shaders\Cube.glsl" />
     <None Include="..\Shaders\IBL\BRDFLUT.comp" />
     <None Include="..\Shaders\IBL\CubeFilterDiffuse.frag" />
     <None Include="..\Shaders\IBL\CubeFilterSpecular.frag" />
@@ -181,8 +185,8 @@
     <None Include="..\Shaders\LightOrb.frag" />
     <None Include="..\Shaders\LightOrb.vert" />
     <None Include="..\Shaders\PBRHeader.glsl" />
-    <None Include="..\Shaders\Cube.frag" />
-    <None Include="..\Shaders\Cube.vert" />
+    <None Include="..\Shaders\Skybox.frag" />
+    <None Include="..\Shaders\Skybox.vert" />
     <None Include="..\Shaders\FullscreenTriangle.vert" />
     <None Include="..\Shaders\ShadowMapping\Depth.vert" />
     <None Include="..\Shaders\ShadowMapping\Filter.glsl" />
@@ -208,6 +212,7 @@
     <ClInclude Include="Header\Mesh.h" />
     <ClInclude Include="Header\Model.h" />
     <ClInclude Include="Header\Pipelines\PipelineAABBGenerator.h" />
+    <ClInclude Include="Header\Pipelines\PipelineAABBRender.h" />
     <ClInclude Include="Header\Pipelines\PipelineBase.h" />
     <ClInclude Include="Header\Pipelines\PipelineBRDFLUT.h" />
     <ClInclude Include="Header\Pipelines\PipelineClear.h" />
@@ -269,6 +274,7 @@
     <ClCompile Include="Source\Mesh.cpp" />
     <ClCompile Include="Source\Model.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineAABBGenerator.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelineAABBRender.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineBase.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineBRDFLUT.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineClear.cpp" />

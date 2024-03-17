@@ -23,7 +23,6 @@ void main()
 
 	float glow = pow(max(1.0 - pow(dist, GLOW_FALLOFF), 0.0), 2.0) * GLOW_STRENGTH;
 
-
 	finalColor += glow;
 
 	if (dist >= 1.0)

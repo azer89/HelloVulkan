@@ -19,7 +19,7 @@ void main()
 	mat4 mvp = camUBO.projection * camUBO.view;
 	int idx = VERTEX_INDICES[gl_VertexIndex];
 	
-	vec3 position = VERTEX_POS[idx] * GRID_SIZE;
+	vec3 position = VERTEX_POS[idx] * GRID_EXTENTS;
 	position.y = yPosition;
 	
 	outCameraPos = camUBO.position.xy;

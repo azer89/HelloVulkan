@@ -32,7 +32,7 @@ vec4 GridColor(vec2 uv, vec2 camPos)
 		length(vec2(dFdx(uv.y), dFdy(uv.y)))
 	);
 
-	float lodLevel = max(0.0, Log10((length(dudv) * GRID_MIN_PIXEL_BETWEEN_CELLS) / GRID_CELL_SIZE) + 1.0);
+	float lodLevel = max(0.0, Log10(GRID_CELL_SIZE) + 1.0);
 	float lodFade = fract(lodLevel);
 
 	// Cell sizes for lod0, lod1 and lod2
@@ -59,7 +59,7 @@ vec4 GridColor(vec2 uv, vec2 camPos)
 		GRID_COLOR_THIN;
 
 	// Calculate opacity falloff based on distance to grid extents
-	float opacityFalloff = (1.0 - Saturate1(length(uv) / GRID_SIZE));
+	float opacityFalloff = (1.0 - Saturate1(length(uv) / GRID_EXTENTS));
 
 	// Blend between LOD level alphas and scale with opacity falloff
 	c.a *= (lod2a > 0.0 ? lod2a : lod1a > 0.0 ? lod1a : (lod0a * (1.0 - lodFade))) * opacityFalloff;

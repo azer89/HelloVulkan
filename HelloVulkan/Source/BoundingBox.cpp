@@ -13,8 +13,8 @@ BoundingBox::BoundingBox(const glm::vec3* points, size_t pointCount)
 		vmin = glm::min(vmin, points[i]);
 		vmax = glm::max(vmax, points[i]);
 	}
-	min_ = vmin;
-	max_ = vmax;
+	min_ = glm::vec4(vmin, 1.0);
+	max_ = glm::vec4(vmax, 1.0);
 }
 
 void BoundingBox::Transform(const glm::mat4& t)
