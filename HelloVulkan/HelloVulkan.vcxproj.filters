@@ -222,6 +222,12 @@
     <None Include="..\Shaders\AABB\AABBRender.vert">
       <Filter>Shaders\AABB</Filter>
     </None>
+    <None Include="..\Shaders\FrustumCulling.comp">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\Indirect.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Camera.h">
@@ -407,6 +413,12 @@
     <ClInclude Include="Header\Pipelines\PipelineAABBRender.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Apps\AppFrustumCulling.h">
+      <Filter>Header Files\Apps</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineFrustumCulling.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">
@@ -566,6 +578,12 @@
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
     <ClCompile Include="Source\Pipelines\PipelineAABBRender.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Apps\AppFrustumCulling.cpp">
+      <Filter>Source Files\Apps</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineFrustumCulling.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
   </ItemGroup>
