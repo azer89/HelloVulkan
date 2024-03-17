@@ -9,6 +9,7 @@
 #include "PipelineClear.h"
 #include "PipelineFinish.h"
 #include "PipelineTonemap.h"
+#include "PipelinePBRBindless.h"
 #include "PipelineResolveMS.h"
 #include "PipelineLightRender.h"
 #include "PipelineInfiniteGrid.h"
@@ -35,14 +36,17 @@ private:
 	std::unique_ptr<PipelineFinish> finishPtr_;
 	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;
 	std::unique_ptr<PipelineLightRender> lightPtr_;
+	std::unique_ptr<PipelinePBRBindless> pbrPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
 	std::unique_ptr<PipelineInfiniteGrid> infGridPtr_;
 
-	std::unique_ptr<ResourcesLight> resLights_;
-	std::unique_ptr<Model> model_;
+	std::unique_ptr<ResourcesLight> resLight_;
 
+	std::unique_ptr<Scene> scene_;
+	std::unique_ptr<ResourcesLight> resourcesLight_; // TODO Set as unique_ptr
+
+	// TODO Move to ResourcesIBL
 	float cubemapMipmapCount_;
-	float modelRotation_;
 };
 
 #endif
