@@ -12,7 +12,7 @@
 constexpr uint32_t UBO_COUNT = 2;
 constexpr uint32_t SSBO_COUNT = 1;
 constexpr uint32_t PBR_MESH_TEXTURE_COUNT = 6;
-constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
+constexpr uint32_t IBL_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 
 PipelinePBRSlotBased::PipelinePBRSlotBased(
 	VulkanContext& ctx,

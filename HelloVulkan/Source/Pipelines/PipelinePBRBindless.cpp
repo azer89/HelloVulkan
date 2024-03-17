@@ -11,8 +11,8 @@
 
 // Constants
 constexpr uint32_t UBO_COUNT = 2;
-constexpr uint32_t SSBO_COUNT = 4;
-constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
+constexpr uint32_t SSBO_COUNT = 2;
+constexpr uint32_t IBL_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 
 PipelinePBRBindless::PipelinePBRBindless(
 	VulkanContext& ctx,
@@ -134,9 +134,6 @@ void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 1
 	dsInfo.AddBuffer(&vimBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 2
-	//dsInfo.AddBuffer(&(scene_->vertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 2
-	//dsInfo.AddBuffer(&(scene_->indexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 3
-	//dsInfo.AddBuffer(&(scene_->meshDataBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
 	dsInfo.AddBuffer(resLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT); // 3
 	dsInfo.AddImage(&(iblResources_->specularCubemap_)); // 4
 	dsInfo.AddImage(&(iblResources_->diffuseCubemap_)); // 5
