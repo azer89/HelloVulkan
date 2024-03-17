@@ -21,19 +21,29 @@ void AppFrustumCulling::Init()
 	resIBL_ = std::make_unique<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
-	// Scene
-	std::vector<std::string> modelFiles = {
-		AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf",
-		AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf",
-	};
+	constexpr uint32_t xCount = 3;
+	constexpr uint32_t zCount = 3;
+	constexpr float dist = 3.0f;
+	constexpr float zOffset = dist;
+	constexpr float xMidPos = static_cast<float>(xCount - 1) * dist / 2.0f;
+	std::vector<std::string> modelFiles(xCount * zCount, AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf");
 	bool supportDeviceAddress = true;
 	scene_ = std::make_unique<Scene>(vulkanContext_, modelFiles, supportDeviceAddress);
+	uint32_t iter = 0;
 
-	// Tachikoma model matrix
-	glm::mat4 modelMatrix(1.f);
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.5f, 0.62f, 0.f));
-	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 1);
+	for (int x = 0; x < xCount; ++x)
+	{
+		for (int z = 0; z < zCount; ++z)
+		{
+			float xPos = x * dist - xMidPos;
+			float zPos = -z * dist - zOffset;
+			glm::mat4 modelMatrix(1.f);
+			modelMatrix = glm::translate(modelMatrix, glm::vec3(xPos, 0.0f, zPos));
+			modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
+			scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, iter++);
+
+		}
+	}
 
 	// Pipelines
 	// This is responsible to clear swapchain image
