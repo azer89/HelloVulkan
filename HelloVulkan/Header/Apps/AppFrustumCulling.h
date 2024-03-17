@@ -15,6 +15,10 @@
 #include "PipelineInfiniteGrid.h"
 #include "PipelineImGui.h"
 
+// Resources
+#include "ResourcesIBL.h"
+#include "ResourcesLight.h"
+
 #include <memory>
 
 class AppFrustumCulling final : AppBase
@@ -35,11 +39,11 @@ private:
 	std::unique_ptr<PipelineTonemap> tonemapPtr_;
 	std::unique_ptr<PipelineFinish> finishPtr_;
 	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;
+	std::unique_ptr<PipelineInfiniteGrid> infGridPtr_;
 	std::unique_ptr<PipelineLightRender> lightPtr_;
 	std::unique_ptr<PipelinePBRBindless> pbrPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
-	std::unique_ptr<PipelineInfiniteGrid> infGridPtr_;
-
+	
 	std::unique_ptr<ResourcesLight> resLight_;
 
 	std::unique_ptr<Scene> scene_;

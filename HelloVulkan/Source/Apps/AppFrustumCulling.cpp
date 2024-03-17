@@ -1,6 +1,4 @@
 #include "AppFrustumCulling.h"
-#include "ResourcesIBL.h"
-#include "ResourcesLight.h"
 #include "VulkanUtility.h"
 #include "Configs.h"
 
