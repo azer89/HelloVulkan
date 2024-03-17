@@ -162,6 +162,7 @@
     <None Include="..\Shaders\ClusteredForward\Mesh.frag" />
     <None Include="..\Shaders\ClusteredForward\Radiance.glsl" />
     <None Include="..\Shaders\Cube.glsl" />
+    <None Include="..\Shaders\Frustum.glsl" />
     <None Include="..\Shaders\FrustumCulling.comp" />
     <None Include="..\Shaders\IBL\BRDFLUT.comp" />
     <None Include="..\Shaders\IBL\CubeFilterDiffuse.frag" />

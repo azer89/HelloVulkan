@@ -66,4 +66,12 @@ struct ClusterForwardUBO
 	uint32_t sliceCountZ;
 };
 
+struct FrustumUBO
+{
+	alignas(16)
+	glm::vec4 planes[6];
+	alignas(16)
+	glm::vec4 corners[8];
+};
+
 #endif
