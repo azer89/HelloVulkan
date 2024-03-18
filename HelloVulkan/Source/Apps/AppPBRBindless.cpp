@@ -23,18 +23,18 @@ void AppPBRBindless::Init()
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
 	// Scene
-	std::vector<std::string> modelFiles = { 
-		AppConfig::ModelFolder + "Sponza/Sponza.gltf",
-		AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf",
+	std::vector<ModelData> dataArray = { 
+		{ AppConfig::ModelFolder + "Sponza/Sponza.gltf", 1},
+		{ AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf", 1},
 	};
 	bool supportDeviceAddress = true;
-	scene_ = std::make_unique<Scene>(vulkanContext_, modelFiles, supportDeviceAddress);
+	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
 
 	// Tachikoma model matrix
 	glm::mat4 modelMatrix(1.f);
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.5f, 0.62f, 0.f));
-	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 1);
+	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 1, 0);
 
 	// Pipelines
 	// This is responsible to clear swapchain image

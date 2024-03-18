@@ -107,7 +107,7 @@ void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 		commandBuffer, 
 		scene_->indirectBuffers_[frameIndex].buffer_, 
 		0, // offset
-		scene_->GetMeshCount(),
+		scene_->GetInstanceCount(),
 		sizeof(VkDrawIndirectCommand));
 	
 	vkCmdEndRenderPass(commandBuffer);

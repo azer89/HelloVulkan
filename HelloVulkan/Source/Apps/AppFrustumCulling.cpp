@@ -26,9 +26,10 @@ void AppFrustumCulling::Init()
 	constexpr float dist = 3.0f;
 	constexpr float zOffset = dist;
 	constexpr float xMidPos = static_cast<float>(xCount - 1) * dist / 2.0f;
-	std::vector<std::string> modelFiles(xCount * zCount, AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf");
+	//std::vector<std::string> modelFiles = AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf");
+	std::vector<ModelData> dataArray = { { AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf", xCount * zCount} };
 	bool supportDeviceAddress = true;
-	scene_ = std::make_unique<Scene>(vulkanContext_, modelFiles, supportDeviceAddress);
+	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
 	uint32_t iter = 0;
 
 	for (int x = 0; x < xCount; ++x)
@@ -40,7 +41,7 @@ void AppFrustumCulling::Init()
 			glm::mat4 modelMatrix(1.f);
 			modelMatrix = glm::translate(modelMatrix, glm::vec3(xPos, 0.0f, zPos));
 			modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
-			scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, iter++);
+			scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 0, iter++);
 
 		}
 	}
