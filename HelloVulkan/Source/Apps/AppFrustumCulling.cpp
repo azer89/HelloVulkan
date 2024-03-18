@@ -60,6 +60,7 @@ void AppFrustumCulling::Init()
 		resShared_.get(),
 		// This is the first offscreen render pass so we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
+	cullingPtr_ = std::make_unique<PipelineFrustumCulling>(vulkanContext_, scene_.get());
 	pbrPtr_ = std::make_unique<PipelinePBRBindless>(
 		vulkanContext_,
 		scene_.get(),
@@ -86,6 +87,7 @@ void AppFrustumCulling::Init()
 		// Must be in order
 		clearPtr_.get(),
 		skyboxPtr_.get(),
+		cullingPtr_.get(),
 		pbrPtr_.get(),
 		linePtr_.get(),
 		lightPtr_.get(),
@@ -122,6 +124,7 @@ void AppFrustumCulling::DestroyResources()
 	clearPtr_.reset();
 	finishPtr_.reset();
 	skyboxPtr_.reset();
+	cullingPtr_.reset();
 	pbrPtr_.reset();
 	lightPtr_.reset();
 	resolveMSPtr_.reset();
@@ -141,6 +144,9 @@ void AppFrustumCulling::UpdateUBOs()
 	CameraUBO skyboxUbo = ubo;
 	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view));
 	skyboxPtr_->SetCameraUBO(vulkanContext_, skyboxUbo);
+
+	FrustumUBO frustumUBO = camera_->GetFrustumUBO();
+	cullingPtr_->SetFrustumUBO(vulkanContext_, frustumUBO);
 }
 
 void AppFrustumCulling::UpdateUI()

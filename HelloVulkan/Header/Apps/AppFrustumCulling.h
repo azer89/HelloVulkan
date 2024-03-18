@@ -8,6 +8,7 @@
 #include "PipelineClear.h"
 #include "PipelineFinish.h"
 #include "PipelineTonemap.h"
+#include "PipelineFrustumCulling.h"
 #include "PipelinePBRBindless.h"
 #include "PipelineResolveMS.h"
 #include "PipelineLightRender.h"
@@ -37,6 +38,7 @@ private:
 	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;
 	std::unique_ptr<PipelineInfiniteGrid> infGridPtr_;
 	std::unique_ptr<PipelineLightRender> lightPtr_;
+	std::unique_ptr<PipelineFrustumCulling> cullingPtr_;
 	std::unique_ptr<PipelinePBRBindless> pbrPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
 	std::unique_ptr<PipelineLine> linePtr_;

@@ -15,6 +15,12 @@ public:
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
+	void SetFrustumUBO(VulkanContext& ctx, FrustumUBO& ubo)
+	{
+		size_t frameIndex = ctx.GetFrameIndex();
+		frustumBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(FrustumUBO));
+	}
+
 private:
 	void Execute(VulkanContext& ctx, VkCommandBuffer commandBuffer, uint32_t frameIndex);
 
@@ -22,6 +28,7 @@ private:
 
 private:
 	Scene* scene_;
+	std::vector<VulkanBuffer> frustumBuffers_;
 	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;
 };
 
