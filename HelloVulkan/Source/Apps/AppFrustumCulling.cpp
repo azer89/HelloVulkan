@@ -44,7 +44,7 @@ void AppFrustumCulling::Init()
 				float zPos = -z * dist - zOffset;
 				glm::mat4 modelMatrix(1.f);
 				modelMatrix = glm::translate(modelMatrix, glm::vec3(xPos, yPos, zPos));
-				modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
+				modelMatrix = glm::rotate(modelMatrix, glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f));
 				scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 0, iter++);
 			}
 		}

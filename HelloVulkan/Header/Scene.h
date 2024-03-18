@@ -64,11 +64,12 @@ public:
 	VulkanBuffer transformedBoundingBoxBuffer_; // TODO Currently no Frame-in-flight
 
 	// Mapping from Model to Mesh
+	// Needed for UpdateModelMatrix()
 	std::vector<std::vector<int>> modelToMeshMap_ = {};
 
-	// Mapping (modelIndex, instanceIndex) --> (meshDataArray_ index)
+	// Mapping (modelIndex, instanceIndex) --> (modelUBOs_)
 	// Needed for UpdateModelMatrix()
-	std::vector<std::vector<int>> modelInstanceToMeshData_ = {};
+	std::vector<std::vector<int>> modelInstanceToModelMatrix_ = {};
 
 private:
 	bool supportDeviceAddress_;

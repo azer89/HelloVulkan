@@ -64,11 +64,11 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 	// meshDataArray_ and modelInstanceToMeshData
 	uint32_t matrixInstanceCount = 0u; // a counter and index to modelUBO_, it's also instance count for the scene
 	uint32_t textureIndexOffset = 0u;
-	modelInstanceToMeshData_.resize(models_.size()); // Mapping (modelIndex, instanceIndex) --> (meshDataArray_ index)
+	modelInstanceToModelMatrix_.resize(models_.size()); // Mapping (modelIndex, instanceIndex) --> (modelUBO_)
 	for (size_t i = 0; i < models_.size(); ++i)
 	{
 		uint32_t instanceCount = models_[i].modelData_.instanceCount; // Duplicate count for this model
-		modelInstanceToMeshData_[i].resize(instanceCount);
+		modelInstanceToModelMatrix_[i].resize(instanceCount);
 		for (int j = 0; j < instanceCount; ++j)
 		{
 			for (size_t k = 0; k < models_[i].meshes_.size(); ++k)
@@ -76,7 +76,7 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 				// matrixInstanceCount points to modelUBO_ array
 				meshDataArray_.emplace_back(models_[i].meshes_[k].GetMeshData(textureIndexOffset, matrixInstanceCount));
 			}
-			modelInstanceToMeshData_[i][j] = matrixInstanceCount; // Set mapping
+			modelInstanceToModelMatrix_[i][j] = matrixInstanceCount; // Set mapping
 			matrixInstanceCount++;
 		}
 		textureIndexOffset += models_[i].GetTextureCount();
@@ -245,7 +245,7 @@ void Scene::UpdateModelMatrix(VulkanContext& ctx,
 		return;
 	}
 
-	int matrixIndex = modelInstanceToMeshData_[modelIndex][instanceIndex];
+	int matrixIndex = modelInstanceToModelMatrix_[modelIndex][instanceIndex];
 
 	// Update transformation matrix
 	modelUBOs_[matrixIndex] = modelUBO;
