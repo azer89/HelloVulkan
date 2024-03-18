@@ -81,4 +81,3 @@ void PipelineFrustumCulling::CreateDescriptor(VulkanContext& ctx)
 		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}
 }
-
