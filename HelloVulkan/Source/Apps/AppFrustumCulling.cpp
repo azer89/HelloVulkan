@@ -72,6 +72,7 @@ void AppFrustumCulling::Init()
 		resourcesLight_.get(),
 		resShared_.get());
 	linePtr_ = std::make_unique<PipelineLine>(vulkanContext_, resShared_.get(), scene_.get());
+	boxRenderPtr_ = std::make_unique<PipelineAABBRender>(vulkanContext_, resShared_.get(), scene_.get());
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
 	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(vulkanContext_, resShared_.get());
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
@@ -89,6 +90,7 @@ void AppFrustumCulling::Init()
 		skyboxPtr_.get(),
 		cullingPtr_.get(),
 		pbrPtr_.get(),
+		boxRenderPtr_.get(),
 		linePtr_.get(),
 		lightPtr_.get(),
 		resolveMSPtr_.get(),
@@ -127,6 +129,7 @@ void AppFrustumCulling::DestroyResources()
 	cullingPtr_.reset();
 	pbrPtr_.reset();
 	lightPtr_.reset();
+	boxRenderPtr_.reset();
 	resolveMSPtr_.reset();
 	tonemapPtr_.reset();
 	imguiPtr_.reset();
@@ -139,6 +142,7 @@ void AppFrustumCulling::UpdateUBOs()
 	lightPtr_->SetCameraUBO(vulkanContext_, ubo);
 	pbrPtr_->SetCameraUBO(vulkanContext_, ubo);
 	linePtr_->SetCameraUBO(vulkanContext_, ubo);
+	boxRenderPtr_->SetCameraUBO(vulkanContext_, ubo);
 
 	// Remove translation
 	CameraUBO skyboxUbo = ubo;
@@ -172,6 +176,7 @@ void AppFrustumCulling::UpdateUI()
 
 	lightPtr_->ShouldRender(staticLightRender);
 	linePtr_->ShouldRender(staticLineRender);
+	boxRenderPtr_->ShouldRender(staticLineRender);
 	pbrPtr_->SetPBRPushConstants(staticPBRPushConstants);
 }
 

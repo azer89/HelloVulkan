@@ -15,6 +15,7 @@
 #include "PipelineInfiniteGrid.h"
 #include "PipelineImGui.h"
 #include "PipelineLine.h"
+#include "PipelineAABBRender.h"
 
 #include <memory>
 
@@ -42,6 +43,7 @@ private:
 	std::unique_ptr<PipelinePBRBindless> pbrPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
 	std::unique_ptr<PipelineLine> linePtr_;
+	std::unique_ptr<PipelineAABBRender> boxRenderPtr_;
 	
 	std::unique_ptr<ResourcesLight> resLight_;
 
