@@ -21,28 +21,32 @@ void AppFrustumCulling::Init()
 	resIBL_ = std::make_unique<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
-	constexpr uint32_t xCount = 3;
-	constexpr uint32_t zCount = 3;
+	constexpr uint32_t xCount = 5;
+	constexpr uint32_t yCount = 5;
+	constexpr uint32_t zCount = 5;
 	constexpr float dist = 3.0f;
-	constexpr float zOffset = dist;
 	constexpr float xMidPos = static_cast<float>(xCount - 1) * dist / 2.0f;
-	//std::vector<std::string> modelFiles = AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf");
-	std::vector<ModelData> dataArray = { { AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf", xCount * zCount} };
+	constexpr float yMidPos = static_cast<float>(yCount - 1) * dist / 2.0f;
+	constexpr float zOffset = dist;
+	std::vector<ModelData> dataArray = { { AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf", xCount * yCount * zCount} };
 	bool supportDeviceAddress = true;
 	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
 	uint32_t iter = 0;
 
 	for (int x = 0; x < xCount; ++x)
 	{
-		for (int z = 0; z < zCount; ++z)
+		for (int y = 0; y < yCount; ++y)
 		{
-			float xPos = x * dist - xMidPos;
-			float zPos = -z * dist - zOffset;
-			glm::mat4 modelMatrix(1.f);
-			modelMatrix = glm::translate(modelMatrix, glm::vec3(xPos, 0.0f, zPos));
-			modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
-			scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 0, iter++);
-
+			for (int z = 0; z < zCount; ++z)
+			{
+				float xPos = x * dist - xMidPos;
+				float yPos = y * dist - yMidPos;
+				float zPos = -z * dist - zOffset;
+				glm::mat4 modelMatrix(1.f);
+				modelMatrix = glm::translate(modelMatrix, glm::vec3(xPos, yPos, zPos));
+				modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
+				scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 0, iter++);
+			}
 		}
 	}
 
