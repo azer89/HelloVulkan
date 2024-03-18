@@ -24,7 +24,7 @@ void AppFrustumCulling::Init()
 	constexpr uint32_t xCount = 5;
 	constexpr uint32_t yCount = 5;
 	constexpr uint32_t zCount = 5;
-	constexpr float dist = 3.0f;
+	constexpr float dist = 5.0f;
 	constexpr float xMidPos = static_cast<float>(xCount - 1) * dist / 2.0f;
 	constexpr float yMidPos = static_cast<float>(yCount - 1) * dist / 2.0f;
 	constexpr float zOffset = dist;
@@ -70,6 +70,7 @@ void AppFrustumCulling::Init()
 		vulkanContext_,
 		resourcesLight_.get(),
 		resShared_.get());
+	linePtr_ = std::make_unique<PipelineLine>(vulkanContext_, resShared_.get(), scene_.get());
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
 	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(vulkanContext_, resShared_.get());
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
@@ -86,6 +87,7 @@ void AppFrustumCulling::Init()
 		clearPtr_.get(),
 		skyboxPtr_.get(),
 		pbrPtr_.get(),
+		linePtr_.get(),
 		lightPtr_.get(),
 		resolveMSPtr_.get(),
 		tonemapPtr_.get(),
@@ -125,6 +127,7 @@ void AppFrustumCulling::DestroyResources()
 	resolveMSPtr_.reset();
 	tonemapPtr_.reset();
 	imguiPtr_.reset();
+	linePtr_.reset();
 }
 
 void AppFrustumCulling::UpdateUBOs()
@@ -132,6 +135,7 @@ void AppFrustumCulling::UpdateUBOs()
 	CameraUBO ubo = camera_->GetCameraUBO();
 	lightPtr_->SetCameraUBO(vulkanContext_, ubo);
 	pbrPtr_->SetCameraUBO(vulkanContext_, ubo);
+	linePtr_->SetCameraUBO(vulkanContext_, ubo);
 
 	// Remove translation
 	CameraUBO skyboxUbo = ubo;
@@ -147,19 +151,22 @@ void AppFrustumCulling::UpdateUI()
 		return;
 	}
 
-	static bool lightRender = true;
-	static PushConstPBR pbrPC;
+	static bool staticLightRender = true;
+	static bool staticLineRender = false;
+	static PushConstPBR staticPBRPushConstants;
 
 	imguiPtr_->ImGuiStart();
 	imguiPtr_->ImGuiSetWindow("Compute-Based Frustum Culling", 525, 350);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
-	ImGui::Text("Vertices: %i, Indices: %i", scene_->vertices_.size(), scene_->indices_.size());
-	ImGui::Checkbox("Render Lights", &lightRender);
-	imguiPtr_->ImGuiShowPBRConfig(&pbrPC, cubemapMipmapCount_);
+	//ImGui::Text("Vertices: %i, Indices: %i", scene_->vertices_.size(), scene_->indices_.size());
+	ImGui::Checkbox("Render Lights", &staticLightRender);
+	ImGui::Checkbox("Render Bounding Box", &staticLineRender);
+	imguiPtr_->ImGuiShowPBRConfig(&staticPBRPushConstants, cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
-	lightPtr_->ShouldRender(lightRender);
-	pbrPtr_->SetPBRPushConstants(pbrPC);
+	lightPtr_->ShouldRender(staticLightRender);
+	linePtr_->ShouldRender(staticLineRender);
+	pbrPtr_->SetPBRPushConstants(staticPBRPushConstants);
 }
 
 // This is called from main.cpp
