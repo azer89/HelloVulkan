@@ -23,9 +23,10 @@ void main()
 	position.y = yPosition;
 	
 	outCameraPos = camUBO.position.xy;
-	
+
+	position.x += camUBO.position.x;
+	position.z += camUBO.position.y;
+
 	outUV = position.xz;
 	gl_Position = mvp * vec4(position, 1.0);
-	
-
 }
