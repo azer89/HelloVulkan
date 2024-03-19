@@ -9,6 +9,12 @@
 #include <vector>
 #include <string>
 
+struct InstanceData
+{
+	int modelMatrixIndex;
+	std::vector<int> boundingBoxIndices;
+};
+
 /*
 A scene used for indirect draw + bindless resources that contains 
 SSBO buffers for vertices, indices, and mesh data.
@@ -35,7 +41,8 @@ public:
 private:
 	void CreateBindlessResources(VulkanContext& ctx);
 	void BuildBoundingBoxes(VulkanContext& ctx);
-	void BuildModelToMeshDataMapping();
+	//void BuildModelToMeshDataMapping();
+	void BuildInstanceDataArray();
 	std::vector<uint32_t> GetInstanceVertexCountArray() const;
 
 public:
@@ -53,7 +60,7 @@ public:
 	std::vector<VulkanBuffer> indirectBuffers_ = {};
 
 	// Length of modelUBO_ is instance count
-	std::vector<ModelUBO> modelUBOs_ = {}; 
+	std::vector<ModelUBO> modelUBOs_ = {}; // TODO Rename to ModelSSBO_
 	std::vector<VulkanBuffer> modelSSBOBuffers_ = {}; // Frame-in-flight
 
 	std::vector<Model> models_ = {};
@@ -65,11 +72,12 @@ public:
 
 	// Mapping from Model to Mesh
 	// Needed for UpdateModelMatrix()
-	std::vector<std::vector<int>> modelToMeshMap_ = {};
+	//std::vector<std::vector<int>> modelToMeshMap_ = {};
 
 	// Mapping (modelIndex, instanceIndex) --> (modelUBOs_)
 	// Needed for UpdateModelMatrix()
-	std::vector<std::vector<int>> modelInstanceToModelMatrix_ = {};
+	//std::vector<std::vector<int>> modelInstanceToModelMatrix_ = {};
+	std::vector<std::vector<InstanceData>> instanceDataArray_ = {};
 
 private:
 	bool supportDeviceAddress_;
