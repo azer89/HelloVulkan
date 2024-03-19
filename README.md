@@ -8,16 +8,16 @@ A 3D rendering engine built from scratch using Vulkan API and C++.
 
 * __Clustered forward shading__ for efficient light culling.
 * __Physically-Based Rendering__ (PBR) with Cook-Torrance BRDF.
-* __Image-Based Lighting__ (IBL) with offscreen pipelines to generate:
+* __Image-Based Lighting__ (IBL) with pipelines to generate:
     * A cubemap from an equirectangular HDR image.
     * Specular and diffuse cubemaps.
-* Compute shader to generate BRDF lookup table.
-* __Bindless textures__, all textures needed for rendering the entire scene are bound just once at the start of the frame.
+    * BRDF lookup table.
 * __Shadow maps__ with Poisson Disk or PCF.
+* __Bindless__, all textures needed for rendering the entire scene are bound just once at the start of the frame.
+* __Buffer device address__ for direct shader access to buffers without the need to create descriptors.
 * glTF mesh/texture support.
 * Multisample anti-aliasing (MSAA).
 * Simple __raytracing__ pipeline with basic intersection testing.
-* __Buffer device address__ for direct shader access to buffers without the need to create descriptors.
 * Reinhard tonemap postprocessing.
 * Automatic runtime compilation from GLSL to SPIR-V using `glslang`.
 * Lightweight abstraction layer on top of Vulkan for faster development.
