@@ -7,7 +7,6 @@
 #include "VIM.h"
 
 #include <vector>
-#include <string>
 
 struct InstanceData
 {
@@ -41,7 +40,6 @@ public:
 private:
 	void CreateBindlessResources(VulkanContext& ctx);
 	void BuildBoundingBoxes(VulkanContext& ctx);
-	//void BuildModelToMeshDataMapping();
 	void BuildInstanceDataArray();
 	std::vector<uint32_t> GetInstanceVertexCountArray() const;
 
@@ -60,7 +58,7 @@ public:
 	std::vector<VulkanBuffer> indirectBuffers_ = {};
 
 	// Length of modelUBO_ is instance count
-	std::vector<ModelUBO> modelUBOs_ = {}; // TODO Rename to ModelSSBO_
+	std::vector<ModelUBO> modelSSBOs_ = {};
 	std::vector<VulkanBuffer> modelSSBOBuffers_ = {}; // Frame-in-flight
 
 	std::vector<Model> models_ = {};
@@ -69,7 +67,6 @@ public:
 	std::vector<BoundingBox> originalBoundingBoxes_ = {};
 	std::vector<BoundingBox> transformedBoundingBoxes_ = {};
 	VulkanBuffer transformedBoundingBoxBuffer_; // TODO Implement Frame-in-flight
-
 	std::vector<std::vector<InstanceData>> instanceDataArray_ = {};
 
 private:

@@ -67,7 +67,7 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 	for (size_t i = 0; i < models_.size(); ++i)
 	{
 		uint32_t instanceCount = models_[i].modelData_.instanceCount; 
-		for (int j = 0; j < instanceCount; ++j)
+		for (uint32_t j = 0; j < instanceCount; ++j)
 		{
 			for (size_t k = 0; k < models_[i].meshes_.size(); ++k)
 			{
@@ -78,7 +78,7 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 		textureCounter += models_[i].GetTextureCount();
 	}
 	// Create a buffer for meshDataArray_
-	const VkDeviceSize meshDataBufferSize = static_cast<VkDeviceSize>(sizeof(MeshData) * meshDataArray_.size());
+	const VkDeviceSize meshDataBufferSize = sizeof(MeshData) * meshDataArray_.size();
 	meshDataBuffer_.CreateGPUOnlyBuffer(
 		ctx, 
 		meshDataBufferSize,
@@ -86,7 +86,7 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 		bufferUsage);
 
 	// Vertices
-	const VkDeviceSize vertexBufferSize = static_cast<VkDeviceSize>(sizeof(VertexData) * vertices_.size());
+	const VkDeviceSize vertexBufferSize = sizeof(VertexData) * vertices_.size();
 	vertexBuffer_.CreateGPUOnlyBuffer(
 		ctx,
 		vertexBufferSize,
@@ -94,7 +94,7 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 		bufferUsage);
 
 	// Indices
-	const VkDeviceSize indexBufferSize = static_cast<VkDeviceSize>(sizeof(uint32_t) * indices_.size());
+	const VkDeviceSize indexBufferSize = sizeof(uint32_t) * indices_.size();
 	indexBuffer_.CreateGPUOnlyBuffer(
 		ctx,
 		indexBufferSize,
@@ -102,8 +102,8 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 		bufferUsage);
 
 	// ModelUBO which is actually an SSBO
-	modelUBOs_ = std::vector<ModelUBO>(matrixCounter, { .model = glm::mat4(1.0f) });
-	const VkDeviceSize modelSSBOBufferSize = sizeof(ModelUBO) * modelUBOs_.size();
+	modelSSBOs_ = std::vector<ModelUBO>(matrixCounter, { .model = glm::mat4(1.0f) });
+	const VkDeviceSize modelSSBOBufferSize = sizeof(ModelUBO) * modelSSBOs_.size();
 	constexpr uint32_t frameCount = AppConfig::FrameCount;
 	modelSSBOBuffers_.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
@@ -111,7 +111,7 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 		modelSSBOBuffers_[i].CreateBuffer(ctx, modelSSBOBufferSize,
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 			VMA_MEMORY_USAGE_CPU_TO_GPU);
-		modelSSBOBuffers_[i].UploadBufferData(ctx, modelUBOs_.data(), modelSSBOBufferSize);
+		modelSSBOBuffers_[i].UploadBufferData(ctx, modelSSBOs_.data(), modelSSBOBufferSize);
 	}
 
 	//BuildModelToMeshDataMapping();
@@ -126,14 +126,14 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 
 void Scene::BuildInstanceDataArray()
 {
-	uint32_t matrixCounter = 0u;
-	uint32_t meshCounter = 0u; // Instanced mesh counter
+	int matrixCounter = 0u;
+	int meshCounter = 0u; // Instanced mesh counter
 	instanceDataArray_.resize(models_.size());
 	for (size_t i = 0; i < models_.size(); ++i)
 	{
 		uint32_t instanceCount = models_[i].modelData_.instanceCount;
 		instanceDataArray_[i].resize(instanceCount);
-		for (int j = 0; j < instanceCount; ++j)
+		for (uint32_t j = 0; j < instanceCount; ++j)
 		{
 			instanceDataArray_[i][j].boundingBoxIndices.resize(models_[i].meshes_.size());
 			for (size_t k = 0; k < models_[i].meshes_.size(); ++k)
@@ -144,23 +144,6 @@ void Scene::BuildInstanceDataArray()
 		}
 	}
 }
-
-/*void Scene::BuildModelToMeshDataMapping()
-{
-	modelToMeshMap_.resize(models_.size());
-	int iter = 0; // iter for all instances in the scene
-	for (size_t i = 0; i < models_.size(); ++i)
-	{
-		size_t instanceCount = models_[i].modelData_.instanceCount;
-		size_t instancedMeshCount = models_[i].GetMeshCount() * instanceCount;
-		modelToMeshMap_[i].resize(instancedMeshCount);
-
-		for (size_t j = 0; j < instancedMeshCount; ++j)
-		{
-			modelToMeshMap_[i][j] = iter++;
-		}
-	}
-}*/
 
 void Scene::BuildBoundingBoxes(VulkanContext& ctx)
 {
@@ -193,13 +176,13 @@ void Scene::BuildBoundingBoxes(VulkanContext& ctx)
 		}
 
 		// Copy temporary array
-		for (int i = 0; i < instanceCount; ++i)
+		for (size_t i = 0; i < instanceCount; ++i)
 		{
-			for (int j = 0; j < meshCount; ++j)
+			for (size_t j = 0; j < meshCount; ++j)
 			{
 				originalBoundingBoxes_[boxIndex] = tempOriArray[j];
 				const MeshData& mData = meshDataArray_[boxIndex];
-				const glm::mat4& mat = modelUBOs_[mData.modelMatrixIndex].model;
+				const glm::mat4& mat = modelSSBOs_[mData.modelMatrixIndex].model;
 				transformedBoundingBoxes_[boxIndex] = originalBoundingBoxes_[boxIndex].GetTransformed(mat);
 				++boxIndex;
 			}
@@ -207,7 +190,7 @@ void Scene::BuildBoundingBoxes(VulkanContext& ctx)
 	}
 
 	// Buffer
-	VkDeviceSize bufferSize = static_cast<VkDeviceSize>(transformedBoundingBoxes_.size() * sizeof(BoundingBox));
+	VkDeviceSize bufferSize = transformedBoundingBoxes_.size() * sizeof(BoundingBox);
 	transformedBoundingBoxBuffer_.CreateBuffer(ctx, 
 		bufferSize, 
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
@@ -219,7 +202,7 @@ void Scene::CreateIndirectBuffers(
 	VulkanContext& ctx,
 	std::vector<VulkanBuffer>& indirectBuffers)
 {
-	const uint32_t instanceCount = meshDataArray_.size();
+	const size_t instanceCount = meshDataArray_.size();
 	const uint32_t indirectDataSize = instanceCount * sizeof(VkDrawIndirectCommand);
 	constexpr size_t numFrames = AppConfig::FrameCount;
 	const std::vector<uint32_t> meshVertexCountArray = GetInstanceVertexCountArray();
@@ -265,7 +248,7 @@ void Scene::UpdateModelMatrix(VulkanContext& ctx,
 	int matrixIndex = instanceDataArray_[modelIndex][instanceIndex].modelMatrixIndex;
 
 	// Update transformation matrix
-	modelUBOs_[matrixIndex] = modelUBO;
+	modelSSBOs_[matrixIndex] = modelUBO;
 
 	// Update SSBO
 	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
@@ -279,7 +262,7 @@ void Scene::UpdateModelMatrix(VulkanContext& ctx,
 
 	// Update bounding boxes
 	std::vector<int>& boxIndices = instanceDataArray_[modelIndex][instanceIndex].boundingBoxIndices;
-	if (boxIndices.size() > 0)
+	if (!boxIndices.empty())
 	{
 		for (int i : boxIndices)
 		{
@@ -322,8 +305,7 @@ std::vector<uint32_t> Scene::GetInstanceVertexCountArray() const
 			for (auto& mesh : model.meshes_)
 			{
 				// Note that we use the index count here
-				uint32_t indexCount = static_cast<uint32_t>(mesh.GetIndexCount());
-				vCountArray[counter++] = indexCount;
+				vCountArray[counter++] = mesh.GetIndexCount();
 			}
 		}
 	}
