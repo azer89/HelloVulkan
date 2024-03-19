@@ -26,13 +26,14 @@ PipelineFrustumCulling::~PipelineFrustumCulling()
 
 void PipelineFrustumCulling::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
-	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "Frustum_Culling", tracy::Color::ForestGreen);
 	const uint32_t frameIndex = ctx.GetFrameIndex();
 	Execute(ctx, commandBuffer, frameIndex);
 }
 
 void PipelineFrustumCulling::Execute(VulkanContext& ctx, VkCommandBuffer commandBuffer, uint32_t frameIndex)
 {
+	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "Frustum_Culling", tracy::Color::ForestGreen);
+
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline_);
 
 	vkCmdBindDescriptorSets(

@@ -22,14 +22,11 @@ void AppFrustumCulling::Init()
 	resIBL_ = std::make_unique<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
-	constexpr uint32_t xCount = 25;
-	//constexpr uint32_t yCount = 5;
-	constexpr uint32_t zCount = 25;
+	constexpr uint32_t xCount = 50;
+	constexpr uint32_t zCount = 50;
 	constexpr float dist = 4.0f;
 	constexpr float xMidPos = static_cast<float>(xCount - 1) * dist / 2.0f;
 	constexpr float zMidPos = static_cast<float>(zCount - 1) * dist / 2.0f;
-	//constexpr float yMidPos = static_cast<float>(yCount - 1) * dist / 2.0f;
-	//constexpr float zOffset = dist;
 	std::vector<ModelData> dataArray = { { AppConfig::ModelFolder + "Zaku/Zaku.gltf", xCount * zCount} };
 	bool supportDeviceAddress = true;
 	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
@@ -37,19 +34,15 @@ void AppFrustumCulling::Init()
 
 	for (int x = 0; x < xCount; ++x)
 	{
-		//for (int y = 0; y < yCount; ++y)
-		//{
-			for (int z = 0; z < zCount; ++z)
-			{
-				float xPos = x * dist - xMidPos;
-				//float yPos = y * dist - yMidPos;
-				float yPos = 0.0f;
-				float zPos = -(z * dist) + zMidPos;
-				glm::mat4 modelMatrix(1.f);
-				modelMatrix = glm::translate(modelMatrix, glm::vec3(xPos, yPos, zPos));
-				scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 0, iter++);
-			}
-		//}
+		for (int z = 0; z < zCount; ++z)
+		{
+			float xPos = x * dist - xMidPos;
+			float yPos = 0.0f;
+			float zPos = -(z * dist) + zMidPos;
+			glm::mat4 modelMatrix(1.f);
+			modelMatrix = glm::translate(modelMatrix, glm::vec3(xPos, yPos, zPos));
+			scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 0, iter++);
+		}
 	}
 
 	// Pipelines
@@ -148,23 +141,20 @@ void AppFrustumCulling::UpdateUBOs()
 	pbrPtr_->SetCameraUBO(vulkanContext_, ubo);
 	boxRenderPtr_->SetCameraUBO(vulkanContext_, ubo);
 	infGridPtr_->SetCameraUBO(vulkanContext_, ubo);
-
 	linePtr_->SetCameraUBO(vulkanContext_, ubo);
+
 	if (updateFrustum_)
 	{
-		linePtr_->SetFrustum(vulkanContext_, camera_->GetViewMatrix(), camera_->GetProjectionMatrix());
-	};
+		linePtr_->SetFrustum(vulkanContext_, ubo);
+
+		FrustumUBO frustumUBO = camera_->GetFrustumUBO();
+		cullingPtr_->SetFrustumUBO(vulkanContext_, frustumUBO);
+	}
 
 	// Remove translation
 	CameraUBO skyboxUbo = ubo;
 	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view));
 	skyboxPtr_->SetCameraUBO(vulkanContext_, skyboxUbo);
-
-	if (updateFrustum_)
-	{
-		FrustumUBO frustumUBO = camera_->GetFrustumUBO();
-		cullingPtr_->SetFrustumUBO(vulkanContext_, frustumUBO);
-	}
 }
 
 void AppFrustumCulling::UpdateUI()
@@ -186,9 +176,8 @@ void AppFrustumCulling::UpdateUI()
 	imguiPtr_->ImGuiStart();
 	imguiPtr_->ImGuiSetWindow("Compute-Based Frustum Culling", 525, 350);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
-	//ImGui::Text("Vertices: %i, Indices: %i", scene_->vertices_.size(), scene_->indices_.size());
 	ImGui::Checkbox("Render Lights", &staticLightRender);
-	ImGui::Checkbox("Render Bounding Box", &staticLineRender);
+	ImGui::Checkbox("Render Frustum and Bounding Boxes", &staticLineRender);
 	ImGui::Checkbox("Update Frustum", &staticUpdateFrustum);
 	imguiPtr_->ImGuiShowPBRConfig(&staticPBRPushConstants, cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();

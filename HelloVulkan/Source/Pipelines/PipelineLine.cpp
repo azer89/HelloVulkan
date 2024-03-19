@@ -100,7 +100,7 @@ void PipelineLine::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer command
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelineLine::SetFrustum(VulkanContext& ctx, const glm::mat4& camView, const glm::mat4& camProj)
+void PipelineLine::SetFrustum(VulkanContext& ctx, const CameraUBO& camUBO)
 {
 	const glm::vec3 corners[] = {
 		glm::vec3(+1, -1, -1), glm::vec3(+1, -1, +1),
@@ -112,7 +112,7 @@ void PipelineLine::SetFrustum(VulkanContext& ctx, const glm::mat4& camView, cons
 
 	for (int i = 0; i < 8; i++)
 	{
-		glm::vec4 q = glm::inverse(camView) * glm::inverse(camProj) * glm::vec4(corners[i], 1.0f);
+		glm::vec4 q = glm::inverse(camUBO.view) * glm::inverse(camUBO.projection) * glm::vec4(corners[i], 1.0f);
 		pp[i] = glm::vec3(q.x / q.w, q.y / q.w, q.z / q.w);
 	}
 

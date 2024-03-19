@@ -29,10 +29,8 @@ public:
 	~PipelineLine();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
-
 	void ShouldRender(bool shouldRender) { shouldRender_ = shouldRender; };
-
-	void SetFrustum(VulkanContext& ctx, const glm::mat4& camView, const glm::mat4& camProj);
+	void SetFrustum(VulkanContext& ctx, const CameraUBO& camUBO);
 
 private:
 	void CreateDescriptor(VulkanContext& ctx);
@@ -49,11 +47,14 @@ private:
 
 private:
 	bool shouldRender_;
+
+	// Bounding box rendering
 	Scene* scene_;
 	std::vector<PointColor> lineDataArray_;
 	std::array<VulkanBuffer, AppConfig::FrameCount> lineBuffers_;
 	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;
 
+	// Camera frustum rendering
 	size_t frustumPointOffset_;
 	size_t frustumPointCount_;
 	std::vector<PointColor> frustumDataArray_;

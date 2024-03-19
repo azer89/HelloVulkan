@@ -15,7 +15,6 @@
 #include "PipelineResolveMS.h"
 #include "PipelineLightRender.h"
 #include "PipelineImGui.h"
-#include "PipelineLine.h"
 
 // STL
 #include <memory>
@@ -45,7 +44,6 @@ private:
 	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;
 	std::unique_ptr<PipelineLightRender> lightPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
-	std::unique_ptr<PipelineLine> linePtr_;
 
 	std::unique_ptr<ResourcesLight> resLight_;
 	std::unique_ptr<ResourcesShadow> resShadow_;
