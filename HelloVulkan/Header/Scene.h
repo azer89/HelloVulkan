@@ -68,15 +68,8 @@ public:
 	// For compute-based culling
 	std::vector<BoundingBox> originalBoundingBoxes_ = {};
 	std::vector<BoundingBox> transformedBoundingBoxes_ = {};
-	VulkanBuffer transformedBoundingBoxBuffer_; // TODO Currently no Frame-in-flight
+	VulkanBuffer transformedBoundingBoxBuffer_; // TODO Implement Frame-in-flight
 
-	// Mapping from Model to Mesh
-	// Needed for UpdateModelMatrix()
-	//std::vector<std::vector<int>> modelToMeshMap_ = {};
-
-	// Mapping (modelIndex, instanceIndex) --> (modelUBOs_)
-	// Needed for UpdateModelMatrix()
-	//std::vector<std::vector<int>> modelInstanceToModelMatrix_ = {};
 	std::vector<std::vector<InstanceData>> instanceDataArray_ = {};
 
 private:

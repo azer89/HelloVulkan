@@ -32,18 +32,31 @@ public:
 
 	void ShouldRender(bool shouldRender) { shouldRender_ = shouldRender; };
 
+	void SetFrustum(VulkanContext& ctx, const glm::mat4& camView, const glm::mat4& camProj);
+
 private:
 	void CreateDescriptor(VulkanContext& ctx);
-	void ProcessScene(VulkanContext& ctx);
+	void CreateBuffers(VulkanContext& ctx);
+
+	void ProcessScene();
 	void AddBox(const glm::mat4& mat, const glm::vec3& size, const glm::vec4& color);
 	void AddLine(const glm::vec3& p1, const glm::vec3& p2, const glm::vec4& color);
+	void UploadLinesToBuffer(VulkanContext& ctx, uint32_t frameIndex);
+
+	void InitFrustumLines();
+	void UpdateFrustumLine(int index, const glm::vec3& p1, const glm::vec3& p2, const glm::vec4& color);
+	void UploadFrustumLinesToBuffer(VulkanContext& ctx, uint32_t frameIndex);
 
 private:
 	bool shouldRender_;
 	Scene* scene_;
 	std::vector<PointColor> lineDataArray_;
-	VulkanBuffer lineBuffer_;
+	std::array<VulkanBuffer, AppConfig::FrameCount> lineBuffers_;
 	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;
+
+	size_t frustumPointOffset_;
+	size_t frustumPointCount_;
+	std::vector<PointColor> frustumDataArray_;
 };
 
 #endif

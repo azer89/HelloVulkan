@@ -15,6 +15,7 @@
 #include "PipelineInfiniteGrid.h"
 #include "PipelineImGui.h"
 #include "PipelineLine.h"
+#include "PipelineInfiniteGrid.h"
 #include "PipelineAABBRender.h"
 
 #include <memory>
@@ -49,6 +50,8 @@ private:
 
 	std::unique_ptr<Scene> scene_;
 	std::unique_ptr<ResourcesLight> resourcesLight_; // TODO Set as unique_ptr
+
+	bool updateFrustum_;
 
 	// TODO Move to ResourcesIBL
 	float cubemapMipmapCount_;
