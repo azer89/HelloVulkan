@@ -14,12 +14,13 @@ A 3D rendering engine built from scratch using Vulkan API and C++.
     * BRDF lookup table.
 * __Compute-based Frustum Culling__.
 * __Shadow maps__ with Poisson Disk or PCF.
-* __Bindless__, all textures needed for rendering the entire scene are bound just once at the start of the frame.
-* __Buffer device address__ for direct shader access to buffers without the need to create descriptors.
+* __Bindless__:
+    * __Descriptor indexing__ allows all textures needed for rendering the entire scene to be bound just once at the start of the frame.
+    * __Buffer device address__ for direct shader access to buffers without the need to create descriptors.
 * glTF mesh/texture support.
 * Multisample anti-aliasing (MSAA).
 * Simple __raytracing__ pipeline with basic intersection testing.
-* Reinhard tonemap postprocessing.
+* Tonemap postprocessing.
 * Automatic runtime compilation from GLSL to SPIR-V using `glslang`.
 * Lightweight abstraction layer on top of Vulkan for faster development.
 * Minor features: skybox, infinite grid, line rendering, and ImGui.
