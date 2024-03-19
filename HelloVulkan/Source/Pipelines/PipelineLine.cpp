@@ -4,9 +4,8 @@
 
 #include "glm/ext.hpp"
 
-#include <iostream>
-
 const glm::vec4 LINE_COLOR = glm::vec4(0.988, 0.4, 0.212, 1.0);
+constexpr float LINE_WIDTH = 4.0f;
 
 PipelineLine::PipelineLine(
 	VulkanContext& ctx,
@@ -21,7 +20,8 @@ PipelineLine::PipelineLine(
 
 			.vertexBufferBind_ = false,
 			.depthTest_ = true,
-			.depthWrite_ = false // Do not write to depth image
+			.depthWrite_ = false, // Do not write to depth image
+			.lineWidth_ = LINE_WIDTH
 		}),
 	scene_(scene),
 	shouldRender_(false)
@@ -80,6 +80,7 @@ void PipelineLine::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer command
 	const uint32_t frameIndex = ctx.GetFrameIndex();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
 	BindPipeline(ctx, commandBuffer);
+	vkCmdSetLineWidth(commandBuffer, LINE_WIDTH);
 	vkCmdBindDescriptorSets(
 		commandBuffer,
 		VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -101,8 +102,6 @@ void PipelineLine::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer command
 
 void PipelineLine::SetFrustum(VulkanContext& ctx, const glm::mat4& camView, const glm::mat4& camProj)
 {
-	//std::cout << "SetFrustum\n";
-
 	const glm::vec3 corners[] = {
 		glm::vec3(+1, -1, -1), glm::vec3(+1, -1, +1),
 		glm::vec3(+1, +1, -1), glm::vec3(+1, +1, +1),

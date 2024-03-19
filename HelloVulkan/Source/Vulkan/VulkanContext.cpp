@@ -200,6 +200,10 @@ void VulkanContext::ChainFeatures()
 		features_.sampleRateShading = VK_TRUE;
 		features_.samplerAnisotropy = VK_TRUE;
 	}
+	if (config_.supportWideLines_)
+	{
+		features_.wideLines = VK_TRUE;
+	}
 	if (config_.supportBindlessTextures_)
 	{
 		features_.multiDrawIndirect = VK_TRUE;

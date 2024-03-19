@@ -24,6 +24,7 @@ struct PipelineConfig
 	bool customViewportSize_ = false;
 	float viewportWidth_ = 0;
 	float viewportHeight_ = 0;
+	float lineWidth_ = 1.0f;
 };
 
 #endif

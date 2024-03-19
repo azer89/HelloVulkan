@@ -208,6 +208,7 @@ void AppFrustumCulling::MainLoop()
 		.suportBufferDeviceAddress_ = true,
 		.supportMSAA_ = true,
 		.supportBindlessTextures_ = true,
+		.supportWideLines_ = true
 		});
 	Init();
 
