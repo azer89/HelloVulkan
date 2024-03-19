@@ -47,7 +47,7 @@ struct ContextConfig
 {
 	bool supportRaytracing_ = false; // If raytracing is enabled then buffer device address is also enabled
 	bool suportBufferDeviceAddress_ = false;
-	bool supportMSAA_ = true; // TODO This can be disabled but will show an error
+	bool supportMSAA_ = true; // TODO This can be disabled but will show a validation error
 	bool supportBindlessTextures_ = true;
 	bool supportWideLines_ = false;
 	// TODO Set validation layer as optional

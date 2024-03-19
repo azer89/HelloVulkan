@@ -108,23 +108,23 @@ void PipelineLine::SetFrustum(VulkanContext& ctx, const CameraUBO& camUBO)
 		glm::vec3(-1, +1, -1), glm::vec3(-1, +1, +1),
 		glm::vec3(-1, -1, -1), glm::vec3(-1, -1, +1)
 	};
-	glm::vec3 pp[8];
+	glm::vec3 points[8];
 
 	for (int i = 0; i < 8; i++)
 	{
 		glm::vec4 q = glm::inverse(camUBO.view) * glm::inverse(camUBO.projection) * glm::vec4(corners[i], 1.0f);
-		pp[i] = glm::vec3(q.x / q.w, q.y / q.w, q.z / q.w);
+		points[i] = glm::vec3(q.x / q.w, q.y / q.w, q.z / q.w);
 	}
 
 	int counter = 0;
 	for (int i = 0; i < 4; i++)
 	{
-		UpdateFrustumLine(counter, pp[i * 2 + 0], pp[i * 2 + 1], LINE_COLOR);
+		UpdateFrustumLine(counter, points[i * 2 + 0], points[i * 2 + 1], LINE_COLOR);
 		counter += 2;
 
 		for (int k = 0; k < 2; k++)
 		{
-			UpdateFrustumLine(counter, pp[k + i * 2], pp[k + ((i + 1) % 4) * 2], LINE_COLOR);
+			UpdateFrustumLine(counter, points[k + i * 2], points[k + ((i + 1) % 4) * 2], LINE_COLOR);
 			counter += 2;
 		}
 	}

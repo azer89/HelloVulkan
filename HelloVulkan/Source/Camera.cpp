@@ -218,7 +218,7 @@ FrustumUBO Camera::GetFrustumUBO() const
 
 	glm::mat4 invProjView = glm::inverse(projView);
 
-	const glm::vec4 corners[8] =
+	static const glm::vec4 corners[8] =
 	{
 		glm::vec4(-1, -1, -1, 1), glm::vec4( 1, -1, -1, 1),
 		glm::vec4( 1,  1, -1, 1), glm::vec4(-1,  1, -1, 1),

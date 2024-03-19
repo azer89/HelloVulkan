@@ -45,7 +45,6 @@ layout(set = 0, binding = 7) uniform sampler2D pbrTextures[];
 #include <Radiance.glsl>
 #include <Ambient.glsl>
 
-// stackoverflow.com/questions/51108596/linearize-depth
 float LinearDepth(float z, float near, float far)
 {
 	return near * far / (far + z * (near - far));
@@ -53,7 +52,6 @@ float LinearDepth(float z, float near, float far)
 
 void main()
 {
-	//MeshData mData = meshes[meshIndex];
 	MeshData mData = vim.meshReference.meshes[meshIndex];
 
 	vec4 albedo4 = texture(pbrTextures[nonuniformEXT(mData.albedo)], texCoord).rgba;
