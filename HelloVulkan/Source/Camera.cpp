@@ -5,6 +5,8 @@
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
 
+#include <iostream>
+
 Camera::Camera(
 	glm::vec3 position, 
 	glm::vec3 worldUp, 
@@ -55,13 +57,16 @@ void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime_)
 	{
 		position_ += right_ * velocity;
 	}
+
+	
+
 	// Update orthogonal axes and matrices
 	UpdateInternal();
 }
 
 // Processes input received from a mouse input system. 
 // Expects the offset value in both the x and y direction.
-void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch)
+void Camera::ProcessMouseMovement(float xoffset, float yoffset)
 {
 	xoffset *= mouseSensitivity_;
 	yoffset *= mouseSensitivity_;
@@ -69,15 +74,37 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPi
 	yaw_ += xoffset;
 	pitch_ += yoffset;
 
-	// Make sure that when pitch is out of bounds, screen doesn't get flipped
-	if (constrainPitch)
-	{
-		const float pitchLimit = 89.f;
-		pitch_ = glm::clamp(pitch_, -pitchLimit, pitchLimit);
-	}
+	
+
+	ConstrainPitch();
 
 	// Update orthogonal axes and matrices
 	UpdateInternal();
+}
+
+void Camera::SetPositionAndTarget(glm::vec3 cameraPosition, glm::vec3 cameraTarget)
+{
+	position_ = cameraPosition;
+
+	glm::vec3 direction = glm::normalize(cameraTarget - position_);
+	pitch_ = asin(direction.y);
+	yaw_ = atan2(direction.z, direction.x);
+
+	// TODO Inefficient because keep converting back-and-forth betwen degrees and radians
+	pitch_ = glm::degrees(pitch_);
+	yaw_ = glm::degrees(yaw_);
+
+	ConstrainPitch();
+
+	// Update orthogonal axes and matrices
+	UpdateInternal();
+}
+
+void Camera::ConstrainPitch()
+{
+	// Make sure that when pitch is out of bounds, screen doesn't get flipped
+	constexpr float pitchLimit = 89.f;
+	pitch_ = glm::clamp(pitch_, -pitchLimit, pitchLimit);
 }
 
 // Processes input received from a mouse scroll-wheel event. 

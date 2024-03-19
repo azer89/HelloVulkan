@@ -11,11 +11,12 @@ AppPBRShadow::AppPBRShadow()
 
 void AppPBRShadow::Init()
 {
+	camera_->SetPositionAndTarget(glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3(0.0));
+
 	// Init shadow map
 	resShadow_ = std::make_unique<ResourcesShadow>();
 	resShadow_->CreateSingleShadowMap(vulkanContext_);
 
-	// Initialize lights
 	InitLights();
 
 	// Initialize attachments

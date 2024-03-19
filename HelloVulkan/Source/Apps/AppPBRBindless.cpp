@@ -12,7 +12,8 @@ AppPBRBindless::AppPBRBindless() :
 
 void AppPBRBindless::Init()
 {
-	// Initialize lights
+	camera_->SetPositionAndTarget(glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3(0.0));
+
 	InitLights();
 
 	// Initialize attachments

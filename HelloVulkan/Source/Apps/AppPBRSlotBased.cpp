@@ -12,6 +12,8 @@ AppPBRSlotBased::AppPBRSlotBased() :
 
 void AppPBRSlotBased::Init()
 {
+	camera_->SetPositionAndTarget(glm::vec3(0.0f, 0.5f, 4.0f), glm::vec3(0.0));
+
 	// Initialize lights
 	InitLights();
 

@@ -12,6 +12,8 @@ AppPBRClusterForward::AppPBRClusterForward()
 
 void AppPBRClusterForward::Init()
 {
+	camera_->SetPositionAndTarget(glm::vec3(0.0f, 1.0f, 6.0f), glm::vec3(0.0, 2.5, 0.0));
+
 	// Initialize attachments
 	InitSharedResources();
 

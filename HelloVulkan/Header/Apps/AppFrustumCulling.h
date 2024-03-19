@@ -29,6 +29,7 @@ public:
 	void UpdateUI() override;
 
 	void Init();
+	void InitScene();
 	void InitLights();
 	void DestroyResources();
 

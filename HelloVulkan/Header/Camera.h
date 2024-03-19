@@ -26,9 +26,10 @@ public:
 		float yaw = CameraConfig::Yaw,
 		float pitch = CameraConfig::Pitch);
 
+	void SetPositionAndTarget(glm::vec3 cameraPosition, glm::vec3 cameraTarget);
 	void SetScreenSize(float width, float height);
 	void ProcessKeyboard(CameraMovement direction, float deltaTime_);
-	void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true);
+	void ProcessMouseMovement(float xoffset, float yoffset);
 	void ProcessMouseScroll(float yoffset);
 
 	[[nodiscard]] glm::mat4 GetProjectionMatrix() const;
@@ -67,6 +68,7 @@ private:
 
 private:
 	void UpdateInternal();
+	void ConstrainPitch();
 };
 
 #endif

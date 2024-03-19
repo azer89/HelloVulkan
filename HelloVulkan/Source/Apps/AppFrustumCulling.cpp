@@ -12,7 +12,8 @@ AppFrustumCulling::AppFrustumCulling() :
 
 void AppFrustumCulling::Init()
 {
-	// Initialize lights
+	camera_->SetPositionAndTarget(glm::vec3(0.0f, 10.0f, 5.0f), glm::vec3(0.0, 0.0, -20));
+
 	InitLights();
 
 	// Initialize attachments
@@ -22,28 +23,7 @@ void AppFrustumCulling::Init()
 	resIBL_ = std::make_unique<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
-	constexpr uint32_t xCount = 50;
-	constexpr uint32_t zCount = 50;
-	constexpr float dist = 4.0f;
-	constexpr float xMidPos = static_cast<float>(xCount - 1) * dist / 2.0f;
-	constexpr float zMidPos = static_cast<float>(zCount - 1) * dist / 2.0f;
-	std::vector<ModelData> dataArray = { { AppConfig::ModelFolder + "Zaku/Zaku.gltf", xCount * zCount} };
-	bool supportDeviceAddress = true;
-	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
-	uint32_t iter = 0;
-
-	for (int x = 0; x < xCount; ++x)
-	{
-		for (int z = 0; z < zCount; ++z)
-		{
-			float xPos = x * dist - xMidPos;
-			float yPos = 0.0f;
-			float zPos = -(z * dist) + zMidPos;
-			glm::mat4 modelMatrix(1.f);
-			modelMatrix = glm::translate(modelMatrix, glm::vec3(xPos, yPos, zPos));
-			scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 0, iter++);
-		}
-	}
+	InitScene();
 
 	// Pipelines
 	// This is responsible to clear swapchain image
@@ -95,6 +75,32 @@ void AppFrustumCulling::Init()
 		imguiPtr_.get(),
 		finishPtr_.get()
 	};
+}
+
+void AppFrustumCulling::InitScene()
+{
+	constexpr uint32_t xCount = 50;
+	constexpr uint32_t zCount = 50;
+	constexpr float dist = 4.0f;
+	constexpr float xMidPos = static_cast<float>(xCount - 1) * dist / 2.0f;
+	constexpr float zMidPos = static_cast<float>(zCount - 1) * dist / 2.0f;
+	std::vector<ModelData> dataArray = { { AppConfig::ModelFolder + "Zaku/Zaku.gltf", xCount * zCount} };
+	bool supportDeviceAddress = true;
+	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
+	uint32_t iter = 0;
+
+	for (int x = 0; x < xCount; ++x)
+	{
+		for (int z = 0; z < zCount; ++z)
+		{
+			float xPos = x * dist - xMidPos;
+			float yPos = 0.0f;
+			float zPos = -(z * dist) + zMidPos;
+			glm::mat4 modelMatrix(1.f);
+			modelMatrix = glm::translate(modelMatrix, glm::vec3(xPos, yPos, zPos));
+			scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 0, iter++);
+		}
+	}
 }
 
 void AppFrustumCulling::InitLights()
