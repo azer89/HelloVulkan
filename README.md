@@ -12,6 +12,7 @@ A 3D rendering engine built from scratch using Vulkan API and C++.
     * A cubemap from an equirectangular HDR image.
     * Specular and diffuse cubemaps.
     * BRDF lookup table.
+* __Compute-based Frustum Culling__.
 * __Shadow maps__ with Poisson Disk or PCF.
 * __Bindless__, all textures needed for rendering the entire scene are bound just once at the start of the frame.
 * __Buffer device address__ for direct shader access to buffers without the need to create descriptors.
@@ -21,7 +22,7 @@ A 3D rendering engine built from scratch using Vulkan API and C++.
 * Reinhard tonemap postprocessing.
 * Automatic runtime compilation from GLSL to SPIR-V using `glslang`.
 * Lightweight abstraction layer on top of Vulkan for faster development.
-* Minor features: skybox, instancing, and ImGui.
+* Minor features: skybox, infinite grid, line rendering, and ImGui.
 
 </br>
 
