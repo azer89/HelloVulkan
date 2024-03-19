@@ -1,23 +1,26 @@
 #include "AppPBRSlotBased.h"
 #include "AppPBRBindless.h"
 #include "AppPBRShadow.h"
+#include "AppFrustumCulling.h"
 #include "AppPBRClusterForward.h"
 #include "AppSimpleRaytracing.h"
 
 // Entry point
 int main()
 {
-	// Bindless textures using draw indirect and descriptor indexing
+	// Bindless, using draw indirect, buffer device address, and descriptor indexing
 	//AppPBRBindless app;
+
+	// Shadow demo, using draw indirect, buffer device address, and descriptor indexing
+	AppPBRShadow app;
 
 	// The good ol resource binding per draw call
 	//AppPBRSlotBased app;
 	
-	AppPBRShadow app;
-	
+	//AppFrustumCulling app;
+
 	//AppPBRClusterForward app;
 	
-	// Currently can only draw a triangle
 	//AppSimpleRaytracing app;
 	
 	app.MainLoop();

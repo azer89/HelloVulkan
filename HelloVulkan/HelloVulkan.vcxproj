@@ -162,10 +162,13 @@
     <None Include="..\Shaders\ClusteredForward\Mesh.frag" />
     <None Include="..\Shaders\ClusteredForward\Radiance.glsl" />
     <None Include="..\Shaders\Cube.glsl" />
+    <None Include="..\Shaders\Frustum.glsl" />
+    <None Include="..\Shaders\FrustumCulling.comp" />
     <None Include="..\Shaders\IBL\BRDFLUT.comp" />
     <None Include="..\Shaders\IBL\CubeFilterDiffuse.frag" />
     <None Include="..\Shaders\IBL\CubeFilterSpecular.frag" />
     <None Include="..\Shaders\IBL\Equirect2Cube.frag" />
+    <None Include="..\Shaders\DrawIndirectCommand.glsl" />
     <None Include="..\Shaders\InfiniteGrid\Grid.frag" />
     <None Include="..\Shaders\InfiniteGrid\Grid.vert" />
     <None Include="..\Shaders\InfiniteGrid\Header.glsl" />
@@ -200,6 +203,7 @@
   <ItemGroup>
     <ClInclude Include="..\Shaders\ShadowMapping\UBO.glsl" />
     <ClInclude Include="Header\Apps\AppBase.h" />
+    <ClInclude Include="Header\Apps\AppFrustumCulling.h" />
     <ClInclude Include="Header\Apps\AppPBRBindless.h" />
     <ClInclude Include="Header\Apps\AppPBRClusterForward.h" />
     <ClInclude Include="Header\Apps\AppPBRShadow.h" />
@@ -220,6 +224,7 @@
     <ClInclude Include="Header\Pipelines\PipelineCubeFilter.h" />
     <ClInclude Include="Header\Pipelines\PipelineEquirect2Cube.h" />
     <ClInclude Include="Header\Pipelines\PipelineFinish.h" />
+    <ClInclude Include="Header\Pipelines\PipelineFrustumCulling.h" />
     <ClInclude Include="Header\Pipelines\PipelineImGui.h" />
     <ClInclude Include="Header\Pipelines\PipelineInfiniteGrid.h" />
     <ClInclude Include="Header\Pipelines\PipelineLightRender.h" />
@@ -262,6 +267,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Apps\AppBase.cpp" />
+    <ClCompile Include="Source\Apps\AppFrustumCulling.cpp" />
     <ClCompile Include="Source\Apps\AppPBRBindless.cpp" />
     <ClCompile Include="Source\Apps\AppPBRClusterForward.cpp" />
     <ClCompile Include="Source\Apps\AppPBRShadow.cpp" />
@@ -281,6 +287,7 @@
     <ClCompile Include="Source\Pipelines\PipelineCubeFilter.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineEquirect2Cube.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineFinish.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelineFrustumCulling.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineImGui.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineInfiniteGrid.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineLightRender.cpp" />

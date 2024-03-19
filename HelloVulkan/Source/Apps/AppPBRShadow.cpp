@@ -1,10 +1,6 @@
 #include "AppPBRShadow.h"
-#include "Configs.h"
 #include "VulkanUtility.h"
-#include "PipelineEquirect2Cube.h"
-#include "PipelineBRDFLUT.h"
-#include "ResourcesShadow.h"
-#include "ResourcesIBL.h"
+#include "Configs.h"
 
 #include "glm/ext.hpp"
 #include "imgui_impl_vulkan.h"
@@ -15,11 +11,12 @@ AppPBRShadow::AppPBRShadow()
 
 void AppPBRShadow::Init()
 {
+	camera_->SetPositionAndTarget(glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3(0.0));
+
 	// Init shadow map
 	resShadow_ = std::make_unique<ResourcesShadow>();
 	resShadow_->CreateSingleShadowMap(vulkanContext_);
 
-	// Initialize lights
 	InitLights();
 
 	// Initialize attachments
@@ -29,26 +26,26 @@ void AppPBRShadow::Init()
 	resIBL_ = std::make_unique<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
-	std::vector<std::string> modelFiles = {
-		AppConfig::ModelFolder + "Sponza/Sponza.gltf",
-		AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf",
-		AppConfig::ModelFolder + "Hexapod/Hexapod.gltf"
+	std::vector<ModelData> dataArray = {
+		{AppConfig::ModelFolder + "Sponza/Sponza.gltf", 1},
+		{AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf", 1},
+		{AppConfig::ModelFolder + "Hexapod/Hexapod.gltf", 1}
 	};
 	bool supportDeviceAddress = true;
-	scene_ = std::make_unique<Scene>(vulkanContext_, modelFiles, supportDeviceAddress);
+	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
 
 	// Model matrix for Tachikoma
 	glm::mat4 modelMatrix(1.f);
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.15f, 0.35f, 1.5f));
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.7f, 0.7f, 0.7f));
-	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 1);
+	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 1, 0);
 
 	// Model matrix for Hexapod
 	modelMatrix = glm::mat4(1.f);
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.62f, -1.5f));
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f));
-	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 2);
+	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 2, 0);
 
 	// Pipelines
 	// This is responsible to clear swapchain image
@@ -69,7 +66,6 @@ void AppPBRShadow::Init()
 		resShared_.get());
 	shadowPtr_ = std::make_unique<PipelineShadow>(vulkanContext_, scene_.get(), resShadow_.get());
 	lightPtr_ = std::make_unique<PipelineLightRender>(vulkanContext_, resLight_.get(), resShared_.get());
-	linePtr_ = std::make_unique<PipelineLine>(vulkanContext_, resShared_.get(), scene_.get());
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
 	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(vulkanContext_, resShared_.get());
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
@@ -87,7 +83,6 @@ void AppPBRShadow::Init()
 		skyboxPtr_.get(),
 		shadowPtr_.get(),
 		pbrPtr_.get(),
-		linePtr_.get(),
 		lightPtr_.get(), // Should be the last
 		resolveMSPtr_.get(),
 		tonemapPtr_.get(),
@@ -134,7 +129,6 @@ void AppPBRShadow::DestroyResources()
 	resolveMSPtr_.reset();
 	tonemapPtr_.reset();
 	imguiPtr_.reset();
-	linePtr_.reset();
 }
 
 void AppPBRShadow::UpdateUBOs()
@@ -143,7 +137,6 @@ void AppPBRShadow::UpdateUBOs()
 	CameraUBO ubo = camera_->GetCameraUBO();
 	lightPtr_->SetCameraUBO(vulkanContext_, ubo);
 	pbrPtr_->SetCameraUBO(vulkanContext_, ubo);
-	linePtr_->SetCameraUBO(vulkanContext_, ubo);
 
 	// Skybox
 	CameraUBO skyboxUbo = ubo;
@@ -164,7 +157,6 @@ void AppPBRShadow::UpdateUI()
 	}
 
 	static bool staticLightRender = true;
-	static bool staticLineRender = false;
 	static PushConstPBR staticPBRPushConstants =
 	{
 		.lightIntensity = 1.5f,
@@ -186,7 +178,6 @@ void AppPBRShadow::UpdateUI()
 
 	ImGui::Text("Vertices: %i, Indices: %i", scene_->vertices_.size(), scene_->indices_.size());
 	ImGui::Checkbox("Render Lights", &staticLightRender);
-	ImGui::Checkbox("Render Bounding Box", &staticLineRender);
 	ImGui::SeparatorText("Shading");
 	imguiPtr_->ImGuiShowPBRConfig(&staticPBRPushConstants, cubemapMipmapCount_);
 
@@ -208,7 +199,6 @@ void AppPBRShadow::UpdateUI()
 	resLight_->UpdateLightPosition(vulkanContext_, 0, &(staticLightPos[0]));
 
 	lightPtr_->ShouldRender(staticLightRender);
-	linePtr_->ShouldRender(staticLineRender);
 	pbrPtr_->SetPBRPushConstants(staticPBRPushConstants);
 
 	resShadow_->shadowUBO_.shadowMinBias = staticMinBias;
@@ -222,7 +212,6 @@ void AppPBRShadow::UpdateUI()
 void AppPBRShadow::MainLoop()
 {
 	InitVulkan({
-		.supportRaytracing_ = false,
 		.suportBufferDeviceAddress_ = true,
 		.supportMSAA_ = true
 		});

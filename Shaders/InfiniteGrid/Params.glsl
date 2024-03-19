@@ -12,7 +12,7 @@ const float GRID_EXTENTS = 50.0;
 const float GRID_CELL_SIZE = 0.2;
 
 // Color of thin lines
-const vec4 GRID_COLOR_THIN = vec4(0.5, 0.5, 0.5, 1.0);
+const vec4 GRID_COLOR_THIN = vec4(0.2, 0.2, 0.2, 1.0);
 
 // Color of thick lines (every tenth line)
 const vec4 GRID_COLOR_THICK = vec4(0.0, 0.0, 0.0, 1.0);

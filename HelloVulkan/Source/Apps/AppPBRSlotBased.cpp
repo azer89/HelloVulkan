@@ -1,9 +1,6 @@
 #include "AppPBRSlotBased.h"
-#include "Configs.h"
 #include "VulkanUtility.h"
-#include "PipelineEquirect2Cube.h"
-#include "PipelineBRDFLUT.h"
-#include "ResourcesIBL.h"
+#include "Configs.h"
 
 #include "glm/ext.hpp"
 #include "imgui_impl_vulkan.h"
@@ -15,6 +12,8 @@ AppPBRSlotBased::AppPBRSlotBased() :
 
 void AppPBRSlotBased::Init()
 {
+	camera_->SetPositionAndTarget(glm::vec3(0.0f, 0.5f, 4.0f), glm::vec3(0.0));
+
 	// Initialize lights
 	InitLights();
 

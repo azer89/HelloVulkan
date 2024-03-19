@@ -1,36 +1,35 @@
-#ifndef APP_PBR_CLUSTER_FORWARD
-#define APP_PBR_CLUSTER_FORWARD
+#ifndef APP_FRUSTUM_CULLING
+#define APP_FRUSTUM_CULLING
 
 #include "AppBase.h"
-#include "Model.h"
+#include "Scene.h"
 #include "ResourcesLight.h"
-#include "ResourcesClusterForward.h"
 #include "PipelineSkybox.h"
 #include "PipelineClear.h"
 #include "PipelineFinish.h"
 #include "PipelineTonemap.h"
+#include "PipelineFrustumCulling.h"
+#include "PipelinePBRBindless.h"
 #include "PipelineResolveMS.h"
 #include "PipelineLightRender.h"
+#include "PipelineInfiniteGrid.h"
 #include "PipelineImGui.h"
-#include "PipelinePBRClusterForward.h"
-#include "PipelineAABBGenerator.h"
-#include "PipelineLightCulling.h"
+#include "PipelineLine.h"
+#include "PipelineInfiniteGrid.h"
+#include "PipelineAABBRender.h"
 
-// STL
 #include <memory>
 
-/*
-Clustered forward PBR
-*/
-class AppPBRClusterForward final : AppBase
+class AppFrustumCulling final : AppBase
 {
 public:
-	AppPBRClusterForward();
+	AppFrustumCulling();
 	void MainLoop() override;
 	void UpdateUBOs() override;
 	void UpdateUI() override;
 
 	void Init();
+	void InitScene();
 	void InitLights();
 	void DestroyResources();
 
@@ -40,17 +39,22 @@ private:
 	std::unique_ptr<PipelineTonemap> tonemapPtr_;
 	std::unique_ptr<PipelineFinish> finishPtr_;
 	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;
+	std::unique_ptr<PipelineInfiniteGrid> infGridPtr_;
 	std::unique_ptr<PipelineLightRender> lightPtr_;
+	std::unique_ptr<PipelineFrustumCulling> cullingPtr_;
+	std::unique_ptr<PipelinePBRBindless> pbrPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
-	std::unique_ptr<PipelinePBRClusterForward> pbrPtr_;
-	std::unique_ptr<PipelineAABBGenerator> aabbPtr_;
-	std::unique_ptr<PipelineLightCulling> lightCullPtr_;
-
-	std::unique_ptr<ResourcesClusterForward> resCF_; 
+	std::unique_ptr<PipelineLine> linePtr_;
+	std::unique_ptr<PipelineAABBRender> boxRenderPtr_;
+	
 	std::unique_ptr<ResourcesLight> resLight_;
 
-	std::unique_ptr<Model> model_;
+	std::unique_ptr<Scene> scene_;
+	std::unique_ptr<ResourcesLight> resourcesLight_; // TODO Set as unique_ptr
 
+	bool updateFrustum_;
+
+	// TODO Move to ResourcesIBL
 	float cubemapMipmapCount_;
 };
 

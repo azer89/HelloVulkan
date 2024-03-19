@@ -2,8 +2,7 @@
 #define APP_SIMPLE_RAYTRACING
 
 #include "AppBase.h"
-
-// Pipelines
+#include "Scene.h"
 #include "PipelineClear.h"
 #include "PipelineFinish.h"
 #include "PipelineImGui.h"

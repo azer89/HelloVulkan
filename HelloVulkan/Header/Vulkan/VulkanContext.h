@@ -45,16 +45,11 @@ struct FrameData
 
 struct ContextConfig
 {
-	// If raytracing is enabled then buffer device address is also enabled
-	bool supportRaytracing_ = false;
-
+	bool supportRaytracing_ = false; // If raytracing is enabled then buffer device address is also enabled
 	bool suportBufferDeviceAddress_ = false;
-	
-	// This can be disabled but validation layer will complain a little bit
-	bool supportMSAA_ = true;
-
+	bool supportMSAA_ = true; // TODO This can be disabled but will show a validation error
 	bool supportBindlessTextures_ = true;
-
+	bool supportWideLines_ = false;
 	// TODO Set validation layer as optional
 };
 

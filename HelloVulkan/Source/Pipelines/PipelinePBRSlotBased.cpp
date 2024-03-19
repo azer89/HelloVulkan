@@ -11,8 +11,8 @@
 // Constants
 constexpr uint32_t UBO_COUNT = 2;
 constexpr uint32_t SSBO_COUNT = 1;
-constexpr uint32_t PBR_MESH_TEXTURE_COUNT = 6;
-constexpr uint32_t PBR_ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
+constexpr uint32_t PBR_TEXTURE_COUNT = 6;
+constexpr uint32_t ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 
 PipelinePBRSlotBased::PipelinePBRSlotBased(
 	VulkanContext& ctx,
@@ -134,7 +134,7 @@ void PipelinePBRSlotBased::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 	dsInfo.AddBuffer(resLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
-	for (size_t i = 0; i < PBR_MESH_TEXTURE_COUNT; ++i)
+	for (size_t i = 0; i < PBR_TEXTURE_COUNT; ++i)
 	{
 		dsInfo.AddImage(nullptr);
 	}

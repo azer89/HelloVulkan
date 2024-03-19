@@ -1,5 +1,6 @@
 #version 460 core
 #extension GL_EXT_nonuniform_qualifier : require
+#extension GL_EXT_buffer_reference : require
 
 /*
 Bindless/Scene.frag 
@@ -14,10 +15,12 @@ Fragment shader for
 #include <CameraUBO.glsl>
 #include <LightData.glsl>
 #include <PBRHeader.glsl>
-#include <Bindless/MeshData.glsl>
 #include <PBRPushConstants.glsl>
 #include <Hammersley.glsl>
 #include <TangentNormalToWorld.glsl>
+#include <Bindless/VertexData.glsl>
+#include <Bindless/MeshData.glsl>
+#include <Bindless/VIM.glsl>
 
 layout(location = 0) in vec3 worldPos;
 layout(location = 1) in vec2 texCoord;
@@ -29,20 +32,19 @@ layout(location = 0) out vec4 fragColor;
 layout(push_constant) uniform PC { PBRPushConstant pc; };
 
 layout(set = 0, binding = 0) uniform CameraBlock { CameraUBO camUBO; }; // UBO
-layout(set = 0, binding = 4) readonly buffer Meshes { MeshData meshes []; }; // SSBO
-layout(set = 0, binding = 5) readonly buffer Lights { LightData lights []; };// SSBO
+layout(set = 0, binding = 2) uniform VIMBlock { VIM vim; }; // UBO
+layout(set = 0, binding = 3) readonly buffer Lights { LightData lights []; };// SSBO
 
-layout(set = 0, binding = 6) uniform samplerCube specularMap;
-layout(set = 0, binding = 7) uniform samplerCube diffuseMap;
-layout(set = 0, binding = 8) uniform sampler2D brdfLUT;
+layout(set = 0, binding = 4) uniform samplerCube specularMap;
+layout(set = 0, binding = 5) uniform samplerCube diffuseMap;
+layout(set = 0, binding = 6) uniform sampler2D brdfLUT;
 
 // NOTE This requires descriptor indexing feature
-layout(set = 0, binding = 9) uniform sampler2D pbrTextures[];
+layout(set = 0, binding = 7) uniform sampler2D pbrTextures[];
 
 #include <Radiance.glsl>
 #include <Ambient.glsl>
 
-// stackoverflow.com/questions/51108596/linearize-depth
 float LinearDepth(float z, float near, float far)
 {
 	return near * far / (far + z * (near - far));
@@ -50,7 +52,7 @@ float LinearDepth(float z, float near, float far)
 
 void main()
 {
-	MeshData mData = meshes[meshIndex];
+	MeshData mData = vim.meshReference.meshes[meshIndex];
 
 	vec4 albedo4 = texture(pbrTextures[nonuniformEXT(mData.albedo)], texCoord).rgba;
 

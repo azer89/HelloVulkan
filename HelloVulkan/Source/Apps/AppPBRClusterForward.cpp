@@ -1,10 +1,7 @@
 #include "AppPBRClusterForward.h"
-#include "PipelineEquirect2Cube.h"
-#include "PipelineBRDFLUT.h"
-#include "ResourcesIBL.h"
-#include "Configs.h"
 #include "PushConstants.h"
 #include "VulkanUtility.h"
+#include "Configs.h"
 
 #include "glm/ext.hpp"
 #include "imgui_impl_vulkan.h"
@@ -15,6 +12,8 @@ AppPBRClusterForward::AppPBRClusterForward()
 
 void AppPBRClusterForward::Init()
 {
+	camera_->SetPositionAndTarget(glm::vec3(0.0f, 1.0f, 6.0f), glm::vec3(0.0, 2.5, 0.0));
+
 	// Initialize attachments
 	InitSharedResources();
 

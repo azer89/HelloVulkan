@@ -1,5 +1,4 @@
 #include "AppSimpleRaytracing.h"
-#include "Scene.h"
 
 #include "imgui_impl_vulkan.h"
 
@@ -9,14 +8,16 @@ AppSimpleRaytracing::AppSimpleRaytracing()
 
 void AppSimpleRaytracing::Init()
 {
+	camera_->SetPositionAndTarget(glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3(0.0f, 0.0f, -3.5f));
+
 	// Initialize attachments
 	InitSharedResources();
 
 	// Scene
-	std::vector<std::string> modelFiles = {
-		AppConfig::ModelFolder + "Dragon/Dragon.obj"
+	std::vector<ModelData> dataArray = {
+		{ AppConfig::ModelFolder + "Dragon/Dragon.obj", 1}
 	};
-	scene_ = std::make_unique<Scene>(vulkanContext_, modelFiles);
+	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray);
 
 	clearPtr_ = std::make_unique<PipelineClear>(vulkanContext_);
 	rtxPtr_ = std::make_unique<PipelineSimpleRaytracing>(vulkanContext_, scene_.get());

@@ -1,4 +1,5 @@
 #include "PipelineResolveMS.h"
+#include "ResourcesShared.h"
 
 /*
 Resolves a multisampled color image to a singlesampled color image

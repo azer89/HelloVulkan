@@ -17,7 +17,7 @@ struct MeshData
 	uint32_t indexOffset_;
 
 	// Needed to access model matrix
-	uint32_t modelIndex;
+	uint32_t modelMatrixIndex;
 
 	// PBR Material
 	uint32_t albedo_;
@@ -83,13 +83,13 @@ public:
 	uint32_t GetVertexOffset() const { return vertexOffset_; }
 	uint32_t GetVertexCount() const { return vertexCount_; }
 
-	[[nodiscard]] MeshData GetMeshData(uint32_t textureIndexOffset, uint32_t modelIndex)
+	[[nodiscard]] MeshData GetMeshData(uint32_t textureIndexOffset, uint32_t modelMatrixIndex)
 	{
 		return
 		{
 			.vertexOffset_ = vertexOffset_,
 			.indexOffset_ = indexOffset_,
-			.modelIndex = modelIndex,
+			.modelMatrixIndex = modelMatrixIndex,
 			.albedo_ = textureIndices_[TextureType::Albedo] + textureIndexOffset,
 			.normal_ = textureIndices_[TextureType::Normal] + textureIndexOffset,
 			.metalness_ = textureIndices_[TextureType::Metalness] + textureIndexOffset,
