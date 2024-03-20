@@ -42,7 +42,7 @@ private:
 	std::unique_ptr<PipelineImGui> imguiPtr_;
 
 	std::unique_ptr<Scene> scene_;
-	std::unique_ptr<ResourcesLight> resourcesLight_; // TODO Set as unique_ptr
+	std::unique_ptr<ResourcesLight> resourcesLight_;
 };
 
 #endif

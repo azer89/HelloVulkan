@@ -18,9 +18,6 @@ public:
 
 	VmaAllocator vmaAllocator_;
 
-private:
-	bool isIndirectBuffer_;
-
 public:
 	VulkanBuffer() :
 		buffer_(nullptr),
@@ -48,15 +45,18 @@ public:
 		VmaMemoryUsage memoryUsage,
 		VmaAllocationCreateFlags flags = VMA_ALLOCATION_CREATE_MAPPED_BIT); // Not sure want to keep this default value
 
-	void CreateIndirectBuffer(
+	void CreateGPUOnlyIndirectBuffer(
+		VulkanContext& ctx,
+		const void* bufferData,
+		VkDeviceSize size);
+	void CreateMappedIndirectBuffer(
 		VulkanContext& ctx,
 		VkDeviceSize size);
-	
 	VkDrawIndirectCommand* MapIndirectBuffer();
-
 	void UnmapIndirectBuffer();
 
-	void CreateBufferWithShaderDeviceAddress(VulkanContext& ctx,
+	void CreateBufferWithShaderDeviceAddress(
+		VulkanContext& ctx,
 		VkDeviceSize size,
 		VkBufferUsageFlags bufferUsage,
 		VmaMemoryUsage memoryUsage,

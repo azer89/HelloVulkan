@@ -29,10 +29,10 @@ private:
 	ResourcesShadow* resShadow_;
 
 	std::vector<VulkanBuffer> shadowMapUBOBuffers_;
-	std::vector<VkDescriptorSet> descriptorSets_;
+	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;
 
 	// Has its own buffers so that the buffers don't get culled
-	std::vector<VulkanBuffer> indirectBuffers_;
+	VulkanBuffer indirectBuffer_;
 };
 
 #endif

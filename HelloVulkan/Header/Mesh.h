@@ -50,7 +50,6 @@ private:
 	uint32_t indexCount_;
 
 public:
-	// TODO Create a default constructor
 	Mesh() = default;
 	~Mesh() = default;
 

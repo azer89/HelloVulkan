@@ -30,11 +30,8 @@ Scene::~Scene()
 	vertexBuffer_.Destroy();
 	indexBuffer_.Destroy();
 	transformedBoundingBoxBuffer_.Destroy();
+	indirectBuffer_.Destroy();
 	for (auto& buffer : modelSSBOBuffers_)
-	{
-		buffer.Destroy();
-	}
-	for (auto& buffer : indirectBuffers_)
 	{
 		buffer.Destroy();
 	}
@@ -54,7 +51,6 @@ VIM Scene::GetVIM() const
 	};
 }
 
-// TODO Create GPU only buffers
 void Scene::CreateBindlessResources(VulkanContext& ctx)
 {
 	// Support for bindless rendering
@@ -114,14 +110,13 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 		modelSSBOBuffers_[i].UploadBufferData(ctx, modelSSBOs_.data(), modelSSBOBufferSize);
 	}
 
-	//BuildModelToMeshDataMapping();
 	BuildInstanceDataArray();
 
 	// Bounding boxes
 	BuildBoundingBoxes(ctx);
 
 	// Indirect buffers
-	CreateIndirectBuffers(ctx, indirectBuffers_);
+	CreateIndirectBuffer(ctx, indirectBuffer_);
 }
 
 void Scene::BuildInstanceDataArray()
@@ -150,7 +145,7 @@ void Scene::BuildBoundingBoxes(VulkanContext& ctx)
 	// Create bounding boxes
 	originalBoundingBoxes_.resize(meshDataArray_.size());
 	transformedBoundingBoxes_.resize(meshDataArray_.size());
-	uint32_t boxIndex = 0; // bounding box index
+	uint32_t boxIndex = 0;
 	for (Model& model : models_)
 	{
 		glm::vec3 vMin(std::numeric_limits<float>::max());
@@ -198,33 +193,44 @@ void Scene::BuildBoundingBoxes(VulkanContext& ctx)
 	transformedBoundingBoxBuffer_.UploadBufferData(ctx, transformedBoundingBoxes_.data(), bufferSize);
 }
 
-void Scene::CreateIndirectBuffers(
+void Scene::CreateIndirectBuffer(
 	VulkanContext& ctx,
-	std::vector<VulkanBuffer>& indirectBuffers)
+	VulkanBuffer& indirectBuffer)
 {
 	const uint32_t instanceCount = static_cast<uint32_t>(meshDataArray_.size());
 	const uint32_t indirectDataSize = instanceCount * sizeof(VkDrawIndirectCommand);
-	constexpr size_t numFrames = AppConfig::FrameCount;
 	const std::vector<uint32_t> meshVertexCountArray = GetInstanceVertexCountArray();
 
-	indirectBuffers.resize(numFrames);
-	for (size_t i = 0; i < numFrames; ++i)
-	{
-		indirectBuffers[i].CreateIndirectBuffer(ctx, indirectDataSize); // Create
-		VkDrawIndirectCommand* data = indirectBuffers[i].MapIndirectBuffer(); // Map
+	// Old code with map-able buffer, keeping it as reference
+	/*indirectBuffer.CreateMappedIndirectBuffer(ctx, indirectDataSize); // Create
+	VkDrawIndirectCommand* data = indirectBuffer.MapIndirectBuffer(); // Map
 
-		for (uint32_t j = 0; j < instanceCount; ++j)
+	for (uint32_t j = 0; j < instanceCount; ++j)
+	{
+		data[j] =
 		{
-			data[j] =
-			{
-				.vertexCount = static_cast<uint32_t>(meshVertexCountArray[j]),
-				.instanceCount = 1u,
-				.firstVertex = 0,
-				.firstInstance = j
-			};
-		}
-		indirectBuffers[i].UnmapIndirectBuffer(); // Unmap
+			.vertexCount = static_cast<uint32_t>(meshVertexCountArray[j]),
+			.instanceCount = 1u,
+			.firstVertex = 0,
+			.firstInstance = j
+		};
 	}
+	indirectBuffer.UnmapIndirectBuffer(); // Unmap*/
+
+	std::vector<VkDrawIndirectCommand> iCommands(instanceCount);
+	for (uint32_t i = 0; i < instanceCount; ++i)
+	{
+		iCommands[i] =
+		{
+			.vertexCount = static_cast<uint32_t>(meshVertexCountArray[i]),
+			.instanceCount = 1u,
+			.firstVertex = 0,
+			.firstInstance = i
+		};
+	}
+
+	// This type of buffer is not accessible from CPU
+	indirectBuffer.CreateGPUOnlyIndirectBuffer(ctx, iCommands.data(), indirectDataSize);
 }
 
 void Scene::UpdateModelMatrix(VulkanContext& ctx,
