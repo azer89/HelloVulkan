@@ -27,9 +27,9 @@ A 3D rendering engine built from scratch using Vulkan API and C++.
 
 </br>
 
-### Gallery
+### Rendering
 
-The images below showcase examples of PBR, IBL, bindless textures, and PCF shadow mapping.
+The images below showcase the implementations of PBR, IBL, bindless textures, and PCF shadow mapping.
 
 <img width="850" alt="bindless_shadow_mapping_1" src="https://github.com/azer89/HelloVulkan/assets/790432/c926d003-8df2-464e-a8f7-e04b66494214">
 
@@ -72,7 +72,7 @@ The left image below shows a rendering of all objects inside the frustum. The ri
 
 ### Cascade Shadow Maps
 
-The left image below is a rendering that uses four cascade shadow maps, resulting in sharper shadows. The right image above showcases the individual cascades with color coding. Poisson disk sampling helps to reduce projective aliasing artifacts, but can create more noticeable seams between cascades with excessive blurring. Additionally, camera movement causes shimmering edges due to the constantly updating shadow maps. 
+The left image below is a rendering that uses four cascade shadow maps, resulting in sharper shadows. The right image above showcases the individual cascades with color coding. Poisson disk sampling helps to reduce projective aliasing artifacts, but can create more noticeable seams between cascades with excessive blurring. 
 
 <img width="850" alt="cascade_shadow_mapping" src="https://github.com/azer89/HelloVulkan/assets/790432/1634a491-ea8f-49f0-8214-766a038bedd1">
 
