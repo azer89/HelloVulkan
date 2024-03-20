@@ -175,7 +175,7 @@ void PipelineEquirect2Cube::CreateOffscreenGraphicsPipeline(
 // TODO Can be moved to generic function in PipelineBase
 void PipelineEquirect2Cube::CreateFramebuffer(
 	VulkanContext& ctx, 
-	std::vector<VkImageView> outputViews)
+	std::vector<VkImageView>& outputViews)
 {
 	const VkFramebufferCreateInfo info =
 	{

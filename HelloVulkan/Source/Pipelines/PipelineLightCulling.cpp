@@ -42,7 +42,7 @@ void PipelineLightCulling::ResetGlobalIndex(VulkanContext& ctx)
 	resCF_->globalIndexCountBuffers_[frameIndex].UploadBufferData(ctx, &zeroValue, sizeof(uint32_t));
 }
 
-void PipelineLightCulling::SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO ubo)
+void PipelineLightCulling::SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO& ubo)
 {
 	size_t frameIndex = ctx.GetFrameIndex();
 	cfUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ClusterForwardUBO));

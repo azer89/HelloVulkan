@@ -23,7 +23,7 @@ public:
 
 	void ResetGlobalIndex(VulkanContext& ctx);
 
-	void SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO ubo);
+	void SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO& ubo);
 
 private:
 	ResourcesLight* resLight_;

@@ -100,7 +100,7 @@ void PipelineLine::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer command
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelineLine::SetFrustum(VulkanContext& ctx, const CameraUBO& camUBO)
+void PipelineLine::SetFrustum(VulkanContext& ctx, CameraUBO& camUBO)
 {
 	const glm::vec3 corners[] = {
 		glm::vec3(+1, -1, -1), glm::vec3(+1, -1, +1),

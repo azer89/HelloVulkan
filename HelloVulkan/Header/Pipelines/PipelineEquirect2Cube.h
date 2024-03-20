@@ -43,7 +43,7 @@ private:
 		const std::vector<std::string>& shaderFiles,
 		VkPipeline* pipeline);
 
-	void CreateFramebuffer(VulkanContext& ctx, std::vector<VkImageView> outputViews);
+	void CreateFramebuffer(VulkanContext& ctx, std::vector<VkImageView>& outputViews);
 };
 
 #endif

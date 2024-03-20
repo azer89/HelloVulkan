@@ -30,7 +30,7 @@ public:
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 	void ShouldRender(bool shouldRender) { shouldRender_ = shouldRender; };
-	void SetFrustum(VulkanContext& ctx, const CameraUBO& camUBO);
+	void SetFrustum(VulkanContext& ctx, CameraUBO& camUBO);
 
 private:
 	void CreateDescriptor(VulkanContext& ctx);
@@ -55,8 +55,6 @@ private:
 	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;
 
 	// Camera frustum rendering
-	size_t frustumPointOffset_;
-	size_t frustumPointCount_;
 	std::vector<PointColor> frustumDataArray_;
 };
 
