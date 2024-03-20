@@ -140,8 +140,8 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 	dsInfo.AddBuffer(resLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
-	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
-	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
+	dsInfo.AddBuffer(&(resCF_->lightCellsBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
+	dsInfo.AddBuffer(&(resCF_->lightIndicesBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
 	for (size_t i = 0; i < PBR_TEXTURE_COUNT; ++i)
 	{
 		dsInfo.AddImage(nullptr);
@@ -162,8 +162,6 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 		descriptorSets_[i].resize(meshCount);
 		dsInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
 		dsInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 2);
-		dsInfo.UpdateBuffer(&(resCF_->lightCellsBuffers_[i]), 4);
-		dsInfo.UpdateBuffer(&(resCF_->lightIndicesBuffers_[i]), 5);
 		for (Model* model : models_)
 		{
 			dsInfo.UpdateBuffer(&(model->modelBuffers_[i]), 1);

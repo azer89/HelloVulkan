@@ -30,20 +30,20 @@ PipelineAABBGenerator::~PipelineAABBGenerator()
 
 void PipelineAABBGenerator::OnWindowResized(VulkanContext& ctx)
 {
-	resCF_->SetAABBDirty();
+	resCF_->aabbDirty_ = true;
 }
 
 void PipelineAABBGenerator::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
 	uint32_t frameIndex = ctx.GetFrameIndex();
-	if (!resCF_->IsAABBDirty(frameIndex))
+	if (!resCF_->aabbDirty_)
 	{
 		return;
 	}
 
 	Execute(ctx, commandBuffer, frameIndex);
 
-	resCF_->SetAABBClean(frameIndex);
+	resCF_->aabbDirty_ = false;
 }
 
 void PipelineAABBGenerator::Execute(VulkanContext& ctx, VkCommandBuffer commandBuffer, uint32_t frameIndex)
@@ -74,9 +74,9 @@ void PipelineAABBGenerator::Execute(VulkanContext& ctx, VkCommandBuffer commandB
 		.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
 		.srcQueueFamilyIndex = ctx.GetComputeFamily(),
 		.dstQueueFamilyIndex = ctx.GetGraphicsFamily(),
-		.buffer = resCF_->aabbBuffers_[frameIndex].buffer_,
+		.buffer = resCF_->aabbBuffer_.buffer_,
 		.offset = 0,
-		.size = resCF_->aabbBuffers_[frameIndex].size_ };
+		.size = resCF_->aabbBuffer_.size_ };
 	VulkanBarrier::CreateBufferBarrier(commandBuffer, &barrier, 1u);
 }
 
@@ -85,7 +85,7 @@ void PipelineAABBGenerator::CreateDescriptor(VulkanContext& ctx)
 	uint32_t frameCount = AppConfig::FrameCount;
 
 	VulkanDescriptorInfo dsInfo;
-	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT); // 0
+	dsInfo.AddBuffer(&(resCF_->aabbBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT); // 0
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT); // 1
 
 	// Pool and layout
@@ -94,7 +94,6 @@ void PipelineAABBGenerator::CreateDescriptor(VulkanContext& ctx)
 	// Sets
 	for (size_t i = 0; i < frameCount; ++i)
 	{
-		dsInfo.UpdateBuffer(&(resCF_->aabbBuffers_[i]), 0);
 		dsInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 1);
 
 		descriptor_.CreateSet(ctx, dsInfo, &descriptorSets_[i]);
