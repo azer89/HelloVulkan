@@ -3,15 +3,15 @@
 
 #include "glm/ext.hpp"
 
-BoundingBox::BoundingBox(const glm::vec3* points, size_t pointCount)
+BoundingBox::BoundingBox(std::span<glm::vec3> points)
 {
 	glm::vec3 vmin(std::numeric_limits<float>::max());
 	glm::vec3 vmax(std::numeric_limits<float>::lowest());
 
-	for (size_t i = 0; i != pointCount; i++)
+	for (glm::vec3& p : points)
 	{
-		vmin = glm::min(vmin, points[i]);
-		vmax = glm::max(vmax, points[i]);
+		vmin = glm::min(vmin, p);
+		vmax = glm::max(vmax, p);
 	}
 	min_ = glm::vec4(vmin, 1.0);
 	max_ = glm::vec4(vmax, 1.0);
@@ -34,7 +34,7 @@ void BoundingBox::Transform(const glm::mat4& t)
 		v = glm::vec3(t * glm::vec4(v, 1.0f));
 	}
 
-	*this = BoundingBox(corners, 8);
+	*this = BoundingBox(corners);
 }
 
 BoundingBox BoundingBox::GetTransformed(const glm::mat4& t) const

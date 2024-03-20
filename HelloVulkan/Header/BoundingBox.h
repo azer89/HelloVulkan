@@ -3,7 +3,7 @@
 
 #include "glm/glm.hpp"
 
-struct VertexData;
+#include <span>
 
 struct BoundingBox
 {
@@ -14,7 +14,7 @@ public:
 public:
 
 	BoundingBox() = default;
-	BoundingBox(const glm::vec3* points, size_t pointCount);
+	BoundingBox(std::span<glm::vec3> points);
 
 	[[nodiscard]] glm::vec3 GetSize() const { return glm::vec3(max_[0] - min_[0], max_[1] - min_[1], max_[2] - min_[2]); }
 	[[nodiscard]] glm::vec3 GetCenter() const { return 0.5f * glm::vec3(max_[0] + min_[0], max_[1] + min_[1], max_[2] + min_[2]); }
