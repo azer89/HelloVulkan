@@ -45,7 +45,6 @@ target_include_directories(HelloVulkan PRIVATE
     "${PROJECT_SOURCE_DIR}/External/assimp/include"
     "${PROJECT_SOURCE_DIR}/External/glfw/include"
     "${PROJECT_SOURCE_DIR}/External/glm"
-    "${PROJECT_SOURCE_DIR}/External/gli"
     "${PROJECT_SOURCE_DIR}/External/ImGui"
     "${PROJECT_SOURCE_DIR}/External/ImGui/backends"
     "${PROJECT_SOURCE_DIR}/External/volk"
