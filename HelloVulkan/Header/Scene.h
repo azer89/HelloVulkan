@@ -37,7 +37,7 @@ public:
 
 	void CreateIndirectBuffers(
 		VulkanContext& ctx,
-		std::vector<VulkanBuffer>& indirectBuffers);
+		VulkanBuffer& indirectBuffer);
 
 private:
 	void CreateBindlessResources(VulkanContext& ctx);
@@ -57,7 +57,7 @@ public:
 	VulkanBuffer indexBuffer_;
 
 	// For indirect draw
-	std::vector<VulkanBuffer> indirectBuffers_ = {};
+	VulkanBuffer indirectBuffer_;
 
 	// Length of modelUBO_ is instance count
 	std::vector<ModelUBO> modelSSBOs_ = {};

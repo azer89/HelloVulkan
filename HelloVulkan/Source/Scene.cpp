@@ -30,11 +30,8 @@ Scene::~Scene()
 	vertexBuffer_.Destroy();
 	indexBuffer_.Destroy();
 	transformedBoundingBoxBuffer_.Destroy();
+	indirectBuffer_.Destroy();
 	for (auto& buffer : modelSSBOBuffers_)
-	{
-		buffer.Destroy();
-	}
-	for (auto& buffer : indirectBuffers_)
 	{
 		buffer.Destroy();
 	}
@@ -121,7 +118,7 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 	BuildBoundingBoxes(ctx);
 
 	// Indirect buffers
-	CreateIndirectBuffers(ctx, indirectBuffers_);
+	CreateIndirectBuffers(ctx, indirectBuffer_);
 }
 
 void Scene::BuildInstanceDataArray()
@@ -200,31 +197,27 @@ void Scene::BuildBoundingBoxes(VulkanContext& ctx)
 
 void Scene::CreateIndirectBuffers(
 	VulkanContext& ctx,
-	std::vector<VulkanBuffer>& indirectBuffers)
+	VulkanBuffer& indirectBuffer)
 {
 	const uint32_t instanceCount = static_cast<uint32_t>(meshDataArray_.size());
 	const uint32_t indirectDataSize = instanceCount * sizeof(VkDrawIndirectCommand);
 	constexpr size_t numFrames = AppConfig::FrameCount;
 	const std::vector<uint32_t> meshVertexCountArray = GetInstanceVertexCountArray();
 
-	indirectBuffers.resize(numFrames);
-	for (size_t i = 0; i < numFrames; ++i)
-	{
-		indirectBuffers[i].CreateIndirectBuffer(ctx, indirectDataSize); // Create
-		VkDrawIndirectCommand* data = indirectBuffers[i].MapIndirectBuffer(); // Map
+	indirectBuffer.CreateIndirectBuffer(ctx, indirectDataSize); // Create
+	VkDrawIndirectCommand* data = indirectBuffer.MapIndirectBuffer(); // Map
 
-		for (uint32_t j = 0; j < instanceCount; ++j)
+	for (uint32_t j = 0; j < instanceCount; ++j)
+	{
+		data[j] =
 		{
-			data[j] =
-			{
-				.vertexCount = static_cast<uint32_t>(meshVertexCountArray[j]),
-				.instanceCount = 1u,
-				.firstVertex = 0,
-				.firstInstance = j
-			};
-		}
-		indirectBuffers[i].UnmapIndirectBuffer(); // Unmap
+			.vertexCount = static_cast<uint32_t>(meshVertexCountArray[j]),
+			.instanceCount = 1u,
+			.firstVertex = 0,
+			.firstInstance = j
+		};
 	}
+	indirectBuffer.UnmapIndirectBuffer(); // Unmap
 }
 
 void Scene::UpdateModelMatrix(VulkanContext& ctx,

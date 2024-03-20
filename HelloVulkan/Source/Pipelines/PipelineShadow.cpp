@@ -15,8 +15,8 @@ PipelineShadow::PipelineShadow(
 
 		.vertexBufferBind_ = false,
 
-		// Render using shadow map dimension
 		.customViewportSize_ = true,
+		// Render using shadow map dimension
 		.viewportWidth_ = static_cast<float>(resShadow->shadowMap_.width_),
 		.viewportHeight_ = static_cast<float>(resShadow->shadowMap_.height_)
 	}),
@@ -36,7 +36,7 @@ PipelineShadow::PipelineShadow(
 		},
 		resShadow_->shadowMap_.width_,
 		resShadow_->shadowMap_.height_);
-	scene_->CreateIndirectBuffers(ctx, indirectBuffers_);
+	scene_->CreateIndirectBuffers(ctx, indirectBuffer_);
 	CreateDescriptor(ctx);
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(VIM), VK_SHADER_STAGE_VERTEX_BIT);
 	CreateGraphicsPipeline(
@@ -57,10 +57,7 @@ PipelineShadow::~PipelineShadow()
 	{
 		buffer.Destroy();
 	}
-	for (auto& buffer : indirectBuffers_)
-	{
-		buffer.Destroy();
-	}
+	indirectBuffer_.Destroy();
 }
 
 void PipelineShadow::UpdateShadow(VulkanContext& ctx, ResourcesShadow* resShadow, glm::vec4 lightPosition)
@@ -115,7 +112,7 @@ void PipelineShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comma
 
 	vkCmdDrawIndirect(
 		commandBuffer,
-		indirectBuffers_[frameIndex].buffer_,
+		indirectBuffer_.buffer_,
 		0, // offset
 		scene_->GetInstanceCount(),
 		sizeof(VkDrawIndirectCommand));
@@ -140,7 +137,6 @@ void PipelineShadow::CreateDescriptor(VulkanContext& ctx)
 	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 
 	// Sets
-	descriptorSets_.resize(frameCount); // TODO use std::array
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
 		dsInfo.UpdateBuffer(&(shadowMapUBOBuffers_[i]), 0);

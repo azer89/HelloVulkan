@@ -58,9 +58,9 @@ void PipelineFrustumCulling::Execute(VulkanContext& ctx, VkCommandBuffer command
 		.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
 		.srcQueueFamilyIndex = ctx.GetComputeFamily(),
 		.dstQueueFamilyIndex = ctx.GetGraphicsFamily(),
-		.buffer = scene_->indirectBuffers_[frameIndex].buffer_,
+		.buffer = scene_->indirectBuffer_.buffer_,
 		.offset = 0,
-		.size = scene_->indirectBuffers_[frameIndex].size_,
+		.size = scene_->indirectBuffer_.size_,
 	};
 	VulkanBarrier::CreateBufferBarrier(commandBuffer, &bufferBarrier, 1u);
 }
@@ -78,7 +78,7 @@ void PipelineFrustumCulling::CreateDescriptor(VulkanContext& ctx)
 	for (size_t i = 0; i < frameCount; ++i)
 	{
 		dsInfo.UpdateBuffer(&(frustumBuffers_[i]), 0);
-		dsInfo.UpdateBuffer(&(scene_->indirectBuffers_[i]), 2);
+		dsInfo.UpdateBuffer(&(scene_->indirectBuffer_), 2);
 		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}
 }
