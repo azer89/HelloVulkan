@@ -50,7 +50,7 @@ private:
 	std::unique_ptr<ResourcesLight> resLight_;
 
 	std::unique_ptr<Scene> scene_;
-	std::unique_ptr<ResourcesLight> resourcesLight_; // TODO Set as unique_ptr
+	std::unique_ptr<ResourcesLight> resourcesLight_;
 
 	bool updateFrustum_;
 };

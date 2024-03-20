@@ -348,7 +348,7 @@ void Model::ProcessMesh(
 	uint32_t vOffset = static_cast<uint32_t>(vertices.size());
 	uint32_t iOffset = static_cast<uint32_t>(indices.size());
 
-	// TODO This if-else statement is kinda dirty
+	// TODO This if-else statement is kinda hacky
 	if (bindlessTexture_)
 	{
 		globalVertices.insert(std::end(globalVertices), std::begin(vertices), std::end(vertices));
