@@ -59,6 +59,12 @@ https://github.com/azer89/HelloVulkan/assets/790432/13a4426f-deec-40f5-816a-5594
 
 </br>
 
+### Clustered Forward Shading
+
+Frustum culling is done entirely on compute shader by modifying draw commands inside an indirect buffer. The CPU only issues a single indirect draw call and it does not know how many objects are drawn. 
+
+</br>
+
 ### Cascade Shadow Maps
 
 <img width="850" alt="cascade_shadow_mapping" src="https://github.com/azer89/HelloVulkan/assets/790432/1634a491-ea8f-49f0-8214-766a038bedd1">
