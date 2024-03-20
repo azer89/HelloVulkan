@@ -7,6 +7,7 @@
 #include "VIM.h"
 
 #include <vector>
+#include <span>
 
 // Note that this is not for GPU instancing, but for duplications of models
 struct InstanceData
@@ -22,7 +23,7 @@ SSBO buffers for vertices, indices, and mesh data.
 class Scene
 {
 public:
-	Scene(VulkanContext& ctx, const std::vector<ModelCreateInfo>& modelDataArray, bool supportDeviceAddress = false);
+	Scene(VulkanContext& ctx, std::span<ModelCreateInfo> modelDataArray, bool supportDeviceAddress = false);
 	~Scene();
 
 	uint32_t GetInstanceCount() const { return static_cast<uint32_t>(meshDataArray_.size()); }
