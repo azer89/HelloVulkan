@@ -110,7 +110,6 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 		modelSSBOBuffers_[i].UploadBufferData(ctx, modelSSBOs_.data(), modelSSBOBufferSize);
 	}
 
-	//BuildModelToMeshDataMapping();
 	BuildInstanceDataArray();
 
 	// Bounding boxes
@@ -202,7 +201,7 @@ void Scene::CreateIndirectBuffer(
 	const uint32_t indirectDataSize = instanceCount * sizeof(VkDrawIndirectCommand);
 	const std::vector<uint32_t> meshVertexCountArray = GetInstanceVertexCountArray();
 
-	// Old code with map-able buffer
+	// Old code with map-able buffer, keeping it as reference
 	/*indirectBuffer.CreateMappedIndirectBuffer(ctx, indirectDataSize); // Create
 	VkDrawIndirectCommand* data = indirectBuffer.MapIndirectBuffer(); // Map
 
