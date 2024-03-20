@@ -5,11 +5,10 @@
 #include "AccelStructure.h"
 #include "VulkanBuffer.h"
 #include "VulkanImage.h"
+#include "Scene.h"
 #include "Configs.h"
 
 #include <array>
-
-class Scene;
 
 class PipelineSimpleRaytracing final : public PipelineBase
 {

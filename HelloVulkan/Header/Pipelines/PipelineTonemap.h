@@ -2,11 +2,10 @@
 #define PIPELINE_TONEMAP
 
 #include "PipelineBase.h"
+#include "VulkanImage.h"
 #include "Configs.h"
 
 #include <array>
-
-class VulkanImage;
 
 /*
 This applies tonemap to a color image and transfers it to a swapchain image

@@ -2,10 +2,9 @@
 #define PIPELINE_EQUIRECT_2_CUBE
 
 #include "PipelineBase.h"
+#include "VulkanImage.h"
 
 #include <string>
-
-class VulkanImage;
 
 /*
 Offscreen pipeline to generate a cubemap from an HDR image

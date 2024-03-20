@@ -2,9 +2,8 @@
 #define PIPELINE_IMGUI
 
 #include "PipelineBase.h"
-
-class FrameCounter;
-struct PushConstPBR;
+#include "FrameCounter.h"
+#include "PushConstants.h"
 
 class PipelineImGui final : public PipelineBase
 {

@@ -24,7 +24,7 @@ void AppPBRBindless::Init()
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
 	// Scene
-	std::vector<ModelData> dataArray = { 
+	std::vector<ModelCreateInfo> dataArray = { 
 		{ AppConfig::ModelFolder + "Sponza/Sponza.gltf", 1},
 		{ AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf", 1},
 	};

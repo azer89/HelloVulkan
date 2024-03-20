@@ -42,14 +42,14 @@ void Model::LoadSlotBased(VulkanContext& ctx, const std::string& path)
 
 void Model::LoadBindless(
 	VulkanContext& ctx, 
-	const ModelData& modelData,
+	const ModelCreateInfo& modelData,
 	std::vector<VertexData>& globalVertices,
 	std::vector<uint32_t>& globalIndices,
 	uint32_t& globalVertexOffset,
 	uint32_t& globalIndexOffset)
 {
 	bindlessTexture_ = true;
-	modelData_ = modelData;
+	modelInfo_ = modelData;
 
 	// In case a texture type cannot be found, replace it with a black 1x1 texture
 	unsigned char black[4] = { 0, 0, 0, 255 };

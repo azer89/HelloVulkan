@@ -2,12 +2,11 @@
 #define PIPELINE_SKYBOX
 
 #include "PipelineBase.h"
+#include "ResourcesShared.h"
+#include "VulkanImage.h"
 #include "Configs.h"
 
 #include <array>
-
-struct ResourcesShared;
-class VulkanImage;
 
 class PipelineSkybox final : public PipelineBase
 {

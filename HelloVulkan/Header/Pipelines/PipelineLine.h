@@ -4,13 +4,12 @@
 #include "PipelineBase.h"
 #include "VulkanBuffer.h"
 #include "BoundingBox.h"
+#include "Scene.h"
+#include "ResourcesShared.h"
 #include "Configs.h"
 
 #include <array>
 #include <vector>
-
-class Scene;
-struct ResourcesShared;
 
 struct PointColor
 {

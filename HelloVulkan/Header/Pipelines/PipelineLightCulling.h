@@ -3,12 +3,11 @@
 
 #include "PipelineBase.h"
 #include "VulkanContext.h"
+#include "ResourcesClusterForward.h"
+#include "ResourcesLight.h"
 #include "Configs.h"
 
 #include <array>
-
-struct ResourcesClusterForward;
-struct ResourcesLight;
 
 /*
 Clustered Forward

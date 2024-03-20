@@ -2,14 +2,13 @@
 #define PIPELINE_PBR_SLOT_BASED
 
 #include "PipelineBase.h"
+#include "ResourcesShared.h"
+#include "ResourcesLight.h"
+#include "ResourcesIBL.h"
+#include "Model.h"
 #include "PushConstants.h"
 
 #include <vector>
-
-struct ResourcesShared;
-struct ResourcesLight;
-struct ResourcesIBL;
-class Model;
 
 /*
 Render meshes using PBR materials, naive forward renderer

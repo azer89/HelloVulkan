@@ -3,10 +3,9 @@
 
 #include "VulkanContext.h"
 #include "PipelineBase.h"
+#include "ResourcesLight.h"
+#include "ResourcesShared.h"
 #include "Configs.h"
-
-struct ResourcesLight;
-struct ResourcesShared;
 
 /*
 Render a light source for debugging purpose

@@ -26,7 +26,7 @@ void AppPBRShadow::Init()
 	resIBL_ = std::make_unique<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
 	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
-	std::vector<ModelData> dataArray = {
+	std::vector<ModelCreateInfo> dataArray = {
 		{AppConfig::ModelFolder + "Sponza/Sponza.gltf", 1},
 		{AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf", 1},
 		{AppConfig::ModelFolder + "Hexapod/Hexapod.gltf", 1}
