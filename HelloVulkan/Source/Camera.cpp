@@ -40,7 +40,7 @@ void Camera::SetScreenSize(float width, float height)
 
 void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime_)
 {
-	float velocity = movementSpeed_ * deltaTime_;
+	const float velocity = movementSpeed_ * deltaTime_;
 	if (direction == CameraMovement::Forward)
 	{
 		position_ += front_ * velocity;
@@ -57,9 +57,7 @@ void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime_)
 	{
 		position_ += right_ * velocity;
 	}
-
 	
-
 	// Update orthogonal axes and matrices
 	UpdateInternal();
 }
@@ -73,9 +71,7 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset)
 
 	yaw_ += xoffset;
 	pitch_ += yoffset;
-
 	
-
 	ConstrainPitch();
 
 	// Update orthogonal axes and matrices
@@ -86,11 +82,11 @@ void Camera::SetPositionAndTarget(glm::vec3 cameraPosition, glm::vec3 cameraTarg
 {
 	position_ = cameraPosition;
 
-	glm::vec3 direction = glm::normalize(cameraTarget - position_);
+	const glm::vec3 direction = glm::normalize(cameraTarget - position_);
 	pitch_ = asin(direction.y);
 	yaw_ = atan2(direction.z, direction.x);
 
-	// TODO Inefficient because keep converting back-and-forth betwen degrees and radians
+	// TODO Inefficient because keep converting back-and-forth between degrees and radians
 	pitch_ = glm::degrees(pitch_);
 	yaw_ = glm::degrees(yaw_);
 
@@ -179,9 +175,9 @@ RaytracingCameraUBO Camera::GetRaytracingCameraUBO() const
 
 ClusterForwardUBO Camera::GetClusterForwardUBO() const
 {
-	float zFloat = static_cast<float>(ClusterForwardConfig::SliceCountZ);
-	float log2FarDivNear = glm::log2(CameraConfig::Far / CameraConfig::Near);
-	float log2Near = glm::log2(CameraConfig::Near);
+	const float zFloat = static_cast<float>(ClusterForwardConfig::SliceCountZ);
+	const float log2FarDivNear = glm::log2(CameraConfig::Far / CameraConfig::Near);
+	const float log2Near = glm::log2(CameraConfig::Near);
 
 	return
 	{
@@ -200,7 +196,7 @@ ClusterForwardUBO Camera::GetClusterForwardUBO() const
 
 FrustumUBO Camera::GetFrustumUBO() const
 {
-	glm::mat4 projView = projectionMatrix_ * viewMatrix_;
+	const glm::mat4 projView = projectionMatrix_ * viewMatrix_;
 	glm::mat4 t = glm::transpose(projView);
 
 	FrustumUBO ubo =
@@ -216,7 +212,7 @@ FrustumUBO Camera::GetFrustumUBO() const
 		}
 	};
 
-	glm::mat4 invProjView = glm::inverse(projView);
+	const glm::mat4 invProjView = glm::inverse(projView);
 
 	static const glm::vec4 corners[8] =
 	{
