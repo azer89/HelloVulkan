@@ -9,22 +9,22 @@ PipelineShadow::PipelineShadow(
 	Scene* scene,
 	ResourcesShadow* resShadow) :
 	PipelineBase(ctx,
-		{
-			// Depth only and offscreen
-			.type_ = PipelineType::GraphicsOffScreen,
+	{
+		// Depth only and offscreen
+		.type_ = PipelineType::GraphicsOffScreen,
 
-			.vertexBufferBind_ = false,
+		.vertexBufferBind_ = false,
 
-			// Render using shadow map dimension
-			.customViewportSize_ = true,
-			.viewportWidth_ = static_cast<float>(resShadow->shadowMap_.width_),
-			.viewportHeight_ = static_cast<float>(resShadow->shadowMap_.height_)
-		}),
+		// Render using shadow map dimension
+		.customViewportSize_ = true,
+		.viewportWidth_ = static_cast<float>(resShadow->shadowMap_.width_),
+		.viewportHeight_ = static_cast<float>(resShadow->shadowMap_.height_)
+	}),
 	scene_(scene),
 	resShadow_(resShadow),
 	vim_(scene->GetVIM())
 {
-	CreateMultipleUniformBuffers(ctx, shadowMapUBOBuffers_, sizeof(ShadowMapUBO), AppConfig::FrameCount);
+	VulkanBuffer::CreateMultipleUniformBuffers(ctx, shadowMapUBOBuffers_, sizeof(ShadowMapUBO), AppConfig::FrameCount);
 
 	renderPass_.CreateDepthOnlyRenderPass(ctx, 
 		RenderPassBit::DepthClear | RenderPassBit::DepthShaderReadOnly);

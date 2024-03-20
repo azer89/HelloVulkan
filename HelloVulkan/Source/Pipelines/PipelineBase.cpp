@@ -34,24 +34,6 @@ PipelineBase::~PipelineBase()
 	vkDestroyPipeline(device_, pipeline_, nullptr);
 }
 
-void PipelineBase::CreateMultipleUniformBuffers(
-	VulkanContext& ctx,
-	std::vector<VulkanBuffer>& buffers,
-	uint32_t dataSize,
-	size_t bufferCount)
-{
-	buffers.resize(bufferCount);
-	for (size_t i = 0; i < bufferCount; i++)
-	{
-		buffers[i].CreateBuffer(
-			ctx,
-			dataSize,
-			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-			VMA_MEMORY_USAGE_CPU_TO_GPU
-		);
-	}
-}
-
 void PipelineBase::BindPipeline(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_);

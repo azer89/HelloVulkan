@@ -99,5 +99,12 @@ public:
 			.range = size_
 		};
 	}
+
+	// Helper function
+	static void CreateMultipleUniformBuffers(
+		VulkanContext& ctx,
+		std::vector<VulkanBuffer>& buffers,
+		uint32_t dataSize,
+		size_t bufferCount);
 };
 #endif

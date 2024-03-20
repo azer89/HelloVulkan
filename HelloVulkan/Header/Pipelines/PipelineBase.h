@@ -63,13 +63,6 @@ protected:
 
 	void BindPipeline(VulkanContext& ctx, VkCommandBuffer commandBuffer);
 
-	// UBO
-	void CreateMultipleUniformBuffers(
-		VulkanContext& ctx,
-		std::vector<VulkanBuffer>& buffers,
-		uint32_t dataSize,
-		size_t bufferCount);
-
 	void CreatePipelineLayout(VulkanContext& ctx,
 		VkDescriptorSetLayout dsLayout, 
 		VkPipelineLayout* pipelineLayout,

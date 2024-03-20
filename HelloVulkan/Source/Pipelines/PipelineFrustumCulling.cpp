@@ -9,7 +9,7 @@ PipelineFrustumCulling::PipelineFrustumCulling(VulkanContext& ctx, Scene* scene)
 	}),
 	scene_(scene)
 {
-	CreateMultipleUniformBuffers(ctx, frustumBuffers_, sizeof(FrustumUBO), AppConfig::FrameCount);
+	VulkanBuffer::CreateMultipleUniformBuffers(ctx, frustumBuffers_, sizeof(FrustumUBO), AppConfig::FrameCount);
 	CreateDescriptor(ctx);
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
 	std::string shaderFile = AppConfig::ShaderFolder + "FrustumCulling.comp";

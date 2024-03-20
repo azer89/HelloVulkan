@@ -26,7 +26,7 @@ PipelineLine::PipelineLine(
 	scene_(scene),
 	shouldRender_(false)
 {
-	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
+	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
 	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
 	framebuffer_.CreateResizeable(
 		ctx,
@@ -37,7 +37,6 @@ PipelineLine::PipelineLine(
 		},
 		IsOffscreen()
 	);
-
 	// Initialize
 	//ProcessScene();
 	InitFrustumLines();
@@ -46,7 +45,6 @@ PipelineLine::PipelineLine(
 	{
 		UploadLinesToBuffer(ctx, i);
 	}*/
-
 	CreateDescriptor(ctx);
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
 	CreateGraphicsPipeline(ctx,
