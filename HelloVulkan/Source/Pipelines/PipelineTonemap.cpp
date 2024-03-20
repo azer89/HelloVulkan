@@ -13,13 +13,9 @@ PipelineTonemap::PipelineTonemap(VulkanContext& ctx,
 	singleSampledColorImage_(singleSampledColorImage)
 {
 	renderPass_.CreateOnScreenColorOnlyRenderPass(ctx);
-
 	framebuffer_.CreateResizeable(ctx, renderPass_.GetHandle(), {}, IsOffscreen());
-
 	CreateDescriptor(ctx);
-
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
-
 	CreateGraphicsPipeline(ctx,
 		renderPass_.GetHandle(),
 		pipelineLayout_,

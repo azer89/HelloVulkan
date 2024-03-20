@@ -24,9 +24,8 @@ void AppPBRShadow::Init()
 
 	// Image-Based Lighting
 	resIBL_ = std::make_unique<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
-	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
-	std::vector<ModelData> dataArray = {
+	std::vector<ModelCreateInfo> dataArray = {
 		{AppConfig::ModelFolder + "Sponza/Sponza.gltf", 1},
 		{AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf", 1},
 		{AppConfig::ModelFolder + "Hexapod/Hexapod.gltf", 1}
@@ -48,9 +47,7 @@ void AppPBRShadow::Init()
 	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 2, 0);
 
 	// Pipelines
-	// This is responsible to clear swapchain image
-	clearPtr_ = std::make_unique<PipelineClear>(vulkanContext_);
-	// This draws a cube
+	clearPtr_ = std::make_unique<PipelineClear>(vulkanContext_); // This is responsible to clear swapchain image
 	skyboxPtr_ = std::make_unique<PipelineSkybox>(
 		vulkanContext_,
 		&(resIBL_->diffuseCubemap_),
@@ -70,7 +67,6 @@ void AppPBRShadow::Init()
 	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(vulkanContext_, resShared_.get());
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
 	tonemapPtr_ = std::make_unique<PipelineTonemap>(vulkanContext_, &(resShared_->singleSampledColorImage_));
-	// ImGui here
 	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
 	finishPtr_ = std::make_unique<PipelineFinish>(vulkanContext_);
@@ -179,7 +175,7 @@ void AppPBRShadow::UpdateUI()
 	ImGui::Text("Vertices: %i, Indices: %i", scene_->vertices_.size(), scene_->indices_.size());
 	ImGui::Checkbox("Render Lights", &staticLightRender);
 	ImGui::SeparatorText("Shading");
-	imguiPtr_->ImGuiShowPBRConfig(&staticPBRPushConstants, cubemapMipmapCount_);
+	imguiPtr_->ImGuiShowPBRConfig(&staticPBRPushConstants, resIBL_->cubemapMipmapCount_);
 
 	ImGui::SeparatorText("Shadow mapping");
 	ImGui::SliderFloat("Min Bias", &staticMinBias, 0.f, 0.01f);

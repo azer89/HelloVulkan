@@ -30,15 +30,10 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 	resCF_(resCF),
 	iblResources_(iblResources)
 {
-	// Per frame UBO
-	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
+	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
+	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cfUBOBuffers_, sizeof(ClusterForwardUBO), AppConfig::FrameCount);
 
-	// Cluster forward UBO
-	CreateMultipleUniformBuffers(ctx, cfUBOBuffers_, sizeof(ClusterForwardUBO), AppConfig::FrameCount);
-
-	// Note that this pipeline is offscreen rendering
 	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
-
 	framebuffer_.CreateResizeable(
 		ctx,
 		renderPass_.GetHandle(),
@@ -47,19 +42,8 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 			&(resShared->depthImage_)
 		},
 		IsOffscreen());
-
 	CreateDescriptor(ctx);
-
-	// Push constants
-	std::vector<VkPushConstantRange> ranges =
-	{ {
-		.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
-		.offset = 0u,
-		.size = sizeof(PushConstPBR),
-	} };
-
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, ranges);
-
+	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(PushConstPBR), VK_SHADER_STAGE_FRAGMENT_BIT);
 	CreateGraphicsPipeline(
 		ctx,
 		renderPass_.GetHandle(),
@@ -140,8 +124,8 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 	dsInfo.AddBuffer(resLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
-	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
-	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
+	dsInfo.AddBuffer(&(resCF_->lightCellsBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
+	dsInfo.AddBuffer(&(resCF_->lightIndicesBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
 	for (size_t i = 0; i < PBR_TEXTURE_COUNT; ++i)
 	{
 		dsInfo.AddImage(nullptr);
@@ -162,8 +146,6 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 		descriptorSets_[i].resize(meshCount);
 		dsInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
 		dsInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 2);
-		dsInfo.UpdateBuffer(&(resCF_->lightCellsBuffers_[i]), 4);
-		dsInfo.UpdateBuffer(&(resCF_->lightIndicesBuffers_[i]), 5);
 		for (Model* model : models_)
 		{
 			dsInfo.UpdateBuffer(&(model->modelBuffers_[i]), 1);

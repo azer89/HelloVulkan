@@ -36,7 +36,7 @@ public:
 		VulkanContext& ctx, 
 		VkCommandBuffer commandBuffer) = 0;
 
-	void SetCameraUBO(VulkanContext& ctx, CameraUBO ubo)
+	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo)
 	{
 		uint32_t frameIndex = ctx.GetFrameIndex();
 		cameraUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(CameraUBO));
@@ -63,17 +63,11 @@ protected:
 
 	void BindPipeline(VulkanContext& ctx, VkCommandBuffer commandBuffer);
 
-	// UBO
-	void CreateMultipleUniformBuffers(
-		VulkanContext& ctx,
-		std::vector<VulkanBuffer>& buffers,
-		uint32_t dataSize,
-		size_t bufferCount);
-
 	void CreatePipelineLayout(VulkanContext& ctx,
-		VkDescriptorSetLayout dsLayout, 
+		VkDescriptorSetLayout dsLayout,
 		VkPipelineLayout* pipelineLayout,
-		const std::vector<VkPushConstantRange>& pushConstantRanges = {});
+		uint32_t pushConstantSize = 0,
+		VkShaderStageFlags pushConstantShaderStage = 0);
 
 	void CreateGraphicsPipeline(
 		VulkanContext& ctx,

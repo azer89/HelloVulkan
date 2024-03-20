@@ -13,7 +13,7 @@ PipelineSimpleRaytracing::PipelineSimpleRaytracing(VulkanContext& ctx, Scene* sc
 		}),
 	scene_(scene)
 {
-	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(RaytracingCameraUBO), AppConfig::FrameCount);
+	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(RaytracingCameraUBO), AppConfig::FrameCount);
 
 	CreateBLAS(ctx);
 	CreateTLAS(ctx);

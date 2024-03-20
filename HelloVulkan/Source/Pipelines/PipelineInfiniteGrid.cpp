@@ -17,7 +17,7 @@ PipelineInfiniteGrid::PipelineInfiniteGrid(
 	yPosition_(yPosition),
 	shouldRender_(true)
 {
-	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
+	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
 	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
 	framebuffer_.CreateResizeable(
 		ctx,
@@ -29,13 +29,7 @@ PipelineInfiniteGrid::PipelineInfiniteGrid(
 		IsOffscreen()
 	);
 	CreateDescriptor(ctx);
-	std::vector<VkPushConstantRange> ranges =
-	{ {
-		.stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
-		.offset = 0u,
-		.size = sizeof(float),
-	} };
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, ranges);
+	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(float), VK_SHADER_STAGE_VERTEX_BIT);
 	CreateGraphicsPipeline(ctx,
 		renderPass_.GetHandle(),
 		pipelineLayout_,

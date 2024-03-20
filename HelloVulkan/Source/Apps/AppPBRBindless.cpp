@@ -5,8 +5,7 @@
 #include "glm/ext.hpp"
 #include "imgui_impl_vulkan.h"
 
-AppPBRBindless::AppPBRBindless() :
-	modelRotation_(0.f)
+AppPBRBindless::AppPBRBindless()
 {
 }
 
@@ -21,10 +20,9 @@ void AppPBRBindless::Init()
 
 	// Image-Based Lighting
 	resIBL_ = std::make_unique<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
-	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
 	// Scene
-	std::vector<ModelData> dataArray = { 
+	std::vector<ModelCreateInfo> dataArray = { 
 		{ AppConfig::ModelFolder + "Sponza/Sponza.gltf", 1},
 		{ AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf", 1},
 	};
@@ -38,8 +36,7 @@ void AppPBRBindless::Init()
 	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 1, 0);
 
 	// Pipelines
-	// This is responsible to clear swapchain image
-	clearPtr_ = std::make_unique<PipelineClear>(vulkanContext_);
+	clearPtr_ = std::make_unique<PipelineClear>(vulkanContext_); // This is responsible to clear swapchain image
 	// This draws a cube
 	skyboxPtr_ = std::make_unique<PipelineSkybox>(
 		vulkanContext_,
@@ -61,7 +58,6 @@ void AppPBRBindless::Init()
 	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(vulkanContext_, resShared_.get());
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
 	tonemapPtr_ = std::make_unique<PipelineTonemap>(vulkanContext_, &(resShared_->singleSampledColorImage_));
-	// ImGui here
 	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
 	finishPtr_ = std::make_unique<PipelineFinish>(vulkanContext_);
@@ -142,7 +138,7 @@ void AppPBRBindless::UpdateUI()
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 	ImGui::Text("Vertices: %i, Indices: %i", scene_->vertices_.size(), scene_->indices_.size());
 	ImGui::Checkbox("Render Lights", &lightRender);
-	imguiPtr_->ImGuiShowPBRConfig(&pbrPC, cubemapMipmapCount_);
+	imguiPtr_->ImGuiShowPBRConfig(&pbrPC, resIBL_->cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
 	lightPtr_->ShouldRender(lightRender);

@@ -14,7 +14,7 @@ void AppSimpleRaytracing::Init()
 	InitSharedResources();
 
 	// Scene
-	std::vector<ModelData> dataArray = {
+	std::vector<ModelCreateInfo> dataArray = {
 		{ AppConfig::ModelFolder + "Dragon/Dragon.obj", 1}
 	};
 	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray);

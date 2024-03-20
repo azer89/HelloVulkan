@@ -4,12 +4,12 @@
 
 #include <iostream>
 
-Scene::Scene(VulkanContext& ctx, const std::vector<ModelData>& modelDataArray, bool supportDeviceAddress) :
+Scene::Scene(VulkanContext& ctx, std::span<ModelCreateInfo> modelDataArray, bool supportDeviceAddress) :
 	supportDeviceAddress_(supportDeviceAddress)
 {
 	uint32_t vertexOffset = 0u;
 	uint32_t indexOffset = 0u;
-	for (const ModelData& mData : modelDataArray)
+	for (const ModelCreateInfo& mData : modelDataArray)
 	{
 		Model m;
 		m.LoadBindless(
@@ -66,7 +66,7 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 	uint32_t textureCounter = 0u;
 	for (Model& model : models_) 
 	{
-		const uint32_t instanceCount = model.modelData_.instanceCount; 
+		const uint32_t instanceCount = model.modelInfo_.instanceCount; 
 		for (uint32_t i = 0; i < instanceCount; ++i)
 		{
 			for (Mesh& mesh : model.meshes_)
@@ -101,7 +101,7 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 		indices_.data(),
 		bufferUsage);
 
-	// ModelUBO which is actually an SSBO
+	// SSBO of ModelUBO
 	modelSSBOs_ = std::vector<ModelUBO>(matrixCounter, { .model = glm::mat4(1.0f) });
 	const VkDeviceSize modelSSBOBufferSize = sizeof(ModelUBO) * modelSSBOs_.size();
 	constexpr uint32_t frameCount = AppConfig::FrameCount;
@@ -131,7 +131,7 @@ void Scene::BuildInstanceDataArray()
 	instanceDataArray_.resize(models_.size());
 	for (size_t i = 0; i < models_.size(); ++i)
 	{
-		const uint32_t instanceCount = models_[i].modelData_.instanceCount;
+		const uint32_t instanceCount = models_[i].modelInfo_.instanceCount;
 		instanceDataArray_[i].resize(instanceCount);
 		for (uint32_t j = 0; j < instanceCount; ++j)
 		{
@@ -150,21 +150,21 @@ void Scene::BuildBoundingBoxes(VulkanContext& ctx)
 	// Create bounding boxes
 	originalBoundingBoxes_.resize(meshDataArray_.size());
 	transformedBoundingBoxes_.resize(meshDataArray_.size());
-	size_t boxIndex = 0; // bounding box index
+	uint32_t boxIndex = 0; // bounding box index
 	for (Model& model : models_)
 	{
 		glm::vec3 vMin(std::numeric_limits<float>::max());
 		glm::vec3 vMax(std::numeric_limits<float>::lowest());
 
-		size_t meshCount = model.GetMeshCount();
-		size_t instanceCount = model.modelData_.instanceCount;
+		const uint32_t meshCount = model.GetMeshCount();
+		const uint32_t instanceCount = model.modelInfo_.instanceCount;
 
 		// Create original bounding boxes with temporary array
 		std::vector<BoundingBox> tempOriArray(meshCount);
-		for (int i = 0; i < meshCount; ++i) // Per mesh
+		for (uint32_t i = 0; i < meshCount; ++i) // Per mesh
 		{
-			uint32_t vertexStart = model.meshes_[i].GetVertexOffset();
-			uint32_t vertexEnd = vertexStart + model.meshes_[i].GetVertexCount();
+			const uint32_t vertexStart = model.meshes_[i].GetVertexOffset();
+			const uint32_t vertexEnd = vertexStart + model.meshes_[i].GetVertexCount();
 			for (uint32_t j = vertexStart; j < vertexEnd; ++j)
 			{
 				const glm::vec3& v = vertices_[j].position;
@@ -176,9 +176,9 @@ void Scene::BuildBoundingBoxes(VulkanContext& ctx)
 		}
 
 		// Copy temporary array
-		for (size_t i = 0; i < instanceCount; ++i)
+		for (uint32_t i = 0; i < instanceCount; ++i)
 		{
-			for (size_t j = 0; j < meshCount; ++j)
+			for (uint32_t j = 0; j < meshCount; ++j)
 			{
 				originalBoundingBoxes_[boxIndex] = tempOriArray[j];
 				const MeshData& mData = meshDataArray_[boxIndex];
@@ -190,7 +190,7 @@ void Scene::BuildBoundingBoxes(VulkanContext& ctx)
 	}
 
 	// Buffer
-	VkDeviceSize bufferSize = transformedBoundingBoxes_.size() * sizeof(BoundingBox);
+	const VkDeviceSize bufferSize = transformedBoundingBoxes_.size() * sizeof(BoundingBox);
 	transformedBoundingBoxBuffer_.CreateBuffer(ctx, 
 		bufferSize, 
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
@@ -202,7 +202,7 @@ void Scene::CreateIndirectBuffers(
 	VulkanContext& ctx,
 	std::vector<VulkanBuffer>& indirectBuffers)
 {
-	const size_t instanceCount = meshDataArray_.size();
+	const uint32_t instanceCount = static_cast<uint32_t>(meshDataArray_.size());
 	const uint32_t indirectDataSize = instanceCount * sizeof(VkDrawIndirectCommand);
 	constexpr size_t numFrames = AppConfig::FrameCount;
 	const std::vector<uint32_t> meshVertexCountArray = GetInstanceVertexCountArray();
@@ -238,14 +238,14 @@ void Scene::UpdateModelMatrix(VulkanContext& ctx,
 		return;
 	}
 
-	uint32_t instanceCount = models_[modelIndex].modelData_.instanceCount;
+	const uint32_t instanceCount = models_[modelIndex].modelInfo_.instanceCount;
 	if (instanceIndex < 0 || instanceIndex >= instanceCount)
 	{
 		std::cerr << "Cannot update ModelUBO because of invalid instanceIndex " << instanceIndex << "\n";
 		return;
 	}
 
-	int matrixIndex = instanceDataArray_[modelIndex][instanceIndex].modelMatrixIndex;
+	const int matrixIndex = instanceDataArray_[modelIndex][instanceIndex].modelMatrixIndex;
 
 	// Update transformation matrix
 	modelSSBOs_[matrixIndex] = modelUBO;
@@ -300,7 +300,7 @@ std::vector<uint32_t> Scene::GetInstanceVertexCountArray() const
 	size_t counter = 0;
 	for (auto& model : models_)
 	{
-		for (int i = 0; i < model.modelData_.instanceCount; ++i)
+		for (uint32_t i = 0; i < model.modelInfo_.instanceCount; ++i)
 		{
 			for (auto& mesh : model.meshes_)
 			{

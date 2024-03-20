@@ -36,16 +36,8 @@ PipelineCubeFilter::PipelineCubeFilter(
 
 	CreateDescriptor(ctx, inputCubemap);
 
-	// Push constants
-	std::vector<VkPushConstantRange> ranges =
-	{{
-		.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
-		.offset = 0u,
-		.size = sizeof(PushConstCubeFilter)
-	}};
-
 	// Pipeline layout
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, ranges);
+	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(PushConstCubeFilter), VK_SHADER_STAGE_FRAGMENT_BIT);
 
 	// Diffuse pipeline
 	graphicsPipelines_.emplace_back(VK_NULL_HANDLE);

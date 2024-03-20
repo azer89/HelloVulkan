@@ -49,9 +49,6 @@ private:
 	std::unique_ptr<ResourcesShadow> resShadow_;
 
 	std::unique_ptr<Scene> scene_;
-
-	// TODO Move to ResourcesIBL
-	float cubemapMipmapCount_;
 };
 
 #endif

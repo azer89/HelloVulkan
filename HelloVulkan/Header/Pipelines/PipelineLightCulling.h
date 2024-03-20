@@ -3,12 +3,11 @@
 
 #include "PipelineBase.h"
 #include "VulkanContext.h"
+#include "ResourcesClusterForward.h"
+#include "ResourcesLight.h"
 #include "Configs.h"
 
 #include <array>
-
-struct ResourcesClusterForward;
-struct ResourcesLight;
 
 /*
 Clustered Forward
@@ -23,7 +22,7 @@ public:
 
 	void ResetGlobalIndex(VulkanContext& ctx);
 
-	void SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO ubo);
+	void SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO& ubo);
 
 private:
 	ResourcesLight* resLight_;

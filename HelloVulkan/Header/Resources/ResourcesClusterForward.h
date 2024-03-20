@@ -7,12 +7,6 @@
 
 #include <array>
 
-enum class AABBFlag : uint8_t
-{
-	Clean = 0u,
-	Dirty = 1u
-};
-
 struct ResourcesClusterForward
 {
 public:
@@ -24,16 +18,15 @@ public:
 
 	void Destroy();
 	void CreateBuffers(VulkanContext& ctx, uint32_t lightCount);
-	void SetAABBDirty();
-	bool IsAABBDirty(uint32_t frameIndex) { return aabbDirtyFlags_[frameIndex] == AABBFlag::Dirty; }
-	void SetAABBClean(uint32_t frameIndex) { aabbDirtyFlags_[frameIndex] = AABBFlag::Clean; }
 	
 public:
-	std::array<AABBFlag, AppConfig::FrameCount> aabbDirtyFlags_; // For window resizing
-	std::array<VulkanBuffer, AppConfig::FrameCount> aabbBuffers_;
+	bool aabbDirty_;
+	VulkanBuffer aabbBuffer_;
+	VulkanBuffer lightCellsBuffer_;
+	VulkanBuffer lightIndicesBuffer_;
+
+	// Use frame-in-flight because it is reset by the CPU
 	std::array<VulkanBuffer, AppConfig::FrameCount> globalIndexCountBuffers_; // Atomic counter
-	std::array<VulkanBuffer, AppConfig::FrameCount> lightCellsBuffers_;
-	std::array<VulkanBuffer, AppConfig::FrameCount> lightIndicesBuffers_;
 };
 
 #endif

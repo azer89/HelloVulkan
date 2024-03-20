@@ -9,26 +9,24 @@ PipelineShadow::PipelineShadow(
 	Scene* scene,
 	ResourcesShadow* resShadow) :
 	PipelineBase(ctx,
-		{
-			// Depth only and offscreen
-			.type_ = PipelineType::GraphicsOffScreen,
+	{
+		// Depth only and offscreen
+		.type_ = PipelineType::GraphicsOffScreen,
 
-			.vertexBufferBind_ = false,
+		.vertexBufferBind_ = false,
 
-			// Render using shadow map dimension
-			.customViewportSize_ = true,
-			.viewportWidth_ = static_cast<float>(resShadow->shadowMap_.width_),
-			.viewportHeight_ = static_cast<float>(resShadow->shadowMap_.height_)
-		}),
+		// Render using shadow map dimension
+		.customViewportSize_ = true,
+		.viewportWidth_ = static_cast<float>(resShadow->shadowMap_.width_),
+		.viewportHeight_ = static_cast<float>(resShadow->shadowMap_.height_)
+	}),
 	scene_(scene),
 	resShadow_(resShadow),
 	vim_(scene->GetVIM())
 {
-	CreateMultipleUniformBuffers(ctx, shadowMapUBOBuffers_, sizeof(ShadowMapUBO), AppConfig::FrameCount);
-
+	VulkanBuffer::CreateMultipleUniformBuffers(ctx, shadowMapUBOBuffers_, sizeof(ShadowMapUBO), AppConfig::FrameCount);
 	renderPass_.CreateDepthOnlyRenderPass(ctx, 
 		RenderPassBit::DepthClear | RenderPassBit::DepthShaderReadOnly);
-
 	framebuffer_.CreateUnresizeable(
 		ctx,
 		renderPass_.GetHandle(),
@@ -38,21 +36,9 @@ PipelineShadow::PipelineShadow(
 		},
 		resShadow_->shadowMap_.width_,
 		resShadow_->shadowMap_.height_);
-
 	scene_->CreateIndirectBuffers(ctx, indirectBuffers_);
-
 	CreateDescriptor(ctx);
-
-	// Push constants
-	std::vector<VkPushConstantRange> ranges =
-	{ {
-		.stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
-		.offset = 0u,
-		.size = sizeof(VIM),
-	} };
-
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, ranges);
-
+	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(VIM), VK_SHADER_STAGE_VERTEX_BIT);
 	CreateGraphicsPipeline(
 		ctx,
 		renderPass_.GetHandle(),

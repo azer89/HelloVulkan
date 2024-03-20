@@ -18,11 +18,8 @@ PipelineEquirect2Cube::PipelineEquirect2Cube(
 {
 	InitializeHDRImage(ctx, hdrFile);
 	renderPass_.CreateOffScreenCubemapRenderPass(ctx, IBLConfig::CubeFormat);
-
 	CreateDescriptor(ctx);
-
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
-
 	CreateOffscreenGraphicsPipeline(
 		ctx,
 		renderPass_.GetHandle(),
@@ -175,7 +172,7 @@ void PipelineEquirect2Cube::CreateOffscreenGraphicsPipeline(
 // TODO Can be moved to generic function in PipelineBase
 void PipelineEquirect2Cube::CreateFramebuffer(
 	VulkanContext& ctx, 
-	std::vector<VkImageView> outputViews)
+	std::vector<VkImageView>& outputViews)
 {
 	const VkFramebufferCreateInfo info =
 	{

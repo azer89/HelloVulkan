@@ -2,15 +2,14 @@
 #define PIPELINE_PBR_CLUSTER_FORWARD
 
 #include "PipelineBase.h"
+#include "ResourcesClusterForward.h"
+#include "ResourcesShared.h"
+#include "ResourcesLight.h"
+#include "ResourcesIBL.h"
 #include "PushConstants.h"
 #include "Model.h"
 
 #include <vector>
-
-struct ResourcesClusterForward;
-struct ResourcesShared;
-struct ResourcesLight;
-struct ResourcesIBL;
 
 /*
 Render meshes using PBR materials, clustered forward renderer
@@ -31,7 +30,7 @@ public:
 
 	void SetPBRPushConstants(const PushConstPBR& pbrPC) { pc_ = pbrPC; };
 
-	void SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO ubo)
+	void SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO& ubo)
 	{
 		size_t frameIndex = ctx.GetFrameIndex();
 		cfUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ClusterForwardUBO));

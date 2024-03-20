@@ -2,14 +2,13 @@
 #define PIPELINE_PBR_BINDLESS_TEXTURES
 
 #include "PipelineBase.h"
+#include "Scene.h"
+#include "ResourcesLight.h"
+#include "ResourcesIBL.h"
+#include "ResourcesShared.h"
 #include "PushConstants.h"
 
 #include <vector>
-
-class Scene;
-struct ResourcesLight;
-struct ResourcesIBL;
-struct ResourcesShared;
 
 /*
 Render a scene using PBR materials, naive forward renderer, and bindless textures

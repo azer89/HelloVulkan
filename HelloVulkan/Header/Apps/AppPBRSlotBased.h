@@ -46,7 +46,6 @@ private:
 	std::unique_ptr<ResourcesLight> resLights_;
 	std::unique_ptr<Model> model_;
 
-	float cubemapMipmapCount_;
 	float modelRotation_;
 };
 

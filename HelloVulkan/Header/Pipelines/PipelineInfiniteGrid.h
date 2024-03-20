@@ -2,8 +2,7 @@
 #define PIPELINE_INFINITE_GRID
 
 #include "PipelineBase.h"
-
-struct ResourcesShared;
+#include "ResourcesShared.h"
 
 class PipelineInfiniteGrid final : public PipelineBase
 {

@@ -32,12 +32,8 @@ PipelinePBRSlotBased::PipelinePBRSlotBased(
 	iblResources_(iblResources),
 	models_(models)
 {
-	// Per frame UBO
-	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
-
-	// Note that this pipeline is offscreen rendering
+	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
 	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
-
 	framebuffer_.CreateResizeable(
 		ctx, 
 		renderPass_.GetHandle(), 
@@ -46,19 +42,8 @@ PipelinePBRSlotBased::PipelinePBRSlotBased(
 			&(resShared->depthImage_)
 		}, 
 		IsOffscreen());
-
 	CreateDescriptor(ctx);
-
-	// Push constants
-	const std::vector<VkPushConstantRange> ranges =
-	{{
-		.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
-		.offset = 0u,
-		.size = sizeof(PushConstPBR),
-	}};
-	
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, ranges);
-
+	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(PushConstPBR), VK_SHADER_STAGE_FRAGMENT_BIT);
 	CreateGraphicsPipeline(
 		ctx,
 		renderPass_.GetHandle(),

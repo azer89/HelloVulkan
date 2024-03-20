@@ -2,10 +2,9 @@
 #define PIPELINE_EQUIRECT_2_CUBE
 
 #include "PipelineBase.h"
+#include "VulkanImage.h"
 
 #include <string>
-
-class VulkanImage;
 
 /*
 Offscreen pipeline to generate a cubemap from an HDR image
@@ -43,7 +42,7 @@ private:
 		const std::vector<std::string>& shaderFiles,
 		VkPipeline* pipeline);
 
-	void CreateFramebuffer(VulkanContext& ctx, std::vector<VkImageView> outputViews);
+	void CreateFramebuffer(VulkanContext& ctx, std::vector<VkImageView>& outputViews);
 };
 
 #endif

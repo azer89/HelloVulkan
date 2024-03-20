@@ -32,16 +32,10 @@ PipelinePBRBindless::PipelinePBRBindless(
 	resLight_(resLight),
 	iblResources_(iblResources)
 {
-	// Per frame UBO
-	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
-
-	PrepareVIM(ctx);
-
+	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
+	PrepareVIM(ctx); // Buffer device address
 	CreateDescriptor(ctx);
-
-	// Note that this pipeline is offscreen rendering
 	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
-
 	framebuffer_.CreateResizeable(
 		ctx, 
 		renderPass_.GetHandle(), 
@@ -50,16 +44,7 @@ PipelinePBRBindless::PipelinePBRBindless(
 			&(resShared->depthImage_)
 		}, 
 		IsOffscreen());
-
-	// Push constants and pipeline layout
-	const std::vector<VkPushConstantRange> ranges =
-	{{
-		.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
-		.offset = 0u,
-		.size = sizeof(PushConstPBR),
-	}};
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, ranges);
-
+	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(PushConstPBR), VK_SHADER_STAGE_FRAGMENT_BIT);
 	CreateGraphicsPipeline(
 		ctx,
 		renderPass_.GetHandle(),

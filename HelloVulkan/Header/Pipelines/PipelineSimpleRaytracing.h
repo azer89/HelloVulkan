@@ -5,11 +5,10 @@
 #include "AccelStructure.h"
 #include "VulkanBuffer.h"
 #include "VulkanImage.h"
+#include "Scene.h"
 #include "Configs.h"
 
 #include <array>
-
-class Scene;
 
 class PipelineSimpleRaytracing final : public PipelineBase
 {
@@ -21,7 +20,7 @@ public:
 
 	void OnWindowResized(VulkanContext& ctx) override;
 
-	void SetRaytracingCameraUBO(VulkanContext& ctx, RaytracingCameraUBO ubo)
+	void SetRaytracingCameraUBO(VulkanContext& ctx, const RaytracingCameraUBO& ubo)
 	{
 		const uint32_t frameIndex = ctx.GetFrameIndex();
 		cameraUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(RaytracingCameraUBO));

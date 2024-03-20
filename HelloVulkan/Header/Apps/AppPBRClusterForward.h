@@ -50,8 +50,6 @@ private:
 	std::unique_ptr<ResourcesLight> resLight_;
 
 	std::unique_ptr<Model> model_;
-
-	float cubemapMipmapCount_;
 };
 
 #endif

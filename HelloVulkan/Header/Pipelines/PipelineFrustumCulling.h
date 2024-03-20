@@ -3,9 +3,8 @@
 
 #include "PipelineBase.h"
 #include "VulkanContext.h"
+#include "Scene.h"
 #include "Configs.h"
-
-class Scene;
 
 class PipelineFrustumCulling final : public PipelineBase
 {

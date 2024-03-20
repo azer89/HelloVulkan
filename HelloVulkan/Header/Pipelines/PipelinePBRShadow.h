@@ -2,14 +2,13 @@
 #define PIPELINE_PBR_SHADOW_MAPPING
 
 #include "PipelineBase.h"
+#include "ResourcesLight.h"
+#include "ResourcesShadow.h"
+#include "ResourcesShared.h"
+#include "ResourcesIBL.h"
 #include "PushConstants.h"
 
 #include <vector>
-
-struct ResourcesLight;
-struct ResourcesShadow;
-struct ResourcesShared;
-struct ResourcesIBL;
 
 /*
 Render meshes using PBR materials, naive forward renderer with shadow mapping
@@ -30,7 +29,7 @@ public:
 
 	void SetPBRPushConstants(const PushConstPBR& pbrPC) { pc_ = pbrPC; };
 
-	void SetShadowMapConfigUBO(VulkanContext& ctx, ShadowMapUBO ubo)
+	void SetShadowMapConfigUBO(VulkanContext& ctx, ShadowMapUBO& ubo)
 	{
 		uint32_t frameIndex = ctx.GetFrameIndex();
 		shadowMapConfigUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ShadowMapUBO));

@@ -13,7 +13,7 @@
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 
-struct ModelData
+struct ModelCreateInfo
 {
 	std::string filename;
 	uint32_t instanceCount; // Allows instancing
@@ -40,7 +40,7 @@ public:
 	std::vector<VulkanBuffer> modelBuffers_;
 
 	// This is used to store the filename and to activate instancing in bindless setup
-	ModelData modelData_;
+	ModelCreateInfo modelInfo_;
 
 public:
 	Model() = default;
@@ -50,7 +50,7 @@ public:
 
 	void LoadSlotBased(VulkanContext& ctx, const std::string& path);
 	void LoadBindless(VulkanContext& ctx, 
-		const ModelData& modelData, 
+		const ModelCreateInfo& modelData, 
 		std::vector<VertexData>& globalVertices,
 		std::vector<uint32_t>& globalIndices,
 		uint32_t& globalVertexOffset,

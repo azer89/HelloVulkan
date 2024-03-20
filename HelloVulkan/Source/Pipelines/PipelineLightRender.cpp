@@ -22,10 +22,8 @@ PipelineLightRender::PipelineLightRender(
 	resLight_(resLights),
 	shouldRender_(true)
 {
-	CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
-
+	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
 	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
-
 	framebuffer_.CreateResizeable(
 		ctx,
 		renderPass_.GetHandle(),
@@ -35,11 +33,8 @@ PipelineLightRender::PipelineLightRender(
 		},
 		IsOffscreen()
 	);
-
 	CreateDescriptor(ctx);
-
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
-
 	CreateGraphicsPipeline(ctx,
 		renderPass_.GetHandle(),
 		pipelineLayout_,

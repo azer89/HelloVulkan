@@ -3,11 +3,10 @@
 
 #include "PipelineBase.h"
 #include "VulkanContext.h"
+#include "ResourcesClusterForward.h"
 #include "Configs.h"
 
 #include <array>
-
-struct ResourcesClusterForward;
 
 /*
 Clustered Forward
@@ -21,7 +20,7 @@ public:
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 	void OnWindowResized(VulkanContext& ctx) override;
 
-	void SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO ubo)
+	void SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO& ubo)
 	{
 		const size_t frameIndex = ctx.GetFrameIndex();
 		cfUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ClusterForwardUBO));
