@@ -202,7 +202,8 @@ void Scene::CreateIndirectBuffer(
 	const uint32_t indirectDataSize = instanceCount * sizeof(VkDrawIndirectCommand);
 	const std::vector<uint32_t> meshVertexCountArray = GetInstanceVertexCountArray();
 
-	indirectBuffer.CreateIndirectBuffer(ctx, indirectDataSize); // Create
+	// Old code with map-able buffer
+	/*indirectBuffer.CreateMappedIndirectBuffer(ctx, indirectDataSize); // Create
 	VkDrawIndirectCommand* data = indirectBuffer.MapIndirectBuffer(); // Map
 
 	for (uint32_t j = 0; j < instanceCount; ++j)
@@ -215,7 +216,22 @@ void Scene::CreateIndirectBuffer(
 			.firstInstance = j
 		};
 	}
-	indirectBuffer.UnmapIndirectBuffer(); // Unmap
+	indirectBuffer.UnmapIndirectBuffer(); // Unmap*/
+
+	std::vector<VkDrawIndirectCommand> iCommands(instanceCount);
+	for (uint32_t i = 0; i < instanceCount; ++i)
+	{
+		iCommands[i] =
+		{
+			.vertexCount = static_cast<uint32_t>(meshVertexCountArray[i]),
+			.instanceCount = 1u,
+			.firstVertex = 0,
+			.firstInstance = i
+		};
+	}
+
+	// This type of buffer is not accessible from CPU
+	indirectBuffer.CreateGPUOnlyIndirectBuffer(ctx, iCommands.data(), indirectDataSize);
 }
 
 void Scene::UpdateModelMatrix(VulkanContext& ctx,

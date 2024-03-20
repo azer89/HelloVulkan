@@ -49,7 +49,20 @@ void VulkanBuffer::CreateBuffer(
 	}
 }
 
-void VulkanBuffer::CreateIndirectBuffer(
+void VulkanBuffer::CreateGPUOnlyIndirectBuffer(
+		VulkanContext& ctx,
+		const void* bufferData,
+		VkDeviceSize size)
+{
+	CreateGPUOnlyBuffer(
+		ctx,
+		size,
+		bufferData,
+		VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
+	);
+}
+
+void VulkanBuffer::CreateMappedIndirectBuffer(
 	VulkanContext& ctx,
 	VkDeviceSize size)
 {
@@ -58,16 +71,10 @@ void VulkanBuffer::CreateIndirectBuffer(
 		VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VMA_MEMORY_USAGE_CPU_TO_GPU, // TODO Is it possible to be GPU only?
 		VMA_ALLOCATION_CREATE_MAPPED_BIT);
-	isIndirectBuffer_ = true;
 }
 
 VkDrawIndirectCommand* VulkanBuffer::MapIndirectBuffer()
 {
-	if (!isIndirectBuffer_)
-	{
-		std::cerr << "Cannot map, this is not indirect buffer\n";
-		return nullptr;
-	}
 	VkDrawIndirectCommand* mappedData = nullptr;
 	vmaMapMemory(vmaAllocator_, vmaAllocation_, (void**)&mappedData);
 	return mappedData;
@@ -75,11 +82,6 @@ VkDrawIndirectCommand* VulkanBuffer::MapIndirectBuffer()
 
 void VulkanBuffer::UnmapIndirectBuffer()
 {
-	if (!isIndirectBuffer_)
-	{
-		std::cerr << "Cannot unmap, this is not indirect buffer\n";
-		return;
-	}
 	vmaUnmapMemory(vmaAllocator_, vmaAllocation_);
 }
 
@@ -121,7 +123,8 @@ void VulkanBuffer::CreateGPUOnlyBuffer
 		ctx,
 		bufferSize_,
 		bufferUsage,
-		VMA_MEMORY_USAGE_GPU_ONLY); // TODO Deprecated flag
+		VMA_MEMORY_USAGE_GPU_ONLY, // TODO Deprecated flag
+		0);
 	CopyFrom(ctx, stagingBuffer.buffer_, bufferSize_);
 
 	stagingBuffer.Destroy();
