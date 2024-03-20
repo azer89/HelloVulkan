@@ -59,9 +59,11 @@ https://github.com/azer89/HelloVulkan/assets/790432/13a4426f-deec-40f5-816a-5594
 
 </br>
 
-### Clustered Forward Shading
+### Compute-Based Frustum Culling
 
-Frustum culling is done entirely on compute shader by modifying draw commands inside an indirect buffer. The CPU only issues a single indirect draw call and it does not know how many objects are drawn. 
+Since the engine is now bindless, we can implement frustum culling entirely on the compute shader by modifying draw commands within an indirect buffer. If an object's AABB falls outside the camera frustum, the compute shader will deactivate the draw call for that object. On the other hand, the CPU only needs to issue a single indirect draw call; it is unaware of the number of objects actually drawn. Using Tracy profiler, an intersection test with 10,000 AABBs only takes less than 25 microseconds (0.025 milliseconds).
+
+
 
 </br>
 
