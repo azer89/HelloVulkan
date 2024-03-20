@@ -56,7 +56,8 @@ public:
 
 	void UnmapIndirectBuffer();
 
-	void CreateBufferWithShaderDeviceAddress(VulkanContext& ctx,
+	void CreateBufferWithShaderDeviceAddress(
+		VulkanContext& ctx,
 		VkDeviceSize size,
 		VkBufferUsageFlags bufferUsage,
 		VmaMemoryUsage memoryUsage,

@@ -35,7 +35,7 @@ public:
 		uint32_t modelIndex,
 		uint32_t instanceIndex);
 
-	void CreateIndirectBuffers(
+	void CreateIndirectBuffer(
 		VulkanContext& ctx,
 		VulkanBuffer& indirectBuffer);
 

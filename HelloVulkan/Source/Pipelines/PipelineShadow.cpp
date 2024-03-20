@@ -36,7 +36,7 @@ PipelineShadow::PipelineShadow(
 		},
 		resShadow_->shadowMap_.width_,
 		resShadow_->shadowMap_.height_);
-	scene_->CreateIndirectBuffers(ctx, indirectBuffer_);
+	scene_->CreateIndirectBuffer(ctx, indirectBuffer_);
 	CreateDescriptor(ctx);
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(VIM), VK_SHADER_STAGE_VERTEX_BIT);
 	CreateGraphicsPipeline(

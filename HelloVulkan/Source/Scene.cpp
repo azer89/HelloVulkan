@@ -51,7 +51,6 @@ VIM Scene::GetVIM() const
 	};
 }
 
-// TODO Create GPU only buffers
 void Scene::CreateBindlessResources(VulkanContext& ctx)
 {
 	// Support for bindless rendering
@@ -118,7 +117,7 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 	BuildBoundingBoxes(ctx);
 
 	// Indirect buffers
-	CreateIndirectBuffers(ctx, indirectBuffer_);
+	CreateIndirectBuffer(ctx, indirectBuffer_);
 }
 
 void Scene::BuildInstanceDataArray()
@@ -147,7 +146,7 @@ void Scene::BuildBoundingBoxes(VulkanContext& ctx)
 	// Create bounding boxes
 	originalBoundingBoxes_.resize(meshDataArray_.size());
 	transformedBoundingBoxes_.resize(meshDataArray_.size());
-	uint32_t boxIndex = 0; // bounding box index
+	uint32_t boxIndex = 0;
 	for (Model& model : models_)
 	{
 		glm::vec3 vMin(std::numeric_limits<float>::max());
@@ -195,7 +194,7 @@ void Scene::BuildBoundingBoxes(VulkanContext& ctx)
 	transformedBoundingBoxBuffer_.UploadBufferData(ctx, transformedBoundingBoxes_.data(), bufferSize);
 }
 
-void Scene::CreateIndirectBuffers(
+void Scene::CreateIndirectBuffer(
 	VulkanContext& ctx,
 	VulkanBuffer& indirectBuffer)
 {
