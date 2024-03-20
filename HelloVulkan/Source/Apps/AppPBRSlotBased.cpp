@@ -30,8 +30,7 @@ void AppPBRSlotBased::Init()
 	std::vector<Model*> models = { model_.get() };
 
 	// Pipelines
-	// This is responsible to clear swapchain image
-	clearPtr_ = std::make_unique<PipelineClear>(vulkanContext_);
+	clearPtr_ = std::make_unique<PipelineClear>(vulkanContext_); // This is responsible to clear swapchain image
 	// This draws a cube
 	skyboxPtr_ = std::make_unique<PipelineSkybox>(
 		vulkanContext_,
@@ -51,7 +50,6 @@ void AppPBRSlotBased::Init()
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
 	tonemapPtr_ = std::make_unique<PipelineTonemap>(vulkanContext_, &(resShared_->singleSampledColorImage_));
 	infGridPtr_ = std::make_unique<PipelineInfiniteGrid>(vulkanContext_, resShared_.get(), -1.0f);
-	// ImGui here
 	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
 	finishPtr_ = std::make_unique<PipelineFinish>(vulkanContext_);

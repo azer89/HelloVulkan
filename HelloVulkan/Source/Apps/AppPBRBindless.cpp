@@ -38,8 +38,7 @@ void AppPBRBindless::Init()
 	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 1, 0);
 
 	// Pipelines
-	// This is responsible to clear swapchain image
-	clearPtr_ = std::make_unique<PipelineClear>(vulkanContext_);
+	clearPtr_ = std::make_unique<PipelineClear>(vulkanContext_); // This is responsible to clear swapchain image
 	// This draws a cube
 	skyboxPtr_ = std::make_unique<PipelineSkybox>(
 		vulkanContext_,
@@ -61,7 +60,6 @@ void AppPBRBindless::Init()
 	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(vulkanContext_, resShared_.get());
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
 	tonemapPtr_ = std::make_unique<PipelineTonemap>(vulkanContext_, &(resShared_->singleSampledColorImage_));
-	// ImGui here
 	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
 	finishPtr_ = std::make_unique<PipelineFinish>(vulkanContext_);

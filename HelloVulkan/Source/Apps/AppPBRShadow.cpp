@@ -48,9 +48,7 @@ void AppPBRShadow::Init()
 	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 2, 0);
 
 	// Pipelines
-	// This is responsible to clear swapchain image
-	clearPtr_ = std::make_unique<PipelineClear>(vulkanContext_);
-	// This draws a cube
+	clearPtr_ = std::make_unique<PipelineClear>(vulkanContext_); // This is responsible to clear swapchain image
 	skyboxPtr_ = std::make_unique<PipelineSkybox>(
 		vulkanContext_,
 		&(resIBL_->diffuseCubemap_),
@@ -70,7 +68,6 @@ void AppPBRShadow::Init()
 	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(vulkanContext_, resShared_.get());
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
 	tonemapPtr_ = std::make_unique<PipelineTonemap>(vulkanContext_, &(resShared_->singleSampledColorImage_));
-	// ImGui here
 	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
 	finishPtr_ = std::make_unique<PipelineFinish>(vulkanContext_);
