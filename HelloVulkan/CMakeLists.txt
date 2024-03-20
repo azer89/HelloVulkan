@@ -29,22 +29,22 @@ if(MSVC)
     target_compile_options(HelloVulkan PRIVATE "/Zi")
 endif()  
 
-# TODO Use a FOR loop
-target_include_directories(HelloVulkan PRIVATE
-    "${CMAKE_CURRENT_LIST_DIR}/Header"
-    "${CMAKE_CURRENT_LIST_DIR}/Header/Apps"
-    "${CMAKE_CURRENT_LIST_DIR}/Header/Pipelines"
-    "${CMAKE_CURRENT_LIST_DIR}/Header/Raytracing"
-    "${CMAKE_CURRENT_LIST_DIR}/Header/Resources"
-    "${CMAKE_CURRENT_LIST_DIR}/Header/Vulkan"
-)
+# Include directories
+set(HEADER_FOLDER "${CMAKE_CURRENT_LIST_DIR}/Header")
+target_include_directories(HelloVulkan PRIVATE "${HEADER_FOLDER}")
+file(GLOB ITEMS LIST_DIRECTORIES true "${HEADER_FOLDER}/*")
+foreach(item ${ITEMS})
+    if(IS_DIRECTORY ${item})
+        target_include_directories(HelloVulkan PRIVATE ${item})
+    endif()
+endforeach()
 
+# Include directories from dependencies
 target_include_directories(HelloVulkan PRIVATE
     "${PROJECT_SOURCE_DIR}/External/stb"
     "${PROJECT_SOURCE_DIR}/External/assimp/include"
     "${PROJECT_SOURCE_DIR}/External/glfw/include"
     "${PROJECT_SOURCE_DIR}/External/glm"
-    "${PROJECT_SOURCE_DIR}/External/gli"
     "${PROJECT_SOURCE_DIR}/External/ImGui"
     "${PROJECT_SOURCE_DIR}/External/ImGui/backends"
     "${PROJECT_SOURCE_DIR}/External/volk"
@@ -53,7 +53,7 @@ target_include_directories(HelloVulkan PRIVATE
     "${PROJECT_SOURCE_DIR}/External/Binaries/assimp/include"
 )
 
-# All include directories for glslang
+# Include directories for glslang
 target_include_directories(HelloVulkan PRIVATE 
     "$ENV{VULKAN_SDK}/Include"
     "$ENV{VULKAN_SDK}/Include/glslang/Include"
