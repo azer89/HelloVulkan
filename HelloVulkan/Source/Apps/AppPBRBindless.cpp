@@ -5,8 +5,7 @@
 #include "glm/ext.hpp"
 #include "imgui_impl_vulkan.h"
 
-AppPBRBindless::AppPBRBindless() :
-	modelRotation_(0.f)
+AppPBRBindless::AppPBRBindless()
 {
 }
 
@@ -21,7 +20,6 @@ void AppPBRBindless::Init()
 
 	// Image-Based Lighting
 	resIBL_ = std::make_unique<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
-	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
 	// Scene
 	std::vector<ModelCreateInfo> dataArray = { 
@@ -140,7 +138,7 @@ void AppPBRBindless::UpdateUI()
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 	ImGui::Text("Vertices: %i, Indices: %i", scene_->vertices_.size(), scene_->indices_.size());
 	ImGui::Checkbox("Render Lights", &lightRender);
-	imguiPtr_->ImGuiShowPBRConfig(&pbrPC, cubemapMipmapCount_);
+	imguiPtr_->ImGuiShowPBRConfig(&pbrPC, resIBL_->cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
 	lightPtr_->ShouldRender(lightRender);

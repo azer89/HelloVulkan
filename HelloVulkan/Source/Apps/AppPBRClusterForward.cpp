@@ -22,7 +22,6 @@ void AppPBRClusterForward::Init()
 
 	// Image-Based Lighting
 	resIBL_ = std::make_unique<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "dikhololo_night_4k.hdr");
-	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
 	resCF_ = std::make_unique<ResourcesClusterForward>();
 	resCF_->CreateBuffers(vulkanContext_, resLight_->GetLightCount());
@@ -180,7 +179,7 @@ void AppPBRClusterForward::UpdateUI()
 	imguiPtr_->ImGuiSetWindow("Clustered Forward Shading", 525, 325);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 	ImGui::Checkbox("Render Lights", &lightRender);
-	imguiPtr_->ImGuiShowPBRConfig(&pbrPC, cubemapMipmapCount_);
+	imguiPtr_->ImGuiShowPBRConfig(&pbrPC, resIBL_->cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
 	lightPtr_->ShouldRender(lightRender);

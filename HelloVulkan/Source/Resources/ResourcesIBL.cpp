@@ -1,9 +1,8 @@
 #include "ResourcesIBL.h"
-
-// IBL
 #include "PipelineEquirect2Cube.h"
 #include "PipelineCubeFilter.h"
 #include "PipelineBRDFLUT.h"
+#include "VulkanUtility.h"
 
 ResourcesIBL::ResourcesIBL(VulkanContext& ctx, const std::string& hdrFile)
 {
@@ -36,6 +35,8 @@ void ResourcesIBL::Create(VulkanContext& ctx, const std::string& hdrFile)
 		PipelineBRDFLUT brdfLUTCompute(ctx);
 		brdfLUTCompute.CreateLUT(ctx, &brdfLut_);
 	}
+
+	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 }
 
 void ResourcesIBL::Destroy()

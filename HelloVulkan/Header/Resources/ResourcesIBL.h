@@ -16,6 +16,7 @@ private:
 	void SetDebugNames(VulkanContext& ctx);
 
 public:
+	float cubemapMipmapCount_;
 	VulkanImage environmentCubemap_;
 	VulkanImage diffuseCubemap_;
 	VulkanImage specularCubemap_;

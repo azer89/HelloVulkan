@@ -22,7 +22,6 @@ void AppPBRSlotBased::Init()
 
 	// Image-Based Lighting
 	resIBL_ = std::make_unique<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
-	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
 	model_ = std::make_unique<Model>();
 	model_->LoadSlotBased(vulkanContext_,
@@ -146,7 +145,7 @@ void AppPBRSlotBased::UpdateUI()
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 	ImGui::Checkbox("Render Lights", &lightRender);
 	ImGui::Checkbox("Render Grid", &gridRender);
-	imguiPtr_->ImGuiShowPBRConfig(&pbrPC, cubemapMipmapCount_);
+	imguiPtr_->ImGuiShowPBRConfig(&pbrPC, resIBL_->cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
 	lightPtr_->ShouldRender(lightRender);

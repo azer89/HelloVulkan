@@ -53,9 +53,6 @@ private:
 	std::unique_ptr<ResourcesLight> resourcesLight_; // TODO Set as unique_ptr
 
 	bool updateFrustum_;
-
-	// TODO Move to ResourcesIBL
-	float cubemapMipmapCount_;
 };
 
 #endif

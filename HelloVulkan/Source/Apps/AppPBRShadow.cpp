@@ -24,7 +24,6 @@ void AppPBRShadow::Init()
 
 	// Image-Based Lighting
 	resIBL_ = std::make_unique<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
-	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
 	std::vector<ModelCreateInfo> dataArray = {
 		{AppConfig::ModelFolder + "Sponza/Sponza.gltf", 1},
@@ -176,7 +175,7 @@ void AppPBRShadow::UpdateUI()
 	ImGui::Text("Vertices: %i, Indices: %i", scene_->vertices_.size(), scene_->indices_.size());
 	ImGui::Checkbox("Render Lights", &staticLightRender);
 	ImGui::SeparatorText("Shading");
-	imguiPtr_->ImGuiShowPBRConfig(&staticPBRPushConstants, cubemapMipmapCount_);
+	imguiPtr_->ImGuiShowPBRConfig(&staticPBRPushConstants, resIBL_->cubemapMipmapCount_);
 
 	ImGui::SeparatorText("Shadow mapping");
 	ImGui::SliderFloat("Min Bias", &staticMinBias, 0.f, 0.01f);

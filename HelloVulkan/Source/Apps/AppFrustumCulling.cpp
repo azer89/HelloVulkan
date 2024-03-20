@@ -21,7 +21,6 @@ void AppFrustumCulling::Init()
 
 	// Image-Based Lighting
 	resIBL_ = std::make_unique<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
-	cubemapMipmapCount_ = static_cast<float>(Utility::MipMapCount(IBLConfig::InputCubeSideLength));
 
 	InitScene();
 
@@ -182,7 +181,7 @@ void AppFrustumCulling::UpdateUI()
 	ImGui::Checkbox("Render Lights", &staticLightRender);
 	ImGui::Checkbox("Render Frustum and Bounding Boxes", &staticLineRender);
 	ImGui::Checkbox("Update Frustum", &staticUpdateFrustum);
-	imguiPtr_->ImGuiShowPBRConfig(&staticPBRPushConstants, cubemapMipmapCount_);
+	imguiPtr_->ImGuiShowPBRConfig(&staticPBRPushConstants, resIBL_->cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
 	updateFrustum_ = staticUpdateFrustum;
