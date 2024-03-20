@@ -53,7 +53,6 @@ void VulkanBuffer::CreateIndirectBuffer(
 	VulkanContext& ctx,
 	VkDeviceSize size)
 {
-	
 	CreateBuffer(ctx,
 		size,
 		VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
