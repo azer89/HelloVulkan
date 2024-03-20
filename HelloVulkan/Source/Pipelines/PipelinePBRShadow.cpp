@@ -39,9 +39,7 @@ PipelinePBRShadow::PipelinePBRShadow(
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, shadowMapConfigUBOBuffers_, sizeof(ShadowMapUBO), AppConfig::FrameCount);
 
-	// Note that this pipeline is offscreen rendering
 	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
-
 	framebuffer_.CreateResizeable(
 		ctx, 
 		renderPass_.GetHandle(), 
@@ -50,21 +48,9 @@ PipelinePBRShadow::PipelinePBRShadow(
 			&(resShared->depthImage_)
 		}, 
 		IsOffscreen());
-
 	PrepareVIM(ctx);
-
 	CreateDescriptor(ctx);
-
-	// Push constants
-	std::vector<VkPushConstantRange> ranges =
-	{{
-		.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
-		.offset = 0u,
-		.size = sizeof(PushConstPBR),
-	}};
-	
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, ranges);
-
+	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(PushConstPBR), VK_SHADER_STAGE_FRAGMENT_BIT);
 	CreateGraphicsPipeline(
 		ctx,
 		renderPass_.GetHandle(),

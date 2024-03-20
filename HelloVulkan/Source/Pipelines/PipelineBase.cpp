@@ -79,11 +79,11 @@ void PipelineBase::OnWindowResized(VulkanContext& ctx)
 	framebuffer_.Recreate(ctx);
 }
 
-void PipelineBase::CreatePipelineLayout(
-	VulkanContext& ctx,
-	VkDescriptorSetLayout dsLayout, 
+void PipelineBase::CreatePipelineLayout(VulkanContext& ctx,
+	VkDescriptorSetLayout dsLayout,
 	VkPipelineLayout* pipelineLayout,
-	const std::vector<VkPushConstantRange>& pushConstantRanges)
+	uint32_t pushConstantSize,
+	VkShaderStageFlags pushConstantShaderStage)
 {
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
@@ -95,10 +95,17 @@ void PipelineBase::CreatePipelineLayout(
 		.pPushConstantRanges = nullptr
 	};
 
-	if (!pushConstantRanges.empty())
+	VkPushConstantRange pcRange;
+	if (pushConstantSize > 0)
 	{
-		pipelineLayoutInfo.pPushConstantRanges = pushConstantRanges.data();
-		pipelineLayoutInfo.pushConstantRangeCount = static_cast<uint32_t>(pushConstantRanges.size());
+		pcRange =
+		{
+			.stageFlags = pushConstantShaderStage,
+			.offset = 0u,
+			.size = pushConstantSize,
+		};
+		pipelineLayoutInfo.pPushConstantRanges = &pcRange;
+		pipelineLayoutInfo.pushConstantRangeCount = 1u;
 	}
 
 	VK_CHECK(vkCreatePipelineLayout(ctx.GetDevice(), &pipelineLayoutInfo, nullptr, pipelineLayout));

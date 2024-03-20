@@ -64,9 +64,10 @@ protected:
 	void BindPipeline(VulkanContext& ctx, VkCommandBuffer commandBuffer);
 
 	void CreatePipelineLayout(VulkanContext& ctx,
-		VkDescriptorSetLayout dsLayout, 
+		VkDescriptorSetLayout dsLayout,
 		VkPipelineLayout* pipelineLayout,
-		const std::vector<VkPushConstantRange>& pushConstantRanges = {});
+		uint32_t pushConstantSize = 0,
+		VkShaderStageFlags pushConstantShaderStage = 0);
 
 	void CreateGraphicsPipeline(
 		VulkanContext& ctx,

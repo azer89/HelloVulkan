@@ -15,7 +15,6 @@ PipelineFinish::PipelineFinish(VulkanContext& ctx) :
 		ctx, 
 		// Present swapchain image 
 		RenderPassBit::ColorPresent);
-
 	framebuffer_.CreateResizeable(ctx, renderPass_.GetHandle(), {}, IsOffscreen());
 }
 

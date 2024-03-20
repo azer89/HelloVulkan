@@ -15,17 +15,8 @@ PipelineBRDFLUT::PipelineBRDFLUT(
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VMA_MEMORY_USAGE_AUTO,
 		VMA_ALLOCATION_CREATE_HOST_ACCESS_RANDOM_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT);
-
-	// Push constants
-	const std::vector<VkPushConstantRange> ranges =
-	{{
-		.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT,
-		.offset = 0u,
-		.size = sizeof(PushConstBRDFLUT)
-	}};
-
 	CreateDescriptor(ctx);
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, ranges);
+	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(PushConstBRDFLUT), VK_SHADER_STAGE_COMPUTE_BIT);
 	CreateComputePipeline(ctx, AppConfig::ShaderFolder + "IBL/BRDFLUT.comp");
 }
 

@@ -29,13 +29,7 @@ PipelineInfiniteGrid::PipelineInfiniteGrid(
 		IsOffscreen()
 	);
 	CreateDescriptor(ctx);
-	std::vector<VkPushConstantRange> ranges =
-	{ {
-		.stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
-		.offset = 0u,
-		.size = sizeof(float),
-	} };
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, ranges);
+	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(float), VK_SHADER_STAGE_VERTEX_BIT);
 	CreateGraphicsPipeline(ctx,
 		renderPass_.GetHandle(),
 		pipelineLayout_,
