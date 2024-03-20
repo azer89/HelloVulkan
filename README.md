@@ -39,7 +39,7 @@ Bindless textures is achieved by utilizing __Descriptor Indexing__. This enables
 
 </br>
 
-The image below is another example of realistic rendering of the damaged helmet demonstrating PBR and IBL techniques.
+The video below is another example of realistic rendering of the damaged helmet demonstrating PBR and IBL techniques.
 
 https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d130bf910
 
