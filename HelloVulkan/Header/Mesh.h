@@ -10,6 +10,12 @@
 #include <vector>
 #include <unordered_map>
 
+enum class MaterialType : uint32_t
+{
+	Opaque = 0,
+	Transparent = 1,
+};
+
 // For bindless textures
 struct MeshData
 {
@@ -17,15 +23,18 @@ struct MeshData
 	uint32_t indexOffset_;
 
 	// Needed to access model matrix
-	uint32_t modelMatrixIndex;
+	uint32_t modelMatrixIndex_;
 
-	// PBR Material
+	// PBR Texture IDs
 	uint32_t albedo_;
 	uint32_t normal_;
 	uint32_t metalness_;
 	uint32_t roughness_;
 	uint32_t ao_;
 	uint32_t emissive_;
+
+	// For sorting
+	MaterialType material_;
 };
 
 class Mesh
@@ -87,14 +96,32 @@ public:
 		{
 			.vertexOffset_ = vertexOffset_,
 			.indexOffset_ = indexOffset_,
-			.modelMatrixIndex = modelMatrixIndex,
+			.modelMatrixIndex_ = modelMatrixIndex,
 			.albedo_ = textureIndices_[TextureType::Albedo] + textureIndexOffset,
 			.normal_ = textureIndices_[TextureType::Normal] + textureIndexOffset,
 			.metalness_ = textureIndices_[TextureType::Metalness] + textureIndexOffset,
 			.roughness_ = textureIndices_[TextureType::Roughness] + textureIndexOffset,
 			.ao_ = textureIndices_[TextureType::AmbientOcclusion] + textureIndexOffset,
 			.emissive_ = textureIndices_[TextureType::Emissive] + textureIndexOffset,
+			.material_ = GetMaterialType()
 		};
+	}
+
+	inline MaterialType GetMaterialType()
+	{
+		if (meshName_.find("transparent") != meshName_.npos)
+		{
+			return MaterialType::Transparent;
+		}
+		return MaterialType::Opaque;
+	}
+
+	inline void ToLower(std::string& str)
+	{
+		for (auto& c : str)
+		{
+			c = tolower(c);
+		}
 	}
 };
 

@@ -11,4 +11,6 @@ struct MeshData
 	uint roughness;
 	uint ao;
 	uint emissive;
+
+	uint material;
 };

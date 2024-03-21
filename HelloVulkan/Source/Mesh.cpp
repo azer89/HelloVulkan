@@ -11,8 +11,10 @@ void Mesh::InitSlotBased(
 	std::vector<uint32_t>&& _indices,
 	std::unordered_map<TextureType, uint32_t>&& textureIndices)
 {
-	bindlessTexture_ = false;
 	meshName_ = meshName;
+	ToLower(meshName_);
+
+	bindlessTexture_ = false;
 	vertexOffset_ = vertexOffset;
 	indexOffset_ = indexOffset; 
 	vertices_ = std::move(_vertices);
@@ -33,8 +35,10 @@ void Mesh::InitBindless(
 	uint32_t indexCount,
 	std::unordered_map<TextureType, uint32_t>&& textureIndices)
 {
-	bindlessTexture_ = true;
 	meshName_ = meshName;
+	ToLower(meshName_);
+
+	bindlessTexture_ = true;
 	vertexOffset_ = vertexOffset;
 	indexOffset_ = indexOffset;
 	vertexCount_ = vertexCount;

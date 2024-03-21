@@ -73,6 +73,16 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 		}
 		textureCounter += model.GetTextureCount();
 	}
+
+	// Sorting based on material type
+	/*std::sort(
+		std::begin(meshDataArray_), 
+		std::end(meshDataArray_), 
+		[](MeshData a, MeshData b)
+		{
+			return a.material_ < b.material_;
+		});*/
+
 	// Create a buffer for meshDataArray_
 	const VkDeviceSize meshDataBufferSize = sizeof(MeshData) * meshDataArray_.size();
 	meshDataBuffer_.CreateGPUOnlyBuffer(
@@ -177,7 +187,7 @@ void Scene::BuildBoundingBoxes(VulkanContext& ctx)
 			{
 				originalBoundingBoxes_[boxIndex] = tempOriArray[j];
 				const MeshData& mData = meshDataArray_[boxIndex];
-				const glm::mat4& mat = modelSSBOs_[mData.modelMatrixIndex].model;
+				const glm::mat4& mat = modelSSBOs_[mData.modelMatrixIndex_].model;
 				transformedBoundingBoxes_[boxIndex] = originalBoundingBoxes_[boxIndex].GetTransformed(mat);
 				++boxIndex;
 			}
