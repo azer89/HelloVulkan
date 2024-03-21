@@ -99,6 +99,13 @@ private:
 		aiMesh* mesh, 
 		const aiScene* scene, 
 		const glm::mat4& transform);
+
+	std::vector<VertexData> GetVertices(const aiMesh* mesh, const glm::mat4& transform);
+	std::vector<uint32_t> GetIndices(const aiMesh* mesh);
+	std::unordered_map<TextureType, uint32_t> GetTextures(
+		VulkanContext& ctx, 
+		const aiScene* scene, 
+		const aiMesh* mesh);
 };
 
 #endif

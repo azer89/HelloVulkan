@@ -39,6 +39,8 @@ public:
 
 private:
 	bool bindlessTexture_;
+	std::string meshName_;
+
 	uint32_t vertexOffset_;
 	uint32_t indexOffset_;
 
@@ -55,32 +57,29 @@ public:
 
 	void InitSlotBased(
 		VulkanContext& ctx,
+		std::string& meshName,
 		uint32_t vertexOffset,
 		uint32_t indexOffset,
 		std::vector<VertexData>&& _vertices,
 		std::vector<uint32_t>&& _indices,
 		std::unordered_map<TextureType, uint32_t>&& textureIndices
 	);
-
 	void InitBindless(
 		VulkanContext& ctx,
+		std::string& meshName,
 		uint32_t vertexOffset,
 		uint32_t indexOffset,
 		uint32_t vertexCount,
 		uint32_t indexCount,
 		std::unordered_map<TextureType, uint32_t>&& textureIndices);
-
-	uint32_t GetIndexCount() const { return indexCount_; };
-
+	void SetupSlotBased(VulkanContext& ctx);
+	void Destroy();
 	// TODO Implement this function
 	//void AddTexture(VulkanContext& ctx, uint32_t textureIndex);
 
-	void SetupSlotBased(VulkanContext& ctx);
-
-	void Destroy();
-
-	uint32_t GetVertexOffset() const { return vertexOffset_; }
-	uint32_t GetVertexCount() const { return vertexCount_; }
+	[[nodiscard]] uint32_t GetIndexCount() const { return indexCount_; }
+	[[nodiscard]] uint32_t GetVertexOffset() const { return vertexOffset_; }
+	[[nodiscard]] uint32_t GetVertexCount() const { return vertexCount_; }
 
 	[[nodiscard]] MeshData GetMeshData(uint32_t textureIndexOffset, uint32_t modelMatrixIndex)
 	{

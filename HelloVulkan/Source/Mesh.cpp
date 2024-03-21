@@ -3,6 +3,7 @@
 // Constructor
 void Mesh::InitSlotBased(
 	VulkanContext& ctx,
+	std::string& meshName,
 	uint32_t vertexOffset,
 	uint32_t indexOffset,
 	// Currently only support r-values
@@ -11,6 +12,7 @@ void Mesh::InitSlotBased(
 	std::unordered_map<TextureType, uint32_t>&& textureIndices)
 {
 	bindlessTexture_ = false;
+	meshName_ = meshName;
 	vertexOffset_ = vertexOffset;
 	indexOffset_ = indexOffset; 
 	vertices_ = std::move(_vertices);
@@ -24,6 +26,7 @@ void Mesh::InitSlotBased(
 
 void Mesh::InitBindless(
 	VulkanContext& ctx,
+	std::string& meshName,
 	uint32_t vertexOffset,
 	uint32_t indexOffset,
 	uint32_t vertexCount,
@@ -31,6 +34,7 @@ void Mesh::InitBindless(
 	std::unordered_map<TextureType, uint32_t>&& textureIndices)
 {
 	bindlessTexture_ = true;
+	meshName_ = meshName;
 	vertexOffset_ = vertexOffset;
 	indexOffset_ = indexOffset;
 	vertexCount_ = vertexCount;

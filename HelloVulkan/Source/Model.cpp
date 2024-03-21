@@ -229,14 +229,59 @@ void Model::ProcessMesh(
 	const aiScene* scene, 
 	const glm::mat4& transform)
 {
-	// Vertices
+	std::string meshName = mesh->mName.C_Str();
+	std::vector<VertexData> vertices = GetVertices(mesh, transform);
+	std::vector<uint32_t> indices = GetIndices(mesh);
+	std::unordered_map<TextureType, uint32_t> textures = GetTextures(ctx, scene, mesh);
+
+	uint32_t vOffset = static_cast<uint32_t>(vertices.size());
+	uint32_t iOffset = static_cast<uint32_t>(indices.size());
+
+	if (bindlessTexture_)
+	{
+		globalVertices.insert(std::end(globalVertices), std::begin(vertices), std::end(vertices));
+		globalIndices.insert(std::end(globalIndices), std::begin(indices), std::end(indices));
+
+		// If Bindless textures, we do not move vertices and indices
+		meshes_.push_back({});
+		meshes_.back().InitBindless(
+			ctx,
+			meshName,
+			globalVertexOffset,
+			globalIndexOffset,
+			static_cast<uint32_t>(vertices.size()),
+			static_cast<uint32_t>(indices.size()),
+			std::move(textures));
+
+		// Update offsets
+		globalVertexOffset += vOffset;
+		globalIndexOffset += iOffset;
+	}
+	else
+	{
+		meshes_.push_back({});
+		// If Slot-based we move vertices and indices
+		meshes_.back().InitSlotBased(
+			ctx,
+			meshName,
+			globalVertexOffset,
+			globalIndexOffset,
+			std::move(vertices),
+			std::move(indices),
+			std::move(textures)
+		);
+	}
+}
+
+std::vector<VertexData> Model::GetVertices(const aiMesh* mesh, const glm::mat4& transform)
+{
 	std::vector<VertexData> vertices;
 	for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
 	{
 		// Positions
 		VertexData vertex =
 		{
-			.position = glm::vec3(transform * 
+			.position = glm::vec3(transform *
 				glm::vec4(
 					mesh->mVertices[i].x,
 					mesh->mVertices[i].y,
@@ -247,7 +292,7 @@ void Model::ProcessMesh(
 		// Normals
 		if (mesh->HasNormals())
 		{
-			vertex.normal = transform * 
+			vertex.normal = transform *
 				glm::vec4(
 					mesh->mNormals[i].x,
 					mesh->mNormals[i].y,
@@ -278,8 +323,11 @@ void Model::ProcessMesh(
 
 		vertices.push_back(vertex);
 	}
+	return vertices;
+}
 
-	// Indices
+std::vector<uint32_t> Model::GetIndices(const aiMesh* mesh)
+{
 	std::vector<uint32_t> indices;
 	for (unsigned int i = 0; i < mesh->mNumFaces; ++i)
 	{
@@ -290,7 +338,14 @@ void Model::ProcessMesh(
 			indices.push_back(static_cast<uint32_t>(face.mIndices[j]));
 		}
 	}
+	return indices;
+}
 
+std::unordered_map<TextureType, uint32_t> Model::GetTextures(
+	VulkanContext& ctx,
+	const aiScene* scene,
+	const aiMesh* mesh)
+{
 	// PBR textures
 	std::unordered_map<TextureType, uint32_t> textures;
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
@@ -305,14 +360,14 @@ void Model::ProcessMesh(
 			TextureType tType = TextureMapper::GetTextureType(aiTType);
 
 			// Make sure each texture is loaded once
-			if (!textureMap_.contains(filename)) 
+			if (!textureMap_.contains(filename))
 			{
 				AddTexture(ctx, filename);
 			}
 
 			// Only support one image per texture type, if we happen to load 
 			// multiple textures of the same type, we only use one.
-			if (!textures.contains(tType)) 
+			if (!textures.contains(tType))
 			{
 				textures[tType] = textureMap_[filename];
 			}
@@ -345,40 +400,5 @@ void Model::ProcessMesh(
 		textures[TextureType::Emissive] = textureMap_[BLACK_TEXTURE];
 	}
 
-	uint32_t vOffset = static_cast<uint32_t>(vertices.size());
-	uint32_t iOffset = static_cast<uint32_t>(indices.size());
-
-	// TODO This if-else statement is kinda hacky
-	if (bindlessTexture_)
-	{
-		globalVertices.insert(std::end(globalVertices), std::begin(vertices), std::end(vertices));
-		globalIndices.insert(std::end(globalIndices), std::begin(indices), std::end(indices));
-
-		// If Bindless textures, we do not move vertices and indices
-		meshes_.push_back({});
-		meshes_.back().InitBindless(
-			ctx,
-			globalVertexOffset,
-			globalIndexOffset,
-			static_cast<uint32_t>(vertices.size()),
-			static_cast<uint32_t>(indices.size()),
-			std::move(textures));
-
-		// Update offsets
-		globalVertexOffset += vOffset;
-		globalIndexOffset += iOffset;
-	}
-	else
-	{
-		meshes_.push_back({});
-		// If Slot-based we move vertices and indices
-		meshes_.back().InitSlotBased(
-			ctx,
-			globalVertexOffset,
-			globalIndexOffset,
-			std::move(vertices),
-			std::move(indices),
-			std::move(textures)
-		);
-	}
+	return textures;
 }
