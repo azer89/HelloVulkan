@@ -65,7 +65,7 @@ void PipelineAABBGenerator::Execute(VulkanContext& ctx, VkCommandBuffer commandB
 		static_cast<uint32_t>(ClusterForwardConfig::SliceCountY), // groupCountY
 		static_cast<uint32_t>(ClusterForwardConfig::SliceCountZ)); // groupCountZ
 
-	VkBufferMemoryBarrier2 barrier = {
+	const VkBufferMemoryBarrier2 barrier = {
 		.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER_2,
 		.pNext = nullptr,
 		.srcStageMask = VK_PIPELINE_STAGE_2_COMPUTE_SHADER_BIT,
@@ -82,7 +82,7 @@ void PipelineAABBGenerator::Execute(VulkanContext& ctx, VkCommandBuffer commandB
 
 void PipelineAABBGenerator::CreateDescriptor(VulkanContext& ctx)
 {
-	uint32_t frameCount = AppConfig::FrameCount;
+	const uint32_t frameCount = AppConfig::FrameCount;
 
 	VulkanDescriptorInfo dsInfo;
 	dsInfo.AddBuffer(&(resCF_->aabbBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT); // 0
