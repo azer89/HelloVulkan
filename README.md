@@ -43,7 +43,7 @@ The images below showcase the implementations of PBR, IBL, and PCF shadow mappin
 <img width="850" alt="bindless_shadow_mapping_2" src="https://github.com/azer89/HelloVulkan/assets/790432/7111e3f7-51e2-47fa-9fad-a0a19b4a1f1b">
 
 </br>
-
+</br>
 </br>
 
 The video below is another example of realistic rendering of the damaged helmet demonstrating PBR and IBL techniques.
