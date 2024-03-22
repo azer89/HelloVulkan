@@ -32,12 +32,15 @@ SSBO buffers for vertices, indices, and mesh data.
 class Scene
 {
 public:
-	Scene(VulkanContext& ctx, std::span<ModelCreateInfo> modelDataArray, bool supportDeviceAddress = false);
+	Scene(
+		VulkanContext& ctx,
+		const std::span<ModelCreateInfo> modelDataArray,
+		const bool supportDeviceAddress = false);
 	~Scene();
 
-	uint32_t GetInstanceCount() const { return static_cast<uint32_t>(meshDataArray_.size()); }
-	std::vector<VkDescriptorImageInfo> GetImageInfos() const;
-	VIM GetVIM() const;
+	[[nodiscard]] uint32_t GetInstanceCount() const { return static_cast<uint32_t>(meshDataArray_.size()); }
+	[[nodiscard]] std::vector<VkDescriptorImageInfo> GetImageInfos() const;
+	[[nodiscard]] VIM GetVIM() const;
 
 	void UpdateModelMatrix(VulkanContext& ctx,
 		const ModelUBO& modelUBO,
@@ -51,7 +54,7 @@ public:
 private:
 	void CreateBindlessResources(VulkanContext& ctx);
 	void CreateDataStructures();
-	BoundingBox GetBoundingBox(uint32_t vertexStart, uint32_t vertexEnd);
+	[[nodiscard]] BoundingBox GetBoundingBox(uint32_t vertexStart, uint32_t vertexEnd);
 
 public:
 	std::vector<VertexData> vertices_ = {};
@@ -70,16 +73,16 @@ public:
 	std::vector<InstanceData> instanceDataArray_ = {};
 	std::vector<MeshData> meshDataArray_ = {}; // Content is sent to meshDataBuffer_
 	std::vector<BoundingBox> transformedBoundingBoxes_ = {}; // Content is sent to transformedBoundingBoxBuffer_
-
+	
 	VulkanBuffer indirectBuffer_;
 	VulkanBuffer meshDataBuffer_;
 	VulkanBuffer transformedBoundingBoxBuffer_; // TODO Implement Frame-in-flight
+	
+private:
+	bool supportDeviceAddress_;
 
 	// First index is modelID, second index is per-model instanceID
 	std::vector<std::vector<InstanceMap>> instanceMapArray_ = {};
-
-private:
-	bool supportDeviceAddress_;
 };
 
 #endif

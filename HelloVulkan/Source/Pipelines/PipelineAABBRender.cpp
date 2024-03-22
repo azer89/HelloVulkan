@@ -66,7 +66,7 @@ void PipelineAABBRender::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer c
 		&descriptorSets_[frameIndex],
 		0,
 		nullptr);
-	const uint32_t boxCount = static_cast<uint32_t>(scene_->transformedBoundingBoxes_.size());
+	const uint32_t boxCount = scene_->GetInstanceCount();
 	vkCmdDraw(commandBuffer, 36, boxCount, 0, 0);
 	vkCmdEndRenderPass(commandBuffer);
 }

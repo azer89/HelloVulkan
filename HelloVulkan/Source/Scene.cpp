@@ -4,7 +4,9 @@
 
 #include <iostream>
 
-Scene::Scene(VulkanContext& ctx, std::span<ModelCreateInfo> modelDataArray, bool supportDeviceAddress) :
+Scene::Scene(VulkanContext& ctx,
+	const std::span<ModelCreateInfo> modelDataArray,
+	const bool supportDeviceAddress) :
 	supportDeviceAddress_(supportDeviceAddress)
 {
 	uint32_t vertexOffset = 0u;

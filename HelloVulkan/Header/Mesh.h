@@ -5,7 +5,6 @@
 #include "VulkanBuffer.h"
 #include "TextureMapper.h"
 #include "VertexData.h"
-#include "UBOs.h"
 
 #include <vector>
 #include <unordered_map>
@@ -66,25 +65,23 @@ public:
 
 	void InitSlotBased(
 		VulkanContext& ctx,
-		std::string& meshName,
-		uint32_t vertexOffset,
-		uint32_t indexOffset,
+		const std::string& meshName,
+		const uint32_t vertexOffset,
+		const uint32_t indexOffset,
 		std::vector<VertexData>&& _vertices,
 		std::vector<uint32_t>&& _indices,
 		std::unordered_map<TextureType, uint32_t>&& textureIndices
 	);
 	void InitBindless(
 		VulkanContext& ctx,
-		std::string& meshName,
-		uint32_t vertexOffset,
-		uint32_t indexOffset,
-		uint32_t vertexCount,
-		uint32_t indexCount,
+		const std::string& meshName,
+		const uint32_t vertexOffset,
+		const uint32_t indexOffset,
+		const uint32_t vertexCount,
+		const uint32_t indexCount,
 		std::unordered_map<TextureType, uint32_t>&& textureIndices);
 	void SetupSlotBased(VulkanContext& ctx);
 	void Destroy();
-	// TODO Implement this function
-	//void AddTexture(VulkanContext& ctx, uint32_t textureIndex);
 
 	[[nodiscard]] uint32_t GetIndexCount() const { return indexCount_; }
 	[[nodiscard]] uint32_t GetVertexOffset() const { return vertexOffset_; }
@@ -107,7 +104,7 @@ public:
 		};
 	}
 
-	inline MaterialType GetMaterialType()
+	[[nodiscard]] MaterialType GetMaterialType() const
 	{
 		if (meshName_.find("transparent") != meshName_.npos)
 		{
@@ -116,7 +113,7 @@ public:
 		return MaterialType::Opaque;
 	}
 
-	inline void ToLower(std::string& str)
+	void ToLower(std::string& str) const
 	{
 		for (auto& c : str)
 		{
