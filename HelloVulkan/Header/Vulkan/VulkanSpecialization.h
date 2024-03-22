@@ -13,14 +13,14 @@ public:
 private:
 	std::vector<VkSpecializationMapEntry> entries_ = {};
 	VkSpecializationInfo specializationInfo_ = {};
-	VkShaderStageFlagBits shaderStage_;
+	VkShaderStageFlags shaderStages_;
 
 public:
 	void ConsumeEntries(
 		std::vector<VkSpecializationMapEntry>&& entries,
 		void* data,
 		size_t dataSize,
-		VkShaderStageFlagBits shaderStage)
+		VkShaderStageFlags shaderStages)
 	{
 		entries_ = std::move(entries);
 
@@ -29,21 +29,21 @@ public:
 		specializationInfo_.pMapEntries = entries_.data();
 		specializationInfo_.pData = data;
 
-		shaderStage_ = shaderStage;
+		shaderStages_ = shaderStages;
 	}
 
-	void Inject(std::vector<VkPipelineShaderStageCreateInfo>& shaderStages)
+	void Inject(std::vector<VkPipelineShaderStageCreateInfo>& shaderInfoArray)
 	{
 		if (entries_.empty())
 		{
 			return;
 		}
 
-		for (auto& stage : shaderStages)
+		for (auto& stageInfo : shaderInfoArray)
 		{
-			if (stage.stage & shaderStage_)
+			if (stageInfo.stage & shaderStages_)
 			{
-				stage.pSpecializationInfo = &specializationInfo_;
+				stageInfo.pSpecializationInfo = &specializationInfo_;
 				break;
 			}
 		}
