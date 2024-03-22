@@ -26,9 +26,7 @@ PipelinePBRShadow::PipelinePBRShadow(
 		{
 			.type_ = PipelineType::GraphicsOffScreen,
 			.msaaSamples_ = resShared->multiSampledColorImage_.multisampleCount_,
-
-			// If you use bindless texture, make sure this is false
-			.vertexBufferBind_ = false,
+			.vertexBufferBind_ = false, // If you use bindless texture, make sure this is false
 		}
 	),
 	scene_(scene),
@@ -113,17 +111,14 @@ void PipelinePBRShadow::CreateSpecializationConstants()
 {
 	alphaDiscard_ = 1u;
 
-	VkSpecializationMapEntry entry =
-	{
+	std::vector<VkSpecializationMapEntry> specializationEntries = {{
 		.constantID = 0,
 		.offset = 0,
 		.size = sizeof(uint32_t)
-	};
+	}};
 
-	specializationEntries_.push_back(entry);
-
-	specializationConstants_.Create(
-		specializationEntries_,
+	specializationConstants_.ConsumeEntries(
+		std::move(specializationEntries),
 		&alphaDiscard_,
 		sizeof(uint32_t),
 		VK_SHADER_STAGE_FRAGMENT_BIT);

@@ -8,36 +8,33 @@
 class VulkanSpecialization
 {
 public:
-	VulkanSpecialization() :
-		specializationInfo_({}),
-		created_(false)
-	{
-	}
+	VulkanSpecialization() = default;
 
 private:
+	std::vector<VkSpecializationMapEntry> entries_ = {};
 	VkSpecializationInfo specializationInfo_ = {};
 	VkShaderStageFlagBits shaderStage_;
-	bool created_ = false;
 
 public:
-	void Create(
-		std::vector<VkSpecializationMapEntry>& entries,
+	void ConsumeEntries(
+		std::vector<VkSpecializationMapEntry>&& entries,
 		void* data,
 		size_t dataSize,
 		VkShaderStageFlagBits shaderStage)
 	{
+		entries_ = std::move(entries);
+
 		specializationInfo_.dataSize = dataSize;
-		specializationInfo_.mapEntryCount = static_cast<uint32_t>(entries.size());
-		specializationInfo_.pMapEntries = entries.data();
+		specializationInfo_.mapEntryCount = static_cast<uint32_t>(entries_.size());
+		specializationInfo_.pMapEntries = entries_.data();
 		specializationInfo_.pData = data;
 
 		shaderStage_ = shaderStage;
-		created_ = true;
 	}
 
 	void Inject(std::vector<VkPipelineShaderStageCreateInfo>& shaderStages)
 	{
-		if (!created_)
+		if (entries_.empty())
 		{
 			return;
 		}

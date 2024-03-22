@@ -52,7 +52,6 @@ private:
 
 	// Specialization constants
 	uint32_t alphaDiscard_;
-	std::vector<VkSpecializationMapEntry> specializationEntries_;
 };
 
 #endif
