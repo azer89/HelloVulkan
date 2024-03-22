@@ -6,6 +6,7 @@
 #include "ResourcesShadow.h"
 #include "ResourcesShared.h"
 #include "ResourcesIBL.h"
+#include "Scene.h"
 #include "PushConstants.h"
 
 #include <vector>
@@ -22,13 +23,13 @@ public:
 		ResourcesIBL* iblResources,
 		ResourcesShadow* resShadow,
 		ResourcesShared* resShared,
+		MaterialType materialType,
 		uint8_t renderBit = 0u);
 	 ~PipelinePBRShadow();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
 	void SetPBRPushConstants(const PushConstPBR& pbrPC) { pc_ = pbrPC; };
-
 	void SetShadowMapConfigUBO(VulkanContext& ctx, ShadowMapUBO& ubo)
 	{
 		uint32_t frameIndex = ctx.GetFrameIndex();
@@ -49,6 +50,11 @@ private:
 	ResourcesShadow* resShadow_;
 	std::vector<VkDescriptorSet> descriptorSets_;
 	std::vector<VulkanBuffer> shadowMapConfigUBOBuffers_;
+
+	// Material pass
+	MaterialType materialType_;
+	VkDeviceSize materialOffset_;
+	uint32_t materialDrawCount_;
 
 	// Specialization constants
 	uint32_t alphaDiscard_;

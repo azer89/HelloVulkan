@@ -54,13 +54,24 @@ void AppPBRShadow::Init()
 		resShared_.get(),
 		// This is the first offscreen render pass so we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
-	pbrPtr_ = std::make_unique<PipelinePBRShadow>(
+	// Opaque pass
+	pbrOpaquePtr_ = std::make_unique<PipelinePBRShadow>(
 		vulkanContext_,
 		scene_.get(),
 		resLight_.get(),
 		resIBL_.get(),
 		resShadow_.get(),
-		resShared_.get());
+		resShared_.get(),
+		MaterialType::Opaque);
+	// Transparent pass
+	pbrTransparentPtr_ = std::make_unique<PipelinePBRShadow>(
+		vulkanContext_,
+		scene_.get(),
+		resLight_.get(),
+		resIBL_.get(),
+		resShadow_.get(),
+		resShared_.get(),
+		MaterialType::Transparent);
 	shadowPtr_ = std::make_unique<PipelineShadow>(vulkanContext_, scene_.get(), resShadow_.get());
 	lightPtr_ = std::make_unique<PipelineLightRender>(vulkanContext_, resLight_.get(), resShared_.get());
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
@@ -78,7 +89,8 @@ void AppPBRShadow::Init()
 		clearPtr_.get(),
 		skyboxPtr_.get(),
 		shadowPtr_.get(),
-		pbrPtr_.get(),
+		pbrOpaquePtr_.get(),
+		pbrTransparentPtr_.get(),
 		lightPtr_.get(), // Should be the last
 		resolveMSPtr_.get(),
 		tonemapPtr_.get(),
@@ -119,7 +131,8 @@ void AppPBRShadow::DestroyResources()
 	clearPtr_.reset();
 	finishPtr_.reset();
 	skyboxPtr_.reset();
-	pbrPtr_.reset();
+	pbrOpaquePtr_.reset();
+	pbrTransparentPtr_.reset();
 	shadowPtr_.reset();
 	lightPtr_.reset();
 	resolveMSPtr_.reset();
@@ -132,7 +145,8 @@ void AppPBRShadow::UpdateUBOs()
 	// Camera matrices
 	CameraUBO ubo = camera_->GetCameraUBO();
 	lightPtr_->SetCameraUBO(vulkanContext_, ubo);
-	pbrPtr_->SetCameraUBO(vulkanContext_, ubo);
+	pbrOpaquePtr_->SetCameraUBO(vulkanContext_, ubo);
+	pbrTransparentPtr_->SetCameraUBO(vulkanContext_, ubo);
 
 	// Skybox
 	CameraUBO skyboxUbo = ubo;
@@ -140,8 +154,8 @@ void AppPBRShadow::UpdateUBOs()
 	skyboxPtr_->SetCameraUBO(vulkanContext_, skyboxUbo);
 
 	shadowPtr_->UpdateShadow(vulkanContext_, resShadow_.get(), resLight_->lights_[0].position_);
-
-	pbrPtr_->SetShadowMapConfigUBO(vulkanContext_, resShadow_->shadowUBO_);
+	pbrOpaquePtr_->SetShadowMapConfigUBO(vulkanContext_, resShadow_->shadowUBO_);
+	pbrTransparentPtr_->SetShadowMapConfigUBO(vulkanContext_, resShadow_->shadowUBO_);
 }
 
 void AppPBRShadow::UpdateUI()
@@ -195,7 +209,8 @@ void AppPBRShadow::UpdateUI()
 	resLight_->UpdateLightPosition(vulkanContext_, 0, &(staticLightPos[0]));
 
 	lightPtr_->ShouldRender(staticLightRender);
-	pbrPtr_->SetPBRPushConstants(staticPBRPushConstants);
+	pbrOpaquePtr_->SetPBRPushConstants(staticPBRPushConstants);
+	pbrTransparentPtr_->SetPBRPushConstants(staticPBRPushConstants);
 
 	resShadow_->shadowUBO_.shadowMinBias = staticMinBias;
 	resShadow_->shadowUBO_.shadowMaxBias = staticMaxBias;
