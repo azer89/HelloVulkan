@@ -42,7 +42,7 @@ public:
 	[[nodiscard]] std::vector<VkDescriptorImageInfo> GetImageInfos() const;
 	[[nodiscard]] VIM GetVIM() const;
 
-	void GetOffsetAndDrawCount(MaterialType matType, VkDeviceSize& offset, uint32_t& drawCount);
+	void GetOffsetAndDrawCount(MaterialType matType, VkDeviceSize& offset, uint32_t& drawCount) const;
 
 	void UpdateModelMatrix(VulkanContext& ctx,
 		const ModelUBO& modelUBO,

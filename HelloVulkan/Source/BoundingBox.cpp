@@ -3,7 +3,7 @@
 
 #include "glm/ext.hpp"
 
-BoundingBox::BoundingBox(std::span<glm::vec3> points)
+BoundingBox::BoundingBox(const std::span<glm::vec3> points)
 {
 	glm::vec3 vmin(std::numeric_limits<float>::max());
 	glm::vec3 vmax(std::numeric_limits<float>::lowest());
