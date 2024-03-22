@@ -51,6 +51,7 @@ PipelinePBRShadow::PipelinePBRShadow(
 	PrepareVIM(ctx);
 	CreateDescriptor(ctx);
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(PushConstPBR), VK_SHADER_STAGE_FRAGMENT_BIT);
+	CreateSpecializationConstants();
 	CreateGraphicsPipeline(
 		ctx,
 		renderPass_.GetHandle(),
@@ -106,6 +107,26 @@ void PipelinePBRShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer co
 		sizeof(VkDrawIndirectCommand));
 	
 	vkCmdEndRenderPass(commandBuffer);
+}
+
+void PipelinePBRShadow::CreateSpecializationConstants()
+{
+	alphaDiscard_ = 1u;
+
+	VkSpecializationMapEntry entry =
+	{
+		.constantID = 0,
+		.offset = 0,
+		.size = sizeof(uint32_t)
+	};
+
+	specializationEntries_.push_back(entry);
+
+	specializationConstants_.Create(
+		specializationEntries_,
+		&alphaDiscard_,
+		sizeof(uint32_t),
+		VK_SHADER_STAGE_FRAGMENT_BIT);
 }
 
 void PipelinePBRShadow::PrepareVIM(VulkanContext& ctx)
