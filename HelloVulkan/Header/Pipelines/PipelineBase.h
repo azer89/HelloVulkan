@@ -6,6 +6,7 @@
 #include "VulkanRenderPass.h"
 #include "VulkanFramebuffer.h"
 #include "VulkanDescriptor.h"
+#include "VulkanSpecialization.h"
 #include "PipelineConfig.h"
 #include "UBOs.h"
 
@@ -52,6 +53,7 @@ protected:
 	VulkanFramebuffer framebuffer_;
 	VulkanDescriptor descriptor_;
 	VulkanRenderPass renderPass_;
+	VulkanSpecialization specializationConstants_;
 	VkPipelineLayout pipelineLayout_ = nullptr;
 	VkPipeline pipeline_ = nullptr;
 
