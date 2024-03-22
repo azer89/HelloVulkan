@@ -5,6 +5,7 @@
 #include "TextureMapper.h"
 #include "VulkanContext.h"
 #include "VulkanImage.h"
+#include "UBOs.h"
 
 #include <string>
 #include <vector>
@@ -21,14 +22,6 @@ struct ModelCreateInfo
 
 class Model
 {
-private:
-	bool bindlessTexture_;
-	VkDevice device_;
-	std::string directory_;
-
-	// string key is the filename, int value points to elements in textureList_
-	std::unordered_map<std::string, uint32_t> textureMap_;
-
 public:
 	std::vector<Mesh> meshes_;
 
@@ -42,6 +35,14 @@ public:
 	// This is used to store the filename and to activate instancing in bindless setup
 	ModelCreateInfo modelInfo_;
 
+private:
+	bool bindlessTexture_;
+	VkDevice device_;
+	std::string directory_;
+
+	// string key is the filename, int value points to elements in textureList_
+	std::unordered_map<std::string, uint32_t> textureMap_;
+	
 public:
 	Model() = default;
 	~Model() = default;
@@ -56,12 +57,9 @@ public:
 		uint32_t& globalVertexOffset,
 		uint32_t& globalIndexOffset);
 
-	VulkanImage* GetTexture(uint32_t textureIndex);
-
-	void AddTextureIfEmpty(TextureType tType, const std::string& filePath);
-
-	uint32_t GetTextureCount() const { return static_cast<uint32_t>(textureList_.size()); }
-	uint32_t GetMeshCount() const { return static_cast<uint32_t>(meshes_.size()); }
+	[[nodiscard]] VulkanImage* GetTexture(uint32_t textureIndex);
+	[[nodiscard]] uint32_t GetTextureCount() const { return static_cast<uint32_t>(textureList_.size()); }
+	[[nodiscard]] uint32_t GetMeshCount() const { return static_cast<uint32_t>(meshes_.size()); }
 
 	void CreateModelUBOBuffers(VulkanContext& ctx);
 	void SetModelUBO(VulkanContext& ctx, ModelUBO ubo);
@@ -70,7 +68,7 @@ private:
 	void AddTexture(VulkanContext& ctx, const std::string& textureFilename);
 	void AddTexture(VulkanContext& ctx, const std::string& textureName, void* data, int width, int height);
 
-	// TODO Three functios below are pretty ugly because we pass too many references
+	// TODO Three functions below are pretty ugly because we pass too many references
 	void LoadModel(
 		VulkanContext& ctx, 
 		std::string const& path,
@@ -79,14 +77,14 @@ private:
 		uint32_t& globalVertexOffset,
 		uint32_t& globalIndexOffset);
 
-	// Processes a node recursively. 
+	// Processes a node recursively
 	void ProcessNode(
 		VulkanContext& ctx, 
 		std::vector<VertexData>& globalVertices,
 		std::vector<uint32_t>& globalIndices,
 		uint32_t& globalVertexOffset,
 		uint32_t& globalIndexOffset,
-		aiNode* node, 
+		const aiNode* node, 
 		const aiScene* scene, 
 		const glm::mat4& parentTransform);
 
@@ -96,9 +94,16 @@ private:
 		std::vector<uint32_t>& globalIndices,
 		uint32_t& globalVertexOffset,
 		uint32_t& globalIndexOffset,
-		aiMesh* mesh, 
+		const aiMesh* mesh, 
 		const aiScene* scene, 
 		const glm::mat4& transform);
+
+	[[nodiscard]] std::vector<VertexData> GetVertices(const aiMesh* mesh, const glm::mat4& transform);
+	[[nodiscard]] std::vector<uint32_t> GetIndices(const aiMesh* mesh);
+	[[nodiscard]] std::unordered_map<TextureType, uint32_t> GetTextures(
+		VulkanContext& ctx, 
+		const aiScene* scene, 
+		const aiMesh* mesh);
 };
 
 #endif

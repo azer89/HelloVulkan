@@ -137,7 +137,7 @@ void AppBase::DrawFrame()
 	}
 
 	{
-		ZoneScopedNC("UpdateUBOs", tracy::Color::Aquamarine2);
+		ZoneScopedNC("UpdateUBOs", tracy::Color::BlueViolet);
 		// Send UBOs to buffers
 		UpdateUBOs();
 	}
