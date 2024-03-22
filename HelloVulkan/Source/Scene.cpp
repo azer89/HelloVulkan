@@ -55,6 +55,9 @@ VIM Scene::GetVIM() const
 
 void Scene::GetOffsetAndDrawCount(MaterialType matType, VkDeviceSize& offset, uint32_t& drawCount)
 {
+	offset = 0;
+	drawCount = 0;
+
 	// Calculate left
 	int left = 0;
 	for (; left < meshDataArray_.size(); ++left)
@@ -67,7 +70,7 @@ void Scene::GetOffsetAndDrawCount(MaterialType matType, VkDeviceSize& offset, ui
 
 	// Calculate right
 	int right = meshDataArray_.size() - 1;
-	for (; right >= 0; --right)
+	for (; right >= 0 && right > left; --right)
 	{
 		if (meshDataArray_[right].material_ == matType)
 		{
@@ -75,12 +78,14 @@ void Scene::GetOffsetAndDrawCount(MaterialType matType, VkDeviceSize& offset, ui
 		}
 	}
 
-	// Edge cases
-	if (left >= right)
+	// Edge case
+	if (left > right)
 	{
 		offset = 0;
 		drawCount == 0;
 	}
+
+	// if left == right, then drawCount == 1
 
 	drawCount = right - left + 1;
 	offset = left * sizeof(VkDrawIndirectCommand);

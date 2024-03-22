@@ -21,6 +21,7 @@ PipelinePBRShadow::PipelinePBRShadow(
 	ResourcesIBL* iblResources,
 	ResourcesShadow* resShadow,
 	ResourcesShared* resShared,
+	MaterialType materialType,
 	uint8_t renderBit) :
 	PipelineBase(ctx, 
 		{
@@ -32,10 +33,15 @@ PipelinePBRShadow::PipelinePBRShadow(
 	scene_(scene),
 	resLight_(resLight),
 	iblResources_(iblResources),
-	resShadow_(resShadow)
+	resShadow_(resShadow),
+	materialType_(materialType),
+	materialOffset_(0),
+	materialDrawCount_(0)
 {
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, shadowMapConfigUBOBuffers_, sizeof(ShadowMapUBO), AppConfig::FrameCount);
+
+	scene_->GetOffsetAndDrawCount(materialType_, materialOffset_, materialDrawCount_);
 
 	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
 	framebuffer_.CreateResizeable(
@@ -73,6 +79,11 @@ PipelinePBRShadow::~PipelinePBRShadow()
 
 void PipelinePBRShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
+	if (materialDrawCount_ == 0)
+	{
+		return;
+	}
+
 	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "PBR_Shadow", tracy::Color::Aqua);
 
 	uint32_t frameIndex = ctx.GetFrameIndex();
@@ -100,8 +111,8 @@ void PipelinePBRShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer co
 	vkCmdDrawIndirect(
 		commandBuffer,
 		scene_->indirectBuffer_.buffer_,
-		0, // offset
-		scene_->GetInstanceCount(),
+		materialOffset_,
+		materialDrawCount_,
 		sizeof(VkDrawIndirectCommand));
 	
 	vkCmdEndRenderPass(commandBuffer);
@@ -109,7 +120,7 @@ void PipelinePBRShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer co
 
 void PipelinePBRShadow::CreateSpecializationConstants()
 {
-	alphaDiscard_ = 1u;
+	alphaDiscard_ = materialType_ == MaterialType::Transparent ? 1u : 0u;
 
 	std::vector<VkSpecializationMapEntry> specializationEntries = {{
 		.constantID = 0,

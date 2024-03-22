@@ -38,7 +38,8 @@ private:
 	std::unique_ptr<PipelineClear> clearPtr_;
 	std::unique_ptr<PipelineSkybox> skyboxPtr_;
 	std::unique_ptr<PipelineShadow> shadowPtr_;
-	std::unique_ptr<PipelinePBRShadow> pbrPtr_;
+	std::unique_ptr<PipelinePBRShadow> pbrOpaquePtr_;
+	std::unique_ptr<PipelinePBRShadow> pbrTransparentPtr_;
 	std::unique_ptr<PipelineTonemap> tonemapPtr_;
 	std::unique_ptr<PipelineFinish> finishPtr_;
 	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;
