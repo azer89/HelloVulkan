@@ -16,6 +16,7 @@ A 3D rendering engine built from scratch using Vulkan API and C++.
 * __Shadow maps__ with Poisson Disk or PCF.
 * __Bindless__:
     * __Descriptor indexing__ that allows all textures in the scene to be bound just once at the start of the frame.
+    * A single __indirect draw call__ per render pass. 
     * __Buffer device address__ for direct shader access to buffers without the need to create descriptors.
 * glTF mesh/texture support.
 * Multisample anti-aliasing (MSAA).
@@ -35,7 +36,11 @@ The images below showcase the implementations of PBR, IBL, bindless textures, an
 
 <img width="850" alt="bindless_shadow_mapping_2" src="https://github.com/azer89/HelloVulkan/assets/790432/7111e3f7-51e2-47fa-9fad-a0a19b4a1f1b">
 
-Bindless textures is achieved by utilizing __Descriptor Indexing__. This enables the storage of all scene textures inside an unbounded array, which allows the texture descriptors to be bound once at the start of a frame. To push the concept of "bindless" further, the rendering uses a feature called __buffer device address__. Instead of creating descriptors, device addresses act as _pointers_ so that the shaders can have direct access to buffers.
+Bindless textures is achieved by utilizing __Descriptor Indexing__. This enables the storage of all scene textures inside an unbounded array, which allows the texture descriptors to be bound once at the start of a frame. 
+
+The engine leverages __indirect draw__ API provided by Vulkan. This means the CPU only calls a single indirect draw command to the GPU. By sorting draw calls based on material type, it is now possible to have separate render passes for each material. For each render pass, the GPU only processes a batch of objects sharing the same material. This significantly improves efficiency because the GPU can now avoid branching in the shader.
+
+Finally, the engine uses a feature called __buffer device address__ to push the concept of "bindless" further. Instead of creating descriptors, device addresses act as _pointers_ so that the shaders can have direct access to buffers.
 
 </br>
 
@@ -61,7 +66,7 @@ https://github.com/azer89/HelloVulkan/assets/790432/13a4426f-deec-40f5-816a-5594
 
 ### Compute-Based Frustum Culling
 
-Since the engine is now bindless, frustum culling can now be done entirely on the compute shader by modifying draw commands within an indirect buffer. If an object's AABB falls outside the camera frustum, the compute shader will deactivate the draw call for that object. The CPU only needs to issue a single indirect draw call and it is unaware of the number of objects actually drawn. Using Tracy profiler, an intersection test with 10,000 AABBs only takes less than 25 microseconds (0.025 milliseconds).
+Since the engine is now bindless, frustum culling can now be done entirely on the compute shader by modifying draw commands within an indirect buffer. If an object's AABB falls outside the camera frustum, the compute shader will deactivate the draw call for that object. Therefore, the CPU is unaware of the number of objects actually drawn. Using Tracy profiler, an intersection test with 10,000 AABBs only takes less than 25 microseconds (0.025 milliseconds).
 
 The left image below shows a rendering of all objects inside the frustum. The right image shows visualizations of AABBs as translucent boxes and the frustum drawn as orange lines.
 
