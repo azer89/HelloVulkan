@@ -18,13 +18,11 @@ struct InstanceData
 	BoundingBox originalBoundingBox;
 };
 
+// Needed for updating bounding boxes
 struct InstanceMap
 {
-	// This points to modelSSBOs_
-	int modelMatrixIndex;
-
-	// This points to meshDataArray_, and transformedBoundingBoxes_ 
-	std::vector<int> boundingBoxIndices;
+	uint32_t modelMatrixIndex;
+	std::vector<uint32_t> instanceDataIndices;
 };
 
 /*
@@ -54,7 +52,6 @@ private:
 	void CreateBindlessResources(VulkanContext& ctx);
 	void CreateDataStructures();
 	BoundingBox GetBoundingBox(uint32_t vertexStart, uint32_t vertexEnd);
-	//std::vector<uint32_t> GetInstanceVertexCountArray() const;
 
 public:
 	std::vector<VertexData> vertices_ = {};

@@ -20,8 +20,8 @@ void Mesh::InitSlotBased(
 	vertices_ = std::move(_vertices);
 	indices_ = std::move(_indices);
 	textureIndices_ = std::move(textureIndices);
-	vertexCount_ = vertices_.size();
-	indexCount_ = indices_.size();
+	vertexCount_ = static_cast<uint32_t>(vertices_.size());
+	indexCount_ = static_cast<uint32_t>(indices_.size());
 
 	SetupSlotBased(ctx);
 }
