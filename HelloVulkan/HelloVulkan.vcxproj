@@ -321,6 +321,7 @@
     <ClCompile Include="Source\Vulkan\VulkanInstance.cpp" />
     <ClCompile Include="Source\Vulkan\VulkanRenderPass.cpp" />
     <ClCompile Include="Source\Vulkan\VulkanShader.cpp" />
+    <ClCompile Include="Source\Vulkan\VulkanSpecialization.cpp" />
     <ClCompile Include="Source\Vulkan\VulkanUtility.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

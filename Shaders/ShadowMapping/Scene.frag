@@ -28,6 +28,7 @@ Fragment shader for
 #include <ShadowMapping/UBO.glsl>
 #include <Bindless/VIM.glsl>
 
+// Specialization constant
 layout (constant_id = 0) const uint ALPHA_DISCARD = 1;
 
 layout(location = 0) in vec3 worldPos;
@@ -66,6 +67,8 @@ void main()
 
 	vec4 albedo4 = texture(pbrTextures[nonuniformEXT(mData.albedo)], texCoord).rgba;
 
+	// A performance trick by using a use specialization constant
+	// so this part will be removed if material type is not transparent
 	if (ALPHA_DISCARD > 0)
 	{
 		if (albedo4.a < 0.5)

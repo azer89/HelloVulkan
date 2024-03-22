@@ -422,6 +422,9 @@
     <ClInclude Include="Header\Pipelines\PipelineFrustumCulling.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Vulkan\VulkanSpecialization.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">
@@ -588,6 +591,9 @@
     </ClCompile>
     <ClCompile Include="Source\Pipelines\PipelineFrustumCulling.cpp">
       <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vulkan\VulkanSpecialization.cpp">
+      <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

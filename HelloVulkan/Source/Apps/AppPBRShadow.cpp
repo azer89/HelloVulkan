@@ -54,6 +54,7 @@ void AppPBRShadow::Init()
 		resShared_.get(),
 		// This is the first offscreen render pass so we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
+	// Opaque pass
 	pbrOpaquePtr_ = std::make_unique<PipelinePBRShadow>(
 		vulkanContext_,
 		scene_.get(),
@@ -62,6 +63,7 @@ void AppPBRShadow::Init()
 		resShadow_.get(),
 		resShared_.get(),
 		MaterialType::Opaque);
+	// Transparent pass
 	pbrTransparentPtr_ = std::make_unique<PipelinePBRShadow>(
 		vulkanContext_,
 		scene_.get(),
