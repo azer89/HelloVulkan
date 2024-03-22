@@ -9,10 +9,21 @@
 #include <vector>
 #include <span>
 
-// Note that this is not for GPU instancing, but for duplications of models
 struct InstanceData
 {
+	uint32_t modelIndex;
+	uint32_t meshIndex;
+	uint32_t perModelInstanceIndex;
+	MeshData meshData;
+	BoundingBox originalBoundingBox;
+};
+
+struct InstanceMap
+{
+	// This points to modelSSBOs_
 	int modelMatrixIndex;
+
+	// This points to meshDataArray_, and transformedBoundingBoxes_ 
 	std::vector<int> boundingBoxIndices;
 };
 
@@ -41,35 +52,34 @@ public:
 
 private:
 	void CreateBindlessResources(VulkanContext& ctx);
-	void BuildBoundingBoxes(VulkanContext& ctx);
-	void BuildInstanceDataArray();
-	std::vector<uint32_t> GetInstanceVertexCountArray() const;
+	void CreateDataStructures();
+	BoundingBox GetBoundingBox(uint32_t vertexStart, uint32_t vertexEnd);
+	//std::vector<uint32_t> GetInstanceVertexCountArray() const;
 
 public:
-	// meshDataArray_ has the the same length as originalBoundingBoxes_
-	std::vector<MeshData> meshDataArray_ = {};
-	VulkanBuffer meshDataBuffer_;
-
 	std::vector<VertexData> vertices_ = {};
 	VulkanBuffer vertexBuffer_;
 
 	std::vector<uint32_t> indices_ = {};
 	VulkanBuffer indexBuffer_;
 
-	// For indirect draw
-	VulkanBuffer indirectBuffer_;
+	std::vector<Model> models_ = {};
 
-	// Length of modelUBO_ is instance count
+	// Length of modelUBO_ is global instance count
 	std::vector<ModelUBO> modelSSBOs_ = {};
 	std::vector<VulkanBuffer> modelSSBOBuffers_ = {}; // Frame-in-flight
 
-	std::vector<Model> models_ = {};
+	// These three have the same length
+	std::vector<InstanceData> instanceDataArray_ = {};
+	std::vector<MeshData> meshDataArray_ = {}; // Content is sent to meshDataBuffer_
+	std::vector<BoundingBox> transformedBoundingBoxes_ = {}; // Content is sent to transformedBoundingBoxBuffer_
 
-	// For compute-based culling
-	std::vector<BoundingBox> originalBoundingBoxes_ = {};
-	std::vector<BoundingBox> transformedBoundingBoxes_ = {};
+	VulkanBuffer indirectBuffer_;
+	VulkanBuffer meshDataBuffer_;
 	VulkanBuffer transformedBoundingBoxBuffer_; // TODO Implement Frame-in-flight
-	std::vector<std::vector<InstanceData>> instanceDataArray_ = {};
+
+	// First index is modelID, second index is per-model instanceID
+	std::vector<std::vector<InstanceMap>> instanceMapArray_ = {};
 
 private:
 	bool supportDeviceAddress_;
