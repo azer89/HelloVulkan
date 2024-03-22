@@ -26,9 +26,7 @@ PipelinePBRShadow::PipelinePBRShadow(
 		{
 			.type_ = PipelineType::GraphicsOffScreen,
 			.msaaSamples_ = resShared->multiSampledColorImage_.multisampleCount_,
-
-			// If you use bindless texture, make sure this is false
-			.vertexBufferBind_ = false,
+			.vertexBufferBind_ = false, // If you use bindless texture, make sure this is false
 		}
 	),
 	scene_(scene),
@@ -51,6 +49,7 @@ PipelinePBRShadow::PipelinePBRShadow(
 	PrepareVIM(ctx);
 	CreateDescriptor(ctx);
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(PushConstPBR), VK_SHADER_STAGE_FRAGMENT_BIT);
+	CreateSpecializationConstants();
 	CreateGraphicsPipeline(
 		ctx,
 		renderPass_.GetHandle(),
@@ -106,6 +105,23 @@ void PipelinePBRShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer co
 		sizeof(VkDrawIndirectCommand));
 	
 	vkCmdEndRenderPass(commandBuffer);
+}
+
+void PipelinePBRShadow::CreateSpecializationConstants()
+{
+	alphaDiscard_ = 1u;
+
+	std::vector<VkSpecializationMapEntry> specializationEntries = {{
+		.constantID = 0,
+		.offset = 0,
+		.size = sizeof(uint32_t)
+	}};
+
+	specializationConstants_.ConsumeEntries(
+		std::move(specializationEntries),
+		&alphaDiscard_,
+		sizeof(uint32_t),
+		VK_SHADER_STAGE_FRAGMENT_BIT);
 }
 
 void PipelinePBRShadow::PrepareVIM(VulkanContext& ctx)

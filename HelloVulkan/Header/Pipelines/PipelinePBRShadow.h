@@ -38,6 +38,7 @@ public:
 private:
 	void PrepareVIM(VulkanContext& ctx);
 	void CreateDescriptor(VulkanContext& ctx);
+	void CreateSpecializationConstants();
 
 private:
 	PushConstPBR pc_;
@@ -48,6 +49,9 @@ private:
 	ResourcesShadow* resShadow_;
 	std::vector<VkDescriptorSet> descriptorSets_;
 	std::vector<VulkanBuffer> shadowMapConfigUBOBuffers_;
+
+	// Specialization constants
+	uint32_t alphaDiscard_;
 };
 
 #endif

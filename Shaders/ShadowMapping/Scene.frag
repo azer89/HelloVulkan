@@ -28,6 +28,8 @@ Fragment shader for
 #include <ShadowMapping/UBO.glsl>
 #include <Bindless/VIM.glsl>
 
+layout (constant_id = 0) const uint ALPHA_DISCARD = 1;
+
 layout(location = 0) in vec3 worldPos;
 layout(location = 1) in vec2 texCoord;
 layout(location = 2) in vec3 normal;
@@ -64,10 +66,12 @@ void main()
 
 	vec4 albedo4 = texture(pbrTextures[nonuniformEXT(mData.albedo)], texCoord).rgba;
 
-	// TODO This kills performance
-	if (albedo4.a < 0.5)
+	if (ALPHA_DISCARD > 0)
 	{
-		discard;
+		if (albedo4.a < 0.5)
+		{
+			discard;
+		}
 	}
 
 	// Material properties

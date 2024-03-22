@@ -263,6 +263,7 @@
     <ClInclude Include="Header\Vulkan\VulkanInstance.h" />
     <ClInclude Include="Header\Vulkan\VulkanRenderPass.h" />
     <ClInclude Include="Header\Vulkan\VulkanShader.h" />
+    <ClInclude Include="Header\Vulkan\VulkanSpecialization.h" />
     <ClInclude Include="Header\Vulkan\VulkanUtility.h" />
   </ItemGroup>
   <ItemGroup>

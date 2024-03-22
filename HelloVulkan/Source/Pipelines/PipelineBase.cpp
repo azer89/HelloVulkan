@@ -132,6 +132,9 @@ void PipelineBase::CreateGraphicsPipeline(
 		shaderStages[i] = shaderModules[i].GetShaderStageInfo(stage, "main");
 	}
 
+	// Add specialization constants if any
+	specializationConstants_.Inject(shaderStages);
+
 	// Pipeline create info
 	VulkanPipelineCreateInfo pInfo(ctx);
 

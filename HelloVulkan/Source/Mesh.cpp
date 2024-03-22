@@ -7,8 +7,8 @@ void Mesh::InitSlotBased(
 	const uint32_t vertexOffset,
 	const uint32_t indexOffset,
 	// Currently only support r-values
-	std::vector<VertexData>&& _vertices,
-	std::vector<uint32_t>&& _indices,
+	std::vector<VertexData>&& vertices,
+	std::vector<uint32_t>&& indices,
 	std::unordered_map<TextureType, uint32_t>&& textureIndices)
 {
 	meshName_ = meshName;
@@ -17,8 +17,8 @@ void Mesh::InitSlotBased(
 	bindlessTexture_ = false;
 	vertexOffset_ = vertexOffset;
 	indexOffset_ = indexOffset; 
-	vertices_ = std::move(_vertices);
-	indices_ = std::move(_indices);
+	vertices_ = std::move(vertices);
+	indices_ = std::move(indices);
 	textureIndices_ = std::move(textureIndices);
 	vertexCount_ = static_cast<uint32_t>(vertices_.size());
 	indexCount_ = static_cast<uint32_t>(indices_.size());
