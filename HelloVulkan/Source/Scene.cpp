@@ -53,6 +53,39 @@ VIM Scene::GetVIM() const
 	};
 }
 
+void Scene::GetOffsetAndDrawCount(MaterialType matType, VkDeviceSize& offset, uint32_t& drawCount)
+{
+	// Calculate left
+	int left = 0;
+	for (; left < meshDataArray_.size(); ++left)
+	{
+		if (meshDataArray_[left].material_ == matType)
+		{
+			break;
+		}
+	}
+
+	// Calculate right
+	int right = meshDataArray_.size() - 1;
+	for (; right >= 0; --right)
+	{
+		if (meshDataArray_[right].material_ == matType)
+		{
+			break;
+		}
+	}
+
+	// Edge cases
+	if (left >= right)
+	{
+		offset = 0;
+		drawCount == 0;
+	}
+
+	drawCount = right - left + 1;
+	offset = left * sizeof(VkDrawIndirectCommand);
+}
+
 void Scene::CreateBindlessResources(VulkanContext& ctx)
 {
 	CreateDataStructures();
