@@ -28,7 +28,7 @@ Fragment shader for
 #include <ShadowMapping/UBO.glsl>
 #include <Bindless/VIM.glsl>
 
-layout (constant_id = 0) const int ALPHA_DISCARD = 1;
+layout (constant_id = 0) const uint ALPHA_DISCARD = 1;
 
 layout(location = 0) in vec3 worldPos;
 layout(location = 1) in vec2 texCoord;
