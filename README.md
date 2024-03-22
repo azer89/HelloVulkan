@@ -12,12 +12,12 @@ A 3D rendering engine built from scratch using Vulkan API and C++.
     * A cubemap from an equirectangular HDR image.
     * Specular and diffuse cubemaps.
     * BRDF lookup table.
+* __Bindless__:
+    * A single __indirect draw call__ per render pass. 
+    * __Descriptor indexing__ that allows all textures in the scene to be bound just once at the start of the frame.
+    * __Buffer device address__ for direct shader access to buffers without the need to create descriptors.
 * __Compute-based Frustum Culling__
 * __Shadow maps__ with Poisson Disk or PCF.
-* __Bindless__:
-    * __Descriptor indexing__ that allows all textures in the scene to be bound just once at the start of the frame.
-    * A single __indirect draw call__ per render pass. 
-    * __Buffer device address__ for direct shader access to buffers without the need to create descriptors.
 * glTF mesh/texture support.
 * Multisample anti-aliasing (MSAA).
 * Simple __raytracing__ pipeline with basic intersection testing.
@@ -30,9 +30,9 @@ A 3D rendering engine built from scratch using Vulkan API and C++.
 
 ### Engine Overview
 
-The engine leverages several advanced Vulkan features to optimize rendering performance. First, Bindless textures is achieved by utilizing __Descriptor Indexing__. This enables the storage of all scene textures inside an unbounded array, which allows texture descriptors to be bound once at the start of a frame. 
+The engine leverages several advanced Vulkan features to optimize rendering performance. First, bindless textures is achieved by utilizing __descriptor Indexing__. This enables the storage of all scene textures inside an unbounded array, which allows texture descriptors to be bound once at the start of a frame. 
 
-Next, the engine takes advantage of __indirect draw__ API provided by Vulkan. This means the CPU only calls a single indirect draw command to the GPU. By sorting draw calls based on material type, it is now possible to have separate render passes for each material. For each render pass, the GPU only processes a batch of objects sharing the same material. This significantly improves efficiency because the GPU can now avoid branching in the shader.
+Next, the engine takes advantage of __indirect draw__ API. This means the CPU only calls a single indirect draw command. By sorting draw calls based on material type, it is now possible to have separate render passes for each material. For each render pass, the GPU only processes a draw call batch of objects sharing the same material. This significantly improves efficiency because shader branching can now be avoided.
 
 Finally, the engine pushes the concept of "bindless" even further by utilizing __buffer device addresses__. Instead of creating descriptors, device addresses act as _pointers_ so that the shaders can have direct access to buffers.
 
@@ -50,13 +50,11 @@ The video below is another example of realistic rendering of the damaged helmet 
 
 https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d130bf910
 
-### [Link to More Results](https://github.com/azer89/HelloVulkan/wiki/Gallery)
-
 </br>
 
 ### Clustered Forward Shading
 
-The technique consists of two steps that are done in compute shaders. The first step is to subdivide the view frustum into AABB clusters.
+The technique consists of two steps that are executed in compute shaders. The first step is to subdivide the view frustum into AABB clusters.
 The next step is light culling, where it calculates lights that intersect the clusters. This step removes lights that are too far from a fragment, leading to reduced light iteration in the final fragment shader.
 
 Preliminary testing using a 3070M graphics card shows the technique can render a PBR Sponza scene in 2560x1600 resolution with over 1000 dynamic lights at 60-100 FPS.
@@ -68,7 +66,7 @@ https://github.com/azer89/HelloVulkan/assets/790432/13a4426f-deec-40f5-816a-5594
 
 ### Compute-Based Frustum Culling
 
-Since the engine uses indirect draw, frustum culling can now be done entirely on the compute shader by modifying draw commands within an indirect buffer. If an object's AABB falls outside the camera frustum, the compute shader will deactivate the draw call for that object. Consequently, the CPU is unaware of the number of objects actually drawn. Using Tracy profiler, an intersection test with 10,000 AABBs only takes less than 25 microseconds (0.025 milliseconds).
+Since the engine uses indirect draw, frustum culling can now be done entirely on the compute shader by modifying draw calls within an indirect buffer. If an object's AABB falls outside the camera frustum, the compute shader will deactivate the draw call for that object. Consequently, the CPU is unaware of the number of objects actually drawn. Using Tracy profiler, an intersection test with 10,000 AABBs only takes less than 25 microseconds (0.025 milliseconds).
 
 The left image below shows a rendering of all objects inside the frustum. The right image shows visualizations of AABBs as translucent boxes and the frustum drawn as orange lines.
 
@@ -93,6 +91,10 @@ The engine also features a basic ray tracing pipeline. This process begins with 
 <img width="425" alt="hardware_raytracing" src="https://github.com/azer89/HelloVulkan/assets/790432/7f6771b3-ab52-41c4-89d4-b3bed05e724e">
 
 </br>
+</br>
+
+### [Link to More Results](https://github.com/azer89/HelloVulkan/wiki/Gallery)
+
 </br>
 
 ### Build
