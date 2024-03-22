@@ -20,7 +20,7 @@ Adapted from
 class VulkanShader
 {
 public:
-	VkShaderModule GetShaderModule() { return shaderModule_; }
+	VkShaderModule GetShaderModule() const { return shaderModule_; }
 
 	VkResult Create(VkDevice device, const char* fileName);
 

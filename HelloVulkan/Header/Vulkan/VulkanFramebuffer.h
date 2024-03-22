@@ -36,8 +36,8 @@ public:
 		uint32_t width,
 		uint32_t height);
 
-	VkFramebuffer GetFramebuffer() const;
-	VkFramebuffer GetFramebuffer(size_t index) const;
+	[[nodiscard]] VkFramebuffer GetFramebuffer() const;
+	[[nodiscard]] VkFramebuffer GetFramebuffer(size_t index) const;
 	void Recreate(VulkanContext& ctx);
 
 private:

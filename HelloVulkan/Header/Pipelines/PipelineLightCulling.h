@@ -19,9 +19,7 @@ public:
 	~PipelineLightCulling();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
-
 	void ResetGlobalIndex(VulkanContext& ctx);
-
 	void SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO& ubo);
 
 private:

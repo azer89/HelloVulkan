@@ -117,6 +117,7 @@ public:
 	{
 		for (auto& c : str)
 		{
+			// TODO Narrowing conversion
 			c = tolower(c);
 		}
 	}

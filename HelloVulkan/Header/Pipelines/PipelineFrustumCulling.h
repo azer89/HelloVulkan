@@ -16,7 +16,7 @@ public:
 
 	void SetFrustumUBO(VulkanContext& ctx, FrustumUBO& ubo)
 	{
-		size_t frameIndex = ctx.GetFrameIndex();
+		const size_t frameIndex = ctx.GetFrameIndex();
 		frustumBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(FrustumUBO));
 	}
 

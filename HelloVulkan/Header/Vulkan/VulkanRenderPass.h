@@ -78,7 +78,7 @@ public:
 
 	void Destroy();
 
-	VkRenderPass GetHandle() { return handle_;}
+	VkRenderPass GetHandle() const { return handle_;}
 
 private:
 	void CreateBeginInfo();

@@ -28,7 +28,7 @@ public:
 	~PipelineLine();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
-	void ShouldRender(bool shouldRender) { shouldRender_ = shouldRender; };
+	void ShouldRender(bool shouldRender) { shouldRender_ = shouldRender; }
 	void SetFrustum(VulkanContext& ctx, CameraUBO& camUBO);
 
 private:
