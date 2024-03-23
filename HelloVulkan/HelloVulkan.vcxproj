@@ -192,7 +192,7 @@
     <None Include="..\Shaders\Skybox.vert" />
     <None Include="..\Shaders\FullscreenTriangle.vert" />
     <None Include="..\Shaders\ShadowMapping\Depth.vert" />
-    <None Include="..\Shaders\ShadowMapping\Filter.glsl" />
+    <None Include="..\Shaders\ShadowMapping\Shadow.glsl" />
     <None Include="..\Shaders\ShadowMapping\Scene.frag" />
     <None Include="..\Shaders\ShadowMapping\Scene.vert" />
     <None Include="..\Shaders\SimpleRaytracing\ClosestHit.rchit" />
