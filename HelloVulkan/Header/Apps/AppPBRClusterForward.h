@@ -42,7 +42,8 @@ private:
 	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;
 	std::unique_ptr<PipelineLightRender> lightPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
-	std::unique_ptr<PipelinePBRClusterForward> pbrPtr_;
+	std::unique_ptr<PipelinePBRClusterForward> pbrOpaquePtr_;
+	std::unique_ptr<PipelinePBRClusterForward> pbrTransparentPtr_;
 	std::unique_ptr<PipelineAABBGenerator> aabbPtr_;
 	std::unique_ptr<PipelineLightCulling> lightCullPtr_;
 

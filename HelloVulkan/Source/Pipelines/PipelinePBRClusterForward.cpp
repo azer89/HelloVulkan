@@ -19,6 +19,7 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 	ResourcesClusterForward* resCF,
 	ResourcesIBL* iblResources,
 	ResourcesShared* resShared,
+	MaterialType materialType,
 	uint8_t renderBit) :
 	PipelineBase(ctx,
 		{
@@ -29,10 +30,15 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 	scene_(scene),
 	resLight_(lights),
 	resCF_(resCF),
-	iblResources_(iblResources)
+	iblResources_(iblResources),
+	materialType_(materialType),
+	materialOffset_(0),
+	materialDrawCount_(0)
 {
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cfUBOBuffers_, sizeof(ClusterForwardUBO), AppConfig::FrameCount);
+
+	scene_->GetOffsetAndDrawCount(materialType_, materialOffset_, materialDrawCount_);
 
 	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
 	framebuffer_.CreateResizeable(
@@ -46,6 +52,7 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 	PrepareVIM(ctx); // Buffer device address
 	CreateDescriptor(ctx);
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(PushConstPBR), VK_SHADER_STAGE_FRAGMENT_BIT);
+	CreateSpecializationConstants();
 	CreateGraphicsPipeline(
 		ctx,
 		renderPass_.GetHandle(),
@@ -69,7 +76,7 @@ PipelinePBRClusterForward::~PipelinePBRClusterForward()
 
 void PipelinePBRClusterForward::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
-	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "PBR_Cluster_Forward", tracy::Color::AliceBlue);
+	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "PBR_Cluster_Forward", tracy::Color::MediumPurple);
 
 	uint32_t frameIndex = ctx.GetFrameIndex();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
@@ -96,8 +103,8 @@ void PipelinePBRClusterForward::FillCommandBuffer(VulkanContext& ctx, VkCommandB
 	vkCmdDrawIndirect(
 		commandBuffer,
 		scene_->indirectBuffer_.buffer_,
-		0, // offset
-		scene_->GetInstanceCount(),
+		materialOffset_,
+		materialDrawCount_,
 		sizeof(VkDrawIndirectCommand));
 
 	vkCmdEndRenderPass(commandBuffer);
@@ -114,6 +121,23 @@ void PipelinePBRClusterForward::PrepareVIM(VulkanContext& ctx)
 		VMA_MEMORY_USAGE_CPU_TO_GPU
 	);
 	vimBuffer_.UploadBufferData(ctx, &vim, vimSize);
+}
+
+void PipelinePBRClusterForward::CreateSpecializationConstants()
+{
+	alphaDiscard_ = materialType_ == MaterialType::Transparent ? 1u : 0u;
+
+	std::vector<VkSpecializationMapEntry> specializationEntries = { {
+		.constantID = 0,
+		.offset = 0,
+		.size = sizeof(uint32_t)
+	} };
+
+	specializationConstants_.ConsumeEntries(
+		std::move(specializationEntries),
+		&alphaDiscard_,
+		sizeof(uint32_t),
+		VK_SHADER_STAGE_FRAGMENT_BIT);
 }
 
 void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)

@@ -23,18 +23,23 @@ public:
 		ResourcesClusterForward* resCF,
 		ResourcesIBL* iblResources,
 		ResourcesShared* resShared,
+		MaterialType materialType,
 		uint8_t renderBit = 0u);
 	~PipelinePBRClusterForward();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
 	void SetPBRPushConstants(const PushConstPBR& pbrPC) { pc_ = pbrPC; };
-
 	void SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO& ubo)
 	{
 		const size_t frameIndex = ctx.GetFrameIndex();
 		cfUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ClusterForwardUBO));
 	}
+
+private:
+	void PrepareVIM(VulkanContext& ctx);
+	void CreateDescriptor(VulkanContext& ctx);
+	void CreateSpecializationConstants();
 
 private:
 	PushConstPBR pc_;
@@ -46,9 +51,14 @@ private:
 	Scene* scene_;
 	std::vector<VkDescriptorSet> descriptorSets_;
 
-private:
-	void PrepareVIM(VulkanContext& ctx);
-	void CreateDescriptor(VulkanContext& ctx);
+	// Material pass
+	MaterialType materialType_;
+	VkDeviceSize materialOffset_;
+	uint32_t materialDrawCount_;
+
+	// Specialization constants
+	uint32_t alphaDiscard_;
+
 };
 
 #endif

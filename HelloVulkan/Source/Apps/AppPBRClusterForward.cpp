@@ -42,13 +42,22 @@ void AppPBRClusterForward::Init()
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
 	aabbPtr_ = std::make_unique<PipelineAABBGenerator>(vulkanContext_, resCF_.get());
 	lightCullPtr_ = std::make_unique<PipelineLightCulling>(vulkanContext_, resLight_.get(), resCF_.get());
-	pbrPtr_ = std::make_unique<PipelinePBRClusterForward>(
+	pbrOpaquePtr_ = std::make_unique<PipelinePBRClusterForward>(
 		vulkanContext_,
 		scene_.get(),
 		resLight_.get(),
 		resCF_.get(),
 		resIBL_.get(),
-		resShared_.get());
+		resShared_.get(),
+		MaterialType::Opaque);
+	pbrTransparentPtr_ = std::make_unique<PipelinePBRClusterForward>(
+		vulkanContext_,
+		scene_.get(),
+		resLight_.get(),
+		resCF_.get(),
+		resIBL_.get(),
+		resShared_.get(),
+		MaterialType::Transparent);
 	lightPtr_ = std::make_unique<PipelineLightRender>(vulkanContext_, resLight_.get(), resShared_.get());
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
 	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(vulkanContext_, resShared_.get());
@@ -66,7 +75,8 @@ void AppPBRClusterForward::Init()
 		skyboxPtr_.get(),
 		aabbPtr_.get(),
 		lightCullPtr_.get(),
-		pbrPtr_.get(),
+		pbrOpaquePtr_.get(),
+		pbrTransparentPtr_.get(),
 		lightPtr_.get(),
 		resolveMSPtr_.get(),
 		tonemapPtr_.get(),
@@ -130,7 +140,8 @@ void AppPBRClusterForward::DestroyResources()
 	skyboxPtr_.reset();
 	aabbPtr_.reset();
 	lightCullPtr_.reset();
-	pbrPtr_.reset();
+	pbrOpaquePtr_.reset();
+	pbrTransparentPtr_.reset();
 	lightPtr_.reset();
 	resolveMSPtr_.reset();
 	tonemapPtr_.reset();
@@ -142,7 +153,8 @@ void AppPBRClusterForward::UpdateUBOs()
 	// Camera UBO
 	CameraUBO ubo = camera_->GetCameraUBO();
 	lightPtr_->SetCameraUBO(vulkanContext_, ubo);
-	pbrPtr_->SetCameraUBO(vulkanContext_, ubo);
+	pbrOpaquePtr_->SetCameraUBO(vulkanContext_, ubo);
+	pbrTransparentPtr_->SetCameraUBO(vulkanContext_, ubo);
 
 	// Remove translation for skybox
 	CameraUBO skyboxUbo = ubo;
@@ -154,7 +166,8 @@ void AppPBRClusterForward::UpdateUBOs()
 	aabbPtr_->SetClusterForwardUBO(vulkanContext_, cfUBO);
 	lightCullPtr_->ResetGlobalIndex(vulkanContext_);
 	lightCullPtr_->SetClusterForwardUBO(vulkanContext_, cfUBO);
-	pbrPtr_->SetClusterForwardUBO(vulkanContext_, cfUBO);
+	pbrOpaquePtr_->SetClusterForwardUBO(vulkanContext_, cfUBO);
+	pbrTransparentPtr_->SetClusterForwardUBO(vulkanContext_, cfUBO);
 }
 
 void AppPBRClusterForward::UpdateUI()
@@ -176,7 +189,8 @@ void AppPBRClusterForward::UpdateUI()
 	imguiPtr_->ImGuiEnd();
 
 	lightPtr_->ShouldRender(lightRender);
-	pbrPtr_->SetPBRPushConstants(pbrPC);
+	pbrOpaquePtr_->SetPBRPushConstants(pbrPC);
+	pbrTransparentPtr_->SetPBRPushConstants(pbrPC);
 }
 
 // This is called from main.cpp

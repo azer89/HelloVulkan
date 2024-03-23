@@ -22,6 +22,9 @@ Fragment shader for PBR+IBL, naive forward shading (non clustered)
 #include <Bindless/MeshData.glsl>
 #include <Bindless/VIM.glsl>
 
+// Specialization constant
+layout (constant_id = 0) const uint ALPHA_DISCARD = 1;
+
 layout(location = 0) in vec3 worldPos;
 layout(location = 1) in vec2 texCoord;
 layout(location = 2) in vec3 normal;
@@ -79,9 +82,14 @@ void main()
 	// PBR + IBL
 	vec4 albedo4 = texture(pbrTextures[nonuniformEXT(mData.albedo)], texCoord).rgba;
 
-	if (albedo4.a < 0.5)
+	// A performance trick by using a use specialization constant
+	// so this part will be removed if material type is not transparent
+	if (ALPHA_DISCARD > 0)
 	{
-		discard;
+		if (albedo4.a < 0.5)
+		{
+			discard;
+		}
 	}
 
 	// PBR + IBL, Material properties
