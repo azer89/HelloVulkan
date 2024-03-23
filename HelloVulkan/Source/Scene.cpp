@@ -116,6 +116,7 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 		indexBufferSize,
 		indices_.data(),
 		bufferUsage);
+	triangleCount_ = static_cast<uint32_t>(indices_.size()) / 3u;
 
 	// Mesh Data
 	const VkDeviceSize meshDataBufferSize = sizeof(MeshData) * meshDataArray_.size();

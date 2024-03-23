@@ -54,7 +54,7 @@ layout(set = 0, binding = 8) uniform sampler2D shadowMap;
 layout(set = 0, binding = 9) uniform sampler2D pbrTextures[];
 
 // PCF or Poisson
-#include <ShadowMapping/Filter.glsl>
+#include <ShadowMapping/Shadow.glsl>
 
 // PBR and IBL
 #include <Radiance.glsl>

@@ -183,10 +183,10 @@ void AppPBRShadow::UpdateUI()
 	static float staticMaxBias = 0.001f;
 
 	imguiPtr_->ImGuiStart();
-	imguiPtr_->ImGuiSetWindow("Shadow Mapping", 525, 650);
+	imguiPtr_->ImGuiSetWindow("Shadow Mapping", 500, 650);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 
-	ImGui::Text("Vertices: %i, Indices: %i", scene_->vertices_.size(), scene_->indices_.size());
+	ImGui::Text("Triangle Count: %i", scene_->triangleCount_);
 	ImGui::Checkbox("Render Lights", &staticLightRender);
 	ImGui::SeparatorText("Shading");
 	imguiPtr_->ImGuiShowPBRConfig(&staticPBRPushConstants, resIBL_->cubemapMipmapCount_);

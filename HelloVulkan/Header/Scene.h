@@ -59,6 +59,8 @@ private:
 	[[nodiscard]] BoundingBox GetBoundingBox(uint32_t vertexStart, uint32_t vertexEnd);
 
 public:
+	uint32_t triangleCount_ = 0;
+
 	std::vector<VertexData> vertices_ = {};
 	VulkanBuffer vertexBuffer_;
 

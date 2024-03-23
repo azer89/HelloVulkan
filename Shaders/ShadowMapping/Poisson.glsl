@@ -1,25 +1,25 @@
-const int NUM_ELEMENTS_DISK = 16;
+const int POISSON_COUNT = 16;
 
-const vec2 poissonDisk[NUM_ELEMENTS_DISK] = vec2[](
-	vec2(-0.5119625f, -0.4827938f),
-	vec2(-0.2171264f, -0.4768726f),
-	vec2(-0.7552931f, -0.2426507f),
-	vec2(-0.7136765f, -0.4496614f),
-	vec2(-0.5938849f, -0.6895654f),
-	vec2(-0.3148003f, -0.7047654f),
-	vec2(-0.42215f, -0.2024607f),
-	vec2(-0.9466816f, -0.2014508f),
-	vec2(-0.8409063f, -0.03465778f),
-	vec2(-0.6517572f, -0.07476326f),
-	vec2(-0.1041822f, -0.02521214f),
-	vec2(-0.3042712f, -0.02195431f),
-	vec2(-0.5082307f, 0.1079806f),
-	vec2(-0.08429877f, -0.2316298f),
-	vec2(-0.9879128f, 0.1113683f),
-	vec2(-0.3859636f, 0.3363545f));
-
+const vec2 poissonDisk[POISSON_COUNT] = vec2[](
+	vec2(-0.94201624, -0.39906216),
+	vec2(0.94558609, -0.76890725),
+	vec2(-0.094184101, -0.92938870),
+	vec2(0.34495938, 0.29387760),
+	vec2(-0.91588581, 0.45771432),
+	vec2(-0.81544232, -0.87912464),
+	vec2(-0.38277543, 0.27676845),
+	vec2(0.97484398, 0.75648379),
+	vec2(0.44323325, -0.97511554),
+	vec2(0.53742981, -0.47373420),
+	vec2(-0.26496911, -0.41893023),
+	vec2(0.79197514, 0.19090188),
+	vec2(-0.24188840, 0.99706507),
+	vec2(-0.81409955, 0.91437590),
+	vec2(0.19984126, 0.78641367),
+	vec2(0.14383161, -0.14100790)
+);
 // Returns a pseudo random number based on a vec3 and an int.
-float PseudoRandom(vec3 seed, int i)
+float Rand(vec3 seed, int i)
 {
 	vec4 seed4 = vec4(seed, i);
 	float dotValue = dot(seed4, vec4(12.9898, 78.233, 45.164, 94.673));
@@ -28,6 +28,6 @@ float PseudoRandom(vec3 seed, int i)
 
 vec2 GetPoissonDiskCoord(vec2 projCoords, int i, float radius)
 {
-	int index = int(float(NUM_ELEMENTS_DISK) * PseudoRandom(projCoords.xyy, i)) % NUM_ELEMENTS_DISK;
+	int index = int(float(POISSON_COUNT) * Rand(projCoords.xyy, i)) % POISSON_COUNT;
 	return projCoords.xy + poissonDisk[index] / radius;
 }

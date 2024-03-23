@@ -33,10 +33,13 @@ PipelineImGui::PipelineImGui(
 	// ImGui
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO();
-	(void)io;
 
 	ImGui::StyleColorsDark();
+
+	ImGuiStyle* style = &ImGui::GetStyle();
+	ImVec4* colors = style->Colors;
+	colors[ImGuiCol_WindowBg] = ImVec4(0.06f, 0.06f, 0.06f, 0.7f);
+	colors[ImGuiCol_PlotLines] = ImVec4(0.21f, 0.61f, 0.61f, 1.00f);
 
 	// Known issue when using both ImGui and volk
 	// github.com/ocornut/imgui/issues/4854
@@ -104,9 +107,9 @@ void PipelineImGui::ImGuiShowPBRConfig(PushConstPBR* pc, float mipmapCount)
 {
 	ImGui::SliderFloat("Light Falloff", &(pc->lightFalloff), 0.01f, 5.f);
 	ImGui::SliderFloat("Light Intensity", &(pc->lightIntensity), 0.1f, 20.f);
-	ImGui::SliderFloat("Albedo Multiplier", &(pc->albedoMultipler), 0.0f, 1.0f);
-	ImGui::SliderFloat("Base Reflectivity", &(pc->baseReflectivity), 0.01f, 1.f);
-	ImGui::SliderFloat("Max Mipmap Lod", &(pc->maxReflectionLod), 0.1f, mipmapCount);
+	ImGui::SliderFloat("Albedo", &(pc->albedoMultipler), 0.0f, 1.0f);
+	ImGui::SliderFloat("Reflectivity", &(pc->baseReflectivity), 0.01f, 1.f);
+	ImGui::SliderFloat("Max Lod", &(pc->maxReflectionLod), 0.1f, mipmapCount);
 }
 
 void PipelineImGui::ImGuiEnd()

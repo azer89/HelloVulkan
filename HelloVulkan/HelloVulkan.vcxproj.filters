@@ -126,7 +126,7 @@
     <None Include="..\Shaders\ShadowMapping\Scene.vert">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
-    <None Include="..\Shaders\ShadowMapping\Filter.glsl">
+    <None Include="..\Shaders\ShadowMapping\Shadow.glsl">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
     <None Include="..\Shaders\TangentNormalToWorld.glsl">
@@ -562,9 +562,6 @@
     <ClCompile Include="Source\Resources\ResourcesShadow.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Resources\ResourcesShared.cpp">
-      <Filter>Source Files\Resources</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Resources\ResourcesLight.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
@@ -593,6 +590,9 @@
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
     <ClCompile Include="Source\Vulkan\VulkanSpecialization.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Resources\ResourcesShared.cpp">
       <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
   </ItemGroup>

@@ -67,8 +67,8 @@ void PipelineShadow::UpdateShadow(VulkanContext& ctx, ResourcesShadow* resShadow
 	glm::mat4 lightProjection = glm::ortho(
 		-resShadow_->orthoSize_,
 		resShadow_->orthoSize_,
-		-resShadow_->orthoSize_,
 		resShadow_->orthoSize_,
+		-resShadow_->orthoSize_,
 		resShadow_->shadowNearPlane_,
 		resShadow_->shadowFarPlane_);
 	glm::mat4 lightView = glm::lookAt(glm::vec3(lightPosition), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
