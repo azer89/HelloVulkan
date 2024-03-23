@@ -12,14 +12,14 @@ int main()
 	//AppPBRBindless app;
 
 	// Shadow demo, using draw indirect, buffer device address, and descriptor indexing
-	//AppPBRShadow app;
+	AppPBRShadow app;
 
 	// The good ol resource binding per draw call
 	//AppPBRSlotBased app;
 	
 	//AppFrustumCulling app;
 
-	AppPBRClusterForward app;
+	//AppPBRClusterForward app;
 	
 	//AppSimpleRaytracing app;
 	
