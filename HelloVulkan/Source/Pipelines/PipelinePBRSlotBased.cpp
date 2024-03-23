@@ -131,11 +131,11 @@ void PipelinePBRSlotBased::CreateDescriptor(VulkanContext& ctx)
 	descriptor_.CreatePoolAndLayout(ctx, dsInfo, AppConfig::FrameCount, meshCount);
 
 	// Sets
-	constexpr size_t bindingOffset = static_cast<size_t>(UBO_COUNT + SSBO_COUNT);
+	constexpr uint32_t bindingOffset = static_cast<size_t>(UBO_COUNT + SSBO_COUNT);
 	descriptorSets_.resize(AppConfig::FrameCount);
 	for (size_t i = 0; i < AppConfig::FrameCount; i++)
 	{
-		size_t meshIndex = 0;
+		uint32_t meshIndex = 0;
 		descriptorSets_[i].resize(meshCount);
 		dsInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
 		for (Model* model : models_)
@@ -146,9 +146,9 @@ void PipelinePBRSlotBased::CreateDescriptor(VulkanContext& ctx)
 				for (const auto& elem : mesh.textureIndices_)
 				{
 					// Should be ordered based on elem.first
-					size_t typeIndex = static_cast<size_t>(elem.first) - 1;
-					int textureIndex = elem.second;
-					VulkanImage* texture = model->GetTexture(textureIndex);
+					const uint32_t typeIndex = static_cast<uint32_t>(elem.first) - 1;
+					const uint32_t textureIndex = static_cast<uint32_t>(elem.second);
+					const VulkanImage* texture = model->GetTexture(textureIndex);
 					dsInfo.UpdateImage(texture, bindingOffset + typeIndex);
 				}
 				descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i][meshIndex]));

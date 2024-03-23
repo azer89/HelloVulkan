@@ -37,8 +37,8 @@ PipelineLightCulling::~PipelineLightCulling()
 
 void PipelineLightCulling::ResetGlobalIndex(VulkanContext& ctx)
 {
-	uint32_t zeroValue = 0u;
-	uint32_t frameIndex = ctx.GetFrameIndex();
+	const uint32_t zeroValue = 0u;
+	const uint32_t frameIndex = ctx.GetFrameIndex();
 	resCF_->globalIndexCountBuffers_[frameIndex].UploadBufferData(ctx, &zeroValue, sizeof(uint32_t));
 }
 
@@ -80,7 +80,7 @@ void PipelineLightCulling::Execute(VulkanContext& ctx, VkCommandBuffer commandBu
 		1,
 		6);*/
 
-	VkBufferMemoryBarrier2 lightGridBarrier =
+	const VkBufferMemoryBarrier2 lightGridBarrier =
 	{
 		.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER_2,
 		.pNext = nullptr,

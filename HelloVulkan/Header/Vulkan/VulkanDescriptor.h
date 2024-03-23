@@ -4,8 +4,6 @@
 #include "VulkanContext.h"
 #include "VulkanDescriptorInfo.h"
 
-#include <vector>
-
 class VulkanDescriptor
 {
 public:

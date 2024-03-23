@@ -87,30 +87,30 @@ public:
 	void EndOneTimeComputeCommand(VkCommandBuffer commandBuffer) const;
 
 	// Getters
-	VkDevice GetDevice() const { return device_; }
-	VkPhysicalDevice GetPhysicalDevice() const { return physicalDevice_; }
-	VkQueue GetGraphicsQueue() const { return graphicsQueue_; }
-	uint32_t GetGraphicsFamily() const { return graphicsFamily_; }
-	uint32_t GetComputeFamily() const { return computeFamily_; }
-	uint32_t GetSwapchainWidth() const { return swapchainWidth_; }
-	uint32_t GetSwapchainHeight() const { return swapchainHeight_; }
-	size_t GetDeviceQueueIndicesSize() const { return deviceQueueIndices_.size(); }
-	const uint32_t* GetDeviceQueueIndicesData() const { return deviceQueueIndices_.data(); }
-	VkSampleCountFlagBits GetMSAASampleCount() const { return msaaSampleCount_; }
-	VkQueue GetComputeQueue() const { return computeQueue_; }
-	VkFormat GetDepthFormat() const { return depthFormat_; };
-	VmaAllocator GetVMAAllocator() const { return vmaAllocator_; }
+	[[nodiscard]] VkDevice GetDevice() const { return device_; }
+	[[nodiscard]] VkPhysicalDevice GetPhysicalDevice() const { return physicalDevice_; }
+	[[nodiscard]] VkQueue GetGraphicsQueue() const { return graphicsQueue_; }
+	[[nodiscard]] uint32_t GetGraphicsFamily() const { return graphicsFamily_; }
+	[[nodiscard]] uint32_t GetComputeFamily() const { return computeFamily_; }
+	[[nodiscard]] uint32_t GetSwapchainWidth() const { return swapchainWidth_; }
+	[[nodiscard]] uint32_t GetSwapchainHeight() const { return swapchainHeight_; }
+	[[nodiscard]] size_t GetDeviceQueueIndicesSize() const { return deviceQueueIndices_.size(); }
+	[[nodiscard]] const uint32_t* GetDeviceQueueIndicesData() const { return deviceQueueIndices_.data(); }
+	[[nodiscard]] VkSampleCountFlagBits GetMSAASampleCount() const { return msaaSampleCount_; }
+	[[nodiscard]] VkQueue GetComputeQueue() const { return computeQueue_; }
+	[[nodiscard]] VkFormat GetDepthFormat() const { return depthFormat_; };
+	[[nodiscard]] VmaAllocator GetVMAAllocator() const { return vmaAllocator_; }
 
 	// Raytracing getters
-	VkPhysicalDeviceRayTracingPipelinePropertiesKHR GetRayTracingPipelineProperties() const { return rtPipelineProperties_; }
+	[[nodiscard]] VkPhysicalDeviceRayTracingPipelinePropertiesKHR GetRayTracingPipelineProperties() const { return rtPipelineProperties_; }
 
 	// Getters related to swapchain
-	VkSwapchainKHR GetSwapChain() const { return swapchain_; }
-	size_t GetSwapchainImageCount() const { return swapchainImages_.size(); }
-	VkFormat GetSwapchainImageFormat() const { return swapchainImageFormat_; }
-	VkImage GetSwapchainImage(size_t i) const { return swapchainImages_[i]; }
-	VkImageView GetSwapchainImageView(size_t i) const { return swapchainImageViews_[i]; }
-	uint32_t GetCurrentSwapchainImageIndex() const { return currentSwapchainImageIndex_; }
+	[[nodiscard]] VkSwapchainKHR GetSwapChain() const { return swapchain_; }
+	[[nodiscard]] size_t GetSwapchainImageCount() const { return swapchainImages_.size(); }
+	[[nodiscard]] VkFormat GetSwapchainImageFormat() const { return swapchainImageFormat_; }
+	[[nodiscard]] VkImage GetSwapchainImage(size_t i) const { return swapchainImages_[i]; }
+	[[nodiscard]] VkImageView GetSwapchainImageView(size_t i) const { return swapchainImageViews_[i]; }
+	[[nodiscard]] uint32_t GetCurrentSwapchainImageIndex() const { return currentSwapchainImageIndex_; }
 
 	// Pointer getters
 	VkSwapchainKHR* GetSwapchainPtr() { return &swapchain_; }
@@ -118,8 +118,8 @@ public:
 	// Sync objects and render command buffer
 	void IncrementFrameIndex();
 	FrameData& GetCurrentFrameData();
-	uint32_t GetFrameIndex() const;
-	TracyVkCtx GetTracyContext() const { return frameDataArray_[GetFrameIndex()].tracyContext_; }
+	[[nodiscard]] uint32_t GetFrameIndex() const;
+	[[nodiscard]] TracyVkCtx GetTracyContext() const { return frameDataArray_[GetFrameIndex()].tracyContext_; }
 
 	// For debugging purpose
 	void SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name) const;

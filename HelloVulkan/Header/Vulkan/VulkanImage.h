@@ -190,7 +190,7 @@ public:
 	);
 
 	// To create descriptor sets
-	VkDescriptorImageInfo GetDescriptorImageInfo() const;
+	[[nodiscard]] VkDescriptorImageInfo GetDescriptorImageInfo() const;
 
 	// For validation layer
 	void SetDebugName(VulkanContext& ctx, const std::string& debugName);

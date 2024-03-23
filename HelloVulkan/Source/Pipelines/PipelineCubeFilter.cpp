@@ -180,7 +180,7 @@ void PipelineCubeFilter::CreateOffscreenGraphicsPipeline(
 	{
 		const char* file = shaderFiles[i].c_str();
 		VK_CHECK(shaderModules[i].Create(ctx.GetDevice(), file));
-		VkShaderStageFlagBits stage = GetShaderStageFlagBits(file);
+		const VkShaderStageFlagBits stage = GetShaderStageFlagBits(file);
 		shaderStages[i] = shaderModules[i].GetShaderStageInfo(stage, "main");
 	}
 

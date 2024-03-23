@@ -53,14 +53,16 @@ VIM Scene::GetVIM() const
 	};
 }
 
-void Scene::GetOffsetAndDrawCount(MaterialType matType, VkDeviceSize& offset, uint32_t& drawCount)
+void Scene::GetOffsetAndDrawCount(MaterialType matType, VkDeviceSize& offset, uint32_t& drawCount) const
 {
 	offset = 0;
 	drawCount = 0;
 
+	const int meshDataSize = static_cast<int>(meshDataArray_.size());
+	
 	// Calculate left
 	int left = 0;
-	for (; left < meshDataArray_.size(); ++left)
+	for (; left < meshDataSize; ++left)
 	{
 		if (meshDataArray_[left].material_ == matType)
 		{
@@ -69,7 +71,7 @@ void Scene::GetOffsetAndDrawCount(MaterialType matType, VkDeviceSize& offset, ui
 	}
 
 	// Calculate right
-	int right = meshDataArray_.size() - 1;
+	int right = meshDataSize - 1;
 	for (; right >= 0 && right > left; --right)
 	{
 		if (meshDataArray_[right].material_ == matType)
@@ -82,7 +84,7 @@ void Scene::GetOffsetAndDrawCount(MaterialType matType, VkDeviceSize& offset, ui
 	if (left > right)
 	{
 		offset = 0;
-		drawCount == 0;
+		drawCount = 0;
 	}
 
 	// if left == right, then drawCount == 1
