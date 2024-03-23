@@ -1,6 +1,3 @@
-// Adapted from
-// github.com/opengl-tutorials/ogl/blob/master/tutorial16_shadowmaps/ShadowMapping.fragmentshader
-
 const int POISSON_COUNT = 16;
 
 const vec2 poissonDisk[POISSON_COUNT] = vec2[](
