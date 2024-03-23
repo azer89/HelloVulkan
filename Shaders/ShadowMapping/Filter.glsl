@@ -15,11 +15,9 @@ float ShadowPCF(vec4 shadowCoord)
 	float bias = max(shadowUBO.shadowMaxBias * (1.0 - NoL), shadowUBO.shadowMinBias);
 
 	// PCF
-	// (1.0 - NoL) allows more blur for vertical surfaces
-	float scale = PCF_SCALE + (1.0 - NoL);
 	ivec2 texDim = textureSize(shadowMap, 0).xy;
-	float dx = scale * 1.0 / float(texDim.x);
-	float dy = scale * 1.0 / float(texDim.y);
+	float dx = PCF_SCALE / float(texDim.x);
+	float dy = PCF_SCALE / float(texDim.y);
 	
 	float shadow = 0.0;
 	int count = 0;
