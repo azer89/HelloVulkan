@@ -141,7 +141,7 @@ void AppPBRSlotBased::UpdateUI()
 	static PushConstPBR pbrPC;
 
 	imguiPtr_->ImGuiStart();
-	imguiPtr_->ImGuiSetWindow("PBR and IBL", 525, 325);
+	imguiPtr_->ImGuiSetWindow("PBR and IBL", 500, 325);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 	ImGui::Checkbox("Render Lights", &lightRender);
 	ImGui::Checkbox("Render Grid", &gridRender);
