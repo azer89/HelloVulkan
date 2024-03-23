@@ -2,7 +2,7 @@
 #define APP_PBR_CLUSTER_FORWARD
 
 #include "AppBase.h"
-#include "Model.h"
+#include "Scene.h"
 #include "ResourcesLight.h"
 #include "ResourcesClusterForward.h"
 #include "PipelineSkybox.h"
@@ -49,7 +49,7 @@ private:
 	std::unique_ptr<ResourcesClusterForward> resCF_; 
 	std::unique_ptr<ResourcesLight> resLight_;
 
-	std::unique_ptr<Model> model_;
+	std::unique_ptr<Scene> scene_;
 };
 
 #endif

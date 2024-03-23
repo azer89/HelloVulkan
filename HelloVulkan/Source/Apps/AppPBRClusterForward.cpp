@@ -26,10 +26,11 @@ void AppPBRClusterForward::Init()
 	resCF_ = std::make_unique<ResourcesClusterForward>();
 	resCF_->CreateBuffers(vulkanContext_, resLight_->GetLightCount());
 
-	model_ = std::make_unique<Model>();
-	model_->LoadSlotBased(vulkanContext_, 
-		AppConfig::ModelFolder + "Sponza/Sponza.gltf");
-	std::vector<Model*> models = { model_.get()};
+	std::vector<ModelCreateInfo> dataArray = {
+		{AppConfig::ModelFolder + "Sponza/Sponza.gltf", 1}
+	};
+	bool supportDeviceAddress = true;
+	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
 
 	// Pipelines
 	clearPtr_ = std::make_unique<PipelineClear>(vulkanContext_); // This is responsible to clear swapchain image
@@ -43,7 +44,7 @@ void AppPBRClusterForward::Init()
 	lightCullPtr_ = std::make_unique<PipelineLightCulling>(vulkanContext_, resLight_.get(), resCF_.get());
 	pbrPtr_ = std::make_unique<PipelinePBRClusterForward>(
 		vulkanContext_,
-		models,
+		scene_.get(),
 		resLight_.get(),
 		resCF_.get(),
 		resIBL_.get(),
@@ -120,9 +121,8 @@ void AppPBRClusterForward::DestroyResources()
 	resCF_.reset();
 	resLight_.reset();
 
-	// Destroy meshes
-	model_->Destroy();
-	model_.reset();
+	// Destroy all objects
+	scene_.reset();
 
 	// Destroy renderers
 	clearPtr_.reset();
@@ -148,13 +148,6 @@ void AppPBRClusterForward::UpdateUBOs()
 	CameraUBO skyboxUbo = ubo;
 	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view));
 	skyboxPtr_->SetCameraUBO(vulkanContext_, skyboxUbo);
-
-	// Model UBOs
-	ModelUBO modelUBO1
-	{
-		.model = glm::mat4(1.0)
-	};
-	model_->SetModelUBO(vulkanContext_, modelUBO1);
 
 	// Clustered forward
 	ClusterForwardUBO cfUBO = camera_->GetClusterForwardUBO();
@@ -190,7 +183,7 @@ void AppPBRClusterForward::UpdateUI()
 void AppPBRClusterForward::MainLoop()
 {
 	InitVulkan({
-		.supportRaytracing_ = false,
+		.suportBufferDeviceAddress_ = true,
 		.supportMSAA_ = true
 		});
 

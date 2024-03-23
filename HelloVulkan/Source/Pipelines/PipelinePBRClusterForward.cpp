@@ -3,6 +3,7 @@
 #include "ResourcesShared.h"
 #include "ResourcesLight.h"
 #include "ResourcesIBL.h"
+#include "Scene.h"
 #include "Configs.h"
 
 // Constants
@@ -13,7 +14,7 @@ constexpr uint32_t ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 
 PipelinePBRClusterForward::PipelinePBRClusterForward(
 	VulkanContext& ctx,
-	std::vector<Model*> models,
+	Scene* scene,
 	ResourcesLight* lights,
 	ResourcesClusterForward* resCF,
 	ResourcesIBL* iblResources,
@@ -23,9 +24,9 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 		{
 			.type_ = PipelineType::GraphicsOffScreen,
 			.msaaSamples_ = resShared->multiSampledColorImage_.multisampleCount_,
-			.vertexBufferBind_ = true,
+			.vertexBufferBind_ = false,
 		}),
-	models_(models),
+	scene_(scene),
 	resLight_(lights),
 	resCF_(resCF),
 	iblResources_(iblResources)
@@ -42,6 +43,7 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 			&(resShared->depthImage_)
 		},
 		IsOffscreen());
+	PrepareVIM(ctx); // Buffer device address
 	CreateDescriptor(ctx);
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(PushConstPBR), VK_SHADER_STAGE_FRAGMENT_BIT);
 	CreateGraphicsPipeline(
@@ -49,8 +51,8 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
-			AppConfig::ShaderFolder + "SlotBased/Mesh.vert",
-			AppConfig::ShaderFolder + "ClusteredForward/Mesh.frag"
+			AppConfig::ShaderFolder + "Bindless/Scene.vert",
+			AppConfig::ShaderFolder + "ClusteredForward/Scene.frag"
 		},
 		&pipeline_
 	);
@@ -62,6 +64,7 @@ PipelinePBRClusterForward::~PipelinePBRClusterForward()
 	{
 		uboBuffer.Destroy();
 	}
+	vimBuffer_.Destroy();
 }
 
 void PipelinePBRClusterForward::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
@@ -80,7 +83,24 @@ void PipelinePBRClusterForward::FillCommandBuffer(VulkanContext& ctx, VkCommandB
 		0,
 		sizeof(PushConstPBR), &pc_);
 
-	size_t meshIndex = 0;
+	vkCmdBindDescriptorSets(
+		commandBuffer,
+		VK_PIPELINE_BIND_POINT_GRAPHICS,
+		pipelineLayout_,
+		0u, // firstSet
+		1u, // descriptorSetCount
+		&(descriptorSets_[frameIndex]),
+		0u, // dynamicOffsetCount
+		nullptr); // pDynamicOffsets
+
+	vkCmdDrawIndirect(
+		commandBuffer,
+		scene_->indirectBuffer_.buffer_,
+		0, // offset
+		scene_->GetInstanceCount(),
+		sizeof(VkDrawIndirectCommand));
+
+	/*size_t meshIndex = 0;
 	for (Model* model : models_)
 	{
 		for (Mesh& mesh : model->meshes_)
@@ -107,13 +127,56 @@ void PipelinePBRClusterForward::FillCommandBuffer(VulkanContext& ctx, VkCommandB
 			vkCmdDrawIndexed(commandBuffer, mesh.GetIndexCount(), 1, 0, 0, 0);
 		}
 	}
+	*/
+
 
 	vkCmdEndRenderPass(commandBuffer);
 }
 
+void PipelinePBRClusterForward::PrepareVIM(VulkanContext& ctx)
+{
+	VIM vim = scene_->GetVIM();
+	VkDeviceSize vimSize = sizeof(VIM);
+	vimBuffer_.CreateBuffer(
+		ctx,
+		vimSize,
+		VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+		VMA_MEMORY_USAGE_CPU_TO_GPU
+	);
+	vimBuffer_.UploadBufferData(ctx, &vim, vimSize);
+}
+
 void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 {
-	uint32_t meshCount = 0u;
+	constexpr uint32_t frameCount = AppConfig::FrameCount;
+
+	VulkanDescriptorInfo dsInfo;
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 1
+	dsInfo.AddBuffer(&vimBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 2
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 3
+	dsInfo.AddBuffer(resLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT); // 4
+	dsInfo.AddBuffer(&(resCF_->lightCellsBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 5
+	dsInfo.AddBuffer(&(resCF_->lightIndicesBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 6
+	dsInfo.AddImage(&(iblResources_->specularCubemap_)); // 7
+	dsInfo.AddImage(&(iblResources_->diffuseCubemap_)); // 8
+	dsInfo.AddImage(&(iblResources_->brdfLut_)); // 9
+	dsInfo.AddImageArray(scene_->GetImageInfos()); // 10
+
+	// Pool and layout
+	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
+
+	// Sets
+	descriptorSets_.resize(frameCount);
+	for (uint32_t i = 0; i < frameCount; ++i)
+	{
+		dsInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
+		dsInfo.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 1);
+		dsInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 3);
+		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
+	}
+
+	/*uint32_t meshCount = 0u;
 	for (const Model* model : models_)
 	{
 		meshCount += model->GetMeshCount();
@@ -163,5 +226,5 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 				meshIndex++;
 			}
 		}
-	}
+	}*/
 }

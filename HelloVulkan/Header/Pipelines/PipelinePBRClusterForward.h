@@ -7,7 +7,7 @@
 #include "ResourcesLight.h"
 #include "ResourcesIBL.h"
 #include "PushConstants.h"
-#include "Model.h"
+#include "Scene.h"
 
 #include <vector>
 
@@ -18,7 +18,7 @@ class PipelinePBRClusterForward final : public PipelineBase
 {
 public:
 	PipelinePBRClusterForward(VulkanContext& ctx,
-		std::vector<Model*> models,
+		Scene* scene,
 		ResourcesLight* lights,
 		ResourcesClusterForward* resCF,
 		ResourcesIBL* iblResources,
@@ -42,10 +42,13 @@ private:
 	ResourcesLight* resLight_;
 	ResourcesIBL* iblResources_;
 	std::vector<VulkanBuffer> cfUBOBuffers_;
-	std::vector<Model*> models_;
-	std::vector<std::vector<VkDescriptorSet>> descriptorSets_;
+	VulkanBuffer vimBuffer_;
+	//std::vector<Model*> models_;
+	Scene* scene_;
+	std::vector<VkDescriptorSet> descriptorSets_;
 
 private:
+	void PrepareVIM(VulkanContext& ctx);
 	void CreateDescriptor(VulkanContext& ctx);
 };
 
