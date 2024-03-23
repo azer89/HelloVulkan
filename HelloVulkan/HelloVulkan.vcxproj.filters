@@ -99,9 +99,6 @@
     <None Include="..\Shaders\ClusteredForward\Header.glsl">
       <Filter>Shaders\ClusteredForward</Filter>
     </None>
-    <None Include="..\Shaders\ClusteredForward\Mesh.frag">
-      <Filter>Shaders\ClusteredForward</Filter>
-    </None>
     <None Include="..\Shaders\ClusteredForward\LightCulling.comp">
       <Filter>Shaders\ClusteredForward</Filter>
     </None>

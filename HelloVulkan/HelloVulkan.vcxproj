@@ -159,7 +159,6 @@
     <None Include="..\Shaders\ClusteredForward\Header.glsl" />
     <None Include="..\Shaders\ClusteredForward\LightCulling.comp" />
     <None Include="..\Shaders\ClusteredForward\LightCullingBatch.comp" />
-    <None Include="..\Shaders\ClusteredForward\Mesh.frag" />
     <None Include="..\Shaders\ClusteredForward\Radiance.glsl" />
     <None Include="..\Shaders\ClusteredForward\Scene.frag" />
     <None Include="..\Shaders\Cube.glsl" />
