@@ -100,36 +100,6 @@ void PipelinePBRClusterForward::FillCommandBuffer(VulkanContext& ctx, VkCommandB
 		scene_->GetInstanceCount(),
 		sizeof(VkDrawIndirectCommand));
 
-	/*size_t meshIndex = 0;
-	for (Model* model : models_)
-	{
-		for (Mesh& mesh : model->meshes_)
-		{
-			vkCmdBindDescriptorSets(
-				commandBuffer,
-				VK_PIPELINE_BIND_POINT_GRAPHICS,
-				pipelineLayout_,
-				0,
-				1,
-				&(descriptorSets_[frameIndex][meshIndex++]),
-				0,
-				nullptr);
-
-			// Bind vertex buffer
-			VkBuffer buffers[] = { mesh.vertexBuffer_.buffer_ };
-			VkDeviceSize offsets[] = { 0 };
-			vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
-
-			// Bind index buffer
-			vkCmdBindIndexBuffer(commandBuffer, mesh.indexBuffer_.buffer_, 0, VK_INDEX_TYPE_UINT32);
-
-			// Draw
-			vkCmdDrawIndexed(commandBuffer, mesh.GetIndexCount(), 1, 0, 0, 0);
-		}
-	}
-	*/
-
-
 	vkCmdEndRenderPass(commandBuffer);
 }
 
@@ -175,56 +145,4 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 		dsInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 3);
 		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}
-
-	/*uint32_t meshCount = 0u;
-	for (const Model* model : models_)
-	{
-		meshCount += model->GetMeshCount();
-	}
-
-	VulkanDescriptorInfo dsInfo;
-	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-	dsInfo.AddBuffer(resLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
-	dsInfo.AddBuffer(&(resCF_->lightCellsBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
-	dsInfo.AddBuffer(&(resCF_->lightIndicesBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
-	for (size_t i = 0; i < PBR_TEXTURE_COUNT; ++i)
-	{
-		dsInfo.AddImage(nullptr);
-	}
-	dsInfo.AddImage(&(iblResources_->specularCubemap_));
-	dsInfo.AddImage(&(iblResources_->diffuseCubemap_));
-	dsInfo.AddImage(&(iblResources_->brdfLut_));
-
-	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, dsInfo, AppConfig::FrameCount, meshCount);
-
-	// Sets
-	constexpr uint32_t bindingOffset = static_cast<size_t>(UBO_COUNT + SSBO_COUNT);
-	descriptorSets_.resize(AppConfig::FrameCount);
-	for (size_t i = 0; i < AppConfig::FrameCount; i++)
-	{
-		uint32_t meshIndex = 0;
-		descriptorSets_[i].resize(meshCount);
-		dsInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
-		dsInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 2);
-		for (Model* model : models_)
-		{
-			dsInfo.UpdateBuffer(&(model->modelBuffers_[i]), 1);
-			for (Mesh& mesh : model->meshes_)
-			{
-				for (const auto& elem : mesh.textureIndices_)
-				{
-					// Should be ordered based on elem.first
-					const uint32_t typeIndex = static_cast<uint32_t>(elem.first) - 1;
-					const uint32_t textureIndex = static_cast<uint32_t>(elem.second);
-					const VulkanImage* texture = model->GetTexture(textureIndex);
-					dsInfo.UpdateImage(texture, bindingOffset + typeIndex);
-				}
-				descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i][meshIndex]));
-				meshIndex++;
-			}
-		}
-	}*/
 }

@@ -43,7 +43,6 @@ private:
 	ResourcesIBL* iblResources_;
 	std::vector<VulkanBuffer> cfUBOBuffers_;
 	VulkanBuffer vimBuffer_;
-	//std::vector<Model*> models_;
 	Scene* scene_;
 	std::vector<VkDescriptorSet> descriptorSets_;
 
