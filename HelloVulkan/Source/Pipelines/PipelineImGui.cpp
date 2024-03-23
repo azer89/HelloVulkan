@@ -107,9 +107,9 @@ void PipelineImGui::ImGuiShowPBRConfig(PushConstPBR* pc, float mipmapCount)
 {
 	ImGui::SliderFloat("Light Falloff", &(pc->lightFalloff), 0.01f, 5.f);
 	ImGui::SliderFloat("Light Intensity", &(pc->lightIntensity), 0.1f, 20.f);
-	ImGui::SliderFloat("Albedo Multiplier", &(pc->albedoMultipler), 0.0f, 1.0f);
-	ImGui::SliderFloat("Base Reflectivity", &(pc->baseReflectivity), 0.01f, 1.f);
-	ImGui::SliderFloat("Max Mipmap Lod", &(pc->maxReflectionLod), 0.1f, mipmapCount);
+	ImGui::SliderFloat("Albedo", &(pc->albedoMultipler), 0.0f, 1.0f);
+	ImGui::SliderFloat("Reflectivity", &(pc->baseReflectivity), 0.01f, 1.f);
+	ImGui::SliderFloat("Max Lod", &(pc->maxReflectionLod), 0.1f, mipmapCount);
 }
 
 void PipelineImGui::ImGuiEnd()
