@@ -3,8 +3,8 @@
 const float SHADOW_AMBIENT = 0.1;
 const float PCF_SCALE = 0.5;
 const int PCF_RANGE = 1;
-const int POISSON_SAMPLE_COUNT = 8;
-const float POISSON_RADIUS = 1500.0; // Smaller means blurrier
+const int POISSON_SAMPLE_COUNT = 4;
+const float POISSON_RADIUS = 5000.0; // Smaller means blurrier
 
 float ShadowPCF(vec4 shadowCoord)
 {
