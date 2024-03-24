@@ -5,8 +5,7 @@
 #include "glm/ext.hpp"
 #include "imgui_impl_vulkan.h"
 
-AppPBRSlotBased::AppPBRSlotBased() :
-	modelRotation_(0.f)
+AppPBRSlotBased::AppPBRSlotBased()
 {
 }
 
@@ -24,8 +23,8 @@ void AppPBRSlotBased::Init()
 	resIBL_ = std::make_unique<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
 
 	model_ = std::make_unique<Model>();
-	model_->LoadSlotBased(vulkanContext_,
-		AppConfig::ModelFolder + "DamagedHelmet/DamagedHelmet.gltf");
+	model_->LoadSlotBased(vulkanContext_, AppConfig::ModelFolder + "DamagedHelmet/DamagedHelmet.gltf");
+	model_->SetModelUBO(vulkanContext_, { .model = glm::mat4(1.0f) });
 	std::vector<Model*> models = { model_.get() };
 
 	// Pipelines
@@ -111,17 +110,6 @@ void AppPBRSlotBased::UpdateUBOs()
 	pbrPtr_->SetCameraUBO(vulkanContext_, ubo);
 	infGridPtr_->SetCameraUBO(vulkanContext_, ubo);
 	skyboxPtr_->SetCameraUBO(vulkanContext_, ubo);
-
-	// Model UBOs
-	glm::mat4 modelMatrix(1.f);
-	modelMatrix = glm::rotate(modelMatrix, modelRotation_, glm::vec3(0.f, 1.f, 0.f));
-	//modelRotation_ += deltaTime_ * 0.1f;
-
-	ModelUBO modelUBO1
-	{
-		.model = modelMatrix
-	};
-	model_->SetModelUBO(vulkanContext_, modelUBO1);
 }
 
 void AppPBRSlotBased::UpdateUI()
