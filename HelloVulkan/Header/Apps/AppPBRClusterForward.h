@@ -2,7 +2,7 @@
 #define APP_PBR_CLUSTER_FORWARD
 
 #include "AppBase.h"
-#include "Model.h"
+#include "Scene.h"
 #include "ResourcesLight.h"
 #include "ResourcesClusterForward.h"
 #include "PipelineSkybox.h"
@@ -42,14 +42,15 @@ private:
 	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;
 	std::unique_ptr<PipelineLightRender> lightPtr_;
 	std::unique_ptr<PipelineImGui> imguiPtr_;
-	std::unique_ptr<PipelinePBRClusterForward> pbrPtr_;
+	std::unique_ptr<PipelinePBRClusterForward> pbrOpaquePtr_;
+	std::unique_ptr<PipelinePBRClusterForward> pbrTransparentPtr_;
 	std::unique_ptr<PipelineAABBGenerator> aabbPtr_;
 	std::unique_ptr<PipelineLightCulling> lightCullPtr_;
 
 	std::unique_ptr<ResourcesClusterForward> resCF_; 
 	std::unique_ptr<ResourcesLight> resLight_;
 
-	std::unique_ptr<Model> model_;
+	std::unique_ptr<Scene> scene_;
 };
 
 #endif

@@ -26,10 +26,11 @@ void AppPBRClusterForward::Init()
 	resCF_ = std::make_unique<ResourcesClusterForward>();
 	resCF_->CreateBuffers(vulkanContext_, resLight_->GetLightCount());
 
-	model_ = std::make_unique<Model>();
-	model_->LoadSlotBased(vulkanContext_, 
-		AppConfig::ModelFolder + "Sponza/Sponza.gltf");
-	std::vector<Model*> models = { model_.get()};
+	std::vector<ModelCreateInfo> dataArray = {
+		{AppConfig::ModelFolder + "Sponza/Sponza.gltf", 1}
+	};
+	bool supportDeviceAddress = true;
+	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
 
 	// Pipelines
 	clearPtr_ = std::make_unique<PipelineClear>(vulkanContext_); // This is responsible to clear swapchain image
@@ -41,13 +42,22 @@ void AppPBRClusterForward::Init()
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
 	aabbPtr_ = std::make_unique<PipelineAABBGenerator>(vulkanContext_, resCF_.get());
 	lightCullPtr_ = std::make_unique<PipelineLightCulling>(vulkanContext_, resLight_.get(), resCF_.get());
-	pbrPtr_ = std::make_unique<PipelinePBRClusterForward>(
+	pbrOpaquePtr_ = std::make_unique<PipelinePBRClusterForward>(
 		vulkanContext_,
-		models,
+		scene_.get(),
 		resLight_.get(),
 		resCF_.get(),
 		resIBL_.get(),
-		resShared_.get());
+		resShared_.get(),
+		MaterialType::Opaque);
+	pbrTransparentPtr_ = std::make_unique<PipelinePBRClusterForward>(
+		vulkanContext_,
+		scene_.get(),
+		resLight_.get(),
+		resCF_.get(),
+		resIBL_.get(),
+		resShared_.get(),
+		MaterialType::Transparent);
 	lightPtr_ = std::make_unique<PipelineLightRender>(vulkanContext_, resLight_.get(), resShared_.get());
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
 	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(vulkanContext_, resShared_.get());
@@ -65,7 +75,8 @@ void AppPBRClusterForward::Init()
 		skyboxPtr_.get(),
 		aabbPtr_.get(),
 		lightCullPtr_.get(),
-		pbrPtr_.get(),
+		pbrOpaquePtr_.get(),
+		pbrTransparentPtr_.get(),
 		lightPtr_.get(),
 		resolveMSPtr_.get(),
 		tonemapPtr_.get(),
@@ -120,9 +131,8 @@ void AppPBRClusterForward::DestroyResources()
 	resCF_.reset();
 	resLight_.reset();
 
-	// Destroy meshes
-	model_->Destroy();
-	model_.reset();
+	// Destroy all objects
+	scene_.reset();
 
 	// Destroy renderers
 	clearPtr_.reset();
@@ -130,7 +140,8 @@ void AppPBRClusterForward::DestroyResources()
 	skyboxPtr_.reset();
 	aabbPtr_.reset();
 	lightCullPtr_.reset();
-	pbrPtr_.reset();
+	pbrOpaquePtr_.reset();
+	pbrTransparentPtr_.reset();
 	lightPtr_.reset();
 	resolveMSPtr_.reset();
 	tonemapPtr_.reset();
@@ -142,26 +153,21 @@ void AppPBRClusterForward::UpdateUBOs()
 	// Camera UBO
 	CameraUBO ubo = camera_->GetCameraUBO();
 	lightPtr_->SetCameraUBO(vulkanContext_, ubo);
-	pbrPtr_->SetCameraUBO(vulkanContext_, ubo);
+	pbrOpaquePtr_->SetCameraUBO(vulkanContext_, ubo);
+	pbrTransparentPtr_->SetCameraUBO(vulkanContext_, ubo);
 
 	// Remove translation for skybox
 	CameraUBO skyboxUbo = ubo;
 	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view));
 	skyboxPtr_->SetCameraUBO(vulkanContext_, skyboxUbo);
 
-	// Model UBOs
-	ModelUBO modelUBO1
-	{
-		.model = glm::mat4(1.0)
-	};
-	model_->SetModelUBO(vulkanContext_, modelUBO1);
-
 	// Clustered forward
 	ClusterForwardUBO cfUBO = camera_->GetClusterForwardUBO();
 	aabbPtr_->SetClusterForwardUBO(vulkanContext_, cfUBO);
 	lightCullPtr_->ResetGlobalIndex(vulkanContext_);
 	lightCullPtr_->SetClusterForwardUBO(vulkanContext_, cfUBO);
-	pbrPtr_->SetClusterForwardUBO(vulkanContext_, cfUBO);
+	pbrOpaquePtr_->SetClusterForwardUBO(vulkanContext_, cfUBO);
+	pbrTransparentPtr_->SetClusterForwardUBO(vulkanContext_, cfUBO);
 }
 
 void AppPBRClusterForward::UpdateUI()
@@ -183,14 +189,15 @@ void AppPBRClusterForward::UpdateUI()
 	imguiPtr_->ImGuiEnd();
 
 	lightPtr_->ShouldRender(lightRender);
-	pbrPtr_->SetPBRPushConstants(pbrPC);
+	pbrOpaquePtr_->SetPBRPushConstants(pbrPC);
+	pbrTransparentPtr_->SetPBRPushConstants(pbrPC);
 }
 
 // This is called from main.cpp
 void AppPBRClusterForward::MainLoop()
 {
 	InitVulkan({
-		.supportRaytracing_ = false,
+		.suportBufferDeviceAddress_ = true,
 		.supportMSAA_ = true
 		});
 
