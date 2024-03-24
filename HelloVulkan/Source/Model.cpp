@@ -100,8 +100,10 @@ void Model::CreateModelUBOBuffers(VulkanContext& ctx)
 
 void Model::SetModelUBO(VulkanContext& ctx, ModelUBO ubo)
 {
-	const uint32_t frameIndex = ctx.GetFrameIndex();
-	modelBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ModelUBO));
+	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
+	{
+		modelBuffers_[i].UploadBufferData(ctx, &ubo, sizeof(ModelUBO));
+	}
 }
 
 void Model::AddTexture(VulkanContext& ctx, const std::string& textureFilename)

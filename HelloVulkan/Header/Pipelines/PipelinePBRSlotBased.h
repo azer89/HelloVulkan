@@ -28,6 +28,11 @@ public:
 
 	void SetPBRPushConstants(const PushConstPBR& pbrPC) { pc_ = pbrPC; };
 
+	void GetUpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
+	{
+		pc_ = inputContext.pbrPC_;
+	}
+
 private:
 	void CreateDescriptor(VulkanContext& ctx);
 

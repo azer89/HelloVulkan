@@ -25,6 +25,11 @@ public:
 
 	void ShouldRender(bool shouldRender) { shouldRender_ = shouldRender; }
 
+	void GetUpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
+	{
+		shouldRender_ = inputContext.renderLights_;
+	}
+
 private:
 	void CreateDescriptor(VulkanContext& ctx);
 

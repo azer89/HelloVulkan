@@ -8,6 +8,7 @@
 #include "VulkanDescriptor.h"
 #include "VulkanSpecialization.h"
 #include "PipelineConfig.h"
+#include "InputContext.h"
 #include "UBOs.h"
 
 #include <string>
@@ -36,6 +37,10 @@ public:
 	virtual void FillCommandBuffer(
 		VulkanContext& ctx, 
 		VkCommandBuffer commandBuffer) = 0;
+
+	virtual void GetUpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext)
+	{
+	}
 
 	virtual void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo)
 	{

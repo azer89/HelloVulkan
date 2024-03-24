@@ -28,32 +28,32 @@ void AppPBRSlotBased::Init()
 	std::vector<Model*> models = { model_.get() };
 
 	// Pipelines
-	clearPtr_ = std::make_unique<PipelineClear>(vulkanContext_); // This is responsible to clear swapchain image
+	AddPipeline<PipelineClear>(vulkanContext_); // This is responsible to clear swapchain image
 	// This draws a cube
-	skyboxPtr_ = std::make_unique<PipelineSkybox>(
+	skyboxPtr_ = AddPipeline<PipelineSkybox>(
 		vulkanContext_,
 		&(resIBL_->environmentCubemap_),
 		resShared_.get(),
 		// This is the first offscreen render pass so we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
-	pbrPtr_ = std::make_unique<PipelinePBRSlotBased>(
+	pbrPtr_ = AddPipeline<PipelinePBRSlotBased>(
 		vulkanContext_,
 		models,
 		resLights_.get(),
 		resIBL_.get(),
 		resShared_.get());
-	lightPtr_ = std::make_unique<PipelineLightRender>(vulkanContext_, resLights_.get(), resShared_.get());
+	infGridPtr_ = AddPipeline<PipelineInfiniteGrid>(vulkanContext_, resShared_.get(), -1.0f);
+	lightPtr_ =  AddPipeline<PipelineLightRender>(vulkanContext_, resLights_.get(), resShared_.get());
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
-	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(vulkanContext_, resShared_.get());
+	AddPipeline<PipelineResolveMS>(vulkanContext_, resShared_.get());
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
-	tonemapPtr_ = std::make_unique<PipelineTonemap>(vulkanContext_, &(resShared_->singleSampledColorImage_));
-	infGridPtr_ = std::make_unique<PipelineInfiniteGrid>(vulkanContext_, resShared_.get(), -1.0f);
-	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
+	AddPipeline<PipelineTonemap>(vulkanContext_, &(resShared_->singleSampledColorImage_));
+	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
-	finishPtr_ = std::make_unique<PipelineFinish>(vulkanContext_);
+	AddPipeline<PipelineFinish>(vulkanContext_);
 
 	// Put all renderer pointers to a vector
-	pipelines_ =
+	/*pipelines_ =
 	{
 		// Must be in order
 		clearPtr_.get(),
@@ -65,7 +65,7 @@ void AppPBRSlotBased::Init()
 		tonemapPtr_.get(),
 		imguiPtr_.get(),
 		finishPtr_.get()
-	};
+	};*/
 }
 
 void AppPBRSlotBased::InitLights()
@@ -92,7 +92,7 @@ void AppPBRSlotBased::DestroyResources()
 	model_.reset();
 	
 	// Destroy renderers
-	clearPtr_.reset();
+	/*clearPtr_.reset();
 	finishPtr_.reset();
 	skyboxPtr_.reset();
 	pbrPtr_.reset();
@@ -100,12 +100,17 @@ void AppPBRSlotBased::DestroyResources()
 	resolveMSPtr_.reset();
 	tonemapPtr_.reset();
 	imguiPtr_.reset();
-	infGridPtr_.reset();
+	infGridPtr_.reset();*/
 }
 
 void AppPBRSlotBased::UpdateUBOs()
 {
 	CameraUBO ubo = camera_->GetCameraUBO();
+	/*for (auto& pipeline : pipelines2_)
+	{
+		pipeline->SetCameraUBO(vulkanContext_, ubo);
+	}*/
+
 	lightPtr_->SetCameraUBO(vulkanContext_, ubo);
 	pbrPtr_->SetCameraUBO(vulkanContext_, ubo);
 	infGridPtr_->SetCameraUBO(vulkanContext_, ubo);
@@ -133,6 +138,10 @@ void AppPBRSlotBased::UpdateUI()
 	lightPtr_->ShouldRender(inputContext_.renderLights_);
 	infGridPtr_->ShouldRender(inputContext_.renderInfiniteGrid_);
 	pbrPtr_->SetPBRPushConstants(inputContext_.pbrPC_);
+	/*for (auto& pipeline : pipelines2_)
+	{
+		pipeline->GetUpdateFromInputContext(vulkanContext_, inputContext_);
+	}*/
 }
 
 // This is called from main.cpp
