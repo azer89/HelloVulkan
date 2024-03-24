@@ -3,9 +3,10 @@
 
 #include "VulkanContext.h"
 #include "VulkanImage.h"
+#include "ResourcesBase.h"
 #include "UBOs.h"
 
-struct ResourcesShadow
+struct ResourcesShadow : ResourcesBase
 {
 public:
 	ResourcesShadow();

@@ -3,8 +3,9 @@
 
 #include "VulkanContext.h"
 #include "VulkanImage.h"
+#include "ResourcesBase.h"
 
-struct ResourcesShared
+struct ResourcesShared : ResourcesBase
 {
 public:
 	ResourcesShared();

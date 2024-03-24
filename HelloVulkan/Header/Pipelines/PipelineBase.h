@@ -37,7 +37,7 @@ public:
 		VulkanContext& ctx, 
 		VkCommandBuffer commandBuffer) = 0;
 
-	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo)
+	virtual void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo)
 	{
 		const uint32_t frameIndex = ctx.GetFrameIndex();
 		cameraUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(CameraUBO));

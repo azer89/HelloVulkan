@@ -213,6 +213,7 @@
     <ClInclude Include="Header\Camera.h" />
     <ClInclude Include="Header\Configs.h" />
     <ClInclude Include="Header\FrameCounter.h" />
+    <ClInclude Include="Header\InputContext.h" />
     <ClInclude Include="Header\Mesh.h" />
     <ClInclude Include="Header\Model.h" />
     <ClInclude Include="Header\Pipelines\PipelineAABBGenerator.h" />
@@ -242,6 +243,7 @@
     <ClInclude Include="Header\PushConstants.h" />
     <ClInclude Include="Header\Raytracing\AccelStructure.h" />
     <ClInclude Include="Header\Raytracing\RaytracingBuilder.h" />
+    <ClInclude Include="Header\Resources\ResourcesBase.h" />
     <ClInclude Include="Header\Resources\ResourcesLight.h" />
     <ClInclude Include="Header\Resources\ResourcesClusterForward.h" />
     <ClInclude Include="Header\Resources\ResourcesIBL.h" />

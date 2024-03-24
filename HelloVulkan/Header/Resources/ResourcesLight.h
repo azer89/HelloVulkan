@@ -5,6 +5,7 @@
 
 #include "VulkanContext.h"
 #include "VulkanBuffer.h"
+#include "ResourcesBase.h"
 
 // A single light
 struct LightData
@@ -36,7 +37,7 @@ struct LightCell
 };
 
 // A collection of lights, including SSBO
-struct ResourcesLight
+struct ResourcesLight : ResourcesBase
 {
 public:
 	ResourcesLight() = default;

@@ -3,11 +3,12 @@
 
 #include "VulkanContext.h"
 #include "VulkanBuffer.h"
+#include "ResourcesBase.h"
 #include "Configs.h"
 
 #include <array>
 
-struct ResourcesClusterForward
+struct ResourcesClusterForward : ResourcesBase
 {
 public:
 	ResourcesClusterForward() = default;

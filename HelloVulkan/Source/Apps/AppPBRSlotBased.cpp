@@ -110,11 +110,7 @@ void AppPBRSlotBased::UpdateUBOs()
 	lightPtr_->SetCameraUBO(vulkanContext_, ubo);
 	pbrPtr_->SetCameraUBO(vulkanContext_, ubo);
 	infGridPtr_->SetCameraUBO(vulkanContext_, ubo);
-
-	// Remove translation
-	CameraUBO skyboxUbo = ubo;
-	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view));
-	skyboxPtr_->SetCameraUBO(vulkanContext_, skyboxUbo);
+	skyboxPtr_->SetCameraUBO(vulkanContext_, ubo);
 
 	// Model UBOs
 	glm::mat4 modelMatrix(1.f);

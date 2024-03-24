@@ -115,11 +115,7 @@ void AppPBRBindless::UpdateUBOs()
 	CameraUBO ubo = camera_->GetCameraUBO();
 	lightPtr_->SetCameraUBO(vulkanContext_, ubo);
 	pbrPtr_->SetCameraUBO(vulkanContext_, ubo);
-
-	// Remove translation
-	CameraUBO skyboxUbo = ubo;
-	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view));
-	skyboxPtr_->SetCameraUBO(vulkanContext_, skyboxUbo);
+	skyboxPtr_->SetCameraUBO(vulkanContext_, ubo);
 }
 
 void AppPBRBindless::UpdateUI()

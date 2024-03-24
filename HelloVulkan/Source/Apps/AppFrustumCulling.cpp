@@ -144,6 +144,7 @@ void AppFrustumCulling::UpdateUBOs()
 	boxRenderPtr_->SetCameraUBO(vulkanContext_, ubo);
 	infGridPtr_->SetCameraUBO(vulkanContext_, ubo);
 	linePtr_->SetCameraUBO(vulkanContext_, ubo);
+	skyboxPtr_->SetCameraUBO(vulkanContext_, ubo);
 
 	if (updateFrustum_)
 	{
@@ -152,11 +153,6 @@ void AppFrustumCulling::UpdateUBOs()
 		FrustumUBO frustumUBO = camera_->GetFrustumUBO();
 		cullingPtr_->SetFrustumUBO(vulkanContext_, frustumUBO);
 	}
-
-	// Remove translation
-	CameraUBO skyboxUbo = ubo;
-	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view));
-	skyboxPtr_->SetCameraUBO(vulkanContext_, skyboxUbo);
 }
 
 void AppFrustumCulling::UpdateUI()
