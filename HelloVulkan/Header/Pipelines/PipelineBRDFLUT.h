@@ -15,16 +15,13 @@ public:
 	PipelineBRDFLUT(VulkanContext& ctx);
 	~PipelineBRDFLUT();
 
+	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override {}
+	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 	void CreateLUT(VulkanContext& ctx, VulkanImage* outputLUT);
-
 	void Execute(VulkanContext& ctx);
 
-	virtual void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
-
 private:
-	// This is the lookup table which has to be transferred to an image
-	VulkanBuffer outBuffer_;
-
+	VulkanBuffer outBuffer_; // This is the lookup table which has to be transferred to an image
 	VkDescriptorSet descriptorSet_;
 
 private:

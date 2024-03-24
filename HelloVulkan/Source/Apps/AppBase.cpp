@@ -222,7 +222,13 @@ void AppBase::FillCommandBuffer(VkCommandBuffer commandBuffer)
 		TracyVkZoneC(vulkanContext_.GetTracyContext(), commandBuffer, "Render", tracy::Color::OrangeRed);
 
 		// Iterate through all pipelines to fill the command buffer
+		// TODO Delete this
 		for (const auto& pip : pipelines_)
+		{
+			pip->FillCommandBuffer(vulkanContext_, commandBuffer);
+		}
+
+		for (const auto& pip : pipelines2_)
 		{
 			pip->FillCommandBuffer(vulkanContext_, commandBuffer);
 		}
@@ -254,7 +260,13 @@ void AppBase::OnWindowResized()
 
 	InitSharedResources();
 
+	// TODO Delete This
 	for (const auto& pip : pipelines_)
+	{
+		pip->OnWindowResized(vulkanContext_);
+	}
+
+	for (const auto& pip : pipelines2_)
 	{
 		pip->OnWindowResized(vulkanContext_);
 	}
@@ -299,6 +311,12 @@ void AppBase::PollEvents()
 
 void AppBase::DestroyInternal()
 {
+	// Destroy pipelines before vulkanContext_ and vulkanInstance_
+	for (auto& pip : pipelines2_)
+	{
+		pip.reset();
+	}
+
 	glfwDestroyWindow(glfwWindow_);
 	glfwTerminate();
 

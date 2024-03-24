@@ -17,6 +17,7 @@ public:
 	);
 	~PipelineResolveMS();
 
+	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override {}
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 };
 

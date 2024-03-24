@@ -11,6 +11,7 @@ class PipelineFinish final : public PipelineBase
 public:
 	PipelineFinish(VulkanContext& ctx);
 
+	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override {}
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 };
 

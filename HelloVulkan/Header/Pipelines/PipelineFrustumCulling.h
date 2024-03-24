@@ -12,6 +12,7 @@ public:
 	PipelineFrustumCulling(VulkanContext& ctx, Scene* scene);
 	~PipelineFrustumCulling();
 
+	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override {}
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
 	void SetFrustumUBO(VulkanContext& ctx, FrustumUBO& ubo)

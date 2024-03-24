@@ -9,7 +9,7 @@
 #include <array>
 
 /*
-Clustered Forward
+Generate voxelized frustum for clustered forward
 */
 class PipelineAABBGenerator final : public PipelineBase
 {
@@ -17,6 +17,7 @@ public:
 	PipelineAABBGenerator(VulkanContext& ctx, ResourcesClusterForward* resCF);
 	~PipelineAABBGenerator();
 
+	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override {}
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 	void OnWindowResized(VulkanContext& ctx) override;
 

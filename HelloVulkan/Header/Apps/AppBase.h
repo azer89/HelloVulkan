@@ -21,8 +21,8 @@ public:
 	virtual void MainLoop() = 0; 
 
 protected:
-	virtual void UpdateUBOs() = 0;
 	virtual void UpdateUI();
+	virtual void UpdateUBOs() = 0;
 	void FillCommandBuffer(VkCommandBuffer commandBuffer);
 	
 	void OnWindowResized();
@@ -53,6 +53,15 @@ protected:
 
 	// Should be used to destroy resources
 	void DestroyInternal();
+	
+	template<class T, class... U>
+	T* AddPipeline(U&&... u)
+	{
+		std::unique_ptr<T> pipeline = std::make_unique<T>(std::forward<U>(u)...);
+		T* ptr = pipeline.get();
+		pipelines2_.push_back(std::move(pipeline));
+		return ptr;
+	}
 
 protected:
 	GLFWwindow* glfwWindow_;
@@ -73,7 +82,8 @@ protected:
 	VulkanContext vulkanContext_;
 
 	// A list of pipelines (graphics and compute)
-	std::vector<PipelineBase*> pipelines_;
+	std::vector<PipelineBase*> pipelines_; // TODO Delete this
+	std::vector<std::unique_ptr<PipelineBase>> pipelines2_;
 
 	// Window size
 	uint32_t windowWidth_;

@@ -14,10 +14,9 @@ public:
 		ResourcesShadow* resShadow);
 	~PipelineShadow();
 
+	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override {}
+	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 	void UpdateShadow(VulkanContext& ctx, ResourcesShadow* resShadow, glm::vec4 lightPosition);
-
-	virtual void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
-
 	void OnWindowResized(VulkanContext& ctx) override;
 	
 private:

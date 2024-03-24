@@ -18,6 +18,7 @@ public:
 	PipelineLightCulling(VulkanContext& ctx, ResourcesLight* resLight, ResourcesClusterForward* resCF);
 	~PipelineLightCulling();
 
+	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override {}
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 	void ResetGlobalIndex(VulkanContext& ctx);
 	void SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO& ubo);

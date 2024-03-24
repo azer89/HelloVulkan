@@ -15,7 +15,6 @@ public:
 	~PipelineInfiniteGrid();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
-
 	void ShouldRender(bool shouldRender) { shouldRender_ = shouldRender; };
 
 private:
