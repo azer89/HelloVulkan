@@ -44,7 +44,8 @@ protected:
 	void InitCamera();
 
 	// Resources
-	void InitSharedResources();
+	void InitSharedResources(); // TODO Delete this
+	void InitSharedResources2();
 	
 	// Functions related to the main loop
 	bool StillRunning();
@@ -61,6 +62,15 @@ protected:
 		std::unique_ptr<T> pipeline = std::make_unique<T>(std::forward<U>(u)...);
 		T* ptr = pipeline.get();
 		pipelines2_.push_back(std::move(pipeline));
+		return ptr;
+	}
+
+	template<class T, class... U>
+	T* AddResources(U&&... u)
+	{
+		std::unique_ptr<T> resources = std::make_unique<T>(std::forward<U>(u)...);
+		T* ptr = resources.get();
+		resources_.push_back(std::move(resources));
 		return ptr;
 	}
 
@@ -84,15 +94,18 @@ protected:
 
 	// A list of pipelines (graphics and compute)
 	std::vector<PipelineBase*> pipelines_; // TODO Delete this
-	std::vector<std::unique_ptr<PipelineBase>> pipelines2_;
+	std::vector<std::unique_ptr<PipelineBase>> pipelines2_; // TODO Rename to pipelines_
+	std::vector<std::unique_ptr<ResourcesBase>> resources_;
 
 	// Window size
 	uint32_t windowWidth_;
 	uint32_t windowHeight_;
 	bool shouldRecreateSwapchain_;
 
-	std::unique_ptr<ResourcesShared> resShared_;
-	std::unique_ptr<ResourcesIBL> resIBL_;
+	std::unique_ptr<ResourcesShared> resShared_; // TODO Delete
+	std::unique_ptr<ResourcesIBL> resIBL_; // TODO Delete
+	ResourcesShared* resShared2_;
+	ResourcesIBL* resIBL2_;
 
 	InputContext inputContext_ = {};
 };

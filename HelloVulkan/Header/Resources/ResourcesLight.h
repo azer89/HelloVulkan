@@ -46,7 +46,7 @@ public:
 		Destroy();
 	}
 
-	void Destroy();
+	void Destroy() override;
 	void AddLights(VulkanContext& ctx, const std::vector<LightData>& lights);
 	void UpdateLightPosition(VulkanContext& ctx, size_t index, float* position);
 

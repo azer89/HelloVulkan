@@ -30,25 +30,10 @@ public:
 
 	void Init();
 	void InitLights();
-	void DestroyResources();
 
 private:
-	/*std::unique_ptr<PipelineClear> clearPtr_;
-	std::unique_ptr<PipelineSkybox> skyboxPtr_;
-	std::unique_ptr<PipelinePBRSlotBased> pbrPtr_;
-	std::unique_ptr<PipelineTonemap> tonemapPtr_;
-	std::unique_ptr<PipelineFinish> finishPtr_;
-	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;
-	std::unique_ptr<PipelineLightRender> lightPtr_;
-	std::unique_ptr<PipelineImGui> imguiPtr_;
-	std::unique_ptr<PipelineInfiniteGrid> infGridPtr_;*/
-	PipelineSkybox* skyboxPtr_;
-	PipelinePBRSlotBased* pbrPtr_;
-	PipelineLightRender* lightPtr_;
-	PipelineInfiniteGrid* infGridPtr_;
 	PipelineImGui* imguiPtr_;
-
-	std::unique_ptr<ResourcesLight> resLights_;
+	ResourcesLight* resLights_;
 	std::unique_ptr<Model> model_;
 };
 

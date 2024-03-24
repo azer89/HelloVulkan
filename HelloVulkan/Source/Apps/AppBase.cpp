@@ -259,6 +259,7 @@ void AppBase::OnWindowResized()
 	);
 
 	InitSharedResources();
+	InitSharedResources2();
 
 	// TODO Delete This
 	for (const auto& pip : pipelines_)
@@ -311,7 +312,10 @@ void AppBase::PollEvents()
 
 void AppBase::DestroyInternal()
 {
-	// Destroy pipelines before vulkanContext_ and vulkanInstance_
+	for (auto& res : resources_)
+	{
+		res.reset();
+	}
 	for (auto& pip : pipelines2_)
 	{
 		pip.reset();
@@ -429,4 +433,13 @@ void AppBase::InitSharedResources()
 		resShared_ = std::make_unique<ResourcesShared>();
 	}
 	resShared_->Create(vulkanContext_);
+}
+
+void AppBase::InitSharedResources2()
+{
+	if (!resShared2_)
+	{
+		resShared2_ = AddResources<ResourcesShared>();
+	}
+	resShared2_->Create(vulkanContext_);
 }

@@ -17,7 +17,7 @@ public:
 		Destroy();
 	}
 
-	void Destroy();
+	void Destroy() override;
 	void CreateBuffers(VulkanContext& ctx, uint32_t lightCount);
 	
 public:

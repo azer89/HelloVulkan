@@ -10,7 +10,7 @@ struct ResourcesIBL : ResourcesBase
 public:
 	ResourcesIBL(VulkanContext& ctx, const std::string& hdrFile);
 	~ResourcesIBL();
-	void Destroy();
+	void Destroy() override;
 
 private:
 	void Create(VulkanContext& ctx, const std::string& hdrFile);

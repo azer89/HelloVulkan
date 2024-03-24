@@ -6,9 +6,8 @@
 class ResourcesBase
 {
 public:
-	virtual void GetUpdateFromInputContext(InputContext* inputContext)
-	{
-	}
+	virtual ~ResourcesBase() = default;
+	virtual void Destroy() = 0;
 };
 
 #endif

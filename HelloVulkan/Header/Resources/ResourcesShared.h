@@ -12,7 +12,7 @@ public:
 	~ResourcesShared();
 
 	void Create(VulkanContext& ctx);
-	void Destroy();
+	void Destroy() override;
 
 public:
 	VulkanImage multiSampledColorImage_;

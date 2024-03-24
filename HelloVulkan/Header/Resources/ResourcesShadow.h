@@ -13,7 +13,7 @@ public:
 	~ResourcesShadow();
 
 	void CreateSingleShadowMap(VulkanContext& ctx);
-	void Destroy();
+	void Destroy() override;
 
 public:
 	VulkanImage shadowMap_;
