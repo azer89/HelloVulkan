@@ -25,7 +25,8 @@ Fragment shader for
 layout(location = 0) in vec3 worldPos;
 layout(location = 1) in vec2 texCoord;
 layout(location = 2) in vec3 normal;
-layout(location = 3) in flat uint meshIndex;
+layout(location = 3) in vec3 vertexColor;
+layout(location = 4) in flat uint meshIndex;
 
 layout(location = 0) out vec4 fragColor;
 
@@ -55,6 +56,7 @@ void main()
 	MeshData mData = vim.meshReference.meshes[meshIndex];
 
 	vec4 albedo4 = texture(pbrTextures[nonuniformEXT(mData.albedo)], texCoord).rgba;
+	albedo4 += vec4(vertexColor, 0.0);
 
 	// TODO This kills performance
 	if (albedo4.a < 0.5)

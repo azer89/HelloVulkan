@@ -13,7 +13,8 @@
 layout(location = 0) out vec3 worldPos;
 layout(location = 1) out vec2 texCoord;
 layout(location = 2) out vec3 normal;
-layout(location = 3) out flat uint meshIndex;
+layout(location = 3) out vec3 vertexColor;
+layout(location = 4) out flat uint meshIndex;
 
 layout(set = 0, binding = 0) uniform CameraBlock { CameraUBO camUBO; }; // UBO
 layout(set = 0, binding = 1) readonly buffer ModelUBOs { ModelUBO modelUBOs[]; }; // SSBO
@@ -33,6 +34,7 @@ void main()
 	worldPos = (model * vec4(vertexData.position, 1.0)).xyz;
 	texCoord = vec2(vertexData.uvX,vertexData.uvY);
 	normal = normalMatrix * vertexData.normal;
+	vertexColor = vertexData.color.xyz;
 	meshIndex = gl_BaseInstance;
 	gl_Position =  camUBO.projection * camUBO.view * vec4(worldPos, 1.0);
 }
