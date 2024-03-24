@@ -132,21 +132,19 @@ void AppPBRSlotBased::UpdateUI()
 		return;
 	}
 
-	static bool lightRender = true;
-	static bool gridRender = true;
-	static PushConstPBR pbrPC;
-
 	imguiPtr_->ImGuiStart();
 	imguiPtr_->ImGuiSetWindow("PBR and IBL", 500, 325);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
-	ImGui::Checkbox("Render Lights", &lightRender);
-	ImGui::Checkbox("Render Grid", &gridRender);
-	imguiPtr_->ImGuiShowPBRConfig(&pbrPC, resIBL_->cubemapMipmapCount_);
+	
+	ImGui::Checkbox("Render Lights", &inputContext_.renderLights_);
+	ImGui::Checkbox("Render Grid", &inputContext_.renderInfiniteGrid_);
+	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resIBL_->cubemapMipmapCount_);
+	
 	imguiPtr_->ImGuiEnd();
 
-	lightPtr_->ShouldRender(lightRender);
-	infGridPtr_->ShouldRender(gridRender);
-	pbrPtr_->SetPBRPushConstants(pbrPC);
+	lightPtr_->ShouldRender(inputContext_.renderLights_);
+	infGridPtr_->ShouldRender(inputContext_.renderInfiniteGrid_);
+	pbrPtr_->SetPBRPushConstants(inputContext_.pbrPC_);
 }
 
 // This is called from main.cpp

@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "ResourcesShared.h"
 #include "ResourcesIBL.h"
+#include "InputContext.h"
 
 #define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
@@ -92,6 +93,8 @@ protected:
 
 	std::unique_ptr<ResourcesShared> resShared_;
 	std::unique_ptr<ResourcesIBL> resIBL_;
+
+	InputContext inputContext_ = {};
 };
 
 #endif
