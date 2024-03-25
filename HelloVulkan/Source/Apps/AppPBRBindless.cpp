@@ -76,15 +76,6 @@ void AppPBRBindless::InitLights()
 	});
 }
 
-void AppPBRBindless::UpdateUBOs()
-{
-	CameraUBO ubo = camera_->GetCameraUBO();
-	for (auto& pipeline : pipelines_)
-	{
-		pipeline->SetCameraUBO(vulkanContext_, ubo);
-	}
-}
-
 void AppPBRBindless::UpdateUI()
 {
 	if (!showImgui_)
@@ -101,8 +92,19 @@ void AppPBRBindless::UpdateUI()
 	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
-	lightPtr_->ShouldRender(inputContext_.renderLights_);
-	pbrPtr_->SetPBRPushConstants(inputContext_.pbrPC_);
+	for (auto& pipeline : pipelines_)
+	{
+		pipeline->GetUpdateFromInputContext(vulkanContext_, inputContext_);
+	}
+}
+
+void AppPBRBindless::UpdateUBOs()
+{
+	CameraUBO ubo = camera_->GetCameraUBO();
+	for (auto& pipeline : pipelines_)
+	{
+		pipeline->SetCameraUBO(vulkanContext_, ubo);
+	}
 }
 
 // This is called from main.cpp

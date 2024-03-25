@@ -24,8 +24,14 @@ public:
 		uint8_t renderBit = 0u);
 	 ~PipelinePBRBindless();
 
+	 void SetPBRPushConstants(const PushConstPBR& pbrPC) { pc_ = pbrPC; };
+
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
-	void SetPBRPushConstants(const PushConstPBR& pbrPC) { pc_ = pbrPC; };
+	
+	void GetUpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
+	{
+		SetPBRPushConstants(inputContext.pbrPC_);
+	}
 
 private:
 	void PrepareVIM(VulkanContext& ctx);
