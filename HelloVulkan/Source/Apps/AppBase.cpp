@@ -297,12 +297,19 @@ void AppBase::PollEvents()
 	glfwPollEvents();
 }
 
-void AppBase::DestroyInternal()
+void AppBase::DestroyResources()
 {
+	for (auto& res : resources_)
+	{
+		res.reset();
+	}
+	for (auto& pip : pipelines_)
+	{
+		pip.reset();
+	}
+
 	glfwDestroyWindow(glfwWindow_);
 	glfwTerminate();
-
-	resShared_.reset();
 
 	vulkanContext_.Destroy();
 	vulkanInstance_.Destroy();
@@ -404,11 +411,12 @@ void AppBase::ProcessInput()
 	}
 }
 
+
 void AppBase::InitSharedResources()
 {
-	if (!resShared_)
+	if (!resourcesShared_)
 	{
-		resShared_ = std::make_unique<ResourcesShared>();
+		resourcesShared_ = AddResources<ResourcesShared>();
 	}
-	resShared_->Create(vulkanContext_);
+	resourcesShared_->Create(vulkanContext_);
 }

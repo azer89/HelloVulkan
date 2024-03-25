@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "ResourcesShared.h"
 #include "ResourcesIBL.h"
+#include "InputContext.h"
 
 #define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
@@ -21,8 +22,8 @@ public:
 	virtual void MainLoop() = 0; 
 
 protected:
-	virtual void UpdateUBOs() = 0;
 	virtual void UpdateUI();
+	virtual void UpdateUBOs() = 0;
 	void FillCommandBuffer(VkCommandBuffer commandBuffer);
 	
 	void OnWindowResized();
@@ -41,9 +42,6 @@ protected:
 	void InitGLSLang();
 	void InitGLFW();
 	void InitCamera();
-
-	// Resources
-	void InitSharedResources();
 	
 	// Functions related to the main loop
 	bool StillRunning();
@@ -51,14 +49,36 @@ protected:
 	void ProcessTiming();
 	void ProcessInput();
 
-	// Should be used to destroy resources
-	void DestroyInternal();
+	void DestroyResources();
+
+	// Resources
+	void InitSharedResources();
+
+	// Create unique_ptr of pipeline and put it in std::vector
+	template<class T, class... U>
+	T* AddPipeline(U&&... u)
+	{
+		std::unique_ptr<T> pipeline = std::make_unique<T>(std::forward<U>(u)...);
+		T* ptr = pipeline.get();
+		pipelines_.push_back(std::move(pipeline));
+		return ptr;
+	}
+
+	// Create unique_ptr of resources and put it in std::vector
+	template<class T, class... U>
+	T* AddResources(U&&... u)
+	{
+		std::unique_ptr<T> resources = std::make_unique<T>(std::forward<U>(u)...);
+		T* ptr = resources.get();
+		resources_.push_back(std::move(resources));
+		return ptr;
+	}
 
 protected:
-	GLFWwindow* glfwWindow_;
+	GLFWwindow* glfwWindow_ = nullptr;
 
 	// Camera
-	std::unique_ptr<Camera> camera_;
+	std::unique_ptr<Camera> camera_ = nullptr;
 	float lastX_;
 	float lastY_;
 	bool firstMouse_;
@@ -72,16 +92,21 @@ protected:
 	VulkanInstance vulkanInstance_;
 	VulkanContext vulkanContext_;
 
-	// A list of pipelines (graphics and compute)
-	std::vector<PipelineBase*> pipelines_;
+	// A list of pipelines (graphics, compute, or raytracing)
+	std::vector<std::unique_ptr<PipelineBase>> pipelines_ = {};
+
+	// A list of resources containing buffers and images
+	std::vector<std::unique_ptr<ResourcesBase>> resources_ = {};
 
 	// Window size
 	uint32_t windowWidth_;
 	uint32_t windowHeight_;
 	bool shouldRecreateSwapchain_;
 
-	std::unique_ptr<ResourcesShared> resShared_;
-	std::unique_ptr<ResourcesIBL> resIBL_;
+	ResourcesShared* resourcesShared_ = nullptr;
+	ResourcesIBL* resourcesIBL_ = nullptr;
+
+	InputContext inputContext_ = {};
 };
 
 #endif

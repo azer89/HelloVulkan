@@ -12,6 +12,7 @@ public:
 	PipelineClear(VulkanContext& ctx);
 	~PipelineClear();
 
+	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override {}
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 };
 

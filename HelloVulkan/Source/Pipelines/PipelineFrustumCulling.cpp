@@ -12,8 +12,7 @@ PipelineFrustumCulling::PipelineFrustumCulling(VulkanContext& ctx, Scene* scene)
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, frustumBuffers_, sizeof(FrustumUBO), AppConfig::FrameCount);
 	CreateDescriptor(ctx);
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
-	std::string shaderFile = AppConfig::ShaderFolder + "FrustumCulling.comp";
-	CreateComputePipeline(ctx, shaderFile);
+	CreateComputePipeline(ctx, AppConfig::ShaderFolder + "FrustumCulling.comp");
 }
 
 PipelineFrustumCulling::~PipelineFrustumCulling()
@@ -67,7 +66,7 @@ void PipelineFrustumCulling::Execute(VulkanContext& ctx, VkCommandBuffer command
 
 void PipelineFrustumCulling::CreateDescriptor(VulkanContext& ctx)
 {
-	const uint32_t frameCount = static_cast<uint32_t>(AppConfig::FrameCount);
+	constexpr uint32_t frameCount = AppConfig::FrameCount;
 	constexpr VkShaderStageFlags stageFlag = VK_SHADER_STAGE_COMPUTE_BIT;
 
 	VulkanDescriptorInfo dsInfo;

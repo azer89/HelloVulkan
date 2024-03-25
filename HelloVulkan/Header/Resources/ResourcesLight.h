@@ -5,6 +5,9 @@
 
 #include "VulkanContext.h"
 #include "VulkanBuffer.h"
+#include "ResourcesBase.h"
+
+#include <span>
 
 // A single light
 struct LightData
@@ -36,7 +39,7 @@ struct LightCell
 };
 
 // A collection of lights, including SSBO
-struct ResourcesLight
+struct ResourcesLight : ResourcesBase
 {
 public:
 	ResourcesLight() = default;
@@ -45,9 +48,10 @@ public:
 		Destroy();
 	}
 
-	void Destroy();
+	void Destroy() override;
 	void AddLights(VulkanContext& ctx, const std::vector<LightData>& lights);
-	void UpdateLightPosition(VulkanContext& ctx, size_t index, float* position);
+	
+	void UpdateLightPosition(VulkanContext& ctx, size_t index, const std::span<float> position);
 
 	VulkanBuffer* GetVulkanBufferPtr() { return &storageBuffer_;  }
 	uint32_t GetLightCount() const { return lightCount_; }
@@ -59,6 +63,12 @@ public:
 			.offset = 0,
 			.range = storageBuffer_.size_
 		};
+	}
+
+	void UpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
+	{
+		// Shadow caster
+		UpdateLightPosition(ctx, 0, inputContext.shadowCasterPosition_);
 	}
 
 public:

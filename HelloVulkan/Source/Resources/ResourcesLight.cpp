@@ -17,7 +17,7 @@ void ResourcesLight::AddLights(VulkanContext& ctx, const std::vector<LightData>&
 	storageBuffer_.UploadBufferData(ctx, lights.data(), storageBufferSize);
 }
 
-void ResourcesLight::UpdateLightPosition(VulkanContext& ctx, size_t index, float* position)
+void ResourcesLight::UpdateLightPosition(VulkanContext& ctx, size_t index, const std::span<float> position)
 {
 	if (index < 0 || index >= lights_.size())
 	{

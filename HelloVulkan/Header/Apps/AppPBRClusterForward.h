@@ -4,17 +4,12 @@
 #include "AppBase.h"
 #include "Scene.h"
 #include "ResourcesLight.h"
-#include "ResourcesClusterForward.h"
-#include "PipelineSkybox.h"
-#include "PipelineClear.h"
-#include "PipelineFinish.h"
-#include "PipelineTonemap.h"
-#include "PipelineResolveMS.h"
 #include "PipelineLightRender.h"
 #include "PipelineImGui.h"
-#include "PipelinePBRClusterForward.h"
 #include "PipelineAABBGenerator.h"
 #include "PipelineLightCulling.h"
+#include "ResourcesClusterForward.h"
+#include "PipelinePBRClusterForward.h"
 
 // STL
 #include <memory>
@@ -32,25 +27,18 @@ public:
 
 	void Init();
 	void InitLights();
-	void DestroyResources();
 
 private:
-	std::unique_ptr<PipelineClear> clearPtr_;
-	std::unique_ptr<PipelineSkybox> skyboxPtr_;
-	std::unique_ptr<PipelineTonemap> tonemapPtr_;
-	std::unique_ptr<PipelineFinish> finishPtr_;
-	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;
-	std::unique_ptr<PipelineLightRender> lightPtr_;
-	std::unique_ptr<PipelineImGui> imguiPtr_;
-	std::unique_ptr<PipelinePBRClusterForward> pbrOpaquePtr_;
-	std::unique_ptr<PipelinePBRClusterForward> pbrTransparentPtr_;
-	std::unique_ptr<PipelineAABBGenerator> aabbPtr_;
-	std::unique_ptr<PipelineLightCulling> lightCullPtr_;
+	PipelineLightRender* lightPtr_ = nullptr;
+	PipelineImGui* imguiPtr_ = nullptr;
+	PipelinePBRClusterForward* pbrOpaquePtr_ = nullptr;
+	PipelinePBRClusterForward* pbrTransparentPtr_ = nullptr;
+	PipelineAABBGenerator* aabbPtr_ = nullptr;
+	PipelineLightCulling* lightCullPtr_ = nullptr;
 
-	std::unique_ptr<ResourcesClusterForward> resCF_; 
-	std::unique_ptr<ResourcesLight> resLight_;
-
-	std::unique_ptr<Scene> scene_;
+	ResourcesClusterForward* resCF_ = nullptr;
+	ResourcesLight* resourcesLight_ = nullptr;
+	std::unique_ptr<Scene> scene_ = nullptr;
 };
 
 #endif

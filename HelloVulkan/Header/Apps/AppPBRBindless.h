@@ -4,16 +4,10 @@
 #include "AppBase.h"
 #include "Scene.h"
 #include "ResourcesLight.h"
-#include "PipelineSkybox.h"
-#include "PipelineClear.h"
-#include "PipelineFinish.h"
-#include "PipelinePBRBindless.h"
-#include "PipelineTonemap.h"
-#include "PipelineResolveMS.h"
-#include "PipelineLightRender.h"
 #include "PipelineImGui.h"
+#include "PipelinePBRBindless.h"
+#include "PipelineLightRender.h"
 
-// STL
 #include <memory>
 
 /*
@@ -29,20 +23,14 @@ public:
 
 	void Init();
 	void InitLights();
-	void DestroyResources();
 
 private:
-	std::unique_ptr<PipelineClear> clearPtr_;
-	std::unique_ptr<PipelineSkybox> skyboxPtr_;
-	std::unique_ptr<PipelinePBRBindless> pbrPtr_;
-	std::unique_ptr<PipelineTonemap> tonemapPtr_;
-	std::unique_ptr<PipelineFinish> finishPtr_;
-	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;
-	std::unique_ptr<PipelineLightRender> lightPtr_;
-	std::unique_ptr<PipelineImGui> imguiPtr_;
+	PipelinePBRBindless* pbrPtr_ = nullptr;
+	PipelineLightRender* lightPtr_ = nullptr;
+	PipelineImGui* imguiPtr_ = nullptr;
 
-	std::unique_ptr<Scene> scene_;
-	std::unique_ptr<ResourcesLight> resourcesLight_;
+	std::unique_ptr<Scene> scene_ = nullptr;
+	ResourcesLight* resourcesLight_ = nullptr;
 };
 
 #endif

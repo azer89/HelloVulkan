@@ -17,20 +17,20 @@ constexpr uint32_t ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 PipelinePBRBindless::PipelinePBRBindless(
 	VulkanContext& ctx,
 	Scene* scene,
-	ResourcesLight* resLight,
-	ResourcesIBL* iblResources,
-	ResourcesShared* resShared,
+	ResourcesLight* resourcesLight,
+	ResourcesIBL* resourcesIBL,
+	ResourcesShared* resourcesShared,
 	uint8_t renderBit) :
 	PipelineBase(ctx, 
 		{
 			.type_ = PipelineType::GraphicsOffScreen,
-			.msaaSamples_ = resShared->multiSampledColorImage_.multisampleCount_,
+			.msaaSamples_ = resourcesShared->multiSampledColorImage_.multisampleCount_,
 			.vertexBufferBind_ = false,
 		}
 	),
 	scene_(scene),
-	resLight_(resLight),
-	iblResources_(iblResources)
+	resourcesLight_(resourcesLight),
+	resourcesIBL_(resourcesIBL)
 {
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
 	PrepareVIM(ctx); // Buffer device address
@@ -40,8 +40,8 @@ PipelinePBRBindless::PipelinePBRBindless(
 		ctx, 
 		renderPass_.GetHandle(), 
 		{
-			&(resShared->multiSampledColorImage_),
-			&(resShared->depthImage_)
+			&(resourcesShared->multiSampledColorImage_),
+			&(resourcesShared->depthImage_)
 		}, 
 		IsOffscreen());
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(PushConstPBR), VK_SHADER_STAGE_FRAGMENT_BIT);
@@ -119,10 +119,10 @@ void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 1
 	dsInfo.AddBuffer(&vimBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 2
-	dsInfo.AddBuffer(resLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT); // 3
-	dsInfo.AddImage(&(iblResources_->specularCubemap_)); // 4
-	dsInfo.AddImage(&(iblResources_->diffuseCubemap_)); // 5
-	dsInfo.AddImage(&(iblResources_->brdfLut_)); // 6
+	dsInfo.AddBuffer(resourcesLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT); // 3
+	dsInfo.AddImage(&(resourcesIBL_->specularCubemap_)); // 4
+	dsInfo.AddImage(&(resourcesIBL_->diffuseCubemap_)); // 5
+	dsInfo.AddImage(&(resourcesIBL_->brdfLut_)); // 6
 	dsInfo.AddImageArray(scene_->GetImageInfos()); // 7
 
 	// Pool and layout

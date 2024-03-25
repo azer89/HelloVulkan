@@ -16,8 +16,8 @@ public:
 	PipelineSimpleRaytracing(VulkanContext& ctx, Scene* scene);
 	~PipelineSimpleRaytracing();
 
+	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override {}
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
-
 	void OnWindowResized(VulkanContext& ctx) override;
 
 	void SetRaytracingCameraUBO(VulkanContext& ctx, const RaytracingCameraUBO& ubo)

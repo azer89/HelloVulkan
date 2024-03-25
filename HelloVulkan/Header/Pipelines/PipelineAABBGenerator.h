@@ -9,14 +9,15 @@
 #include <array>
 
 /*
-Clustered Forward
+Generate voxelized frustum for clustered forward
 */
 class PipelineAABBGenerator final : public PipelineBase
 {
 public:
-	PipelineAABBGenerator(VulkanContext& ctx, ResourcesClusterForward* resCF);
+	PipelineAABBGenerator(VulkanContext& ctx, ResourcesClusterForward* resourcesCF);
 	~PipelineAABBGenerator();
 
+	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override {}
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 	void OnWindowResized(VulkanContext& ctx) override;
 
@@ -27,7 +28,7 @@ public:
 	}
 
 private:
-	ResourcesClusterForward* resCF_;
+	ResourcesClusterForward* resourcesCF_;
 
 	std::vector<VulkanBuffer> cfUBOBuffers_;
 	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;

@@ -51,20 +51,20 @@ void PipelineSimpleRaytracing::FillCommandBuffer(VulkanContext& ctx, VkCommandBu
 		.size = handleSizeAligned
 	};
 
-	VkStridedDeviceAddressRegionKHR missShaderSbtEntry =
+	const VkStridedDeviceAddressRegionKHR missShaderSbtEntry =
 	{
 		.deviceAddress = missShaderBindingTable_.deviceAddress_,
 		.stride = handleSizeAligned,
 		.size = handleSizeAligned,
 	};
 
-	VkStridedDeviceAddressRegionKHR hitShaderSbtEntry =
+	const VkStridedDeviceAddressRegionKHR hitShaderSbtEntry =
 	{
 		.deviceAddress = hitShaderBindingTable_.deviceAddress_,
 		.stride = handleSizeAligned,
 		.size = handleSizeAligned
 	};
-	VkStridedDeviceAddressRegionKHR callableShaderSbtEntry{};
+	const VkStridedDeviceAddressRegionKHR callableShaderSbtEntry{};
 
 	const uint32_t frameIndex = ctx.GetFrameIndex();
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, pipeline_);
@@ -268,7 +268,7 @@ void PipelineSimpleRaytracing::CreateRayTracingPipeline(VulkanContext& ctx)
 	};
 
 	// Pipeline
-	VkRayTracingPipelineCreateInfoKHR rayTracingPipelineCI =
+	const VkRayTracingPipelineCreateInfoKHR rayTracingPipelineCI =
 	{
 		.sType = VK_STRUCTURE_TYPE_RAY_TRACING_PIPELINE_CREATE_INFO_KHR,
 		.stageCount = static_cast<uint32_t>(shaderStages.size()),

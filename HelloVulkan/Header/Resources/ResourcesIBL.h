@@ -2,14 +2,15 @@
 #define IBL_RESOURCES
 
 #include "VulkanContext.h"
+#include "ResourcesBase.h"
 #include "VulkanImage.h"
 
-struct ResourcesIBL
+struct ResourcesIBL : ResourcesBase
 {
 public:
 	ResourcesIBL(VulkanContext& ctx, const std::string& hdrFile);
 	~ResourcesIBL();
-	void Destroy();
+	void Destroy() override;
 
 private:
 	void Create(VulkanContext& ctx, const std::string& hdrFile);

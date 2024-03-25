@@ -13,10 +13,11 @@ class PipelineResolveMS final : public PipelineBase
 public:
 	PipelineResolveMS(
 		VulkanContext& ctx,
-		ResourcesShared* resShared
+		ResourcesShared* resourcesShared
 	);
 	~PipelineResolveMS();
 
+	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override {}
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 };
 

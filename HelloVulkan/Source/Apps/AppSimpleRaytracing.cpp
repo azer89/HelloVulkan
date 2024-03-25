@@ -1,6 +1,6 @@
 #include "AppSimpleRaytracing.h"
-
-#include "imgui_impl_vulkan.h"
+#include "PipelineClear.h"
+#include "PipelineFinish.h"
 
 AppSimpleRaytracing::AppSimpleRaytracing()
 {
@@ -10,33 +10,16 @@ void AppSimpleRaytracing::Init()
 {
 	camera_->SetPositionAndTarget(glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3(0.0f, 0.0f, -3.5f));
 
-	// Initialize attachments
-	InitSharedResources();
-
 	// Scene
 	std::vector<ModelCreateInfo> dataArray = {
 		{ AppConfig::ModelFolder + "Dragon/Dragon.obj", 1}
 	};
 	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray);
 
-	clearPtr_ = std::make_unique<PipelineClear>(vulkanContext_);
-	rtxPtr_ = std::make_unique<PipelineSimpleRaytracing>(vulkanContext_, scene_.get());
-	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
-	finishPtr_ = std::make_unique<PipelineFinish>(vulkanContext_);
-
-	pipelines_ =
-	{
-		// Must be in order
-		clearPtr_.get(),
-		rtxPtr_.get(),
-		imguiPtr_.get(),
-		finishPtr_.get()
-	};
-}
-
-void AppSimpleRaytracing::UpdateUBOs()
-{
-	rtxPtr_->SetRaytracingCameraUBO(vulkanContext_, camera_->GetRaytracingCameraUBO());
+	AddPipeline<PipelineClear>(vulkanContext_);
+	rtxPtr_ = AddPipeline<PipelineSimpleRaytracing>(vulkanContext_, scene_.get());
+	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
+	AddPipeline<PipelineFinish>(vulkanContext_);
 }
 
 void AppSimpleRaytracing::UpdateUI()
@@ -53,14 +36,9 @@ void AppSimpleRaytracing::UpdateUI()
 	imguiPtr_->ImGuiEnd();
 }
 
-void AppSimpleRaytracing::DestroyResources()
+void AppSimpleRaytracing::UpdateUBOs()
 {
-	scene_.reset();
-
-	clearPtr_.reset();
-	finishPtr_.reset();
-	imguiPtr_.reset();
-	rtxPtr_.reset();
+	rtxPtr_->SetRaytracingCameraUBO(vulkanContext_, camera_->GetRaytracingCameraUBO());
 }
 
 void AppSimpleRaytracing::MainLoop()
@@ -81,6 +59,6 @@ void AppSimpleRaytracing::MainLoop()
 		DrawFrame();
 	}
 
+	scene_.reset();
 	DestroyResources();
-	DestroyInternal();
 }

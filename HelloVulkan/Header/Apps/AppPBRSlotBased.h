@@ -3,16 +3,8 @@
 
 #include "AppBase.h"
 #include "Model.h"
-#include "ResourcesLight.h"
-#include "PipelineSkybox.h"
-#include "PipelineClear.h"
-#include "PipelineFinish.h"
-#include "PipelinePBRSlotBased.h"
-#include "PipelineTonemap.h"
-#include "PipelineResolveMS.h"
-#include "PipelineLightRender.h"
-#include "PipelineInfiniteGrid.h"
 #include "PipelineImGui.h"
+#include "ResourcesLight.h"
 
 // STL
 #include <memory>
@@ -30,23 +22,11 @@ public:
 
 	void Init();
 	void InitLights();
-	void DestroyResources();
 
 private:
-	std::unique_ptr<PipelineClear> clearPtr_;
-	std::unique_ptr<PipelineSkybox> skyboxPtr_;
-	std::unique_ptr<PipelinePBRSlotBased> pbrPtr_;
-	std::unique_ptr<PipelineTonemap> tonemapPtr_;
-	std::unique_ptr<PipelineFinish> finishPtr_;
-	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;
-	std::unique_ptr<PipelineLightRender> lightPtr_;
-	std::unique_ptr<PipelineImGui> imguiPtr_;
-	std::unique_ptr<PipelineInfiniteGrid> infGridPtr_;
-
-	std::unique_ptr<ResourcesLight> resLights_;
-	std::unique_ptr<Model> model_;
-
-	float modelRotation_;
+	PipelineImGui* imguiPtr_ = nullptr;
+	ResourcesLight* resourcesLights_ = nullptr;
+	std::unique_ptr<Model> model_ = nullptr;
 };
 
 #endif

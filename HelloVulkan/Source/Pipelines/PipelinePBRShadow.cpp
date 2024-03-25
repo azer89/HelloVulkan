@@ -17,23 +17,23 @@ constexpr uint32_t ENV_TEXTURE_COUNT = 4; // Specular, diffuse, BRDF LUT, and sh
 PipelinePBRShadow::PipelinePBRShadow(
 	VulkanContext& ctx,
 	Scene* scene,
-	ResourcesLight* resLight,
-	ResourcesIBL* iblResources,
-	ResourcesShadow* resShadow,
-	ResourcesShared* resShared,
+	ResourcesLight* resourcesLight,
+	ResourcesIBL* resourcesIBL,
+	ResourcesShadow* resourcesShadow,
+	ResourcesShared* resourcesShared,
 	MaterialType materialType,
 	uint8_t renderBit) :
 	PipelineBase(ctx, 
 		{
 			.type_ = PipelineType::GraphicsOffScreen,
-			.msaaSamples_ = resShared->multiSampledColorImage_.multisampleCount_,
+			.msaaSamples_ = resourcesShared->multiSampledColorImage_.multisampleCount_,
 			.vertexBufferBind_ = false, // If you use bindless texture, make sure this is false
 		}
 	),
 	scene_(scene),
-	resLight_(resLight),
-	iblResources_(iblResources),
-	resShadow_(resShadow),
+	resourcesLight_(resourcesLight),
+	resourcesIBL_(resourcesIBL),
+	resourcesShadow_(resourcesShadow),
 	materialType_(materialType),
 	materialOffset_(0),
 	materialDrawCount_(0)
@@ -48,8 +48,8 @@ PipelinePBRShadow::PipelinePBRShadow(
 		ctx, 
 		renderPass_.GetHandle(), 
 		{
-			&(resShared->multiSampledColorImage_),
-			&(resShared->depthImage_)
+			&(resourcesShared->multiSampledColorImage_),
+			&(resourcesShared->depthImage_)
 		}, 
 		IsOffscreen());
 	PrepareVIM(ctx);
@@ -86,7 +86,7 @@ void PipelinePBRShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer co
 
 	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "PBR_Shadow", tracy::Color::Aqua);
 
-	uint32_t frameIndex = ctx.GetFrameIndex();
+	const uint32_t frameIndex = ctx.GetFrameIndex();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
 
 	BindPipeline(ctx, commandBuffer);
@@ -137,8 +137,8 @@ void PipelinePBRShadow::CreateSpecializationConstants()
 
 void PipelinePBRShadow::PrepareVIM(VulkanContext& ctx)
 {
-	VIM vim = scene_->GetVIM();
-	VkDeviceSize vimSize = sizeof(VIM);
+	const VIM vim = scene_->GetVIM();
+	const VkDeviceSize vimSize = sizeof(VIM);
 	vimBuffer_.CreateBuffer(
 		ctx,
 		vimSize,
@@ -156,11 +156,11 @@ void PipelinePBRShadow::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 1
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 2
 	dsInfo.AddBuffer(&vimBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 3
-	dsInfo.AddBuffer(resLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
-	dsInfo.AddImage(&(iblResources_->specularCubemap_)); // 5
-	dsInfo.AddImage(&(iblResources_->diffuseCubemap_)); // 6
-	dsInfo.AddImage(&(iblResources_->brdfLut_)); // 7
-	dsInfo.AddImage(&(resShadow_->shadowMap_)); // 8
+	dsInfo.AddBuffer(resourcesLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
+	dsInfo.AddImage(&(resourcesIBL_->specularCubemap_)); // 5
+	dsInfo.AddImage(&(resourcesIBL_->diffuseCubemap_)); // 6
+	dsInfo.AddImage(&(resourcesIBL_->brdfLut_)); // 7
+	dsInfo.AddImage(&(resourcesShadow_->shadowMap_)); // 8
 	dsInfo.AddImageArray(scene_->GetImageInfos()); // 9
 
 	// Pool and layout

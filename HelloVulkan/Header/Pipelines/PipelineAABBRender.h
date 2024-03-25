@@ -3,7 +3,6 @@
 
 #include "VulkanContext.h"
 #include "PipelineBase.h"
-#include "Scene.h"
 #include "ResourcesShared.h"
 #include "Configs.h"
 
@@ -20,7 +19,10 @@ public:
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
-	void ShouldRender(bool shouldRender) { shouldRender_ = shouldRender; }
+	void UpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
+	{
+		shouldRender_ = inputContext.renderDebug_;
+	}
 
 private:
 	void CreateDescriptor(VulkanContext& ctx);

@@ -3,15 +3,16 @@
 
 #include "VulkanContext.h"
 #include "VulkanImage.h"
+#include "ResourcesBase.h"
 
-struct ResourcesShared
+struct ResourcesShared : ResourcesBase
 {
 public:
 	ResourcesShared();
 	~ResourcesShared();
 
 	void Create(VulkanContext& ctx);
-	void Destroy();
+	void Destroy() override;
 
 public:
 	VulkanImage multiSampledColorImage_;

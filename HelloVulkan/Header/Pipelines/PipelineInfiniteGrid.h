@@ -9,14 +9,17 @@ class PipelineInfiniteGrid final : public PipelineBase
 public:
 	PipelineInfiniteGrid(
 		VulkanContext& ctx,
-		ResourcesShared* resShared,
+		ResourcesShared* resourcesShared,
 		float yPosition,
 		uint8_t renderBit = 0);
 	~PipelineInfiniteGrid();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
-	void ShouldRender(bool shouldRender) { shouldRender_ = shouldRender; };
+	void UpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
+	{
+		shouldRender_ = inputContext.renderInfiniteGrid_;
+	}
 
 private:
 	void CreateDescriptor(VulkanContext& ctx);

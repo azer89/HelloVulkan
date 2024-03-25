@@ -3,16 +3,26 @@
 
 #include "VulkanContext.h"
 #include "VulkanImage.h"
+#include "ResourcesBase.h"
 #include "UBOs.h"
 
-struct ResourcesShadow
+struct ResourcesShadow : ResourcesBase
 {
 public:
 	ResourcesShadow();
 	~ResourcesShadow();
 
 	void CreateSingleShadowMap(VulkanContext& ctx);
-	void Destroy();
+	void Destroy() override;
+
+	void UpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
+	{
+		shadowUBO_.shadowMinBias = inputContext.shadowMinBias_;
+		shadowUBO_.shadowMaxBias = inputContext.shadowMaxBias_;
+		shadowNearPlane_ = inputContext.shadowNearPlane_;
+		shadowFarPlane_ = inputContext.shadowFarPlane_;
+		orthoSize_ = inputContext.shadowOrthoSize_;
+	}
 
 public:
 	VulkanImage shadowMap_;

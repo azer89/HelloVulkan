@@ -3,6 +3,12 @@
 #include "VulkanUtility.h"
 #include "Configs.h"
 
+#include "PipelineSkybox.h"
+#include "PipelineClear.h"
+#include "PipelineFinish.h"
+#include "PipelineTonemap.h"
+#include "PipelineResolveMS.h"
+
 #include "glm/ext.hpp"
 #include "imgui_impl_vulkan.h"
 
@@ -12,6 +18,7 @@ AppPBRClusterForward::AppPBRClusterForward()
 
 void AppPBRClusterForward::Init()
 {
+	inputContext_.pbrPC_.albedoMultipler = 0.01f;
 	camera_->SetPositionAndTarget(glm::vec3(0.0f, 1.0f, 6.0f), glm::vec3(0.0, 2.5, 0.0));
 
 	// Initialize attachments
@@ -21,10 +28,10 @@ void AppPBRClusterForward::Init()
 	InitLights();
 
 	// Image-Based Lighting
-	resIBL_ = std::make_unique<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "dikhololo_night_4k.hdr");
+	resourcesIBL_ = AddResources<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "dikhololo_night_4k.hdr");
 
-	resCF_ = std::make_unique<ResourcesClusterForward>();
-	resCF_->CreateBuffers(vulkanContext_, resLight_->GetLightCount());
+	resCF_ = AddResources<ResourcesClusterForward>();
+	resCF_->CreateBuffers(vulkanContext_, resourcesLight_->GetLightCount());
 
 	std::vector<ModelCreateInfo> dataArray = {
 		{AppConfig::ModelFolder + "Sponza/Sponza.gltf", 1}
@@ -33,56 +40,39 @@ void AppPBRClusterForward::Init()
 	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
 
 	// Pipelines
-	clearPtr_ = std::make_unique<PipelineClear>(vulkanContext_); // This is responsible to clear swapchain image
-	skyboxPtr_ = std::make_unique<PipelineSkybox>(
+	AddPipeline<PipelineClear>(vulkanContext_); // This is responsible to clear swapchain image
+	AddPipeline<PipelineSkybox>(
 		vulkanContext_,
-		&(resIBL_->environmentCubemap_),
-		resShared_.get(),
+		&(resourcesIBL_->environmentCubemap_),
+		resourcesShared_,
 		// This is the first offscreen render pass so we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
-	aabbPtr_ = std::make_unique<PipelineAABBGenerator>(vulkanContext_, resCF_.get());
-	lightCullPtr_ = std::make_unique<PipelineLightCulling>(vulkanContext_, resLight_.get(), resCF_.get());
-	pbrOpaquePtr_ = std::make_unique<PipelinePBRClusterForward>(
+	aabbPtr_ = AddPipeline<PipelineAABBGenerator>(vulkanContext_, resCF_);
+	lightCullPtr_ = AddPipeline<PipelineLightCulling>(vulkanContext_, resourcesLight_, resCF_);
+	pbrOpaquePtr_ = AddPipeline<PipelinePBRClusterForward>(
 		vulkanContext_,
 		scene_.get(),
-		resLight_.get(),
-		resCF_.get(),
-		resIBL_.get(),
-		resShared_.get(),
+		resourcesLight_,
+		resCF_,
+		resourcesIBL_,
+		resourcesShared_,
 		MaterialType::Opaque);
-	pbrTransparentPtr_ = std::make_unique<PipelinePBRClusterForward>(
+	pbrTransparentPtr_ = AddPipeline<PipelinePBRClusterForward>(
 		vulkanContext_,
 		scene_.get(),
-		resLight_.get(),
-		resCF_.get(),
-		resIBL_.get(),
-		resShared_.get(),
+		resourcesLight_,
+		resCF_,
+		resourcesIBL_,
+		resourcesShared_,
 		MaterialType::Transparent);
-	lightPtr_ = std::make_unique<PipelineLightRender>(vulkanContext_, resLight_.get(), resShared_.get());
+	lightPtr_ = AddPipeline<PipelineLightRender>(vulkanContext_, resourcesLight_, resourcesShared_);
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
-	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(vulkanContext_, resShared_.get());
+	AddPipeline<PipelineResolveMS>(vulkanContext_, resourcesShared_);
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
-	tonemapPtr_ = std::make_unique<PipelineTonemap>(vulkanContext_, &(resShared_->singleSampledColorImage_));
-	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
+	AddPipeline<PipelineTonemap>(vulkanContext_, &(resourcesShared_->singleSampledColorImage_));
+	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
-	finishPtr_ = std::make_unique<PipelineFinish>(vulkanContext_);
-
-	// Put all renderer pointers to a vector
-	pipelines_ =
-	{
-		// Must be in order
-		clearPtr_.get(),
-		skyboxPtr_.get(),
-		aabbPtr_.get(),
-		lightCullPtr_.get(),
-		pbrOpaquePtr_.get(),
-		pbrTransparentPtr_.get(),
-		lightPtr_.get(),
-		resolveMSPtr_.get(),
-		tonemapPtr_.get(),
-		imguiPtr_.get(),
-		finishPtr_.get()
-	};
+	AddPipeline<PipelineFinish>(vulkanContext_);
 }
 
 void AppPBRClusterForward::InitLights()
@@ -120,46 +110,18 @@ void AppPBRClusterForward::InitLights()
 		lights.push_back(l);
 	}
 
-	resLight_ = std::make_unique<ResourcesLight>();
-	resLight_->AddLights(vulkanContext_, lights);
-}
-
-void AppPBRClusterForward::DestroyResources()
-{
-	// Resources
-	resIBL_.reset();
-	resCF_.reset();
-	resLight_.reset();
-
-	// Destroy all objects
-	scene_.reset();
-
-	// Destroy renderers
-	clearPtr_.reset();
-	finishPtr_.reset();
-	skyboxPtr_.reset();
-	aabbPtr_.reset();
-	lightCullPtr_.reset();
-	pbrOpaquePtr_.reset();
-	pbrTransparentPtr_.reset();
-	lightPtr_.reset();
-	resolveMSPtr_.reset();
-	tonemapPtr_.reset();
-	imguiPtr_.reset();
+	resourcesLight_ = AddResources<ResourcesLight>();
+	resourcesLight_->AddLights(vulkanContext_, lights);
 }
 
 void AppPBRClusterForward::UpdateUBOs()
 {
 	// Camera UBO
 	CameraUBO ubo = camera_->GetCameraUBO();
-	lightPtr_->SetCameraUBO(vulkanContext_, ubo);
-	pbrOpaquePtr_->SetCameraUBO(vulkanContext_, ubo);
-	pbrTransparentPtr_->SetCameraUBO(vulkanContext_, ubo);
-
-	// Remove translation for skybox
-	CameraUBO skyboxUbo = ubo;
-	skyboxUbo.view = glm::mat4(glm::mat3(skyboxUbo.view));
-	skyboxPtr_->SetCameraUBO(vulkanContext_, skyboxUbo);
+	for (auto& pipeline : pipelines_)
+	{
+		pipeline->SetCameraUBO(vulkanContext_, ubo);
+	}
 
 	// Clustered forward
 	ClusterForwardUBO cfUBO = camera_->GetClusterForwardUBO();
@@ -178,19 +140,17 @@ void AppPBRClusterForward::UpdateUI()
 		return;
 	}
 
-	static bool lightRender = true;
-	static PushConstPBR pbrPC;
-
 	imguiPtr_->ImGuiStart();
 	imguiPtr_->ImGuiSetWindow("Clustered Forward Shading", 500, 325);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
-	ImGui::Checkbox("Render Lights", &lightRender);
-	imguiPtr_->ImGuiShowPBRConfig(&pbrPC, resIBL_->cubemapMipmapCount_);
+	ImGui::Checkbox("Render Lights", &inputContext_.renderLights_);
+	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
-	lightPtr_->ShouldRender(lightRender);
-	pbrOpaquePtr_->SetPBRPushConstants(pbrPC);
-	pbrTransparentPtr_->SetPBRPushConstants(pbrPC);
+	for (auto& pipeline : pipelines_)
+	{
+		pipeline->UpdateFromInputContext(vulkanContext_, inputContext_);
+	}
 }
 
 // This is called from main.cpp
@@ -212,6 +172,8 @@ void AppPBRClusterForward::MainLoop()
 		DrawFrame();
 	}
 
+	// Destroy all objects
+	scene_.reset();
+
 	DestroyResources();
-	DestroyInternal();
 }

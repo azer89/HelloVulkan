@@ -3,18 +3,12 @@
 
 #include "AppBase.h"
 #include "Scene.h"
-#include "ResourcesShadow.h"
-#include "ResourcesShadow.h"
-#include "ResourcesLight.h"
-#include "PipelineSkybox.h"
-#include "PipelineClear.h"
-#include "PipelineFinish.h"
-#include "PipelinePBRShadow.h"
-#include "PipelineShadow.h"
-#include "PipelineTonemap.h"
-#include "PipelineResolveMS.h"
-#include "PipelineLightRender.h"
 #include "PipelineImGui.h"
+#include "ResourcesLight.h"
+#include "ResourcesShadow.h"
+#include "PipelineShadow.h"
+#include "PipelinePBRShadow.h"
+#include "PipelineLightRender.h"
 
 // STL
 #include <memory>
@@ -32,24 +26,17 @@ public:
 
 	void Init();
 	void InitLights();
-	void DestroyResources();
 
 private:
-	std::unique_ptr<PipelineClear> clearPtr_;
-	std::unique_ptr<PipelineSkybox> skyboxPtr_;
-	std::unique_ptr<PipelineShadow> shadowPtr_;
-	std::unique_ptr<PipelinePBRShadow> pbrOpaquePtr_;
-	std::unique_ptr<PipelinePBRShadow> pbrTransparentPtr_;
-	std::unique_ptr<PipelineTonemap> tonemapPtr_;
-	std::unique_ptr<PipelineFinish> finishPtr_;
-	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;
-	std::unique_ptr<PipelineLightRender> lightPtr_;
-	std::unique_ptr<PipelineImGui> imguiPtr_;
-
-	std::unique_ptr<ResourcesLight> resLight_;
-	std::unique_ptr<ResourcesShadow> resShadow_;
-
-	std::unique_ptr<Scene> scene_;
+	PipelineImGui* imguiPtr_ = nullptr;
+	PipelineShadow* shadowPtr_ = nullptr;
+	PipelineLightRender* lightPtr_ = nullptr;
+	PipelinePBRShadow* pbrOpaquePtr_ = nullptr;
+	PipelinePBRShadow* pbrTransparentPtr_ = nullptr;
+	
+	ResourcesLight* resourcesLight_ = nullptr;
+	ResourcesShadow* resourcesShadow_ = nullptr;
+	std::unique_ptr<Scene> scene_ = nullptr;
 };
 
 #endif

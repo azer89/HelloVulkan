@@ -20,9 +20,9 @@ public:
 	PipelinePBRClusterForward(VulkanContext& ctx,
 		Scene* scene,
 		ResourcesLight* lights,
-		ResourcesClusterForward* resCF,
-		ResourcesIBL* iblResources,
-		ResourcesShared* resShared,
+		ResourcesClusterForward* resourcesCF,
+		ResourcesIBL* resourcesIBL,
+		ResourcesShared* resourcesShared,
 		MaterialType materialType,
 		uint8_t renderBit = 0u);
 	~PipelinePBRClusterForward();
@@ -30,10 +30,16 @@ public:
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
 	void SetPBRPushConstants(const PushConstPBR& pbrPC) { pc_ = pbrPC; };
+
 	void SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO& ubo)
 	{
 		const size_t frameIndex = ctx.GetFrameIndex();
 		cfUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ClusterForwardUBO));
+	}
+
+	void UpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
+	{
+		SetPBRPushConstants(inputContext.pbrPC_);
 	}
 
 private:
@@ -43,9 +49,9 @@ private:
 
 private:
 	PushConstPBR pc_;
-	ResourcesClusterForward* resCF_;
-	ResourcesLight* resLight_;
-	ResourcesIBL* iblResources_;
+	ResourcesClusterForward* resourcesCF_;
+	ResourcesLight* resourcesLight_;
+	ResourcesIBL* resourcesIBL_;
 	std::vector<VulkanBuffer> cfUBOBuffers_;
 	VulkanBuffer vimBuffer_;
 	Scene* scene_;

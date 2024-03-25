@@ -16,21 +16,21 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 	VulkanContext& ctx,
 	Scene* scene,
 	ResourcesLight* lights,
-	ResourcesClusterForward* resCF,
-	ResourcesIBL* iblResources,
-	ResourcesShared* resShared,
+	ResourcesClusterForward* resourcesCF,
+	ResourcesIBL* resourcesIBL,
+	ResourcesShared* resourcesShared,
 	MaterialType materialType,
 	uint8_t renderBit) :
 	PipelineBase(ctx,
 		{
 			.type_ = PipelineType::GraphicsOffScreen,
-			.msaaSamples_ = resShared->multiSampledColorImage_.multisampleCount_,
+			.msaaSamples_ = resourcesShared->multiSampledColorImage_.multisampleCount_,
 			.vertexBufferBind_ = false,
 		}),
 	scene_(scene),
-	resLight_(lights),
-	resCF_(resCF),
-	iblResources_(iblResources),
+	resourcesLight_(lights),
+	resourcesCF_(resourcesCF),
+	resourcesIBL_(resourcesIBL),
 	materialType_(materialType),
 	materialOffset_(0),
 	materialDrawCount_(0)
@@ -45,8 +45,8 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 		ctx,
 		renderPass_.GetHandle(),
 		{
-			&(resShared->multiSampledColorImage_),
-			&(resShared->depthImage_)
+			&(resourcesShared->multiSampledColorImage_),
+			&(resourcesShared->depthImage_)
 		},
 		IsOffscreen());
 	PrepareVIM(ctx); // Buffer device address
@@ -78,7 +78,7 @@ void PipelinePBRClusterForward::FillCommandBuffer(VulkanContext& ctx, VkCommandB
 {
 	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "PBR_Cluster_Forward", tracy::Color::MediumPurple);
 
-	uint32_t frameIndex = ctx.GetFrameIndex();
+	const uint32_t frameIndex = ctx.GetFrameIndex();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
 
 	BindPipeline(ctx, commandBuffer);
@@ -149,12 +149,12 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 1
 	dsInfo.AddBuffer(&vimBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 2
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 3
-	dsInfo.AddBuffer(resLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT); // 4
-	dsInfo.AddBuffer(&(resCF_->lightCellsBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 5
-	dsInfo.AddBuffer(&(resCF_->lightIndicesBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 6
-	dsInfo.AddImage(&(iblResources_->specularCubemap_)); // 7
-	dsInfo.AddImage(&(iblResources_->diffuseCubemap_)); // 8
-	dsInfo.AddImage(&(iblResources_->brdfLut_)); // 9
+	dsInfo.AddBuffer(resourcesLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT); // 4
+	dsInfo.AddBuffer(&(resourcesCF_->lightCellsBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 5
+	dsInfo.AddBuffer(&(resourcesCF_->lightIndicesBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 6
+	dsInfo.AddImage(&(resourcesIBL_->specularCubemap_)); // 7
+	dsInfo.AddImage(&(resourcesIBL_->diffuseCubemap_)); // 8
+	dsInfo.AddImage(&(resourcesIBL_->brdfLut_)); // 9
 	dsInfo.AddImageArray(scene_->GetImageInfos()); // 10
 
 	// Pool and layout

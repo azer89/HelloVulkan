@@ -15,15 +15,18 @@ class PipelineLightRender final : public PipelineBase
 public:
 	PipelineLightRender(
 		VulkanContext& ctx,
-		ResourcesLight* resLights,
-		ResourcesShared* resShared,
+		ResourcesLight* resourcesLights,
+		ResourcesShared* resourcesShared,
 		uint8_t renderBit = 0u
 	);
 	~PipelineLightRender();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
-	void ShouldRender(bool shouldRender) { shouldRender_ = shouldRender; }
+	void UpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
+	{
+		shouldRender_ = inputContext.renderLights_;
+	}
 
 private:
 	void CreateDescriptor(VulkanContext& ctx);
