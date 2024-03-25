@@ -3,20 +3,20 @@
 
 #include "AppBase.h"
 #include "Scene.h"
+#include "PipelineLine.h"
+#include "PipelineImGui.h"
 #include "ResourcesLight.h"
 #include "PipelineSkybox.h"
 #include "PipelineClear.h"
 #include "PipelineFinish.h"
 #include "PipelineTonemap.h"
-#include "PipelineFrustumCulling.h"
-#include "PipelinePBRBindless.h"
 #include "PipelineResolveMS.h"
+#include "PipelineAABBRender.h"
 #include "PipelineLightRender.h"
 #include "PipelineInfiniteGrid.h"
-#include "PipelineImGui.h"
-#include "PipelineLine.h"
+#include "PipelinePBRBindless.h"
 #include "PipelineInfiniteGrid.h"
-#include "PipelineAABBRender.h"
+#include "PipelineFrustumCulling.h"
 
 #include <memory>
 
@@ -33,16 +33,16 @@ public:
 	void InitLights();
 
 private:
-	PipelineLightRender* lightPtr_;
-	PipelineFrustumCulling* cullingPtr_;
-	PipelinePBRBindless* pbrPtr_;
-	PipelineImGui* imguiPtr_;
-	PipelineLine* linePtr_;
-	PipelineInfiniteGrid* infGridPtr_;
-	PipelineAABBRender* boxRenderPtr_;
+	PipelineFrustumCulling* cullingPtr_ = nullptr;
+	PipelinePBRBindless* pbrPtr_ = nullptr;
+	PipelineImGui* imguiPtr_ = nullptr;
+	PipelineLine* linePtr_ = nullptr;
+	PipelineLightRender* lightPtr_ = nullptr;
+	PipelineInfiniteGrid* infGridPtr_ = nullptr;
+	PipelineAABBRender* boxRenderPtr_ = nullptr;
 
-	std::unique_ptr<Scene> scene_;
-	ResourcesLight* resourcesLight_;
+	std::unique_ptr<Scene> scene_ = nullptr;
+	ResourcesLight* resourcesLight_ = nullptr;
 
 	bool updateFrustum_;
 };

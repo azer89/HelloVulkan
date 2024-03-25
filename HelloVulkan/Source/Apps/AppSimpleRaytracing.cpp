@@ -60,5 +60,5 @@ void AppSimpleRaytracing::MainLoop()
 	}
 
 	scene_.reset();
-	DestroyInternal();
+	DestroyResources();
 }

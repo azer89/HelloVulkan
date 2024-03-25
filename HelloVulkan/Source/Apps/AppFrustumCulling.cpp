@@ -17,10 +17,10 @@ void AppFrustumCulling::Init()
 	InitLights();
 
 	// Initialize attachments
-	InitSharedResources2();
+	InitSharedResources();
 
 	// Image-Based Lighting
-	resIBL2_ = AddResources<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
+	resourcesIBL_ = AddResources<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
 
 	InitScene();
 
@@ -28,8 +28,8 @@ void AppFrustumCulling::Init()
 	AddPipeline<PipelineClear>(vulkanContext_); // This is responsible to clear swapchain image
 	AddPipeline<PipelineSkybox>(
 		vulkanContext_,
-		&(resIBL2_->diffuseCubemap_),
-		resShared2_,
+		&(resourcesIBL_->diffuseCubemap_),
+		resourcesShared_,
 		// This is the first offscreen render pass so we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
 	cullingPtr_ = AddPipeline<PipelineFrustumCulling>(vulkanContext_, scene_.get());
@@ -37,19 +37,19 @@ void AppFrustumCulling::Init()
 		vulkanContext_,
 		scene_.get(),
 		resourcesLight_,
-		resIBL2_,
-		resShared2_);
-	infGridPtr_ = AddPipeline<PipelineInfiniteGrid>(vulkanContext_, resShared2_, 0.0f);
-	boxRenderPtr_ = AddPipeline<PipelineAABBRender>(vulkanContext_, resShared2_, scene_.get());
-	linePtr_ = AddPipeline<PipelineLine>(vulkanContext_, resShared2_, scene_.get());
+		resourcesIBL_,
+		resourcesShared_);
+	infGridPtr_ = AddPipeline<PipelineInfiniteGrid>(vulkanContext_, resourcesShared_, 0.0f);
+	boxRenderPtr_ = AddPipeline<PipelineAABBRender>(vulkanContext_, resourcesShared_, scene_.get());
+	linePtr_ = AddPipeline<PipelineLine>(vulkanContext_, resourcesShared_, scene_.get());
 	lightPtr_ = AddPipeline<PipelineLightRender>(
 		vulkanContext_,
 		resourcesLight_,
-		resShared2_);
+		resourcesShared_);
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
-	AddPipeline<PipelineResolveMS>(vulkanContext_, resShared2_);
+	AddPipeline<PipelineResolveMS>(vulkanContext_, resourcesShared_);
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
-	AddPipeline<PipelineTonemap>(vulkanContext_, &(resShared2_->singleSampledColorImage_));
+	AddPipeline<PipelineTonemap>(vulkanContext_, &(resourcesShared_->singleSampledColorImage_));
 	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
 	AddPipeline<PipelineFinish>(vulkanContext_);
@@ -100,7 +100,7 @@ void AppFrustumCulling::InitLights()
 void AppFrustumCulling::UpdateUBOs()
 {
 	CameraUBO ubo = camera_->GetCameraUBO();
-	for (auto& pipeline : pipelines2_)
+	for (auto& pipeline : pipelines_)
 	{
 		pipeline->SetCameraUBO(vulkanContext_, ubo);
 	}
@@ -130,7 +130,7 @@ void AppFrustumCulling::UpdateUI()
 	ImGui::Checkbox("Render Lights", &inputContext_.renderLights_);
 	ImGui::Checkbox("Render Frustum and Bounding Boxes", &inputContext_.renderDebug_);
 	ImGui::Checkbox("Update Frustum", &staticUpdateFrustum);
-	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resIBL2_->cubemapMipmapCount_);
+	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
 	updateFrustum_ = staticUpdateFrustum;
@@ -164,5 +164,5 @@ void AppFrustumCulling::MainLoop()
 	//DestroyResources();
 	scene_.reset();
 	
-	DestroyInternal();
+	DestroyResources();
 }

@@ -15,13 +15,13 @@ void AppPBRClusterForward::Init()
 	camera_->SetPositionAndTarget(glm::vec3(0.0f, 1.0f, 6.0f), glm::vec3(0.0, 2.5, 0.0));
 
 	// Initialize attachments
-	InitSharedResources2();
+	InitSharedResources();
 
 	// Initialize lights
 	InitLights();
 
 	// Image-Based Lighting
-	resIBL2_ = AddResources<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "dikhololo_night_4k.hdr");
+	resourcesIBL_ = AddResources<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "dikhololo_night_4k.hdr");
 
 	resCF_ = AddResources<ResourcesClusterForward>();
 	resCF_->CreateBuffers(vulkanContext_, resLight_->GetLightCount());
@@ -36,8 +36,8 @@ void AppPBRClusterForward::Init()
 	AddPipeline<PipelineClear>(vulkanContext_); // This is responsible to clear swapchain image
 	AddPipeline<PipelineSkybox>(
 		vulkanContext_,
-		&(resIBL2_->environmentCubemap_),
-		resShared2_,
+		&(resourcesIBL_->environmentCubemap_),
+		resourcesShared_,
 		// This is the first offscreen render pass so we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
 	aabbPtr_ = AddPipeline<PipelineAABBGenerator>(vulkanContext_, resCF_);
@@ -47,22 +47,22 @@ void AppPBRClusterForward::Init()
 		scene_.get(),
 		resLight_,
 		resCF_,
-		resIBL2_,
-		resShared2_,
+		resourcesIBL_,
+		resourcesShared_,
 		MaterialType::Opaque);
 	pbrTransparentPtr_ = AddPipeline<PipelinePBRClusterForward>(
 		vulkanContext_,
 		scene_.get(),
 		resLight_,
 		resCF_,
-		resIBL2_,
-		resShared2_,
+		resourcesIBL_,
+		resourcesShared_,
 		MaterialType::Transparent);
-	lightPtr_ = AddPipeline<PipelineLightRender>(vulkanContext_, resLight_, resShared2_);
+	lightPtr_ = AddPipeline<PipelineLightRender>(vulkanContext_, resLight_, resourcesShared_);
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
-	AddPipeline<PipelineResolveMS>(vulkanContext_, resShared2_);
+	AddPipeline<PipelineResolveMS>(vulkanContext_, resourcesShared_);
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
-	AddPipeline<PipelineTonemap>(vulkanContext_, &(resShared2_->singleSampledColorImage_));
+	AddPipeline<PipelineTonemap>(vulkanContext_, &(resourcesShared_->singleSampledColorImage_));
 	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
 	AddPipeline<PipelineFinish>(vulkanContext_);
@@ -114,7 +114,7 @@ void AppPBRClusterForward::UpdateUBOs()
 {
 	// Camera UBO
 	CameraUBO ubo = camera_->GetCameraUBO();
-	for (auto& pipeline : pipelines2_)
+	for (auto& pipeline : pipelines_)
 	{
 		pipeline->SetCameraUBO(vulkanContext_, ubo);
 	}
@@ -140,7 +140,7 @@ void AppPBRClusterForward::UpdateUI()
 	imguiPtr_->ImGuiSetWindow("Clustered Forward Shading", 500, 325);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 	ImGui::Checkbox("Render Lights", &inputContext_.renderLights_);
-	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resIBL2_->cubemapMipmapCount_);
+	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
 	lightPtr_->ShouldRender(inputContext_.renderLights_);
@@ -170,5 +170,5 @@ void AppPBRClusterForward::MainLoop()
 	// Destroy all objects
 	scene_.reset();
 
-	DestroyInternal();
+	DestroyResources();
 }

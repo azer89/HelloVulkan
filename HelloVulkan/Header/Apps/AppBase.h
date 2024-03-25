@@ -42,9 +42,6 @@ protected:
 	void InitGLSLang();
 	void InitGLFW();
 	void InitCamera();
-
-	// Resources
-	void InitSharedResources2();
 	
 	// Functions related to the main loop
 	bool StillRunning();
@@ -52,15 +49,17 @@ protected:
 	void ProcessTiming();
 	void ProcessInput();
 
-	// Should be used to destroy resources
-	void DestroyInternal();
+	void DestroyResources();
+
+	// Resources
+	void InitSharedResources();
 	
 	template<class T, class... U>
 	T* AddPipeline(U&&... u)
 	{
 		std::unique_ptr<T> pipeline = std::make_unique<T>(std::forward<U>(u)...);
 		T* ptr = pipeline.get();
-		pipelines2_.push_back(std::move(pipeline));
+		pipelines_.push_back(std::move(pipeline));
 		return ptr;
 	}
 
@@ -74,10 +73,10 @@ protected:
 	}
 
 protected:
-	GLFWwindow* glfwWindow_;
+	GLFWwindow* glfwWindow_ = nullptr;
 
 	// Camera
-	std::unique_ptr<Camera> camera_;
+	std::unique_ptr<Camera> camera_ = nullptr;
 	float lastX_;
 	float lastY_;
 	bool firstMouse_;
@@ -92,16 +91,18 @@ protected:
 	VulkanContext vulkanContext_;
 
 	// A list of pipelines (graphics and compute)
-	std::vector<std::unique_ptr<PipelineBase>> pipelines2_; // TODO Rename to pipelines_
-	std::vector<std::unique_ptr<ResourcesBase>> resources_;
+	std::vector<std::unique_ptr<PipelineBase>> pipelines_ = {};
+
+	// A list of buffers and images
+	std::vector<std::unique_ptr<ResourcesBase>> resources_ = {};
 
 	// Window size
 	uint32_t windowWidth_;
 	uint32_t windowHeight_;
 	bool shouldRecreateSwapchain_;
 
-	ResourcesShared* resShared2_;
-	ResourcesIBL* resIBL2_;
+	ResourcesShared* resourcesShared_ = nullptr;
+	ResourcesIBL* resourcesIBL_ = nullptr;
 
 	InputContext inputContext_ = {};
 };

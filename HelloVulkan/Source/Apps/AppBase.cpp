@@ -222,7 +222,7 @@ void AppBase::FillCommandBuffer(VkCommandBuffer commandBuffer)
 		TracyVkZoneC(vulkanContext_.GetTracyContext(), commandBuffer, "Render", tracy::Color::OrangeRed);
 
 		// Iterate through all pipelines to fill the command buffer
-		for (const auto& pip : pipelines2_)
+		for (const auto& pip : pipelines_)
 		{
 			pip->FillCommandBuffer(vulkanContext_, commandBuffer);
 		}
@@ -252,9 +252,9 @@ void AppBase::OnWindowResized()
 		windowHeight_
 	);
 
-	InitSharedResources2();
+	InitSharedResources();
 
-	for (const auto& pip : pipelines2_)
+	for (const auto& pip : pipelines_)
 	{
 		pip->OnWindowResized(vulkanContext_);
 	}
@@ -297,13 +297,13 @@ void AppBase::PollEvents()
 	glfwPollEvents();
 }
 
-void AppBase::DestroyInternal()
+void AppBase::DestroyResources()
 {
 	for (auto& res : resources_)
 	{
 		res.reset();
 	}
-	for (auto& pip : pipelines2_)
+	for (auto& pip : pipelines_)
 	{
 		pip.reset();
 	}
@@ -412,11 +412,11 @@ void AppBase::ProcessInput()
 }
 
 
-void AppBase::InitSharedResources2()
+void AppBase::InitSharedResources()
 {
-	if (!resShared2_)
+	if (!resourcesShared_)
 	{
-		resShared2_ = AddResources<ResourcesShared>();
+		resourcesShared_ = AddResources<ResourcesShared>();
 	}
-	resShared2_->Create(vulkanContext_);
+	resourcesShared_->Create(vulkanContext_);
 }

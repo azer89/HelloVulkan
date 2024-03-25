@@ -17,10 +17,10 @@ void AppPBRSlotBased::Init()
 	InitLights();
 
 	// Initialize attachments
-	InitSharedResources2();
+	InitSharedResources();
 
 	// Image-Based Lighting
-	resIBL2_ = AddResources<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
+	resourcesIBL_ = AddResources<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
 
 	model_ = std::make_unique<Model>();
 	model_->LoadSlotBased(vulkanContext_, AppConfig::ModelFolder + "DamagedHelmet/DamagedHelmet.gltf");
@@ -32,22 +32,22 @@ void AppPBRSlotBased::Init()
 	// This draws a cube
 	AddPipeline<PipelineSkybox>(
 		vulkanContext_,
-		&(resIBL2_->environmentCubemap_),
-		resShared2_,
+		&(resourcesIBL_->environmentCubemap_),
+		resourcesShared_,
 		// This is the first offscreen render pass so we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
 	AddPipeline<PipelinePBRSlotBased>(
 		vulkanContext_,
 		models,
 		resLights_,
-		resIBL2_,
-		resShared2_);
-	AddPipeline<PipelineInfiniteGrid>(vulkanContext_, resShared2_, -1.0f);
-	AddPipeline<PipelineLightRender>(vulkanContext_, resLights_, resShared2_);
+		resourcesIBL_,
+		resourcesShared_);
+	AddPipeline<PipelineInfiniteGrid>(vulkanContext_, resourcesShared_, -1.0f);
+	AddPipeline<PipelineLightRender>(vulkanContext_, resLights_, resourcesShared_);
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
-	AddPipeline<PipelineResolveMS>(vulkanContext_, resShared2_);
+	AddPipeline<PipelineResolveMS>(vulkanContext_, resourcesShared_);
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
-	AddPipeline<PipelineTonemap>(vulkanContext_, &(resShared2_->singleSampledColorImage_));
+	AddPipeline<PipelineTonemap>(vulkanContext_, &(resourcesShared_->singleSampledColorImage_));
 	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
 	AddPipeline<PipelineFinish>(vulkanContext_);
@@ -69,7 +69,7 @@ void AppPBRSlotBased::InitLights()
 void AppPBRSlotBased::UpdateUBOs()
 {
 	CameraUBO ubo = camera_->GetCameraUBO();
-	for (auto& pipeline : pipelines2_)
+	for (auto& pipeline : pipelines_)
 	{
 		pipeline->SetCameraUBO(vulkanContext_, ubo);
 	}
@@ -88,10 +88,10 @@ void AppPBRSlotBased::UpdateUI()
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 	ImGui::Checkbox("Render Lights", &inputContext_.renderLights_);
 	ImGui::Checkbox("Render Grid", &inputContext_.renderInfiniteGrid_);
-	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resIBL2_->cubemapMipmapCount_);
+	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
-	for (auto& pipeline : pipelines2_)
+	for (auto& pipeline : pipelines_)
 	{
 		pipeline->GetUpdateFromInputContext(vulkanContext_, inputContext_);
 	}
@@ -116,5 +116,5 @@ void AppPBRSlotBased::MainLoop()
 	}
 
 	model_->Destroy();
-	DestroyInternal();
+	DestroyResources();
 }

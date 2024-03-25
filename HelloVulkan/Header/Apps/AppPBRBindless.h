@@ -6,14 +6,13 @@
 #include "ResourcesLight.h"
 #include "PipelineSkybox.h"
 #include "PipelineClear.h"
+#include "PipelineImGui.h"
 #include "PipelineFinish.h"
-#include "PipelinePBRBindless.h"
 #include "PipelineTonemap.h"
 #include "PipelineResolveMS.h"
+#include "PipelinePBRBindless.h"
 #include "PipelineLightRender.h"
-#include "PipelineImGui.h"
 
-// STL
 #include <memory>
 
 /*
@@ -31,12 +30,12 @@ public:
 	void InitLights();
 
 private:
-	PipelinePBRBindless* pbrPtr_;
-	PipelineLightRender* lightPtr_;
-	PipelineImGui* imguiPtr_;
+	PipelinePBRBindless* pbrPtr_ = nullptr;
+	PipelineLightRender* lightPtr_ = nullptr;
+	PipelineImGui* imguiPtr_ = nullptr;
 
-	std::unique_ptr<Scene> scene_;
-	ResourcesLight* resourcesLight_;
+	std::unique_ptr<Scene> scene_ = nullptr;
+	ResourcesLight* resourcesLight_ = nullptr;
 };
 
 #endif

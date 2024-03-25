@@ -16,10 +16,10 @@ void AppPBRBindless::Init()
 	InitLights();
 
 	// Initialize attachments
-	InitSharedResources2();
+	InitSharedResources();
 
 	// Image-Based Lighting
-	resIBL2_ = AddResources<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
+	resourcesIBL_ = AddResources<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
 
 	// Scene
 	std::vector<ModelCreateInfo> dataArray = { 
@@ -40,24 +40,24 @@ void AppPBRBindless::Init()
 	// This draws a cube
 	AddPipeline<PipelineSkybox>(
 		vulkanContext_,
-		&(resIBL2_->diffuseCubemap_),
-		resShared2_,
+		&(resourcesIBL_->diffuseCubemap_),
+		resourcesShared_,
 		// This is the first offscreen render pass so we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
 	pbrPtr_ = AddPipeline<PipelinePBRBindless>(
 		vulkanContext_,
 		scene_.get(),
 		resourcesLight_,
-		resIBL2_,
-		resShared2_);
+		resourcesIBL_,
+		resourcesShared_);
 	lightPtr_ = AddPipeline<PipelineLightRender>(
 		vulkanContext_,
 		resourcesLight_,
-		resShared2_);
+		resourcesShared_);
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
-	AddPipeline<PipelineResolveMS>(vulkanContext_, resShared2_);
+	AddPipeline<PipelineResolveMS>(vulkanContext_, resourcesShared_);
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
-	AddPipeline<PipelineTonemap>(vulkanContext_, &(resShared2_->singleSampledColorImage_));
+	AddPipeline<PipelineTonemap>(vulkanContext_, &(resourcesShared_->singleSampledColorImage_));
 	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
 	AddPipeline<PipelineFinish>(vulkanContext_);
@@ -79,7 +79,7 @@ void AppPBRBindless::InitLights()
 void AppPBRBindless::UpdateUBOs()
 {
 	CameraUBO ubo = camera_->GetCameraUBO();
-	for (auto& pipeline : pipelines2_)
+	for (auto& pipeline : pipelines_)
 	{
 		pipeline->SetCameraUBO(vulkanContext_, ubo);
 	}
@@ -98,7 +98,7 @@ void AppPBRBindless::UpdateUI()
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 	ImGui::Text("Triangle Count: %i", scene_->triangleCount_);
 	ImGui::Checkbox("Render Lights", &inputContext_.renderLights_);
-	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resIBL2_->cubemapMipmapCount_);
+	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
 	lightPtr_->ShouldRender(inputContext_.renderLights_);
@@ -126,5 +126,5 @@ void AppPBRBindless::MainLoop()
 
 	scene_.reset();
 
-	DestroyInternal();
+	DestroyResources();
 }

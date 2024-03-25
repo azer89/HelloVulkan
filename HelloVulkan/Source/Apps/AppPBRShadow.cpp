@@ -20,10 +20,10 @@ void AppPBRShadow::Init()
 	InitLights();
 
 	// Initialize attachments
-	InitSharedResources2();
+	InitSharedResources();
 
 	// Image-Based Lighting
-	resIBL2_ = AddResources<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
+	resourcesIBL_ = AddResources<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
 
 	std::vector<ModelCreateInfo> dataArray = {
 		{AppConfig::ModelFolder + "Sponza/Sponza.gltf", 1},
@@ -50,8 +50,8 @@ void AppPBRShadow::Init()
 	AddPipeline<PipelineClear>(vulkanContext_); // This is responsible to clear swapchain image
 	AddPipeline<PipelineSkybox>(
 		vulkanContext_,
-		&(resIBL2_->diffuseCubemap_),
-		resShared2_,
+		&(resourcesIBL_->diffuseCubemap_),
+		resourcesShared_,
 		// This is the first offscreen render pass so we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
 	shadowPtr_ = AddPipeline<PipelineShadow>(vulkanContext_, scene_.get(), resShadow_);
@@ -60,24 +60,24 @@ void AppPBRShadow::Init()
 		vulkanContext_,
 		scene_.get(),
 		resLight_,
-		resIBL2_,
+		resourcesIBL_,
 		resShadow_,
-		resShared2_,
+		resourcesShared_,
 		MaterialType::Opaque);
 	// Transparent pass
 	pbrTransparentPtr_ = AddPipeline<PipelinePBRShadow>(
 		vulkanContext_,
 		scene_.get(),
 		resLight_,
-		resIBL2_,
+		resourcesIBL_,
 		resShadow_,
-		resShared2_,
+		resourcesShared_,
 		MaterialType::Transparent);
-	lightPtr_ = AddPipeline<PipelineLightRender>(vulkanContext_, resLight_, resShared2_);
+	lightPtr_ = AddPipeline<PipelineLightRender>(vulkanContext_, resLight_, resourcesShared_);
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
-	AddPipeline<PipelineResolveMS>(vulkanContext_, resShared2_);
+	AddPipeline<PipelineResolveMS>(vulkanContext_, resourcesShared_);
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
-	AddPipeline<PipelineTonemap>(vulkanContext_, &(resShared2_->singleSampledColorImage_));
+	AddPipeline<PipelineTonemap>(vulkanContext_, &(resourcesShared_->singleSampledColorImage_));
 	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
 	AddPipeline<PipelineFinish>(vulkanContext_);
@@ -107,7 +107,7 @@ void AppPBRShadow::InitLights()
 void AppPBRShadow::UpdateUBOs()
 {
 	CameraUBO ubo = camera_->GetCameraUBO();
-	for (auto& pipeline : pipelines2_)
+	for (auto& pipeline : pipelines_)
 	{
 		pipeline->SetCameraUBO(vulkanContext_, ubo);
 	}
@@ -132,7 +132,7 @@ void AppPBRShadow::UpdateUI()
 	ImGui::Text("Triangle Count: %i", scene_->triangleCount_);
 	ImGui::Checkbox("Render Lights", &inputContext_.renderLights_);
 	ImGui::SeparatorText("Shading");
-	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resIBL2_->cubemapMipmapCount_);
+	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
 
 	ImGui::SeparatorText("Shadow mapping");
 	ImGui::SliderFloat("Min Bias", &inputContext_.shadowMinBias_, 0.f, 0.01f);
@@ -181,5 +181,5 @@ void AppPBRShadow::MainLoop()
 	}
 
 	scene_.reset();
-	DestroyInternal();
+	DestroyResources();
 }
