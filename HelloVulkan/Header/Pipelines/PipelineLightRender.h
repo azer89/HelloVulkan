@@ -15,8 +15,8 @@ class PipelineLightRender final : public PipelineBase
 public:
 	PipelineLightRender(
 		VulkanContext& ctx,
-		ResourcesLight* resLights,
-		ResourcesShared* resShared,
+		ResourcesLight* resourcesLights,
+		ResourcesShared* resourcesShared,
 		uint8_t renderBit = 0u
 	);
 	~PipelineLightRender();

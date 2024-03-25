@@ -15,7 +15,7 @@ Clustered Forward
 class PipelineLightCulling final : public PipelineBase
 {
 public:
-	PipelineLightCulling(VulkanContext& ctx, ResourcesLight* resLight, ResourcesClusterForward* resCF);
+	PipelineLightCulling(VulkanContext& ctx, ResourcesLight* resourcesLight, ResourcesClusterForward* resourcesCF);
 	~PipelineLightCulling();
 
 	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override {}
@@ -24,8 +24,8 @@ public:
 	void SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO& ubo);
 
 private:
-	ResourcesLight* resLight_;
-	ResourcesClusterForward* resCF_;
+	ResourcesLight* resourcesLight_;
+	ResourcesClusterForward* resourcesCF_;
 
 	std::vector<VulkanBuffer> cfUBOBuffers_;
 	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;

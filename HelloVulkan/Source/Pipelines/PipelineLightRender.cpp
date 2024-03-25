@@ -8,18 +8,18 @@
 
 PipelineLightRender::PipelineLightRender(
 	VulkanContext& ctx,
-	ResourcesLight* resLights,
-	ResourcesShared* resShared,
+	ResourcesLight* resourcesLights,
+	ResourcesShared* resourcesShared,
 	uint8_t renderBit) :
 	PipelineBase(ctx, 
 		{
 			.type_ = PipelineType::GraphicsOffScreen,
-			.msaaSamples_ = resShared->multiSampledColorImage_.multisampleCount_,
+			.msaaSamples_ = resourcesShared->multiSampledColorImage_.multisampleCount_,
 			.depthTest_ = true,
 			.depthWrite_ = false // To "blend" the circles
 		}
 	), // Offscreen rendering
-	resLight_(resLights),
+	resLight_(resourcesLights),
 	shouldRender_(true)
 {
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
@@ -28,8 +28,8 @@ PipelineLightRender::PipelineLightRender(
 		ctx,
 		renderPass_.GetHandle(),
 		{
-			&(resShared->multiSampledColorImage_),
-			&(resShared->depthImage_)
+			&(resourcesShared->multiSampledColorImage_),
+			&(resourcesShared->depthImage_)
 		},
 		IsOffscreen()
 	);

@@ -8,14 +8,14 @@
 
 PipelineLightCulling::PipelineLightCulling(
 	VulkanContext& ctx,
-	ResourcesLight* resLight,
-	ResourcesClusterForward* resCF) :
+	ResourcesLight* resourcesLight,
+	ResourcesClusterForward* resourcesCF) :
 	PipelineBase(ctx,
 		{
 			.type_ = PipelineType::Compute
 		}),
-	resLight_(resLight),
-	resCF_(resCF)
+	resourcesLight_(resourcesLight),
+	resourcesCF_(resourcesCF)
 {
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cfUBOBuffers_, sizeof(ClusterForwardUBO), AppConfig::FrameCount);
 	CreateDescriptor(ctx);
@@ -39,7 +39,7 @@ void PipelineLightCulling::ResetGlobalIndex(VulkanContext& ctx)
 {
 	const uint32_t zeroValue = 0u;
 	const uint32_t frameIndex = ctx.GetFrameIndex();
-	resCF_->globalIndexCountBuffers_[frameIndex].UploadBufferData(ctx, &zeroValue, sizeof(uint32_t));
+	resourcesCF_->globalIndexCountBuffers_[frameIndex].UploadBufferData(ctx, &zeroValue, sizeof(uint32_t));
 }
 
 void PipelineLightCulling::SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO& ubo)
@@ -90,9 +90,9 @@ void PipelineLightCulling::Execute(VulkanContext& ctx, VkCommandBuffer commandBu
 		.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
 		.srcQueueFamilyIndex = ctx.GetComputeFamily(),
 		.dstQueueFamilyIndex = ctx.GetGraphicsFamily(),
-		.buffer = resCF_->lightCellsBuffer_.buffer_,
+		.buffer = resourcesCF_->lightCellsBuffer_.buffer_,
 		.offset = 0,
-		.size = resCF_->lightCellsBuffer_.size_
+		.size = resourcesCF_->lightCellsBuffer_.size_
 	};
 	const VkBufferMemoryBarrier2 lightIndicesBarrier =
 	{
@@ -104,9 +104,9 @@ void PipelineLightCulling::Execute(VulkanContext& ctx, VkCommandBuffer commandBu
 		.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
 		.srcQueueFamilyIndex = ctx.GetComputeFamily(),
 		.dstQueueFamilyIndex = ctx.GetGraphicsFamily(),
-		.buffer = resCF_->lightIndicesBuffer_.buffer_,
+		.buffer = resourcesCF_->lightIndicesBuffer_.buffer_,
 		.offset = 0,
-		.size = resCF_->lightIndicesBuffer_.size_,
+		.size = resourcesCF_->lightIndicesBuffer_.size_,
 	};
 	const std::array<VkBufferMemoryBarrier2, 2> barriers =
 	{
@@ -122,18 +122,18 @@ void PipelineLightCulling::CreateDescriptor(VulkanContext& ctx)
 	constexpr VkShaderStageFlags stageFlag = VK_SHADER_STAGE_COMPUTE_BIT;
 
 	VulkanDescriptorInfo dsInfo;
-	dsInfo.AddBuffer(&(resCF_->aabbBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 0
-	dsInfo.AddBuffer(resLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 1
+	dsInfo.AddBuffer(&(resourcesCF_->aabbBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 0
+	dsInfo.AddBuffer(resourcesLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 1
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 2
-	dsInfo.AddBuffer(&(resCF_->lightCellsBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 3
-	dsInfo.AddBuffer(&(resCF_->lightIndicesBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 4
+	dsInfo.AddBuffer(&(resourcesCF_->lightCellsBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 3
+	dsInfo.AddBuffer(&(resourcesCF_->lightIndicesBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 4
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, stageFlag); // 5
 
 	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 
 	for (size_t i = 0; i < frameCount; ++i)
 	{
-		dsInfo.UpdateBuffer(&(resCF_->globalIndexCountBuffers_[i]), 2);
+		dsInfo.UpdateBuffer(&(resourcesCF_->globalIndexCountBuffers_[i]), 2);
 		dsInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 5);
 		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}

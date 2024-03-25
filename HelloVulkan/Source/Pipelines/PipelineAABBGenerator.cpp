@@ -7,12 +7,12 @@
 
 PipelineAABBGenerator::PipelineAABBGenerator(
 	VulkanContext& ctx, 
-	ResourcesClusterForward* resCF) :
+	ResourcesClusterForward* resourcesCF) :
 	PipelineBase(ctx,
 	{
 		.type_ = PipelineType::Compute
 	}),
-	resCF_(resCF)
+	resourcesCF_(resourcesCF)
 {
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cfUBOBuffers_, sizeof(ClusterForwardUBO), AppConfig::FrameCount);
 	CreateDescriptor(ctx);
@@ -30,20 +30,20 @@ PipelineAABBGenerator::~PipelineAABBGenerator()
 
 void PipelineAABBGenerator::OnWindowResized(VulkanContext& ctx)
 {
-	resCF_->aabbDirty_ = true;
+	resourcesCF_->aabbDirty_ = true;
 }
 
 void PipelineAABBGenerator::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
 	uint32_t frameIndex = ctx.GetFrameIndex();
-	if (!resCF_->aabbDirty_)
+	if (!resourcesCF_->aabbDirty_)
 	{
 		return;
 	}
 
 	Execute(ctx, commandBuffer, frameIndex);
 
-	resCF_->aabbDirty_ = false;
+	resourcesCF_->aabbDirty_ = false;
 }
 
 void PipelineAABBGenerator::Execute(VulkanContext& ctx, VkCommandBuffer commandBuffer, uint32_t frameIndex)
@@ -74,9 +74,9 @@ void PipelineAABBGenerator::Execute(VulkanContext& ctx, VkCommandBuffer commandB
 		.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
 		.srcQueueFamilyIndex = ctx.GetComputeFamily(),
 		.dstQueueFamilyIndex = ctx.GetGraphicsFamily(),
-		.buffer = resCF_->aabbBuffer_.buffer_,
+		.buffer = resourcesCF_->aabbBuffer_.buffer_,
 		.offset = 0,
-		.size = resCF_->aabbBuffer_.size_ };
+		.size = resourcesCF_->aabbBuffer_.size_ };
 	VulkanBarrier::CreateBufferBarrier(commandBuffer, &barrier, 1u);
 }
 
@@ -85,7 +85,7 @@ void PipelineAABBGenerator::CreateDescriptor(VulkanContext& ctx)
 	const uint32_t frameCount = AppConfig::FrameCount;
 
 	VulkanDescriptorInfo dsInfo;
-	dsInfo.AddBuffer(&(resCF_->aabbBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT); // 0
+	dsInfo.AddBuffer(&(resourcesCF_->aabbBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT); // 0
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT); // 1
 
 	// Pool and layout

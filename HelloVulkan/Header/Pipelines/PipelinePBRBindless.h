@@ -18,9 +18,9 @@ class PipelinePBRBindless final : public PipelineBase
 public:
 	PipelinePBRBindless(VulkanContext& ctx,
 		Scene* scene,
-		ResourcesLight* resLight,
-		ResourcesIBL* iblResources,
-		ResourcesShared* resShared,
+		ResourcesLight* resourcesLight,
+		ResourcesIBL* resourcesIBL,
+		ResourcesShared* resourcesShared,
 		uint8_t renderBit = 0u);
 	 ~PipelinePBRBindless();
 
@@ -38,8 +38,8 @@ private:
 	void CreateDescriptor(VulkanContext& ctx);
 
 	Scene* scene_;
-	ResourcesLight* resLight_;
-	ResourcesIBL* iblResources_;
+	ResourcesLight* resourcesLight_;
+	ResourcesIBL* resourcesIBL_;
 	PushConstPBR pc_;
 	VulkanBuffer vimBuffer_;
 	std::vector<VkDescriptorSet> descriptorSets_;

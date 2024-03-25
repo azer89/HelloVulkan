@@ -92,7 +92,7 @@ protected:
 	VulkanInstance vulkanInstance_;
 	VulkanContext vulkanContext_;
 
-	// A list of pipelines (graphics and compute)
+	// A list of pipelines (graphics, compute, or raytracing)
 	std::vector<std::unique_ptr<PipelineBase>> pipelines_ = {};
 
 	// A list of resources containing buffers and images

@@ -19,10 +19,10 @@ class PipelinePBRShadow final : public PipelineBase
 public:
 	PipelinePBRShadow(VulkanContext& ctx,
 		Scene* scene,
-		ResourcesLight* resLight,
-		ResourcesIBL* iblResources,
-		ResourcesShadow* resShadow,
-		ResourcesShared* resShared,
+		ResourcesLight* resourcesLight,
+		ResourcesIBL* resourcesIBL,
+		ResourcesShadow* resourcesShadow,
+		ResourcesShared* resourcesShared,
 		MaterialType materialType,
 		uint8_t renderBit = 0u);
 	 ~PipelinePBRShadow();
@@ -51,9 +51,9 @@ private:
 	PushConstPBR pc_;
 	Scene* scene_;
 	VulkanBuffer vimBuffer_;
-	ResourcesLight* resLight_;
-	ResourcesIBL* iblResources_;
-	ResourcesShadow* resShadow_;
+	ResourcesLight* resourcesLight_;
+	ResourcesIBL* resourcesIBL_;
+	ResourcesShadow* resourcesShadow_;
 	std::vector<VkDescriptorSet> descriptorSets_;
 	std::vector<VulkanBuffer> shadowMapConfigUBOBuffers_;
 

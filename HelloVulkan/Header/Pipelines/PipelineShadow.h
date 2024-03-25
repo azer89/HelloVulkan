@@ -11,7 +11,7 @@ class PipelineShadow final : public PipelineBase
 public:
 	PipelineShadow(VulkanContext& ctx,
 		Scene* scene,
-		ResourcesShadow* resShadow);
+		ResourcesShadow* resourcesShadow);
 	~PipelineShadow();
 
 	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override {}
@@ -25,7 +25,7 @@ private:
 private:
 	VIM vim_;
 	Scene* scene_;
-	ResourcesShadow* resShadow_;
+	ResourcesShadow* resourcesShadow_;
 
 	std::vector<VulkanBuffer> shadowMapUBOBuffers_;
 	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;

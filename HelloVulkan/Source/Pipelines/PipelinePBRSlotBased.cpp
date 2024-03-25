@@ -17,19 +17,19 @@ constexpr uint32_t ENV_TEXTURE_COUNT = 3; // Specular, diffuse, and BRDF LUT
 PipelinePBRSlotBased::PipelinePBRSlotBased(
 	VulkanContext& ctx,
 	const std::vector<Model*>& models,
-	ResourcesLight* resLight,
-	ResourcesIBL* iblResources,
-	ResourcesShared* resShared,
+	ResourcesLight* resourcesLight,
+	ResourcesIBL* resourcesIBL,
+	ResourcesShared* resourcesShared,
 	uint8_t renderBit) :
 	PipelineBase(ctx, 
 		{
 			.type_ = PipelineType::GraphicsOffScreen,
-			.msaaSamples_ = resShared->multiSampledColorImage_.multisampleCount_,
+			.msaaSamples_ = resourcesShared->multiSampledColorImage_.multisampleCount_,
 			.vertexBufferBind_ = true,
 		}
 	),
-	resLight_(resLight),
-	iblResources_(iblResources),
+	resourcesLight_(resourcesLight),
+	resourcesIBL_(resourcesIBL),
 	models_(models)
 {
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
@@ -38,8 +38,8 @@ PipelinePBRSlotBased::PipelinePBRSlotBased(
 		ctx, 
 		renderPass_.GetHandle(), 
 		{
-			&(resShared->multiSampledColorImage_),
-			&(resShared->depthImage_)
+			&(resourcesShared->multiSampledColorImage_),
+			&(resourcesShared->depthImage_)
 		}, 
 		IsOffscreen());
 	CreateDescriptor(ctx);
@@ -118,14 +118,14 @@ void PipelinePBRSlotBased::CreateDescriptor(VulkanContext& ctx)
 	VulkanDescriptorInfo dsInfo;
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-	dsInfo.AddBuffer(resLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
+	dsInfo.AddBuffer(resourcesLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
 	for (size_t i = 0; i < PBR_TEXTURE_COUNT; ++i)
 	{
 		dsInfo.AddImage(nullptr);
 	}
-	dsInfo.AddImage(&(iblResources_->specularCubemap_));
-	dsInfo.AddImage(&(iblResources_->diffuseCubemap_));
-	dsInfo.AddImage(&(iblResources_->brdfLut_));
+	dsInfo.AddImage(&(resourcesIBL_->specularCubemap_));
+	dsInfo.AddImage(&(resourcesIBL_->diffuseCubemap_));
+	dsInfo.AddImage(&(resourcesIBL_->brdfLut_));
 
 	// Pool and layout
 	descriptor_.CreatePoolAndLayout(ctx, dsInfo, AppConfig::FrameCount, meshCount);

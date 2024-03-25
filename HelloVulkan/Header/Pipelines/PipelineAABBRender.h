@@ -3,7 +3,6 @@
 
 #include "VulkanContext.h"
 #include "PipelineBase.h"
-#include "Scene.h"
 #include "ResourcesShared.h"
 #include "Configs.h"
 

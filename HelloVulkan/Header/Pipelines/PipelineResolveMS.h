@@ -13,7 +13,7 @@ class PipelineResolveMS final : public PipelineBase
 public:
 	PipelineResolveMS(
 		VulkanContext& ctx,
-		ResourcesShared* resShared
+		ResourcesShared* resourcesShared
 	);
 	~PipelineResolveMS();
 
