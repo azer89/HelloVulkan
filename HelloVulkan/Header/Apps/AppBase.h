@@ -44,7 +44,6 @@ protected:
 	void InitCamera();
 
 	// Resources
-	void InitSharedResources(); // TODO Delete this
 	void InitSharedResources2();
 	
 	// Functions related to the main loop
@@ -93,7 +92,6 @@ protected:
 	VulkanContext vulkanContext_;
 
 	// A list of pipelines (graphics and compute)
-	std::vector<PipelineBase*> pipelines_; // TODO Delete this
 	std::vector<std::unique_ptr<PipelineBase>> pipelines2_; // TODO Rename to pipelines_
 	std::vector<std::unique_ptr<ResourcesBase>> resources_;
 
@@ -102,8 +100,6 @@ protected:
 	uint32_t windowHeight_;
 	bool shouldRecreateSwapchain_;
 
-	std::unique_ptr<ResourcesShared> resShared_; // TODO Delete
-	std::unique_ptr<ResourcesIBL> resIBL_; // TODO Delete
 	ResourcesShared* resShared2_;
 	ResourcesIBL* resIBL2_;
 
