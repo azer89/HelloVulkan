@@ -19,7 +19,7 @@ public:
 
 	void GetUpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
 	{
-		shouldRender_ = inputContext.renderLights_;
+		shouldRender_ = inputContext.renderInfiniteGrid_;
 	}
 
 private:

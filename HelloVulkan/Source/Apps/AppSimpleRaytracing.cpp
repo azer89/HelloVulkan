@@ -22,11 +22,6 @@ void AppSimpleRaytracing::Init()
 	AddPipeline<PipelineFinish>(vulkanContext_);
 }
 
-void AppSimpleRaytracing::UpdateUBOs()
-{
-	rtxPtr_->SetRaytracingCameraUBO(vulkanContext_, camera_->GetRaytracingCameraUBO());
-}
-
 void AppSimpleRaytracing::UpdateUI()
 {
 	if (!showImgui_)
@@ -39,6 +34,11 @@ void AppSimpleRaytracing::UpdateUI()
 	imguiPtr_->ImGuiSetWindow("Raytracing", 500, 150);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 	imguiPtr_->ImGuiEnd();
+}
+
+void AppSimpleRaytracing::UpdateUBOs()
+{
+	rtxPtr_->SetRaytracingCameraUBO(vulkanContext_, camera_->GetRaytracingCameraUBO());
 }
 
 void AppSimpleRaytracing::MainLoop()

@@ -95,23 +95,6 @@ void AppFrustumCulling::InitLights()
 		});
 }
 
-void AppFrustumCulling::UpdateUBOs()
-{
-	CameraUBO ubo = camera_->GetCameraUBO();
-	for (auto& pipeline : pipelines_)
-	{
-		pipeline->SetCameraUBO(vulkanContext_, ubo);
-	}
-
-	if (updateFrustum_)
-	{
-		linePtr_->SetFrustum(vulkanContext_, ubo);
-
-		FrustumUBO frustumUBO = camera_->GetFrustumUBO();
-		cullingPtr_->SetFrustumUBO(vulkanContext_, frustumUBO);
-	}
-}
-
 void AppFrustumCulling::UpdateUI()
 {
 	if (!showImgui_)
@@ -133,10 +116,28 @@ void AppFrustumCulling::UpdateUI()
 
 	updateFrustum_ = staticUpdateFrustum;
 
-	lightPtr_->ShouldRender(inputContext_.renderLights_);
-	linePtr_->ShouldRender(inputContext_.renderDebug_);
-	boxRenderPtr_->ShouldRender(inputContext_.renderDebug_);
-	pbrPtr_->SetPBRPushConstants(inputContext_.pbrPC_);
+	for (auto& pipeline : pipelines_)
+	{
+		pipeline->GetUpdateFromInputContext(vulkanContext_, inputContext_);
+	}
+
+}
+
+void AppFrustumCulling::UpdateUBOs()
+{
+	CameraUBO ubo = camera_->GetCameraUBO();
+	for (auto& pipeline : pipelines_)
+	{
+		pipeline->SetCameraUBO(vulkanContext_, ubo);
+	}
+
+	if (updateFrustum_)
+	{
+		linePtr_->SetFrustum(vulkanContext_, ubo);
+
+		FrustumUBO frustumUBO = camera_->GetFrustumUBO();
+		cullingPtr_->SetFrustumUBO(vulkanContext_, frustumUBO);
+	}
 }
 
 // This is called from main.cpp

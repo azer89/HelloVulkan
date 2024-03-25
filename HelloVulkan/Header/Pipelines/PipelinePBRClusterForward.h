@@ -30,10 +30,16 @@ public:
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
 	void SetPBRPushConstants(const PushConstPBR& pbrPC) { pc_ = pbrPC; };
+
 	void SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO& ubo)
 	{
 		const size_t frameIndex = ctx.GetFrameIndex();
 		cfUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ClusterForwardUBO));
+	}
+
+	void GetUpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
+	{
+		SetPBRPushConstants(inputContext.pbrPC_);
 	}
 
 private:

@@ -141,9 +141,10 @@ void AppPBRClusterForward::UpdateUI()
 	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
-	lightPtr_->ShouldRender(inputContext_.renderLights_);
-	pbrOpaquePtr_->SetPBRPushConstants(inputContext_.pbrPC_);
-	pbrTransparentPtr_->SetPBRPushConstants(inputContext_.pbrPC_);
+	for (auto& pipeline : pipelines_)
+	{
+		pipeline->GetUpdateFromInputContext(vulkanContext_, inputContext_);
+	}
 }
 
 // This is called from main.cpp
