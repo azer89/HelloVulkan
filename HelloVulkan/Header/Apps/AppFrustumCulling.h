@@ -31,26 +31,18 @@ public:
 	void Init();
 	void InitScene();
 	void InitLights();
-	void DestroyResources();
 
 private:
-	std::unique_ptr<PipelineClear> clearPtr_;
-	std::unique_ptr<PipelineSkybox> skyboxPtr_;
-	std::unique_ptr<PipelineTonemap> tonemapPtr_;
-	std::unique_ptr<PipelineFinish> finishPtr_;
-	std::unique_ptr<PipelineResolveMS> resolveMSPtr_;
-	std::unique_ptr<PipelineInfiniteGrid> infGridPtr_;
-	std::unique_ptr<PipelineLightRender> lightPtr_;
-	std::unique_ptr<PipelineFrustumCulling> cullingPtr_;
-	std::unique_ptr<PipelinePBRBindless> pbrPtr_;
-	std::unique_ptr<PipelineImGui> imguiPtr_;
-	std::unique_ptr<PipelineLine> linePtr_;
-	std::unique_ptr<PipelineAABBRender> boxRenderPtr_;
-	
-	std::unique_ptr<ResourcesLight> resLight_;
+	PipelineLightRender* lightPtr_;
+	PipelineFrustumCulling* cullingPtr_;
+	PipelinePBRBindless* pbrPtr_;
+	PipelineImGui* imguiPtr_;
+	PipelineLine* linePtr_;
+	PipelineInfiniteGrid* infGridPtr_;
+	PipelineAABBRender* boxRenderPtr_;
 
 	std::unique_ptr<Scene> scene_;
-	std::unique_ptr<ResourcesLight> resourcesLight_;
+	ResourcesLight* resourcesLight_;
 
 	bool updateFrustum_;
 };

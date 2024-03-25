@@ -17,60 +17,45 @@ void AppFrustumCulling::Init()
 	InitLights();
 
 	// Initialize attachments
-	InitSharedResources();
+	InitSharedResources2();
 
 	// Image-Based Lighting
-	resIBL_ = std::make_unique<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
+	resIBL2_ = AddResources<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
 
 	InitScene();
 
 	// Pipelines
-	clearPtr_ = std::make_unique<PipelineClear>(vulkanContext_); // This is responsible to clear swapchain image
-	skyboxPtr_ = std::make_unique<PipelineSkybox>(
+	AddPipeline<PipelineClear>(vulkanContext_); // This is responsible to clear swapchain image
+	AddPipeline<PipelineSkybox>(
 		vulkanContext_,
-		&(resIBL_->diffuseCubemap_),
-		resShared_.get(),
+		&(resIBL2_->diffuseCubemap_),
+		resShared2_,
 		// This is the first offscreen render pass so we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
-	cullingPtr_ = std::make_unique<PipelineFrustumCulling>(vulkanContext_, scene_.get());
-	pbrPtr_ = std::make_unique<PipelinePBRBindless>(
+	cullingPtr_ = AddPipeline<PipelineFrustumCulling>(vulkanContext_, scene_.get());
+	pbrPtr_ = AddPipeline<PipelinePBRBindless>(
 		vulkanContext_,
 		scene_.get(),
-		resourcesLight_.get(),
-		resIBL_.get(),
-		resShared_.get());
-	lightPtr_ = std::make_unique<PipelineLightRender>(
+		resourcesLight_,
+		resIBL2_,
+		resShared2_);
+	infGridPtr_ = AddPipeline<PipelineInfiniteGrid>(vulkanContext_, resShared2_, 0.0f);
+	boxRenderPtr_ = AddPipeline<PipelineAABBRender>(vulkanContext_, resShared2_, scene_.get());
+	linePtr_ = AddPipeline<PipelineLine>(vulkanContext_, resShared2_, scene_.get());
+	lightPtr_ = AddPipeline<PipelineLightRender>(
 		vulkanContext_,
-		resourcesLight_.get(),
-		resShared_.get());
-	linePtr_ = std::make_unique<PipelineLine>(vulkanContext_, resShared_.get(), scene_.get());
-	boxRenderPtr_ = std::make_unique<PipelineAABBRender>(vulkanContext_, resShared_.get(), scene_.get());
-	infGridPtr_ = std::make_unique<PipelineInfiniteGrid>(vulkanContext_, resShared_.get(), 0.0f);
+		resourcesLight_,
+		resShared2_);
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
-	resolveMSPtr_ = std::make_unique<PipelineResolveMS>(vulkanContext_, resShared_.get());
+	AddPipeline<PipelineResolveMS>(vulkanContext_, resShared2_);
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
-	tonemapPtr_ = std::make_unique<PipelineTonemap>(vulkanContext_, &(resShared_->singleSampledColorImage_));
-	imguiPtr_ = std::make_unique<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
+	AddPipeline<PipelineTonemap>(vulkanContext_, &(resShared2_->singleSampledColorImage_));
+	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
-	finishPtr_ = std::make_unique<PipelineFinish>(vulkanContext_);
+	AddPipeline<PipelineFinish>(vulkanContext_);
 
-	// Put all renderer pointers to a vector
-	pipelines_ =
-	{
-		// Must be in order
-		clearPtr_.get(),
-		skyboxPtr_.get(),
-		cullingPtr_.get(),
-		pbrPtr_.get(),
-		infGridPtr_.get(),
-		boxRenderPtr_.get(),
-		linePtr_.get(),
-		lightPtr_.get(),
-		resolveMSPtr_.get(),
-		tonemapPtr_.get(),
-		imguiPtr_.get(),
-		finishPtr_.get()
-	};
+	// ImGui
+	inputContext_.pbrPC_.albedoMultipler = 0.5f;
 }
 
 void AppFrustumCulling::InitScene()
@@ -102,7 +87,7 @@ void AppFrustumCulling::InitScene()
 void AppFrustumCulling::InitLights()
 {
 	// Lights (SSBO)
-	resourcesLight_ = std::make_unique<ResourcesLight>();
+	resourcesLight_ = AddResources<ResourcesLight>();
 	resourcesLight_->AddLights(vulkanContext_,
 		{
 			{.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
@@ -112,39 +97,13 @@ void AppFrustumCulling::InitLights()
 		});
 }
 
-void AppFrustumCulling::DestroyResources()
-{
-	// Resources
-	resIBL_.reset();
-	resourcesLight_.reset();
-
-	// Destroy meshes
-	scene_.reset();
-
-	// Destroy renderers
-	clearPtr_.reset();
-	finishPtr_.reset();
-	skyboxPtr_.reset();
-	cullingPtr_.reset();
-	pbrPtr_.reset();
-	lightPtr_.reset();
-	boxRenderPtr_.reset();
-	resolveMSPtr_.reset();
-	tonemapPtr_.reset();
-	imguiPtr_.reset();
-	linePtr_.reset();
-	infGridPtr_.reset();
-}
-
 void AppFrustumCulling::UpdateUBOs()
 {
 	CameraUBO ubo = camera_->GetCameraUBO();
-	lightPtr_->SetCameraUBO(vulkanContext_, ubo);
-	pbrPtr_->SetCameraUBO(vulkanContext_, ubo);
-	boxRenderPtr_->SetCameraUBO(vulkanContext_, ubo);
-	infGridPtr_->SetCameraUBO(vulkanContext_, ubo);
-	linePtr_->SetCameraUBO(vulkanContext_, ubo);
-	skyboxPtr_->SetCameraUBO(vulkanContext_, ubo);
+	for (auto& pipeline : pipelines2_)
+	{
+		pipeline->SetCameraUBO(vulkanContext_, ubo);
+	}
 
 	if (updateFrustum_)
 	{
@@ -163,29 +122,23 @@ void AppFrustumCulling::UpdateUI()
 		return;
 	}
 
-	static bool staticLightRender = false;
-	static bool staticLineRender = false;
 	static bool staticUpdateFrustum = true;
-	static PushConstPBR staticPBRPushConstants =
-	{
-		.albedoMultipler = 0.5f
-	};
 
 	imguiPtr_->ImGuiStart();
 	imguiPtr_->ImGuiSetWindow("Compute-Based Frustum Culling", 500, 350);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
-	ImGui::Checkbox("Render Lights", &staticLightRender);
-	ImGui::Checkbox("Render Frustum and Bounding Boxes", &staticLineRender);
+	ImGui::Checkbox("Render Lights", &inputContext_.renderLights_);
+	ImGui::Checkbox("Render Frustum and Bounding Boxes", &inputContext_.renderDebug_);
 	ImGui::Checkbox("Update Frustum", &staticUpdateFrustum);
-	imguiPtr_->ImGuiShowPBRConfig(&staticPBRPushConstants, resIBL_->cubemapMipmapCount_);
+	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resIBL2_->cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
 	updateFrustum_ = staticUpdateFrustum;
 
-	lightPtr_->ShouldRender(staticLightRender);
-	linePtr_->ShouldRender(staticLineRender);
-	boxRenderPtr_->ShouldRender(staticLineRender);
-	pbrPtr_->SetPBRPushConstants(staticPBRPushConstants);
+	lightPtr_->ShouldRender(inputContext_.renderLights_);
+	linePtr_->ShouldRender(inputContext_.renderDebug_);
+	boxRenderPtr_->ShouldRender(inputContext_.renderDebug_);
+	pbrPtr_->SetPBRPushConstants(inputContext_.pbrPC_);
 }
 
 // This is called from main.cpp
@@ -208,6 +161,8 @@ void AppFrustumCulling::MainLoop()
 		DrawFrame();
 	}
 
-	DestroyResources();
+	//DestroyResources();
+	scene_.reset();
+	
 	DestroyInternal();
 }

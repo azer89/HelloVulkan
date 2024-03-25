@@ -26,6 +26,7 @@ public:
 	float shadowMaxBias_ = 0.001f;
 
 	bool renderInfiniteGrid_ = true;
+	bool renderDebug_ = false;
 	bool renderAABB_ = false;
 	bool renderLights_ = true;
 };
