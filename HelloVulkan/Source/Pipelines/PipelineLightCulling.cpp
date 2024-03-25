@@ -37,14 +37,14 @@ PipelineLightCulling::~PipelineLightCulling()
 
 void PipelineLightCulling::ResetGlobalIndex(VulkanContext& ctx)
 {
-	const uint32_t zeroValue = 0u;
 	const uint32_t frameIndex = ctx.GetFrameIndex();
+	constexpr uint32_t zeroValue = 0u;
 	resourcesCF_->globalIndexCountBuffers_[frameIndex].UploadBufferData(ctx, &zeroValue, sizeof(uint32_t));
 }
 
 void PipelineLightCulling::SetClusterForwardUBO(VulkanContext& ctx, ClusterForwardUBO& ubo)
 {
-	size_t frameIndex = ctx.GetFrameIndex();
+	const size_t frameIndex = ctx.GetFrameIndex();
 	cfUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ClusterForwardUBO));
 }
 

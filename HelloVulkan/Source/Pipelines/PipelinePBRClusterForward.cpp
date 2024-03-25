@@ -78,7 +78,7 @@ void PipelinePBRClusterForward::FillCommandBuffer(VulkanContext& ctx, VkCommandB
 {
 	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "PBR_Cluster_Forward", tracy::Color::MediumPurple);
 
-	uint32_t frameIndex = ctx.GetFrameIndex();
+	const uint32_t frameIndex = ctx.GetFrameIndex();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
 
 	BindPipeline(ctx, commandBuffer);

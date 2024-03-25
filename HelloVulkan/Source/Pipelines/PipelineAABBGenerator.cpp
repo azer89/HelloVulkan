@@ -82,7 +82,7 @@ void PipelineAABBGenerator::Execute(VulkanContext& ctx, VkCommandBuffer commandB
 
 void PipelineAABBGenerator::CreateDescriptor(VulkanContext& ctx)
 {
-	const uint32_t frameCount = AppConfig::FrameCount;
+	constexpr uint32_t frameCount = AppConfig::FrameCount;
 
 	VulkanDescriptorInfo dsInfo;
 	dsInfo.AddBuffer(&(resourcesCF_->aabbBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT); // 0

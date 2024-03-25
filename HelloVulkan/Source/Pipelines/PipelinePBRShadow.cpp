@@ -86,7 +86,7 @@ void PipelinePBRShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer co
 
 	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "PBR_Shadow", tracy::Color::Aqua);
 
-	uint32_t frameIndex = ctx.GetFrameIndex();
+	const uint32_t frameIndex = ctx.GetFrameIndex();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
 
 	BindPipeline(ctx, commandBuffer);
@@ -137,8 +137,8 @@ void PipelinePBRShadow::CreateSpecializationConstants()
 
 void PipelinePBRShadow::PrepareVIM(VulkanContext& ctx)
 {
-	VIM vim = scene_->GetVIM();
-	VkDeviceSize vimSize = sizeof(VIM);
+	const VIM vim = scene_->GetVIM();
+	const VkDeviceSize vimSize = sizeof(VIM);
 	vimBuffer_.CreateBuffer(
 		ctx,
 		vimSize,

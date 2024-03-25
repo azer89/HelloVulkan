@@ -12,17 +12,15 @@ PipelineShadow::PipelineShadow(
 	{
 		// Depth only and offscreen
 		.type_ = PipelineType::GraphicsOffScreen,
-
 		.vertexBufferBind_ = false,
-
 		.customViewportSize_ = true,
 		// Render using shadow map dimension
 		.viewportWidth_ = static_cast<float>(resourcesShadow->shadowMap_.width_),
 		.viewportHeight_ = static_cast<float>(resourcesShadow->shadowMap_.height_)
 	}),
+	vim_(scene->GetVIM()),
 	scene_(scene),
-	resourcesShadow_(resourcesShadow),
-	vim_(scene->GetVIM())
+	resourcesShadow_(resourcesShadow)
 {
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, shadowMapUBOBuffers_, sizeof(ShadowMapUBO), AppConfig::FrameCount);
 	renderPass_.CreateDepthOnlyRenderPass(ctx, 
@@ -64,15 +62,15 @@ void PipelineShadow::UpdateShadow(VulkanContext& ctx, ResourcesShadow* resShadow
 {
 	//glm::mat4 lightProjection = 
 	// glm::perspective(glm::radians(45.f), 1.0f, resShadow_.shadowNearPlane, resShadow_.shadowFarPlane);
-	glm::mat4 lightProjection = glm::ortho(
+	const glm::mat4 lightProjection = glm::ortho(
 		-resourcesShadow_->orthoSize_,
 		resourcesShadow_->orthoSize_,
 		resourcesShadow_->orthoSize_,
 		-resourcesShadow_->orthoSize_,
 		resourcesShadow_->shadowNearPlane_,
 		resourcesShadow_->shadowFarPlane_);
-	glm::mat4 lightView = glm::lookAt(glm::vec3(lightPosition), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
+	const glm::mat4 lightView = glm::lookAt(glm::vec3(lightPosition), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+	const glm::mat4 lightSpaceMatrix = lightProjection * lightView;
 	resourcesShadow_->shadowUBO_.lightSpaceMatrix = lightSpaceMatrix;
 	resourcesShadow_->shadowUBO_.lightPosition = lightPosition;
 
@@ -84,7 +82,7 @@ void PipelineShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comma
 {
 	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "Render_Shadow_Map", tracy::Color::OrangeRed);
 
-	uint32_t frameIndex = ctx.GetFrameIndex();
+	const uint32_t frameIndex = ctx.GetFrameIndex();
 	renderPass_.BeginRenderPass(
 		ctx, 
 		commandBuffer, 

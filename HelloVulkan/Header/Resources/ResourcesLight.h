@@ -7,6 +7,8 @@
 #include "VulkanBuffer.h"
 #include "ResourcesBase.h"
 
+#include <span>
+
 // A single light
 struct LightData
 {
@@ -48,7 +50,8 @@ public:
 
 	void Destroy() override;
 	void AddLights(VulkanContext& ctx, const std::vector<LightData>& lights);
-	void UpdateLightPosition(VulkanContext& ctx, size_t index, float* position);
+	
+	void UpdateLightPosition(VulkanContext& ctx, size_t index, const std::span<float> position);
 
 	VulkanBuffer* GetVulkanBufferPtr() { return &storageBuffer_;  }
 	uint32_t GetLightCount() const { return lightCount_; }
@@ -64,7 +67,8 @@ public:
 
 	void UpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
 	{
-		UpdateLightPosition(ctx, 0, &(inputContext.shadowCasterPosition_[0]));
+		// Shadow caster
+		UpdateLightPosition(ctx, 0, inputContext.shadowCasterPosition_);
 	}
 
 public:

@@ -92,7 +92,7 @@ void PipelineBRDFLUT::Execute(VulkanContext& ctx)
 		1u); // groupCountZ
 	
 	// Set barrier
-	VkMemoryBarrier2 barrier = {
+	constexpr VkMemoryBarrier2 barrier = {
 		.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER_2,
 		.pNext = nullptr,
 		.srcStageMask = VK_PIPELINE_STAGE_2_COMPUTE_SHADER_BIT,
