@@ -18,7 +18,11 @@ public:
 	~PipelineAABBRender();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
-	void ShouldRender(bool shouldRender) { shouldRender_ = shouldRender; }
+
+	void UpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
+	{
+		shouldRender_ = inputContext.renderDebug_;
+	}
 
 private:
 	void CreateDescriptor(VulkanContext& ctx);
