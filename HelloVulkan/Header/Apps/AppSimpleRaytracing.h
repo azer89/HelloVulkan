@@ -23,14 +23,10 @@ public:
 	void UpdateUI() override;
 
 	void Init();
-	void DestroyResources();
 
 private:
-	std::unique_ptr<PipelineClear> clearPtr_;
-	std::unique_ptr<PipelineFinish> finishPtr_;
-	std::unique_ptr<PipelineImGui> imguiPtr_;
-	std::unique_ptr<PipelineSimpleRaytracing> rtxPtr_;
-
+	PipelineImGui* imguiPtr_;
+	PipelineSimpleRaytracing* rtxPtr_;
 	std::unique_ptr<Scene> scene_;
 };
 
