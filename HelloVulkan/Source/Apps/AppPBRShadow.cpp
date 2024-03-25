@@ -11,6 +11,7 @@ AppPBRShadow::AppPBRShadow()
 
 void AppPBRShadow::Init()
 {
+	inputContext_.shadowCasterPosition_ = { -2.5f, 20.0f, 5.0f };
 	camera_->SetPositionAndTarget(glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3(0.0));
 
 	// Init shadow map
@@ -81,9 +82,6 @@ void AppPBRShadow::Init()
 	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
 	AddPipeline<PipelineFinish>(vulkanContext_);
-
-	// ImGui
-	inputContext_.shadowCasterPosition_ = { -2.5f, 20.0f, 5.0f };
 }
 
 void AppPBRShadow::InitLights()
@@ -102,19 +100,6 @@ void AppPBRShadow::InitLights()
 		{.position_ = glm::vec4(-1.5f, 2.5f, -5.f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
 		{.position_ = glm::vec4(1.5f, 2.5f, -5.f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f }
 	});
-}
-
-void AppPBRShadow::UpdateUBOs()
-{
-	CameraUBO ubo = camera_->GetCameraUBO();
-	for (auto& pipeline : pipelines_)
-	{
-		pipeline->SetCameraUBO(vulkanContext_, ubo);
-	}
-
-	shadowPtr_->UpdateShadow(vulkanContext_, resShadow_, resLight_->lights_[0].position_);
-	pbrOpaquePtr_->SetShadowMapConfigUBO(vulkanContext_, resShadow_->shadowUBO_);
-	pbrTransparentPtr_->SetShadowMapConfigUBO(vulkanContext_, resShadow_->shadowUBO_);
 }
 
 void AppPBRShadow::UpdateUI()
@@ -148,18 +133,28 @@ void AppPBRShadow::UpdateUI()
 
 	imguiPtr_->ImGuiEnd();
 
-	// TODO Check if light position is changed 
-	resLight_->UpdateLightPosition(vulkanContext_, 0, &(inputContext_.shadowCasterPosition_[0]));
+	for (auto& pipeline : pipelines_)
+	{
+		pipeline->GetUpdateFromInputContext(vulkanContext_, inputContext_);
+	}
 
-	lightPtr_->ShouldRender(inputContext_.renderLights_);
-	pbrOpaquePtr_->SetPBRPushConstants(inputContext_.pbrPC_);
-	pbrTransparentPtr_->SetPBRPushConstants(inputContext_.pbrPC_);
+	for (auto& resources : resources_)
+	{
+		resources->GetUpdateFromInputContext(vulkanContext_, inputContext_);
+	}
+}
 
-	resShadow_->shadowUBO_.shadowMinBias = inputContext_.shadowMinBias_;
-	resShadow_->shadowUBO_.shadowMaxBias = inputContext_.shadowMaxBias_;
-	resShadow_->shadowNearPlane_ = inputContext_.shadowNearPlane_;
-	resShadow_->shadowFarPlane_ = inputContext_.shadowFarPlane_;
-	resShadow_->orthoSize_ = inputContext_.shadowOrthoSize_;
+void AppPBRShadow::UpdateUBOs()
+{
+	CameraUBO ubo = camera_->GetCameraUBO();
+	for (auto& pipeline : pipelines_)
+	{
+		pipeline->SetCameraUBO(vulkanContext_, ubo);
+	}
+
+	shadowPtr_->UpdateShadow(vulkanContext_, resShadow_, resLight_->lights_[0].position_);
+	pbrOpaquePtr_->SetShadowMapConfigUBO(vulkanContext_, resShadow_->shadowUBO_);
+	pbrTransparentPtr_->SetShadowMapConfigUBO(vulkanContext_, resShadow_->shadowUBO_);
 }
 
 // This is called from main.cpp

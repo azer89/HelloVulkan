@@ -15,6 +15,15 @@ public:
 	void CreateSingleShadowMap(VulkanContext& ctx);
 	void Destroy() override;
 
+	void GetUpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
+	{
+		shadowUBO_.shadowMinBias = inputContext.shadowMinBias_;
+		shadowUBO_.shadowMaxBias = inputContext.shadowMaxBias_;
+		shadowNearPlane_ = inputContext.shadowNearPlane_;
+		shadowFarPlane_ = inputContext.shadowFarPlane_;
+		orthoSize_ = inputContext.shadowOrthoSize_;
+	}
+
 public:
 	VulkanImage shadowMap_;
 

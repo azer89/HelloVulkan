@@ -62,6 +62,11 @@ public:
 		};
 	}
 
+	void GetUpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
+	{
+		UpdateLightPosition(ctx, 0, &(inputContext.shadowCasterPosition_[0]));
+	}
+
 public:
 	std::vector<LightData> lights_;
 

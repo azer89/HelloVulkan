@@ -30,10 +30,16 @@ public:
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
 	void SetPBRPushConstants(const PushConstPBR& pbrPC) { pc_ = pbrPC; };
+	
 	void SetShadowMapConfigUBO(VulkanContext& ctx, ShadowMapUBO& ubo)
 	{
 		const uint32_t frameIndex = ctx.GetFrameIndex();
 		shadowMapConfigUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ShadowMapUBO));
+	}
+	
+	void GetUpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
+	{
+		SetPBRPushConstants(inputContext.pbrPC_);
 	}
 
 private:

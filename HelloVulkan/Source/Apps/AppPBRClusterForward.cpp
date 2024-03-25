@@ -12,6 +12,7 @@ AppPBRClusterForward::AppPBRClusterForward()
 
 void AppPBRClusterForward::Init()
 {
+	inputContext_.pbrPC_.albedoMultipler = 0.01f;
 	camera_->SetPositionAndTarget(glm::vec3(0.0f, 1.0f, 6.0f), glm::vec3(0.0, 2.5, 0.0));
 
 	// Initialize attachments
@@ -66,9 +67,6 @@ void AppPBRClusterForward::Init()
 	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
 	AddPipeline<PipelineFinish>(vulkanContext_);
-
-	// ImGui
-	inputContext_.pbrPC_.albedoMultipler = 0.01f;
 }
 
 void AppPBRClusterForward::InitLights()

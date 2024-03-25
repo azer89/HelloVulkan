@@ -12,6 +12,7 @@ AppFrustumCulling::AppFrustumCulling() :
 
 void AppFrustumCulling::Init()
 {
+	inputContext_.pbrPC_.albedoMultipler = 0.5f;
 	camera_->SetPositionAndTarget(glm::vec3(0.0f, 10.0f, 5.0f), glm::vec3(0.0, 0.0, -20));
 
 	InitLights();
@@ -53,9 +54,6 @@ void AppFrustumCulling::Init()
 	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// Present swapchain image
 	AddPipeline<PipelineFinish>(vulkanContext_);
-
-	// ImGui
-	inputContext_.pbrPC_.albedoMultipler = 0.5f;
 }
 
 void AppFrustumCulling::InitScene()
