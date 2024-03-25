@@ -62,7 +62,7 @@ public:
 		};
 	}
 
-	void GetUpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
+	void UpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
 	{
 		UpdateLightPosition(ctx, 0, &(inputContext.shadowCasterPosition_[0]));
 	}

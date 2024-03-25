@@ -6,16 +6,10 @@
 #include "PipelineLine.h"
 #include "PipelineImGui.h"
 #include "ResourcesLight.h"
-#include "PipelineSkybox.h"
-#include "PipelineClear.h"
-#include "PipelineFinish.h"
-#include "PipelineTonemap.h"
-#include "PipelineResolveMS.h"
 #include "PipelineAABBRender.h"
 #include "PipelineLightRender.h"
 #include "PipelineInfiniteGrid.h"
 #include "PipelinePBRBindless.h"
-#include "PipelineInfiniteGrid.h"
 #include "PipelineFrustumCulling.h"
 
 #include <memory>

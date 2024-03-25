@@ -4,16 +4,10 @@
 #include "AppBase.h"
 #include "Scene.h"
 #include "PipelineImGui.h"
-#include "PipelineClear.h"
 #include "ResourcesLight.h"
-#include "PipelineSkybox.h"
-#include "PipelineFinish.h"
-#include "ResourcesShadow.h"
 #include "ResourcesShadow.h"
 #include "PipelineShadow.h"
-#include "PipelineTonemap.h"
 #include "PipelinePBRShadow.h"
-#include "PipelineResolveMS.h"
 #include "PipelineLightRender.h"
 
 // STL
@@ -40,8 +34,8 @@ private:
 	PipelinePBRShadow* pbrOpaquePtr_ = nullptr;
 	PipelinePBRShadow* pbrTransparentPtr_ = nullptr;
 	
-	ResourcesLight* resLight_ = nullptr;
-	ResourcesShadow* resShadow_ = nullptr;
+	ResourcesLight* resourcesLight_ = nullptr;
+	ResourcesShadow* resourcesShadow_ = nullptr;
 	std::unique_ptr<Scene> scene_ = nullptr;
 };
 

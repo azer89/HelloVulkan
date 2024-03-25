@@ -9,7 +9,7 @@ public:
 	virtual ~ResourcesBase() = default;
 	virtual void Destroy() = 0;
 
-	virtual void GetUpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext)
+	virtual void UpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext)
 	{
 	}
 };

@@ -2,6 +2,15 @@
 #include "VulkanUtility.h"
 #include "Configs.h"
 
+#include "PipelineClear.h"
+#include "PipelineSkybox.h"
+#include "PipelineFinish.h"
+#include "PipelineTonemap.h"
+#include "PipelineResolveMS.h"
+#include "PipelineLightRender.h"
+#include "PipelineInfiniteGrid.h"
+#include "PipelinePBRSlotBased.h"
+
 #include "glm/ext.hpp"
 #include "imgui_impl_vulkan.h"
 
@@ -39,11 +48,11 @@ void AppPBRSlotBased::Init()
 	AddPipeline<PipelinePBRSlotBased>(
 		vulkanContext_,
 		models,
-		resLights_,
+		resourcesLights_,
 		resourcesIBL_,
 		resourcesShared_);
 	AddPipeline<PipelineInfiniteGrid>(vulkanContext_, resourcesShared_, -1.0f);
-	AddPipeline<PipelineLightRender>(vulkanContext_, resLights_, resourcesShared_);
+	AddPipeline<PipelineLightRender>(vulkanContext_, resourcesLights_, resourcesShared_);
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
 	AddPipeline<PipelineResolveMS>(vulkanContext_, resourcesShared_);
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
@@ -56,14 +65,14 @@ void AppPBRSlotBased::Init()
 void AppPBRSlotBased::InitLights()
 {
 	// Lights (SSBO)
-	resLights_ = AddResources<ResourcesLight>();
-	resLights_->AddLights(vulkanContext_,
-		{
-			{.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
-			{.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
-			{.position_ = glm::vec4(-1.5f, 0.7f, -1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
-			{.position_ = glm::vec4(1.5f, 0.7f, -1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f }
-		});
+	resourcesLights_ = AddResources<ResourcesLight>();
+	resourcesLights_->AddLights(vulkanContext_,
+	{
+		{.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
+		{.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
+		{.position_ = glm::vec4(-1.5f, 0.7f, -1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
+		{.position_ = glm::vec4(1.5f, 0.7f, -1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f }
+	});
 }
 
 void AppPBRSlotBased::UpdateUBOs()
@@ -93,7 +102,7 @@ void AppPBRSlotBased::UpdateUI()
 
 	for (auto& pipeline : pipelines_)
 	{
-		pipeline->GetUpdateFromInputContext(vulkanContext_, inputContext_);
+		pipeline->UpdateFromInputContext(vulkanContext_, inputContext_);
 	}
 }
 

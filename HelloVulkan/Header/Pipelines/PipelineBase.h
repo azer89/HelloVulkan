@@ -38,7 +38,7 @@ public:
 		VulkanContext& ctx, 
 		VkCommandBuffer commandBuffer) = 0;
 
-	virtual void GetUpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext)
+	virtual void UpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext)
 	{
 	}
 

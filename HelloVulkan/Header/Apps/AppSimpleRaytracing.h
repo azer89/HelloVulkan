@@ -3,9 +3,7 @@
 
 #include "AppBase.h"
 #include "Scene.h"
-#include "PipelineClear.h"
 #include "PipelineImGui.h"
-#include "PipelineFinish.h"
 #include "PipelineSimpleRaytracing.h"
 
 // STL

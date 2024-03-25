@@ -2,6 +2,12 @@
 #include "VulkanUtility.h"
 #include "Configs.h"
 
+#include "PipelineSkybox.h"
+#include "PipelineClear.h"
+#include "PipelineFinish.h"
+#include "PipelineTonemap.h"
+#include "PipelineResolveMS.h"
+
 #include "glm/ext.hpp"
 #include "imgui_impl_vulkan.h"
 
@@ -94,7 +100,7 @@ void AppPBRBindless::UpdateUI()
 
 	for (auto& pipeline : pipelines_)
 	{
-		pipeline->GetUpdateFromInputContext(vulkanContext_, inputContext_);
+		pipeline->UpdateFromInputContext(vulkanContext_, inputContext_);
 	}
 }
 

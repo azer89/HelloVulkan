@@ -28,7 +28,7 @@ public:
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 	
-	void GetUpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
+	void UpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
 	{
 		SetPBRPushConstants(inputContext.pbrPC_);
 	}

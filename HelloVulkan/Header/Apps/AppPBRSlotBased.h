@@ -3,17 +3,8 @@
 
 #include "AppBase.h"
 #include "Model.h"
-#include "PipelineClear.h"
 #include "PipelineImGui.h"
 #include "ResourcesLight.h"
-#include "PipelineSkybox.h"
-#include "PipelineFinish.h"
-#include "PipelineTonemap.h"
-#include "PipelineResolveMS.h"
-#include "PipelineLightRender.h"
-#include "PipelineInfiniteGrid.h"
-#include "PipelinePBRSlotBased.h"
-
 
 // STL
 #include <memory>
@@ -34,7 +25,7 @@ public:
 
 private:
 	PipelineImGui* imguiPtr_ = nullptr;
-	ResourcesLight* resLights_ = nullptr;
+	ResourcesLight* resourcesLights_ = nullptr;
 	std::unique_ptr<Model> model_ = nullptr;
 };
 

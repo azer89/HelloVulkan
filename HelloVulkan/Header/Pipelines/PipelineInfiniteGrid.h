@@ -17,7 +17,7 @@ public:
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 	void ShouldRender(bool shouldRender) { shouldRender_ = shouldRender; };
 
-	void GetUpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
+	void UpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
 	{
 		shouldRender_ = inputContext.renderInfiniteGrid_;
 	}

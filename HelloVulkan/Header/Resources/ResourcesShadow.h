@@ -15,7 +15,7 @@ public:
 	void CreateSingleShadowMap(VulkanContext& ctx);
 	void Destroy() override;
 
-	void GetUpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
+	void UpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
 	{
 		shadowUBO_.shadowMinBias = inputContext.shadowMinBias_;
 		shadowUBO_.shadowMaxBias = inputContext.shadowMaxBias_;

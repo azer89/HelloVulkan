@@ -2,6 +2,13 @@
 #include "VulkanUtility.h"
 #include "Configs.h"
 
+#include "PipelineSkybox.h"
+#include "PipelineClear.h"
+#include "PipelineFinish.h"
+#include "PipelineTonemap.h"
+#include "PipelineResolveMS.h"
+#include "PipelineInfiniteGrid.h"
+
 #include "glm/ext.hpp"
 #include "imgui_impl_vulkan.h"
 
@@ -118,9 +125,8 @@ void AppFrustumCulling::UpdateUI()
 
 	for (auto& pipeline : pipelines_)
 	{
-		pipeline->GetUpdateFromInputContext(vulkanContext_, inputContext_);
+		pipeline->UpdateFromInputContext(vulkanContext_, inputContext_);
 	}
-
 }
 
 void AppFrustumCulling::UpdateUBOs()

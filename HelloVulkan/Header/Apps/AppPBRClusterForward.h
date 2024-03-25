@@ -4,11 +4,6 @@
 #include "AppBase.h"
 #include "Scene.h"
 #include "ResourcesLight.h"
-#include "PipelineSkybox.h"
-#include "PipelineClear.h"
-#include "PipelineFinish.h"
-#include "PipelineTonemap.h"
-#include "PipelineResolveMS.h"
 #include "PipelineLightRender.h"
 #include "PipelineImGui.h"
 #include "PipelineAABBGenerator.h"
@@ -42,7 +37,7 @@ private:
 	PipelineLightCulling* lightCullPtr_ = nullptr;
 
 	ResourcesClusterForward* resCF_ = nullptr;
-	ResourcesLight* resLight_ = nullptr;
+	ResourcesLight* resourcesLight_ = nullptr;
 	std::unique_ptr<Scene> scene_ = nullptr;
 };
 

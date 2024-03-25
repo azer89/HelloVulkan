@@ -53,7 +53,8 @@ protected:
 
 	// Resources
 	void InitSharedResources();
-	
+
+	// Create unique_ptr of pipeline and put it in std::vector
 	template<class T, class... U>
 	T* AddPipeline(U&&... u)
 	{
@@ -63,6 +64,7 @@ protected:
 		return ptr;
 	}
 
+	// Create unique_ptr of resources and put it in std::vector
 	template<class T, class... U>
 	T* AddResources(U&&... u)
 	{
@@ -93,7 +95,7 @@ protected:
 	// A list of pipelines (graphics and compute)
 	std::vector<std::unique_ptr<PipelineBase>> pipelines_ = {};
 
-	// A list of buffers and images
+	// A list of resources containing buffers and images
 	std::vector<std::unique_ptr<ResourcesBase>> resources_ = {};
 
 	// Window size

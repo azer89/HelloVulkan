@@ -2,6 +2,12 @@
 #include "VulkanUtility.h"
 #include "Configs.h"
 
+#include "PipelineClear.h"
+#include "PipelineSkybox.h"
+#include "PipelineFinish.h"
+#include "PipelineTonemap.h"
+#include "PipelineResolveMS.h"
+
 #include "glm/ext.hpp"
 #include "imgui_impl_vulkan.h"
 
@@ -15,8 +21,8 @@ void AppPBRShadow::Init()
 	camera_->SetPositionAndTarget(glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3(0.0));
 
 	// Init shadow map
-	resShadow_ = AddResources<ResourcesShadow>();
-	resShadow_->CreateSingleShadowMap(vulkanContext_);
+	resourcesShadow_ = AddResources<ResourcesShadow>();
+	resourcesShadow_->CreateSingleShadowMap(vulkanContext_);
 
 	InitLights();
 
@@ -55,26 +61,26 @@ void AppPBRShadow::Init()
 		resourcesShared_,
 		// This is the first offscreen render pass so we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
-	shadowPtr_ = AddPipeline<PipelineShadow>(vulkanContext_, scene_.get(), resShadow_);
+	shadowPtr_ = AddPipeline<PipelineShadow>(vulkanContext_, scene_.get(), resourcesShadow_);
 	// Opaque pass
 	pbrOpaquePtr_ = AddPipeline<PipelinePBRShadow>(
 		vulkanContext_,
 		scene_.get(),
-		resLight_,
+		resourcesLight_,
 		resourcesIBL_,
-		resShadow_,
+		resourcesShadow_,
 		resourcesShared_,
 		MaterialType::Opaque);
 	// Transparent pass
 	pbrTransparentPtr_ = AddPipeline<PipelinePBRShadow>(
 		vulkanContext_,
 		scene_.get(),
-		resLight_,
+		resourcesLight_,
 		resourcesIBL_,
-		resShadow_,
+		resourcesShadow_,
 		resourcesShared_,
 		MaterialType::Transparent);
-	lightPtr_ = AddPipeline<PipelineLightRender>(vulkanContext_, resLight_, resourcesShared_);
+	lightPtr_ = AddPipeline<PipelineLightRender>(vulkanContext_, resourcesLight_, resourcesShared_);
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
 	AddPipeline<PipelineResolveMS>(vulkanContext_, resourcesShared_);
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
@@ -87,8 +93,8 @@ void AppPBRShadow::Init()
 void AppPBRShadow::InitLights()
 {
 	// Lights (SSBO)
-	resLight_ = AddResources<ResourcesLight>();
-	resLight_->AddLights(vulkanContext_,
+	resourcesLight_ = AddResources<ResourcesLight>();
+	resourcesLight_->AddLights(vulkanContext_,
 	{
 		// The first light is used to generate the shadow map
 		// and its position is set by ImGui
@@ -135,12 +141,12 @@ void AppPBRShadow::UpdateUI()
 
 	for (auto& pipeline : pipelines_)
 	{
-		pipeline->GetUpdateFromInputContext(vulkanContext_, inputContext_);
+		pipeline->UpdateFromInputContext(vulkanContext_, inputContext_);
 	}
 
 	for (auto& resources : resources_)
 	{
-		resources->GetUpdateFromInputContext(vulkanContext_, inputContext_);
+		resources->UpdateFromInputContext(vulkanContext_, inputContext_);
 	}
 }
 
@@ -152,9 +158,9 @@ void AppPBRShadow::UpdateUBOs()
 		pipeline->SetCameraUBO(vulkanContext_, ubo);
 	}
 
-	shadowPtr_->UpdateShadow(vulkanContext_, resShadow_, resLight_->lights_[0].position_);
-	pbrOpaquePtr_->SetShadowMapConfigUBO(vulkanContext_, resShadow_->shadowUBO_);
-	pbrTransparentPtr_->SetShadowMapConfigUBO(vulkanContext_, resShadow_->shadowUBO_);
+	shadowPtr_->UpdateShadow(vulkanContext_, resourcesShadow_, resourcesLight_->lights_[0].position_);
+	pbrOpaquePtr_->SetShadowMapConfigUBO(vulkanContext_, resourcesShadow_->shadowUBO_);
+	pbrTransparentPtr_->SetShadowMapConfigUBO(vulkanContext_, resourcesShadow_->shadowUBO_);
 }
 
 // This is called from main.cpp

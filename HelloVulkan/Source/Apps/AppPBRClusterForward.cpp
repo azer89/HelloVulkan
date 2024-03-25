@@ -3,6 +3,12 @@
 #include "VulkanUtility.h"
 #include "Configs.h"
 
+#include "PipelineSkybox.h"
+#include "PipelineClear.h"
+#include "PipelineFinish.h"
+#include "PipelineTonemap.h"
+#include "PipelineResolveMS.h"
+
 #include "glm/ext.hpp"
 #include "imgui_impl_vulkan.h"
 
@@ -25,7 +31,7 @@ void AppPBRClusterForward::Init()
 	resourcesIBL_ = AddResources<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "dikhololo_night_4k.hdr");
 
 	resCF_ = AddResources<ResourcesClusterForward>();
-	resCF_->CreateBuffers(vulkanContext_, resLight_->GetLightCount());
+	resCF_->CreateBuffers(vulkanContext_, resourcesLight_->GetLightCount());
 
 	std::vector<ModelCreateInfo> dataArray = {
 		{AppConfig::ModelFolder + "Sponza/Sponza.gltf", 1}
@@ -42,11 +48,11 @@ void AppPBRClusterForward::Init()
 		// This is the first offscreen render pass so we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
 	aabbPtr_ = AddPipeline<PipelineAABBGenerator>(vulkanContext_, resCF_);
-	lightCullPtr_ = AddPipeline<PipelineLightCulling>(vulkanContext_, resLight_, resCF_);
+	lightCullPtr_ = AddPipeline<PipelineLightCulling>(vulkanContext_, resourcesLight_, resCF_);
 	pbrOpaquePtr_ = AddPipeline<PipelinePBRClusterForward>(
 		vulkanContext_,
 		scene_.get(),
-		resLight_,
+		resourcesLight_,
 		resCF_,
 		resourcesIBL_,
 		resourcesShared_,
@@ -54,12 +60,12 @@ void AppPBRClusterForward::Init()
 	pbrTransparentPtr_ = AddPipeline<PipelinePBRClusterForward>(
 		vulkanContext_,
 		scene_.get(),
-		resLight_,
+		resourcesLight_,
 		resCF_,
 		resourcesIBL_,
 		resourcesShared_,
 		MaterialType::Transparent);
-	lightPtr_ = AddPipeline<PipelineLightRender>(vulkanContext_, resLight_, resourcesShared_);
+	lightPtr_ = AddPipeline<PipelineLightRender>(vulkanContext_, resourcesLight_, resourcesShared_);
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
 	AddPipeline<PipelineResolveMS>(vulkanContext_, resourcesShared_);
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
@@ -104,8 +110,8 @@ void AppPBRClusterForward::InitLights()
 		lights.push_back(l);
 	}
 
-	resLight_ = AddResources<ResourcesLight>();
-	resLight_->AddLights(vulkanContext_, lights);
+	resourcesLight_ = AddResources<ResourcesLight>();
+	resourcesLight_->AddLights(vulkanContext_, lights);
 }
 
 void AppPBRClusterForward::UpdateUBOs()
@@ -143,7 +149,7 @@ void AppPBRClusterForward::UpdateUI()
 
 	for (auto& pipeline : pipelines_)
 	{
-		pipeline->GetUpdateFromInputContext(vulkanContext_, inputContext_);
+		pipeline->UpdateFromInputContext(vulkanContext_, inputContext_);
 	}
 }
 

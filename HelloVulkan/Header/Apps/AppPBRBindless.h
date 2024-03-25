@@ -4,12 +4,7 @@
 #include "AppBase.h"
 #include "Scene.h"
 #include "ResourcesLight.h"
-#include "PipelineSkybox.h"
-#include "PipelineClear.h"
 #include "PipelineImGui.h"
-#include "PipelineFinish.h"
-#include "PipelineTonemap.h"
-#include "PipelineResolveMS.h"
 #include "PipelinePBRBindless.h"
 #include "PipelineLightRender.h"
 
