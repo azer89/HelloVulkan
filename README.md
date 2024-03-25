@@ -30,7 +30,7 @@ A 3D rendering engine built from scratch using Vulkan API and C++.
 
 ### Engine Overview
 
-The engine leverages several advanced Vulkan features to optimize rendering performance. First, bindless textures is achieved by utilizing __descriptor Indexing__. This enables the storage of all scene textures inside an unbounded array, which allows texture descriptors to be bound once at the start of a frame. 
+The engine leverages several modern GPU features to optimize rendering performance. First, bindless textures is achieved by utilizing __descriptor Indexing__. This enables the storage of all scene textures inside an unbounded array, which allows texture descriptors to be bound once at the start of a frame. 
 
 Next, the engine takes advantage of __indirect draw__ API. This means the CPU only calls a single indirect draw command. By sorting draw calls based on material type, it is now possible to have separate render passes for each material. For each render pass, the GPU only processes a draw call batch of objects sharing the same material. This significantly improves efficiency because shader branching can now be avoided.
 

@@ -54,23 +54,23 @@ protected:
 	// Resources
 	void InitSharedResources();
 
-	// Create unique_ptr of pipeline and put it in std::vector
 	template<class T, class... U>
 	T* AddPipeline(U&&... u)
 	{
+		// Create std::unique_ptr of pipeline
 		std::unique_ptr<T> pipeline = std::make_unique<T>(std::forward<U>(u)...);
 		T* ptr = pipeline.get();
-		pipelines_.push_back(std::move(pipeline));
+		pipelines_.push_back(std::move(pipeline)); // Put it in std::vector
 		return ptr;
 	}
 
-	// Create unique_ptr of resources and put it in std::vector
 	template<class T, class... U>
 	T* AddResources(U&&... u)
 	{
+		// Create std::unique_ptr of resources
 		std::unique_ptr<T> resources = std::make_unique<T>(std::forward<U>(u)...);
 		T* ptr = resources.get();
-		resources_.push_back(std::move(resources));
+		resources_.push_back(std::move(resources)); // Put it in std::vector
 		return ptr;
 	}
 
