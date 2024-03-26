@@ -19,6 +19,7 @@ public:
 	[[nodiscard]] float GetTicksPerSecond() const { return ticksPerSecond_; }
 	[[nodiscard]] float GetDuration() const { return duration_; }
 	[[nodiscard]] const AnimationNode& GetRootNode() const { return rootNode_; }
+	//[[nodiscard]] bool ContainsNode(std::string nodeName) { return boneInfoMap_.contains(nodeName); }
 	[[nodiscard]] const std::unordered_map<std::string, BoneInfo>& GetBoneIDMap() const { return boneInfoMap_; }
 
 private:
