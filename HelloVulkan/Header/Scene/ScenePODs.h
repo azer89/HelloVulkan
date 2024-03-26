@@ -2,6 +2,7 @@
 #define SCENE_PLAIN_OLD_DATA
 
 #include "VertexData.h"
+#include "BoundingBox.h"
 
 #include <vector>
 
@@ -31,28 +32,6 @@ struct SceneData
 	}
 };
 
-struct InstanceData
-{
-	uint32_t modelIndex;
-	uint32_t meshIndex;
-	uint32_t perModelInstanceIndex;
-	MeshData meshData;
-	BoundingBox originalBoundingBox;
-};
-
-// Needed for updating bounding boxes
-struct InstanceMap
-{
-	uint32_t modelMatrixIndex;
-	std::vector<uint32_t> instanceDataIndices;
-};
-
-struct ModelCreateInfo
-{
-	std::string filename;
-	uint32_t instanceCount; // Allows instancing
-};
-
 enum class MaterialType : uint32_t
 {
 	Opaque = 0,
@@ -80,4 +59,25 @@ struct MeshData
 	MaterialType material_;
 };
 
+struct InstanceData
+{
+	uint32_t modelIndex;
+	uint32_t meshIndex;
+	uint32_t perModelInstanceIndex;
+	MeshData meshData;
+	BoundingBox originalBoundingBox;
+};
+
+// Needed for updating bounding boxes
+struct InstanceMap
+{
+	uint32_t modelMatrixIndex;
+	std::vector<uint32_t> instanceDataIndices;
+};
+
+struct ModelCreateInfo
+{
+	std::string filename;
+	uint32_t instanceCount; // Allows instancing
+};
 #endif

@@ -18,25 +18,26 @@
 class Model
 {
 public:
-	std::vector<Mesh> meshes_;
+	std::vector<Mesh> meshes_ = {};
 
 	// NOTE Textures are stored in Model regardless of bindless textures or Slot-Based
-	std::vector<VulkanImage> textureList_;
+	std::vector<VulkanImage> textureList_ = {};
 
 	// Optional per-frame buffers for model matrix
 	// TODO Maybe can be moved to pipelines
-	std::vector<VulkanBuffer> modelBuffers_;
+	std::vector<VulkanBuffer> modelBuffers_ = {};
 
 	// This is used to store the filename and to activate instancing in bindless setup
-	ModelCreateInfo modelInfo_;
+	ModelCreateInfo modelInfo_ = {};
 
 private:
-	bool bindlessTexture_;
-	VkDevice device_;
-	std::string directory_;
+	const aiScene* scene_ = nullptr;
+	bool bindlessTexture_ = false;
+	VkDevice device_ = nullptr;
+	std::string directory_ = {};
 
 	// string key is the filename, int value points to elements in textureList_
-	std::unordered_map<std::string, uint32_t> textureMap_;
+	std::unordered_map<std::string, uint32_t> textureMap_ = {};
 
 public:
 	Model() = default;
@@ -61,7 +62,7 @@ private:
 	void AddTexture(VulkanContext& ctx, const std::string& textureFilename);
 	void AddTexture(VulkanContext& ctx, const std::string& textureName, void* data, int width, int height);
 
-	// TODO Three functions below are pretty ugly because we pass too many references
+	// Entry point
 	void LoadModel(
 		VulkanContext& ctx,
 		std::string const& path,
@@ -73,23 +74,17 @@ private:
 		VulkanContext& ctx,
 		SceneData& sceneData,
 		const aiNode* node,
-		const aiScene* scene,
 		const glm::mat4& parentTransform);
 
 	void ProcessMesh(
 		VulkanContext& ctx,
 		SceneData& sceneData,
 		const aiMesh* mesh,
-		const aiScene* scene,
 		const glm::mat4& transform);
 
 	[[nodiscard]] std::vector<VertexData> GetVertices(const aiMesh* mesh, const glm::mat4& transform);
 	[[nodiscard]] std::vector<uint32_t> GetIndices(const aiMesh* mesh);
-	[[nodiscard]] std::unordered_map<TextureType, uint32_t> GetTextures(
-		VulkanContext& ctx,
-		const aiScene* scene,
-		const aiMesh* mesh);
+	[[nodiscard]] std::unordered_map<TextureType, uint32_t> GetTextures(VulkanContext& ctx, const aiMesh* mesh);
 };
 
 #endif
-
