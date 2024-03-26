@@ -55,9 +55,13 @@ public:
 		SceneData& sceneData
 	);
 
+	[[nodiscard]] const aiScene* GetAssimpScene() const { return scene_; }
 	[[nodiscard]] VulkanImage* GetTexture(uint32_t textureIndex);
 	[[nodiscard]] uint32_t GetTextureCount() const { return static_cast<uint32_t>(textureList_.size()); }
 	[[nodiscard]] uint32_t GetMeshCount() const { return static_cast<uint32_t>(meshes_.size()); }
+
+	[[nodiscard]] const std::unordered_map<std::string, BoneInfo>& GetBoneInfoMap() const { return boneInfoMap_; }
+	[[nodiscard]] int GetBoneCount() const { return boneCounter_; }
 
 	void CreateModelUBOBuffers(VulkanContext& ctx);
 	void SetModelUBO(VulkanContext& ctx, ModelUBO ubo);
