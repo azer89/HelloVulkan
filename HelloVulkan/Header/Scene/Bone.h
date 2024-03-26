@@ -1,6 +1,10 @@
 #ifndef SCENE_BONE
 #define SCENE_BONE
 
+/*
+Adapted from learnopengl.com/Guest-Articles/2020/Skeletal-Animation
+*/
+
 #include "ScenePODs.h"
 
 #include "assimp/scene.h"

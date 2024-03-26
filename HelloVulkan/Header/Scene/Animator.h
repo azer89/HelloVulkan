@@ -1,6 +1,10 @@
 #ifndef SCENE_ANIMATOR
 #define SCENE_ANIMATOR
 
+/*
+Adapted from learnopengl.com/Guest-Articles/2020/Skeletal-Animation
+*/
+
 #include "Bone.h"
 #include "Animation.h"
 

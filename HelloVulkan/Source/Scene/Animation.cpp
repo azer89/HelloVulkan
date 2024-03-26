@@ -10,7 +10,7 @@ Animation::Animation(const std::string& animationPath, Model* model)
 	Assimp::Importer importer;
 	const aiScene* scene = model->GetAssimpScene();
 	assert(scene && scene->mRootNode);
-	auto animation = scene->mAnimations[0];
+	auto animation = scene->mAnimations[0]; // TODO Can only support one animation
 	duration_ = animation->mDuration;
 	ticksPerSecond_ = animation->mTicksPerSecond;
 	aiMatrix4x4 globalTransformation = scene->mRootNode->mTransformation;
@@ -37,13 +37,13 @@ Bone* Animation::FindBone(const std::string& name)
 
 void Animation::ReadMissingBones(const aiAnimation* animation, Model& model)
 {
-	int size = animation->mNumChannels;
+	uint32_t size = animation->mNumChannels;
 
 	auto& boneInfoMap = model.GetBoneInfoMap();
 	int boneCount = model.GetBoneCount();
 
 	// Reading channels(bones engaged in an animation and their keyframes)
-	for (int i = 0; i < size; i++)
+	for (uint32_t i = 0; i < size; ++i)
 	{
 		auto channel = animation->mChannels[i];
 		std::string boneName = channel->mNodeName.data;
@@ -75,4 +75,15 @@ void Animation::ReadHierarchyData(AnimationNode& dest, const aiNode* src)
 		ReadHierarchyData(newData, src->mChildren[i]);
 		dest.children.push_back(newData);
 	}
+}
+
+bool Animation::GetIndexAndOffsetMatrix(const std::string& name, int& index, glm::mat4& offsetMatrix)
+{
+	if (boneInfoMap_.contains(name))
+	{
+		index = boneInfoMap_[name].id;
+		offsetMatrix = boneInfoMap_[name].offsetMatrix;
+		return true;
+	}
+	return false;
 }

@@ -237,6 +237,9 @@
     <None Include="..\Shaders\ClusteredForward\Scene.frag">
       <Filter>Shaders\ClusteredForward</Filter>
     </None>
+    <None Include="..\Shaders\Skinning.comp">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Camera.h">

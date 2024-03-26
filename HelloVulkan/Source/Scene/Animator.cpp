@@ -1,13 +1,17 @@
 #include "Animator.h"
 
+#include <iostream>
+
+constexpr uint32_t MAX_BONE_MATRICES = 100; // TODO
+
 Animator::Animator(Animation* animationPtr)
 {
 	currentTime_ = 0.0;
 	currentAnimation_ = animationPtr;
 
-	finalBoneMatrices_.reserve(100); // TODO
+	finalBoneMatrices_.reserve(MAX_BONE_MATRICES);
 
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < MAX_BONE_MATRICES; i++)
 	{
 		finalBoneMatrices_.push_back(glm::mat4(1.0f));
 	}
@@ -35,22 +39,33 @@ void Animator::CalculateBoneTransform(const AnimationNode* node, glm::mat4 paren
 	std::string nodeName = node->name;
 	glm::mat4 nodeTransform = node->transformation;
 
-	Bone* Bone = currentAnimation_->FindBone(nodeName);
+	Bone* bone = currentAnimation_->FindBone(nodeName);
 
-	if (Bone)
+	if (bone)
 	{
-		Bone->Update(currentTime_);
-		nodeTransform = Bone->GetLocalTransform();
+		bone->Update(currentTime_);
+		nodeTransform = bone->GetLocalTransform();
 	}
 
 	glm::mat4 globalTransformation = parentTransform * nodeTransform;
 
-	auto boneInfoMap = currentAnimation_->GetBoneIDMap();
-	if (boneInfoMap.contains(nodeName))
+	//auto boneInfoMap = currentAnimation_->GetBoneIDMap();
+	int index = -1;
+	glm::mat4 offsetMatrix = glm::mat4(1.0f);
+	//if (boneInfoMap.contains(nodeName))
+	if (currentAnimation_->GetIndexAndOffsetMatrix(nodeName, index, offsetMatrix))
 	{
-		int index = boneInfoMap[nodeName].id;
-		glm::mat4 offset = boneInfoMap[nodeName].offsetMatrix;
-		finalBoneMatrices_[index] = globalTransformation * offset;
+		//int index = boneInfoMap[nodeName].id;
+		//glm::mat4 offsetMatrix = boneInfoMap[nodeName].offsetMatrix;
+
+		if (index >= finalBoneMatrices_.size())
+		{
+			std::cerr << "finalBoneMatrices_ is not long enough, index = " << index << '\n';
+		}
+		else
+		{
+			finalBoneMatrices_[index] = globalTransformation * offsetMatrix;
+		}
 	}
 
 	for (uint32_t i = 0; i < node->childrenCount; ++i)

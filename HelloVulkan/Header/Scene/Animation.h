@@ -1,6 +1,10 @@
 #ifndef SCENE_ANIMATION
 #define SCENE_ANIMATION
 
+/*
+Adapted from learnopengl.com/Guest-Articles/2020/Skeletal-Animation
+*/
+
 #include "Bone.h"
 #include "Model.h"
 #include "ScenePODs.h"
@@ -19,8 +23,8 @@ public:
 	[[nodiscard]] float GetTicksPerSecond() const { return ticksPerSecond_; }
 	[[nodiscard]] float GetDuration() const { return duration_; }
 	[[nodiscard]] const AnimationNode& GetRootNode() const { return rootNode_; }
-	//[[nodiscard]] bool ContainsNode(std::string nodeName) { return boneInfoMap_.contains(nodeName); }
-	[[nodiscard]] const std::unordered_map<std::string, BoneInfo>& GetBoneIDMap() const { return boneInfoMap_; }
+	//[[nodiscard]] const std::unordered_map<std::string, BoneInfo>& GetBoneIDMap() const { return boneInfoMap_; }
+	[[nodiscard]] bool GetIndexAndOffsetMatrix(const std::string& name, int& index, glm::mat4& offsetMatrix);
 
 private:
 	void ReadMissingBones(const aiAnimation* animation, Model& model);

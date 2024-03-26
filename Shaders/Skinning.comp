@@ -1,0 +1,25 @@
+#version 460 core
+#extension GL_EXT_buffer_reference : require
+
+layout (local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
+
+#include <Bindless/VertexData.glsl>
+#include <Bindless/MeshData.glsl>
+#include <Bindless/BDA.glsl>
+
+layout (push_constant) uniform PC
+{
+	uint vertexCount;
+} pc;
+
+layout(set = 0, binding = 0) readonly buffer M { mat4 matrices[]; }; // SSBO
+layout(set = 0, binding = 1) buffer V { VertexData vertices[]; }; // SSBO
+
+void main()
+{
+	uint index = gl_GlobalInvocationID.x;
+	if (index >= pc.vertexCount)
+	{
+		return;
+	}
+}
