@@ -236,6 +236,7 @@
     <ClInclude Include="Header\Pipelines\PipelineResolveMS.h" />
     <ClInclude Include="Header\Pipelines\PipelineShadow.h" />
     <ClInclude Include="Header\Pipelines\PipelineSimpleRaytracing.h" />
+    <ClInclude Include="Header\Pipelines\PipelineSkinning.h" />
     <ClInclude Include="Header\Pipelines\PipelineSkybox.h" />
     <ClInclude Include="Header\Pipelines\PipelineTonemap.h" />
     <ClInclude Include="Header\PushConstants.h" />
@@ -305,6 +306,7 @@
     <ClCompile Include="Source\Pipelines\PipelineResolveMS.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineShadow.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineSimpleRaytracing.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelineSkinning.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineSkybox.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineTonemap.cpp" />
     <ClCompile Include="Source\Raytracing\AccelStructure.cpp" />
