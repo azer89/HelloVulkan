@@ -34,7 +34,7 @@ public:
 	}
 
 private:
-	void PrepareVIM(VulkanContext& ctx);
+	void PrepareBDA(VulkanContext& ctx);
 	void CreateDescriptor(VulkanContext& ctx);
 
 	Scene* scene_;

@@ -52,7 +52,7 @@ PipelinePBRShadow::PipelinePBRShadow(
 			&(resourcesShared->depthImage_)
 		}, 
 		IsOffscreen());
-	PrepareVIM(ctx);
+	PrepareBDA(ctx);
 	CreateDescriptor(ctx);
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(PushConstPBR), VK_SHADER_STAGE_FRAGMENT_BIT);
 	CreateSpecializationConstants();
@@ -135,7 +135,7 @@ void PipelinePBRShadow::CreateSpecializationConstants()
 		VK_SHADER_STAGE_FRAGMENT_BIT);
 }
 
-void PipelinePBRShadow::PrepareVIM(VulkanContext& ctx)
+void PipelinePBRShadow::PrepareBDA(VulkanContext& ctx)
 {
 	const BDA vim = scene_->GetBDA();
 	const VkDeviceSize vimSize = sizeof(BDA);

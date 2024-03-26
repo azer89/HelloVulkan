@@ -33,7 +33,7 @@ PipelinePBRBindless::PipelinePBRBindless(
 	resourcesIBL_(resourcesIBL)
 {
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
-	PrepareVIM(ctx); // Buffer device address
+	PrepareBDA(ctx); // Buffer device address
 	CreateDescriptor(ctx);
 	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
 	framebuffer_.CreateResizeable(
@@ -98,17 +98,17 @@ void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelinePBRBindless::PrepareVIM(VulkanContext& ctx)
+void PipelinePBRBindless::PrepareBDA(VulkanContext& ctx)
 {
-	BDA vim = scene_->GetBDA();
-	VkDeviceSize vimSize = sizeof(BDA);
+	BDA bda = scene_->GetBDA();
+	VkDeviceSize bdaSize = sizeof(BDA);
 	bdaBuffer_.CreateBuffer(
 		ctx,
-		vimSize,
+		bdaSize,
 		VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 		VMA_MEMORY_USAGE_CPU_TO_GPU
 	);
-	bdaBuffer_.UploadBufferData(ctx, &vim, vimSize);
+	bdaBuffer_.UploadBufferData(ctx, &bda, bdaSize);
 }
 
 void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
