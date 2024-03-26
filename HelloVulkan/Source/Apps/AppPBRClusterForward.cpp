@@ -34,7 +34,11 @@ void AppPBRClusterForward::Init()
 	resCF_->CreateBuffers(vulkanContext_, resourcesLight_->GetLightCount());
 
 	std::vector<ModelCreateInfo> dataArray = {
-		{AppConfig::ModelFolder + "Sponza/Sponza.gltf", 1}
+		{
+			.filename = AppConfig::ModelFolder + "Sponza/Sponza.gltf",
+			.instanceCount = 1,
+			.playAnimation = false
+		}
 	};
 	bool supportDeviceAddress = true;
 	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);

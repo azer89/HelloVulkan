@@ -12,7 +12,11 @@ void AppSimpleRaytracing::Init()
 
 	// Scene
 	std::vector<ModelCreateInfo> dataArray = {
-		{ AppConfig::ModelFolder + "Dragon/Dragon.obj", 1}
+		{ 
+			.filename = AppConfig::ModelFolder + "Dragon/Dragon.obj",
+			.instanceCount = 1,
+			.playAnimation = false
+		}
 	};
 	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray);
 

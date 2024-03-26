@@ -12,12 +12,12 @@
 #include <vector>
 #include <unordered_map>
 
-#include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 
 class Model
 {
 public:
+	std::string filepath_ = {};
 	std::vector<Mesh> meshes_ = {};
 
 	// NOTE Textures are stored in Model regardless of bindless textures or Slot-Based
@@ -30,11 +30,18 @@ public:
 	// This is used to store the filename and to activate instancing in bindless setup
 	ModelCreateInfo modelInfo_ = {};
 
+	// Skinning
+	std::unordered_map<std::string, BoneInfo> boneInfoMap_;
+
 private:
 	const aiScene* scene_ = nullptr;
 	bool bindlessTexture_ = false;
 	VkDevice device_ = nullptr;
 	std::string directory_ = {};
+
+	// Skinning
+	int boneCounter_ = 0;
+	bool processAnimation_ = false;
 
 	// string key is the filename, int value points to elements in textureList_
 	std::unordered_map<std::string, uint32_t> textureMap_ = {};
@@ -47,13 +54,16 @@ public:
 
 	void LoadSlotBased(VulkanContext& ctx, const std::string& path);
 	void LoadBindless(VulkanContext& ctx,
-		const ModelCreateInfo& modelData,
+		const ModelCreateInfo& modelInfo,
 		SceneData& sceneData
 	);
 
+	[[nodiscard]] const aiScene* GetAssimpScene() const { return scene_; }
 	[[nodiscard]] VulkanImage* GetTexture(uint32_t textureIndex);
 	[[nodiscard]] uint32_t GetTextureCount() const { return static_cast<uint32_t>(textureList_.size()); }
 	[[nodiscard]] uint32_t GetMeshCount() const { return static_cast<uint32_t>(meshes_.size()); }
+	[[nodiscard]] int GetBoneCounter() const { return boneCounter_; }
+	[[nodiscard]] int ProcessAnimation() const { return processAnimation_; }
 
 	void CreateModelUBOBuffers(VulkanContext& ctx);
 	void SetModelUBO(VulkanContext& ctx, ModelUBO ubo);
@@ -82,9 +92,21 @@ private:
 		const aiMesh* mesh,
 		const glm::mat4& transform);
 
-	[[nodiscard]] std::vector<VertexData> GetVertices(const aiMesh* mesh, const glm::mat4& transform);
-	[[nodiscard]] std::vector<uint32_t> GetIndices(const aiMesh* mesh);
-	[[nodiscard]] std::unordered_map<TextureType, uint32_t> GetTextures(VulkanContext& ctx, const aiMesh* mesh);
+	void SetBoneToDefault(
+		std::vector<uint32_t>& skinningIndices,
+		std::vector<iSVec>& boneIDArray,
+		std::vector<fSVec>& boneWeightArray,
+		uint32_t vertexCount,
+		uint32_t prevVertexOffset);
+
+	void ExtractBoneWeight(
+		std::vector<iSVec>& boneIDs,
+		std::vector<fSVec>& boneWeights,
+		const aiMesh* mesh);
+
+	[[nodiscard]] std::vector<VertexData> GetMeshVertices(const aiMesh* mesh, const glm::mat4& transform);
+	[[nodiscard]] std::vector<uint32_t> GetMeshIndices(const aiMesh* mesh);
+	[[nodiscard]] std::unordered_map<TextureType, uint32_t> GetMeshTextures(VulkanContext& ctx, const aiMesh* mesh);
 };
 
 #endif

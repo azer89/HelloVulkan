@@ -52,9 +52,9 @@ void PipelineFrustumCulling::Execute(VulkanContext& ctx, VkCommandBuffer command
 		.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER_2,
 		.pNext = nullptr,
 		.srcStageMask = VK_PIPELINE_STAGE_2_COMPUTE_SHADER_BIT,
-		.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT,
-		.dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-		.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
+		.srcAccessMask = VK_ACCESS_2_SHADER_WRITE_BIT,
+		.dstStageMask = VK_PIPELINE_STAGE_2_DRAW_INDIRECT_BIT_KHR,
+		.dstAccessMask = VK_ACCESS_2_MEMORY_READ_BIT_KHR ,
 		.srcQueueFamilyIndex = ctx.GetComputeFamily(),
 		.dstQueueFamilyIndex = ctx.GetGraphicsFamily(),
 		.buffer = scene_->indirectBuffer_.buffer_,
@@ -72,12 +72,11 @@ void PipelineFrustumCulling::CreateDescriptor(VulkanContext& ctx)
 	VulkanDescriptorInfo dsInfo;
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, stageFlag); // 0
 	dsInfo.AddBuffer(&(scene_->transformedBoundingBoxBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 1
-	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 2
+	dsInfo.AddBuffer(&(scene_->indirectBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 2
 	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 	for (size_t i = 0; i < frameCount; ++i)
 	{
 		dsInfo.UpdateBuffer(&(frustumBuffers_[i]), 0);
-		dsInfo.UpdateBuffer(&(scene_->indirectBuffer_), 2);
 		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}
 }

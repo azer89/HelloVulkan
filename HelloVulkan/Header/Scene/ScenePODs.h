@@ -3,8 +3,20 @@
 
 #include "VertexData.h"
 #include "BoundingBox.h"
+#include "Configs.h"
 
 #include <vector>
+#include <array>
+
+#include "glm/glm.hpp"
+#include "glm/ext.hpp"
+#include "glm/gtx/quaternion.hpp"
+
+// Skinning vector with int elements
+using iSVec = std::array<int, AppConfig::MaxSkinningBone>;
+
+// Skinning vector with float elements
+using fSVec = std::array<float, AppConfig::MaxSkinningBone>;
 
 struct SceneData
 {
@@ -12,22 +24,23 @@ struct SceneData
 	std::vector<uint32_t> indices = {};
 	std::vector<uint32_t> vertexOffsets = {};
 	std::vector<uint32_t> indexOffsets = {};
+	
+	// Skinning
+	uint32_t boneMatrixCount = 1u;
+	std::vector<VertexData> preSkinningVertices = {};
+	std::vector<uint32_t> skinningIndices = {};
+	std::vector<iSVec> boneIDArray = {};
+	std::vector<fSVec> boneWeightArray = {};
 
 	uint32_t GetCurrentVertexOffset()
 	{
-		if (vertexOffsets.empty())
-		{
-			return 0u;
-		}
+		if (vertexOffsets.empty()) { return 0u; }
 		return vertexOffsets.back();
 	}
 
 	uint32_t GetCurrentIndexOffset()
 	{
-		if (indexOffsets.empty())
-		{
-			return 0u;
-		}
+		if (indexOffsets.empty()) { return 0u; }
 		return indexOffsets.back();
 	}
 };
@@ -77,7 +90,50 @@ struct InstanceMap
 
 struct ModelCreateInfo
 {
-	std::string filename;
-	uint32_t instanceCount; // Allows instancing
+	std::string filename = {};
+	uint32_t instanceCount = 1; // Allows instancing
+	bool playAnimation = false;
 };
+
+// Skinning
+struct BoneInfo
+{
+	// ID is index in finalBoneMatrices
+	int id = 0; // The first matrix (zero index) is identity
+
+	// Offset matrix transforms vertex from model space to bone space
+	glm::mat4 offsetMatrix = glm::mat4(1.0);
+
+};
+
+// Skinning
+struct AnimationNode
+{
+	glm::mat4 transformation = glm::mat4(1.0);
+	std::string name = {};
+	uint32_t childrenCount = 0u;
+	std::vector<AnimationNode> children = {};
+};
+
+// Skinning
+struct KeyPosition
+{
+	glm::vec3 position;
+	float timeStamp;
+};
+
+// Skinning
+struct KeyRotation
+{
+	glm::quat orientation;
+	float timeStamp;
+};
+
+// Skinning
+struct KeyScale
+{
+	glm::vec3 scale;
+	float timeStamp;
+};
+
 #endif

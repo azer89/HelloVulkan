@@ -21,16 +21,25 @@ Scene::Scene(VulkanContext& ctx,
 		models_.push_back(m);
 	}
 	CreateBindlessResources(ctx);
+	CreateAnimationResources(ctx);
 }
 
 Scene::~Scene()
 {
-	meshDataBuffer_.Destroy();
+	boneIDBuffer_.Destroy();
+	boneWeightBuffer_.Destroy();
+	skinningIndicesBuffer_.Destroy();
+	preSkinningVertexBuffer_.Destroy();
 	vertexBuffer_.Destroy();
 	indexBuffer_.Destroy();
-	transformedBoundingBoxBuffer_.Destroy();
 	indirectBuffer_.Destroy();
+	meshDataBuffer_.Destroy();
+	transformedBoundingBoxBuffer_.Destroy();
 	for (auto& buffer : modelSSBOBuffers_)
+	{
+		buffer.Destroy();
+	}
+	for (auto& buffer : boneMatricesBuffers_)
 	{
 		buffer.Destroy();
 	}
@@ -99,6 +108,7 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 	if (supportDeviceAddress_) { bufferUsage |= VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT; }
 	
 	// Vertices
+	// NOTE This may contain post-skinning vertices
 	const VkDeviceSize vertexBufferSize = sizeof(VertexData) * sceneData_.vertices.size();
 	vertexBuffer_.CreateGPUOnlyBuffer(
 		ctx,
@@ -126,7 +136,6 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 	// Transform matrices
 	const VkDeviceSize modelSSBOBufferSize = sizeof(ModelUBO) * modelSSBOs_.size();
 	constexpr uint32_t frameCount = AppConfig::FrameCount;
-	modelSSBOBuffers_.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
 		modelSSBOBuffers_[i].CreateBuffer(ctx, modelSSBOBufferSize,
@@ -145,6 +154,97 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 
 	// Indirect buffers
 	CreateIndirectBuffer(ctx, indirectBuffer_);
+}
+
+void Scene::UpdateAnimation(VulkanContext& ctx, float deltaTime)
+{
+	if (!HasAnimation())
+	{
+		return;
+	}
+
+	for (uint32_t i = 0; i < animators_.size(); ++i)
+	{
+		if (models_[i].ProcessAnimation())
+		{
+			animators_[i].UpdateAnimation(&(animations_[i]), skinningMatrices_, deltaTime);
+		}
+	}
+
+	const uint32_t frameIndex = ctx.GetFrameIndex();
+	const VkDeviceSize matrixBufferSize = sizeof(glm::mat4) * skinningMatrices_.size();
+	boneMatricesBuffers_[frameIndex].UploadBufferData(ctx, skinningMatrices_.data(), matrixBufferSize);
+}
+
+void Scene::CreateAnimationResources(VulkanContext& ctx)
+{
+	if (!HasAnimation())
+	{
+		return;
+	}
+
+	skinningMatrices_.reserve(sceneData_.boneMatrixCount + 1);
+	for (int i = 0; i < sceneData_.boneMatrixCount; i++)
+	{
+		skinningMatrices_.push_back(glm::mat4(1.0f));
+	}
+
+	animations_.resize(models_.size());
+	animators_.resize(models_.size());
+	for (uint32_t i = 0; i < models_.size(); ++i)
+	{
+		if (models_[i].ProcessAnimation())
+		{
+			animations_[i].Init(models_[i].filepath_, &(models_[i]));
+		}
+	}
+
+	// Support for bindless rendering
+	VkBufferUsageFlags bufferUsage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+	if (supportDeviceAddress_) { bufferUsage |= VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT; }
+
+	// Bone IDs
+	const VkDeviceSize boneIDBufferSize = sizeof(iSVec) * sceneData_.boneIDArray.size();
+	boneIDBuffer_.CreateGPUOnlyBuffer(
+		ctx,
+		boneIDBufferSize,
+		sceneData_.boneIDArray.data(),
+		bufferUsage);
+	
+	// Bone weights
+	const VkDeviceSize boneWeightBufferSize = sizeof(fSVec) * sceneData_.boneWeightArray.size();
+	boneWeightBuffer_.CreateGPUOnlyBuffer(
+		ctx,
+		boneWeightBufferSize,
+		sceneData_.boneWeightArray.data(),
+		bufferUsage);
+
+	// Map from preSkinningVertices to vertices
+	const VkDeviceSize skinningIndicesBufferSize = sizeof(uint32_t) * sceneData_.skinningIndices.size();
+	skinningIndicesBuffer_.CreateGPUOnlyBuffer(
+		ctx,
+		skinningIndicesBufferSize,
+		sceneData_.skinningIndices.data(),
+		bufferUsage);
+
+	// Pre-skinned vertex buffer
+	const VkDeviceSize vertexBufferSize = sizeof(VertexData) * sceneData_.preSkinningVertices.size();
+	preSkinningVertexBuffer_.CreateGPUOnlyBuffer(
+		ctx,
+		vertexBufferSize,
+		sceneData_.preSkinningVertices.data(),
+		bufferUsage);
+
+	// Bone matrices buffers
+	const VkDeviceSize matrixBufferSize = sizeof(glm::mat4) * skinningMatrices_.size();
+	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
+	{
+		boneMatricesBuffers_[i].CreateBuffer(
+			ctx,
+			matrixBufferSize,
+			bufferUsage,
+			VMA_MEMORY_USAGE_CPU_TO_GPU);
+	}
 }
 
 void Scene::CreateDataStructures()
@@ -188,7 +288,7 @@ void Scene::CreateDataStructures()
 	}
 
 	// Sort based on material
-	std::sort(
+	std::ranges::sort(
 		std::begin(instanceDataArray_),
 		std::end(instanceDataArray_),
 		[](InstanceData a, InstanceData b)
