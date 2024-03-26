@@ -137,15 +137,15 @@ void PipelinePBRShadow::CreateSpecializationConstants()
 
 void PipelinePBRShadow::PrepareBDA(VulkanContext& ctx)
 {
-	const BDA vim = scene_->GetBDA();
-	const VkDeviceSize vimSize = sizeof(BDA);
+	const BDA bda = scene_->GetBDA();
+	const VkDeviceSize bdaSize = sizeof(BDA);
 	bdaBuffer_.CreateBuffer(
 		ctx,
-		vimSize,
+		bdaSize,
 		VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 		VMA_MEMORY_USAGE_CPU_TO_GPU
 	);
-	bdaBuffer_.UploadBufferData(ctx, &vim, vimSize);
+	bdaBuffer_.UploadBufferData(ctx, &bda, bdaSize);
 }
 
 void PipelinePBRShadow::CreateDescriptor(VulkanContext& ctx)
