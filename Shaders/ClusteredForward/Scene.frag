@@ -20,7 +20,7 @@ Fragment shader for PBR+IBL, naive forward shading (non clustered)
 #include <ClusteredForward/Header.glsl>
 #include <Bindless/VertexData.glsl>
 #include <Bindless/MeshData.glsl>
-#include <Bindless/VIM.glsl>
+#include <Bindless/BDA.glsl>
 
 // Specialization constant
 layout (constant_id = 0) const uint ALPHA_DISCARD = 1;
@@ -36,7 +36,7 @@ layout(location = 0) out vec4 fragColor;
 layout(push_constant) uniform PC { PBRPushConstant pc; };
 
 layout(set = 0, binding = 0) uniform CameraBlock { CameraUBO camUBO; }; // UBO
-layout(set = 0, binding = 2) uniform VIMBlock { VIM vim; }; // UBO
+layout(set = 0, binding = 2) uniform BDABlock { BDA bda; }; // UBO
 layout(set = 0, binding = 3) uniform CFUBO { ClusterForwardUBO cfUBO; }; // UBO
 layout(set = 0, binding = 4) readonly buffer Lights { LightData lights []; }; // SSBO
 layout(set = 0, binding = 5) readonly buffer LightCells { LightCell lightCells []; }; // SSBO
@@ -78,7 +78,7 @@ void main()
 	uint lightIndexOffset = lightCells[clusterIdx].offset;
 
 	// Buffer device address
-	MeshData mData = vim.meshReference.meshes[meshIndex];
+	MeshData mData = bda.meshReference.meshes[meshIndex];
 
 	// PBR + IBL
 	vec4 albedo4 = texture(pbrTextures[nonuniformEXT(mData.albedo)], texCoord).rgba;

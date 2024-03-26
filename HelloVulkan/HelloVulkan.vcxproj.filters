@@ -183,7 +183,7 @@
     <None Include="..\Shaders\IBL\BRDFLUT.comp">
       <Filter>Shaders\IBL</Filter>
     </None>
-    <None Include="..\Shaders\Bindless\VIM.glsl">
+    <None Include="..\Shaders\Bindless\BDA.glsl">
       <Filter>Shaders\Bindless</Filter>
     </None>
     <None Include="..\Shaders\Line.frag">
