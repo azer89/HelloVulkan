@@ -247,6 +247,9 @@
     <ClInclude Include="Header\Resources\ResourcesIBL.h" />
     <ClInclude Include="Header\Resources\ResourcesShadow.h" />
     <ClInclude Include="Header\Resources\ResourcesShared.h" />
+    <ClInclude Include="Header\Scene\Animation.h" />
+    <ClInclude Include="Header\Scene\Animator.h" />
+    <ClInclude Include="Header\Scene\Bone.h" />
     <ClInclude Include="Header\Scene\Mesh.h" />
     <ClInclude Include="Header\Scene\Model.h" />
     <ClInclude Include="Header\Scene\Scene.h" />
@@ -311,6 +314,9 @@
     <ClCompile Include="Source\Resources\ResourcesIBL.cpp" />
     <ClCompile Include="Source\Resources\ResourcesShadow.cpp" />
     <ClCompile Include="Source\Resources\ResourcesShared.cpp" />
+    <ClCompile Include="Source\Scene\Animation.cpp" />
+    <ClCompile Include="Source\Scene\Animator.cpp" />
+    <ClCompile Include="Source\Scene\Bone.cpp" />
     <ClCompile Include="Source\Scene\Mesh.cpp" />
     <ClCompile Include="Source\Scene\Model.cpp" />
     <ClCompile Include="Source\Scene\Scene.cpp" />

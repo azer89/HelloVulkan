@@ -36,6 +36,10 @@ private:
 	VkDevice device_ = nullptr;
 	std::string directory_ = {};
 
+	// Skinning
+	std::unordered_map<std::string, BoneInfo> boneInfoMap_;
+	uint32_t boneCounter_ = 0;
+
 	// string key is the filename, int value points to elements in textureList_
 	std::unordered_map<std::string, uint32_t> textureMap_ = {};
 
@@ -81,6 +85,13 @@ private:
 		SceneData& sceneData,
 		const aiMesh* mesh,
 		const glm::mat4& transform);
+
+	void SetBoneDataToDefault(uSVec& boneIDs, fSVec& boneWeights);
+	void GetBoneData(uSVec& boneIDs, fSVec& boneWeights, int boneID, float weight);
+	void ExtractBoneWeightForVertices(
+		std::vector<uSVec>& boneIDs,
+		std::vector<fSVec>& boneWeights,
+		aiMesh* mesh);
 
 	[[nodiscard]] std::vector<VertexData> GetVertices(const aiMesh* mesh, const glm::mat4& transform);
 	[[nodiscard]] std::vector<uint32_t> GetIndices(const aiMesh* mesh);

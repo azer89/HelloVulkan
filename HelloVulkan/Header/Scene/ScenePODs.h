@@ -3,8 +3,16 @@
 
 #include "VertexData.h"
 #include "BoundingBox.h"
+#include "Configs.h"
 
 #include <vector>
+#include <array>
+
+// Skinning vector with uint elements
+using uSVec = std::array<uint32_t, AppConfig::MaxSkinningBone>;
+
+// Skinning vector with float elements
+using fSVec = std::array<float, AppConfig::MaxSkinningBone>;
 
 struct SceneData
 {
@@ -12,6 +20,10 @@ struct SceneData
 	std::vector<uint32_t> indices = {};
 	std::vector<uint32_t> vertexOffsets = {};
 	std::vector<uint32_t> indexOffsets = {};
+	
+	// Skinning
+	std::vector<uSVec> boneIDs;
+	std::vector<fSVec> boneWeights;
 
 	uint32_t GetCurrentVertexOffset()
 	{
@@ -30,6 +42,24 @@ struct SceneData
 		}
 		return indexOffsets.back();
 	}
+};
+
+struct BoneInfo
+{
+	// ID is index in finalBoneMatrices
+	int id = -1;
+
+	// Offset matrix transforms vertex from model space to bone space
+	glm::mat4 offsetMatrix = glm::mat4(1.0);
+
+};
+
+struct AnimationNode
+{
+	glm::mat4 transformation = glm::mat4(1.0);
+	std::string name = {};
+	uint32_t childrenCount = 0u;
+	std::vector<AnimationNode> children = {};
 };
 
 enum class MaterialType : uint32_t

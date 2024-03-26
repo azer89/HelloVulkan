@@ -16,6 +16,8 @@ namespace AppConfig
 	// VK_PRESENT_MODE_FIFO_KHR --> Lock to screen FPS
 	// VK_PRESENT_MODE_MAILBOX_KHR --> Triple buffering
 	constexpr VkPresentModeKHR PresentMode = VK_PRESENT_MODE_FIFO_KHR;
+
+	constexpr uint32_t MaxSkinningBone = 4;
 	
 	const std::string ScreenTitle = "Hello Vulkan";
 

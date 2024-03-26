@@ -238,6 +238,74 @@ void Model::ProcessMesh(
 	}
 }
 
+void Model::SetBoneDataToDefault(uSVec& boneIDs, fSVec& boneWeights)
+{
+	for (uint32_t i = 0; i < AppConfig::MaxSkinningBone; ++i)
+	{
+		boneWeights[i] = -1;
+		boneIDs[i] = 0.0f;
+	}
+}
+
+
+void Model::GetBoneData(uSVec& boneIDs, fSVec& boneWeights, int boneID, float weight)
+{
+	for (uint32_t i = 0; i < AppConfig::MaxSkinningBone; ++i)
+	{
+		if (boneIDs[i] < 0)
+		{
+			boneWeights[i] = weight;
+			boneIDs[i] = boneID;
+			break;
+		}
+	}
+}
+
+void Model::ExtractBoneWeightForVertices(
+	std::vector<uSVec>& boneIDs,
+	std::vector<fSVec>& boneWeights,
+	aiMesh* mesh)
+{
+	if (mesh->mNumBones == 0)
+	{
+		return;
+	}
+
+	for (uint32_t boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
+	{
+		int boneID = -1;
+		std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
+		if (!boneInfoMap_.contains(boneName))
+		{
+			BoneInfo newBoneInfo =
+			{
+				.id = boneCounter_,
+				.offsetMatrix = CastToGLMMat4(mesh->mBones[boneIndex]->mOffsetMatrix)
+			};
+			boneInfoMap_[boneName] = newBoneInfo;
+			boneID = boneCounter_;
+			++boneCounter_;
+		}
+		else
+		{
+			boneID = boneInfoMap_[boneName].id;
+		}
+
+		assert(boneID != -1);
+
+		auto weights = mesh->mBones[boneIndex]->mWeights;
+		int numWeights = mesh->mBones[boneIndex]->mNumWeights;
+
+		for (int wIndex = 0; wIndex < numWeights; ++wIndex)
+		{
+			int vertexId = weights[wIndex].mVertexId;
+			float weight = weights[wIndex].mWeight;
+			assert(vertexId <= vertices.size());
+			GetBoneData(boneIDs[vertexId], boneWeights[vertexId], boneID, weight);
+		}
+	}
+}
+
 std::vector<VertexData> Model::GetVertices(const aiMesh* mesh, const glm::mat4& transform)
 {
 	std::vector<VertexData> vertices;
