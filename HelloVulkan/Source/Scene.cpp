@@ -43,7 +43,7 @@ Scene::~Scene()
 	}
 }
 
-VIM Scene::GetVIM() const
+BDA Scene::GetBDA() const
 {
 	return
 	{

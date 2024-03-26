@@ -1,13 +1,13 @@
-#ifndef VERTEX_INDEX_MESH
-#define VERTEX_INDEX_MESH
+#ifndef BUFFER_DEVICE_ADDRESS
+#define BUFFER_DEVICE_ADDRESS
 
 #include <cstdint>
 
-struct VIM
+struct BDA
 {
-	uint64_t vertexBufferAddress; // V
-	uint64_t indexBufferAddress; // I
-	uint64_t meshDataBufferAddress; // M
+	uint64_t vertexBufferAddress;
+	uint64_t indexBufferAddress;
+	uint64_t meshDataBufferAddress;
 	uint64_t _pad;
 };
 

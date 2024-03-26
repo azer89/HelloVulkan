@@ -74,7 +74,7 @@ PipelinePBRShadow::~PipelinePBRShadow()
 	{
 		uboBuffer.Destroy();
 	}
-	vimBuffer_.Destroy();
+	bdaBuffer_.Destroy();
 }
 
 void PipelinePBRShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
@@ -137,15 +137,15 @@ void PipelinePBRShadow::CreateSpecializationConstants()
 
 void PipelinePBRShadow::PrepareVIM(VulkanContext& ctx)
 {
-	const VIM vim = scene_->GetVIM();
-	const VkDeviceSize vimSize = sizeof(VIM);
-	vimBuffer_.CreateBuffer(
+	const BDA vim = scene_->GetBDA();
+	const VkDeviceSize vimSize = sizeof(BDA);
+	bdaBuffer_.CreateBuffer(
 		ctx,
 		vimSize,
 		VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 		VMA_MEMORY_USAGE_CPU_TO_GPU
 	);
-	vimBuffer_.UploadBufferData(ctx, &vim, vimSize);
+	bdaBuffer_.UploadBufferData(ctx, &vim, vimSize);
 }
 
 void PipelinePBRShadow::CreateDescriptor(VulkanContext& ctx)
@@ -155,7 +155,7 @@ void PipelinePBRShadow::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 1
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 2
-	dsInfo.AddBuffer(&vimBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 3
+	dsInfo.AddBuffer(&bdaBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 3
 	dsInfo.AddBuffer(resourcesLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
 	dsInfo.AddImage(&(resourcesIBL_->specularCubemap_)); // 5
 	dsInfo.AddImage(&(resourcesIBL_->diffuseCubemap_)); // 6

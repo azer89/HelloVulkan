@@ -50,7 +50,7 @@ private:
 private:
 	PushConstPBR pc_;
 	Scene* scene_;
-	VulkanBuffer vimBuffer_;
+	VulkanBuffer bdaBuffer_;
 	ResourcesLight* resourcesLight_;
 	ResourcesIBL* resourcesIBL_;
 	ResourcesShadow* resourcesShadow_;

@@ -41,7 +41,7 @@ private:
 	ResourcesLight* resourcesLight_;
 	ResourcesIBL* resourcesIBL_;
 	PushConstPBR pc_;
-	VulkanBuffer vimBuffer_;
+	VulkanBuffer bdaBuffer_;
 	std::vector<VkDescriptorSet> descriptorSets_;
 };
 

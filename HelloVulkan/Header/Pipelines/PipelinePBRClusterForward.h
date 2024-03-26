@@ -53,7 +53,7 @@ private:
 	ResourcesLight* resourcesLight_;
 	ResourcesIBL* resourcesIBL_;
 	std::vector<VulkanBuffer> cfUBOBuffers_;
-	VulkanBuffer vimBuffer_;
+	VulkanBuffer bdaBuffer_;
 	Scene* scene_;
 	std::vector<VkDescriptorSet> descriptorSets_;
 

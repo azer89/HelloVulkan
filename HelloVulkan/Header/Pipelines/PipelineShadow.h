@@ -23,7 +23,7 @@ private:
 	void CreateDescriptor(VulkanContext& ctx);
 
 private:
-	VIM vim_;
+	BDA bda_;
 	Scene* scene_;
 	ResourcesShadow* resourcesShadow_;
 
