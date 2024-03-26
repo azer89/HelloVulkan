@@ -38,7 +38,7 @@ private:
 
 	// Skinning
 	std::unordered_map<std::string, BoneInfo> boneInfoMap_;
-	uint32_t boneCounter_ = 0;
+	int boneCounter_ = 0;
 
 	// string key is the filename, int value points to elements in textureList_
 	std::unordered_map<std::string, uint32_t> textureMap_ = {};
