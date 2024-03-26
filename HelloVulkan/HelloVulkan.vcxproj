@@ -112,7 +112,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;TRACY_ENABLE;GLM_FORCE_DEPTH_ZERO_TO_ONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Header;Header\Apps;Header\Pipelines;Header\Resources;Header\Vulkan;Header\Raytracing;..\External\stb;..\External\assimp\include;..\External\glfw\include;..\External\glm;..\External\ImGui;..\External\ImGui\backends;..\External\volk;..\External\VulkanMemoryAllocator\include;..\External\tracy\public\tracy;..\External\Binaries\assimp\include;$(VULKAN_SDK)\Include;$(VULKAN_SDK)\Include\glslang\Include;$(VULKAN_SDK)\Include\glslang\MachineIndependent;$(VULKAN_SDK)\Include\glslang\Public;$(VULKAN_SDK)\Include\glslang\SPIRV;$(VULKAN_SDK)\Include\spirv_cross;$(VULKAN_SDK)\Include\spirv-tools;$(VULKAN_SDK)\Include\spirv-headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Header;Header\Apps;Header\Pipelines;Header\Resources;Header\Scene;Header\Vulkan;Header\Raytracing;..\External\stb;..\External\assimp\include;..\External\glfw\include;..\External\glm;..\External\ImGui;..\External\ImGui\backends;..\External\volk;..\External\VulkanMemoryAllocator\include;..\External\tracy\public\tracy;..\External\Binaries\assimp\include;$(VULKAN_SDK)\Include;$(VULKAN_SDK)\Include\glslang\Include;$(VULKAN_SDK)\Include\glslang\MachineIndependent;$(VULKAN_SDK)\Include\glslang\Public;$(VULKAN_SDK)\Include\glslang\SPIRV;$(VULKAN_SDK)\Include\spirv_cross;$(VULKAN_SDK)\Include\spirv-tools;$(VULKAN_SDK)\Include\spirv-headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>Default</LanguageStandard_C>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -132,7 +132,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;TRACY_ENABLE;GLM_FORCE_DEPTH_ZERO_TO_ONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Header;Header\Apps;Header\Pipelines;Header\Resources;Header\Vulkan;Header\Raytracing;..\External\stb;..\External\assimp\include;..\External\glfw\include;..\External\glm;..\External\ImGui;..\External\ImGui\backends;..\External\volk;..\External\VulkanMemoryAllocator\include;..\External\tracy\public\tracy;..\External\Binaries\assimp\include;$(VULKAN_SDK)\Include;$(VULKAN_SDK)\Include\glslang\Include;$(VULKAN_SDK)\Include\glslang\MachineIndependent;$(VULKAN_SDK)\Include\glslang\Public;$(VULKAN_SDK)\Include\glslang\SPIRV;$(VULKAN_SDK)\Include\spirv_cross;$(VULKAN_SDK)\Include\spirv-tools;$(VULKAN_SDK)\Include\spirv-headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Header;Header\Apps;Header\Pipelines;Header\Resources;Header\Scene;Header\Vulkan;Header\Raytracing;..\External\stb;..\External\assimp\include;..\External\glfw\include;..\External\glm;..\External\ImGui;..\External\ImGui\backends;..\External\volk;..\External\VulkanMemoryAllocator\include;..\External\tracy\public\tracy;..\External\Binaries\assimp\include;$(VULKAN_SDK)\Include;$(VULKAN_SDK)\Include\glslang\Include;$(VULKAN_SDK)\Include\glslang\MachineIndependent;$(VULKAN_SDK)\Include\glslang\Public;$(VULKAN_SDK)\Include\glslang\SPIRV;$(VULKAN_SDK)\Include\spirv_cross;$(VULKAN_SDK)\Include\spirv-tools;$(VULKAN_SDK)\Include\spirv-headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -214,8 +214,6 @@
     <ClInclude Include="Header\Configs.h" />
     <ClInclude Include="Header\FrameCounter.h" />
     <ClInclude Include="Header\InputContext.h" />
-    <ClInclude Include="Header\Mesh.h" />
-    <ClInclude Include="Header\Model.h" />
     <ClInclude Include="Header\Pipelines\PipelineAABBGenerator.h" />
     <ClInclude Include="Header\Pipelines\PipelineAABBRender.h" />
     <ClInclude Include="Header\Pipelines\PipelineBase.h" />
@@ -249,8 +247,11 @@
     <ClInclude Include="Header\Resources\ResourcesIBL.h" />
     <ClInclude Include="Header\Resources\ResourcesShadow.h" />
     <ClInclude Include="Header\Resources\ResourcesShared.h" />
-    <ClInclude Include="Header\Scene.h" />
-    <ClInclude Include="Header\TextureMapper.h" />
+    <ClInclude Include="Header\Scene\Mesh.h" />
+    <ClInclude Include="Header\Scene\Model.h" />
+    <ClInclude Include="Header\Scene\Scene.h" />
+    <ClInclude Include="Header\Scene\ScenePODs.h" />
+    <ClInclude Include="Header\Scene\TextureMapper.h" />
     <ClInclude Include="Header\UBOs.h" />
     <ClInclude Include="Header\VertexData.h" />
     <ClInclude Include="Header\BDA.h" />
@@ -280,8 +281,6 @@
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\FrameCounter.cpp" />
     <ClCompile Include="Source\main.cpp" />
-    <ClCompile Include="Source\Mesh.cpp" />
-    <ClCompile Include="Source\Model.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineAABBGenerator.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineAABBRender.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineBase.cpp" />
@@ -312,7 +311,9 @@
     <ClCompile Include="Source\Resources\ResourcesIBL.cpp" />
     <ClCompile Include="Source\Resources\ResourcesShadow.cpp" />
     <ClCompile Include="Source\Resources\ResourcesShared.cpp" />
-    <ClCompile Include="Source\Scene.cpp" />
+    <ClCompile Include="Source\Scene\Mesh.cpp" />
+    <ClCompile Include="Source\Scene\Model.cpp" />
+    <ClCompile Include="Source\Scene\Scene.cpp" />
     <ClCompile Include="Source\Vulkan\VulkanBarrier.cpp" />
     <ClCompile Include="Source\Vulkan\VulkanBuffer.cpp" />
     <ClCompile Include="Source\Vulkan\VulkanContext.cpp" />

@@ -2,10 +2,11 @@
 #define MODEL
 
 #include "Mesh.h"
+#include "UBOs.h"
+#include "ScenePODs.h"
 #include "TextureMapper.h"
 #include "VulkanContext.h"
 #include "VulkanImage.h"
-#include "UBOs.h"
 
 #include <string>
 #include <vector>
@@ -14,35 +15,30 @@
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 
-struct ModelCreateInfo
-{
-	std::string filename;
-	uint32_t instanceCount; // Allows instancing
-};
-
 class Model
 {
 public:
-	std::vector<Mesh> meshes_;
+	std::vector<Mesh> meshes_ = {};
 
 	// NOTE Textures are stored in Model regardless of bindless textures or Slot-Based
-	std::vector<VulkanImage> textureList_;
+	std::vector<VulkanImage> textureList_ = {};
 
 	// Optional per-frame buffers for model matrix
 	// TODO Maybe can be moved to pipelines
-	std::vector<VulkanBuffer> modelBuffers_;
+	std::vector<VulkanBuffer> modelBuffers_ = {};
 
 	// This is used to store the filename and to activate instancing in bindless setup
-	ModelCreateInfo modelInfo_;
+	ModelCreateInfo modelInfo_ = {};
 
 private:
-	bool bindlessTexture_;
-	VkDevice device_;
-	std::string directory_;
+	const aiScene* scene_ = nullptr;
+	bool bindlessTexture_ = false;
+	VkDevice device_ = nullptr;
+	std::string directory_ = {};
 
 	// string key is the filename, int value points to elements in textureList_
-	std::unordered_map<std::string, uint32_t> textureMap_;
-	
+	std::unordered_map<std::string, uint32_t> textureMap_ = {};
+
 public:
 	Model() = default;
 	~Model() = default;
@@ -50,12 +46,10 @@ public:
 	void Destroy();
 
 	void LoadSlotBased(VulkanContext& ctx, const std::string& path);
-	void LoadBindless(VulkanContext& ctx, 
-		const ModelCreateInfo& modelData, 
-		std::vector<VertexData>& globalVertices,
-		std::vector<uint32_t>& globalIndices,
-		uint32_t& globalVertexOffset,
-		uint32_t& globalIndexOffset);
+	void LoadBindless(VulkanContext& ctx,
+		const ModelCreateInfo& modelData,
+		SceneData& sceneData
+	);
 
 	[[nodiscard]] VulkanImage* GetTexture(uint32_t textureIndex);
 	[[nodiscard]] uint32_t GetTextureCount() const { return static_cast<uint32_t>(textureList_.size()); }
@@ -68,43 +62,29 @@ private:
 	void AddTexture(VulkanContext& ctx, const std::string& textureFilename);
 	void AddTexture(VulkanContext& ctx, const std::string& textureName, void* data, int width, int height);
 
-	// TODO Three functions below are pretty ugly because we pass too many references
+	// Entry point
 	void LoadModel(
-		VulkanContext& ctx, 
+		VulkanContext& ctx,
 		std::string const& path,
-		std::vector<VertexData>& globalVertices,
-		std::vector<uint32_t>& globalIndices,
-		uint32_t& globalVertexOffset,
-		uint32_t& globalIndexOffset);
+		SceneData& sceneData
+	);
 
 	// Processes a node recursively
 	void ProcessNode(
-		VulkanContext& ctx, 
-		std::vector<VertexData>& globalVertices,
-		std::vector<uint32_t>& globalIndices,
-		uint32_t& globalVertexOffset,
-		uint32_t& globalIndexOffset,
-		const aiNode* node, 
-		const aiScene* scene, 
+		VulkanContext& ctx,
+		SceneData& sceneData,
+		const aiNode* node,
 		const glm::mat4& parentTransform);
 
 	void ProcessMesh(
-		VulkanContext& ctx, 
-		std::vector<VertexData>& globalVertices,
-		std::vector<uint32_t>& globalIndices,
-		uint32_t& globalVertexOffset,
-		uint32_t& globalIndexOffset,
-		const aiMesh* mesh, 
-		const aiScene* scene, 
+		VulkanContext& ctx,
+		SceneData& sceneData,
+		const aiMesh* mesh,
 		const glm::mat4& transform);
 
 	[[nodiscard]] std::vector<VertexData> GetVertices(const aiMesh* mesh, const glm::mat4& transform);
 	[[nodiscard]] std::vector<uint32_t> GetIndices(const aiMesh* mesh);
-	[[nodiscard]] std::unordered_map<TextureType, uint32_t> GetTextures(
-		VulkanContext& ctx, 
-		const aiScene* scene, 
-		const aiMesh* mesh);
+	[[nodiscard]] std::unordered_map<TextureType, uint32_t> GetTextures(VulkanContext& ctx, const aiMesh* mesh);
 };
 
 #endif
-

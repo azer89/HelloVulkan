@@ -1,29 +1,14 @@
 #ifndef SCENE_BINDLESS_TEXTURE
 #define SCENE_BINDLESS_TEXTURE
 
-#include "Model.h"
-#include "UBOs.h"
-#include "BoundingBox.h"
 #include "BDA.h"
+#include "UBOs.h"
+#include "Model.h"
+#include "ScenePODs.h"
+#include "BoundingBox.h"
 
 #include <vector>
 #include <span>
-
-struct InstanceData
-{
-	uint32_t modelIndex;
-	uint32_t meshIndex;
-	uint32_t perModelInstanceIndex;
-	MeshData meshData;
-	BoundingBox originalBoundingBox;
-};
-
-// Needed for updating bounding boxes
-struct InstanceMap
-{
-	uint32_t modelMatrixIndex;
-	std::vector<uint32_t> instanceDataIndices;
-};
 
 /*
 A scene used for indirect draw + bindless resources that contains 
@@ -60,27 +45,21 @@ private:
 
 public:
 	uint32_t triangleCount_ = 0;
-
-	std::vector<VertexData> vertices_ = {};
-	VulkanBuffer vertexBuffer_;
-
-	std::vector<uint32_t> indices_ = {};
-	VulkanBuffer indexBuffer_;
-
+	SceneData sceneData_ = {}; // Containing vertices and indices
 	std::vector<Model> models_ = {};
-
-	// Length of modelUBO_ is global instance count
 	std::vector<ModelUBO> modelSSBOs_ = {};
-	std::vector<VulkanBuffer> modelSSBOBuffers_ = {}; // Frame-in-flight
 
 	// These three have the same length
 	std::vector<InstanceData> instanceDataArray_ = {};
 	std::vector<MeshData> meshDataArray_ = {}; // Content is sent to meshDataBuffer_
 	std::vector<BoundingBox> transformedBoundingBoxes_ = {}; // Content is sent to transformedBoundingBoxBuffer_
-	
+
+	VulkanBuffer vertexBuffer_;
+	VulkanBuffer indexBuffer_;
 	VulkanBuffer indirectBuffer_;
 	VulkanBuffer meshDataBuffer_;
 	VulkanBuffer transformedBoundingBoxBuffer_; // TODO Implement Frame-in-flight
+	std::vector<VulkanBuffer> modelSSBOBuffers_ = {}; // Frame-in-flight
 	
 private:
 	bool supportDeviceAddress_;
