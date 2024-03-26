@@ -398,7 +398,7 @@
     <ClInclude Include="Header\Raytracing\RaytracingBuilder.h">
       <Filter>Header Files\Raytracing</Filter>
     </ClInclude>
-    <ClInclude Include="Header\VIM.h">
+    <ClInclude Include="Header\BDA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header\BoundingBox.h">

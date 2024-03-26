@@ -253,7 +253,7 @@
     <ClInclude Include="Header\TextureMapper.h" />
     <ClInclude Include="Header\UBOs.h" />
     <ClInclude Include="Header\VertexData.h" />
-    <ClInclude Include="Header\VIM.h" />
+    <ClInclude Include="Header\BDA.h" />
     <ClInclude Include="Header\Vulkan\VulkanPipelineCreateInfo.h" />
     <ClInclude Include="Header\Vulkan\VulkanBarrier.h" />
     <ClInclude Include="Header\Vulkan\VulkanBuffer.h" />

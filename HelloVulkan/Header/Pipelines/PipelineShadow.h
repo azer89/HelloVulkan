@@ -4,7 +4,7 @@
 #include "PipelineBase.h"
 #include "Scene.h"
 #include "ResourcesShadow.h"
-#include "VIM.h"
+#include "BDA.h"
 
 class PipelineShadow final : public PipelineBase
 {
