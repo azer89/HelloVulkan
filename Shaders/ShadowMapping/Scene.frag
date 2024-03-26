@@ -26,7 +26,7 @@ Fragment shader for
 #include <Bindless/VertexData.glsl>
 #include <Bindless/MeshData.glsl>
 #include <ShadowMapping/UBO.glsl>
-#include <Bindless/VIM.glsl>
+#include <Bindless/BDA.glsl>
 
 // Specialization constant
 layout (constant_id = 0) const uint ALPHA_DISCARD = 1;
@@ -43,7 +43,7 @@ layout(push_constant) uniform PC { PBRPushConstant pc; };
 
 layout(set = 0, binding = 0) uniform CameraBlock { CameraUBO camUBO; }; // UBO
 layout(set = 0, binding = 1) uniform UBOBlock { ShadowUBO shadowUBO; }; // UBO
-layout(set = 0, binding = 3) uniform VIMBlock { VIM vim; };
+layout(set = 0, binding = 3) uniform BDABlock { BDA bda; };
 layout(set = 0, binding = 4) readonly buffer Lights { LightData lights []; }; // SSBO
 layout(set = 0, binding = 5) uniform samplerCube specularMap;
 layout(set = 0, binding = 6) uniform samplerCube diffuseMap;
@@ -63,7 +63,7 @@ layout(set = 0, binding = 9) uniform sampler2D pbrTextures[];
 void main()
 {
 	// This uses buffer device address
-	MeshData mData = vim.meshReference.meshes[meshIndex];
+	MeshData mData = bda.meshReference.meshes[meshIndex];
 
 	vec4 albedo4 = texture(pbrTextures[nonuniformEXT(mData.albedo)], texCoord).rgba;
 

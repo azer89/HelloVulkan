@@ -20,7 +20,7 @@ Fragment shader for
 #include <TangentNormalToWorld.glsl>
 #include <Bindless/VertexData.glsl>
 #include <Bindless/MeshData.glsl>
-#include <Bindless/VIM.glsl>
+#include <Bindless/BDA.glsl>
 
 layout(location = 0) in vec3 worldPos;
 layout(location = 1) in vec2 texCoord;
@@ -33,7 +33,7 @@ layout(location = 0) out vec4 fragColor;
 layout(push_constant) uniform PC { PBRPushConstant pc; };
 
 layout(set = 0, binding = 0) uniform CameraBlock { CameraUBO camUBO; }; // UBO
-layout(set = 0, binding = 2) uniform VIMBlock { VIM vim; }; // UBO
+layout(set = 0, binding = 2) uniform BDABlock { BDA bda; }; // UBO
 layout(set = 0, binding = 3) readonly buffer Lights { LightData lights []; };// SSBO
 
 layout(set = 0, binding = 4) uniform samplerCube specularMap;
@@ -53,7 +53,7 @@ float LinearDepth(float z, float near, float far)
 
 void main()
 {
-	MeshData mData = vim.meshReference.meshes[meshIndex];
+	MeshData mData = bda.meshReference.meshes[meshIndex];
 
 	vec4 albedo4 = texture(pbrTextures[nonuniformEXT(mData.albedo)], texCoord).rgba;
 	albedo4 += vec4(vertexColor, 0.0);

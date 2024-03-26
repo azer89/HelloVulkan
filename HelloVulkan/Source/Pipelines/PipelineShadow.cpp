@@ -18,7 +18,7 @@ PipelineShadow::PipelineShadow(
 		.viewportWidth_ = static_cast<float>(resourcesShadow->shadowMap_.width_),
 		.viewportHeight_ = static_cast<float>(resourcesShadow->shadowMap_.height_)
 	}),
-	vim_(scene->GetVIM()),
+	bda_(scene->GetBDA()),
 	scene_(scene),
 	resourcesShadow_(resourcesShadow)
 {
@@ -36,7 +36,7 @@ PipelineShadow::PipelineShadow(
 		resourcesShadow_->shadowMap_.height_);
 	scene_->CreateIndirectBuffer(ctx, indirectBuffer_);
 	CreateDescriptor(ctx);
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(VIM), VK_SHADER_STAGE_VERTEX_BIT);
+	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(BDA), VK_SHADER_STAGE_VERTEX_BIT);
 	CreateGraphicsPipeline(
 		ctx,
 		renderPass_.GetHandle(),
@@ -96,7 +96,7 @@ void PipelineShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comma
 		pipelineLayout_,
 		VK_SHADER_STAGE_VERTEX_BIT,
 		0,
-		sizeof(VIM), &vim_);
+		sizeof(BDA), &bda_);
 
 	vkCmdBindDescriptorSets(
 		commandBuffer,

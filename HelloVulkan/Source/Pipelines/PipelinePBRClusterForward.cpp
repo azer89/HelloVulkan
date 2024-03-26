@@ -49,7 +49,7 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 			&(resourcesShared->depthImage_)
 		},
 		IsOffscreen());
-	PrepareVIM(ctx); // Buffer device address
+	PrepareBDA(ctx); // Buffer device address
 	CreateDescriptor(ctx);
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(PushConstPBR), VK_SHADER_STAGE_FRAGMENT_BIT);
 	CreateSpecializationConstants();
@@ -71,7 +71,7 @@ PipelinePBRClusterForward::~PipelinePBRClusterForward()
 	{
 		uboBuffer.Destroy();
 	}
-	vimBuffer_.Destroy();
+	bdaBuffer_.Destroy();
 }
 
 void PipelinePBRClusterForward::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
@@ -110,17 +110,17 @@ void PipelinePBRClusterForward::FillCommandBuffer(VulkanContext& ctx, VkCommandB
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelinePBRClusterForward::PrepareVIM(VulkanContext& ctx)
+void PipelinePBRClusterForward::PrepareBDA(VulkanContext& ctx)
 {
-	VIM vim = scene_->GetVIM();
-	VkDeviceSize vimSize = sizeof(VIM);
-	vimBuffer_.CreateBuffer(
+	BDA bda = scene_->GetBDA();
+	VkDeviceSize bdaSize = sizeof(BDA);
+	bdaBuffer_.CreateBuffer(
 		ctx,
-		vimSize,
+		bdaSize,
 		VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 		VMA_MEMORY_USAGE_CPU_TO_GPU
 	);
-	vimBuffer_.UploadBufferData(ctx, &vim, vimSize);
+	bdaBuffer_.UploadBufferData(ctx, &bda, bdaSize);
 }
 
 void PipelinePBRClusterForward::CreateSpecializationConstants()
@@ -147,7 +147,7 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 	VulkanDescriptorInfo dsInfo;
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 1
-	dsInfo.AddBuffer(&vimBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 2
+	dsInfo.AddBuffer(&bdaBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 2
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 3
 	dsInfo.AddBuffer(resourcesLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT); // 4
 	dsInfo.AddBuffer(&(resourcesCF_->lightCellsBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 5

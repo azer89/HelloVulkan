@@ -34,14 +34,14 @@ public:
 	}
 
 private:
-	void PrepareVIM(VulkanContext& ctx);
+	void PrepareBDA(VulkanContext& ctx);
 	void CreateDescriptor(VulkanContext& ctx);
 
 	Scene* scene_;
 	ResourcesLight* resourcesLight_;
 	ResourcesIBL* resourcesIBL_;
 	PushConstPBR pc_;
-	VulkanBuffer vimBuffer_;
+	VulkanBuffer bdaBuffer_;
 	std::vector<VkDescriptorSet> descriptorSets_;
 };
 

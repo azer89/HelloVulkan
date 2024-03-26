@@ -43,14 +43,14 @@ public:
 	}
 
 private:
-	void PrepareVIM(VulkanContext& ctx);
+	void PrepareBDA(VulkanContext& ctx);
 	void CreateDescriptor(VulkanContext& ctx);
 	void CreateSpecializationConstants();
 
 private:
 	PushConstPBR pc_;
 	Scene* scene_;
-	VulkanBuffer vimBuffer_;
+	VulkanBuffer bdaBuffer_;
 	ResourcesLight* resourcesLight_;
 	ResourcesIBL* resourcesIBL_;
 	ResourcesShadow* resourcesShadow_;

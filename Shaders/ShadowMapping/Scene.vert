@@ -17,7 +17,7 @@ Vertex shader for
 #include <ShadowMapping/UBO.glsl>
 #include <Bindless/VertexData.glsl>
 #include <Bindless/MeshData.glsl>
-#include <Bindless/VIM.glsl>
+#include <Bindless/BDA.glsl>
 
 layout(location = 0) out vec3 worldPos;
 layout(location = 1) out vec2 texCoord;
@@ -30,7 +30,7 @@ layout(set = 0, binding = 1) uniform UBOBlock { ShadowUBO shadowUBO; }; // UBO
 layout(set = 0, binding = 2) readonly buffer ModelUBOs { ModelUBO modelUBOs []; }; // SSBO
 
 // Buffer device address
-layout(set = 0, binding = 3) uniform VIMBlock { VIM vim; }; // UBO
+layout(set = 0, binding = 3) uniform BDABlock { BDA bda; }; // UBO
 
 const mat4 biasMat = mat4(
 	0.5, 0.0, 0.0, 0.0,
@@ -40,11 +40,11 @@ const mat4 biasMat = mat4(
 
 void main()
 {
-	MeshData meshData = vim.meshReference.meshes[gl_BaseInstance];
+	MeshData meshData = bda.meshReference.meshes[gl_BaseInstance];
 	uint vOffset = meshData.vertexOffset;
 	uint iOffset = meshData.indexOffset;
-	uint vIndex = vim.indexReference.indices[iOffset + gl_VertexIndex] + vOffset;
-	VertexData vertexData = vim.vertexReference.vertices[vIndex];
+	uint vIndex = bda.indexReference.indices[iOffset + gl_VertexIndex] + vOffset;
+	VertexData vertexData = bda.vertexReference.vertices[vIndex];
 	mat4 model = modelUBOs[meshData.modelMatrixIndex].model;
 	mat3 normalMatrix = transpose(inverse(mat3(model)));
 

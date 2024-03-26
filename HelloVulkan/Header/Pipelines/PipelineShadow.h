@@ -4,7 +4,7 @@
 #include "PipelineBase.h"
 #include "Scene.h"
 #include "ResourcesShadow.h"
-#include "VIM.h"
+#include "BDA.h"
 
 class PipelineShadow final : public PipelineBase
 {
@@ -23,7 +23,7 @@ private:
 	void CreateDescriptor(VulkanContext& ctx);
 
 private:
-	VIM vim_;
+	BDA bda_;
 	Scene* scene_;
 	ResourcesShadow* resourcesShadow_;
 

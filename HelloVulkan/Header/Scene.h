@@ -4,7 +4,7 @@
 #include "Model.h"
 #include "UBOs.h"
 #include "BoundingBox.h"
-#include "VIM.h"
+#include "BDA.h"
 
 #include <vector>
 #include <span>
@@ -40,7 +40,7 @@ public:
 
 	[[nodiscard]] uint32_t GetInstanceCount() const { return static_cast<uint32_t>(meshDataArray_.size()); }
 	[[nodiscard]] std::vector<VkDescriptorImageInfo> GetImageInfos() const;
-	[[nodiscard]] VIM GetVIM() const;
+	[[nodiscard]] BDA GetBDA() const;
 
 	void GetOffsetAndDrawCount(MaterialType matType, VkDeviceSize& offset, uint32_t& drawCount) const;
 

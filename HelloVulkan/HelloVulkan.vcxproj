@@ -153,7 +153,7 @@
     <None Include="..\Shaders\Bindless\Scene.vert" />
     <None Include="..\Shaders\Bindless\MeshData.glsl" />
     <None Include="..\Shaders\Bindless\VertexData.glsl" />
-    <None Include="..\Shaders\Bindless\VIM.glsl" />
+    <None Include="..\Shaders\Bindless\BDA.glsl" />
     <None Include="..\Shaders\CameraUBO.glsl" />
     <None Include="..\Shaders\ClusteredForward\AABBGenerator.comp" />
     <None Include="..\Shaders\ClusteredForward\Header.glsl" />
@@ -253,7 +253,7 @@
     <ClInclude Include="Header\TextureMapper.h" />
     <ClInclude Include="Header\UBOs.h" />
     <ClInclude Include="Header\VertexData.h" />
-    <ClInclude Include="Header\VIM.h" />
+    <ClInclude Include="Header\BDA.h" />
     <ClInclude Include="Header\Vulkan\VulkanPipelineCreateInfo.h" />
     <ClInclude Include="Header\Vulkan\VulkanBarrier.h" />
     <ClInclude Include="Header\Vulkan\VulkanBuffer.h" />
