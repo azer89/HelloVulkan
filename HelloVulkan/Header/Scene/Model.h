@@ -2,10 +2,11 @@
 #define MODEL
 
 #include "Mesh.h"
+#include "UBOs.h"
+#include "ScenePODs.h"
 #include "TextureMapper.h"
 #include "VulkanContext.h"
 #include "VulkanImage.h"
-#include "UBOs.h"
 
 #include <string>
 #include <vector>
@@ -13,12 +14,6 @@
 
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
-
-struct ModelCreateInfo
-{
-	std::string filename;
-	uint32_t instanceCount; // Allows instancing
-};
 
 class Model
 {
@@ -42,7 +37,7 @@ private:
 
 	// string key is the filename, int value points to elements in textureList_
 	std::unordered_map<std::string, uint32_t> textureMap_;
-	
+
 public:
 	Model() = default;
 	~Model() = default;
@@ -50,12 +45,10 @@ public:
 	void Destroy();
 
 	void LoadSlotBased(VulkanContext& ctx, const std::string& path);
-	void LoadBindless(VulkanContext& ctx, 
-		const ModelCreateInfo& modelData, 
-		std::vector<VertexData>& globalVertices,
-		std::vector<uint32_t>& globalIndices,
-		uint32_t& globalVertexOffset,
-		uint32_t& globalIndexOffset);
+	void LoadBindless(VulkanContext& ctx,
+		const ModelCreateInfo& modelData,
+		SceneData& sceneData
+	);
 
 	[[nodiscard]] VulkanImage* GetTexture(uint32_t textureIndex);
 	[[nodiscard]] uint32_t GetTextureCount() const { return static_cast<uint32_t>(textureList_.size()); }
@@ -70,39 +63,31 @@ private:
 
 	// TODO Three functions below are pretty ugly because we pass too many references
 	void LoadModel(
-		VulkanContext& ctx, 
+		VulkanContext& ctx,
 		std::string const& path,
-		std::vector<VertexData>& globalVertices,
-		std::vector<uint32_t>& globalIndices,
-		uint32_t& globalVertexOffset,
-		uint32_t& globalIndexOffset);
+		SceneData& sceneData
+	);
 
 	// Processes a node recursively
 	void ProcessNode(
-		VulkanContext& ctx, 
-		std::vector<VertexData>& globalVertices,
-		std::vector<uint32_t>& globalIndices,
-		uint32_t& globalVertexOffset,
-		uint32_t& globalIndexOffset,
-		const aiNode* node, 
-		const aiScene* scene, 
+		VulkanContext& ctx,
+		SceneData& sceneData,
+		const aiNode* node,
+		const aiScene* scene,
 		const glm::mat4& parentTransform);
 
 	void ProcessMesh(
-		VulkanContext& ctx, 
-		std::vector<VertexData>& globalVertices,
-		std::vector<uint32_t>& globalIndices,
-		uint32_t& globalVertexOffset,
-		uint32_t& globalIndexOffset,
-		const aiMesh* mesh, 
-		const aiScene* scene, 
+		VulkanContext& ctx,
+		SceneData& sceneData,
+		const aiMesh* mesh,
+		const aiScene* scene,
 		const glm::mat4& transform);
 
 	[[nodiscard]] std::vector<VertexData> GetVertices(const aiMesh* mesh, const glm::mat4& transform);
 	[[nodiscard]] std::vector<uint32_t> GetIndices(const aiMesh* mesh);
 	[[nodiscard]] std::unordered_map<TextureType, uint32_t> GetTextures(
-		VulkanContext& ctx, 
-		const aiScene* scene, 
+		VulkanContext& ctx,
+		const aiScene* scene,
 		const aiMesh* mesh);
 };
 

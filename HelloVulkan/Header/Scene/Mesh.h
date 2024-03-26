@@ -5,36 +5,10 @@
 #include "VulkanBuffer.h"
 #include "TextureMapper.h"
 #include "VertexData.h"
+#include "ScenePODs.h"
 
 #include <vector>
 #include <unordered_map>
-
-enum class MaterialType : uint32_t
-{
-	Opaque = 0,
-	Transparent = 1,
-};
-
-// For bindless textures
-struct MeshData
-{
-	uint32_t vertexOffset_;
-	uint32_t indexOffset_;
-
-	// Needed to access model matrix
-	uint32_t modelMatrixIndex_;
-
-	// PBR Texture IDs
-	uint32_t albedo_;
-	uint32_t normal_;
-	uint32_t metalness_;
-	uint32_t roughness_;
-	uint32_t ao_;
-	uint32_t emissive_;
-
-	// For sorting
-	MaterialType material_;
-};
 
 class Mesh
 {

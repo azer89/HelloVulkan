@@ -17,10 +17,7 @@ Scene::Scene(VulkanContext& ctx,
 		m.LoadBindless(
 			ctx,
 			mData,
-			vertices_,
-			indices_,
-			vertexOffset,
-			indexOffset);
+			sceneData_);
 		models_.push_back(m);
 	}
 	CreateBindlessResources(ctx);
@@ -102,21 +99,21 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 	if (supportDeviceAddress_) { bufferUsage |= VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT; }
 	
 	// Vertices
-	const VkDeviceSize vertexBufferSize = sizeof(VertexData) * vertices_.size();
+	const VkDeviceSize vertexBufferSize = sizeof(VertexData) * sceneData_.vertices.size();
 	vertexBuffer_.CreateGPUOnlyBuffer(
 		ctx,
 		vertexBufferSize,
-		vertices_.data(),
+		sceneData_.vertices.data(),
 		bufferUsage);
 
 	// Indices
-	const VkDeviceSize indexBufferSize = sizeof(uint32_t) * indices_.size();
+	const VkDeviceSize indexBufferSize = sizeof(uint32_t) * sceneData_.indices.size();
 	indexBuffer_.CreateGPUOnlyBuffer(
 		ctx,
 		indexBufferSize,
-		indices_.data(),
+		sceneData_.indices.data(),
 		bufferUsage);
-	triangleCount_ = static_cast<uint32_t>(indices_.size()) / 3u;
+	triangleCount_ = static_cast<uint32_t>(sceneData_.indices.size()) / 3u; // TODO This somehow can be wrong
 
 	// Mesh Data
 	const VkDeviceSize meshDataBufferSize = sizeof(MeshData) * meshDataArray_.size();
@@ -294,7 +291,7 @@ BoundingBox Scene::GetBoundingBox(uint32_t vertexStart, uint32_t vertexEnd)
 	glm::vec3 vMax(std::numeric_limits<float>::lowest());
 	for (uint32_t j = vertexStart; j < vertexEnd; ++j)
 	{
-		const glm::vec3& v = vertices_[j].position;
+		const glm::vec3& v = sceneData_.vertices[j].position;
 		vMin = glm::min(vMin, v);
 		vMax = glm::max(vMax, v);
 	}

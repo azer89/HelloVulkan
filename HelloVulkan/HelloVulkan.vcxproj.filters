@@ -67,6 +67,12 @@
     <Filter Include="Shaders\AABB">
       <UniqueIdentifier>{c3440f13-1025-405e-b306-41a5fc8e7ba1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Scene">
+      <UniqueIdentifier>{19222e76-2299-4358-9a1c-28bd794afb7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scene">
+      <UniqueIdentifier>{5844965a-9532-4789-9019-c0634fa4c058}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\Skybox.vert">
@@ -239,15 +245,6 @@
     <ClInclude Include="Header\Configs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\Model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\TextureMapper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Apps\AppBase.h">
       <Filter>Header Files\Apps</Filter>
     </ClInclude>
@@ -322,9 +319,6 @@
     </ClInclude>
     <ClInclude Include="Header\Pipelines\PipelinePBRBindless.h">
       <Filter>Header Files\Pipelines</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\Scene.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header\Apps\AppPBRSlotBased.h">
       <Filter>Header Files\Apps</Filter>
@@ -431,18 +425,27 @@
     <ClInclude Include="Header\Resources\ResourcesBase.h">
       <Filter>Header Files\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Scene\Mesh.h">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Scene\Model.h">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Scene\Scene.h">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Scene\TextureMapper.h">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Scene\ScenePODs.h">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Apps\AppBase.cpp">
@@ -510,9 +513,6 @@
     </ClCompile>
     <ClCompile Include="Source\Pipelines\PipelinePBRBindless.cpp">
       <Filter>Source Files\Pipelines</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Scene.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Apps\AppPBRSlotBased.cpp">
       <Filter>Source Files\Apps</Filter>
@@ -600,6 +600,15 @@
     </ClCompile>
     <ClCompile Include="Source\Resources\ResourcesShared.cpp">
       <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\Mesh.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\Model.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\Scene.cpp">
+      <Filter>Source Files\Scene</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

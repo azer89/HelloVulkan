@@ -24,17 +24,11 @@ void Model::LoadSlotBased(VulkanContext& ctx, const std::string& path)
 	AddTexture(ctx, BLACK_TEXTURE, (void*)&black, 1, 1);
 
 	// Load model here
-	uint32_t tempVertexOffset = 0u;
-	uint32_t tempIndexOffset = 0u;
-	std::vector<VertexData> tempVertices;
-	std::vector<uint32_t> tempIndices;
+	SceneData dummySceneData = {};
 	LoadModel(
 		ctx, 
 		path, 
-		tempVertices, 
-		tempIndices,
-		tempVertexOffset,
-		tempIndexOffset);
+		dummySceneData);
 
 	// Slot-based rendering
 	CreateModelUBOBuffers(ctx);
@@ -43,10 +37,7 @@ void Model::LoadSlotBased(VulkanContext& ctx, const std::string& path)
 void Model::LoadBindless(
 	VulkanContext& ctx, 
 	const ModelCreateInfo& modelData,
-	std::vector<VertexData>& globalVertices,
-	std::vector<uint32_t>& globalIndices,
-	uint32_t& globalVertexOffset,
-	uint32_t& globalIndexOffset)
+	SceneData& sceneData)
 {
 	bindlessTexture_ = true;
 	modelInfo_ = modelData;
@@ -59,10 +50,7 @@ void Model::LoadBindless(
 	LoadModel(
 		ctx,
 		modelData.filename,
-		globalVertices,
-		globalIndices, 
-		globalVertexOffset, 
-		globalIndexOffset);
+		sceneData);
 }
 
 void Model::Destroy()
@@ -139,10 +127,7 @@ VulkanImage* Model::GetTexture(uint32_t textureIndex)
 // stores the resulting meshes in the meshes vector.
 void Model::LoadModel(VulkanContext& ctx, 
 	std::string const& path,
-	std::vector<VertexData>& globalVertices,
-	std::vector<uint32_t>& globalIndices,
-	uint32_t& globalVertexOffset,
-	uint32_t& globalIndexOffset)
+	SceneData& sceneData)
 {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(
@@ -163,11 +148,8 @@ void Model::LoadModel(VulkanContext& ctx,
 
 	// Process assimp's root node recursively
 	ProcessNode(
-		ctx, 
-		globalVertices,
-		globalIndices,
-		globalVertexOffset, 
-		globalIndexOffset, 
+		ctx,
+		sceneData,
 		scene->mRootNode, 
 		scene, 
 		glm::mat4(1.0));
@@ -175,11 +157,8 @@ void Model::LoadModel(VulkanContext& ctx,
 
 // Processes a node in a recursive fashion.
 void Model::ProcessNode(
-	VulkanContext& ctx, 
-	std::vector<VertexData>& globalVertices,
-	std::vector<uint32_t>& globalIndices,
-	uint32_t& globalVertexOffset,
-	uint32_t& globalIndexOffset,
+	VulkanContext& ctx,
+	SceneData& sceneData,
 	const aiNode* node, 
 	const aiScene* scene, 
 	const glm::mat4& parentTransform)
@@ -192,11 +171,8 @@ void Model::ProcessNode(
 	{
 		const aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 		ProcessMesh(
-			ctx, 
-			globalVertices, 
-			globalIndices, 
-			globalVertexOffset, 
-			globalIndexOffset, 
+			ctx,
+			sceneData,
 			mesh, 
 			scene, 
 			totalTransform);
@@ -205,11 +181,8 @@ void Model::ProcessNode(
 	for (unsigned int i = 0; i < node->mNumChildren; ++i)
 	{
 		ProcessNode(
-			ctx, 
-			globalVertices,
-			globalIndices,
-			globalVertexOffset,
-			globalIndexOffset, 
+			ctx,
+			sceneData,
 			node->mChildren[i], 
 			scene, 
 			totalTransform);
@@ -217,11 +190,8 @@ void Model::ProcessNode(
 }
 
 void Model::ProcessMesh(
-	VulkanContext& ctx, 
-	std::vector<VertexData>& globalVertices,
-	std::vector<uint32_t>& globalIndices,
-	uint32_t& globalVertexOffset,
-	uint32_t& globalIndexOffset,
+	VulkanContext& ctx,
+	SceneData& sceneData,
 	const aiMesh* mesh, 
 	const aiScene* scene, 
 	const glm::mat4& transform)
@@ -231,28 +201,31 @@ void Model::ProcessMesh(
 	std::vector<uint32_t> indices = GetIndices(mesh);
 	std::unordered_map<TextureType, uint32_t> textures = GetTextures(ctx, scene, mesh);
 
-	const uint32_t vOffset = static_cast<uint32_t>(vertices.size());
-	const uint32_t iOffset = static_cast<uint32_t>(indices.size());
+	const uint32_t prevVertexOffset = sceneData.GetCurrentVertexOffset();
+	const uint32_t prevIndexOffset = sceneData.GetCurrentIndexOffset();
 
 	if (bindlessTexture_)
 	{
-		globalVertices.insert(std::end(globalVertices), std::begin(vertices), std::end(vertices));
-		globalIndices.insert(std::end(globalIndices), std::begin(indices), std::end(indices));
+		sceneData.vertices.insert(std::end(sceneData.vertices), std::begin(vertices), std::end(vertices));
+		sceneData.indices.insert(std::end(sceneData.indices), std::begin(indices), std::end(indices));
 
 		// If Bindless textures, we do not move vertices and indices
 		meshes_.emplace_back();
 		meshes_.back().InitBindless(
 			ctx,
 			meshName,
-			globalVertexOffset,
-			globalIndexOffset,
+			prevVertexOffset,
+			prevIndexOffset,
 			static_cast<uint32_t>(vertices.size()),
 			static_cast<uint32_t>(indices.size()),
 			std::move(textures));
 
+		const uint32_t currVertexOffset = static_cast<uint32_t>(vertices.size());
+		const uint32_t currIndexOffset = static_cast<uint32_t>(indices.size());
+		
 		// Update offsets
-		globalVertexOffset += vOffset;
-		globalIndexOffset += iOffset;
+		sceneData.vertexOffsets.emplace_back(currVertexOffset + prevVertexOffset);
+		sceneData.indexOffsets.emplace_back(currIndexOffset + prevIndexOffset);
 	}
 	else
 	{
@@ -261,8 +234,8 @@ void Model::ProcessMesh(
 		meshes_.back().InitSlotBased(
 			ctx,
 			meshName,
-			globalVertexOffset,
-			globalIndexOffset,
+			prevVertexOffset,
+			prevIndexOffset,
 			std::move(vertices),
 			std::move(indices),
 			std::move(textures)
