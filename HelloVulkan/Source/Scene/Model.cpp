@@ -238,15 +238,20 @@ void Model::ProcessMesh(
 	}
 }
 
-void Model::SetBoneDataToDefault(uSVec& boneIDs, fSVec& boneWeights)
+void Model::SetBoneDataToDefault(std::vector<uSVec>& boneIDArray, std::vector<fSVec>& boneWeightArray, uint32_t vertexCount)
 {
-	for (uint32_t i = 0; i < AppConfig::MaxSkinningBone; ++i)
+	boneIDArray.resize(vertexCount);
+	boneWeightArray.resize(vertexCount);
+
+	for (uint32_t i = 0; i < vertexCount; ++i)
 	{
-		boneWeights[i] = -1;
-		boneIDs[i] = 0.0f;
+		for (uint32_t j = 0; j < AppConfig::MaxSkinningBone; ++j)
+		{
+			boneWeightArray[i][j] = -1;
+			boneIDArray[i][j] = 0.0f;
+		}
 	}
 }
-
 
 void Model::GetBoneData(uSVec& boneIDs, fSVec& boneWeights, int boneID, float weight)
 {
@@ -291,16 +296,19 @@ void Model::ExtractBoneWeightForVertices(
 			boneID = boneInfoMap_[boneName].id;
 		}
 
-		assert(boneID != -1);
+		if (boneID < 0)
+		{
+			std::cerr << "Cannot find bone, name = " << boneName << '\n';
+		}
 
-		auto weights = mesh->mBones[boneIndex]->mWeights;
-		int numWeights = mesh->mBones[boneIndex]->mNumWeights;
+		aiVertexWeight* weights = mesh->mBones[boneIndex]->mWeights;
+		uint32_t numWeights = mesh->mBones[boneIndex]->mNumWeights;
 
 		for (int wIndex = 0; wIndex < numWeights; ++wIndex)
 		{
 			int vertexId = weights[wIndex].mVertexId;
 			float weight = weights[wIndex].mWeight;
-			assert(vertexId <= vertices.size());
+			assert(vertexId <= mesh->mNumVertices);
 			GetBoneData(boneIDs[vertexId], boneWeights[vertexId], boneID, weight);
 		}
 	}

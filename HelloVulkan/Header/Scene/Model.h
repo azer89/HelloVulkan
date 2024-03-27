@@ -90,7 +90,7 @@ private:
 		const aiMesh* mesh,
 		const glm::mat4& transform);
 
-	void SetBoneDataToDefault(uSVec& boneIDs, fSVec& boneWeights);
+	void SetBoneDataToDefault(std::vector<uSVec>& boneIDArray, std::vector<fSVec>& boneWeightArray, uint32_t vertexCount);
 	void GetBoneData(uSVec& boneIDs, fSVec& boneWeights, int boneID, float weight);
 	void ExtractBoneWeightForVertices(
 		std::vector<uSVec>& boneIDs,

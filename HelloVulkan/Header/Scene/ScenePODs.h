@@ -27,8 +27,9 @@ struct SceneData
 	std::vector<uint32_t> indexOffsets = {};
 	
 	// Skinning
-	std::vector<uSVec> boneIDs;
-	std::vector<fSVec> boneWeights;
+	// TODO This currently takes a lot of unused memory if there are too many static objects
+	std::vector<uSVec> boneIDArray;
+	std::vector<fSVec> boneWeightArray;
 
 	uint32_t GetCurrentVertexOffset()
 	{

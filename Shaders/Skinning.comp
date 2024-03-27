@@ -9,17 +9,30 @@ layout (local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
 
 layout (push_constant) uniform PC
 {
-	uint vertexCount;
+	//uint vertexOffset; // Start index
+	uint vertexCount; // Vertex count to be processed
 } pc;
 
 layout(set = 0, binding = 0) readonly buffer M { mat4 finalBonesMatrices[]; }; // SSBO
 layout(set = 0, binding = 1) buffer V { VertexData vertices[]; }; // SSBO
 
+const int MAX_SKINNING_BONE = 4;
+const int MAX_BONE_MATRICES = 100;
+
 void main()
 {
+	// Prevent processing vertices that are not in the batch
 	uint index = gl_GlobalInvocationID.x;
 	if (index >= pc.vertexCount)
 	{
 		return;
 	}
+
+	/*index += pc.vertexOffset;
+
+	// Prevent out of bounds
+	if (index >= vertices.length())
+	{
+		return;
+	}*/
 }
