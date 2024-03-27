@@ -7,26 +7,52 @@ layout (local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
 #include <Bindless/MeshData.glsl>
 #include <Bindless/BDA.glsl>
 
-layout (push_constant) uniform PC
-{
+//layout (push_constant) uniform PC
+//{
 	//uint vertexOffset; // Start index
-	uint vertexCount; // Vertex count to be processed
-} pc;
+	//uint vertexCount; // Vertex count to be processed
+//} pc;
 
-layout(set = 0, binding = 0) readonly buffer M { mat4 finalBonesMatrices[]; }; // SSBO
-layout(set = 0, binding = 1) buffer V { VertexData vertices[]; }; // SSBO
+layout(set = 0, binding = 0) uniform BDABlock { BDA bda; }; // UBO
+layout(set = 0, binding = 1) readonly buffer M { mat4 finalBonesMatrices[]; }; // SSBO
+layout(set = 0, binding = 2) readonly buffer B { ivec4 boneIdArray[]; }; // SSBO
+layout(set = 0, binding = 3) readonly buffer W { vec4 weightArray[]; }; // SSBO
+layout(set = 0, binding = 4) buffer V { VertexData outVertices[]; }; // SSBO Output
 
 const int MAX_SKINNING_BONE = 4;
-const int MAX_BONE_MATRICES = 100;
 
 void main()
 {
 	// Prevent processing vertices that are not in the batch
-	uint index = gl_GlobalInvocationID.x;
-	if (index >= pc.vertexCount)
+	uint vIndex = gl_GlobalInvocationID.x;
+	if (vIndex >= outVertices.length())
 	{
 		return;
 	}
+
+	VertexData vertexData = bda.vertexReference.vertices[vIndex];
+	vec3 totalPosition = vec3(0.0f);
+	ivec4 boneIds = boneIdArray[vIndex];
+	vec4 weights = weightArray[vIndex];
+
+	for (int i = 0; i < MAX_SKINNING_BONE; i++)
+	{
+		int bIndex = boneIds[i];
+		if (bIndex == -1)
+		{
+			continue;
+		}
+
+		if (bIndex >= finalBonesMatrices.length())
+		{
+			break;
+		}
+
+		vec4 localPosition = finalBonesMatrices[bIndex] * vec4(pos, 1.0f);
+		totalPosition += localPosition.xyz * weights[i];
+	}
+
+	outVertices.positions[vIndex] = totalPosition;
 
 	/*index += pc.vertexOffset;
 
