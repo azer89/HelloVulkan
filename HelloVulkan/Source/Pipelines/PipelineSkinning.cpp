@@ -64,7 +64,7 @@ void PipelineSkinning::Execute(VulkanContext& ctx, VkCommandBuffer commandBuffer
 
 void PipelineSkinning::PrepareBDA(VulkanContext& ctx)
 {
-	BDA bda = scene_->GetBDA();
+	BDA bda = scene_->GetBDA(false);
 	VkDeviceSize bdaSize = sizeof(BDA);
 	bdaBuffer_.CreateBuffer(
 		ctx,

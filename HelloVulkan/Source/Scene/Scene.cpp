@@ -48,11 +48,11 @@ Scene::~Scene()
 	}
 }
 
-BDA Scene::GetBDA() const
+BDA Scene::GetBDA(bool useSkinning) const
 {
 	return
 	{
-		.vertexBufferAddress = vertexBuffer_.deviceAddress_,
+		.vertexBufferAddress = useSkinning ? skinnedVertexBuffer_.deviceAddress_ : vertexBuffer_.deviceAddress_,
 		.indexBufferAddress = indexBuffer_.deviceAddress_,
 		.meshDataBufferAddress = meshDataBuffer_.deviceAddress_
 	};

@@ -137,7 +137,7 @@ void PipelinePBRShadow::CreateSpecializationConstants()
 
 void PipelinePBRShadow::PrepareBDA(VulkanContext& ctx)
 {
-	const BDA bda = scene_->GetBDA();
+	const BDA bda = scene_->GetBDA(false);
 	const VkDeviceSize bdaSize = sizeof(BDA);
 	bdaBuffer_.CreateBuffer(
 		ctx,

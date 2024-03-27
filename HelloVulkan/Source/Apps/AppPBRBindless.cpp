@@ -55,7 +55,8 @@ void AppPBRBindless::Init()
 		scene_.get(),
 		resourcesLight_,
 		resourcesIBL_,
-		resourcesShared_);
+		resourcesShared_,
+		false);
 	lightPtr_ = AddPipeline<PipelineLightRender>(
 		vulkanContext_,
 		resourcesLight_,

@@ -56,7 +56,8 @@ void AppSkinning::Init()
 		scene_.get(),
 		resourcesLight_,
 		resourcesIBL_,
-		resourcesShared_);
+		resourcesShared_,
+		true);
 	lightPtr_ = AddPipeline<PipelineLightRender>(
 		vulkanContext_,
 		resourcesLight_,

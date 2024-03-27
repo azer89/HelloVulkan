@@ -27,7 +27,7 @@ public:
 
 	[[nodiscard]] uint32_t GetInstanceCount() const { return static_cast<uint32_t>(meshDataArray_.size()); }
 	[[nodiscard]] std::vector<VkDescriptorImageInfo> GetImageInfos() const;
-	[[nodiscard]] BDA GetBDA() const;
+	[[nodiscard]] BDA GetBDA(bool useSkinning) const;
 
 	void GetOffsetAndDrawCount(MaterialType matType, VkDeviceSize& offset, uint32_t& drawCount) const;
 

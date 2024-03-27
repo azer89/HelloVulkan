@@ -46,7 +46,8 @@ void AppFrustumCulling::Init()
 		scene_.get(),
 		resourcesLight_,
 		resourcesIBL_,
-		resourcesShared_);
+		resourcesShared_,
+		false);
 	infGridPtr_ = AddPipeline<PipelineInfiniteGrid>(vulkanContext_, resourcesShared_, 0.0f);
 	boxRenderPtr_ = AddPipeline<PipelineAABBRender>(vulkanContext_, resourcesShared_, scene_.get());
 	linePtr_ = AddPipeline<PipelineLine>(vulkanContext_, resourcesShared_, scene_.get());

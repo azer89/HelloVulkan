@@ -20,6 +20,7 @@ PipelinePBRBindless::PipelinePBRBindless(
 	ResourcesLight* resourcesLight,
 	ResourcesIBL* resourcesIBL,
 	ResourcesShared* resourcesShared,
+	bool useSkinning,
 	uint8_t renderBit) :
 	PipelineBase(ctx, 
 		{
@@ -30,7 +31,8 @@ PipelinePBRBindless::PipelinePBRBindless(
 	),
 	scene_(scene),
 	resourcesLight_(resourcesLight),
-	resourcesIBL_(resourcesIBL)
+	resourcesIBL_(resourcesIBL),
+	useSkinning_(useSkinning)
 {
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
 	PrepareBDA(ctx); // Buffer device address
@@ -100,7 +102,7 @@ void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 
 void PipelinePBRBindless::PrepareBDA(VulkanContext& ctx)
 {
-	BDA bda = scene_->GetBDA();
+	BDA bda = scene_->GetBDA(useSkinning_);
 	VkDeviceSize bdaSize = sizeof(BDA);
 	bdaBuffer_.CreateBuffer(
 		ctx,
