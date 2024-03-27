@@ -95,7 +95,7 @@ private:
 	void ExtractBoneWeightForVertices(
 		std::vector<uSVec>& boneIDs,
 		std::vector<fSVec>& boneWeights,
-		aiMesh* mesh);
+		const aiMesh* mesh);
 
 	[[nodiscard]] std::vector<VertexData> GetVertices(const aiMesh* mesh, const glm::mat4& transform);
 	[[nodiscard]] std::vector<uint32_t> GetIndices(const aiMesh* mesh);

@@ -455,6 +455,9 @@
     <ClInclude Include="Header\Pipelines\PipelineSkinning.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Apps\AppSkinning.h">
+      <Filter>Header Files\Apps</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">
@@ -636,6 +639,9 @@
     </ClCompile>
     <ClCompile Include="Source\Pipelines\PipelineSkinning.cpp">
       <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Apps\AppSkinning.cpp">
+      <Filter>Source Files\Apps</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

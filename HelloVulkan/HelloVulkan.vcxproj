@@ -210,6 +210,7 @@
     <ClInclude Include="Header\Apps\AppPBRShadow.h" />
     <ClInclude Include="Header\Apps\AppPBRSlotBased.h" />
     <ClInclude Include="Header\Apps\AppSimpleRaytracing.h" />
+    <ClInclude Include="Header\Apps\AppSkinning.h" />
     <ClInclude Include="Header\BoundingBox.h" />
     <ClInclude Include="Header\Camera.h" />
     <ClInclude Include="Header\Configs.h" />
@@ -282,6 +283,7 @@
     <ClCompile Include="Source\Apps\AppPBRShadow.cpp" />
     <ClCompile Include="Source\Apps\AppPBRSlotBased.cpp" />
     <ClCompile Include="Source\Apps\AppSimpleRaytracing.cpp" />
+    <ClCompile Include="Source\Apps\AppSkinning.cpp" />
     <ClCompile Include="Source\BoundingBox.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\FrameCounter.cpp" />

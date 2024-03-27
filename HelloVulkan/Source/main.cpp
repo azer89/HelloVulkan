@@ -1,29 +1,15 @@
-#include "AppPBRSlotBased.h"
-#include "AppPBRBindless.h"
-#include "AppPBRShadow.h"
+#include "AppPBRSlotBased.h" // The good ol resource binding per draw call
+#include "AppPBRBindless.h" // Bindless, using draw indirect, buffer device address, and descriptor indexing
+#include "AppPBRShadow.h" // Shadow demo, using draw indirect, buffer device address, and descriptor indexing
 #include "AppFrustumCulling.h"
 #include "AppPBRClusterForward.h"
 #include "AppSimpleRaytracing.h"
+#include "AppSkinning.h"
 
 // Entry point
 int main()
 {
-	// Bindless, using draw indirect, buffer device address, and descriptor indexing
-	//AppPBRBindless app;
-
-	// Shadow demo, using draw indirect, buffer device address, and descriptor indexing
-	AppPBRShadow app;
-
-	// The good ol resource binding per draw call
-	//AppPBRSlotBased app;
-	
-	//AppFrustumCulling app;
-
-	//AppPBRClusterForward app;
-	
-	//AppSimpleRaytracing app;
-	
+	AppSkinning app;
 	app.MainLoop();
-
 	return 0;
 }

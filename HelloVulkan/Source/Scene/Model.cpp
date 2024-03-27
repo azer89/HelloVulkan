@@ -199,6 +199,11 @@ void Model::ProcessMesh(
 	const uint32_t prevVertexOffset = sceneData.GetCurrentVertexOffset();
 	const uint32_t prevIndexOffset = sceneData.GetCurrentIndexOffset();
 
+	std::vector<uSVec> boneIDArray;
+	std::vector<fSVec> boneWeightArray;
+	SetBoneDataToDefault(boneIDArray, boneWeightArray, vertices.size());
+	ExtractBoneWeightForVertices(boneIDArray, boneWeightArray, mesh);
+
 	if (bindlessTexture_)
 	{
 		sceneData.vertices.insert(std::end(sceneData.vertices), std::begin(vertices), std::end(vertices));
@@ -269,7 +274,7 @@ void Model::GetBoneData(uSVec& boneIDs, fSVec& boneWeights, int boneID, float we
 void Model::ExtractBoneWeightForVertices(
 	std::vector<uSVec>& boneIDs,
 	std::vector<fSVec>& boneWeights,
-	aiMesh* mesh)
+	const aiMesh* mesh)
 {
 	if (mesh->mNumBones == 0)
 	{
