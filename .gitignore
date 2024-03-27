@@ -407,6 +407,6 @@ CMakeFiles/
 CMakeCache.txt
 
 # TODO Remove this
-DancingStormtrooper.bin
-DancingStormtrooper.gltf
-Stormtrooper_D.png
+CesiumMan_data.bin
+CesiumMan.gltf
+CesiumMan_img0.jpg

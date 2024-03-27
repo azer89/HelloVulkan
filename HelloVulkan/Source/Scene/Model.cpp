@@ -306,6 +306,11 @@ void Model::ExtractBoneWeightForVertices(
 			std::cerr << "Cannot find bone, name = " << boneName << '\n';
 		}
 
+		if (boneID > 0)
+		{
+			std::cout << boneID << " ";
+		}
+
 		aiVertexWeight* weights = mesh->mBones[boneIndex]->mWeights;
 		uint32_t numWeights = mesh->mBones[boneIndex]->mNumWeights;
 

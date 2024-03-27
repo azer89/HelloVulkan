@@ -29,16 +29,16 @@ void AppSkinning::Init()
 
 	// Scene
 	std::vector<ModelCreateInfo> dataArray = {
-		{ AppConfig::ModelFolder + "DancingStormtrooper/DancingStormtrooper.gltf", 1},
+		{ AppConfig::ModelFolder + "CesiumMan/CesiumMan.gltf", 1},
 	};
 	bool supportDeviceAddress = true;
 	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
 
-	// Tachikoma model matrix
-	glm::mat4 modelMatrix(1.f);
+	// Model matrix
+	/*glm::mat4 modelMatrix(1.f);
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.5f, 0.62f, 0.f));
-	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 1, 0);
+	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 0, 0);*/
 
 	// Pipelines
 	AddPipeline<PipelineClear>(vulkanContext_); // This is responsible to clear swapchain image
