@@ -185,7 +185,7 @@ void Scene::CreateAnimationResources(VulkanContext& ctx)
 	skinnedVertexBuffer_.CreateGPUOnlyBuffer(
 		ctx,
 		vertexBufferSize,
-		sceneData_.vertices.data(), // Doesn't matter
+		sceneData_.vertices.data(), // Upload data from the original vertices
 		bufferUsage);
 
 	// Bone matrices buffers
