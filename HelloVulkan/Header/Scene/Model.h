@@ -18,6 +18,8 @@
 class Model
 {
 public:
+	std::string filepath_ = {};
+
 	std::vector<Mesh> meshes_ = {};
 
 	// NOTE Textures are stored in Model regardless of bindless textures or Slot-Based
@@ -91,7 +93,7 @@ private:
 		const glm::mat4& transform);
 
 	void SetBoneDataToDefault(std::vector<uSVec>& boneIDArray, std::vector<fSVec>& boneWeightArray, uint32_t vertexCount);
-	void GetBoneData(uSVec& boneIDs, fSVec& boneWeights, int boneID, float weight);
+	//void SetBoneData(uSVec& boneIDs, fSVec& boneWeights, int boneID, float weight);
 	void ExtractBoneWeightForVertices(
 		std::vector<uSVec>& boneIDs,
 		std::vector<fSVec>& boneWeights,

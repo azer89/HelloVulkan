@@ -129,9 +129,10 @@ void Model::LoadModel(VulkanContext& ctx,
 	std::string const& path,
 	SceneData& sceneData)
 {
+	filepath_ = path;
 	Assimp::Importer importer;
 	scene_ = importer.ReadFile(
-		path,
+		filepath_,
 		aiProcess_Triangulate |
 		aiProcess_GenSmoothNormals |
 		aiProcess_FlipUVs |
@@ -144,7 +145,7 @@ void Model::LoadModel(VulkanContext& ctx,
 	}
 
 	// Retrieve the directory path of the filepath
-	directory_ = path.substr(0, path.find_last_of('/'));
+	directory_ = filepath_.substr(0, filepath_.find_last_of('/'));
 
 	// Process assimp's root node recursively
 	ProcessNode(
@@ -192,6 +193,7 @@ void Model::ProcessMesh(
 	const glm::mat4& transform)
 {
 	const std::string meshName = mesh->mName.C_Str();
+
 	std::vector<VertexData> vertices = GetVertices(mesh, transform);
 	std::vector<uint32_t> indices = GetIndices(mesh);
 	std::unordered_map<TextureType, uint32_t> textures = GetTextures(ctx, mesh);
@@ -201,13 +203,24 @@ void Model::ProcessMesh(
 
 	std::vector<uSVec> boneIDArray;
 	std::vector<fSVec> boneWeightArray;
-	SetBoneDataToDefault(boneIDArray, boneWeightArray, vertices.size());
-	ExtractBoneWeightForVertices(boneIDArray, boneWeightArray, mesh);
+	bool hasAnimation = false;
+	if (scene_->mAnimations)
+	{
+		SetBoneDataToDefault(boneIDArray, boneWeightArray, vertices.size());
+		ExtractBoneWeightForVertices(boneIDArray, boneWeightArray, mesh);
+		hasAnimation = true;
+	}
 
 	if (bindlessTexture_)
 	{
 		sceneData.vertices.insert(std::end(sceneData.vertices), std::begin(vertices), std::end(vertices));
 		sceneData.indices.insert(std::end(sceneData.indices), std::begin(indices), std::end(indices));
+
+		if (hasAnimation)
+		{
+			sceneData.boneIDArray.insert(std::end(sceneData.boneIDArray), std::begin(boneIDArray), std::end(boneIDArray));
+			sceneData.boneWeightArray.insert(std::end(sceneData.boneWeightArray), std::begin(boneWeightArray), std::end(boneWeightArray));
+		}
 
 		// If Bindless textures, we do not move vertices and indices
 		meshes_.emplace_back();
@@ -252,13 +265,13 @@ void Model::SetBoneDataToDefault(std::vector<uSVec>& boneIDArray, std::vector<fS
 	{
 		for (uint32_t j = 0; j < AppConfig::MaxSkinningBone; ++j)
 		{
-			boneWeightArray[i][j] = -1;
-			boneIDArray[i][j] = 0.0f;
+			boneIDArray[i][j] = -1;
+			boneWeightArray[i][j] = 0.0f;
 		}
 	}
 }
 
-void Model::GetBoneData(uSVec& boneIDs, fSVec& boneWeights, int boneID, float weight)
+/*void Model::SetBoneData(uSVec& boneIDs, fSVec& boneWeights, int boneID, float weight)
 {
 	for (uint32_t i = 0; i < AppConfig::MaxSkinningBone; ++i)
 	{
@@ -269,7 +282,7 @@ void Model::GetBoneData(uSVec& boneIDs, fSVec& boneWeights, int boneID, float we
 			break;
 		}
 	}
-}
+}*/
 
 void Model::ExtractBoneWeightForVertices(
 	std::vector<uSVec>& boneIDs,
@@ -287,12 +300,11 @@ void Model::ExtractBoneWeightForVertices(
 		std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
 		if (!boneInfoMap_.contains(boneName))
 		{
-			BoneInfo newBoneInfo =
+			boneInfoMap_[boneName] = 
 			{
 				.id = boneCounter_,
 				.offsetMatrix = CastToGLMMat4(mesh->mBones[boneIndex]->mOffsetMatrix)
 			};
-			boneInfoMap_[boneName] = newBoneInfo;
 			boneID = boneCounter_;
 			++boneCounter_;
 		}
@@ -306,20 +318,24 @@ void Model::ExtractBoneWeightForVertices(
 			std::cerr << "Cannot find bone, name = " << boneName << '\n';
 		}
 
-		if (boneID > 0)
-		{
-			std::cout << boneID << " ";
-		}
-
 		aiVertexWeight* weights = mesh->mBones[boneIndex]->mWeights;
 		uint32_t numWeights = mesh->mBones[boneIndex]->mNumWeights;
 
-		for (int wIndex = 0; wIndex < numWeights; ++wIndex)
+		for (uint32_t wIndex = 0; wIndex < numWeights; ++wIndex)
 		{
 			int vertexId = weights[wIndex].mVertexId;
 			float weight = weights[wIndex].mWeight;
 			assert(vertexId <= mesh->mNumVertices);
-			GetBoneData(boneIDs[vertexId], boneWeights[vertexId], boneID, weight);
+			//SetBoneData(boneIDs[vertexId], boneWeights[vertexId], boneID, weight);
+			for (uint32_t i = 0; i < AppConfig::MaxSkinningBone; ++i)
+			{
+				if (boneIDs[vertexId][i] < 0)
+				{
+					boneWeights[vertexId][i] = weight;
+					boneIDs[vertexId][i] = boneID;
+					break;
+				}
+			}
 		}
 	}
 }

@@ -29,7 +29,7 @@ void AppSkinning::Init()
 
 	// Scene
 	std::vector<ModelCreateInfo> dataArray = {
-		{ AppConfig::ModelFolder + "CesiumMan/CesiumMan.gltf", 1},
+		{ AppConfig::ModelFolder + "vampire/dancing_vampire.dae", 1},
 	};
 	bool supportDeviceAddress = true;
 	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);

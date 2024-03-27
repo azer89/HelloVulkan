@@ -1,14 +1,18 @@
 #include "Animation.h"
 
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
+
 inline glm::mat4 CastToGLMMat4(const aiMatrix4x4& m)
 {
 	return glm::transpose(glm::make_mat4(&m.a1));
 }
 
-Animation::Animation(const std::string& animationPath, Model* model)
+Animation::Animation(std::string const& path, Model* model)
 {
 	Assimp::Importer importer;
-	const aiScene* scene = model->GetAssimpScene();
+	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate);
+
 	assert(scene && scene->mRootNode);
 	auto animation = scene->mAnimations[0]; // TODO Can only support one animation
 	duration_ = animation->mDuration;

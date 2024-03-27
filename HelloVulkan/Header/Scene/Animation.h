@@ -16,7 +16,7 @@ Adapted from learnopengl.com/Guest-Articles/2020/Skeletal-Animation
 class Animation
 {
 public:
-	Animation(const std::string& animationPath, Model* model);
+	Animation(std::string const& path, Model* model);
 	~Animation() = default;
 
 	[[nodiscard]] Bone* FindBone(const std::string& name);

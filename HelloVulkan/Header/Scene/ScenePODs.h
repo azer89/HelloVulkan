@@ -13,8 +13,8 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/quaternion.hpp"
 
-// Skinning vector with uint elements
-using uSVec = std::array<uint32_t, AppConfig::MaxSkinningBone>;
+// Skinning vector with int elements
+using uSVec = std::array<int, AppConfig::MaxSkinningBone>;
 
 // Skinning vector with float elements
 using fSVec = std::array<float, AppConfig::MaxSkinningBone>;
