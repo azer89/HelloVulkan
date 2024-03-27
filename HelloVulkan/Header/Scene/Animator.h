@@ -21,10 +21,13 @@ public:
 	void PlayAnimation(Animation* animationPtr);
 	void CalculateBoneTransform(const AnimationNode* node, glm::mat4 parentTransform);
 
-	[[nodiscard]] std::vector<glm::mat4>& GetFinalBoneMatrices() { return finalBoneMatrices_; }
+	//[[nodiscard]] std::vector<glm::mat4>& GetFinalBoneMatrices() { return finalBoneMatrices_; }
+
+public:
+	std::vector<glm::mat4> finalBoneMatrices_ = {};
 
 private:
-	std::vector<glm::mat4> finalBoneMatrices_ = {};
+	
 	Animation* currentAnimation_ = nullptr;
 	float currentTime_ = 0.0f;
 	float deltaTime_ = 0.0f;

@@ -152,6 +152,20 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 	CreateIndirectBuffer(ctx, indirectBuffer_);
 }
 
+void Scene::UpdateAnimation(VulkanContext& ctx, float deltaTime)
+{
+	if (!HasAnimation())
+	{
+		return;
+	}
+
+	animatorPtr_->UpdateAnimation(deltaTime);
+
+	const uint32_t frameIndex = ctx.GetFrameIndex();
+	const VkDeviceSize matrixBufferSize = sizeof(glm::mat4) * animatorPtr_->finalBoneMatrices_.size();
+	boneMatricesBuffers_[frameIndex].UploadBufferData(ctx, animatorPtr_->finalBoneMatrices_.data(), matrixBufferSize);
+}
+
 void Scene::CreateAnimationResources(VulkanContext& ctx)
 {
 	if (!HasAnimation())
@@ -175,8 +189,7 @@ void Scene::CreateAnimationResources(VulkanContext& ctx)
 		bufferUsage);
 
 	// Bone matrices buffers
-	std::vector<glm::mat4>& boneMatrices = animatorPtr_->GetFinalBoneMatrices();
-	const VkDeviceSize matrixBufferSize = sizeof(glm::mat4) * boneMatrices.size();
+	const VkDeviceSize matrixBufferSize = sizeof(glm::mat4) * animatorPtr_->finalBoneMatrices_.size();
 	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
 	{
 		boneMatricesBuffers_[i].CreateBuffer(

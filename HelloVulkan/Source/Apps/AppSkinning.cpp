@@ -105,6 +105,8 @@ void AppSkinning::UpdateUI()
 
 void AppSkinning::UpdateUBOs()
 {
+	scene_->UpdateAnimation(vulkanContext_, frameCounter_.GetDeltaSecond());
+
 	CameraUBO ubo = camera_->GetCameraUBO();
 	for (auto& pipeline : pipelines_)
 	{

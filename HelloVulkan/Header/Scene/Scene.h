@@ -40,6 +40,8 @@ public:
 		VulkanContext& ctx,
 		VulkanBuffer& indirectBuffer);
 
+	void UpdateAnimation(VulkanContext& ctx, float deltaTime);
+
 private:
 	void CreateAnimationResources(VulkanContext& ctx);
 	void CreateBindlessResources(VulkanContext& ctx);
