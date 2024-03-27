@@ -449,7 +449,7 @@ VkResult VulkanContext::GetNextSwapchainImage(VkSemaphore nextSwapchainImageSema
 	return vkAcquireNextImageKHR(
 		device_,
 		swapchain_,
-		0,
+		UINT64_MAX,
 		// Wait for the swapchain image to become available
 		nextSwapchainImageSemaphore,
 		VK_NULL_HANDLE,
