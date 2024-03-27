@@ -206,7 +206,7 @@ void Model::ProcessMesh(
 	bool hasAnimation = false;
 	if (scene_->mAnimations)
 	{
-		SetBoneDataToDefault(boneIDArray, boneWeightArray, vertices.size());
+		SetBoneDataToDefault(boneIDArray, boneWeightArray, static_cast<uint32_t>(vertices.size()));
 		ExtractBoneWeightForVertices(boneIDArray, boneWeightArray, mesh);
 		hasAnimation = true;
 	}
@@ -318,13 +318,13 @@ void Model::ExtractBoneWeightForVertices(
 			std::cerr << "Cannot find bone, name = " << boneName << '\n';
 		}
 
-		aiVertexWeight* weights = mesh->mBones[boneIndex]->mWeights;
-		uint32_t numWeights = mesh->mBones[boneIndex]->mNumWeights;
+		const aiVertexWeight* weights = mesh->mBones[boneIndex]->mWeights;
+		const uint32_t numWeights = mesh->mBones[boneIndex]->mNumWeights;
 
 		for (uint32_t wIndex = 0; wIndex < numWeights; ++wIndex)
 		{
-			int vertexId = weights[wIndex].mVertexId;
-			float weight = weights[wIndex].mWeight;
+			const uint32_t vertexId = weights[wIndex].mVertexId;
+			const float weight = weights[wIndex].mWeight;
 			assert(vertexId <= mesh->mNumVertices);
 			//SetBoneData(boneIDs[vertexId], boneWeights[vertexId], boneID, weight);
 			for (uint32_t i = 0; i < AppConfig::MaxSkinningBone; ++i)

@@ -15,8 +15,8 @@ Animation::Animation(std::string const& path, Model* model)
 
 	assert(scene && scene->mRootNode);
 	auto animation = scene->mAnimations[0]; // TODO Can only support one animation
-	duration_ = animation->mDuration;
-	ticksPerSecond_ = animation->mTicksPerSecond;
+	duration_ = static_cast<float>(animation->mDuration);
+	ticksPerSecond_ = static_cast<float>(animation->mTicksPerSecond);
 	aiMatrix4x4 globalTransformation = scene->mRootNode->mTransformation;
 	globalTransformation = globalTransformation.Inverse();
 	ReadHierarchyData(rootNode_, scene->mRootNode);
@@ -73,7 +73,7 @@ void Animation::ReadHierarchyData(AnimationNode& dest, const aiNode* src)
 	dest.transformation = CastToGLMMat4(src->mTransformation);
 	dest.childrenCount = src->mNumChildren;
 
-	for (int i = 0; i < src->mNumChildren; i++)
+	for (uint32_t i = 0; i < src->mNumChildren; i++)
 	{
 		AnimationNode newData;
 		ReadHierarchyData(newData, src->mChildren[i]);

@@ -32,7 +32,7 @@ private:
 
 private:
 	float duration_;
-	int ticksPerSecond_;
+	float ticksPerSecond_;
 	std::vector<Bone> bones_;
 	AnimationNode rootNode_;
 	std::unordered_map<std::string, BoneInfo> boneInfoMap_;
