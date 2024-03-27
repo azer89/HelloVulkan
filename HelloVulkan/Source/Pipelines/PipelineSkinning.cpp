@@ -8,6 +8,10 @@ PipelineSkinning::PipelineSkinning(VulkanContext& ctx, Scene* scene) :
 	}),
 	scene_(scene)
 {
+	PrepareBDA(ctx); // Buffer device address
+	CreateDescriptor(ctx);
+	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
+	CreateComputePipeline(ctx, AppConfig::ShaderFolder + "Skinning.comp");
 }
 
 PipelineSkinning::~PipelineSkinning()
@@ -24,6 +28,22 @@ void PipelineSkinning::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer com
 void PipelineSkinning::Execute(VulkanContext& ctx, VkCommandBuffer commandBuffer, uint32_t frameIndex)
 {
 	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "Skinning", tracy::Color::Lime);
+
+	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline_);
+
+	vkCmdBindDescriptorSets(
+		commandBuffer,
+		VK_PIPELINE_BIND_POINT_COMPUTE,
+		pipelineLayout_,
+		0, // firstSet
+		1, // descriptorSetCount
+		&descriptorSets_[frameIndex],
+		0, // dynamicOffsetCount
+		0); // pDynamicOffsets
+
+	constexpr float workgroupSize = 256.f;
+	const auto groupSizeX = static_cast<uint32_t>(std::ceil(scene_->sceneData_.vertices.size() / workgroupSize));
+	vkCmdDispatch(commandBuffer, groupSizeX, 1, 1);
 
 	const VkBufferMemoryBarrier2 bufferBarrier =
 	{
@@ -61,11 +81,17 @@ void PipelineSkinning::CreateDescriptor(VulkanContext& ctx)
 	constexpr VkShaderStageFlags stageFlag = VK_SHADER_STAGE_COMPUTE_BIT;
 	VulkanDescriptorInfo dsInfo;
 
-	dsInfo.AddBuffer(&bdaBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
+	dsInfo.AddBuffer(&bdaBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, stageFlag);
+	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag);
+	dsInfo.AddBuffer(&(scene_->boneIDBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag);
+	dsInfo.AddBuffer(&(scene_->boneWeightBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag);
+	dsInfo.AddBuffer(&(scene_->skinnedVertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // Output
+
+	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 
 	for (size_t i = 0; i < frameCount; ++i)
 	{
-		dsInfo.AddBuffer(&(scene_->boneMatricesBuffers_[i]), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
+		dsInfo.UpdateBuffer(&(scene_->boneMatricesBuffers_[i]), 1);
+		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}
 }

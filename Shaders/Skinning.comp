@@ -53,6 +53,6 @@ void main()
 		totalNormal += localNormal * weights[i];
 	}
 
-	outVertices.positions[vIndex] = totalPosition;
-	outVertices.normal[vIndex] = totalNormal;
+	outVertices[vIndex].position = totalPosition;
+	outVertices[vIndex].normal = totalNormal;
 }

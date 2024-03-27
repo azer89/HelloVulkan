@@ -62,17 +62,21 @@ public:
 	std::vector<InstanceData> instanceDataArray_ = {};
 	std::vector<MeshData> meshDataArray_ = {}; // Content is sent to meshDataBuffer_
 	std::vector<BoundingBox> transformedBoundingBoxes_ = {}; // Content is sent to transformedBoundingBoxBuffer_
+	
+	// Skinning
+	VulkanBuffer boneIDBuffer_;
+	VulkanBuffer boneWeightBuffer_;
+	VulkanBuffer skinnedVertexBuffer_;
+	std::array<VulkanBuffer, AppConfig::FrameCount> boneMatricesBuffers_; // Frame-in-flight
 
 	VulkanBuffer vertexBuffer_;
-	VulkanBuffer skinnedVertexBuffer_; // Skinning
-	VulkanBuffer boneIDBuffer_; // Skinning
-	VulkanBuffer boneWeightBuffer_; // Skinning
 	VulkanBuffer indexBuffer_;
 	VulkanBuffer indirectBuffer_;
 	VulkanBuffer meshDataBuffer_;
-	VulkanBuffer transformedBoundingBoxBuffer_; // TODO Implement Frame-in-flight
 	std::array<VulkanBuffer, AppConfig::FrameCount> modelSSBOBuffers_ = {}; // Frame-in-flight
-	std::array<VulkanBuffer, AppConfig::FrameCount> boneMatricesBuffers_; // Frame-in-flight
+
+	// Frustum culling
+	VulkanBuffer transformedBoundingBoxBuffer_; // TODO Implement Frame-in-flight
 	
 private:
 	bool supportDeviceAddress_;

@@ -7,6 +7,7 @@
 #include "PipelineFinish.h"
 #include "PipelineTonemap.h"
 #include "PipelineResolveMS.h"
+#include "PipelineSkinning.h"
 
 #include "glm/ext.hpp"
 #include "imgui_impl_vulkan.h"
@@ -49,6 +50,7 @@ void AppSkinning::Init()
 		resourcesShared_,
 		// This is the first offscreen render pass so we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
+	AddPipeline<PipelineSkinning>(vulkanContext_, scene_.get());
 	pbrPtr_ = AddPipeline<PipelinePBRBindless>(
 		vulkanContext_,
 		scene_.get(),

@@ -182,15 +182,7 @@ void Scene::CreateAnimationResources(VulkanContext& ctx)
 	VkBufferUsageFlags bufferUsage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 	if (supportDeviceAddress_) { bufferUsage |= VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT; }
 
-	// Skinned vertices buffer
-	const VkDeviceSize vertexBufferSize = sizeof(VertexData) * sceneData_.vertices.size();
-	skinnedVertexBuffer_.CreateGPUOnlyBuffer(
-		ctx,
-		vertexBufferSize,
-		sceneData_.vertices.data(), // Upload data from the original vertices
-		bufferUsage);
-
-	// boneIDs
+	// Bone IDs
 	const VkDeviceSize boneIDBufferSize = sizeof(iSVec) * sceneData_.boneIDArray.size();
 	boneIDBuffer_.CreateGPUOnlyBuffer(
 		ctx,
@@ -198,12 +190,20 @@ void Scene::CreateAnimationResources(VulkanContext& ctx)
 		sceneData_.boneIDArray.data(),
 		bufferUsage);
 	
-	// boneWeights
+	// Bone weights
 	const VkDeviceSize boneWeightBufferSize = sizeof(fSVec) * sceneData_.boneWeightArray.size();
 	boneWeightBuffer_.CreateGPUOnlyBuffer(
 		ctx,
 		boneWeightBufferSize,
 		sceneData_.boneWeightArray.data(),
+		bufferUsage);
+
+	// Skinned vertices buffer
+	const VkDeviceSize vertexBufferSize = sizeof(VertexData) * sceneData_.vertices.size();
+	skinnedVertexBuffer_.CreateGPUOnlyBuffer(
+		ctx,
+		vertexBufferSize,
+		sceneData_.vertices.data(), // Upload data from the original vertices
 		bufferUsage);
 
 	// Bone matrices buffers

@@ -12,6 +12,7 @@ public:
 	~PipelineSkinning();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
+	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override {}
 
 private:
 	void Execute(VulkanContext& ctx, VkCommandBuffer commandBuffer, uint32_t frameIndex);
