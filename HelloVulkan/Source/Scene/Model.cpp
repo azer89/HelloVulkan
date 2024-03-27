@@ -201,7 +201,7 @@ void Model::ProcessMesh(
 	const uint32_t prevVertexOffset = sceneData.GetCurrentVertexOffset();
 	const uint32_t prevIndexOffset = sceneData.GetCurrentIndexOffset();
 
-	std::vector<uSVec> boneIDArray;
+	std::vector<iSVec> boneIDArray;
 	std::vector<fSVec> boneWeightArray;
 	bool hasAnimation = false;
 	if (scene_->mAnimations)
@@ -256,7 +256,7 @@ void Model::ProcessMesh(
 	}
 }
 
-void Model::SetBoneDataToDefault(std::vector<uSVec>& boneIDArray, std::vector<fSVec>& boneWeightArray, uint32_t vertexCount)
+void Model::SetBoneDataToDefault(std::vector<iSVec>& boneIDArray, std::vector<fSVec>& boneWeightArray, uint32_t vertexCount)
 {
 	boneIDArray.resize(vertexCount);
 	boneWeightArray.resize(vertexCount);
@@ -285,7 +285,7 @@ void Model::SetBoneDataToDefault(std::vector<uSVec>& boneIDArray, std::vector<fS
 }*/
 
 void Model::ExtractBoneWeightForVertices(
-	std::vector<uSVec>& boneIDs,
+	std::vector<iSVec>& boneIDs,
 	std::vector<fSVec>& boneWeights,
 	const aiMesh* mesh)
 {

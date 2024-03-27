@@ -14,7 +14,7 @@
 #include "glm/gtx/quaternion.hpp"
 
 // Skinning vector with int elements
-using uSVec = std::array<int, AppConfig::MaxSkinningBone>;
+using iSVec = std::array<int, AppConfig::MaxSkinningBone>;
 
 // Skinning vector with float elements
 using fSVec = std::array<float, AppConfig::MaxSkinningBone>;
@@ -28,7 +28,7 @@ struct SceneData
 	
 	// Skinning
 	// TODO This currently takes a lot of unused memory if there are too many static objects
-	std::vector<uSVec> boneIDArray;
+	std::vector<iSVec> boneIDArray;
 	std::vector<fSVec> boneWeightArray;
 
 	uint32_t GetCurrentVertexOffset()
