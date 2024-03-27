@@ -64,7 +64,9 @@ public:
 	std::vector<BoundingBox> transformedBoundingBoxes_ = {}; // Content is sent to transformedBoundingBoxBuffer_
 
 	VulkanBuffer vertexBuffer_;
-	VulkanBuffer skinnedVertexBuffer_;
+	VulkanBuffer skinnedVertexBuffer_; // Skinning
+	VulkanBuffer boneIDBuffer_; // Skinning
+	VulkanBuffer boneWeightBuffer_; // Skinning
 	VulkanBuffer indexBuffer_;
 	VulkanBuffer indirectBuffer_;
 	VulkanBuffer meshDataBuffer_;

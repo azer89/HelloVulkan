@@ -29,6 +29,8 @@ Scene::~Scene()
 	meshDataBuffer_.Destroy();
 	vertexBuffer_.Destroy();
 	skinnedVertexBuffer_.Destroy();
+	boneIDBuffer_.Destroy();
+	boneWeightBuffer_.Destroy();
 	indexBuffer_.Destroy();
 	transformedBoundingBoxBuffer_.Destroy();
 	indirectBuffer_.Destroy();
@@ -186,6 +188,22 @@ void Scene::CreateAnimationResources(VulkanContext& ctx)
 		ctx,
 		vertexBufferSize,
 		sceneData_.vertices.data(), // Upload data from the original vertices
+		bufferUsage);
+
+	// boneIDs
+	const VkDeviceSize boneIDBufferSize = sizeof(iSVec) * sceneData_.boneIDArray.size();
+	boneIDBuffer_.CreateGPUOnlyBuffer(
+		ctx,
+		boneIDBufferSize,
+		sceneData_.boneIDArray.data(),
+		bufferUsage);
+	
+	// boneWeights
+	const VkDeviceSize boneWeightBufferSize = sizeof(fSVec) * sceneData_.boneWeightArray.size();
+	boneWeightBuffer_.CreateGPUOnlyBuffer(
+		ctx,
+		boneWeightBufferSize,
+		sceneData_.boneWeightArray.data(),
 		bufferUsage);
 
 	// Bone matrices buffers
