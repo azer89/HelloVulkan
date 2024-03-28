@@ -3,7 +3,7 @@
 
 #include "volk.h"
 
-#include "glslang_c_interface.h"
+#include <glslang/Include/glslang_c_interface.h>
 
 #include <vector>
 #include <string>

@@ -6,7 +6,7 @@
 #include "volk.h"
 
 // Init GLSLang
-#include "glslang_c_interface.h" 
+#include <glslang/Include/glslang_c_interface.h>
 
 #include "imgui_impl_vulkan.h"
 

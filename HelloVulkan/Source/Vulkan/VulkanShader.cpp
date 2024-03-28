@@ -2,8 +2,9 @@
 #include "Configs.h"
 
 #include <iostream>
+#include <cstring>
 
-#include "resource_limits_c.h"
+#include <glslang/Public/resource_limits_c.h>
 
 VkShaderStageFlagBits GetShaderStageFlagBits(const char* file);
 VkShaderStageFlagBits GLSLangShaderStageToVulkan(glslang_stage_t sh);
