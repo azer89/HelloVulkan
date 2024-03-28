@@ -42,7 +42,8 @@ void PipelineSkinning::Execute(VulkanContext& ctx, VkCommandBuffer commandBuffer
 		0); // pDynamicOffsets
 
 	constexpr float workgroupSize = 256.f;
-	const auto groupSizeX = static_cast<uint32_t>(std::ceil(scene_->sceneData_.vertices.size() / workgroupSize));
+	const float vertexSize = static_cast<float>(scene_->sceneData_.vertices.size());
+	const auto groupSizeX = static_cast<uint32_t>(std::ceil(vertexSize / workgroupSize));
 	vkCmdDispatch(commandBuffer, groupSizeX, 1, 1);
 
 	const VkBufferMemoryBarrier2 bufferBarrier =
@@ -51,7 +52,7 @@ void PipelineSkinning::Execute(VulkanContext& ctx, VkCommandBuffer commandBuffer
 		.pNext = nullptr,
 		.srcStageMask = VK_PIPELINE_STAGE_2_COMPUTE_SHADER_BIT,
 		.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT,
-		.dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+		.dstStageMask = VK_PIPELINE_STAGE_VERTEX_SHADER_BIT, // Skinned vertex buffer is read in vertex shader
 		.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
 		.srcQueueFamilyIndex = ctx.GetComputeFamily(),
 		.dstQueueFamilyIndex = ctx.GetGraphicsFamily(),

@@ -7,10 +7,6 @@ layout (local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
 #include <Bindless/MeshData.glsl>
 #include <Bindless/BDA.glsl>
 
-/*layout (push_constant) uniform PC
-{
-} pc;*/
-
 layout(set = 0, binding = 0) uniform BDABlock { BDA bda; }; // UBO
 layout(set = 0, binding = 1) readonly buffer M { mat4 finalBonesMatrices[]; }; // SSBO
 layout(set = 0, binding = 2) readonly buffer B { ivec4 boneIdArray[]; }; // SSBO
@@ -43,7 +39,7 @@ void main()
 
 		if (bIndex >= finalBonesMatrices.length())
 		{
-			break;
+			continue;
 		}
 
 		vec4 localPosition = finalBonesMatrices[bIndex] * vec4(vertexData.position, 1.0f);

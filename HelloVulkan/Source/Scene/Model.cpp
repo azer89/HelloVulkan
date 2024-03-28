@@ -271,19 +271,6 @@ void Model::SetBoneDataToDefault(std::vector<iSVec>& boneIDArray, std::vector<fS
 	}
 }
 
-/*void Model::SetBoneData(uSVec& boneIDs, fSVec& boneWeights, int boneID, float weight)
-{
-	for (uint32_t i = 0; i < AppConfig::MaxSkinningBone; ++i)
-	{
-		if (boneIDs[i] < 0)
-		{
-			boneWeights[i] = weight;
-			boneIDs[i] = boneID;
-			break;
-		}
-	}
-}*/
-
 void Model::ExtractBoneWeightForVertices(
 	std::vector<iSVec>& boneIDs,
 	std::vector<fSVec>& boneWeights,
@@ -294,16 +281,16 @@ void Model::ExtractBoneWeightForVertices(
 		return;
 	}
 
-	for (uint32_t boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
+	for (uint32_t b = 0; b < mesh->mNumBones; ++b)
 	{
 		int boneID = -1;
-		std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
+		std::string boneName = mesh->mBones[b]->mName.C_Str();
 		if (!boneInfoMap_.contains(boneName))
 		{
 			boneInfoMap_[boneName] = 
 			{
 				.id = boneCounter_,
-				.offsetMatrix = CastToGLMMat4(mesh->mBones[boneIndex]->mOffsetMatrix)
+				.offsetMatrix = CastToGLMMat4(mesh->mBones[b]->mOffsetMatrix)
 			};
 			boneID = boneCounter_;
 			++boneCounter_;
@@ -318,21 +305,20 @@ void Model::ExtractBoneWeightForVertices(
 			std::cerr << "Cannot find bone, name = " << boneName << '\n';
 		}
 
-		const aiVertexWeight* weights = mesh->mBones[boneIndex]->mWeights;
-		const uint32_t numWeights = mesh->mBones[boneIndex]->mNumWeights;
+		const aiVertexWeight* weights = mesh->mBones[b]->mWeights;
+		const uint32_t numWeights = mesh->mBones[b]->mNumWeights;
 
-		for (uint32_t wIndex = 0; wIndex < numWeights; ++wIndex)
+		for (uint32_t w = 0; w < numWeights; ++w)
 		{
-			const uint32_t vertexId = weights[wIndex].mVertexId;
-			const float weight = weights[wIndex].mWeight;
+			const uint32_t vertexId = weights[w].mVertexId; // TODO Offset
+			const float weight = weights[w].mWeight;
 			assert(vertexId <= mesh->mNumVertices);
-			//SetBoneData(boneIDs[vertexId], boneWeights[vertexId], boneID, weight);
-			for (uint32_t i = 0; i < AppConfig::MaxSkinningBone; ++i)
+			for (uint32_t iter = 0; iter < AppConfig::MaxSkinningBone; ++iter)
 			{
-				if (boneIDs[vertexId][i] < 0)
+				if (boneIDs[vertexId][iter] < 0)
 				{
-					boneWeights[vertexId][i] = weight;
-					boneIDs[vertexId][i] = boneID;
+					boneWeights[vertexId][iter] = weight;
+					boneIDs[vertexId][iter] = boneID;
 					break;
 				}
 			}
