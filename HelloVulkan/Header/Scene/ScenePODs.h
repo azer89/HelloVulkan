@@ -94,8 +94,9 @@ struct InstanceMap
 
 struct ModelCreateInfo
 {
-	std::string filename;
-	uint32_t instanceCount; // Allows instancing
+	std::string filename = {};
+	uint32_t instanceCount = 1; // Allows instancing
+	bool hasAnimation = false;
 };
 
 // Skinning

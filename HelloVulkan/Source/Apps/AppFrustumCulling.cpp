@@ -71,7 +71,11 @@ void AppFrustumCulling::InitScene()
 	constexpr float dist = 4.0f;
 	constexpr float xMidPos = static_cast<float>(xCount - 1) * dist / 2.0f;
 	constexpr float zMidPos = static_cast<float>(zCount - 1) * dist / 2.0f;
-	std::vector<ModelCreateInfo> dataArray = { { AppConfig::ModelFolder + "Zaku/Zaku.gltf", xCount * zCount} };
+	std::vector<ModelCreateInfo> dataArray = {{ 
+		.filename = AppConfig::ModelFolder + "Zaku/Zaku.gltf", 
+		.instanceCount = xCount * zCount,
+		.hasAnimation = false
+	}};
 	bool supportDeviceAddress = true;
 	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
 	uint32_t iter = 0;

@@ -107,6 +107,7 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 	if (supportDeviceAddress_) { bufferUsage |= VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT; }
 	
 	// Vertices
+	// NOTE This may contain post-skinning vertices
 	const VkDeviceSize vertexBufferSize = sizeof(VertexData) * sceneData_.vertices.size();
 	vertexBuffer_.CreateGPUOnlyBuffer(
 		ctx,
@@ -164,8 +165,8 @@ void Scene::UpdateAnimation(VulkanContext& ctx, float deltaTime)
 	animatorPtr_->UpdateAnimation(deltaTime);
 
 	const uint32_t frameIndex = ctx.GetFrameIndex();
-	const VkDeviceSize matrixBufferSize = sizeof(glm::mat4) * animatorPtr_->finalBoneMatrices_.size();
-	boneMatricesBuffers_[frameIndex].UploadBufferData(ctx, animatorPtr_->finalBoneMatrices_.data(), matrixBufferSize);
+	const VkDeviceSize matrixBufferSize = sizeof(glm::mat4) * animatorPtr_->skinningMatrices_.size();
+	boneMatricesBuffers_[frameIndex].UploadBufferData(ctx, animatorPtr_->skinningMatrices_.data(), matrixBufferSize);
 }
 
 void Scene::CreateAnimationResources(VulkanContext& ctx)
@@ -198,7 +199,7 @@ void Scene::CreateAnimationResources(VulkanContext& ctx)
 		sceneData_.boneWeightArray.data(),
 		bufferUsage);
 
-	// Skinned vertices buffer
+	// Original vertex buffer without skinning
 	// TODO This can be a subset of vertexBuffer_
 	const VkDeviceSize vertexBufferSize = sizeof(VertexData) * sceneData_.vertices.size();
 	preSkinningVertexBuffer_.CreateGPUOnlyBuffer(
@@ -208,7 +209,7 @@ void Scene::CreateAnimationResources(VulkanContext& ctx)
 		bufferUsage);
 
 	// Bone matrices buffers
-	const VkDeviceSize matrixBufferSize = sizeof(glm::mat4) * animatorPtr_->finalBoneMatrices_.size();
+	const VkDeviceSize matrixBufferSize = sizeof(glm::mat4) * animatorPtr_->skinningMatrices_.size();
 	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
 	{
 		boneMatricesBuffers_[i].CreateBuffer(

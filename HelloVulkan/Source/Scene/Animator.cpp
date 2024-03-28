@@ -9,11 +9,11 @@ Animator::Animator(Animation* animationPtr)
 	currentTime_ = 0.0;
 	currentAnimation_ = animationPtr;
 
-	finalBoneMatrices_.reserve(MAX_BONE_MATRICES);
+	skinningMatrices_.reserve(MAX_BONE_MATRICES);
 
 	for (int i = 0; i < MAX_BONE_MATRICES; i++)
 	{
-		finalBoneMatrices_.push_back(glm::mat4(1.0f));
+		skinningMatrices_.push_back(glm::mat4(1.0f));
 	}
 }
 
@@ -54,13 +54,13 @@ void Animator::CalculateBoneTransform(const AnimationNode* node, glm::mat4 paren
 	glm::mat4 offsetMatrix = glm::mat4(1.0f);
 	if (currentAnimation_->GetIndexAndOffsetMatrix(nodeName, index, offsetMatrix))
 	{
-		if (index >= finalBoneMatrices_.size())
+		if (index >= skinningMatrices_.size())
 		{
 			std::cerr << "finalBoneMatrices_ is not long enough, index = " << index << '\n';
 		}
 		else
 		{
-			finalBoneMatrices_[index] = globalTransformation * offsetMatrix;
+			skinningMatrices_[index] = globalTransformation * offsetMatrix;
 		}
 	}
 

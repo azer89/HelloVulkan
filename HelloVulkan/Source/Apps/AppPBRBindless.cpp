@@ -29,8 +29,16 @@ void AppPBRBindless::Init()
 
 	// Scene
 	std::vector<ModelCreateInfo> dataArray = { 
-		{ AppConfig::ModelFolder + "Sponza/Sponza.gltf", 1},
-		{ AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf", 1},
+		{ 
+			.filename = AppConfig::ModelFolder + "Sponza/Sponza.gltf",
+			.instanceCount = 1,
+			.hasAnimation = false
+		},
+		{ 
+			.filename = AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf",
+			.instanceCount = 1,
+			.hasAnimation = false
+		},
 	};
 	bool supportDeviceAddress = true;
 	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);

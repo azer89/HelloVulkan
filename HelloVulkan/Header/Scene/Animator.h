@@ -24,7 +24,7 @@ public:
 	//[[nodiscard]] std::vector<glm::mat4>& GetFinalBoneMatrices() { return finalBoneMatrices_; }
 
 public:
-	std::vector<glm::mat4> finalBoneMatrices_ = {};
+	std::vector<glm::mat4> skinningMatrices_ = {};
 
 private:
 	
