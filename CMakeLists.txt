@@ -3,6 +3,7 @@ cmake_minimum_required (VERSION 3.8)
 project (HelloVulkan)
 
 find_package(Vulkan REQUIRED)
+find_package(glslang QUIET)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED on)

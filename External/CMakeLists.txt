@@ -25,7 +25,7 @@ add_subdirectory(assimp)
 add_library(imgui STATIC)
 target_include_directories(imgui PRIVATE 
     "$ENV{VULKAN_SDK}/Include"
-    "${CMAKE_CURRENT_LIST_DIR}/imgui"
+    "${CMAKE_CURRENT_LIST_DIR}/ImGui"
     "${CMAKE_CURRENT_LIST_DIR}/glfw/include"
 )
 target_compile_definitions(imgui PRIVATE VK_NO_PROTOTYPES)  # This is very important because of volk loader
@@ -51,4 +51,7 @@ set_property(TARGET imgui PROPERTY FOLDER "External")
 set_property(TARGET zlibstatic PROPERTY FOLDER "External")
 set_property(TARGET TracyClient PROPERTY FOLDER "External")
 set_property(TARGET update_mappings PROPERTY FOLDER "External") # glfw
-set_property(TARGET UpdateAssimpLibsDebugSymbolsAndDLLs PROPERTY FOLDER "External")
+
+if(TARGET UpdateAssimpLibsDebugSymbolsAndDLLs)
+    set_property(TARGET UpdateAssimpLibsDebugSymbolsAndDLLs PROPERTY FOLDER "External")
+endif()
