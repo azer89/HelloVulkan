@@ -112,7 +112,7 @@ void PipelinePBRClusterForward::FillCommandBuffer(VulkanContext& ctx, VkCommandB
 
 void PipelinePBRClusterForward::PrepareBDA(VulkanContext& ctx)
 {
-	BDA bda = scene_->GetBDA(false);
+	BDA bda = scene_->GetBDA();
 	VkDeviceSize bdaSize = sizeof(BDA);
 	bdaBuffer_.CreateBuffer(
 		ctx,

@@ -18,7 +18,7 @@ PipelineShadow::PipelineShadow(
 		.viewportWidth_ = static_cast<float>(resourcesShadow->shadowMap_.width_),
 		.viewportHeight_ = static_cast<float>(resourcesShadow->shadowMap_.height_)
 	}),
-	bda_(scene->GetBDA(false)),
+	bda_(scene->GetBDA()),
 	scene_(scene),
 	resourcesShadow_(resourcesShadow)
 {

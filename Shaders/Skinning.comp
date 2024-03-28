@@ -48,7 +48,4 @@ void main()
 
 	outVertices[vIndex].position = totalPosition;
 	outVertices[vIndex].normal = totalNormal;
-
-	//outVertices[vIndex].position = inVertex.position;
-	//outVertices[vIndex].normal = inVertex.normal;
 }

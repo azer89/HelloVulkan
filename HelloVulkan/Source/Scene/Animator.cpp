@@ -52,12 +52,8 @@ void Animator::CalculateBoneTransform(const AnimationNode* node, glm::mat4 paren
 	//auto boneInfoMap = currentAnimation_->GetBoneIDMap();
 	int index = -1;
 	glm::mat4 offsetMatrix = glm::mat4(1.0f);
-	//if (boneInfoMap.contains(nodeName))
 	if (currentAnimation_->GetIndexAndOffsetMatrix(nodeName, index, offsetMatrix))
 	{
-		//int index = boneInfoMap[nodeName].id;
-		//glm::mat4 offsetMatrix = boneInfoMap[nodeName].offsetMatrix;
-
 		if (index >= finalBoneMatrices_.size())
 		{
 			std::cerr << "finalBoneMatrices_ is not long enough, index = " << index << '\n';

@@ -28,7 +28,7 @@ Scene::~Scene()
 {
 	meshDataBuffer_.Destroy();
 	vertexBuffer_.Destroy();
-	skinnedVertexBuffer_.Destroy();
+	preSkinningVertexBuffer_.Destroy();
 	boneIDBuffer_.Destroy();
 	boneWeightBuffer_.Destroy();
 	indexBuffer_.Destroy();
@@ -48,11 +48,11 @@ Scene::~Scene()
 	}
 }
 
-BDA Scene::GetBDA(bool useSkinning) const
+BDA Scene::GetBDA() const
 {
 	return
 	{
-		.vertexBufferAddress = useSkinning ? skinnedVertexBuffer_.deviceAddress_ : vertexBuffer_.deviceAddress_,
+		.vertexBufferAddress = vertexBuffer_.deviceAddress_,
 		.indexBufferAddress = indexBuffer_.deviceAddress_,
 		.meshDataBufferAddress = meshDataBuffer_.deviceAddress_
 	};
@@ -199,11 +199,12 @@ void Scene::CreateAnimationResources(VulkanContext& ctx)
 		bufferUsage);
 
 	// Skinned vertices buffer
+	// TODO This can be a subset of vertexBuffer_
 	const VkDeviceSize vertexBufferSize = sizeof(VertexData) * sceneData_.vertices.size();
-	skinnedVertexBuffer_.CreateGPUOnlyBuffer(
+	preSkinningVertexBuffer_.CreateGPUOnlyBuffer(
 		ctx,
 		vertexBufferSize,
-		sceneData_.vertices.data(), // Upload data from the original vertices
+		sceneData_.vertices.data(), // TODO This can be a subset of vertexBuffer_
 		bufferUsage);
 
 	// Bone matrices buffers

@@ -54,9 +54,9 @@ void PipelineSkinning::Execute(VulkanContext& ctx, VkCommandBuffer commandBuffer
 		.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
 		.srcQueueFamilyIndex = ctx.GetComputeFamily(),
 		.dstQueueFamilyIndex = ctx.GetGraphicsFamily(),
-		.buffer = scene_->skinnedVertexBuffer_.buffer_,
+		.buffer = scene_->vertexBuffer_.buffer_,
 		.offset = 0,
-		.size = scene_->skinnedVertexBuffer_.size_,
+		.size = scene_->vertexBuffer_.size_,
 	};
 	VulkanBarrier::CreateBufferBarrier(commandBuffer, &bufferBarrier, 1u);
 }
@@ -70,8 +70,8 @@ void PipelineSkinning::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag);
 	dsInfo.AddBuffer(&(scene_->boneIDBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag);
 	dsInfo.AddBuffer(&(scene_->boneWeightBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag);
+	dsInfo.AddBuffer(&(scene_->preSkinningVertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // Input
 	dsInfo.AddBuffer(&(scene_->vertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // Output
-	dsInfo.AddBuffer(&(scene_->skinnedVertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // Output
 
 	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 

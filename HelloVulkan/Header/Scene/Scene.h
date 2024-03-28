@@ -27,7 +27,7 @@ public:
 
 	[[nodiscard]] uint32_t GetInstanceCount() const { return static_cast<uint32_t>(meshDataArray_.size()); }
 	[[nodiscard]] std::vector<VkDescriptorImageInfo> GetImageInfos() const;
-	[[nodiscard]] BDA GetBDA(bool useSkinning) const;
+	[[nodiscard]] BDA GetBDA() const;
 
 	void GetOffsetAndDrawCount(MaterialType matType, VkDeviceSize& offset, uint32_t& drawCount) const;
 
@@ -66,10 +66,10 @@ public:
 	// Skinning
 	VulkanBuffer boneIDBuffer_;
 	VulkanBuffer boneWeightBuffer_;
-	VulkanBuffer skinnedVertexBuffer_;
+	VulkanBuffer preSkinningVertexBuffer_; // This buffer contains a subset of vertexBuffer_
 	std::array<VulkanBuffer, AppConfig::FrameCount> boneMatricesBuffers_; // Frame-in-flight
 
-	VulkanBuffer vertexBuffer_;
+	VulkanBuffer vertexBuffer_; 
 	VulkanBuffer indexBuffer_;
 	VulkanBuffer indirectBuffer_;
 	VulkanBuffer meshDataBuffer_;

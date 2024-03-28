@@ -14,7 +14,7 @@ Animation::Animation(std::string const& path, Model* model)
 	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate);
 
 	assert(scene && scene->mRootNode);
-	auto animation = scene->mAnimations[0]; // TODO Can only support one animation
+	auto animation = scene->mAnimations[0]; // TODO Currently can only support one animation
 	duration_ = static_cast<float>(animation->mDuration);
 	ticksPerSecond_ = static_cast<float>(animation->mTicksPerSecond);
 	aiMatrix4x4 globalTransformation = scene->mRootNode->mTransformation;

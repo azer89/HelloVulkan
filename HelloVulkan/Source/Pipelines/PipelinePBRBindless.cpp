@@ -102,7 +102,7 @@ void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 
 void PipelinePBRBindless::PrepareBDA(VulkanContext& ctx)
 {
-	BDA bda = scene_->GetBDA(useSkinning_);
+	BDA bda = scene_->GetBDA();
 	VkDeviceSize bdaSize = sizeof(BDA);
 	bdaBuffer_.CreateBuffer(
 		ctx,
