@@ -1,29 +1,26 @@
 #version 460 core
-#extension GL_EXT_buffer_reference : require
 
 layout (local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
 
 #include <Bindless/VertexData.glsl>
-#include <Bindless/MeshData.glsl>
-#include <Bindless/BDA.glsl>
 
-layout(set = 0, binding = 0) uniform BDABlock { BDA bda; }; // UBO
-layout(set = 0, binding = 1) readonly buffer M { mat4 finalBonesMatrices[]; }; // SSBO
-layout(set = 0, binding = 2) readonly buffer B { ivec4 boneIdArray[]; }; // SSBO
-layout(set = 0, binding = 3) readonly buffer W { vec4 weightArray[]; }; // SSBO
-layout(set = 0, binding = 4) buffer V { VertexData outVertices[]; }; // SSBO Output
+layout(set = 0, binding = 0) readonly buffer M { mat4 finalBonesMatrices[]; }; // SSBO
+layout(set = 0, binding = 1) readonly buffer B { ivec4 boneIdArray[]; }; // SSBO
+layout(set = 0, binding = 2) readonly buffer W { vec4 weightArray[]; }; // SSBO
+layout(set = 0, binding = 3) buffer V_In { VertexData inVertices []; };
+layout(set = 0, binding = 4) buffer V_Out { VertexData outVertices[]; }; // SSBO Output
 
 const int MAX_SKINNING_BONE = 4;
 
 void main()
 {
 	uint vIndex = gl_GlobalInvocationID.x;
-	if (vIndex >= outVertices.length())
+	if (vIndex >= inVertices.length())
 	{
 		return;
 	}
 
-	VertexData vertexData = bda.vertexReference.vertices[vIndex];
+	VertexData vertexData = inVertices[vIndex];
 	vec3 totalPosition = vec3(0.0f);
 	vec3 totalNormal = vec3(0.0f);
 	ivec4 boneIds = boneIdArray[vIndex];

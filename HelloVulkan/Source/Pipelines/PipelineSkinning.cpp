@@ -8,7 +8,6 @@ PipelineSkinning::PipelineSkinning(VulkanContext& ctx, Scene* scene) :
 	}),
 	scene_(scene)
 {
-	PrepareBDA(ctx); // Buffer device address
 	CreateDescriptor(ctx);
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
 	CreateComputePipeline(ctx, AppConfig::ShaderFolder + "Skinning.comp");
@@ -16,7 +15,6 @@ PipelineSkinning::PipelineSkinning(VulkanContext& ctx, Scene* scene) :
 
 PipelineSkinning::~PipelineSkinning()
 {
-	bdaBuffer_.Destroy();
 }
 
 void PipelineSkinning::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
@@ -63,36 +61,23 @@ void PipelineSkinning::Execute(VulkanContext& ctx, VkCommandBuffer commandBuffer
 	VulkanBarrier::CreateBufferBarrier(commandBuffer, &bufferBarrier, 1u);
 }
 
-void PipelineSkinning::PrepareBDA(VulkanContext& ctx)
-{
-	BDA bda = scene_->GetBDA(false);
-	VkDeviceSize bdaSize = sizeof(BDA);
-	bdaBuffer_.CreateBuffer(
-		ctx,
-		bdaSize,
-		VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-		VMA_MEMORY_USAGE_CPU_TO_GPU
-	);
-	bdaBuffer_.UploadBufferData(ctx, &bda, bdaSize);
-}
-
 void PipelineSkinning::CreateDescriptor(VulkanContext& ctx)
 {
 	constexpr uint32_t frameCount = AppConfig::FrameCount;
 	constexpr VkShaderStageFlags stageFlag = VK_SHADER_STAGE_COMPUTE_BIT;
 	VulkanDescriptorInfo dsInfo;
 
-	dsInfo.AddBuffer(&bdaBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, stageFlag);
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag);
 	dsInfo.AddBuffer(&(scene_->boneIDBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag);
 	dsInfo.AddBuffer(&(scene_->boneWeightBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag);
+	dsInfo.AddBuffer(&(scene_->vertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // Output
 	dsInfo.AddBuffer(&(scene_->skinnedVertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // Output
 
 	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 
 	for (size_t i = 0; i < frameCount; ++i)
 	{
-		dsInfo.UpdateBuffer(&(scene_->boneMatricesBuffers_[i]), 1);
+		dsInfo.UpdateBuffer(&(scene_->boneMatricesBuffers_[i]), 0);
 		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}
 }

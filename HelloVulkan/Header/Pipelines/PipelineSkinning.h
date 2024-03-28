@@ -17,11 +17,9 @@ public:
 private:
 	void Execute(VulkanContext& ctx, VkCommandBuffer commandBuffer, uint32_t frameIndex);
 	void CreateDescriptor(VulkanContext& ctx);
-	void PrepareBDA(VulkanContext& ctx);
 
 private:
 	Scene* scene_;
-	VulkanBuffer bdaBuffer_;
 	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;
 };
 
