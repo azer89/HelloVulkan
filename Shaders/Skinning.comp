@@ -51,4 +51,7 @@ void main()
 
 	outVertices[vIndex].position = totalPosition;
 	outVertices[vIndex].normal = totalNormal;
+
+	//outVertices[vIndex].position = vertexData.position;
+	//outVertices[vIndex].normal = vertexData.normal;
 }

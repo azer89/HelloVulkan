@@ -256,7 +256,10 @@ void Model::ProcessMesh(
 	}
 }
 
-void Model::SetBoneDataToDefault(std::vector<iSVec>& boneIDArray, std::vector<fSVec>& boneWeightArray, uint32_t vertexCount)
+void Model::SetBoneDataToDefault(
+	std::vector<iSVec>& boneIDArray, 
+	std::vector<fSVec>& boneWeightArray, 
+	uint32_t vertexCount)
 {
 	boneIDArray.resize(vertexCount);
 	boneWeightArray.resize(vertexCount);
@@ -312,7 +315,7 @@ void Model::ExtractBoneWeightForVertices(
 		{
 			const uint32_t vertexId = weights[w].mVertexId; // TODO Offset
 			const float weight = weights[w].mWeight;
-			assert(vertexId <= mesh->mNumVertices);
+			assert(vertexId < mesh->mNumVertices);
 			for (uint32_t iter = 0; iter < AppConfig::MaxSkinningBone; ++iter)
 			{
 				if (boneIDs[vertexId][iter] < 0)

@@ -10,7 +10,6 @@
 
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
-#define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/quaternion.hpp"
 
 // Skinning vector with int elements

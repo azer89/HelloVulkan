@@ -1,5 +1,8 @@
 #include "Bone.h"
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include "glm/gtx/quaternion.hpp"
+
 inline glm::vec3 CastToGLMVec3(const aiVector3D& vec)
 {
 	return glm::vec3(vec.x, vec.y, vec.z);
