@@ -33,9 +33,21 @@ void AppPBRShadow::Init()
 	resourcesIBL_ = AddResources<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
 
 	std::vector<ModelCreateInfo> dataArray = {
-		{AppConfig::ModelFolder + "Sponza/Sponza.gltf", 1},
-		{AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf", 1},
-		{AppConfig::ModelFolder + "Hexapod/Hexapod.gltf", 1}
+		{
+			.filename = AppConfig::ModelFolder + "Sponza/Sponza.gltf",
+			.instanceCount = 1,
+			.hasAnimation = false
+		},
+		{
+			.filename = AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf",
+			.instanceCount = 1,
+			.hasAnimation = false
+		},
+		{
+			.filename = AppConfig::ModelFolder + "Hexapod/Hexapod.gltf",
+			.instanceCount = 1,
+			.hasAnimation = false
+		}
 	};
 	bool supportDeviceAddress = true;
 	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);

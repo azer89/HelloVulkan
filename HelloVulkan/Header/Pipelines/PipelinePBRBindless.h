@@ -21,6 +21,7 @@ public:
 		ResourcesLight* resourcesLight,
 		ResourcesIBL* resourcesIBL,
 		ResourcesShared* resourcesShared,
+		bool useSkinning,
 		uint8_t renderBit = 0u);
 	 ~PipelinePBRBindless();
 
@@ -37,6 +38,7 @@ private:
 	void PrepareBDA(VulkanContext& ctx);
 	void CreateDescriptor(VulkanContext& ctx);
 
+	bool useSkinning_;
 	Scene* scene_;
 	ResourcesLight* resourcesLight_;
 	ResourcesIBL* resourcesIBL_;

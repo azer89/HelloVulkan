@@ -237,6 +237,9 @@
     <None Include="..\Shaders\ClusteredForward\Scene.frag">
       <Filter>Shaders\ClusteredForward</Filter>
     </None>
+    <None Include="..\Shaders\Skinning.comp">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Camera.h">
@@ -440,6 +443,21 @@
     <ClInclude Include="Header\Scene\ScenePODs.h">
       <Filter>Header Files\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Scene\Animator.h">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Scene\Animation.h">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Scene\Bone.h">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineSkinning.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Apps\AppSkinning.h">
+      <Filter>Header Files\Apps</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">
@@ -609,6 +627,21 @@
     </ClCompile>
     <ClCompile Include="Source\Scene\Scene.cpp">
       <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\Animator.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\Animation.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\Bone.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineSkinning.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Apps\AppSkinning.cpp">
+      <Filter>Source Files\Apps</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

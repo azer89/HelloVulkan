@@ -129,9 +129,10 @@ void Model::LoadModel(VulkanContext& ctx,
 	std::string const& path,
 	SceneData& sceneData)
 {
+	filepath_ = path;
 	Assimp::Importer importer;
 	scene_ = importer.ReadFile(
-		path,
+		filepath_,
 		aiProcess_Triangulate |
 		aiProcess_GenSmoothNormals |
 		aiProcess_FlipUVs |
@@ -144,7 +145,7 @@ void Model::LoadModel(VulkanContext& ctx,
 	}
 
 	// Retrieve the directory path of the filepath
-	directory_ = path.substr(0, path.find_last_of('/'));
+	directory_ = filepath_.substr(0, filepath_.find_last_of('/'));
 
 	// Process assimp's root node recursively
 	ProcessNode(
@@ -192,17 +193,34 @@ void Model::ProcessMesh(
 	const glm::mat4& transform)
 {
 	const std::string meshName = mesh->mName.C_Str();
-	std::vector<VertexData> vertices = GetVertices(mesh, transform);
+
+	std::vector<VertexData> vertices = GetVertices(mesh, scene_->mAnimations ? glm::mat4(1.0f) : transform);
 	std::vector<uint32_t> indices = GetIndices(mesh);
 	std::unordered_map<TextureType, uint32_t> textures = GetTextures(ctx, mesh);
 
 	const uint32_t prevVertexOffset = sceneData.GetCurrentVertexOffset();
 	const uint32_t prevIndexOffset = sceneData.GetCurrentIndexOffset();
 
+	std::vector<iSVec> boneIDArray;
+	std::vector<fSVec> boneWeightArray;
+	bool hasAnimation = false;
+	if (scene_->mAnimations)
+	{
+		SetBoneDataToDefault(boneIDArray, boneWeightArray, static_cast<uint32_t>(vertices.size()));
+		ExtractBoneWeightForVertices(boneIDArray, boneWeightArray, mesh);
+		hasAnimation = true;
+	}
+
 	if (bindlessTexture_)
 	{
 		sceneData.vertices.insert(std::end(sceneData.vertices), std::begin(vertices), std::end(vertices));
 		sceneData.indices.insert(std::end(sceneData.indices), std::begin(indices), std::end(indices));
+
+		if (hasAnimation)
+		{
+			sceneData.boneIDArray.insert(std::end(sceneData.boneIDArray), std::begin(boneIDArray), std::end(boneIDArray));
+			sceneData.boneWeightArray.insert(std::end(sceneData.boneWeightArray), std::begin(boneWeightArray), std::end(boneWeightArray));
+		}
 
 		// If Bindless textures, we do not move vertices and indices
 		meshes_.emplace_back();
@@ -235,6 +253,86 @@ void Model::ProcessMesh(
 			std::move(indices),
 			std::move(textures)
 		);
+	}
+}
+
+void Model::SetBoneDataToDefault(
+	std::vector<iSVec>& boneIDArray, 
+	std::vector<fSVec>& boneWeightArray, 
+	uint32_t vertexCount)
+{
+	boneIDArray.resize(vertexCount);
+	boneWeightArray.resize(vertexCount);
+
+	for (uint32_t i = 0; i < vertexCount; ++i)
+	{
+		for (uint32_t j = 0; j < AppConfig::MaxSkinningBone; ++j)
+		{
+			boneIDArray[i][j] = -1;
+			boneWeightArray[i][j] = 0.0f;
+		}
+	}
+}
+
+void Model::ExtractBoneWeightForVertices(
+	std::vector<iSVec>& boneIDs,
+	std::vector<fSVec>& boneWeights,
+	const aiMesh* mesh)
+{
+	if (mesh->mNumBones == 0)
+	{
+		return;
+	}
+
+	for (uint32_t b = 0; b < mesh->mNumBones; ++b)
+	{
+		int boneID = -1;
+		std::string boneName = mesh->mBones[b]->mName.C_Str();
+		if (!boneInfoMap_.contains(boneName))
+		{
+			boneInfoMap_[boneName] = 
+			{
+				.id = boneCounter_,
+				.offsetMatrix = CastToGLMMat4(mesh->mBones[b]->mOffsetMatrix)
+			};
+			boneID = boneCounter_;
+			++boneCounter_;
+		}
+		else
+		{
+			boneID = boneInfoMap_[boneName].id;
+		}
+
+		if (boneID < 0)
+		{
+			std::cerr << "Cannot find bone, name = " << boneName << '\n';
+		}
+
+		const aiVertexWeight* weights = mesh->mBones[b]->mWeights;
+		const uint32_t numWeights = mesh->mBones[b]->mNumWeights;
+
+		for (uint32_t w = 0; w < numWeights; ++w)
+		{
+			const uint32_t vertexId = weights[w].mVertexId; // TODO Offset
+			const float weight = weights[w].mWeight;
+			assert(vertexId < mesh->mNumVertices);
+
+			// NOTE Do not consider a bone if the weight is zero
+			if (weight == 0)
+			{
+				continue;
+			}
+
+			for (uint32_t iter = 0; iter < AppConfig::MaxSkinningBone; ++iter)
+			{
+				if (boneIDs[vertexId][iter] < 0)
+				{
+					boneWeights[vertexId][iter] = weight;
+					boneIDs[vertexId][iter] = boneID;
+					break;
+				}
+			}
+		}
 	}
 }
 

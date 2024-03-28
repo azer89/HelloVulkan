@@ -4,6 +4,8 @@
 #include "BDA.h"
 #include "UBOs.h"
 #include "Model.h"
+#include "Animation.h"
+#include "Animator.h"
 #include "ScenePODs.h"
 #include "BoundingBox.h"
 
@@ -38,10 +40,14 @@ public:
 		VulkanContext& ctx,
 		VulkanBuffer& indirectBuffer);
 
+	void UpdateAnimation(VulkanContext& ctx, float deltaTime);
+
 private:
+	void CreateAnimationResources(VulkanContext& ctx);
 	void CreateBindlessResources(VulkanContext& ctx);
 	void CreateDataStructures();
 	[[nodiscard]] BoundingBox GetBoundingBox(uint32_t vertexStart, uint32_t vertexEnd);
+	[[nodiscard]] bool HasAnimation() { return !sceneData_.boneIDArray.empty(); }
 
 public:
 	uint32_t triangleCount_ = 0;
@@ -49,17 +55,28 @@ public:
 	std::vector<Model> models_ = {};
 	std::vector<ModelUBO> modelSSBOs_ = {};
 
+	std::unique_ptr<Animation> animationPtr_ = nullptr;
+	std::unique_ptr<Animator> animatorPtr_ = nullptr;
+
 	// These three have the same length
 	std::vector<InstanceData> instanceDataArray_ = {};
 	std::vector<MeshData> meshDataArray_ = {}; // Content is sent to meshDataBuffer_
 	std::vector<BoundingBox> transformedBoundingBoxes_ = {}; // Content is sent to transformedBoundingBoxBuffer_
+	
+	// Skinning
+	VulkanBuffer boneIDBuffer_;
+	VulkanBuffer boneWeightBuffer_;
+	VulkanBuffer preSkinningVertexBuffer_; // This buffer contains a subset of vertexBuffer_
+	std::array<VulkanBuffer, AppConfig::FrameCount> boneMatricesBuffers_; // Frame-in-flight
 
-	VulkanBuffer vertexBuffer_;
+	VulkanBuffer vertexBuffer_; 
 	VulkanBuffer indexBuffer_;
 	VulkanBuffer indirectBuffer_;
 	VulkanBuffer meshDataBuffer_;
+	std::array<VulkanBuffer, AppConfig::FrameCount> modelSSBOBuffers_ = {}; // Frame-in-flight
+
+	// Frustum culling
 	VulkanBuffer transformedBoundingBoxBuffer_; // TODO Implement Frame-in-flight
-	std::vector<VulkanBuffer> modelSSBOBuffers_ = {}; // Frame-in-flight
 	
 private:
 	bool supportDeviceAddress_;

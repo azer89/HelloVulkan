@@ -1,4 +1,4 @@
-#include "AppPBRBindless.h"
+#include "AppSkinning.h"
 #include "VulkanUtility.h"
 #include "Configs.h"
 
@@ -7,15 +7,16 @@
 #include "PipelineFinish.h"
 #include "PipelineTonemap.h"
 #include "PipelineResolveMS.h"
+#include "PipelineSkinning.h"
 
 #include "glm/ext.hpp"
 #include "imgui_impl_vulkan.h"
 
-AppPBRBindless::AppPBRBindless()
+AppSkinning::AppSkinning()
 {
 }
 
-void AppPBRBindless::Init()
+void AppSkinning::Init()
 {
 	camera_->SetPositionAndTarget(glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3(0.0));
 
@@ -28,26 +29,21 @@ void AppPBRBindless::Init()
 	resourcesIBL_ = AddResources<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
 
 	// Scene
-	std::vector<ModelCreateInfo> dataArray = { 
+	std::vector<ModelCreateInfo> dataArray = {
 		{ 
-			.filename = AppConfig::ModelFolder + "Sponza/Sponza.gltf",
+			.filename = AppConfig::ModelFolder + "DancingStormtrooper/DancingStormtrooper.gltf",
 			.instanceCount = 1,
-			.hasAnimation = false
-		},
-		{ 
-			.filename = AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf",
-			.instanceCount = 1,
-			.hasAnimation = false
+			.hasAnimation = true
 		},
 	};
 	bool supportDeviceAddress = true;
 	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
 
-	// Tachikoma model matrix
-	glm::mat4 modelMatrix(1.f);
+	// Model matrix
+	/*glm::mat4 modelMatrix(1.f);
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.5f, 0.62f, 0.f));
-	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 1, 0);
+	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 0, 0);*/
 
 	// Pipelines
 	AddPipeline<PipelineClear>(vulkanContext_); // This is responsible to clear swapchain image
@@ -58,13 +54,14 @@ void AppPBRBindless::Init()
 		resourcesShared_,
 		// This is the first offscreen render pass so we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
+	AddPipeline<PipelineSkinning>(vulkanContext_, scene_.get());
 	pbrPtr_ = AddPipeline<PipelinePBRBindless>(
 		vulkanContext_,
 		scene_.get(),
 		resourcesLight_,
 		resourcesIBL_,
 		resourcesShared_,
-		false);
+		true);
 	lightPtr_ = AddPipeline<PipelineLightRender>(
 		vulkanContext_,
 		resourcesLight_,
@@ -78,7 +75,7 @@ void AppPBRBindless::Init()
 	AddPipeline<PipelineFinish>(vulkanContext_);
 }
 
-void AppPBRBindless::InitLights()
+void AppSkinning::InitLights()
 {
 	// Lights (SSBO)
 	resourcesLight_ = AddResources<ResourcesLight>();
@@ -91,7 +88,7 @@ void AppPBRBindless::InitLights()
 	});
 }
 
-void AppPBRBindless::UpdateUI()
+void AppSkinning::UpdateUI()
 {
 	if (!showImgui_)
 	{
@@ -100,7 +97,7 @@ void AppPBRBindless::UpdateUI()
 	}
 
 	imguiPtr_->ImGuiStart();
-	imguiPtr_->ImGuiSetWindow("Bindless Textures", 500, 350);
+	imguiPtr_->ImGuiSetWindow("Skinning", 500, 350);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 	ImGui::Text("Triangle Count: %i", scene_->triangleCount_);
 	ImGui::Checkbox("Render Lights", &inputContext_.renderLights_);
@@ -113,8 +110,10 @@ void AppPBRBindless::UpdateUI()
 	}
 }
 
-void AppPBRBindless::UpdateUBOs()
+void AppSkinning::UpdateUBOs()
 {
+	scene_->UpdateAnimation(vulkanContext_, frameCounter_.GetDeltaSecond());
+
 	CameraUBO ubo = camera_->GetCameraUBO();
 	for (auto& pipeline : pipelines_)
 	{
@@ -123,7 +122,7 @@ void AppPBRBindless::UpdateUBOs()
 }
 
 // This is called from main.cpp
-void AppPBRBindless::MainLoop()
+void AppSkinning::MainLoop()
 {
 	InitVulkan({
 		.suportBufferDeviceAddress_ = true,
