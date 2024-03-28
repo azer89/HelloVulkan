@@ -22,7 +22,7 @@ void Animator::UpdateAnimation(float dt)
 	deltaTime_ = dt;
 	if (currentAnimation_)
 	{
-		currentTime_ += currentAnimation_->GetTicksPerSecond() * dt;
+		currentTime_ += currentAnimation_->GetTicksPerSecond() * deltaTime_;
 		currentTime_ = fmod(currentTime_, currentAnimation_->GetDuration());
 		CalculateBoneTransform(&currentAnimation_->GetRootNode(), glm::mat4(1.0f));
 	}

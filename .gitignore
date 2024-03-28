@@ -405,9 +405,3 @@ CMakeFiles/
 *.cmake
 
 CMakeCache.txt
-
-# TODO Remove this
-CesiumMan_data.bin
-CesiumMan.gltf
-CesiumMan_img0.jpg
-[Vv]ampire/

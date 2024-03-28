@@ -194,7 +194,7 @@ void Model::ProcessMesh(
 {
 	const std::string meshName = mesh->mName.C_Str();
 
-	std::vector<VertexData> vertices = GetVertices(mesh, transform);
+	std::vector<VertexData> vertices = GetVertices(mesh, scene_->mAnimations ? glm::mat4(1.0f) : transform);
 	std::vector<uint32_t> indices = GetIndices(mesh);
 	std::unordered_map<TextureType, uint32_t> textures = GetTextures(ctx, mesh);
 
@@ -316,6 +316,13 @@ void Model::ExtractBoneWeightForVertices(
 			const uint32_t vertexId = weights[w].mVertexId; // TODO Offset
 			const float weight = weights[w].mWeight;
 			assert(vertexId < mesh->mNumVertices);
+
+			// NOTE Do not consider a bone if the weight is zero
+			if (weight == 0)
+			{
+				continue;
+			}
+
 			for (uint32_t iter = 0; iter < AppConfig::MaxSkinningBone; ++iter)
 			{
 				if (boneIDs[vertexId][iter] < 0)
