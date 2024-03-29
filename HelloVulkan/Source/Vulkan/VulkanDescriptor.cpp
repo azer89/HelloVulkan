@@ -21,29 +21,36 @@ void VulkanDescriptor::CreatePoolAndLayout(
 	{
 		if (write.descriptorType_ == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
 		{
-			uboCount++;
+			uboCount += write.descriptorCount_;
 		}
 		else if(write.descriptorType_ == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER)
 		{
-			ssboCount++;
+			ssboCount += write.descriptorCount_;
 		}
 		else if (write.descriptorType_ == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER)
 		{
-			samplerCount++;
+			samplerCount += write.descriptorCount_;
 		}
 		else if (write.descriptorType_ == VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR)
 		{
-			accelerationStructureCount++;
+			accelerationStructureCount += write.descriptorCount_;
 		}
 		else if (write.descriptorType_ == VK_DESCRIPTOR_TYPE_STORAGE_IMAGE)
 		{
-			storageImageCount++;
+			storageImageCount += write.descriptorCount_;
 		}
 		else
 		{
 			std::cerr << "Descriptor type is currently not supported\n";
 		}
 	}
+
+	// Frame-in-flight
+	uboCount *= frameCount;
+	ssboCount *= frameCount;
+	samplerCount *= frameCount;
+	storageImageCount *= frameCount;
+	accelerationStructureCount *= frameCount;
 
 	std::vector<VkDescriptorPoolSize> poolSizes;
 
