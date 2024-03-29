@@ -45,6 +45,11 @@ void AppBase::InitGLSLang()
 
 void AppBase::InitGLFW()
 {
+	glfwSetErrorCallback([](int error, const char* description)
+	{
+		throw std::runtime_error(std::string("GLFW Error: ") + description);
+	});
+	
 	glfwInit();
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
@@ -66,7 +71,6 @@ void AppBase::InitGLFW()
 		glfwTerminate();
 		throw std::runtime_error("Failed to create GLFW window");
 	}
-	glfwMakeContextCurrent(glfwWindow_);
 
 	glfwSetWindowUserPointer(glfwWindow_, this);
 	
