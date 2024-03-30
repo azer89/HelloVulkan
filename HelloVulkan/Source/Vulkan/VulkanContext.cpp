@@ -769,9 +769,9 @@ void VulkanContext::InsertDebugLabel(VkCommandBuffer commandBuffer, const char* 
 	 .pNext = nullptr,
 	 .pLabelName = label,
 	 .color = {float((colorRGBA >> 0) & 0xff) / 255.0f,
-			   float((colorRGBA >> 8) & 0xff) / 255.0f,
-			   float((colorRGBA >> 16) & 0xff) / 255.0f,
-			   float((colorRGBA >> 24) & 0xff) / 255.0f},
+				float((colorRGBA >> 8) & 0xff) / 255.0f,
+				float((colorRGBA >> 16) & 0xff) / 255.0f,
+				float((colorRGBA >> 24) & 0xff) / 255.0f},
 	};
 	vkCmdInsertDebugUtilsLabelEXT(commandBuffer, &utilsLabel);
 }
