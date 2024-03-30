@@ -17,8 +17,8 @@ inline glm::quat CastToGLMQuat(const aiQuaternion& pOrientation)
 
 Bone::Bone(const std::string& name, int id, const aiNodeAnim* channel) :
 	name_(name),
-	id_(id),
-	localTransform_(1.0f)
+	localTransform_(1.0f),
+	id_(id)
 {
 	positionCount_ = channel->mNumPositionKeys;
 

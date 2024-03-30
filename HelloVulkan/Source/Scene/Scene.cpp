@@ -186,7 +186,7 @@ void Scene::CreateAnimationResources(VulkanContext& ctx)
 	skinningMatrices_.reserve(sceneData_.boneMatrixCount + 1);
 	for (uint32_t i = 0; i < sceneData_.boneMatrixCount; i++)
 	{
-		skinningMatrices_.push_back(glm::mat4(1.0f));
+		skinningMatrices_.emplace_back(1.0f);
 	}
 
 	animations_.resize(models_.size());
@@ -336,8 +336,8 @@ void Scene::CreateDataStructures()
 
 void Scene::UpdateModelMatrix(VulkanContext& ctx,
 	const ModelUBO& modelUBO,
-	uint32_t modelIndex,
-	uint32_t instanceIndex)
+	const uint32_t modelIndex,
+	const uint32_t instanceIndex)
 {
 	if (modelIndex < 0 || modelIndex >= models_.size())
 	{
@@ -385,7 +385,7 @@ void Scene::UpdateModelMatrix(VulkanContext& ctx,
 	}
 }
 
-BoundingBox Scene::GetBoundingBox(uint32_t vertexStart, uint32_t vertexEnd)
+BoundingBox Scene::GetBoundingBox(const uint32_t vertexStart, const uint32_t vertexEnd)
 {
 	glm::vec3 vMin(std::numeric_limits<float>::max());
 	glm::vec3 vMax(std::numeric_limits<float>::lowest());

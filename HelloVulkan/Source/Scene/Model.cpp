@@ -147,7 +147,7 @@ void Model::LoadModel(VulkanContext& ctx,
 	directory_ = filepath_.substr(0, filepath_.find_last_of('/'));
 
 	processAnimation_ = modelInfo_.playAnimation && scene_->mAnimations;
-	if (processAnimation_) { boneCounter_ = sceneData.boneMatrixCount; }
+	if (processAnimation_) { boneCounter_ = static_cast<int>(sceneData.boneMatrixCount); }
 
 	// Process assimp's root node recursively
 	ProcessNode(
@@ -282,7 +282,7 @@ void Model::SetBoneToDefault(
 		skinningIndices[i] = prevVertexOffset + i;
 		for (uint32_t j = 0; j < AppConfig::MaxSkinningBone; ++j)
 		{
-			boneIDArray[i][j] = 0;
+			boneIDArray[i][j] = 0; // The first matrix is identity
 			boneWeightArray[i][j] = 0.0f;
 		}
 	}

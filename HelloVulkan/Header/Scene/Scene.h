@@ -33,8 +33,8 @@ public:
 
 	void UpdateModelMatrix(VulkanContext& ctx,
 		const ModelUBO& modelUBO,
-		uint32_t modelIndex,
-		uint32_t instanceIndex);
+		const uint32_t modelIndex,
+		const uint32_t instanceIndex);
 
 	void CreateIndirectBuffer(
 		VulkanContext& ctx,
@@ -46,7 +46,7 @@ private:
 	void CreateAnimationResources(VulkanContext& ctx);
 	void CreateBindlessResources(VulkanContext& ctx);
 	void CreateDataStructures();
-	[[nodiscard]] BoundingBox GetBoundingBox(uint32_t vertexStart, uint32_t vertexEnd);
+	[[nodiscard]] BoundingBox GetBoundingBox(const uint32_t vertexStart, const uint32_t vertexEnd);
 	[[nodiscard]] bool HasAnimation() const { return !sceneData_.boneIDArray.empty(); }
 
 public:
