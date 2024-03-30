@@ -12,6 +12,7 @@ Adapted from learnopengl.com/Guest-Articles/2020/Skeletal-Animation
 class Bone
 {
 public:
+	Bone() = default;
 	Bone(const std::string& name, int id, const aiNodeAnim* channel);
 
 	void Update(float animationTime);
@@ -39,6 +40,5 @@ private:
 	uint32_t scalingCount_;
 	int id_;
 };
-
 
 #endif

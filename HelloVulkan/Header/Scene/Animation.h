@@ -20,7 +20,7 @@ public:
 
 	void Init(std::string const& path, Model* model);
 
-	[[nodiscard]] Bone* FindBone(const std::string& name);
+	[[nodiscard]] Bone* GetBone(const std::string& name);
 	[[nodiscard]] float GetTicksPerSecond() const { return ticksPerSecond_; }
 	[[nodiscard]] float GetDuration() const { return duration_; }
 	[[nodiscard]] bool GetIndexAndOffsetMatrix(const std::string& name, int& index, glm::mat4& offsetMatrix) const;
@@ -36,7 +36,7 @@ private:
 	float duration_ = 0.0f;
 	float ticksPerSecond_ = 0.0f;
 	Model* model_ = nullptr;
-	std::vector<Bone> bones_ = {};
+	std::unordered_map<std::string, Bone> boneMap_;
 };
 
 #endif

@@ -15,8 +15,8 @@ void Animation::Init(std::string const& path, Model* model)
 
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate);
-
 	assert(scene && scene->mRootNode);
+
 	const aiAnimation* animation = scene->mAnimations[0]; // TODO Currently can only support one animation
 	duration_ = static_cast<float>(animation->mDuration);
 	ticksPerSecond_ = static_cast<float>(animation->mTicksPerSecond);
@@ -26,19 +26,13 @@ void Animation::Init(std::string const& path, Model* model)
 	AddBones(animation);
 }
 
-Bone* Animation::FindBone(const std::string& name)
+Bone* Animation::GetBone(const std::string& name)
 {
-	const auto iter = std::ranges::find_if(bones_.begin(), bones_.end(),
-		[&](const Bone& Bone)
-		{
-			return Bone.GetBoneName() == name;
-		}
-	);
-	if (iter == bones_.end())
+	if (boneMap_.contains(name))
 	{
-		return nullptr;
+		return &boneMap_[name];
 	}
-	return &(*iter);
+	return nullptr;
 }
 
 void Animation::AddBones(const aiAnimation* animation)
@@ -59,8 +53,8 @@ void Animation::AddBones(const aiAnimation* animation)
 			boneCounter++;
 		}
 
-		// Add the bone to the list
-		bones_.emplace_back(boneName, model_->boneInfoMap_[boneName].id, channel);
+		// Add the bone to map
+		boneMap_[boneName] = Bone(boneName, model_->boneInfoMap_[boneName].id, channel);
 	}
 }
 
