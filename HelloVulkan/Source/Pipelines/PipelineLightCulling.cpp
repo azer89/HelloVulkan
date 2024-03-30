@@ -69,6 +69,8 @@ void PipelineLightCulling::Execute(VulkanContext& ctx, VkCommandBuffer commandBu
 		0, // dynamicOffsetCount
 		0); // pDynamicOffsets
 
+	ctx.InsertDebugLabel(commandBuffer, "PipelineLightCulling", 0xff9999ff);
+
 	vkCmdDispatch(commandBuffer,
 		static_cast<uint32_t>(ClusterForwardConfig::SliceCountX), // groupCountX
 		static_cast<uint32_t>(ClusterForwardConfig::SliceCountY), // groupCountY

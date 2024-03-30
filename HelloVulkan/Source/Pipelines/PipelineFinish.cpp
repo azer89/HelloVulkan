@@ -1,5 +1,4 @@
 #include "PipelineFinish.h"
-#include "VulkanUtility.h"
 
 /*
 	Present swapchain image 
@@ -23,5 +22,6 @@ void PipelineFinish::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comma
 	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "Finish", tracy::Color::MediumAquamarine);
 	const uint32_t swapchainImageIndex = ctx.GetCurrentSwapchainImageIndex();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));
+	ctx.InsertDebugLabel(commandBuffer, "PipelineFinish", 0xff99ffff);
 	vkCmdEndRenderPass(commandBuffer);
 }

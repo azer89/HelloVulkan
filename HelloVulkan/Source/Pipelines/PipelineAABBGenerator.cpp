@@ -60,6 +60,8 @@ void PipelineAABBGenerator::Execute(VulkanContext& ctx, VkCommandBuffer commandB
 		0, // dynamicOffsetCount
 		0); // pDynamicOffsets
 
+	ctx.InsertDebugLabel(commandBuffer, "PipelineFrustumCulling", 0xff99ff99);
+
 	vkCmdDispatch(commandBuffer,
 		static_cast<uint32_t>(ClusterForwardConfig::SliceCountX), // groupCountX
 		static_cast<uint32_t>(ClusterForwardConfig::SliceCountY), // groupCountY

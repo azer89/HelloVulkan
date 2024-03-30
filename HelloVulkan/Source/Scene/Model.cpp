@@ -21,7 +21,7 @@ void Model::LoadSlotBased(VulkanContext& ctx, const std::string& path)
 	bindlessTexture_ = false;
 
 	// In case a texture type cannot be found, replace it with a black 1x1 texture
-	unsigned char black[4] = { 0, 0, 0, 255 };
+	uint32_t black = 0xff000000;
 	AddTexture(ctx, BLACK_TEXTURE, (void*)&black, 1, 1);
 
 	// Load model here
@@ -44,7 +44,7 @@ void Model::LoadBindless(
 	modelInfo_ = modelInfo;
 
 	// In case a texture type cannot be found, replace it with a black 1x1 texture
-	unsigned char black[4] = { 0, 0, 0, 255 };
+	uint32_t black = 0xff000000;
 	AddTexture(ctx, BLACK_TEXTURE, (void*)&black, 1, 1);
 
 	// Load model here
@@ -139,8 +139,7 @@ void Model::LoadModel(VulkanContext& ctx,
 	// Check for errors
 	if (!scene_ || scene_->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene_->mRootNode) // if is Not Zero
 	{
-		std::cerr << "Error ASSIMP: " << importer.GetErrorString() << '\n';
-		return;
+		throw std::runtime_error("Cannot load file " + path);
 	}
 
 	// Retrieve the directory path of the filepath

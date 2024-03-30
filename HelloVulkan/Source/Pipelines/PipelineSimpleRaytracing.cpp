@@ -1,9 +1,10 @@
 #include "PipelineSimpleRaytracing.h"
 #include "RaytracingBuilder.h"
 #include "VulkanShader.h"
-#include "VulkanUtility.h"
+#include "VulkanCheck.h"
 #include "Scene.h"
 #include "Configs.h"
+#include "Utility.h"
 
 PipelineSimpleRaytracing::PipelineSimpleRaytracing(VulkanContext& ctx, Scene* scene) :
 	PipelineBase(

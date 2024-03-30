@@ -1,5 +1,5 @@
 #include "AccelStructure.h"
-#include "VulkanUtility.h"
+#include "VulkanCheck.h"
 
 void AccelStructure::Create(
 	VulkanContext& ctx,

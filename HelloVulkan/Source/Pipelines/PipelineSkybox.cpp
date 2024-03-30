@@ -1,7 +1,6 @@
 #include "PipelineSkybox.h"
 #include "VulkanImage.h"
 #include "ResourcesShared.h"
-#include "VulkanUtility.h"
 #include "Configs.h"
 #include "UBOs.h"
 
@@ -69,6 +68,7 @@ void PipelineSkybox::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comma
 		&descriptorSets_[frameIndex],
 		0, 
 		nullptr);
+	ctx.InsertDebugLabel(commandBuffer, "PipelineSkybox", 0xff99ff99);
 	vkCmdDraw(commandBuffer, 36, 1, 0, 0);
 	vkCmdEndRenderPass(commandBuffer);
 }

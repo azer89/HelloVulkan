@@ -215,6 +215,7 @@
     <ClInclude Include="Header\Camera.h" />
     <ClInclude Include="Header\Configs.h" />
     <ClInclude Include="Header\FrameCounter.h" />
+    <ClInclude Include="Header\Utility.h" />
     <ClInclude Include="Header\InputContext.h" />
     <ClInclude Include="Header\Pipelines\PipelineAABBGenerator.h" />
     <ClInclude Include="Header\Pipelines\PipelineAABBRender.h" />
@@ -273,7 +274,7 @@
     <ClInclude Include="Header\Vulkan\VulkanRenderPass.h" />
     <ClInclude Include="Header\Vulkan\VulkanShader.h" />
     <ClInclude Include="Header\Vulkan\VulkanSpecialization.h" />
-    <ClInclude Include="Header\Vulkan\VulkanUtility.h" />
+    <ClInclude Include="Header\Vulkan\VulkanCheck.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Apps\AppBase.cpp" />
@@ -336,7 +337,7 @@
     <ClCompile Include="Source\Vulkan\VulkanRenderPass.cpp" />
     <ClCompile Include="Source\Vulkan\VulkanShader.cpp" />
     <ClCompile Include="Source\Vulkan\VulkanSpecialization.cpp" />
-    <ClCompile Include="Source\Vulkan\VulkanUtility.cpp" />
+    <ClCompile Include="Source\Vulkan\VulkanCheck.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

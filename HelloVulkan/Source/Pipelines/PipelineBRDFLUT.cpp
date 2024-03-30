@@ -85,6 +85,8 @@ void PipelineBRDFLUT::Execute(VulkanContext& ctx)
 		0, // dynamicOffsetCount
 		0); // pDynamicOffsets
 
+	ctx.InsertDebugLabel(commandBuffer, "PipelineBRDFLUT", 0xff99ffff);
+
 	// Tell the GPU to do some compute
 	vkCmdDispatch(commandBuffer, 
 		static_cast<uint32_t>(IBLConfig::LUTWidth), // groupCountX

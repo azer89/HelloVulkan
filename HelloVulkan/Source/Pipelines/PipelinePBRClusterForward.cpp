@@ -100,6 +100,8 @@ void PipelinePBRClusterForward::FillCommandBuffer(VulkanContext& ctx, VkCommandB
 		0u, // dynamicOffsetCount
 		nullptr); // pDynamicOffsets
 
+	ctx.InsertDebugLabel(commandBuffer, "PipelinePBRClusteredForward", 0xff9999ff);
+
 	vkCmdDrawIndirect(
 		commandBuffer,
 		scene_->indirectBuffer_.buffer_,

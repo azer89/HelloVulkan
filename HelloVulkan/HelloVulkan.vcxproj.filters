@@ -368,7 +368,7 @@
     <ClInclude Include="Header\Vulkan\VulkanShader.h">
       <Filter>Header Files\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Vulkan\VulkanUtility.h">
+    <ClInclude Include="Header\Vulkan\VulkanCheck.h">
       <Filter>Header Files\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="Header\Resources\ResourcesClusterForward.h">
@@ -457,6 +457,9 @@
     </ClInclude>
     <ClInclude Include="Header\Apps\AppSkinning.h">
       <Filter>Header Files\Apps</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Utility.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -574,9 +577,6 @@
     <ClCompile Include="Source\Vulkan\VulkanShader.cpp">
       <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Vulkan\VulkanUtility.cpp">
-      <Filter>Source Files\Vulkan</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Resources\ResourcesClusterForward.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
@@ -616,9 +616,6 @@
     <ClCompile Include="Source\Vulkan\VulkanSpecialization.cpp">
       <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Resources\ResourcesShared.cpp">
-      <Filter>Source Files\Vulkan</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Scene\Mesh.cpp">
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
@@ -642,6 +639,12 @@
     </ClCompile>
     <ClCompile Include="Source\Apps\AppSkinning.cpp">
       <Filter>Source Files\Apps</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vulkan\VulkanCheck.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Resources\ResourcesShared.cpp">
+      <Filter>Source Files\Resources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

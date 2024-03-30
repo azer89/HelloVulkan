@@ -3,7 +3,6 @@
 #include "ResourcesShared.h"
 #include "ResourcesLight.h"
 #include "ResourcesIBL.h"
-#include "VulkanUtility.h"
 #include "Configs.h"
 
 #include <vector>
@@ -75,6 +74,8 @@ void PipelinePBRSlotBased::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer
 		VK_SHADER_STAGE_FRAGMENT_BIT,
 		0,
 		sizeof(PushConstPBR), &pc_);
+
+	ctx.InsertDebugLabel(commandBuffer, "PipelinePBRSlotBased", 0xffff9999);
 
 	size_t meshIndex = 0;
 	for (Model* model : models_)

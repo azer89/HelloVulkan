@@ -1,5 +1,7 @@
 #include "VulkanDescriptor.h"
-#include "VulkanUtility.h"
+#include "VulkanCheck.h"
+
+#include <iostream>
 
 void VulkanDescriptor::CreatePoolAndLayout(
 	VulkanContext& ctx, 

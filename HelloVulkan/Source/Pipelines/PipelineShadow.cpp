@@ -2,7 +2,7 @@
 #include "ResourcesShadow.h"
 #include "Scene.h"
 
-#include <glm/gtc/matrix_transform.hpp>
+#include "glm/gtc/matrix_transform.hpp"
 
 PipelineShadow::PipelineShadow(
 	VulkanContext& ctx,
@@ -107,6 +107,8 @@ void PipelineShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comma
 		&descriptorSets_[frameIndex],
 		0u,
 		nullptr);
+
+	ctx.InsertDebugLabel(commandBuffer, "PipelineShadow", 0xff99ff99);
 
 	vkCmdDrawIndirect(
 		commandBuffer,

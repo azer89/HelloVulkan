@@ -46,26 +46,19 @@ private:
 	void CreateAnimationResources(VulkanContext& ctx);
 	void CreateBindlessResources(VulkanContext& ctx);
 	void CreateDataStructures();
-	[[nodiscard]] BoundingBox GetBoundingBox(const uint32_t vertexStart, const uint32_t vertexEnd);
 	[[nodiscard]] bool HasAnimation() const { return !sceneData_.boneIDArray.empty(); }
 
 public:
 	uint32_t triangleCount_ = 0;
 	SceneData sceneData_ = {}; // Containing vertices and indices
-	std::vector<Model> models_ = {};
 	std::vector<ModelUBO> modelSSBOs_ = {};
-
-	// Animation
-	std::vector<glm::mat4> skinningMatrices_ = {};
-	std::vector<Animation> animations_ = {};
-	std::vector<Animator> animators_ = {};
 
 	// These three have the same length
 	std::vector<InstanceData> instanceDataArray_ = {};
 	std::vector<MeshData> meshDataArray_ = {}; // Content is sent to meshDataBuffer_
 	std::vector<BoundingBox> transformedBoundingBoxes_ = {}; // Content is sent to transformedBoundingBoxBuffer_
 	
-	// Skinning
+	// Animation
 	VulkanBuffer boneIDBuffer_ = {};
 	VulkanBuffer boneWeightBuffer_ = {};
 	VulkanBuffer skinningIndicesBuffer_ = {};
@@ -84,8 +77,15 @@ public:
 private:
 	bool supportDeviceAddress_ = false;
 
+	std::vector<Model> models_ = {};
+
 	// First index is modelID, second index is per-model instanceID
 	std::vector<std::vector<InstanceMap>> instanceMapArray_ = {};
+
+	// Animation
+	std::vector<glm::mat4> skinningMatrices_ = {};
+	std::vector<Animation> animations_ = {};
+	std::vector<Animator> animators_ = {};
 };
 
 #endif

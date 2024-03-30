@@ -1,6 +1,5 @@
 #include "PipelineTonemap.h"
 #include "VulkanImage.h"
-#include "VulkanUtility.h"
 #include "Configs.h"
 
 PipelineTonemap::PipelineTonemap(VulkanContext& ctx,
@@ -48,6 +47,7 @@ void PipelineTonemap::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comm
 		&descriptorSets_[frameIndex],
 		0,
 		nullptr);
+	ctx.InsertDebugLabel(commandBuffer, "PipelineTonemap", 0xffff9999);
 	vkCmdDraw(commandBuffer, 3, 1, 0, 0);
 	vkCmdEndRenderPass(commandBuffer);
 }

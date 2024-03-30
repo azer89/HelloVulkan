@@ -1,6 +1,6 @@
 #include "RaytracingBuilder.h"
 #include "AccelStructure.h"
-#include "VulkanUtility.h"
+#include "VulkanCheck.h"
 
 // TODO Currently can only handle a single vertex buffer
 void RaytracingBuilder::CreateBLAS(VulkanContext& ctx, 

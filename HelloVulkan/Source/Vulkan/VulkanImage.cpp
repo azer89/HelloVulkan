@@ -1,11 +1,14 @@
 #include "VulkanImage.h"
 #include "VulkanBuffer.h"
-#include "VulkanUtility.h"
+#include "VulkanBarrier.h"
+#include "VulkanCheck.h"
+#include "Utility.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-#include "VulkanBarrier.h"
+#include <iostream>
+#include <sstream>
 
 void VulkanImage::Destroy()
 {
@@ -97,7 +100,9 @@ void VulkanImage::CreateFromFile(
 
 	if (!pixels)
 	{
-		std::cerr << "Failed to load image " << filename << '\n';
+		std::stringstream ss;
+		ss << "Failed to load image " << filename;
+		throw std::runtime_error(ss.str());
 	}
 
 	CreateImageFromData(
@@ -119,6 +124,14 @@ void VulkanImage::CreateFromHDR(
 	stbi_set_flip_vertically_on_load(true);
 	int texWidth, texHeight, texChannels;
 	float* pixels = stbi_loadf(filename, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+
+	if (!pixels)
+	{
+		std::stringstream ss;
+		ss << "Failed to load image " << filename;
+		throw std::runtime_error(ss.str());
+	}
+
 	CreateImageFromData(
 		ctx,
 		pixels,

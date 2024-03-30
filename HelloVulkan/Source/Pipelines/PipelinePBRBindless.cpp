@@ -1,5 +1,4 @@
 #include "PipelinePBRBindless.h"
-#include "VulkanUtility.h"
 #include "VulkanDescriptorInfo.h"
 #include "ResourcesShared.h"
 #include "ResourcesLight.h"
@@ -89,6 +88,8 @@ void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 		&(descriptorSets_[frameIndex]),
 		0u, // dynamicOffsetCount
 		nullptr); // pDynamicOffsets
+
+	ctx.InsertDebugLabel(commandBuffer, "PipelinePBRBindless", 0xff9999ff);
 
 	vkCmdDrawIndirect(
 		commandBuffer, 

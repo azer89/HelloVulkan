@@ -121,8 +121,9 @@ public:
 	[[nodiscard]] uint32_t GetFrameIndex() const;
 	[[nodiscard]] TracyVkCtx GetTracyContext() const { return frameDataArray_[GetFrameIndex()].tracyContext_; }
 
-	// For debugging purpose
+	// Debugging
 	void SetVkObjectName(void* objectHandle, VkObjectType objType, const char* name) const;
+	void InsertDebugLabel(VkCommandBuffer commandBuffer, const char* label, uint32_t colorRGBA) const;
 
 private:
 	void CreateDevice();

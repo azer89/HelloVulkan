@@ -1,11 +1,12 @@
 #include "VulkanPipelineCreateInfo.h"
-#include "VulkanUtility.h"
 #include "VulkanShader.h"
 #include "VulkanImage.h"
 #include "VulkanFramebuffer.h"
+#include "VulkanCheck.h"
 #include "PipelineCubeFilter.h"
 #include "PushConstants.h"
 #include "Configs.h"
+#include "Utility.h"
 
 PipelineCubeFilter::PipelineCubeFilter(
 	VulkanContext& ctx, VulkanImage* inputCubemap) :
@@ -316,6 +317,7 @@ void PipelineCubeFilter::OffscreenRender(VulkanContext& ctx,
 			sizeof(PushConstCubeFilter), &pc);
 
 		renderPass_.BeginCubemapRenderPass(commandBuffer, mipFramebuffers[i].GetFramebuffer(), targetSize);
+		ctx.InsertDebugLabel(commandBuffer, "PipelineCubeFilter", 0xff9999ff);
 		vkCmdDraw(commandBuffer, 3, 1u, 0, 0);
 		vkCmdEndRenderPass(commandBuffer);
 	}

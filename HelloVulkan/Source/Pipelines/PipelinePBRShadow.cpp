@@ -3,7 +3,6 @@
 #include "ResourcesShadow.h"
 #include "ResourcesShared.h"
 #include "ResourcesIBL.h"
-#include "VulkanUtility.h"
 #include "Scene.h"
 #include "Configs.h"
 
@@ -85,7 +84,7 @@ void PipelinePBRShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer co
 	}
 
 	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "PBR_Shadow", tracy::Color::Aqua);
-
+	
 	const uint32_t frameIndex = ctx.GetFrameIndex();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
 
@@ -108,13 +107,15 @@ void PipelinePBRShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer co
 		0u,
 		nullptr);
 
+	ctx.InsertDebugLabel(commandBuffer, "PipelinePBRShadow", 0xff9999ff);
+
 	vkCmdDrawIndirect(
 		commandBuffer,
 		scene_->indirectBuffer_.buffer_,
 		materialOffset_,
 		materialDrawCount_,
 		sizeof(VkDrawIndirectCommand));
-	
+
 	vkCmdEndRenderPass(commandBuffer);
 }
 

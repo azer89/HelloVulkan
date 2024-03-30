@@ -1,5 +1,5 @@
 #include "PipelineImGui.h"
-#include "VulkanUtility.h"
+#include "VulkanCheck.h"
 #include "FrameCounter.h"
 #include "PushConstants.h"
 #include "Configs.h"
@@ -12,7 +12,7 @@ PipelineImGui::PipelineImGui(
 	VulkanContext& ctx,
 	VkInstance vulkanInstance,
 	GLFWwindow* glfwWindow) :
-	PipelineBase(ctx, 
+	PipelineBase(ctx,
 		{
 			.type_ = PipelineType::GraphicsOnScreen
 		}
@@ -24,12 +24,12 @@ PipelineImGui::PipelineImGui(
 	// Create framebuffer
 	framebuffer_.CreateResizeable(ctx, renderPass_.GetHandle(), {}, IsOffscreen());
 
+	// Create a decsiptor pool
 	constexpr uint32_t imageCount = AppConfig::FrameCount;
 	VulkanDescriptorInfo dsInfo;
-	dsInfo.AddImage(nullptr);
-	// TODO Layout is unused here
+	dsInfo.AddImage(nullptr); // NOTE According to Sascha Willems, we only need one image, if error, then we need to use vkguide.dev code
 	descriptor_.CreatePoolAndLayout(ctx, dsInfo, imageCount, 1u, VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT);
-	
+
 	// ImGui
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -44,9 +44,9 @@ PipelineImGui::PipelineImGui(
 	// Known issue when using both ImGui and volk
 	// github.com/ocornut/imgui/issues/4854
 	ImGui_ImplVulkan_LoadFunctions([](const char* functionName, void* vulkanInstance)
-	{
-		return vkGetInstanceProcAddr(*(reinterpret_cast<VkInstance*>(vulkanInstance)), functionName);
-	}, &vulkanInstance);
+		{
+			return vkGetInstanceProcAddr(*(reinterpret_cast<VkInstance*>(vulkanInstance)), functionName);
+		}, &vulkanInstance);
 
 	ImGui_ImplGlfw_InitForVulkan(glfwWindow, true);
 
@@ -64,7 +64,7 @@ PipelineImGui::PipelineImGui(
 		.MSAASamples = VK_SAMPLE_COUNT_1_BIT,
 		.ColorAttachmentFormat = ctx.GetSwapchainImageFormat(),
 	};
-	
+
 	ImGui_ImplVulkan_Init(&init_info, renderPass_.GetHandle());
 }
 
@@ -132,6 +132,7 @@ void PipelineImGui::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comman
 	const uint32_t swapchainImageIndex = ctx.GetCurrentSwapchainImageIndex();
 	ImDrawData* draw_data = ImGui::GetDrawData();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));
+	ctx.InsertDebugLabel(commandBuffer, "PipelineImGui", 0xff9999ff);
 	ImGui_ImplVulkan_RenderDrawData(draw_data, commandBuffer);
 	vkCmdEndRenderPass(commandBuffer);
 }

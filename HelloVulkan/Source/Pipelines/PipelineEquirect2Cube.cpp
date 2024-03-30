@@ -1,8 +1,9 @@
 #include "PipelineEquirect2Cube.h"
 #include "VulkanPipelineCreateInfo.h"
-#include "VulkanUtility.h"
+#include "VulkanCheck.h"
 #include "VulkanShader.h"
 #include "Configs.h"
+#include "Utility.h"
 
 #include "VulkanImage.h"
 
@@ -259,6 +260,8 @@ void PipelineEquirect2Cube::OffscreenRender(VulkanContext& ctx, VulkanImage* out
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_);
 
 	renderPass_.BeginCubemapRenderPass(commandBuffer, cubeFramebuffer_, IBLConfig::InputCubeSideLength);
+
+	ctx.InsertDebugLabel(commandBuffer, "PipelineEquirect2Cube", 0xffff99ff);
 
 	vkCmdDraw(commandBuffer, 3, 1u, 0, 0);
 

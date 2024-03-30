@@ -89,6 +89,8 @@ void PipelineLine::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer command
 		0,
 		nullptr);
 
+	ctx.InsertDebugLabel(commandBuffer, "PipelineLine", 0xffff9999);
+
 	vkCmdDraw(commandBuffer, 
 		static_cast<uint32_t>(lineDataArray_.size() + frustumDataArray_.size()), 
 		1, 

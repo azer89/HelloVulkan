@@ -36,5 +36,6 @@ void PipelineResolveMS::FillCommandBuffer(
 {
 	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "Multisample_Resolve", tracy::Color::GreenYellow);
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer());
+	ctx.InsertDebugLabel(commandBuffer, "PipelineResolveMS", 0xffff99ff);
 	vkCmdEndRenderPass(commandBuffer);
 }
