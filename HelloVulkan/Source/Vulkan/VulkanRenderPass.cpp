@@ -1,5 +1,5 @@
 #include "VulkanRenderPass.h"
-#include "VulkanUtility.h"
+#include "VulkanCheck.h"
 
 #include <array>
 #include <vector>

@@ -1,10 +1,12 @@
 #include "VulkanContext.h"
-#include "VulkanUtility.h"
+#include "VulkanCheck.h"
 #include "Configs.h"
 
 #define VMA_IMPLEMENTATION
 #define VMA_STATIC_VULKAN_FUNCTIONS 0
 #include "vk_mem_alloc.h"
+
+#include <iostream>
 
 void VulkanContext::Create(VulkanInstance& instance, ContextConfig config)
 {

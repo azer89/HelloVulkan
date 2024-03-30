@@ -1,5 +1,7 @@
 #include "VulkanFramebuffer.h"
-#include "VulkanUtility.h"
+#include "VulkanCheck.h"
+
+#include <iostream>
 
 void VulkanFramebuffer::CreateResizeable(VulkanContext& ctx,
 	VkRenderPass renderPass,

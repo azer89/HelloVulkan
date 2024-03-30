@@ -1,11 +1,13 @@
 #include "VulkanImage.h"
 #include "VulkanBuffer.h"
-#include "VulkanUtility.h"
+#include "VulkanBarrier.h"
+#include "VulkanCheck.h"
+#include "Utility.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-#include "VulkanBarrier.h"
+#include <iostream>
 
 void VulkanImage::Destroy()
 {

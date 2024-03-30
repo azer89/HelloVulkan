@@ -1,5 +1,4 @@
 #include "PipelineFinish.h"
-#include "VulkanUtility.h"
 
 /*
 	Present swapchain image 

@@ -1,6 +1,6 @@
 #include "AppPBRClusterForward.h"
 #include "PushConstants.h"
-#include "VulkanUtility.h"
+#include "Utility.h"
 #include "Configs.h"
 
 #include "PipelineSkybox.h"

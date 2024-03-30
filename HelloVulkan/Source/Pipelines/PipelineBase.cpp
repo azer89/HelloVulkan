@@ -2,7 +2,7 @@
 #include "VertexData.h"
 #include "Scene.h"
 
-#include "VulkanUtility.h"
+#include "VulkanCheck.h"
 #include "VulkanShader.h"
 #include "VulkanBuffer.h"
 #include "VulkanPipelineCreateInfo.h"

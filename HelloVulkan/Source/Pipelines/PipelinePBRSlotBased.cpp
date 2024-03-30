@@ -3,7 +3,6 @@
 #include "ResourcesShared.h"
 #include "ResourcesLight.h"
 #include "ResourcesIBL.h"
-#include "VulkanUtility.h"
 #include "Configs.h"
 
 #include <vector>

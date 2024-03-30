@@ -1,7 +1,7 @@
 #include "AppBase.h"
 #include "Configs.h"
 #include "ResourcesShared.h"
-#include "VulkanUtility.h"
+#include "VulkanCheck.h"
 
 #include "volk.h"
 

@@ -1,5 +1,5 @@
 #include "VulkanInstance.h"
-#include "VulkanUtility.h"
+#include "VulkanCheck.h"
 #include "Configs.h"
 
 #include <vector>

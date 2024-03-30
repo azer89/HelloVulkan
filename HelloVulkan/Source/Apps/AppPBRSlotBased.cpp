@@ -1,5 +1,5 @@
 #include "AppPBRSlotBased.h"
-#include "VulkanUtility.h"
+#include "Utility.h"
 #include "Configs.h"
 
 #include "PipelineClear.h"

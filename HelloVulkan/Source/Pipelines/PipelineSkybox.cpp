@@ -1,7 +1,6 @@
 #include "PipelineSkybox.h"
 #include "VulkanImage.h"
 #include "ResourcesShared.h"
-#include "VulkanUtility.h"
 #include "Configs.h"
 #include "UBOs.h"
 

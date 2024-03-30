@@ -3,7 +3,6 @@
 #include "ResourcesShadow.h"
 #include "ResourcesShared.h"
 #include "ResourcesIBL.h"
-#include "VulkanUtility.h"
 #include "Scene.h"
 #include "Configs.h"
 

@@ -1,11 +1,12 @@
 #include "VulkanPipelineCreateInfo.h"
-#include "VulkanUtility.h"
 #include "VulkanShader.h"
 #include "VulkanImage.h"
 #include "VulkanFramebuffer.h"
+#include "VulkanCheck.h"
 #include "PipelineCubeFilter.h"
 #include "PushConstants.h"
 #include "Configs.h"
+#include "Utility.h"
 
 PipelineCubeFilter::PipelineCubeFilter(
 	VulkanContext& ctx, VulkanImage* inputCubemap) :

@@ -1,5 +1,5 @@
 #include "VulkanBuffer.h"
-#include "VulkanUtility.h"
+#include "VulkanCheck.h"
 
 #include <iostream>
 

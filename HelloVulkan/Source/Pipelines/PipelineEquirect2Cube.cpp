@@ -1,8 +1,9 @@
 #include "PipelineEquirect2Cube.h"
 #include "VulkanPipelineCreateInfo.h"
-#include "VulkanUtility.h"
+#include "VulkanCheck.h"
 #include "VulkanShader.h"
 #include "Configs.h"
+#include "Utility.h"
 
 #include "VulkanImage.h"
 

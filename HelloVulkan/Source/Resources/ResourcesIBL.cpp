@@ -2,7 +2,7 @@
 #include "PipelineEquirect2Cube.h"
 #include "PipelineCubeFilter.h"
 #include "PipelineBRDFLUT.h"
-#include "VulkanUtility.h"
+#include "Utility.h"
 
 ResourcesIBL::ResourcesIBL(VulkanContext& ctx, const std::string& hdrFile)
 {

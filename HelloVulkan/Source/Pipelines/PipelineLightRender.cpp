@@ -1,7 +1,6 @@
 #include "PipelineLightRender.h"
 #include "ResourcesLight.h"
 #include "ResourcesShared.h"
-#include "VulkanUtility.h"
 #include "Configs.h"
 
 #include <array>

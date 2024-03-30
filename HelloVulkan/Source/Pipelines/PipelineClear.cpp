@@ -1,5 +1,4 @@
 #include "PipelineClear.h"
-#include "VulkanUtility.h"
 
 PipelineClear::PipelineClear(VulkanContext& ctx) :
 	PipelineBase(
