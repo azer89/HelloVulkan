@@ -1,23 +1,25 @@
-#include "AppPBRShadow.h"
+#include "AppSkinning.h"
 #include "VulkanUtility.h"
 #include "Configs.h"
 
-#include "PipelineClear.h"
 #include "PipelineSkybox.h"
+#include "PipelineClear.h"
 #include "PipelineFinish.h"
 #include "PipelineTonemap.h"
 #include "PipelineResolveMS.h"
+#include "PipelineSkinning.h"
 
 #include "glm/ext.hpp"
 #include "imgui_impl_vulkan.h"
 
-AppPBRShadow::AppPBRShadow()
+AppSkinning::AppSkinning()
 {
 }
 
-void AppPBRShadow::Init()
+void AppSkinning::Init()
 {
-	inputContext_.shadowCasterPosition_ = { -2.5f, 20.0f, 5.0f };
+	inputContext_.shadowMinBias_ = 0.003f;
+	inputContext_.shadowCasterPosition_ = { -0.5f, 20.0f, 5.0f };
 	camera_->SetPositionAndTarget(glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3(0.0));
 
 	// Init shadow map
@@ -32,47 +34,18 @@ void AppPBRShadow::Init()
 	// Image-Based Lighting
 	resourcesIBL_ = AddResources<ResourcesIBL>(vulkanContext_, AppConfig::TextureFolder + "piazza_bologni_1k.hdr");
 
-	std::vector<ModelCreateInfo> dataArray = {
-		{
-			.filename = AppConfig::ModelFolder + "Sponza/Sponza.gltf",
-			.instanceCount = 1,
-			.playAnimation = false
-		},
-		{
-			.filename = AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf",
-			.instanceCount = 1,
-			.playAnimation = false
-		},
-		{
-			.filename = AppConfig::ModelFolder + "Hexapod/Hexapod.gltf",
-			.instanceCount = 1,
-			.playAnimation = false
-		}
-	};
-	bool supportDeviceAddress = true;
-	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
-
-	// Model matrix for Tachikoma
-	glm::mat4 modelMatrix(1.f);
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.15f, 0.35f, 1.5f));
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(45.f), glm::vec3(0.f, 1.f, 0.f));
-	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.7f, 0.7f, 0.7f));
-	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 1, 0);
-
-	// Model matrix for Hexapod
-	modelMatrix = glm::mat4(1.f);
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.62f, -1.5f));
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f));
-	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 2, 0);
+	InitScene();
 
 	// Pipelines
 	AddPipeline<PipelineClear>(vulkanContext_); // This is responsible to clear swapchain image
+	// This draws a cube
 	AddPipeline<PipelineSkybox>(
 		vulkanContext_,
 		&(resourcesIBL_->diffuseCubemap_),
 		resourcesShared_,
 		// This is the first offscreen render pass so we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
+	AddPipeline<PipelineSkinning>(vulkanContext_, scene_.get());
 	shadowPtr_ = AddPipeline<PipelineShadow>(vulkanContext_, scene_.get(), resourcesShadow_);
 	// Opaque pass
 	pbrOpaquePtr_ = AddPipeline<PipelinePBRShadow>(
@@ -102,7 +75,54 @@ void AppPBRShadow::Init()
 	AddPipeline<PipelineFinish>(vulkanContext_);
 }
 
-void AppPBRShadow::InitLights()
+void AppSkinning::InitScene()
+{
+	// Scene
+	std::vector<ModelCreateInfo> dataArray = {
+		{
+			.filename = AppConfig::ModelFolder + "Sponza/Sponza.gltf",
+			.instanceCount = 1,
+			.playAnimation = false
+		},
+		{
+			.filename = AppConfig::ModelFolder + "DancingStormtrooper01/DancingStormtrooper01.gltf",
+			.instanceCount = 4,
+			.playAnimation = true
+		},
+		{
+			.filename = AppConfig::ModelFolder + "DancingStormtrooper02/DancingStormtrooper02.gltf",
+			.instanceCount = 4,
+			.playAnimation = true
+		}
+	};
+	bool supportDeviceAddress = true;
+	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
+
+	constexpr uint32_t xCount = 2;
+	constexpr uint32_t zCount = 4;
+	constexpr float dist = 1.2f;
+	constexpr float xMidPos = static_cast<float>(xCount - 1) * dist / 2.0f;
+	constexpr float zMidPos = static_cast<float>(zCount - 1) * dist / 2.0f;
+	constexpr float yPos = -0.33f;
+	const glm::vec3 scale = glm::vec3(0.5f, 0.5f, 0.5f);
+
+	for (int x = 0; x < xCount; ++x)
+	{
+		for (int z = 0; z < zCount; ++z)
+		{
+			float xPos = x * dist - xMidPos;
+			float zPos = -(z * dist) + zMidPos;
+			glm::mat4 modelMatrix(1.f);
+			modelMatrix = glm::translate(modelMatrix, glm::vec3(xPos, yPos, zPos));
+			modelMatrix = glm::scale(modelMatrix, scale);
+			uint32_t modelIndex = x % 2;
+			uint32_t instanceIndex = z; // May not work if you change xCount and zCount
+			scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, modelIndex + 1, instanceIndex);
+		}
+	}
+}
+
+void AppSkinning::InitLights()
 {
 	// Lights (SSBO)
 	resourcesLight_ = AddResources<ResourcesLight>();
@@ -120,7 +140,7 @@ void AppPBRShadow::InitLights()
 	});
 }
 
-void AppPBRShadow::UpdateUI()
+void AppSkinning::UpdateUI()
 {
 	if (!showImgui_)
 	{
@@ -129,7 +149,7 @@ void AppPBRShadow::UpdateUI()
 	}
 
 	imguiPtr_->ImGuiStart();
-	imguiPtr_->ImGuiSetWindow("Shadow Mapping", 500, 650);
+	imguiPtr_->ImGuiSetWindow("Compute-based Skinning", 500, 650);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 
 	ImGui::Text("Triangle Count: %i", scene_->triangleCount_);
@@ -142,11 +162,11 @@ void AppPBRShadow::UpdateUI()
 	ImGui::SliderFloat("Max Bias", &inputContext_.shadowMaxBias_, 0.f, 0.01f);
 	ImGui::SliderFloat("Near Plane", &inputContext_.shadowNearPlane_, 0.1f, 50.0f);
 	ImGui::SliderFloat("Far Plane", &inputContext_.shadowFarPlane_, 10.0f, 150.0f);
-	ImGui::SliderFloat("Ortho Size", &inputContext_.shadowOrthoSize_, 10.0f, 30.0f);
+	ImGui::SliderFloat("Ortho Size", &inputContext_.shadowOrthoSize_, 10.0f, 100.0f);
 
 	ImGui::SeparatorText("Light position");
 	ImGui::SliderFloat("X", &(inputContext_.shadowCasterPosition_[0]), -10.0f, 10.0f);
-	ImGui::SliderFloat("Y", &(inputContext_.shadowCasterPosition_[1]), 15.0f, 60.0f);
+	ImGui::SliderFloat("Y", &(inputContext_.shadowCasterPosition_[1]), 5.0f, 60.0f);
 	ImGui::SliderFloat("Z", &(inputContext_.shadowCasterPosition_[2]), -10.0f, 10.0f);
 
 	imguiPtr_->ImGuiEnd();
@@ -155,15 +175,16 @@ void AppPBRShadow::UpdateUI()
 	{
 		pipeline->UpdateFromInputContext(vulkanContext_, inputContext_);
 	}
-
 	for (auto& resources : resources_)
 	{
 		resources->UpdateFromInputContext(vulkanContext_, inputContext_);
 	}
 }
 
-void AppPBRShadow::UpdateUBOs()
+void AppSkinning::UpdateUBOs()
 {
+	scene_->UpdateAnimation(vulkanContext_, frameCounter_.GetDeltaSecond());
+
 	CameraUBO ubo = camera_->GetCameraUBO();
 	for (auto& pipeline : pipelines_)
 	{
@@ -176,12 +197,13 @@ void AppPBRShadow::UpdateUBOs()
 }
 
 // This is called from main.cpp
-void AppPBRShadow::MainLoop()
+void AppSkinning::MainLoop()
 {
 	InitVulkan({
 		.suportBufferDeviceAddress_ = true,
-		.supportMSAA_ = true
-		});
+		.supportMSAA_ = true,
+		.supportBindlessTextures_ = true,
+	});
 	Init();
 
 	// Main loop
@@ -194,5 +216,6 @@ void AppPBRShadow::MainLoop()
 	}
 
 	scene_.reset();
+
 	DestroyResources();
 }

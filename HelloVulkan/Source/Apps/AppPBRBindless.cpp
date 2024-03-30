@@ -29,8 +29,16 @@ void AppPBRBindless::Init()
 
 	// Scene
 	std::vector<ModelCreateInfo> dataArray = { 
-		{ AppConfig::ModelFolder + "Sponza/Sponza.gltf", 1},
-		{ AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf", 1},
+		{ 
+			.filename = AppConfig::ModelFolder + "Sponza/Sponza.gltf",
+			.instanceCount = 1,
+			.playAnimation = false
+		},
+		{ 
+			.filename = AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf",
+			.instanceCount = 1,
+			.playAnimation = false
+		},
 	};
 	bool supportDeviceAddress = true;
 	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
@@ -55,7 +63,8 @@ void AppPBRBindless::Init()
 		scene_.get(),
 		resourcesLight_,
 		resourcesIBL_,
-		resourcesShared_);
+		resourcesShared_,
+		false);
 	lightPtr_ = AddPipeline<PipelineLightRender>(
 		vulkanContext_,
 		resourcesLight_,

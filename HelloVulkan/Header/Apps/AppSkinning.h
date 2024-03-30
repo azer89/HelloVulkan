@@ -1,30 +1,28 @@
-#ifndef APP_PBR_SHADOW_MAPPING
-#define APP_PBR_SHADOW_MAPPING
+#ifndef APP_SKINNING
+#define APP_SKINNING
 
 #include "AppBase.h"
 #include "Scene.h"
-#include "PipelineImGui.h"
 #include "ResourcesLight.h"
 #include "ResourcesShadow.h"
+#include "PipelineImGui.h"
 #include "PipelineShadow.h"
 #include "PipelinePBRShadow.h"
 #include "PipelineLightRender.h"
+#include "PipelineInfiniteGrid.h"
 
-// STL
 #include <memory>
 
-/*
-Demo for shadow mapping with bindless textures
-*/
-class AppPBRShadow final : AppBase
+class AppSkinning final : AppBase
 {
 public:
-	AppPBRShadow();
+	AppSkinning();
 	void MainLoop() override;
 	void UpdateUBOs() override;
 	void UpdateUI() override;
 
 	void Init();
+	void InitScene();
 	void InitLights();
 
 private:
@@ -33,7 +31,7 @@ private:
 	PipelinePBRShadow* pbrOpaquePtr_ = nullptr;
 	PipelinePBRShadow* pbrTransparentPtr_ = nullptr;
 	PipelineLightRender* lightPtr_ = nullptr;
-	
+
 	std::unique_ptr<Scene> scene_ = nullptr;
 	ResourcesLight* resourcesLight_ = nullptr;
 	ResourcesShadow* resourcesShadow_ = nullptr;

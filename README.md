@@ -16,7 +16,8 @@ A 3D rendering engine built from scratch using Vulkan API and C++.
     * A single __indirect draw call__ per render pass. 
     * __Descriptor indexing__ that allows all textures in the scene to be bound just once at the start of the frame.
     * __Buffer device address__ for direct shader access to buffers without the need to create descriptors.
-* __Compute-based Frustum Culling__
+* __Compute-based Frustum Culling__.
+* __Compute-based Skinning__ for skeletal animation.
 * __Shadow maps__ with Poisson Disk or PCF.
 * glTF mesh/texture support.
 * Multisample anti-aliasing (MSAA).
@@ -71,6 +72,15 @@ Since the engine uses indirect draw, frustum culling can now be done entirely on
 The left image below shows a rendering of all objects inside the frustum. The right image shows visualizations of AABBs as translucent boxes and the frustum drawn as orange lines.
 
 <img width="850" alt="frustum_culling" src="https://github.com/azer89/HelloVulkan/assets/790432/d42100a6-f95d-41ec-8e53-012b22e4175b">
+
+</br>
+</br>
+
+### Compute-Based Skinning
+
+The compute-based skinning approach is much simpler than the traditional vertex shader skinning. This is because the skinning computation is done only once using a compute shader at the beginning of the frame. The resulting skinned vertices are then stored in a buffer, enabling reuse for subsequent render passes like shadow mapping and lighting. There is no need to modify existing pipelines and shader permutations can be reduced.
+
+https://github.com/azer89/HelloVulkan/assets/790432/d7ca4541-412f-432c-861a-070b6d2d51ab
 
 </br>
 </br>

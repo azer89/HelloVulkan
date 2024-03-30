@@ -80,14 +80,19 @@ void main()
 	// Material properties
 	vec3 albedo = pow(albedo4.rgb, vec3(2.2));
 	vec3 emissive = texture(pbrTextures[nonuniformEXT(mData.emissive)], texCoord).rgb;
-	vec3 tangentNormal = texture(pbrTextures[nonuniformEXT(mData.normal)], texCoord).xyz * 2.0 - 1.0;
+	vec3 tangentNormal = texture(pbrTextures[nonuniformEXT(mData.normal)], texCoord).xyz;
 	float metallic = texture(pbrTextures[nonuniformEXT(mData.metalness)], texCoord).b;
 	float roughness = texture(pbrTextures[nonuniformEXT(mData.roughness)], texCoord).g;
 	float ao = texture(pbrTextures[nonuniformEXT(mData.ao)], texCoord).r;
 	float alphaRoughness = AlphaDirectLighting(roughness);
-	
-	// Input lighting data
-	vec3 N = TangentNormalToWorld(tangentNormal, worldPos, normal, texCoord);
+
+	vec3 N = normal;
+	if (length(tangentNormal) > 0)
+	{
+		tangentNormal = tangentNormal * 2.0 - 1.0;
+		N = TangentNormalToWorld(tangentNormal, worldPos, normal, texCoord);
+	}
+
 	vec3 V = normalize(camUBO.position.xyz - worldPos);
 	float NoV = max(dot(N, V), 0.0);
 

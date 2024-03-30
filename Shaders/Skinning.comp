@@ -1,0 +1,41 @@
+#version 460 core
+
+layout (local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
+
+#include <Bindless/VertexData.glsl>
+
+layout(set = 0, binding = 0) readonly buffer M { mat4 finalBoneMatrices[]; };
+layout(set = 0, binding = 1) readonly buffer B { ivec4 boneIdArray[]; };
+layout(set = 0, binding = 2) readonly buffer W { vec4 weightArray[]; };
+layout(set = 0, binding = 3) readonly buffer I { uint skinningIndices[]; }; // Mapping from inVertices to outVertices
+layout(set = 0, binding = 4) readonly buffer V_In { VertexData inVertices []; }; // Vertex input
+layout(set = 0, binding = 5) buffer V_Out { VertexData outVertices[]; }; // Vertex output
+
+void main()
+{
+	uint inIndex = gl_GlobalInvocationID.x;
+	if (inIndex >= inVertices.length())
+	{
+		return;
+	}
+
+	VertexData inVertex = inVertices[inIndex];
+	vec3 totalPosition = vec3(0.0f);
+	vec3 totalNormal = vec3(0.0f);
+	ivec4 boneIds = boneIdArray[inIndex];
+	vec4 weights = weightArray[inIndex];
+
+	totalPosition += (finalBoneMatrices[boneIds[0]] * vec4(inVertex.position, 1.0f)).xyz * weights[0];
+	totalPosition += (finalBoneMatrices[boneIds[1]] * vec4(inVertex.position, 1.0f)).xyz * weights[1];
+	totalPosition += (finalBoneMatrices[boneIds[2]] * vec4(inVertex.position, 1.0f)).xyz * weights[2];
+	totalPosition += (finalBoneMatrices[boneIds[3]] * vec4(inVertex.position, 1.0f)).xyz * weights[3];
+
+	totalNormal += (mat3(finalBoneMatrices[boneIds[0]]) * inVertex.normal) * weights[0];
+	totalNormal += (mat3(finalBoneMatrices[boneIds[1]]) * inVertex.normal) * weights[1];
+	totalNormal += (mat3(finalBoneMatrices[boneIds[2]]) * inVertex.normal) * weights[2];
+	totalNormal += (mat3(finalBoneMatrices[boneIds[3]]) * inVertex.normal) * weights[3];
+
+	uint outIndex = skinningIndices[inIndex];
+	outVertices[outIndex].position = totalPosition;
+	outVertices[outIndex].normal = totalNormal;
+}
