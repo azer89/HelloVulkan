@@ -323,14 +323,15 @@ VkSampleCountFlagBits VulkanContext::GetMaxUsableSampleCount(VkPhysicalDevice d)
 		physicalDeviceProperties.limits.framebufferColorSampleCounts &
 		physicalDeviceProperties.limits.framebufferDepthSampleCounts;
 	
-	if (counts & VK_SAMPLE_COUNT_64_BIT) { return VK_SAMPLE_COUNT_64_BIT; }
-	if (counts & VK_SAMPLE_COUNT_32_BIT) { return VK_SAMPLE_COUNT_32_BIT; }
-	if (counts & VK_SAMPLE_COUNT_16_BIT) { return VK_SAMPLE_COUNT_16_BIT; }
-	if (counts & VK_SAMPLE_COUNT_8_BIT) { return VK_SAMPLE_COUNT_8_BIT; }
-	if (counts & VK_SAMPLE_COUNT_4_BIT) { return VK_SAMPLE_COUNT_4_BIT; }
-	if (counts & VK_SAMPLE_COUNT_2_BIT) { return VK_SAMPLE_COUNT_2_BIT; }
+	VkSampleCountFlagBits max = VK_SAMPLE_COUNT_1_BIT;
+	if (counts & VK_SAMPLE_COUNT_64_BIT) { max = VK_SAMPLE_COUNT_64_BIT; }
+	if (counts & VK_SAMPLE_COUNT_32_BIT) { max = VK_SAMPLE_COUNT_32_BIT; }
+	if (counts & VK_SAMPLE_COUNT_16_BIT) { max = VK_SAMPLE_COUNT_16_BIT; }
+	if (counts & VK_SAMPLE_COUNT_8_BIT) { max = VK_SAMPLE_COUNT_8_BIT; }
+	if (counts & VK_SAMPLE_COUNT_4_BIT) { max = VK_SAMPLE_COUNT_4_BIT; }
+	if (counts & VK_SAMPLE_COUNT_2_BIT) { max = VK_SAMPLE_COUNT_2_BIT; }
 
-	return VK_SAMPLE_COUNT_1_BIT;
+	return AppConfig::MSAACount > max ? max : AppConfig::MSAACount;
 }
 
 VkResult VulkanContext::CreatePhysicalDevice(VkInstance instance)
@@ -391,6 +392,10 @@ VkResult VulkanContext::CreateSwapchain(VkSurfaceKHR surface)
 	const VkSurfaceFormatKHR surfaceFormat = { swapchainImageFormat_, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
 	const SwapchainSupportDetails swapchainSupport = QuerySwapchainSupport(surface);
 	const VkPresentModeKHR presentMode = ChooseSwapPresentMode(swapchainSupport.presentModes_);
+	
+	const VkSurfaceCapabilitiesKHR capabilities = swapchainSupport.capabilities_;
+	swapchainWidth_ = std::clamp(swapchainWidth_,capabilities.minImageExtent.width,capabilities.maxImageExtent.width);
+	swapchainHeight_ = std::clamp(swapchainHeight_,capabilities.minImageExtent.height,capabilities.maxImageExtent.height);
 
 	const VkSwapchainCreateInfoKHR createInfo =
 	{
@@ -445,7 +450,7 @@ VkResult VulkanContext::GetNextSwapchainImage(VkSemaphore nextSwapchainImageSema
 	return vkAcquireNextImageKHR(
 		device_,
 		swapchain_,
-		0,
+		UINT64_MAX,
 		// Wait for the swapchain image to become available
 		nextSwapchainImageSemaphore,
 		VK_NULL_HANDLE,

@@ -1,4 +1,4 @@
-# This CMake file has only been tested on Windows 11 and Visual Studio 2022 
+# This CMake file has only been tested on Windows 11 and Ubuntu 22.04 LTS
 
 file(GLOB_RECURSE SHADER_FILES CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/Shaders/*")
 file(GLOB_RECURSE H_FILES CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/Header/*.h")
@@ -53,44 +53,42 @@ target_include_directories(HelloVulkan PRIVATE
     "${PROJECT_SOURCE_DIR}/External/Binaries/assimp/include"
 )
 
-# Include directories for glslang
-target_include_directories(HelloVulkan PRIVATE 
-    "$ENV{VULKAN_SDK}/Include"
-    "$ENV{VULKAN_SDK}/Include/glslang/Include"
-    "$ENV{VULKAN_SDK}/Include/glslang/MachineIndependent"
-    "$ENV{VULKAN_SDK}/Include/glslang/Public"
-    "$ENV{VULKAN_SDK}/Include/glslang/SPIRV"
-    "$ENV{VULKAN_SDK}/Include/spirv_cross"
-    "$ENV{VULKAN_SDK}/Include/spirv-tools"
-    "$ENV{VULKAN_SDK}/Include/spirv-headers"
-)
-
 # Set dependencies
 target_link_libraries(HelloVulkan PRIVATE assimp imgui glfw TracyClient volk)
 
-# These libraries are needed for runtime glsl compilation.
-# If you are not on Windows you need to change the filenames below and remove the IF statement.
-if(MSVC)
+if(glslang_FOUND)
     target_link_libraries(HelloVulkan PRIVATE
-        $<$<CONFIG:Debug>:
-            "$ENV{VULKAN_SDK}/Lib/GenericCodeGend.lib"
-            "$ENV{VULKAN_SDK}/Lib/glslangd.lib"
-            "$ENV{VULKAN_SDK}/Lib/glslang-default-resource-limitsd.lib"
-            "$ENV{VULKAN_SDK}/Lib/MachineIndependentd.lib"
-            "$ENV{VULKAN_SDK}/Lib/SPIRVd.lib"
-            "$ENV{VULKAN_SDK}/Lib/SPIRV-Toolsd.lib"
-            "$ENV{VULKAN_SDK}/Lib/SPIRV-Tools-optd.lib"
-            "$ENV{VULKAN_SDK}/Lib/OSDependentd.lib"
-        >
-        $<$<CONFIG:Release>:
-            "$ENV{VULKAN_SDK}/Lib/GenericCodeGen.lib"
-            "$ENV{VULKAN_SDK}/Lib/glslang.lib"
-            "$ENV{VULKAN_SDK}/Lib/glslang-default-resource-limits.lib"
-            "$ENV{VULKAN_SDK}/Lib/MachineIndependent.lib"
-            "$ENV{VULKAN_SDK}/Lib/SPIRV.lib"
-            "$ENV{VULKAN_SDK}/Lib/SPIRV-Tools.lib"
-            "$ENV{VULKAN_SDK}/Lib/SPIRV-Tools-opt.lib"
-            "$ENV{VULKAN_SDK}/Lib/OSDependent.lib"
-        >
+            glslang::glslang
+            glslang::SPIRV
+            glslang::glslang-default-resource-limits
     )
+else()
+    # These libraries are needed for runtime glsl compilation.
+    # If you are not on Windows you need to change the filenames below and remove the IF statement.
+    if(WIN32)
+        get_filename_component(VK_SDK_PATH ${Vulkan_LIBRARY} DIRECTORY) # Some CMake Generators don't play nice with $ENV{VULKAN_SDK}
+        get_filename_component(VK_SDK_PATH ${VK_SDK_PATH} DIRECTORY)
+        target_link_libraries(HelloVulkan PRIVATE
+                $<$<CONFIG:Debug>:
+                "${VK_SDK_PATH}/Lib/GenericCodeGend.lib"
+                "${VK_SDK_PATH}/Lib/glslangd.lib"
+                "${VK_SDK_PATH}/Lib/glslang-default-resource-limitsd.lib"
+                "${VK_SDK_PATH}/Lib/MachineIndependentd.lib"
+                "${VK_SDK_PATH}/Lib/SPIRVd.lib"
+                "${VK_SDK_PATH}/Lib/SPIRV-Toolsd.lib"
+                "${VK_SDK_PATH}/Lib/SPIRV-Tools-optd.lib"
+                "${VK_SDK_PATH}/Lib/OSDependentd.lib"
+                >
+                $<$<CONFIG:Release>:
+                "${VK_SDK_PATH}/Lib/GenericCodeGen.lib"
+                "${VK_SDK_PATH}/Lib/glslang.lib"
+                "${VK_SDK_PATH}/Lib/glslang-default-resource-limits.lib"
+                "${VK_SDK_PATH}/Lib/MachineIndependent.lib"
+                "${VK_SDK_PATH}/Lib/SPIRV.lib"
+                "${VK_SDK_PATH}/Lib/SPIRV-Tools.lib"
+                "${VK_SDK_PATH}/Lib/SPIRV-Tools-opt.lib"
+                "${VK_SDK_PATH}/Lib/OSDependent.lib"
+                >
+        )
+    endif()
 endif()

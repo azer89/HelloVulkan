@@ -11,15 +11,12 @@ void VulkanInstance::Create()
 	{
 		"VK_LAYER_KHRONOS_validation"
 	};
-
-	// A list of extensions
-	const std::vector<const char*> extensions =
-	{
-		"VK_KHR_surface",
-		"VK_KHR_win32_surface", // This project only works on Windows
-		VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
-		VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME // for indexed textures
-	};
+	
+	uint32_t glfwExtensionCount;
+	auto glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+	std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
+	extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+	extensions.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
 
 	const VkApplicationInfo appInfo =
 	{
