@@ -23,6 +23,10 @@ public:
 
 	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override {}
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
+
+private:
+	VkDevice device_;
+	VkDescriptorPool imguiPool_;
 };
 
 #endif

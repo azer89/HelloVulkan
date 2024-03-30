@@ -139,8 +139,7 @@ void Model::LoadModel(VulkanContext& ctx,
 	// Check for errors
 	if (!scene_ || scene_->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene_->mRootNode) // if is Not Zero
 	{
-		std::cerr << "Error ASSIMP: " << importer.GetErrorString() << '\n';
-		return;
+		throw std::runtime_error("Cannot load file " + path);
 	}
 
 	// Retrieve the directory path of the filepath

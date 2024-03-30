@@ -16,7 +16,8 @@ PipelineImGui::PipelineImGui(
 		{
 			.type_ = PipelineType::GraphicsOnScreen
 		}
-	)
+	),
+	device_(ctx.GetDevice())
 {
 	// Create render pass
 	renderPass_.CreateOnScreenColorOnlyRenderPass(ctx);
@@ -24,7 +25,6 @@ PipelineImGui::PipelineImGui(
 	// Create framebuffer
 	framebuffer_.CreateResizeable(ctx, renderPass_.GetHandle(), {}, IsOffscreen());
 
-	// Descriptor pool
 	// Create descriptor pool for ImGui
 	// the size of the pool is very oversize, but it's copied from imgui demo itself.
 	VkDescriptorPoolSize poolSizes[] =
@@ -49,8 +49,7 @@ PipelineImGui::PipelineImGui(
 		.poolSizeCount = std::size(poolSizes),
 		.pPoolSizes = poolSizes
 	};
-	VkDescriptorPool imguiPool;
-	VK_CHECK(vkCreateDescriptorPool(ctx.GetDevice(), &poolInfo, nullptr, &imguiPool));
+	VK_CHECK(vkCreateDescriptorPool(ctx.GetDevice(), &poolInfo, nullptr, &imguiPool_));
 
 	// ImGui
 	IMGUI_CHECKVERSION();
@@ -79,7 +78,7 @@ PipelineImGui::PipelineImGui(
 		.QueueFamily = ctx.GetGraphicsFamily(),
 		.Queue = ctx.GetGraphicsQueue(),
 		.PipelineCache = nullptr,
-		.DescriptorPool = imguiPool,
+		.DescriptorPool = imguiPool_,
 		.Subpass = 0,
 		.MinImageCount = AppConfig::FrameCount,
 		.ImageCount = AppConfig::FrameCount,
@@ -95,6 +94,7 @@ PipelineImGui::~PipelineImGui()
 	ImGui_ImplVulkan_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
+	vkDestroyDescriptorPool(device_, imguiPool_, nullptr);
 }
 
 void PipelineImGui::ImGuiStart()
