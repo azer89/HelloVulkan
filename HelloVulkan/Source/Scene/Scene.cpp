@@ -184,7 +184,7 @@ void Scene::CreateAnimationResources(VulkanContext& ctx)
 	}
 
 	skinningMatrices_.reserve(sceneData_.boneMatrixCount + 1);
-	for (int i = 0; i < sceneData_.boneMatrixCount; i++)
+	for (uint32_t i = 0; i < sceneData_.boneMatrixCount; i++)
 	{
 		skinningMatrices_.push_back(glm::mat4(1.0f));
 	}

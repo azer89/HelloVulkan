@@ -47,7 +47,7 @@ private:
 	void CreateBindlessResources(VulkanContext& ctx);
 	void CreateDataStructures();
 	[[nodiscard]] BoundingBox GetBoundingBox(uint32_t vertexStart, uint32_t vertexEnd);
-	[[nodiscard]] bool HasAnimation() { return sceneData_.boneIDArray.size() > 0; }
+	[[nodiscard]] bool HasAnimation() const { return !sceneData_.boneIDArray.empty(); }
 
 public:
 	uint32_t triangleCount_ = 0;
@@ -66,23 +66,23 @@ public:
 	std::vector<BoundingBox> transformedBoundingBoxes_ = {}; // Content is sent to transformedBoundingBoxBuffer_
 	
 	// Skinning
-	VulkanBuffer boneIDBuffer_;
-	VulkanBuffer boneWeightBuffer_;
-	VulkanBuffer skinningIndicesBuffer_;
-	VulkanBuffer preSkinningVertexBuffer_; // This buffer contains a subset of vertexBuffer_
+	VulkanBuffer boneIDBuffer_ = {};
+	VulkanBuffer boneWeightBuffer_ = {};
+	VulkanBuffer skinningIndicesBuffer_ = {};
+	VulkanBuffer preSkinningVertexBuffer_ = {}; // This buffer contains a subset of vertexBuffer_
 	std::array<VulkanBuffer, AppConfig::FrameCount> boneMatricesBuffers_; // Frame-in-flight
 
-	VulkanBuffer vertexBuffer_; 
-	VulkanBuffer indexBuffer_;
-	VulkanBuffer indirectBuffer_;
-	VulkanBuffer meshDataBuffer_;
+	VulkanBuffer vertexBuffer_ = {}; 
+	VulkanBuffer indexBuffer_ = {};
+	VulkanBuffer indirectBuffer_ = {};
+	VulkanBuffer meshDataBuffer_ = {};
 	std::array<VulkanBuffer, AppConfig::FrameCount> modelSSBOBuffers_ = {}; // Frame-in-flight
 
 	// Frustum culling
 	VulkanBuffer transformedBoundingBoxBuffer_; // TODO Implement Frame-in-flight
 	
 private:
-	bool supportDeviceAddress_;
+	bool supportDeviceAddress_ = false;
 
 	// First index is modelID, second index is per-model instanceID
 	std::vector<std::vector<InstanceMap>> instanceMapArray_ = {};

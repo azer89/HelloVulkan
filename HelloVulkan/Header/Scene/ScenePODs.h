@@ -10,7 +10,6 @@
 
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
-#include "glm/gtx/quaternion.hpp"
 
 // Skinning vector with int elements
 using iSVec = std::array<int, AppConfig::MaxSkinningBone>;
@@ -32,13 +31,13 @@ struct SceneData
 	std::vector<iSVec> boneIDArray = {};
 	std::vector<fSVec> boneWeightArray = {};
 
-	uint32_t GetCurrentVertexOffset()
+	uint32_t GetCurrentVertexOffset() const
 	{
 		if (vertexOffsets.empty()) { return 0u; }
 		return vertexOffsets.back();
 	}
 
-	uint32_t GetCurrentIndexOffset()
+	uint32_t GetCurrentIndexOffset() const
 	{
 		if (indexOffsets.empty()) { return 0u; }
 		return indexOffsets.back();
@@ -103,7 +102,6 @@ struct BoneInfo
 
 	// Offset matrix transforms vertex from model space to bone space
 	glm::mat4 offsetMatrix = glm::mat4(1.0);
-
 };
 
 // Skinning

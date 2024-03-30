@@ -71,11 +71,11 @@ void Bone::Update(float animationTime)
 
 int Bone::GetPositionIndex(float animationTime) const
 {
-	for (int index = 0; index < positionCount_ - 1; ++index)
+	for (uint32_t index = 0; index < positionCount_ - 1; ++index)
 	{
 		if (animationTime < positions_[index + 1].timeStamp)
 		{
-			return index;
+			return static_cast<int>(index);
 		}
 	}
 	std::cerr << "Position index is -1\n";
@@ -84,11 +84,11 @@ int Bone::GetPositionIndex(float animationTime) const
 
 int Bone::GetRotationIndex(float animationTime) const
 {
-	for (int index = 0; index < rotationCount_ - 1; ++index)
+	for (uint32_t index = 0; index < rotationCount_ - 1; ++index)
 	{
 		if (animationTime < rotations_[index + 1].timeStamp)
 		{
-			return index;
+			return static_cast<int>(index);
 		}
 	}
 	std::cerr << "Rotation index is -1\n";
@@ -97,11 +97,11 @@ int Bone::GetRotationIndex(float animationTime) const
 
 int Bone::GetScaleIndex(float animationTime) const
 {
-	for (int index = 0; index < scalingCount_ - 1; ++index)
+	for (uint32_t index = 0; index < scalingCount_ - 1; ++index)
 	{
 		if (animationTime < scales_[index + 1].timeStamp)
 		{
-			return index;
+			return static_cast<int>(index);
 		}
 	}
 	std::cerr << "Scale index is -1\n";
