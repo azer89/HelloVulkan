@@ -1,6 +1,7 @@
 #include "PipelineImGui.h"
 #include "FrameCounter.h"
 #include "PushConstants.h"
+#include "VulkanCheck.h"
 #include "Configs.h"
 
 #include "imgui.h"
@@ -23,12 +24,34 @@ PipelineImGui::PipelineImGui(
 	// Create framebuffer
 	framebuffer_.CreateResizeable(ctx, renderPass_.GetHandle(), {}, IsOffscreen());
 
-	constexpr uint32_t imageCount = AppConfig::FrameCount;
-	VulkanDescriptorInfo dsInfo;
-	dsInfo.AddImage(nullptr);
-	// TODO Layout is unused here
-	descriptor_.CreatePoolAndLayout(ctx, dsInfo, imageCount, 1u, VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT);
-	
+	// Descriptor pool
+	// Create descriptor pool for ImGui
+	// the size of the pool is very oversize, but it's copied from imgui demo itself.
+	VkDescriptorPoolSize poolSizes[] =
+	{
+		{ VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
+		{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
+		{ VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000 },
+		{ VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000 },
+		{ VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000 },
+		{ VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000 },
+		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000 },
+		{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000 },
+		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
+		{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
+		{ VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000 }
+	};
+	VkDescriptorPoolCreateInfo poolInfo =
+	{
+		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+		.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
+		.maxSets = 1000,
+		.poolSizeCount = std::size(poolSizes),
+		.pPoolSizes = poolSizes
+	};
+	VkDescriptorPool imguiPool;
+	VK_CHECK(vkCreateDescriptorPool(ctx.GetDevice(), &poolInfo, nullptr, &imguiPool));
+
 	// ImGui
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -56,10 +79,10 @@ PipelineImGui::PipelineImGui(
 		.QueueFamily = ctx.GetGraphicsFamily(),
 		.Queue = ctx.GetGraphicsQueue(),
 		.PipelineCache = nullptr,
-		.DescriptorPool = descriptor_.pool_,
+		.DescriptorPool = imguiPool,
 		.Subpass = 0,
-		.MinImageCount = imageCount,
-		.ImageCount = imageCount,
+		.MinImageCount = AppConfig::FrameCount,
+		.ImageCount = AppConfig::FrameCount,
 		.MSAASamples = VK_SAMPLE_COUNT_1_BIT,
 		.ColorAttachmentFormat = ctx.GetSwapchainImageFormat(),
 	};

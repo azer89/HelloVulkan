@@ -1,5 +1,4 @@
 #include "PipelineInfiniteGrid.h"
-
 #include "ResourcesShared.h"
 
 PipelineInfiniteGrid::PipelineInfiniteGrid(

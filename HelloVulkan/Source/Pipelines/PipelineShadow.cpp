@@ -2,7 +2,7 @@
 #include "ResourcesShadow.h"
 #include "Scene.h"
 
-#include <glm/gtc/matrix_transform.hpp>
+#include "glm/gtc/matrix_transform.hpp"
 
 PipelineShadow::PipelineShadow(
 	VulkanContext& ctx,

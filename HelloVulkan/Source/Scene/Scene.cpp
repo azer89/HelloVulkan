@@ -269,8 +269,8 @@ void Scene::CreateDataStructures()
 		for (uint32_t i = 0; i < meshCount; ++i) // Per mesh
 		{
 			const uint32_t vertexStart = models_[m].meshes_[i].GetVertexOffset();
-			const uint32_t vertexEnd = vertexStart + models_[m].meshes_[i].GetVertexCount();
-			tempOriArray[i] = GetBoundingBox(vertexStart, vertexEnd);
+			const uint32_t vertexCount = models_[m].meshes_[i].GetVertexCount();
+			tempOriArray[i] = BoundingBox(Utility::Slide(std::span{ sceneData_.vertices }, vertexStart, vertexCount));
 		}
 
 		// Create the actual InstanceData
@@ -390,22 +390,6 @@ void Scene::UpdateModelMatrix(VulkanContext& ctx,
 			sizeof(BoundingBox) * firstIndex,
 			sizeof(BoundingBox) * mappedIndices.size());
 	}
-}
-
-BoundingBox Scene::GetBoundingBox(const uint32_t vertexStart, const uint32_t vertexEnd)
-{
-	glm::vec3 vMin(std::numeric_limits<float>::max());
-	glm::vec3 vMax(std::numeric_limits<float>::lowest());
-	for (uint32_t j = vertexStart; j < vertexEnd; ++j)
-	{
-		const glm::vec3& v = sceneData_.vertices[j].position;
-		vMin = glm::min(vMin, v);
-		vMax = glm::max(vMax, v);
-	}
-	BoundingBox bb;
-	bb.min_ = glm::vec4(vMin, 1.0);
-	bb.max_ = glm::vec4(vMax, 1.0);
-	return bb;
 }
 
 void Scene::CreateIndirectBuffer(

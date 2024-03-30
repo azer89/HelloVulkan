@@ -2,6 +2,7 @@
 #define UTILITY_HEADER
 
 #include <random>
+#include <span>
 
 namespace Utility
 {
@@ -46,6 +47,12 @@ namespace Utility
 			levels += 1;
 		}
 		return levels;
+	}
+
+	template<class T, std::size_t N>
+	auto Slide(std::span<T, N> s, std::size_t offset, std::size_t width)
+	{
+		return s.subspan(offset, offset + width <= s.size() ? width : 0u);
 	}
 }
 

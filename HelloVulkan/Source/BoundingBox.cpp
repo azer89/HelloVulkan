@@ -17,6 +17,20 @@ BoundingBox::BoundingBox(const std::span<glm::vec3> points)
 	max_ = glm::vec4(vmax, 1.0);
 }
 
+BoundingBox::BoundingBox(const std::span<VertexData> vertexDataArray)
+{
+	glm::vec3 vMin(std::numeric_limits<float>::max());
+	glm::vec3 vMax(std::numeric_limits<float>::lowest());
+	for (auto& vData : vertexDataArray)
+	{
+		const glm::vec3& v = vData.position;
+		vMin = glm::min(vMin, v);
+		vMax = glm::max(vMax, v);
+	}
+	min_ = glm::vec4(vMin, 1.0);
+	max_ = glm::vec4(vMax, 1.0);
+}
+
 void BoundingBox::Transform(const glm::mat4& t)
 {
 	glm::vec3 corners[] = {
