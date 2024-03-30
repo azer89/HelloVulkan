@@ -169,18 +169,19 @@ void VulkanDescriptor::UpdateSet(
 
 	uint32_t bindIndex = 0;
 
-	for (size_t i = 0; i < descriptorInfo.writes_.size(); ++i)
+	descriptorWrites.reserve(descriptorInfo.writes_.size());
+	for (auto& write : descriptorInfo.writes_)
 	{
 		descriptorWrites.push_back({
 			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-			.pNext = descriptorInfo.writes_[i].pNext_,
+			.pNext = write.pNext_,
 			.dstSet = *set, // Dereference
 			.dstBinding = bindIndex++,
 			.dstArrayElement = 0,
-			.descriptorCount = descriptorInfo.writes_[i].descriptorCount_,
-			.descriptorType = descriptorInfo.writes_[i].descriptorType_,
-			.pImageInfo = descriptorInfo.writes_[i].imageInfoPtr_,
-			.pBufferInfo = descriptorInfo.writes_[i].bufferInfoPtr_,
+			.descriptorCount = write.descriptorCount_,
+			.descriptorType = write.descriptorType_,
+			.pImageInfo = write.imageInfoPtr_,
+			.pBufferInfo = write.bufferInfoPtr_,
 			.pTexelBufferView = nullptr
 		});
 	}

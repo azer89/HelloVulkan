@@ -26,8 +26,8 @@ struct SceneData
 	
 	// Skinning
 	uint32_t boneMatrixCount = 1u; // Always has at least one matrix (identity)
-	std::vector<VertexData> preSkinningVertices = {};
-	std::vector<uint32_t> skinningIndices = {};
+	std::vector<VertexData> preSkinningVertices = {}; // Subset of vertices
+	std::vector<uint32_t> skinningIndices = {}; // Mapping from preSkinningVertices to vertices
 	std::vector<iSVec> boneIDArray = {};
 	std::vector<fSVec> boneWeightArray = {};
 

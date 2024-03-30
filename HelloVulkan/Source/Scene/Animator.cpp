@@ -30,8 +30,8 @@ void Animator::Reset()
 
 void Animator::CalculateBoneTransform(
 	Animation* animation,
-	AnimationNode* node,
-	glm::mat4& parentTransform,
+	const AnimationNode* node,
+	const glm::mat4& parentTransform,
 	std::vector<glm::mat4>& skinningMatrices)
 {
 	const std::string nodeName = node->name;

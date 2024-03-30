@@ -163,17 +163,24 @@ void Scene::UpdateAnimation(VulkanContext& ctx, float deltaTime)
 		return;
 	}
 
-	for (uint32_t i = 0; i < animators_.size(); ++i)
 	{
-		if (models_[i].ProcessAnimation())
+		ZoneScopedNC("UpdateAnimation", tracy::Color::GreenYellow);
+
+		for (uint32_t i = 0; i < animators_.size(); ++i)
 		{
-			animators_[i].UpdateAnimation(&(animations_[i]), skinningMatrices_, deltaTime);
+			if (models_[i].ProcessAnimation())
+			{
+				animators_[i].UpdateAnimation(&(animations_[i]), skinningMatrices_, deltaTime);
+			}
 		}
 	}
+	{
+		ZoneScopedNC("Update boneMatricesBuffers_", tracy::Color::Orange);
 
-	const uint32_t frameIndex = ctx.GetFrameIndex();
-	const VkDeviceSize matrixBufferSize = sizeof(glm::mat4) * skinningMatrices_.size();
-	boneMatricesBuffers_[frameIndex].UploadBufferData(ctx, skinningMatrices_.data(), matrixBufferSize);
+		const uint32_t frameIndex = ctx.GetFrameIndex();
+		const VkDeviceSize matrixBufferSize = sizeof(glm::mat4) * skinningMatrices_.size();
+		boneMatricesBuffers_[frameIndex].UploadBufferData(ctx, skinningMatrices_.data(), matrixBufferSize);
+	}
 }
 
 void Scene::CreateAnimationResources(VulkanContext& ctx)
