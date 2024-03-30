@@ -20,9 +20,9 @@ void VulkanContext::Create(VulkanInstance& instance, ContextConfig config)
 	CreateDevice();
 
 	GetRaytracingPropertiesAndFeatures();
-	
+
 	GetQueues();
-	
+
 	CheckSurfaceSupport(instance);
 
 	// Swapchain
@@ -193,7 +193,7 @@ void VulkanContext::ChainFeatures()
 
 		chainPtr = &rtASEnabledFeatures;
 	}
-	
+
 	features_ = {};
 	if (config_.supportMSAA_)
 	{
@@ -319,10 +319,10 @@ VkSampleCountFlagBits VulkanContext::GetMaxUsableSampleCount(VkPhysicalDevice d)
 	VkPhysicalDeviceProperties physicalDeviceProperties;
 	vkGetPhysicalDeviceProperties(d, &physicalDeviceProperties);
 
-	VkSampleCountFlags counts = 
+	VkSampleCountFlags counts =
 		physicalDeviceProperties.limits.framebufferColorSampleCounts &
 		physicalDeviceProperties.limits.framebufferDepthSampleCounts;
-	
+
 	VkSampleCountFlagBits max = VK_SAMPLE_COUNT_1_BIT;
 	if (counts & VK_SAMPLE_COUNT_64_BIT) { max = VK_SAMPLE_COUNT_64_BIT; }
 	if (counts & VK_SAMPLE_COUNT_32_BIT) { max = VK_SAMPLE_COUNT_32_BIT; }
@@ -392,10 +392,10 @@ VkResult VulkanContext::CreateSwapchain(VkSurfaceKHR surface)
 	const VkSurfaceFormatKHR surfaceFormat = { swapchainImageFormat_, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
 	const SwapchainSupportDetails swapchainSupport = QuerySwapchainSupport(surface);
 	const VkPresentModeKHR presentMode = ChooseSwapPresentMode(swapchainSupport.presentModes_);
-	
+
 	const VkSurfaceCapabilitiesKHR capabilities = swapchainSupport.capabilities_;
-	swapchainWidth_ = std::clamp(swapchainWidth_,capabilities.minImageExtent.width,capabilities.maxImageExtent.width);
-	swapchainHeight_ = std::clamp(swapchainHeight_,capabilities.minImageExtent.height,capabilities.maxImageExtent.height);
+	swapchainWidth_ = std::clamp(swapchainWidth_, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
+	swapchainHeight_ = std::clamp(swapchainHeight_, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
 
 	const VkSwapchainCreateInfoKHR createInfo =
 	{
@@ -407,8 +407,8 @@ VkResult VulkanContext::CreateSwapchain(VkSurfaceKHR surface)
 		.imageColorSpace = surfaceFormat.colorSpace,
 		.imageExtent = {.width = swapchainWidth_, .height = swapchainHeight_ },
 		.imageArrayLayers = 1,
-		.imageUsage = 
-			VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | 
+		.imageUsage =
+			VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |
 			VK_IMAGE_USAGE_TRANSFER_DST_BIT,
 		.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE,
 		.queueFamilyIndexCount = 1,
@@ -528,9 +528,9 @@ SwapchainSupportDetails VulkanContext::QuerySwapchainSupport(VkSurfaceKHR surfac
 	{
 		details.formats_.resize(formatCount);
 		vkGetPhysicalDeviceSurfaceFormatsKHR(
-			physicalDevice_, 
-			surface, 
-			&formatCount, 
+			physicalDevice_,
+			surface,
+			&formatCount,
 			details.formats_.data());
 	}
 
@@ -601,9 +601,9 @@ bool VulkanContext::IsDeviceSuitable(VkPhysicalDevice d)
 	VkPhysicalDeviceFeatures deviceFeatures;
 	vkGetPhysicalDeviceFeatures(d, &deviceFeatures);
 
-	const bool isDiscreteGPU = 
+	const bool isDiscreteGPU =
 		deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
-	const bool isIntegratedGPU = 
+	const bool isIntegratedGPU =
 		deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU;
 	const bool isGPU = isDiscreteGPU || isIntegratedGPU;
 
@@ -696,24 +696,24 @@ void VulkanContext::AllocateFrameInFlightData()
 		VK_CHECK(CreateSemaphore(&(frameDataArray_[i].graphicsQueueSemaphore_)));
 		VK_CHECK(CreateFence(&(frameDataArray_[i].queueSubmitFence_)));
 		VK_CHECK(CreateCommandBuffer(graphicsCommandPool_, &(frameDataArray_[i].graphicsCommandBuffer_)));
-		frameDataArray_[i].tracyContext_ = 
+		frameDataArray_[i].tracyContext_ =
 			TracyVkContext(physicalDevice_, device_, graphicsQueue_, frameDataArray_[i].graphicsCommandBuffer_);
 	}
 }
 
-FrameData& VulkanContext::GetCurrentFrameData() 
-{ 
-	return frameDataArray_[frameIndex_]; 
+FrameData& VulkanContext::GetCurrentFrameData()
+{
+	return frameDataArray_[frameIndex_];
 }
 
-void VulkanContext::IncrementFrameIndex() 
-{ 
-	frameIndex_ = (frameIndex_ + 1u) % AppConfig::FrameCount; 
+void VulkanContext::IncrementFrameIndex()
+{
+	frameIndex_ = (frameIndex_ + 1u) % AppConfig::FrameCount;
 }
 
-uint32_t VulkanContext::GetFrameIndex() const 
-{ 
-	return frameIndex_; 
+uint32_t VulkanContext::GetFrameIndex() const
+{
+	return frameIndex_;
 }
 
 VkFormat VulkanContext::FindDepthFormat() const

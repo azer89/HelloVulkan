@@ -11,7 +11,7 @@ void VulkanInstance::Create()
 	{
 		"VK_LAYER_KHRONOS_validation"
 	};
-	
+
 	uint32_t glfwExtensionCount;
 	auto glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 	std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
