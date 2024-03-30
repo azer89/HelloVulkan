@@ -1,7 +1,7 @@
 #include "PipelineImGui.h"
+#include "VulkanCheck.h"
 #include "FrameCounter.h"
 #include "PushConstants.h"
-#include "VulkanCheck.h"
 #include "Configs.h"
 
 #include "imgui.h"
@@ -12,12 +12,11 @@ PipelineImGui::PipelineImGui(
 	VulkanContext& ctx,
 	VkInstance vulkanInstance,
 	GLFWwindow* glfwWindow) :
-	PipelineBase(ctx, 
+	PipelineBase(ctx,
 		{
 			.type_ = PipelineType::GraphicsOnScreen
 		}
-	),
-	device_(ctx.GetDevice())
+	)
 {
 	// Create render pass
 	renderPass_.CreateOnScreenColorOnlyRenderPass(ctx);
@@ -25,32 +24,11 @@ PipelineImGui::PipelineImGui(
 	// Create framebuffer
 	framebuffer_.CreateResizeable(ctx, renderPass_.GetHandle(), {}, IsOffscreen());
 
-	// Create descriptor pool for ImGui
-	// the size of the pool is very oversize, but it's copied from imgui demo itself.
-	constexpr uint32_t maxSize = 50u;
-	VkDescriptorPoolSize poolSizes[] =
-	{
-		{ VK_DESCRIPTOR_TYPE_SAMPLER, maxSize },
-		{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, maxSize },
-		{ VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, maxSize },
-		{ VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, maxSize },
-		{ VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, maxSize },
-		{ VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, maxSize },
-		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, maxSize },
-		{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, maxSize },
-		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, maxSize },
-		{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, maxSize },
-		{ VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, maxSize }
-	};
-	VkDescriptorPoolCreateInfo poolInfo =
-	{
-		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-		.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
-		.maxSets = 1000,
-		.poolSizeCount = std::size(poolSizes),
-		.pPoolSizes = poolSizes
-	};
-	VK_CHECK(vkCreateDescriptorPool(ctx.GetDevice(), &poolInfo, nullptr, &imguiPool_));
+	// Create a decsiptor pool
+	constexpr uint32_t imageCount = AppConfig::FrameCount;
+	VulkanDescriptorInfo dsInfo;
+	dsInfo.AddImage(nullptr); // NOTE According to Sascha Willems, we only need one image, if error, then we need to use vkguide.dev code
+	descriptor_.CreatePoolAndLayout(ctx, dsInfo, imageCount, 1u, VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT);
 
 	// ImGui
 	IMGUI_CHECKVERSION();
@@ -66,9 +44,9 @@ PipelineImGui::PipelineImGui(
 	// Known issue when using both ImGui and volk
 	// github.com/ocornut/imgui/issues/4854
 	ImGui_ImplVulkan_LoadFunctions([](const char* functionName, void* vulkanInstance)
-	{
-		return vkGetInstanceProcAddr(*(reinterpret_cast<VkInstance*>(vulkanInstance)), functionName);
-	}, &vulkanInstance);
+		{
+			return vkGetInstanceProcAddr(*(reinterpret_cast<VkInstance*>(vulkanInstance)), functionName);
+		}, &vulkanInstance);
 
 	ImGui_ImplGlfw_InitForVulkan(glfwWindow, true);
 
@@ -79,14 +57,14 @@ PipelineImGui::PipelineImGui(
 		.QueueFamily = ctx.GetGraphicsFamily(),
 		.Queue = ctx.GetGraphicsQueue(),
 		.PipelineCache = nullptr,
-		.DescriptorPool = imguiPool_,
+		.DescriptorPool = descriptor_.pool_,
 		.Subpass = 0,
-		.MinImageCount = AppConfig::FrameCount,
-		.ImageCount = AppConfig::FrameCount,
+		.MinImageCount = imageCount,
+		.ImageCount = imageCount,
 		.MSAASamples = VK_SAMPLE_COUNT_1_BIT,
 		.ColorAttachmentFormat = ctx.GetSwapchainImageFormat(),
 	};
-	
+
 	ImGui_ImplVulkan_Init(&init_info, renderPass_.GetHandle());
 }
 
@@ -95,7 +73,6 @@ PipelineImGui::~PipelineImGui()
 	ImGui_ImplVulkan_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
-	vkDestroyDescriptorPool(device_, imguiPool_, nullptr);
 }
 
 void PipelineImGui::ImGuiStart()
