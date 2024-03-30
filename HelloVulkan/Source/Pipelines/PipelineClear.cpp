@@ -20,5 +20,6 @@ void PipelineClear::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comman
 	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "Clear", tracy::Color::DarkRed);
 	const uint32_t swapchainImageIndex = ctx.GetCurrentSwapchainImageIndex();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));
+	ctx.InsertDebugLabel(commandBuffer, "PipelineClear", 0xff99ffff);
 	vkCmdEndRenderPass(commandBuffer);
 }

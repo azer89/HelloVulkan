@@ -761,3 +761,17 @@ void VulkanContext::SetVkObjectName(void* objectHandle, VkObjectType objType, co
 	};
 	VK_CHECK(vkSetDebugUtilsObjectNameEXT(device_, &nameInfo));
 }
+
+void VulkanContext::InsertDebugLabel(VkCommandBuffer commandBuffer, const char* label, uint32_t colorRGBA) const
+{
+	const VkDebugUtilsLabelEXT utilsLabel = {
+	 .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
+	 .pNext = nullptr,
+	 .pLabelName = label,
+	 .color = {float((colorRGBA >> 0) & 0xff) / 255.0f,
+			   float((colorRGBA >> 8) & 0xff) / 255.0f,
+			   float((colorRGBA >> 16) & 0xff) / 255.0f,
+			   float((colorRGBA >> 24) & 0xff) / 255.0f},
+	};
+	vkCmdInsertDebugUtilsLabelEXT(commandBuffer, &utilsLabel);
+}

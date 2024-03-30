@@ -70,6 +70,7 @@ void PipelineInfiniteGrid::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer
 		&descriptorSets_[frameIndex],
 		0,
 		nullptr);
+	ctx.InsertDebugLabel(commandBuffer, "PipelineInfiniteGrid", 0xff99ff99);
 	vkCmdDraw(commandBuffer, 6, 1, 0, 0);
 	vkCmdEndRenderPass(commandBuffer);
 }

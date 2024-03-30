@@ -317,6 +317,7 @@ void PipelineCubeFilter::OffscreenRender(VulkanContext& ctx,
 			sizeof(PushConstCubeFilter), &pc);
 
 		renderPass_.BeginCubemapRenderPass(commandBuffer, mipFramebuffers[i].GetFramebuffer(), targetSize);
+		ctx.InsertDebugLabel(commandBuffer, "PipelineCubeFilter", 0xff9999ff);
 		vkCmdDraw(commandBuffer, 3, 1u, 0, 0);
 		vkCmdEndRenderPass(commandBuffer);
 	}

@@ -154,6 +154,7 @@ void PipelineImGui::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comman
 	const uint32_t swapchainImageIndex = ctx.GetCurrentSwapchainImageIndex();
 	ImDrawData* draw_data = ImGui::GetDrawData();
 	renderPass_.BeginRenderPass(ctx, commandBuffer, framebuffer_.GetFramebuffer(swapchainImageIndex));
+	ctx.InsertDebugLabel(commandBuffer, "PipelineImGui", 0xff9999ff);
 	ImGui_ImplVulkan_RenderDrawData(draw_data, commandBuffer);
 	vkCmdEndRenderPass(commandBuffer);
 }

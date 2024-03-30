@@ -67,6 +67,7 @@ void PipelineAABBRender::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer c
 		0,
 		nullptr);
 	const uint32_t boxCount = scene_->GetInstanceCount();
+	ctx.InsertDebugLabel(commandBuffer, "PipelineAABBRender", 0xff99ff99);
 	vkCmdDraw(commandBuffer, 36, boxCount, 0, 0);
 	vkCmdEndRenderPass(commandBuffer);
 }

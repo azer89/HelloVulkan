@@ -75,6 +75,8 @@ void PipelinePBRSlotBased::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer
 		0,
 		sizeof(PushConstPBR), &pc_);
 
+	ctx.InsertDebugLabel(commandBuffer, "PipelinePBRSlotBased", 0xffff9999);
+
 	size_t meshIndex = 0;
 	for (Model* model : models_)
 	{

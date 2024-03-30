@@ -261,6 +261,8 @@ void PipelineEquirect2Cube::OffscreenRender(VulkanContext& ctx, VulkanImage* out
 
 	renderPass_.BeginCubemapRenderPass(commandBuffer, cubeFramebuffer_, IBLConfig::InputCubeSideLength);
 
+	ctx.InsertDebugLabel(commandBuffer, "PipelineEquirect2Cube", 0xffff99ff);
+
 	vkCmdDraw(commandBuffer, 3, 1u, 0, 0);
 
 	vkCmdEndRenderPass(commandBuffer);

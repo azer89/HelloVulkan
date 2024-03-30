@@ -45,6 +45,8 @@ void PipelineFrustumCulling::Execute(VulkanContext& ctx, VkCommandBuffer command
 		0, // dynamicOffsetCount
 		0); // pDynamicOffsets
 
+	ctx.InsertDebugLabel(commandBuffer, "PipelineFrustumCulling", 0xff9999ff);
+
 	vkCmdDispatch(commandBuffer, scene_->GetInstanceCount(), 1, 1);
 
 	const VkBufferMemoryBarrier2 bufferBarrier =

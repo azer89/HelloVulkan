@@ -69,6 +69,7 @@ void PipelineLightRender::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 		&descriptorSets_[frameIndex],
 		0,
 		nullptr);
+	ctx.InsertDebugLabel(commandBuffer, "PipelineLightRender", 0xff99ff99);
 	vkCmdDraw(
 		commandBuffer, 
 		6, // Draw a quad

@@ -89,6 +89,8 @@ void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 		0u, // dynamicOffsetCount
 		nullptr); // pDynamicOffsets
 
+	ctx.InsertDebugLabel(commandBuffer, "PipelinePBRBindless", 0xff9999ff);
+
 	vkCmdDrawIndirect(
 		commandBuffer, 
 		scene_->indirectBuffer_.buffer_, 

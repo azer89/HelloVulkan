@@ -108,6 +108,8 @@ void PipelineShadow::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comma
 		0u,
 		nullptr);
 
+	ctx.InsertDebugLabel(commandBuffer, "PipelineShadow", 0xff99ff99);
+
 	vkCmdDrawIndirect(
 		commandBuffer,
 		indirectBuffer_.buffer_,
