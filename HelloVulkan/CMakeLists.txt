@@ -63,8 +63,6 @@ if(glslang_FOUND)
             glslang::glslang-default-resource-limits
     )
 else()
-    # These libraries are needed for runtime glsl compilation.
-    # If you are not on Windows you need to change the filenames below and remove the IF statement.
     if(WIN32)
         get_filename_component(VK_SDK_PATH ${Vulkan_LIBRARY} DIRECTORY) # Some CMake Generators don't play nice with $ENV{VULKAN_SDK}
         get_filename_component(VK_SDK_PATH ${VK_SDK_PATH} DIRECTORY)
