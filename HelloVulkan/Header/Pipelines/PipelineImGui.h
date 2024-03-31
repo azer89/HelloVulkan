@@ -4,6 +4,7 @@
 #include "PipelineBase.h"
 #include "FrameCounter.h"
 #include "PushConstants.h"
+#include "InputContext.h"
 
 class PipelineImGui final : public PipelineBase
 {
@@ -18,6 +19,7 @@ public:
 	void ImGuiSetWindow(const char* title, int width, int height, float fontSize = 1.25f);
 	void ImGuiShowFrameData(FrameCounter* frameCounter);
 	void ImGuiShowPBRConfig(PushConstPBR* pc, float mipmapCount);
+	void ImGuiShowEditMode(int* editMode);
 	void ImGuiEnd();
 	void ImGuiDrawEmpty();
 

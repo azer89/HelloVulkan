@@ -7,8 +7,10 @@
 class ClickableScene
 {
 public:
-	ClickableScene() = default;
-	void Init();
+	ClickableScene(Scene* scene);
+
+private:
+	Scene* scene_;
 };
 
 #endif

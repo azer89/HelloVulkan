@@ -154,6 +154,7 @@ void AppSkinning::UpdateUI()
 
 	ImGui::Text("Triangle Count: %i", scene_->triangleCount_);
 	ImGui::Checkbox("Render Lights", &inputContext_.renderLights_);
+	imguiPtr_->ImGuiShowEditMode(&inputContext_.editMode_);
 	ImGui::SeparatorText("Shading");
 	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
 

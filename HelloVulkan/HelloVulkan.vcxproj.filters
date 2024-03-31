@@ -649,5 +649,8 @@
     <ClCompile Include="Source\Resources\ResourcesShared.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Scene\ClickableScene.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -6,6 +6,14 @@
 
 #include <array>
 
+namespace EditMode
+{
+	constexpr int None = 0;
+	constexpr int Translate = 1;
+	constexpr int Rotate = 2;
+	constexpr int Scale = 3;
+};
+
 struct InputContext
 {
 public:
@@ -30,6 +38,7 @@ public:
 	bool firstMouse_ = true;
 	bool leftMousePressed_ = false;
 	bool showImgui_ = true;
+	int editMode_ = 0;
 
 	bool renderInfiniteGrid_ = true;
 	bool renderDebug_ = false;
