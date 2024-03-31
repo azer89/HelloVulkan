@@ -39,6 +39,7 @@ public:
 	[[nodiscard]] ClusterForwardUBO GetClusterForwardUBO() const;
 	[[nodiscard]] RaytracingCameraUBO GetRaytracingCameraUBO() const;
 	[[nodiscard]] FrustumUBO GetFrustumUBO() const;
+	[[nodiscard]] glm::vec4 GetRayFromScreenToWorld(int screenPosX, int screenPosY) const;
 
 private:
 	glm::mat4 projectionMatrix_;

@@ -230,3 +230,22 @@ FrustumUBO Camera::GetFrustumUBO() const
 
 	return ubo;
 }
+
+glm::vec4 Camera::GetRayFromScreenToWorld(int screenPosX, int screenPosY) const
+{
+	glm::mat4 inverseViewMatrix_ = glm::inverse(viewMatrix_);
+	glm::vec4 rayClipSpace =
+		glm::vec4(
+			(static_cast<float>(screenPosX) / screenWidth_) * 2.f - 1.f,
+			(static_cast<float>(screenPosY) / screenHeight_) * 2.f - 1.f,
+			-1.0f,
+			1.0f);
+	glm::vec4 rayViewSpace = inverseProjectionMatrix_ * rayClipSpace;
+	rayViewSpace.z = -1.0f;
+	rayViewSpace.w = 0.0f;
+
+	glm::vec4 rayWorldSpace = inverseViewMatrix_ * rayViewSpace;
+	rayWorldSpace = glm::normalize(rayWorldSpace);
+
+	return rayWorldSpace;
+}
