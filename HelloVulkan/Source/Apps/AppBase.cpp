@@ -4,11 +4,8 @@
 #include "VulkanCheck.h"
 
 #include "volk.h"
-
-// Init GLSLang
-#include <glslang/Include/glslang_c_interface.h>
-
 #include "imgui_impl_vulkan.h"
+#include "glslang/Include/glslang_c_interface.h"
 
 #include <iostream>
 #include <array>
@@ -18,7 +15,6 @@ AppBase::AppBase() :
 {
 	InitGLFW();
 	InitGLSLang();
-	InitImGui();
 	InitCamera();
 }
 
@@ -74,35 +70,25 @@ void AppBase::InitGLFW()
 
 	glfwSetWindowUserPointer(glfwWindow_, this);
 	
-	auto FuncFramebuffer = [](GLFWwindow* window, int width, int height)
-	{
-		static_cast<AppBase*>(glfwGetWindowUserPointer(window))->FrameBufferSizeCallback(window, width, height);
-	};
-	glfwSetFramebufferSizeCallback(glfwWindow_, FuncFramebuffer);
+	auto funcFramebuffer = [](GLFWwindow* window, int width, int height)
+		{ static_cast<AppBase*>(glfwGetWindowUserPointer(window))->FrameBufferSizeCallback(window, width, height); };
+	glfwSetFramebufferSizeCallback(glfwWindow_, funcFramebuffer);
 
-	auto FuncCursor = [](GLFWwindow* window, double x, double y)
-	{
-		static_cast<AppBase*>(glfwGetWindowUserPointer(window))->MouseCallback(window, x, y);
-	};
-	glfwSetCursorPosCallback(glfwWindow_, FuncCursor);
+	auto funcCursor = [](GLFWwindow* window, double x, double y)
+		{ static_cast<AppBase*>(glfwGetWindowUserPointer(window))->MouseCallback(window, x, y); };
+	glfwSetCursorPosCallback(glfwWindow_, funcCursor);
 
-	auto FuncMouse = [](GLFWwindow* window, int button, int action, int mods)
-	{
-		static_cast<AppBase*>(glfwGetWindowUserPointer(window))->MouseButtonCallback(window, button, action, mods);
-	};
-	glfwSetMouseButtonCallback(glfwWindow_, FuncMouse);
+	auto funcMouse = [](GLFWwindow* window, int button, int action, int mods)
+		{ static_cast<AppBase*>(glfwGetWindowUserPointer(window))->MouseButtonCallback(window, button, action, mods); };
+	glfwSetMouseButtonCallback(glfwWindow_, funcMouse);
 
-	auto FuncScroll = [](GLFWwindow* window, double xOffset, double yOffset)
-	{
-		static_cast<AppBase*>(glfwGetWindowUserPointer(window))->ScrollCallback(window, xOffset, yOffset);
-	};
-	glfwSetScrollCallback(glfwWindow_, FuncScroll);
+	auto funcScroll = [](GLFWwindow* window, double xOffset, double yOffset)
+		{ static_cast<AppBase*>(glfwGetWindowUserPointer(window))->ScrollCallback(window, xOffset, yOffset); };
+	glfwSetScrollCallback(glfwWindow_, funcScroll);
 
-	auto FuncKey = [](GLFWwindow* window, int key, int scancode, int action, int mods)
-	{
-		static_cast<AppBase*>(glfwGetWindowUserPointer(window))->KeyCallback(window, key, scancode, action, mods);
-	};
-	glfwSetKeyCallback(glfwWindow_, FuncKey);
+	auto funcKey = [](GLFWwindow* window, int key, int scancode, int action, int mods)
+		{ static_cast<AppBase*>(glfwGetWindowUserPointer(window))->KeyCallback(window, key, scancode, action, mods); };
+	glfwSetKeyCallback(glfwWindow_, funcKey);
 }
 
 // TODO Analyzie this function for possible performance improvement
@@ -266,17 +252,11 @@ void AppBase::OnWindowResized()
 	shouldRecreateSwapchain_ = false;
 }
 
-void AppBase::InitImGui()
-{
-	showImgui_ = true;
-}
-
 void AppBase::InitCamera()
 {
 	camera_ = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 3.0f));
-	lastX_ = static_cast<float>(windowWidth_) / 2.0f;
-	lastY_ = static_cast<float>(windowHeight_) / 2.0f;
-	firstMouse_ = true;
+	inputContext_.lastX_ = static_cast<float>(windowWidth_) / 2.0f;
+	inputContext_.lastY_ = static_cast<float>(windowHeight_) / 2.0f;
 }
 
 void AppBase::ProcessTiming()
@@ -284,6 +264,11 @@ void AppBase::ProcessTiming()
 	// Per-frame time
 	float currentFrame = static_cast<float>(glfwGetTime());
 	frameCounter_.Update(currentFrame);
+}
+
+bool AppBase::ShowImGui()
+{
+	return inputContext_.showImgui_;
 }
 
 bool AppBase::StillRunning()
@@ -334,41 +319,41 @@ void AppBase::FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
 
 void AppBase::MouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 {
-	if (!leftMousePressed_)
+	if (!inputContext_.leftMousePressed_)
 	{
 		return;
 	}
 
 	const float xPos = static_cast<float>(xposIn);
 	const float yPos = static_cast<float>(yposIn);
-	if (firstMouse_)
+	if (inputContext_.firstMouse_)
 	{
-		lastX_ = xPos;
-		lastY_ = yPos;
-		firstMouse_ = false;
+		inputContext_.lastX_ = xPos;
+		inputContext_.lastY_ = yPos;
+		inputContext_.firstMouse_ = false;
 	}
-	const float xOffset = xPos - lastX_;
-	const float yOffset = lastY_ - yPos; // reversed since y-coordinates go from bottom to top
-	lastX_ = xPos;
-	lastY_ = yPos;
+	const float xOffset = xPos - inputContext_.lastX_;
+	const float yOffset = inputContext_.lastY_ - yPos; // Reversed since y-coordinates go from bottom to top
+	inputContext_.lastX_ = xPos;
+	inputContext_.lastY_ = yPos;
 	camera_->ProcessMouseMovement(xOffset, yOffset);
 }
 
 void AppBase::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
-	if (const auto& io = ImGui::GetIO(); io.WantCaptureMouse)
+	if (ImGui::GetIO().WantCaptureMouse)
 	{
 		return;
 	}
 
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
 	{
-		leftMousePressed_ = true;
+		inputContext_.leftMousePressed_ = true;
 	}
 	else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
 	{
-		leftMousePressed_ = false;
-		firstMouse_ = true;
+		inputContext_.leftMousePressed_ = false;
+		inputContext_.firstMouse_ = true;
 	}
 }
 
@@ -382,7 +367,7 @@ void AppBase::KeyCallback(GLFWwindow* window, int key, int scancode, int action,
 	if (key == GLFW_KEY_I && action == GLFW_PRESS)
 	{
 		// Toggle imgui window
-		showImgui_ = !showImgui_;
+		inputContext_.showImgui_ = !inputContext_.showImgui_;
 	}
 }
 
@@ -414,7 +399,6 @@ void AppBase::ProcessInput()
 		camera_->ProcessKeyboard(CameraMovement::Right, frameCounter_.GetDeltaSecond());
 	}
 }
-
 
 void AppBase::InitSharedResources()
 {

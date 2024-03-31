@@ -86,7 +86,7 @@ void AppPBRSlotBased::UpdateUBOs()
 
 void AppPBRSlotBased::UpdateUI()
 {
-	if (!showImgui_)
+	if (!ShowImGui())
 	{
 		imguiPtr_->ImGuiDrawEmpty();
 		return;

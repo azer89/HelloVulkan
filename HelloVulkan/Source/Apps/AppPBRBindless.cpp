@@ -93,7 +93,7 @@ void AppPBRBindless::InitLights()
 
 void AppPBRBindless::UpdateUI()
 {
-	if (!showImgui_)
+	if (!ShowImGui())
 	{
 		imguiPtr_->ImGuiDrawEmpty();
 		return;

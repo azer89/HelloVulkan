@@ -25,6 +25,12 @@ public:
 	float shadowMinBias_ = 0.001f;
 	float shadowMaxBias_ = 0.001f;
 
+	float lastX_ = 0.0f;
+	float lastY_ = 0.0f;
+	bool firstMouse_ = true;
+	bool leftMousePressed_ = false;
+	bool showImgui_ = true;
+
 	bool renderInfiniteGrid_ = true;
 	bool renderDebug_ = false;
 	bool renderAABB_ = false;

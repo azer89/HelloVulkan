@@ -122,7 +122,7 @@ void AppPBRShadow::InitLights()
 
 void AppPBRShadow::UpdateUI()
 {
-	if (!showImgui_)
+	if (!ShowImGui())
 	{
 		imguiPtr_->ImGuiDrawEmpty();
 		return;

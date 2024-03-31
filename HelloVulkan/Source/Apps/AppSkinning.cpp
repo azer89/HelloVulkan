@@ -142,7 +142,7 @@ void AppSkinning::InitLights()
 
 void AppSkinning::UpdateUI()
 {
-	if (!showImgui_)
+	if (!ShowImGui())
 	{
 		imguiPtr_->ImGuiDrawEmpty();
 		return;

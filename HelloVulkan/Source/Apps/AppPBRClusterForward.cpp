@@ -138,7 +138,7 @@ void AppPBRClusterForward::UpdateUBOs()
 
 void AppPBRClusterForward::UpdateUI()
 {
-	if (!showImgui_)
+	if (!ShowImGui())
 	{
 		imguiPtr_->ImGuiDrawEmpty();
 		return;

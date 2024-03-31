@@ -38,7 +38,6 @@ protected:
 
 	// Init functions
 	void InitVulkan(ContextConfig config);
-	void InitImGui();
 	void InitGLSLang();
 	void InitGLFW();
 	void InitCamera();
@@ -48,6 +47,9 @@ protected:
 	void PollEvents();
 	void ProcessTiming();
 	void ProcessInput();
+
+	// ImGui
+	bool ShowImGui();
 
 	void DestroyResources();
 
@@ -79,11 +81,11 @@ protected:
 
 	// Camera
 	std::unique_ptr<Camera> camera_ = nullptr;
-	float lastX_;
+	/*float lastX_;
 	float lastY_;
 	bool firstMouse_;
 	bool leftMousePressed_;
-	bool showImgui_;
+	bool showImgui_;*/
 
 	// Timing
 	FrameCounter frameCounter_;

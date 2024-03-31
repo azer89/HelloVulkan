@@ -28,7 +28,7 @@ void AppSimpleRaytracing::Init()
 
 void AppSimpleRaytracing::UpdateUI()
 {
-	if (!showImgui_)
+	if (!ShowImGui())
 	{
 		imguiPtr_->ImGuiDrawEmpty();
 		return;

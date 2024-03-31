@@ -109,7 +109,7 @@ void AppFrustumCulling::InitLights()
 
 void AppFrustumCulling::UpdateUI()
 {
-	if (!showImgui_)
+	if (!ShowImGui())
 	{
 		imguiPtr_->ImGuiDrawEmpty();
 		return;
