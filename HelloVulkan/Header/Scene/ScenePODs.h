@@ -73,9 +73,9 @@ struct MeshData
 
 struct InstanceData
 {
-	uint32_t modelIndex;
-	uint32_t meshIndex;
-	uint32_t perModelInstanceIndex;
+	uint32_t modelIndex; // Pointing to global Model array
+	uint32_t perModelMeshIndex; // Pointing to meshDataArray_
+	uint32_t perModelInstanceIndex; // Local to Model
 	MeshData meshData;
 	BoundingBox originalBoundingBox;
 };
@@ -90,7 +90,7 @@ struct InstanceMap
 struct ModelCreateInfo
 {
 	std::string filename = {};
-	uint32_t instanceCount = 1; // Allows instancing
+	uint32_t instanceCount = 1u; // Allows instancing
 	bool playAnimation = false;
 };
 
@@ -98,7 +98,7 @@ struct ModelCreateInfo
 struct BoneInfo
 {
 	// ID is index in finalBoneMatrices
-	int id = 0; // The first matrix (zero index) is identity
+	int id = 0; // The first matrix is identity
 
 	// Offset matrix transforms vertex from model space to bone space
 	glm::mat4 offsetMatrix = glm::mat4(1.0);

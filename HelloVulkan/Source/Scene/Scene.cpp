@@ -281,7 +281,7 @@ void Scene::CreateDataStructures()
 				instanceDataArray_.push_back(
 				{
 					.modelIndex = m,
-					.meshIndex = j,
+					.perModelMeshIndex = j,
 					.perModelInstanceIndex = i,
 					.meshData = models_[m].meshes_[j].GetMeshData(textureCounter, matrixCounter),
 					.originalBoundingBox = tempOriArray[j] // Copy bounding box from temporary
@@ -403,11 +403,11 @@ void Scene::CreateIndirectBuffer(
 	for (uint32_t i = 0; i < instanceCount; ++i)
 	{
 		const uint32_t modelIndex = instanceDataArray_[i].modelIndex;
-		const uint32_t meshIndex = instanceDataArray_[i].meshIndex;
+		const uint32_t perModelMeshIndex = instanceDataArray_[i].perModelMeshIndex;
 
 		iCommands[i] =
 		{
-			.vertexCount = models_[modelIndex].meshes_[meshIndex].GetIndexCount(),
+			.vertexCount = models_[modelIndex].meshes_[perModelMeshIndex].GetIndexCount(),
 			.instanceCount = 1u,
 			.firstVertex = 0,
 			.firstInstance = i
