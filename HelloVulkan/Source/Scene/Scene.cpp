@@ -431,3 +431,38 @@ std::vector<VkDescriptorImageInfo> Scene::GetImageInfos() const
 	}
 	return textureInfoArray;
 }
+
+void Scene::BoundingBoxIntersection(Ray& ray)
+{
+	float tMin = 10000;
+	int modelIndex = -1;
+
+	for (size_t i = 0; i < transformedBoundingBoxes_.size(); ++i)
+	{
+		MeshData& mData = meshDataArray_[i];
+		Model& m = models_[mData.modelMatrixIndex_];
+
+		if (!m.modelInfo_.clikable)
+		{
+			continue;
+		}
+
+		float t;
+		if (transformedBoundingBoxes_[i].Hit(ray, t))
+		{
+			if (t < tMin)
+			{
+				tMin = t;
+				modelIndex = mData.modelMatrixIndex_;
+			}
+		}
+		//std::cout << t << "\n";
+	}
+
+	if (modelIndex >= 0)
+	{
+		//MeshData& mData = meshDataArray_[minIndex];
+		Model& m = models_[modelIndex];
+		std::cout << m.filepath_ << "\n\n";
+	}
+}

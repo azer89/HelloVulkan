@@ -42,6 +42,8 @@ public:
 
 	void UpdateAnimation(VulkanContext& ctx, float deltaTime);
 
+	void BoundingBoxIntersection(Ray& ray);
+
 private:
 	void CreateAnimationResources(VulkanContext& ctx);
 	void CreateBindlessResources(VulkanContext& ctx);

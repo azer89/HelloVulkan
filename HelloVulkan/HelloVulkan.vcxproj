@@ -217,6 +217,7 @@
     <ClInclude Include="Header\Camera.h" />
     <ClInclude Include="Header\Configs.h" />
     <ClInclude Include="Header\FrameCounter.h" />
+    <ClInclude Include="Header\Ray.h" />
     <ClInclude Include="Header\Scene\ClickableScene.h" />
     <ClInclude Include="Header\Utility.h" />
     <ClInclude Include="Header\InputContext.h" />
