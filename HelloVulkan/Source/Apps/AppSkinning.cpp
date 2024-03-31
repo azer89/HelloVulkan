@@ -12,6 +12,8 @@
 #include "glm/ext.hpp"
 #include "imgui_impl_vulkan.h"
 
+#include <iostream>
+
 AppSkinning::AppSkinning()
 {
 }
@@ -82,17 +84,20 @@ void AppSkinning::InitScene()
 	{{
 		.filename = AppConfig::ModelFolder + "Sponza/Sponza.gltf",
 		.instanceCount = 1,
-		.playAnimation = false
+		.playAnimation = false,
+		.clickable = false
 	},
 	{
 		.filename = AppConfig::ModelFolder + "DancingStormtrooper01/DancingStormtrooper01.gltf",
 		.instanceCount = 4,
-		.playAnimation = true
+		.playAnimation = true,
+		.clickable = true
 	},
 	{
 		.filename = AppConfig::ModelFolder + "DancingStormtrooper02/DancingStormtrooper02.gltf",
 		.instanceCount = 4,
-		.playAnimation = true
+		.playAnimation = true,
+		.clickable = true
 	}};
 	bool supportDeviceAddress = true;
 	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
@@ -147,6 +152,19 @@ void AppSkinning::UpdateUI()
 		return;
 	}
 
+	// Gizmo
+	if (inputContext_.leftMousePressed_)
+	{
+		std::cout << inputContext_.mousePositionX << ", " << inputContext_.mousePositionY << "\n";
+		Ray r = camera_->GetRayFromScreenToWorld(inputContext_.mousePositionX, inputContext_.mousePositionY);
+		int i = scene_->GetClickedInstanceIndex(r);
+		if (i >= 0)
+		{
+			InstanceData& iData = scene_->instanceDataArray_[i];
+			inputContext_.selectedModelIndex = iData.meshData.modelMatrixIndex_;
+		}
+	}
+
 	// Start
 	imguiPtr_->ImGuiStart();
 	imguiPtr_->ImGuiSetWindow("Compute-based Skinning", 500, 650);
@@ -171,8 +189,13 @@ void AppSkinning::UpdateUI()
 	ImGui::SliderFloat("Z", &(inputContext_.shadowCasterPosition_[2]), -10.0f, 10.0f);
 
 	// Gizmo
-	imguiPtr_->ImGuizmoStart();
-	imguiPtr_->ImGuizmoShow(camera_.get(), scene_->modelSSBOs_[0].model, inputContext_.editMode_);
+	if (inputContext_.selectedModelIndex >= 0)
+	{
+		imguiPtr_->ImGuizmoStart();
+		imguiPtr_->ImGuizmoShow(camera_.get(), 
+			scene_->modelSSBOs_[inputContext_.selectedModelIndex].model,
+			inputContext_.editMode_);
+	}
 	
 	// End
 	imguiPtr_->ImGuiEnd();

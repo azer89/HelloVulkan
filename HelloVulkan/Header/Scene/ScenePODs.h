@@ -92,7 +92,7 @@ struct ModelCreateInfo
 	std::string filename = {};
 	uint32_t instanceCount = 1u; // Allows instancing
 	bool playAnimation = false;
-	bool clikable = false;
+	bool clickable = false;
 };
 
 // Skinning

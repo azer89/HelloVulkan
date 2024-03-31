@@ -42,7 +42,7 @@ public:
 
 	void UpdateAnimation(VulkanContext& ctx, float deltaTime);
 
-	void BoundingBoxIntersection(Ray& ray);
+	int GetClickedInstanceIndex(Ray& ray);
 
 private:
 	void CreateAnimationResources(VulkanContext& ctx);

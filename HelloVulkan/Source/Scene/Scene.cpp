@@ -432,20 +432,17 @@ std::vector<VkDescriptorImageInfo> Scene::GetImageInfos() const
 	return textureInfoArray;
 }
 
-void Scene::BoundingBoxIntersection(Ray& ray)
+int Scene::GetClickedInstanceIndex(Ray& ray)
 {
-	float tMin = 10000;
-	int modelIndex = -1;
+	float tMin = FLT_MAX;
+	int modelIndex = -1; // TODO Debug
+	int instanceIndex = -1;
 
 	for (size_t i = 0; i < transformedBoundingBoxes_.size(); ++i)
 	{
-		MeshData& mData = meshDataArray_[i];
-		Model& m = models_[mData.modelMatrixIndex_];
-
-		if (!m.modelInfo_.clikable)
-		{
-			continue;
-		}
+		InstanceData& iData = instanceDataArray_[i];
+		Model& m = models_[iData.modelIndex];
+		if (!m.modelInfo_.clickable) { continue; }
 
 		float t;
 		if (transformedBoundingBoxes_[i].Hit(ray, t))
@@ -453,16 +450,18 @@ void Scene::BoundingBoxIntersection(Ray& ray)
 			if (t < tMin)
 			{
 				tMin = t;
-				modelIndex = mData.modelMatrixIndex_;
+				modelIndex = iData.modelIndex;
+				instanceIndex = i;
 			}
 		}
-		//std::cout << t << "\n";
 	}
 
+	// TODO Debug 
 	if (modelIndex >= 0)
 	{
-		//MeshData& mData = meshDataArray_[minIndex];
 		Model& m = models_[modelIndex];
-		std::cout << m.filepath_ << "\n\n";
+		std::cout << m.filepath_ << "\n";
 	}
+	std::cout << instanceIndex << "\n\n";
+	return instanceIndex;
 }
