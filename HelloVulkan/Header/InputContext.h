@@ -37,6 +37,7 @@ public:
 	float lastY_ = 0.0f;
 	bool firstMouse_ = true;
 	bool leftMousePressed_ = false;
+	bool leftMouseHold_ = false;
 	bool showImgui_ = true;
 	int editMode_ = 0;
 

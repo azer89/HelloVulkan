@@ -187,6 +187,14 @@ void AppBase::DrawFrame()
 	// Do this after the end of the draw
 	vulkanContext_.IncrementFrameIndex();
 
+	// Mouse input
+	if (inputContext_.leftMousePressed_)
+	{
+		inputContext_.leftMousePressed_ = false;
+		inputContext_.leftMouseHold_ = true;
+	}
+
+	// End Tracy frame
 	FrameMark;
 }
 
@@ -319,7 +327,7 @@ void AppBase::FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
 
 void AppBase::MouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 {
-	if (!inputContext_.leftMousePressed_)
+	if (!inputContext_.leftMousePressed_ && !inputContext_.leftMouseHold_)
 	{
 		return;
 	}
@@ -353,6 +361,7 @@ void AppBase::MouseButtonCallback(GLFWwindow* window, int button, int action, in
 	else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
 	{
 		inputContext_.leftMousePressed_ = false;
+		inputContext_.leftMouseHold_ = false;
 		inputContext_.firstMouse_ = true;
 	}
 }

@@ -81,11 +81,6 @@ protected:
 
 	// Camera
 	std::unique_ptr<Camera> camera_ = nullptr;
-	/*float lastX_;
-	float lastY_;
-	bool firstMouse_;
-	bool leftMousePressed_;
-	bool showImgui_;*/
 
 	// Timing
 	FrameCounter frameCounter_;
