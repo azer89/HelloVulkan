@@ -263,8 +263,6 @@ void AppBase::OnWindowResized()
 void AppBase::InitCamera()
 {
 	camera_ = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 3.0f));
-	inputContext_.lastX_ = static_cast<float>(windowWidth_) / 2.0f;
-	inputContext_.lastY_ = static_cast<float>(windowHeight_) / 2.0f;
 }
 
 void AppBase::ProcessTiming()
@@ -327,24 +325,26 @@ void AppBase::FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
 
 void AppBase::MouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 {
-	if (!inputContext_.leftMousePressed_ && !inputContext_.leftMouseHold_)
-	{
-		return;
-	}
-
 	const float xPos = static_cast<float>(xposIn);
 	const float yPos = static_cast<float>(yposIn);
 	if (inputContext_.firstMouse_)
 	{
-		inputContext_.lastX_ = xPos;
-		inputContext_.lastY_ = yPos;
+		inputContext_.mousePositionX = xPos;
+		inputContext_.mousePositionY = yPos;
 		inputContext_.firstMouse_ = false;
+		return;
 	}
-	const float xOffset = xPos - inputContext_.lastX_;
-	const float yOffset = inputContext_.lastY_ - yPos; // Reversed since y-coordinates go from bottom to top
-	inputContext_.lastX_ = xPos;
-	inputContext_.lastY_ = yPos;
-	camera_->ProcessMouseMovement(xOffset, yOffset);
+
+	if (inputContext_.leftMousePressed_ || inputContext_.leftMouseHold_)
+	{
+		const float xOffset = xPos - inputContext_.mousePositionX;
+		const float yOffset = inputContext_.mousePositionY - yPos; // Reversed since y-coordinates go from bottom to top
+		camera_->ProcessMouseMovement(xOffset, yOffset);
+	}
+
+	inputContext_.mousePositionX = xPos;
+	inputContext_.mousePositionY = yPos;
+	
 }
 
 void AppBase::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)

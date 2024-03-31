@@ -33,12 +33,21 @@ public:
 	float shadowMinBias_ = 0.001f;
 	float shadowMaxBias_ = 0.001f;
 
-	float lastX_ = 0.0f;
-	float lastY_ = 0.0f;
+	// Mouse-related
 	bool firstMouse_ = true;
 	bool leftMousePressed_ = false;
 	bool leftMouseHold_ = false;
 	bool showImgui_ = true;
+
+	// Mouse position at all times
+	float mousePositionX = 0;
+	float mousePositionY = 0;
+
+	// Mouse position only when clicked
+	float mousePressX = 0;
+	float mousePressY = 0;
+
+	// Gizmo
 	int editMode_ = 0;
 
 	bool renderInfiniteGrid_ = true;
