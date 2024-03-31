@@ -21,6 +21,7 @@ public:
 	void ImGuiShowFrameData(FrameCounter* frameCounter);
 	void ImGuiShowPBRConfig(PushConstPBR* pc, float mipmapCount);
 	void ImGuiShowEditMode(int* editMode);
+	void ImGuizmoStart();
 	void ImGuizmoShow(const Camera* camera, glm::mat4& matrix, const int editMode);
 	void ImGuiEnd();
 	void ImGuiDrawEmpty();

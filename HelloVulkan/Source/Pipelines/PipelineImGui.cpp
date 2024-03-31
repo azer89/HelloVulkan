@@ -123,6 +123,12 @@ void PipelineImGui::ImGuiShowEditMode(int* editMode)
 	ImGui::RadioButton("Scale", editMode, 3);
 }
 
+void PipelineImGui::ImGuizmoStart()
+{
+	ImGuizmo::SetOrthographic(false);
+	ImGuizmo::BeginFrame();
+}
+
 void PipelineImGui::ImGuizmoShow(const Camera* camera, glm::mat4& matrix, const int editMode)
 {
 	if (editMode == EditMode::None)
@@ -138,8 +144,9 @@ void PipelineImGui::ImGuizmoShow(const Camera* camera, glm::mat4& matrix, const 
 	ImGuiIO& io = ImGui::GetIO();
 	ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
 
-	glm::mat4 projection = camera->GetProjectionMatrix();
 	glm::mat4 view = camera->GetViewMatrix();
+	glm::mat4 projection = camera->GetProjectionMatrix();
+	projection[1][1] *= -1;
 
 	ImGuizmo::Manipulate(
 		glm::value_ptr(view),

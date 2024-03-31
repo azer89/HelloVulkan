@@ -78,23 +78,22 @@ void AppSkinning::Init()
 void AppSkinning::InitScene()
 {
 	// Scene
-	std::vector<ModelCreateInfo> dataArray = {
-		{
-			.filename = AppConfig::ModelFolder + "Sponza/Sponza.gltf",
-			.instanceCount = 1,
-			.playAnimation = false
-		},
-		{
-			.filename = AppConfig::ModelFolder + "DancingStormtrooper01/DancingStormtrooper01.gltf",
-			.instanceCount = 4,
-			.playAnimation = true
-		},
-		{
-			.filename = AppConfig::ModelFolder + "DancingStormtrooper02/DancingStormtrooper02.gltf",
-			.instanceCount = 4,
-			.playAnimation = true
-		}
-	};
+	std::vector<ModelCreateInfo> dataArray = 
+	{{
+		.filename = AppConfig::ModelFolder + "Sponza/Sponza.gltf",
+		.instanceCount = 1,
+		.playAnimation = false
+	},
+	{
+		.filename = AppConfig::ModelFolder + "DancingStormtrooper01/DancingStormtrooper01.gltf",
+		.instanceCount = 4,
+		.playAnimation = true
+	},
+	{
+		.filename = AppConfig::ModelFolder + "DancingStormtrooper02/DancingStormtrooper02.gltf",
+		.instanceCount = 4,
+		.playAnimation = true
+	}};
 	bool supportDeviceAddress = true;
 	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
 
@@ -148,6 +147,7 @@ void AppSkinning::UpdateUI()
 		return;
 	}
 
+	// Start
 	imguiPtr_->ImGuiStart();
 	imguiPtr_->ImGuiSetWindow("Compute-based Skinning", 500, 650);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
@@ -170,6 +170,11 @@ void AppSkinning::UpdateUI()
 	ImGui::SliderFloat("Y", &(inputContext_.shadowCasterPosition_[1]), 5.0f, 60.0f);
 	ImGui::SliderFloat("Z", &(inputContext_.shadowCasterPosition_[2]), -10.0f, 10.0f);
 
+	// Gizmo
+	imguiPtr_->ImGuizmoStart();
+	imguiPtr_->ImGuizmoShow(camera_.get(), scene_->modelSSBOs_[0].model, inputContext_.editMode_);
+	
+	// End
 	imguiPtr_->ImGuiEnd();
 
 	for (auto& pipeline : pipelines_)
