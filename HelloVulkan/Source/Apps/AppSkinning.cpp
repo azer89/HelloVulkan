@@ -162,6 +162,7 @@ void AppSkinning::UpdateUI()
 		{
 			InstanceData& iData = scene_->instanceDataArray_[i];
 			inputContext_.selectedModelIndex = iData.meshData.modelMatrixIndex_;
+			inputContext_.selectedInstanceIndex = i;
 		}
 	}
 
@@ -195,6 +196,9 @@ void AppSkinning::UpdateUI()
 		imguiPtr_->ImGuizmoShow(camera_.get(), 
 			scene_->modelSSBOs_[inputContext_.selectedModelIndex].model,
 			inputContext_.editMode_);
+
+		const InstanceData& iData = scene_->instanceDataArray_[inputContext_.selectedInstanceIndex];
+		scene_->UpdateModelMatrix(vulkanContext_, iData.modelIndex, iData.perModelInstanceIndex);
 	}
 	
 	// End

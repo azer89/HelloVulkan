@@ -349,12 +349,7 @@ void AppBase::MouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 
 void AppBase::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
-	if (ImGui::GetIO().WantCaptureMouse)
-	{
-		return;
-	}
-
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+	if (!ImGui::GetIO().WantCaptureMouse && button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
 	{
 		inputContext_.leftMousePressed_ = true;
 	}

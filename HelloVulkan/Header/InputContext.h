@@ -50,6 +50,7 @@ public:
 	// Gizmo
 	int editMode_ = 0;
 	int selectedModelIndex = -1;
+	int selectedInstanceIndex = -1;
 
 	bool renderInfiniteGrid_ = true;
 	bool renderDebug_ = false;

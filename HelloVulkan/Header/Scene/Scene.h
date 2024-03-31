@@ -31,11 +31,17 @@ public:
 
 	void GetOffsetAndDrawCount(MaterialType matType, VkDeviceSize& offset, uint32_t& drawCount) const;
 
-	void UpdateModelMatrix(VulkanContext& ctx,
+	void UpdateModelMatrix(
+		VulkanContext& ctx,
 		const ModelUBO& modelUBO,
 		const uint32_t modelIndex,
-		const uint32_t instanceIndex);
+		const uint32_t perModelInstanceIndex);
 
+	void UpdateModelMatrix(
+		VulkanContext& ctx,
+		const uint32_t modelIndex,
+		const uint32_t perModelInstanceIndex);
+	
 	void CreateIndirectBuffer(
 		VulkanContext& ctx,
 		VulkanBuffer& indirectBuffer);
@@ -81,7 +87,7 @@ private:
 
 	std::vector<Model> models_ = {};
 
-	// First index is modelID, second index is per-model instanceID
+	// First index is modelID, second index is per-model instanceId
 	std::vector<std::vector<InstanceMap>> instanceMapArray_ = {};
 
 	// Animation
