@@ -364,11 +364,11 @@ void Scene::UpdateModelMatrix(VulkanContext& ctx,
 	// Update transformation matrix
 	modelSSBOs_[matrixIndex] = modelUBO;
 
-	// Overload
-	UpdateModelMatrix(ctx, modelIndex, perModelInstanceIndex);
+	// Update the buffer
+	UpdateModelMatrixBuffer(ctx, modelIndex, perModelInstanceIndex);
 }
 
-void Scene::UpdateModelMatrix(
+void Scene::UpdateModelMatrixBuffer(
 	VulkanContext& ctx,
 	const uint32_t modelIndex,
 	const uint32_t perModelInstanceIndex)
@@ -447,7 +447,7 @@ std::vector<VkDescriptorImageInfo> Scene::GetImageInfos() const
 int Scene::GetClickedInstanceIndex(Ray& ray)
 {
 	float tMin = FLT_MAX;
-	int modelIndex = -1; // TODO Debug
+	//int modelIndex = -1; // Debug
 	int instanceIndex = -1;
 
 	for (size_t i = 0; i < transformedBoundingBoxes_.size(); ++i)
@@ -462,18 +462,18 @@ int Scene::GetClickedInstanceIndex(Ray& ray)
 			if (t < tMin)
 			{
 				tMin = t;
-				modelIndex = iData.modelIndex;
+				//modelIndex = iData.modelIndex;
 				instanceIndex = i;
 			}
 		}
 	}
 
-	// TODO Debug 
-	if (modelIndex >= 0)
+	// Debug 
+	/*if (modelIndex >= 0)
 	{
 		Model& m = models_[modelIndex];
-		std::cout << m.filepath_ << "\n";
-	}
-	std::cout << instanceIndex << "\n\n";
+		std::cout << m.filepath_ << '\n';
+	}*/
+
 	return instanceIndex;
 }

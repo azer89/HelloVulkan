@@ -114,19 +114,20 @@ void PipelineImGui::ImGuiShowPBRConfig(PushConstPBR* pc, float mipmapCount)
 	ImGui::SliderFloat("Max Lod", &(pc->maxReflectionLod), 0.1f, mipmapCount);
 }
 
-void PipelineImGui::ImGuiShowEditMode(int* editMode)
+void PipelineImGui::ImGuizmoStart()
+{
+	ImGuizmo::SetOrthographic(false);
+	ImGuizmo::BeginFrame();
+	ImGuizmo::SetGizmoSizeClipSpace(0.15);
+}
+
+void PipelineImGui::ImGuizmoShowOption(int* editMode)
 {
 	ImGui::Text("Edit Mode "); ImGui::SameLine();
 	ImGui::RadioButton("None", editMode, 0); ImGui::SameLine();
 	ImGui::RadioButton("Translate", editMode, 1); ImGui::SameLine();
 	ImGui::RadioButton("Rotate", editMode, 2); ImGui::SameLine();
 	ImGui::RadioButton("Scale", editMode, 3);
-}
-
-void PipelineImGui::ImGuizmoStart()
-{
-	ImGuizmo::SetOrthographic(false);
-	ImGuizmo::BeginFrame();
 }
 
 void PipelineImGui::ImGuizmoShow(const Camera* camera, glm::mat4& matrix, const int editMode)

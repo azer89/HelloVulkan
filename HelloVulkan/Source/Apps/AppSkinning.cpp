@@ -152,20 +152,6 @@ void AppSkinning::UpdateUI()
 		return;
 	}
 
-	// Gizmo
-	if (inputContext_.leftMousePressed_)
-	{
-		std::cout << inputContext_.mousePositionX << ", " << inputContext_.mousePositionY << "\n";
-		Ray r = camera_->GetRayFromScreenToWorld(inputContext_.mousePositionX, inputContext_.mousePositionY);
-		int i = scene_->GetClickedInstanceIndex(r);
-		if (i >= 0)
-		{
-			InstanceData& iData = scene_->instanceDataArray_[i];
-			inputContext_.selectedModelIndex = iData.meshData.modelMatrixIndex_;
-			inputContext_.selectedInstanceIndex = i;
-		}
-	}
-
 	// Start
 	imguiPtr_->ImGuiStart();
 	imguiPtr_->ImGuiSetWindow("Compute-based Skinning", 500, 650);
@@ -173,7 +159,7 @@ void AppSkinning::UpdateUI()
 
 	ImGui::Text("Triangle Count: %i", scene_->triangleCount_);
 	ImGui::Checkbox("Render Lights", &inputContext_.renderLights_);
-	imguiPtr_->ImGuiShowEditMode(&inputContext_.editMode_);
+	imguiPtr_->ImGuizmoShowOption(&inputContext_.editMode_);
 	ImGui::SeparatorText("Shading");
 	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
 
@@ -190,7 +176,20 @@ void AppSkinning::UpdateUI()
 	ImGui::SliderFloat("Z", &(inputContext_.shadowCasterPosition_[2]), -10.0f, 10.0f);
 
 	// Gizmo
-	if (inputContext_.selectedModelIndex >= 0)
+	if (inputContext_.CanSelectObject())
+	{
+		Ray r = camera_->GetRayFromScreenToWorld(inputContext_.mousePositionX, inputContext_.mousePositionY);
+		int i = scene_->GetClickedInstanceIndex(r);
+		if (i >= 0)
+		{
+			InstanceData& iData = scene_->instanceDataArray_[i];
+			inputContext_.selectedModelIndex = iData.meshData.modelMatrixIndex_;
+			inputContext_.selectedInstanceIndex = i;
+		}
+	}
+
+	// Gizmo
+	if (inputContext_.ShowGizmo())
 	{
 		imguiPtr_->ImGuizmoStart();
 		imguiPtr_->ImGuizmoShow(camera_.get(), 
@@ -198,7 +197,7 @@ void AppSkinning::UpdateUI()
 			inputContext_.editMode_);
 
 		const InstanceData& iData = scene_->instanceDataArray_[inputContext_.selectedInstanceIndex];
-		scene_->UpdateModelMatrix(vulkanContext_, iData.modelIndex, iData.perModelInstanceIndex);
+		scene_->UpdateModelMatrixBuffer(vulkanContext_, iData.modelIndex, iData.perModelInstanceIndex);
 	}
 	
 	// End

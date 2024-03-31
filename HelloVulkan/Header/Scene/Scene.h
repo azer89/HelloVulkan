@@ -28,16 +28,19 @@ public:
 	[[nodiscard]] uint32_t GetInstanceCount() const { return static_cast<uint32_t>(meshDataArray_.size()); }
 	[[nodiscard]] std::vector<VkDescriptorImageInfo> GetImageInfos() const;
 	[[nodiscard]] BDA GetBDA() const;
+	[[nodiscard]] int GetClickedInstanceIndex(Ray& ray);
 
 	void GetOffsetAndDrawCount(MaterialType matType, VkDeviceSize& offset, uint32_t& drawCount) const;
 
+	// Update model matrix and update the buffer 
 	void UpdateModelMatrix(
 		VulkanContext& ctx,
 		const ModelUBO& modelUBO,
 		const uint32_t modelIndex,
 		const uint32_t perModelInstanceIndex);
 
-	void UpdateModelMatrix(
+	// Update the buffer of model matrix, assuming the matrix has been changed beforehand
+	void UpdateModelMatrixBuffer(
 		VulkanContext& ctx,
 		const uint32_t modelIndex,
 		const uint32_t perModelInstanceIndex);
@@ -48,14 +51,13 @@ public:
 
 	void UpdateAnimation(VulkanContext& ctx, float deltaTime);
 
-	int GetClickedInstanceIndex(Ray& ray);
-
 private:
+	[[nodiscard]] bool HasAnimation() const { return !sceneData_.boneIDArray.empty(); }
+
 	void CreateAnimationResources(VulkanContext& ctx);
 	void CreateBindlessResources(VulkanContext& ctx);
 	void CreateDataStructures();
-	[[nodiscard]] bool HasAnimation() const { return !sceneData_.boneIDArray.empty(); }
-
+	
 public:
 	uint32_t triangleCount_ = 0;
 	SceneData sceneData_ = {}; // Containing vertices and indices

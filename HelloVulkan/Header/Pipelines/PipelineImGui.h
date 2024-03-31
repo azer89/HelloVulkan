@@ -20,11 +20,12 @@ public:
 	void ImGuiSetWindow(const char* title, int width, int height, float fontSize = 1.25f);
 	void ImGuiShowFrameData(FrameCounter* frameCounter);
 	void ImGuiShowPBRConfig(PushConstPBR* pc, float mipmapCount);
-	void ImGuiShowEditMode(int* editMode);
-	void ImGuizmoStart();
-	void ImGuizmoShow(const Camera* camera, glm::mat4& matrix, const int editMode);
 	void ImGuiEnd();
 	void ImGuiDrawEmpty();
+
+	void ImGuizmoStart();
+	void ImGuizmoShow(const Camera* camera, glm::mat4& matrix, const int editMode);
+	void ImGuizmoShowOption(int* editMode);
 
 	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override {}
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
