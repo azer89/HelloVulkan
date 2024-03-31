@@ -1,6 +1,7 @@
 #ifndef PIPELINE_IMGUI
 #define PIPELINE_IMGUI
 
+#include "Camera.h"
 #include "PipelineBase.h"
 #include "FrameCounter.h"
 #include "PushConstants.h"
@@ -20,6 +21,7 @@ public:
 	void ImGuiShowFrameData(FrameCounter* frameCounter);
 	void ImGuiShowPBRConfig(PushConstPBR* pc, float mipmapCount);
 	void ImGuiShowEditMode(int* editMode);
+	void ImGuizmoShow(const Camera* camera, glm::mat4& matrix, const int editMode);
 	void ImGuiEnd();
 	void ImGuiDrawEmpty();
 

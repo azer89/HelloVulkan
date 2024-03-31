@@ -7,6 +7,8 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_vulkan.h"
+#include "ImGuizmo.h"
+#include <glm/gtc/type_ptr.hpp>
 
 PipelineImGui::PipelineImGui(
 	VulkanContext& ctx,
@@ -119,6 +121,32 @@ void PipelineImGui::ImGuiShowEditMode(int* editMode)
 	ImGui::RadioButton("Translate", editMode, 1); ImGui::SameLine();
 	ImGui::RadioButton("Rotate", editMode, 2); ImGui::SameLine();
 	ImGui::RadioButton("Scale", editMode, 3);
+}
+
+void PipelineImGui::ImGuizmoShow(const Camera* camera, glm::mat4& matrix, const int editMode)
+{
+	if (editMode == EditMode::None)
+	{
+		return;
+	}
+
+	static ImGuizmo::OPERATION gizmoOperation = ImGuizmo::TRANSLATE;
+
+	gizmoOperation = editMode == EditMode::Translate ? ImGuizmo::TRANSLATE :
+		(editMode == EditMode::Rotate ? ImGuizmo::ROTATE : ImGuizmo::SCALE);
+
+	ImGuiIO& io = ImGui::GetIO();
+	ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+
+	glm::mat4 projection = camera->GetProjectionMatrix();
+	glm::mat4 view = camera->GetViewMatrix();
+
+	ImGuizmo::Manipulate(
+		glm::value_ptr(view),
+		glm::value_ptr(projection),
+		gizmoOperation,
+		ImGuizmo::WORLD,
+		glm::value_ptr(matrix));
 }
 
 void PipelineImGui::ImGuiEnd()
