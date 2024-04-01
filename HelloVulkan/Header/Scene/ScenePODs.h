@@ -73,9 +73,15 @@ struct MeshData
 
 struct InstanceData
 {
-	uint32_t modelIndex; // Pointing to global Model array
-	uint32_t perModelMeshIndex; // Pointing to meshDataArray_
-	uint32_t perModelInstanceIndex; // Local to Model
+	// Need two indices to access instanceMapArray_
+	//		First index is modelIndex
+	//		Second index is perModelInstanceIndex
+	uint32_t modelIndex;
+	uint32_t perModelInstanceIndex;
+
+	// See function Scene::CreateIndirectBuffer()
+	uint32_t perModelMeshIndex;
+
 	MeshData meshData;
 	BoundingBox originalBoundingBox;
 };

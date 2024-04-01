@@ -281,8 +281,8 @@ void Scene::CreateDataStructures()
 				instanceDataArray_.push_back(
 				{
 					.modelIndex = m,
-					.perModelMeshIndex = j,
 					.perModelInstanceIndex = i,
+					.perModelMeshIndex = j,
 					.meshData = models_[m].meshes_[j].GetMeshData(textureCounter, matrixCounter),
 					.originalBoundingBox = tempOriArray[j] // Copy bounding box from temporary
 				}
@@ -444,7 +444,7 @@ std::vector<VkDescriptorImageInfo> Scene::GetImageInfos() const
 	return textureInfoArray;
 }
 
-int Scene::GetClickedInstanceIndex(Ray& ray)
+int Scene::GetClickedInstanceIndex(const Ray& ray)
 {
 	float tMin = FLT_MAX;
 	//int modelIndex = -1; // Debug
