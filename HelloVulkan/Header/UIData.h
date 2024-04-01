@@ -39,7 +39,6 @@ public:
 	bool firstMouse_ = true;
 	bool leftMousePressed_ = false;
 	bool leftMouseHold_ = false;
-	bool showImgui_ = true;
 
 	// Mouse position at all times
 	float mousePositionX = 0;
@@ -48,6 +47,8 @@ public:
 	// Mouse position only when clicked
 	float mousePressX = 0;
 	float mousePressY = 0;
+
+	bool showImgui_ = true;
 
 	// Gizmo
 	int editMode_ = 0;

@@ -351,7 +351,6 @@ void AppBase::MouseButtonCallback(GLFWwindow* window, int button, int action, in
 	{
 		uiData_.leftMousePressed_ = false;
 		uiData_.leftMouseHold_ = false;
-		uiData_.firstMouse_ = true;
 	}
 }
 
