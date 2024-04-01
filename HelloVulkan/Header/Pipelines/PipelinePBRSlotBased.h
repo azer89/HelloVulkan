@@ -28,9 +28,9 @@ public:
 
 	void SetPBRPushConstants(const PushConstPBR& pbrPC) { pc_ = pbrPC; };
 
-	void UpdateFromInputContext(VulkanContext& ctx, UIData& inputContext) override
+	void UpdateFromIUData(VulkanContext& ctx, UIData& uiData) override
 	{
-		pc_ = inputContext.pbrPC_;
+		pc_ = uiData.pbrPC_;
 	}
 
 private:

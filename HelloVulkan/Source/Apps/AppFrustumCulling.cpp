@@ -130,7 +130,7 @@ void AppFrustumCulling::UpdateUI()
 
 	for (auto& pipeline : pipelines_)
 	{
-		pipeline->UpdateFromInputContext(vulkanContext_, uiData_);
+		pipeline->UpdateFromIUData(vulkanContext_, uiData_);
 	}
 }
 

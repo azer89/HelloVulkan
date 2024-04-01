@@ -9,7 +9,7 @@ public:
 	virtual ~ResourcesBase() = default;
 	virtual void Destroy() = 0;
 
-	virtual void UpdateFromInputContext(VulkanContext& ctx, UIData& inputContext)
+	virtual void UpdateFromUIData(VulkanContext& ctx, UIData& uiData)
 	{
 	}
 };

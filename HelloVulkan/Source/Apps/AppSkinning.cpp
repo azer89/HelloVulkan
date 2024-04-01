@@ -178,11 +178,11 @@ void AppSkinning::UpdateUI()
 
 	for (auto& pipeline : pipelines_)
 	{
-		pipeline->UpdateFromInputContext(vulkanContext_, uiData_);
+		pipeline->UpdateFromIUData(vulkanContext_, uiData_);
 	}
 	for (auto& resources : resources_)
 	{
-		resources->UpdateFromInputContext(vulkanContext_, uiData_);
+		resources->UpdateFromUIData(vulkanContext_, uiData_);
 	}
 }
 

@@ -23,9 +23,9 @@ public:
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
-	void UpdateFromInputContext(VulkanContext& ctx, UIData& inputContext) override
+	void UpdateFromIUData(VulkanContext& ctx, UIData& uiData) override
 	{
-		shouldRender_ = inputContext.renderLights_;
+		shouldRender_ = uiData.renderLights_;
 	}
 
 private:

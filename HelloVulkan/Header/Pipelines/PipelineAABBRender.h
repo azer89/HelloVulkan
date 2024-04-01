@@ -19,7 +19,7 @@ public:
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
-	void UpdateFromInputContext(VulkanContext& ctx, UIData& inputContext) override
+	void UpdateFromIUData(VulkanContext& ctx, UIData& inputContext) override
 	{
 		shouldRender_ = inputContext.renderDebug_;
 	}
