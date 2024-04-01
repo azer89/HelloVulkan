@@ -22,6 +22,3 @@
 [submodule "External/glfw"]
 	path = External/glfw
 	url = https://github.com/glfw/glfw.git
-[submodule "External/ImGuizmo"]
-	path = External/ImGuizmo
-	url = https://github.com/CedricGuillemet/ImGuizmo
