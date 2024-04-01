@@ -444,6 +444,7 @@ std::vector<VkDescriptorImageInfo> Scene::GetImageInfos() const
 	return textureInfoArray;
 }
 
+// This is currently a brute force but can be improved with BVH or pixel perfect technique
 int Scene::GetClickedInstanceIndex(const Ray& ray)
 {
 	float tMin = FLT_MAX;

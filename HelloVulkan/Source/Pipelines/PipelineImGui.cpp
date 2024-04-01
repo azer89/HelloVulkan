@@ -44,7 +44,7 @@ PipelineImGui::PipelineImGui(
 
 	ImGuiStyle* style = &ImGui::GetStyle();
 	ImVec4* colors = style->Colors;
-	colors[ImGuiCol_WindowBg] = ImVec4(0.06f, 0.06f, 0.06f, 0.5f);
+	colors[ImGuiCol_WindowBg] = ImVec4(0.0784f, 0.157f, 0.314f, 0.5f);
 	colors[ImGuiCol_PlotLines] = ImVec4(0.21f, 0.61f, 0.61f, 1.00f);
 
 	ImGuiIO& io = ImGui::GetIO();
@@ -111,7 +111,7 @@ void PipelineImGui::ImGuiShowFrameData(FrameCounter* frameCounter)
 		nullptr,
 		FLT_MAX,
 		FLT_MAX,
-		ImVec2(400, 50));
+		ImVec2(350, 50));
 }
 
 void PipelineImGui::ImGuiShowPBRConfig(PushConstPBR* pc, float mipmapCount)
@@ -132,7 +132,7 @@ void PipelineImGui::ImGuizmoStart()
 
 void PipelineImGui::ImGuizmoShowOption(int* editMode)
 {
-	ImGui::Text("Edit Mode "); ImGui::SameLine();
+	ImGui::Text("Edit Mode ");
 	ImGui::RadioButton("None", editMode, 0); ImGui::SameLine();
 	ImGui::RadioButton("Translate", editMode, 1); ImGui::SameLine();
 	ImGui::RadioButton("Rotate", editMode, 2); ImGui::SameLine();

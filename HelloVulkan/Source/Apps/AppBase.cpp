@@ -370,7 +370,6 @@ void AppBase::KeyCallback(GLFWwindow* window, int key, int scancode, int action,
 {
 	if (key == GLFW_KEY_I && action == GLFW_PRESS)
 	{
-		// Toggle imgui window
 		inputContext_.showImgui_ = !inputContext_.showImgui_;
 	}
 }
@@ -378,29 +377,52 @@ void AppBase::KeyCallback(GLFWwindow* window, int key, int scancode, int action,
 // Process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 void AppBase::ProcessInput()
 {
-	if (glfwGetKey(glfwWindow_, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	if (glfwGetKey(glfwWindow_, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS ||
+		glfwGetKey(glfwWindow_, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS)
 	{
-		glfwSetWindowShouldClose(glfwWindow_, true);
+		if (glfwGetKey(glfwWindow_, GLFW_KEY_N) == GLFW_PRESS)
+		{
+			inputContext_.editMode_ = 0;
+		}
+		else if (glfwGetKey(glfwWindow_, GLFW_KEY_T) == GLFW_PRESS)
+		{
+			inputContext_.editMode_ = 1;
+		}
+		else if (glfwGetKey(glfwWindow_, GLFW_KEY_R) == GLFW_PRESS)
+		{
+			inputContext_.editMode_ = 2;
+		}
+		else if (glfwGetKey(glfwWindow_, GLFW_KEY_S) == GLFW_PRESS)
+		{
+			inputContext_.editMode_ = 3;
+		}
 	}
-
-	if (glfwGetKey(glfwWindow_, GLFW_KEY_W) == GLFW_PRESS)
+	else
 	{
-		camera_->ProcessKeyboard(CameraMovement::Forward, frameCounter_.GetDeltaSecond());
-	}
+		if (glfwGetKey(glfwWindow_, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		{
+			glfwSetWindowShouldClose(glfwWindow_, true);
+		}
 
-	if (glfwGetKey(glfwWindow_, GLFW_KEY_S) == GLFW_PRESS)
-	{
-		camera_->ProcessKeyboard(CameraMovement::Backward, frameCounter_.GetDeltaSecond());
-	}
+		if (glfwGetKey(glfwWindow_, GLFW_KEY_W) == GLFW_PRESS)
+		{
+			camera_->ProcessKeyboard(CameraMovement::Forward, frameCounter_.GetDeltaSecond());
+		}
 
-	if (glfwGetKey(glfwWindow_, GLFW_KEY_A) == GLFW_PRESS)
-	{
-		camera_->ProcessKeyboard(CameraMovement::Left, frameCounter_.GetDeltaSecond());
-	}
+		if (glfwGetKey(glfwWindow_, GLFW_KEY_S) == GLFW_PRESS)
+		{
+			camera_->ProcessKeyboard(CameraMovement::Backward, frameCounter_.GetDeltaSecond());
+		}
 
-	if (glfwGetKey(glfwWindow_, GLFW_KEY_D) == GLFW_PRESS)
-	{
-		camera_->ProcessKeyboard(CameraMovement::Right, frameCounter_.GetDeltaSecond());
+		if (glfwGetKey(glfwWindow_, GLFW_KEY_A) == GLFW_PRESS)
+		{
+			camera_->ProcessKeyboard(CameraMovement::Left, frameCounter_.GetDeltaSecond());
+		}
+
+		if (glfwGetKey(glfwWindow_, GLFW_KEY_D) == GLFW_PRESS)
+		{
+			camera_->ProcessKeyboard(CameraMovement::Right, frameCounter_.GetDeltaSecond());
+		}
 	}
 }
 
