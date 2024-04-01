@@ -25,7 +25,7 @@ A 3D rendering engine built from scratch using Vulkan API and C++.
 * Tonemap postprocessing.
 * Automatic runtime compilation from GLSL to SPIR-V using `glslang`.
 * Lightweight abstraction layer on top of Vulkan for faster development.
-* Minor features: skybox, infinite grid, line rendering, and ImGui.
+* Additional features: skybox, infinite grid, line rendering, and ImGui / ImGuizmo.
 
 </br>
 
@@ -80,7 +80,7 @@ The left image below shows a rendering of all objects inside the frustum. The ri
 
 The compute-based skinning approach is much simpler than the traditional vertex shader skinning. This is because the skinning computation is done only once using a compute shader at the beginning of the frame. The resulting skinned vertices are then stored in a buffer, enabling reuse for subsequent render passes like shadow mapping and lighting. Consequently, there is no need to modify existing pipelines and no extra shader permutations.
 
-https://github.com/azer89/HelloVulkan/assets/790432/d7ca4541-412f-432c-861a-070b6d2d51ab
+https://github.com/azer89/HelloVulkan/assets/790432/51f097f5-b361-4de9-9f04-99c511900f8d
 
 </br>
 </br>
