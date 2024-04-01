@@ -294,14 +294,8 @@ void AppBase::PollEvents()
 
 void AppBase::DestroyResources()
 {
-	for (auto& res : resources_)
-	{
-		res.reset();
-	}
-	for (auto& pip : pipelines_)
-	{
-		pip.reset();
-	}
+	for (auto& res : resources_) { res.reset(); }
+	for (auto& pip : pipelines_) { pip.reset(); }
 
 	glfwDestroyWindow(glfwWindow_);
 	glfwTerminate();
@@ -380,49 +374,24 @@ void AppBase::ProcessInput()
 	if (glfwGetKey(glfwWindow_, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS ||
 		glfwGetKey(glfwWindow_, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS)
 	{
-		if (glfwGetKey(glfwWindow_, GLFW_KEY_N) == GLFW_PRESS)
-		{
-			uiData_.editMode_ = 0;
-		}
-		else if (glfwGetKey(glfwWindow_, GLFW_KEY_T) == GLFW_PRESS)
-		{
-			uiData_.editMode_ = 1;
-		}
-		else if (glfwGetKey(glfwWindow_, GLFW_KEY_R) == GLFW_PRESS)
-		{
-			uiData_.editMode_ = 2;
-		}
-		else if (glfwGetKey(glfwWindow_, GLFW_KEY_S) == GLFW_PRESS)
-		{
-			uiData_.editMode_ = 3;
-		}
+		if (glfwGetKey(glfwWindow_, GLFW_KEY_N) == GLFW_PRESS) { uiData_.editMode_ = 0; }
+		else if (glfwGetKey(glfwWindow_, GLFW_KEY_T) == GLFW_PRESS) { uiData_.editMode_ = 1; }
+		else if (glfwGetKey(glfwWindow_, GLFW_KEY_R) == GLFW_PRESS) { uiData_.editMode_ = 2; }
+		else if (glfwGetKey(glfwWindow_, GLFW_KEY_S) == GLFW_PRESS) { uiData_.editMode_ = 3; }
 	}
 	else
 	{
 		if (glfwGetKey(glfwWindow_, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		{
-			glfwSetWindowShouldClose(glfwWindow_, true);
-		}
-
+			{ glfwSetWindowShouldClose(glfwWindow_, true); }
+		
 		if (glfwGetKey(glfwWindow_, GLFW_KEY_W) == GLFW_PRESS)
-		{
-			camera_->ProcessKeyboard(CameraMovement::Forward, frameCounter_.GetDeltaSecond());
-		}
-
-		if (glfwGetKey(glfwWindow_, GLFW_KEY_S) == GLFW_PRESS)
-		{
-			camera_->ProcessKeyboard(CameraMovement::Backward, frameCounter_.GetDeltaSecond());
-		}
-
-		if (glfwGetKey(glfwWindow_, GLFW_KEY_A) == GLFW_PRESS)
-		{
-			camera_->ProcessKeyboard(CameraMovement::Left, frameCounter_.GetDeltaSecond());
-		}
-
-		if (glfwGetKey(glfwWindow_, GLFW_KEY_D) == GLFW_PRESS)
-		{
-			camera_->ProcessKeyboard(CameraMovement::Right, frameCounter_.GetDeltaSecond());
-		}
+			{ camera_->ProcessKeyboard(CameraMovement::Forward, frameCounter_.GetDeltaSecond()); }
+		else if (glfwGetKey(glfwWindow_, GLFW_KEY_S) == GLFW_PRESS)
+			{ camera_->ProcessKeyboard(CameraMovement::Backward, frameCounter_.GetDeltaSecond()); }
+		else if (glfwGetKey(glfwWindow_, GLFW_KEY_A) == GLFW_PRESS)
+			{ camera_->ProcessKeyboard(CameraMovement::Left, frameCounter_.GetDeltaSecond()); }
+		else if (glfwGetKey(glfwWindow_, GLFW_KEY_D) == GLFW_PRESS)
+			{ camera_->ProcessKeyboard(CameraMovement::Right, frameCounter_.GetDeltaSecond()); }
 	}
 }
 

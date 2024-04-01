@@ -145,7 +145,7 @@ void AppPBRClusterForward::UpdateUI()
 	}
 
 	imguiPtr_->ImGuiStart();
-	imguiPtr_->ImGuiSetWindow("Clustered Forward Shading", 500, 325);
+	imguiPtr_->ImGuiSetWindow("Clustered Forward Shading", 450, 350);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 	ImGui::Checkbox("Render Lights", &uiData_.renderLights_);
 	imguiPtr_->ImGuiShowPBRConfig(&uiData_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);

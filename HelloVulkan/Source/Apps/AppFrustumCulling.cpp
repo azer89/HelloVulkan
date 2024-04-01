@@ -118,7 +118,7 @@ void AppFrustumCulling::UpdateUI()
 	static bool staticUpdateFrustum = true;
 
 	imguiPtr_->ImGuiStart();
-	imguiPtr_->ImGuiSetWindow("Compute-Based Frustum Culling", 500, 350);
+	imguiPtr_->ImGuiSetWindow("Compute-Based Frustum Culling", 450, 375);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 	ImGui::Checkbox("Render Lights", &uiData_.renderLights_);
 	ImGui::Checkbox("Render Frustum and Bounding Boxes", &uiData_.renderDebug_);

@@ -100,7 +100,7 @@ void AppPBRBindless::UpdateUI()
 	}
 
 	imguiPtr_->ImGuiStart();
-	imguiPtr_->ImGuiSetWindow("Bindless Textures", 500, 350);
+	imguiPtr_->ImGuiSetWindow("Bindless Textures", 450, 350);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 	ImGui::Text("Triangle Count: %i", scene_->triangleCount_);
 	ImGui::Checkbox("Render Lights", &uiData_.renderLights_);
