@@ -14,6 +14,25 @@
 
 /*
 A scene used for indirect draw + bindless resources that contains SSBO buffers for vertices, indices, and mesh data.
+
+Below is an example of a Scene structure:
+
+Scene
+|
+|-- Model
+|    |-- Mesh
+|    `-- Mesh
+|
+|-- Model
+|    |-- Mesh
+|    |-- Mesh
+|    `-- Mesh
+
+A scene has multiple models, each model is loaded from a file (fbx, glTF, etc.), and a model has multiple meshes.
+A single mesh requires one draw call. For example, if the scene has 10 meshes, 10 draw calls will be issued.
+The scene representation supports instances, each is defined as a copy of a mesh.
+Instances only duplicate the draw call of a mesh, so this is different than hardware instancing.
+
 */
 class Scene
 {
@@ -31,20 +50,20 @@ public:
 
 	void GetOffsetAndDrawCount(MaterialType matType, VkDeviceSize& offset, uint32_t& drawCount) const;
 
-	// Update model matrix and update the buffer 
-	// Need two indices to access instanceMapArray_
-	//		First index is modelIndex
-	//		Second index is perModelInstanceIndex
+	/*Update model matrix and update the buffer
+	Need two indices to access instanceMapArray_
+		First index is modelIndex
+		Second index is perModelInstanceIndex*/
 	void UpdateModelMatrix(
 		VulkanContext& ctx,
 		const ModelUBO& modelUBO,
 		const uint32_t modelIndex,
 		const uint32_t perModelInstanceIndex);
 
-	// Update the buffer of model matrix, assuming the matrix has been changed beforehand
-	// Need two indices to access instanceMapArray_
-	//		First index is modelIndex
-	//		Second index is perModelInstanceIndex
+	/*Only update the buffer of model matrix
+	Need two indices to access instanceMapArray_
+		First index is modelIndex
+		Second index is perModelInstanceIndex*/
 	void UpdateModelMatrixBuffer(
 		VulkanContext& ctx,
 		const uint32_t modelIndex,
@@ -94,9 +113,10 @@ private:
 
 	std::vector<Model> models_ = {};
 
-	// Need two indices to access instanceMapArray_
-	//		First index is modelIndex
-	//		Second index is perModelInstanceIndex
+	/*Update model matrix and update the buffer
+	Need two indices to access instanceMapArray_
+		First index is modelIndex
+		Second index is perModelInstanceIndex*/
 	std::vector<std::vector<InstanceMap>> instanceMapArray_ = {};
 
 	// Animation
