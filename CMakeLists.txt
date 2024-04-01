@@ -17,7 +17,7 @@ add_subdirectory("${PROJECT_SOURCE_DIR}/External")
 # The actual source code
 add_subdirectory("${PROJECT_SOURCE_DIR}/HelloVulkan")
 
-# Put CMake targets to a colled called "CMakeTargets"
+# Put CMake targets to a folder called "CMakeTargets"
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMakeTargets")
 set_property(TARGET uninstall PROPERTY FOLDER "CMakeTargets")
