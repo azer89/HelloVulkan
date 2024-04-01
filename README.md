@@ -110,7 +110,7 @@ The engine also features a basic ray tracing pipeline. This process begins with 
 ### Build
 * C++20
 * Vulkan 1.3
-* Dependencies: assimp, glm, glfw, ImGui, stb, tracy, volk, and VMA.
+* Dependencies located in `External` folder
 * [Link to build instruction](https://github.com/azer89/HelloVulkan/wiki/Build-Instruction)
 
 </br>
