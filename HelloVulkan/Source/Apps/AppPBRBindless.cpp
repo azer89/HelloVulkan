@@ -103,13 +103,13 @@ void AppPBRBindless::UpdateUI()
 	imguiPtr_->ImGuiSetWindow("Bindless Textures", 500, 350);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 	ImGui::Text("Triangle Count: %i", scene_->triangleCount_);
-	ImGui::Checkbox("Render Lights", &inputContext_.renderLights_);
-	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
+	ImGui::Checkbox("Render Lights", &uiData_.renderLights_);
+	imguiPtr_->ImGuiShowPBRConfig(&uiData_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
 	for (auto& pipeline : pipelines_)
 	{
-		pipeline->UpdateFromInputContext(vulkanContext_, inputContext_);
+		pipeline->UpdateFromInputContext(vulkanContext_, uiData_);
 	}
 }
 

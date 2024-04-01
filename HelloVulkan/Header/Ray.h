@@ -3,8 +3,6 @@
 
 #include "glm/glm.hpp"
 
-#include <iostream>
-
 struct Ray
 {
 public:
@@ -20,12 +18,6 @@ public:
 		dirFrac_.x = 1.f / direction_.x;
 		dirFrac_.y = 1.f / direction_.y;
 		dirFrac_.z = 1.f / direction_.z;
-	}
-
-	void Print()
-	{
-		std::cout << "origin: " << origin_.x << ", " << origin_.y << ", " << origin_.z << "\n";
-		std::cout << "direction: " << direction_.x << ", " << direction_.y << ", " << direction_.z << "\n";
 	}
 };
 

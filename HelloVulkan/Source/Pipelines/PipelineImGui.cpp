@@ -167,7 +167,7 @@ void PipelineImGui::ImGuizmoShow(glm::mat4& modelMatrix, const int editMode)
 		glm::value_ptr(modelMatrix));
 }
 
-void PipelineImGui::ImGuizmoManipulateScene(VulkanContext& ctx, InputContext* inputContext)
+void PipelineImGui::ImGuizmoManipulateScene(VulkanContext& ctx, UIData* inputContext)
 {
 	if (!scene_ || !camera_)
 	{

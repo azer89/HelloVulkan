@@ -29,7 +29,7 @@ public:
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 	
-	void UpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
+	void UpdateFromInputContext(VulkanContext& ctx, UIData& inputContext) override
 	{
 		SetPBRPushConstants(inputContext.pbrPC_);
 	}

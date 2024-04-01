@@ -220,7 +220,7 @@
     <ClInclude Include="Header\Ray.h" />
     <ClInclude Include="Header\Scene\ClickableScene.h" />
     <ClInclude Include="Header\Utility.h" />
-    <ClInclude Include="Header\InputContext.h" />
+    <ClInclude Include="Header\UIData.h" />
     <ClInclude Include="Header\Pipelines\PipelineAABBGenerator.h" />
     <ClInclude Include="Header\Pipelines\PipelineAABBRender.h" />
     <ClInclude Include="Header\Pipelines\PipelineBase.h" />

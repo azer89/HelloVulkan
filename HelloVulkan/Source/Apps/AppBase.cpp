@@ -188,10 +188,10 @@ void AppBase::DrawFrame()
 	vulkanContext_.IncrementFrameIndex();
 
 	// Mouse input
-	if (inputContext_.leftMousePressed_)
+	if (uiData_.leftMousePressed_)
 	{
-		inputContext_.leftMousePressed_ = false;
-		inputContext_.leftMouseHold_ = true;
+		uiData_.leftMousePressed_ = false;
+		uiData_.leftMouseHold_ = true;
 	}
 
 	// End Tracy frame
@@ -274,7 +274,7 @@ void AppBase::ProcessTiming()
 
 bool AppBase::ShowImGui()
 {
-	return inputContext_.showImgui_;
+	return uiData_.showImgui_;
 }
 
 bool AppBase::StillRunning()
@@ -327,23 +327,23 @@ void AppBase::MouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 {
 	const float xPos = static_cast<float>(xposIn);
 	const float yPos = static_cast<float>(yposIn);
-	if (inputContext_.firstMouse_)
+	if (uiData_.firstMouse_)
 	{
-		inputContext_.mousePositionX = xPos;
-		inputContext_.mousePositionY = yPos;
-		inputContext_.firstMouse_ = false;
+		uiData_.mousePositionX = xPos;
+		uiData_.mousePositionY = yPos;
+		uiData_.firstMouse_ = false;
 		return;
 	}
 
-	if (inputContext_.leftMousePressed_ || inputContext_.leftMouseHold_)
+	if (uiData_.leftMousePressed_ || uiData_.leftMouseHold_)
 	{
-		const float xOffset = xPos - inputContext_.mousePositionX;
-		const float yOffset = inputContext_.mousePositionY - yPos; // Reversed since y-coordinates go from bottom to top
+		const float xOffset = xPos - uiData_.mousePositionX;
+		const float yOffset = uiData_.mousePositionY - yPos; // Reversed since y-coordinates go from bottom to top
 		camera_->ProcessMouseMovement(xOffset, yOffset);
 	}
 
-	inputContext_.mousePositionX = xPos;
-	inputContext_.mousePositionY = yPos;
+	uiData_.mousePositionX = xPos;
+	uiData_.mousePositionY = yPos;
 	
 }
 
@@ -351,13 +351,13 @@ void AppBase::MouseButtonCallback(GLFWwindow* window, int button, int action, in
 {
 	if (!ImGui::GetIO().WantCaptureMouse && button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
 	{
-		inputContext_.leftMousePressed_ = true;
+		uiData_.leftMousePressed_ = true;
 	}
 	else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
 	{
-		inputContext_.leftMousePressed_ = false;
-		inputContext_.leftMouseHold_ = false;
-		inputContext_.firstMouse_ = true;
+		uiData_.leftMousePressed_ = false;
+		uiData_.leftMouseHold_ = false;
+		uiData_.firstMouse_ = true;
 	}
 }
 
@@ -370,7 +370,7 @@ void AppBase::KeyCallback(GLFWwindow* window, int key, int scancode, int action,
 {
 	if (key == GLFW_KEY_I && action == GLFW_PRESS)
 	{
-		inputContext_.showImgui_ = !inputContext_.showImgui_;
+		uiData_.showImgui_ = !uiData_.showImgui_;
 	}
 }
 
@@ -382,19 +382,19 @@ void AppBase::ProcessInput()
 	{
 		if (glfwGetKey(glfwWindow_, GLFW_KEY_N) == GLFW_PRESS)
 		{
-			inputContext_.editMode_ = 0;
+			uiData_.editMode_ = 0;
 		}
 		else if (glfwGetKey(glfwWindow_, GLFW_KEY_T) == GLFW_PRESS)
 		{
-			inputContext_.editMode_ = 1;
+			uiData_.editMode_ = 1;
 		}
 		else if (glfwGetKey(glfwWindow_, GLFW_KEY_R) == GLFW_PRESS)
 		{
-			inputContext_.editMode_ = 2;
+			uiData_.editMode_ = 2;
 		}
 		else if (glfwGetKey(glfwWindow_, GLFW_KEY_S) == GLFW_PRESS)
 		{
-			inputContext_.editMode_ = 3;
+			uiData_.editMode_ = 3;
 		}
 	}
 	else

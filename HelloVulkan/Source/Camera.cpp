@@ -233,8 +233,8 @@ FrustumUBO Camera::GetFrustumUBO() const
 
 Ray Camera::GetRayFromScreenToWorld(float screenPosX, float screenPosY) const
 {
-	glm::mat4 inverseViewMatrix_ = glm::inverse(viewMatrix_);
-	glm::vec4 rayClipSpace =
+	const glm::mat4 inverseViewMatrix_ = glm::inverse(viewMatrix_);
+	const glm::vec4 rayClipSpace =
 		glm::vec4(
 			(static_cast<float>(screenPosX) / screenWidth_) * 2.f - 1.f,
 			(static_cast<float>(screenPosY) / screenHeight_) * 2.f - 1.f,

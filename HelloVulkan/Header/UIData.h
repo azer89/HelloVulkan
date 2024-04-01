@@ -1,7 +1,6 @@
-#ifndef INPUT_CONTEXT
-#define INPUT_CONTEXT
+#ifndef USER_INTERFACE_DATA
+#define USER_INTERFACE_DATA
 
-#include "UBOs.h"
 #include "PushConstants.h"
 
 #include <array>
@@ -14,7 +13,7 @@ namespace EditMode
 	constexpr int Scale = 3;
 };
 
-struct InputContext
+struct UIData
 {
 public:
 	PushConstPBR pbrPC_ = 
@@ -58,12 +57,12 @@ public:
 	bool renderLights_ = true;
 
 public:
-	bool CanSelectObject()
+	bool CanSelectObject() const
 	{
 		return leftMousePressed_ && editMode_ != 0;
 	}
 
-	bool ShowGizmo()
+	bool ShowGizmo() const
 	{
 		return selectedModelIndex > 0 && selectedInstanceIndex > 0;
 	}

@@ -8,7 +8,7 @@
 #include "VulkanDescriptor.h"
 #include "VulkanSpecialization.h"
 #include "PipelineConfig.h"
-#include "InputContext.h"
+#include "UIData.h"
 #include "UBOs.h"
 
 #include <string>
@@ -38,7 +38,7 @@ public:
 		VulkanContext& ctx, 
 		VkCommandBuffer commandBuffer) = 0;
 
-	virtual void UpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext)
+	virtual void UpdateFromInputContext(VulkanContext& ctx, UIData& inputContext)
 	{
 	}
 

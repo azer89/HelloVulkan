@@ -19,7 +19,7 @@ AppFrustumCulling::AppFrustumCulling() :
 
 void AppFrustumCulling::Init()
 {
-	inputContext_.pbrPC_.albedoMultipler = 0.5f;
+	uiData_.pbrPC_.albedoMultipler = 0.5f;
 	camera_->SetPositionAndTarget(glm::vec3(0.0f, 10.0f, 5.0f), glm::vec3(0.0, 0.0, -20));
 
 	InitLights();
@@ -120,17 +120,17 @@ void AppFrustumCulling::UpdateUI()
 	imguiPtr_->ImGuiStart();
 	imguiPtr_->ImGuiSetWindow("Compute-Based Frustum Culling", 500, 350);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
-	ImGui::Checkbox("Render Lights", &inputContext_.renderLights_);
-	ImGui::Checkbox("Render Frustum and Bounding Boxes", &inputContext_.renderDebug_);
+	ImGui::Checkbox("Render Lights", &uiData_.renderLights_);
+	ImGui::Checkbox("Render Frustum and Bounding Boxes", &uiData_.renderDebug_);
 	ImGui::Checkbox("Update Frustum", &staticUpdateFrustum);
-	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
+	imguiPtr_->ImGuiShowPBRConfig(&uiData_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
 	updateFrustum_ = staticUpdateFrustum;
 
 	for (auto& pipeline : pipelines_)
 	{
-		pipeline->UpdateFromInputContext(vulkanContext_, inputContext_);
+		pipeline->UpdateFromInputContext(vulkanContext_, uiData_);
 	}
 }
 

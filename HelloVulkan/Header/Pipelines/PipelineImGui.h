@@ -6,7 +6,7 @@
 #include "PipelineBase.h"
 #include "FrameCounter.h"
 #include "PushConstants.h"
-#include "InputContext.h"
+#include "UIData.h"
 
 class PipelineImGui final : public PipelineBase
 {
@@ -30,7 +30,7 @@ public:
 	void ImGuizmoStart();
 	void ImGuizmoShow(glm::mat4& modelMatrix, const int editMode);
 	void ImGuizmoShowOption(int* editMode);
-	void ImGuizmoManipulateScene(VulkanContext& ctx, InputContext* inputContext);
+	void ImGuizmoManipulateScene(VulkanContext& ctx, UIData* inputContext);
 
 	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override {}
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;

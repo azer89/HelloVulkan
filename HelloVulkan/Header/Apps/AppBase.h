@@ -3,12 +3,12 @@
 
 #include "VulkanInstance.h"
 #include "VulkanContext.h"
+#include "ResourcesShared.h"
+#include "ResourcesIBL.h"
 #include "PipelineBase.h"
 #include "FrameCounter.h"
 #include "Camera.h"
-#include "ResourcesShared.h"
-#include "ResourcesIBL.h"
-#include "InputContext.h"
+#include "UIData.h"
 
 #define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
@@ -103,7 +103,7 @@ protected:
 	ResourcesShared* resourcesShared_ = nullptr;
 	ResourcesIBL* resourcesIBL_ = nullptr;
 
-	InputContext inputContext_ = {};
+	UIData uiData_ = {};
 };
 
 #endif
