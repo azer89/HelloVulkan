@@ -127,7 +127,7 @@ void PipelineImGui::ImGuizmoStart()
 {
 	ImGuizmo::SetOrthographic(false);
 	ImGuizmo::BeginFrame();
-	ImGuizmo::SetGizmoSizeClipSpace(0.15);
+	ImGuizmo::SetGizmoSizeClipSpace(0.15f);
 }
 
 void PipelineImGui::ImGuizmoShowOption(int* editMode)

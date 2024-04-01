@@ -464,7 +464,7 @@ int Scene::GetClickedInstanceIndex(const Ray& ray)
 			{
 				tMin = t;
 				//modelIndex = iData.modelIndex;
-				instanceIndex = i;
+				instanceIndex = static_cast<int>(i);
 			}
 		}
 	}
