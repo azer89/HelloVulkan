@@ -43,6 +43,10 @@ PipelineImGui::PipelineImGui(
 	colors[ImGuiCol_WindowBg] = ImVec4(0.06f, 0.06f, 0.06f, 0.7f);
 	colors[ImGuiCol_PlotLines] = ImVec4(0.21f, 0.61f, 0.61f, 1.00f);
 
+	ImGuiIO& io = ImGui::GetIO();
+	const std::string filename = AppConfig::FontFolder + "Roboto-Medium.ttf";
+	io.Fonts->AddFontFromFileTTF(filename.c_str(), 18.0f);
+
 	// Known issue when using both ImGui and volk
 	// github.com/ocornut/imgui/issues/4854
 	ImGui_ImplVulkan_LoadFunctions([](const char* functionName, void* vulkanInstance)
@@ -103,7 +107,7 @@ void PipelineImGui::ImGuiShowFrameData(FrameCounter* frameCounter)
 		nullptr,
 		FLT_MAX,
 		FLT_MAX,
-		ImVec2(450, 50));
+		ImVec2(425, 50));
 }
 
 void PipelineImGui::ImGuiShowPBRConfig(PushConstPBR* pc, float mipmapCount)

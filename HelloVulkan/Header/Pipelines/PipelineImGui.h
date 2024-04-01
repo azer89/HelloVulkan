@@ -17,7 +17,7 @@ public:
 	~PipelineImGui();
 
 	void ImGuiStart();
-	void ImGuiSetWindow(const char* title, int width, int height, float fontSize = 1.25f);
+	void ImGuiSetWindow(const char* title, int width, int height, float fontSize = 1.0f);
 	void ImGuiShowFrameData(FrameCounter* frameCounter);
 	void ImGuiShowPBRConfig(PushConstPBR* pc, float mipmapCount);
 	void ImGuiEnd();
