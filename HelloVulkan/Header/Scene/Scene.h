@@ -88,8 +88,8 @@ public:
 	std::vector<ModelUBO> modelSSBOs_ = {};
 
 	// These three have the same length
-	std::vector<InstanceData> instanceDataArray_ = {};
 	std::vector<MeshData> meshDataArray_ = {}; // Content is sent to meshDataBuffer_
+	std::vector<InstanceData> instanceDataArray_ = {};
 	std::vector<BoundingBox> transformedBoundingBoxes_ = {}; // Content is sent to transformedBoundingBoxBuffer_
 	
 	// Animation
@@ -97,8 +97,9 @@ public:
 	VulkanBuffer boneWeightBuffer_ = {};
 	VulkanBuffer skinningIndicesBuffer_ = {};
 	VulkanBuffer preSkinningVertexBuffer_ = {}; // This buffer contains a subset of vertexBuffer_
-	std::array<VulkanBuffer, AppConfig::FrameCount> boneMatricesBuffers_; // Frame-in-flight
+	std::array<VulkanBuffer, AppConfig::FrameCount> boneMatricesBuffers_ = {}; // Frame-in-flight
 
+	// Vertex pulling
 	VulkanBuffer vertexBuffer_ = {}; 
 	VulkanBuffer indexBuffer_ = {};
 	VulkanBuffer indirectBuffer_ = {};
@@ -106,7 +107,7 @@ public:
 	std::array<VulkanBuffer, AppConfig::FrameCount> modelSSBOBuffers_ = {}; // Frame-in-flight
 
 	// Frustum culling
-	VulkanBuffer transformedBoundingBoxBuffer_; // TODO Implement Frame-in-flight
+	VulkanBuffer transformedBoundingBoxBuffer_ = {}; // TODO No Frame-in-flight but somenow not giving error
 	
 private:
 	bool supportDeviceAddress_ = false;

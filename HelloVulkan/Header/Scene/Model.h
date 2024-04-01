@@ -31,7 +31,7 @@ public:
 	ModelCreateInfo modelInfo_ = {};
 
 	// Skinning
-	std::unordered_map<std::string, BoneInfo> boneInfoMap_;
+	std::unordered_map<std::string, BoneInfo> boneInfoMap_ = {};
 
 private:
 	const aiScene* scene_ = nullptr;

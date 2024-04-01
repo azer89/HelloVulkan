@@ -20,18 +20,18 @@ public:
 	std::unordered_map<TextureType, uint32_t> textureIndices_;
 
 private:
-	bool bindlessTexture_;
-	std::string meshName_;
+	bool bindlessTexture_ = false;
+	std::string meshName_ = {};
 
-	uint32_t vertexOffset_;
-	uint32_t indexOffset_;
+	uint32_t vertexOffset_ = 0;
+	uint32_t indexOffset_ = 0;
 
 	// Slot-based rendering
-	std::vector<VertexData> vertices_;
-	std::vector<uint32_t> indices_;
+	std::vector<VertexData> vertices_ = {};
+	std::vector<uint32_t> indices_ = {};
 
-	uint32_t vertexCount_;
-	uint32_t indexCount_;
+	uint32_t vertexCount_ = 0;
+	uint32_t indexCount_ = 0;
 
 public:
 	Mesh() = default;

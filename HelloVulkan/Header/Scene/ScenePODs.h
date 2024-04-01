@@ -53,22 +53,22 @@ enum class MaterialType : uint32_t
 // For bindless textures
 struct MeshData
 {
-	uint32_t vertexOffset_;
-	uint32_t indexOffset_;
+	uint32_t vertexOffset_ = 0;
+	uint32_t indexOffset_ = 0;
 
 	// Pointing to modelSSBO_
-	uint32_t modelMatrixIndex_;
+	uint32_t modelMatrixIndex_ = 0;
 
 	// PBR Texture IDs
-	uint32_t albedo_;
-	uint32_t normal_;
-	uint32_t metalness_;
-	uint32_t roughness_;
-	uint32_t ao_;
-	uint32_t emissive_;
+	uint32_t albedo_ = 0;
+	uint32_t normal_ = 0;
+	uint32_t metalness_ = 0;
+	uint32_t roughness_ = 0;
+	uint32_t ao_ = 0;
+	uint32_t emissive_ = 0;
 
 	// For sorting
-	MaterialType material_;
+	MaterialType material_ = {};
 };
 
 struct InstanceData
@@ -77,24 +77,24 @@ struct InstanceData
 	Need two indices to access instanceMapArray_
 		First index is modelIndex
 		Second index is perModelInstanceIndex*/
-	uint32_t modelIndex;
-	uint32_t perModelInstanceIndex;
+	uint32_t modelIndex = 0;
+	uint32_t perModelInstanceIndex = 0;
 
 	// See function Scene::CreateIndirectBuffer()
-	uint32_t perModelMeshIndex;
+	uint32_t perModelMeshIndex = 0;
 
-	MeshData meshData;
-	BoundingBox originalBoundingBox;
+	MeshData meshData = {};
+	BoundingBox originalBoundingBox = {};
 };
 
 // Needed for updating bounding boxes
 struct InstanceMap
 {
 	// Pointing to modelSSBO_
-	uint32_t modelMatrixIndex;
+	uint32_t modelMatrixIndex = 0;
 
 	// List of global instance indices that share the same model matrix
-	std::vector<uint32_t> instanceDataIndices;
+	std::vector<uint32_t> instanceDataIndices = {};
 };
 
 struct ModelCreateInfo
@@ -132,22 +132,22 @@ struct AnimationNode
 // Skinning
 struct KeyPosition
 {
-	glm::vec3 position;
-	float timeStamp;
+	glm::vec3 position = {};
+	float timeStamp = 0.0f;
 };
 
 // Skinning
 struct KeyRotation
 {
-	glm::quat orientation;
-	float timeStamp;
+	glm::quat orientation = {};
+	float timeStamp = 0.0f;
 };
 
 // Skinning
 struct KeyScale
 {
-	glm::vec3 scale;
-	float timeStamp;
+	glm::vec3 scale = {};
+	float timeStamp = 0.0f;
 };
 
 #endif
