@@ -24,11 +24,6 @@ namespace Utility
 		return (value + alignment - 1) & ~(alignment - 1);
 	}
 
-	inline size_t AlignedSize(size_t value, size_t alignment)
-	{
-		return (value + alignment - 1) & ~(alignment - 1);
-	}
-
 	inline int MipMapCount(int w, int h)
 	{
 		int levels = 1;
