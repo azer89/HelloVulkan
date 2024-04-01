@@ -447,7 +447,7 @@ std::vector<VkDescriptorImageInfo> Scene::GetImageInfos() const
 // This is currently a brute force but can be improved with BVH or pixel perfect technique
 int Scene::GetClickedInstanceIndex(const Ray& ray)
 {
-	float tMin = FLT_MAX;
+	float tMin = std::numeric_limits<float>::max();
 	//int modelIndex = -1; // Debug
 	int instanceIndex = -1;
 
