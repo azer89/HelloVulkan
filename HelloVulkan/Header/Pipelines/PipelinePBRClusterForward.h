@@ -37,9 +37,9 @@ public:
 		cfUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ClusterForwardUBO));
 	}
 
-	void UpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
+	void UpdateFromIUData(VulkanContext& ctx, UIData& uiData) override
 	{
-		SetPBRPushConstants(inputContext.pbrPC_);
+		SetPBRPushConstants(uiData.pbrPC_);
 	}
 
 private:

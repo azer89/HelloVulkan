@@ -86,23 +86,23 @@ void AppPBRSlotBased::UpdateUBOs()
 
 void AppPBRSlotBased::UpdateUI()
 {
-	if (!showImgui_)
+	if (!ShowImGui())
 	{
 		imguiPtr_->ImGuiDrawEmpty();
 		return;
 	}
 
 	imguiPtr_->ImGuiStart();
-	imguiPtr_->ImGuiSetWindow("PBR and IBL", 500, 325);
+	imguiPtr_->ImGuiSetWindow("PBR and IBL", 450, 350);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
-	ImGui::Checkbox("Render Lights", &inputContext_.renderLights_);
-	ImGui::Checkbox("Render Grid", &inputContext_.renderInfiniteGrid_);
-	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
+	ImGui::Checkbox("Render Lights", &uiData_.renderLights_);
+	ImGui::Checkbox("Render Grid", &uiData_.renderInfiniteGrid_);
+	imguiPtr_->ImGuiShowPBRConfig(&uiData_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
 	for (auto& pipeline : pipelines_)
 	{
-		pipeline->UpdateFromInputContext(vulkanContext_, inputContext_);
+		pipeline->UpdateFromIUData(vulkanContext_, uiData_);
 	}
 }
 

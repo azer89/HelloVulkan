@@ -17,7 +17,7 @@ AppPBRShadow::AppPBRShadow()
 
 void AppPBRShadow::Init()
 {
-	inputContext_.shadowCasterPosition_ = { -2.5f, 20.0f, 5.0f };
+	uiData_.shadowCasterPosition_ = { -2.5f, 20.0f, 5.0f };
 	camera_->SetPositionAndTarget(glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3(0.0));
 
 	// Init shadow map
@@ -35,18 +35,14 @@ void AppPBRShadow::Init()
 	std::vector<ModelCreateInfo> dataArray = {
 		{
 			.filename = AppConfig::ModelFolder + "Sponza/Sponza.gltf",
-			.instanceCount = 1,
-			.playAnimation = false
 		},
 		{
 			.filename = AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf",
-			.instanceCount = 1,
-			.playAnimation = false
+			.clickable = true
 		},
 		{
 			.filename = AppConfig::ModelFolder + "Hexapod/Hexapod.gltf",
-			.instanceCount = 1,
-			.playAnimation = false
+			.clickable = true
 		}
 	};
 	bool supportDeviceAddress = true;
@@ -97,7 +93,7 @@ void AppPBRShadow::Init()
 	AddPipeline<PipelineResolveMS>(vulkanContext_, resourcesShared_);
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
 	AddPipeline<PipelineTonemap>(vulkanContext_, &(resourcesShared_->singleSampledColorImage_));
-	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
+	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_, scene_.get(), camera_.get());
 	// Present swapchain image
 	AddPipeline<PipelineFinish>(vulkanContext_);
 }
@@ -122,43 +118,46 @@ void AppPBRShadow::InitLights()
 
 void AppPBRShadow::UpdateUI()
 {
-	if (!showImgui_)
+	if (!ShowImGui())
 	{
 		imguiPtr_->ImGuiDrawEmpty();
 		return;
 	}
 
 	imguiPtr_->ImGuiStart();
-	imguiPtr_->ImGuiSetWindow("Shadow Mapping", 500, 650);
+	imguiPtr_->ImGuiSetWindow("Shadow Mapping", 450, 700);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 
 	ImGui::Text("Triangle Count: %i", scene_->triangleCount_);
-	ImGui::Checkbox("Render Lights", &inputContext_.renderLights_);
+	ImGui::Checkbox("Render Lights", &uiData_.renderLights_);
+	imguiPtr_->ImGuizmoShowOption(&uiData_.editMode_);
 	ImGui::SeparatorText("Shading");
-	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
+	imguiPtr_->ImGuiShowPBRConfig(&uiData_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
 
 	ImGui::SeparatorText("Shadow mapping");
-	ImGui::SliderFloat("Min Bias", &inputContext_.shadowMinBias_, 0.f, 0.01f);
-	ImGui::SliderFloat("Max Bias", &inputContext_.shadowMaxBias_, 0.f, 0.01f);
-	ImGui::SliderFloat("Near Plane", &inputContext_.shadowNearPlane_, 0.1f, 50.0f);
-	ImGui::SliderFloat("Far Plane", &inputContext_.shadowFarPlane_, 10.0f, 150.0f);
-	ImGui::SliderFloat("Ortho Size", &inputContext_.shadowOrthoSize_, 10.0f, 30.0f);
+	ImGui::SliderFloat("Min Bias", &uiData_.shadowMinBias_, 0.f, 0.01f);
+	ImGui::SliderFloat("Max Bias", &uiData_.shadowMaxBias_, 0.f, 0.01f);
+	ImGui::SliderFloat("Near Plane", &uiData_.shadowNearPlane_, 0.1f, 50.0f);
+	ImGui::SliderFloat("Far Plane", &uiData_.shadowFarPlane_, 10.0f, 150.0f);
+	ImGui::SliderFloat("Ortho Size", &uiData_.shadowOrthoSize_, 10.0f, 30.0f);
 
 	ImGui::SeparatorText("Light position");
-	ImGui::SliderFloat("X", &(inputContext_.shadowCasterPosition_[0]), -10.0f, 10.0f);
-	ImGui::SliderFloat("Y", &(inputContext_.shadowCasterPosition_[1]), 15.0f, 60.0f);
-	ImGui::SliderFloat("Z", &(inputContext_.shadowCasterPosition_[2]), -10.0f, 10.0f);
+	ImGui::SliderFloat("X", &(uiData_.shadowCasterPosition_[0]), -10.0f, 10.0f);
+	ImGui::SliderFloat("Y", &(uiData_.shadowCasterPosition_[1]), 15.0f, 60.0f);
+	ImGui::SliderFloat("Z", &(uiData_.shadowCasterPosition_[2]), -10.0f, 10.0f);
+
+	imguiPtr_->ImGuizmoManipulateScene(vulkanContext_, &uiData_);
 
 	imguiPtr_->ImGuiEnd();
 
 	for (auto& pipeline : pipelines_)
 	{
-		pipeline->UpdateFromInputContext(vulkanContext_, inputContext_);
+		pipeline->UpdateFromIUData(vulkanContext_, uiData_);
 	}
 
 	for (auto& resources : resources_)
 	{
-		resources->UpdateFromInputContext(vulkanContext_, inputContext_);
+		resources->UpdateFromUIData(vulkanContext_, uiData_);
 	}
 }
 

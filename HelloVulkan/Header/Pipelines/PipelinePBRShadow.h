@@ -37,9 +37,9 @@ public:
 		shadowMapConfigUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ShadowMapUBO));
 	}
 	
-	void UpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
+	void UpdateFromIUData(VulkanContext& ctx, UIData& uiData) override
 	{
-		SetPBRPushConstants(inputContext.pbrPC_);
+		SetPBRPushConstants(uiData.pbrPC_);
 	}
 
 private:

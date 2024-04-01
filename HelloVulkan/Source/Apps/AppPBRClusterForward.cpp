@@ -18,7 +18,7 @@ AppPBRClusterForward::AppPBRClusterForward()
 
 void AppPBRClusterForward::Init()
 {
-	inputContext_.pbrPC_.albedoMultipler = 0.01f;
+	uiData_.pbrPC_.albedoMultipler = 0.01f;
 	camera_->SetPositionAndTarget(glm::vec3(0.0f, 1.0f, 6.0f), glm::vec3(0.0, 2.5, 0.0));
 
 	// Initialize attachments
@@ -138,22 +138,22 @@ void AppPBRClusterForward::UpdateUBOs()
 
 void AppPBRClusterForward::UpdateUI()
 {
-	if (!showImgui_)
+	if (!ShowImGui())
 	{
 		imguiPtr_->ImGuiDrawEmpty();
 		return;
 	}
 
 	imguiPtr_->ImGuiStart();
-	imguiPtr_->ImGuiSetWindow("Clustered Forward Shading", 500, 325);
+	imguiPtr_->ImGuiSetWindow("Clustered Forward Shading", 450, 350);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
-	ImGui::Checkbox("Render Lights", &inputContext_.renderLights_);
-	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
+	ImGui::Checkbox("Render Lights", &uiData_.renderLights_);
+	imguiPtr_->ImGuiShowPBRConfig(&uiData_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
 	for (auto& pipeline : pipelines_)
 	{
-		pipeline->UpdateFromInputContext(vulkanContext_, inputContext_);
+		pipeline->UpdateFromIUData(vulkanContext_, uiData_);
 	}
 }
 

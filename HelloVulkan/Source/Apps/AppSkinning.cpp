@@ -12,14 +12,16 @@
 #include "glm/ext.hpp"
 #include "imgui_impl_vulkan.h"
 
+#include <iostream>
+
 AppSkinning::AppSkinning()
 {
 }
 
 void AppSkinning::Init()
 {
-	inputContext_.shadowMinBias_ = 0.003f;
-	inputContext_.shadowCasterPosition_ = { -0.5f, 20.0f, 5.0f };
+	uiData_.shadowMinBias_ = 0.003f;
+	uiData_.shadowCasterPosition_ = { -0.5f, 20.0f, 5.0f };
 	camera_->SetPositionAndTarget(glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3(0.0));
 
 	// Init shadow map
@@ -70,7 +72,7 @@ void AppSkinning::Init()
 	AddPipeline<PipelineResolveMS>(vulkanContext_, resourcesShared_);
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
 	AddPipeline<PipelineTonemap>(vulkanContext_, &(resourcesShared_->singleSampledColorImage_));
-	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
+	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_, scene_.get(), camera_.get());
 	// Present swapchain image
 	AddPipeline<PipelineFinish>(vulkanContext_);
 }
@@ -78,23 +80,22 @@ void AppSkinning::Init()
 void AppSkinning::InitScene()
 {
 	// Scene
-	std::vector<ModelCreateInfo> dataArray = {
-		{
-			.filename = AppConfig::ModelFolder + "Sponza/Sponza.gltf",
-			.instanceCount = 1,
-			.playAnimation = false
-		},
-		{
-			.filename = AppConfig::ModelFolder + "DancingStormtrooper01/DancingStormtrooper01.gltf",
-			.instanceCount = 4,
-			.playAnimation = true
-		},
-		{
-			.filename = AppConfig::ModelFolder + "DancingStormtrooper02/DancingStormtrooper02.gltf",
-			.instanceCount = 4,
-			.playAnimation = true
-		}
-	};
+	std::vector<ModelCreateInfo> dataArray = 
+	{{
+		.filename = AppConfig::ModelFolder + "Sponza/Sponza.gltf"
+	},
+	{
+		.filename = AppConfig::ModelFolder + "DancingStormtrooper01/DancingStormtrooper01.gltf",
+		.instanceCount = 4,
+		.playAnimation = true,
+		.clickable = true
+	},
+	{
+		.filename = AppConfig::ModelFolder + "DancingStormtrooper02/DancingStormtrooper02.gltf",
+		.instanceCount = 4,
+		.playAnimation = true,
+		.clickable = true
+	}};
 	bool supportDeviceAddress = true;
 	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
 
@@ -128,8 +129,7 @@ void AppSkinning::InitLights()
 	resourcesLight_ = AddResources<ResourcesLight>();
 	resourcesLight_->AddLights(vulkanContext_,
 	{
-		// The first light is used to generate the shadow map
-		// and its position is set by ImGui
+		// The first light is a shadow caster
 		{.color_ = glm::vec4(1.f), .radius_ = 1.0f },
 
 		// Add additional lights so that the scene is not too dark
@@ -142,42 +142,47 @@ void AppSkinning::InitLights()
 
 void AppSkinning::UpdateUI()
 {
-	if (!showImgui_)
+	if (!ShowImGui())
 	{
 		imguiPtr_->ImGuiDrawEmpty();
 		return;
 	}
 
+	// Start
 	imguiPtr_->ImGuiStart();
-	imguiPtr_->ImGuiSetWindow("Compute-based Skinning", 500, 650);
+	imguiPtr_->ImGuiSetWindow("Compute-based Skinning", 450, 700);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 
 	ImGui::Text("Triangle Count: %i", scene_->triangleCount_);
-	ImGui::Checkbox("Render Lights", &inputContext_.renderLights_);
+	ImGui::Checkbox("Render Lights", &uiData_.renderLights_);
+	imguiPtr_->ImGuizmoShowOption(&uiData_.editMode_);
 	ImGui::SeparatorText("Shading");
-	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
+	imguiPtr_->ImGuiShowPBRConfig(&uiData_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
 
 	ImGui::SeparatorText("Shadow mapping");
-	ImGui::SliderFloat("Min Bias", &inputContext_.shadowMinBias_, 0.f, 0.01f);
-	ImGui::SliderFloat("Max Bias", &inputContext_.shadowMaxBias_, 0.f, 0.01f);
-	ImGui::SliderFloat("Near Plane", &inputContext_.shadowNearPlane_, 0.1f, 50.0f);
-	ImGui::SliderFloat("Far Plane", &inputContext_.shadowFarPlane_, 10.0f, 150.0f);
-	ImGui::SliderFloat("Ortho Size", &inputContext_.shadowOrthoSize_, 10.0f, 100.0f);
+	ImGui::SliderFloat("Min Bias", &uiData_.shadowMinBias_, 0.f, 0.01f);
+	ImGui::SliderFloat("Max Bias", &uiData_.shadowMaxBias_, 0.f, 0.01f);
+	ImGui::SliderFloat("Near Plane", &uiData_.shadowNearPlane_, 0.1f, 50.0f);
+	ImGui::SliderFloat("Far Plane", &uiData_.shadowFarPlane_, 10.0f, 150.0f);
+	ImGui::SliderFloat("Ortho Size", &uiData_.shadowOrthoSize_, 10.0f, 100.0f);
 
 	ImGui::SeparatorText("Light position");
-	ImGui::SliderFloat("X", &(inputContext_.shadowCasterPosition_[0]), -10.0f, 10.0f);
-	ImGui::SliderFloat("Y", &(inputContext_.shadowCasterPosition_[1]), 5.0f, 60.0f);
-	ImGui::SliderFloat("Z", &(inputContext_.shadowCasterPosition_[2]), -10.0f, 10.0f);
+	ImGui::SliderFloat("X", &(uiData_.shadowCasterPosition_[0]), -10.0f, 10.0f);
+	ImGui::SliderFloat("Y", &(uiData_.shadowCasterPosition_[1]), 5.0f, 60.0f);
+	ImGui::SliderFloat("Z", &(uiData_.shadowCasterPosition_[2]), -10.0f, 10.0f);
 
+	imguiPtr_->ImGuizmoManipulateScene(vulkanContext_, &uiData_);
+	
+	// End
 	imguiPtr_->ImGuiEnd();
 
 	for (auto& pipeline : pipelines_)
 	{
-		pipeline->UpdateFromInputContext(vulkanContext_, inputContext_);
+		pipeline->UpdateFromIUData(vulkanContext_, uiData_);
 	}
 	for (auto& resources : resources_)
 	{
-		resources->UpdateFromInputContext(vulkanContext_, inputContext_);
+		resources->UpdateFromUIData(vulkanContext_, uiData_);
 	}
 }
 

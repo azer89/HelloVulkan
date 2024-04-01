@@ -13,8 +13,26 @@
 #include <span>
 
 /*
-A scene used for indirect draw + bindless resources that contains 
-SSBO buffers for vertices, indices, and mesh data.
+A scene used for indirect draw + bindless resources that contains SSBO buffers for vertices, indices, and mesh data.
+
+Below is an example of a Scene structure:
+
+Scene
+|
+|-- Model
+|    |-- Mesh
+|    `-- Mesh
+|
+|-- Model
+|    |-- Mesh
+|    |-- Mesh
+|    `-- Mesh
+
+A scene has multiple models, each model is loaded from a file (fbx, glTF, etc.), and a model has multiple meshes.
+A single mesh requires one draw call. For example, if the scene has 10 meshes, 10 draw calls will be issued.
+The scene representation supports instances, each is defined as a copy of a mesh.
+Instances only duplicate the draw call of a mesh, so this is different than hardware instancing.
+
 */
 class Scene
 {
@@ -28,14 +46,29 @@ public:
 	[[nodiscard]] uint32_t GetInstanceCount() const { return static_cast<uint32_t>(meshDataArray_.size()); }
 	[[nodiscard]] std::vector<VkDescriptorImageInfo> GetImageInfos() const;
 	[[nodiscard]] BDA GetBDA() const;
+	[[nodiscard]] int GetClickedInstanceIndex(const Ray& ray);
 
 	void GetOffsetAndDrawCount(MaterialType matType, VkDeviceSize& offset, uint32_t& drawCount) const;
 
-	void UpdateModelMatrix(VulkanContext& ctx,
+	/*Update model matrix and update the buffer
+	Need two indices to access instanceMapArray_
+		First index is modelIndex
+		Second index is perModelInstanceIndex*/
+	void UpdateModelMatrix(
+		VulkanContext& ctx,
 		const ModelUBO& modelUBO,
 		const uint32_t modelIndex,
-		const uint32_t instanceIndex);
+		const uint32_t perModelInstanceIndex);
 
+	/*Only update the buffer of model matrix
+	Need two indices to access instanceMapArray_
+		First index is modelIndex
+		Second index is perModelInstanceIndex*/
+	void UpdateModelMatrixBuffer(
+		VulkanContext& ctx,
+		const uint32_t modelIndex,
+		const uint32_t perModelInstanceIndex);
+	
 	void CreateIndirectBuffer(
 		VulkanContext& ctx,
 		VulkanBuffer& indirectBuffer);
@@ -43,11 +76,12 @@ public:
 	void UpdateAnimation(VulkanContext& ctx, float deltaTime);
 
 private:
+	[[nodiscard]] bool HasAnimation() const { return !sceneData_.boneIDArray.empty(); }
+
 	void CreateAnimationResources(VulkanContext& ctx);
 	void CreateBindlessResources(VulkanContext& ctx);
 	void CreateDataStructures();
-	[[nodiscard]] bool HasAnimation() const { return !sceneData_.boneIDArray.empty(); }
-
+	
 public:
 	uint32_t triangleCount_ = 0;
 	SceneData sceneData_ = {}; // Containing vertices and indices
@@ -79,7 +113,10 @@ private:
 
 	std::vector<Model> models_ = {};
 
-	// First index is modelID, second index is per-model instanceID
+	/*Update model matrix and update the buffer
+	Need two indices to access instanceMapArray_
+		First index is modelIndex
+		Second index is perModelInstanceIndex*/
 	std::vector<std::vector<InstanceMap>> instanceMapArray_ = {};
 
 	// Animation

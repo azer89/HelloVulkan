@@ -47,6 +47,7 @@ target_include_directories(HelloVulkan PRIVATE
     "${PROJECT_SOURCE_DIR}/External/glm"
     "${PROJECT_SOURCE_DIR}/External/ImGui"
     "${PROJECT_SOURCE_DIR}/External/ImGui/backends"
+    "${PROJECT_SOURCE_DIR}/External/ImGuizmo"
     "${PROJECT_SOURCE_DIR}/External/volk"
     "${PROJECT_SOURCE_DIR}/External/VulkanMemoryAllocator/include"
     "${PROJECT_SOURCE_DIR}/External/tracy/public/tracy"

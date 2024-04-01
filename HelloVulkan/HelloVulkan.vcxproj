@@ -112,7 +112,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;TRACY_ENABLE;GLM_FORCE_DEPTH_ZERO_TO_ONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Header;Header\Apps;Header\Pipelines;Header\Resources;Header\Scene;Header\Vulkan;Header\Raytracing;..\External\stb;..\External\assimp\include;..\External\glfw\include;..\External\glm;..\External\ImGui;..\External\ImGui\backends;..\External\volk;..\External\VulkanMemoryAllocator\include;..\External\tracy\public\tracy;..\External\Binaries\assimp\include;$(VULKAN_SDK)\Include;$(VULKAN_SDK)\Include\glslang\Include;$(VULKAN_SDK)\Include\glslang\MachineIndependent;$(VULKAN_SDK)\Include\glslang\Public;$(VULKAN_SDK)\Include\glslang\SPIRV;$(VULKAN_SDK)\Include\spirv_cross;$(VULKAN_SDK)\Include\spirv-tools;$(VULKAN_SDK)\Include\spirv-headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Header;Header\Apps;Header\Pipelines;Header\Resources;Header\Scene;Header\Vulkan;Header\Raytracing;..\External\stb;..\External\assimp\include;..\External\glfw\include;..\External\glm;..\External\ImGui;..\External\ImGui\backends;..\External\ImGuizmo;..\External\volk;..\External\VulkanMemoryAllocator\include;..\External\tracy\public\tracy;..\External\Binaries\assimp\include;$(VULKAN_SDK)\Include;$(VULKAN_SDK)\Include\glslang\Include;$(VULKAN_SDK)\Include\glslang\MachineIndependent;$(VULKAN_SDK)\Include\glslang\Public;$(VULKAN_SDK)\Include\glslang\SPIRV;$(VULKAN_SDK)\Include\spirv_cross;$(VULKAN_SDK)\Include\spirv-tools;$(VULKAN_SDK)\Include\spirv-headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>Default</LanguageStandard_C>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -122,7 +122,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>glfw3.lib;assimp-vc143-mtd.lib;volk.lib;ImGui.lib;TracyClient.lib;GenericCodeGend.lib;glslangd.lib;glslang-default-resource-limitsd.lib;MachineIndependentd.lib;SPIRVd.lib;SPIRV-Toolsd.lib;SPIRV-Tools-optd.lib;OSDependentd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\External\Binaries\ImGui\x64\$(Configuration);..\External\Binaries\assimp\lib\$(Configuration);..\External\Binaries\tracy\$(Configuration);..\External\Binaries\volk\$(Configuration);..\External\Binaries\glfw\$(Configuration);$(VULKAN_SDK)\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\External\Binaries\ImGui\$(Configuration);..\External\Binaries\assimp\lib\$(Configuration);..\External\Binaries\tracy\$(Configuration);..\External\Binaries\volk\$(Configuration);..\External\Binaries\glfw\$(Configuration);$(VULKAN_SDK)\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -133,7 +133,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;TRACY_ENABLE;GLM_FORCE_DEPTH_ZERO_TO_ONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Header;Header\Apps;Header\Pipelines;Header\Resources;Header\Scene;Header\Vulkan;Header\Raytracing;..\External\stb;..\External\assimp\include;..\External\glfw\include;..\External\glm;..\External\ImGui;..\External\ImGui\backends;..\External\volk;..\External\VulkanMemoryAllocator\include;..\External\tracy\public\tracy;..\External\Binaries\assimp\include;$(VULKAN_SDK)\Include;$(VULKAN_SDK)\Include\glslang\Include;$(VULKAN_SDK)\Include\glslang\MachineIndependent;$(VULKAN_SDK)\Include\glslang\Public;$(VULKAN_SDK)\Include\glslang\SPIRV;$(VULKAN_SDK)\Include\spirv_cross;$(VULKAN_SDK)\Include\spirv-tools;$(VULKAN_SDK)\Include\spirv-headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Header;Header\Apps;Header\Pipelines;Header\Resources;Header\Scene;Header\Vulkan;Header\Raytracing;..\External\stb;..\External\assimp\include;..\External\glfw\include;..\External\glm;..\External\ImGui;..\External\ImGui\backends;..\External\ImGuizmo;..\External\volk;..\External\VulkanMemoryAllocator\include;..\External\tracy\public\tracy;..\External\Binaries\assimp\include;$(VULKAN_SDK)\Include;$(VULKAN_SDK)\Include\glslang\Include;$(VULKAN_SDK)\Include\glslang\MachineIndependent;$(VULKAN_SDK)\Include\glslang\Public;$(VULKAN_SDK)\Include\glslang\SPIRV;$(VULKAN_SDK)\Include\spirv_cross;$(VULKAN_SDK)\Include\spirv-tools;$(VULKAN_SDK)\Include\spirv-headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -143,7 +143,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>glfw3.lib;assimp-vc143-mt.lib;volk.lib;ImGui.lib;TracyClient.lib;GenericCodeGen.lib;glslang.lib;glslang-default-resource-limits.lib;MachineIndependent.lib;SPIRV.lib;SPIRV-Tools.lib;SPIRV-Tools-opt.lib;OSDependent.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\External\Binaries\ImGui\x64\$(Configuration);..\External\Binaries\assimp\lib\$(Configuration);..\External\Binaries\volk\$(Configuration);..\External\Binaries\tracy\$(Configuration);..\External\Binaries\glfw\$(Configuration);$(VULKAN_SDK)\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\External\Binaries\ImGui\$(Configuration);..\External\Binaries\assimp\lib\$(Configuration);..\External\Binaries\volk\$(Configuration);..\External\Binaries\tracy\$(Configuration);..\External\Binaries\glfw\$(Configuration);$(VULKAN_SDK)\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -217,8 +217,9 @@
     <ClInclude Include="Header\Camera.h" />
     <ClInclude Include="Header\Configs.h" />
     <ClInclude Include="Header\FrameCounter.h" />
+    <ClInclude Include="Header\Ray.h" />
     <ClInclude Include="Header\Utility.h" />
-    <ClInclude Include="Header\InputContext.h" />
+    <ClInclude Include="Header\UIData.h" />
     <ClInclude Include="Header\Pipelines\PipelineAABBGenerator.h" />
     <ClInclude Include="Header\Pipelines\PipelineAABBRender.h" />
     <ClInclude Include="Header\Pipelines\PipelineBase.h" />

@@ -422,9 +422,6 @@
     <ClInclude Include="Header\Vulkan\VulkanSpecialization.h">
       <Filter>Header Files\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="Header\InputContext.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Resources\ResourcesBase.h">
       <Filter>Header Files\Resources</Filter>
     </ClInclude>
@@ -459,6 +456,12 @@
       <Filter>Header Files\Apps</Filter>
     </ClInclude>
     <ClInclude Include="Header\Utility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Ray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\UIData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

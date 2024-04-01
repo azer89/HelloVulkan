@@ -30,9 +30,9 @@ public:
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 	void SetFrustum(VulkanContext& ctx, CameraUBO& camUBO);
 
-	void UpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
+	void UpdateFromIUData(VulkanContext& ctx, UIData& uiData) override
 	{
-		shouldRender_ = inputContext.renderDebug_;
+		shouldRender_ = uiData.renderDebug_;
 	}
 
 private:

@@ -1,8 +1,8 @@
 #ifndef SCENE_PLAIN_OLD_DATA
 #define SCENE_PLAIN_OLD_DATA
 
-#include "VertexData.h"
 #include "BoundingBox.h"
+#include "VertexData.h"
 #include "Configs.h"
 
 #include <vector>
@@ -56,7 +56,7 @@ struct MeshData
 	uint32_t vertexOffset_;
 	uint32_t indexOffset_;
 
-	// Needed to access model matrix
+	// Pointing to modelSSBO_
 	uint32_t modelMatrixIndex_;
 
 	// PBR Texture IDs
@@ -73,9 +73,16 @@ struct MeshData
 
 struct InstanceData
 {
+	/*Update model matrix and update the buffer
+	Need two indices to access instanceMapArray_
+		First index is modelIndex
+		Second index is perModelInstanceIndex*/
 	uint32_t modelIndex;
-	uint32_t meshIndex;
 	uint32_t perModelInstanceIndex;
+
+	// See function Scene::CreateIndirectBuffer()
+	uint32_t perModelMeshIndex;
+
 	MeshData meshData;
 	BoundingBox originalBoundingBox;
 };
@@ -83,22 +90,31 @@ struct InstanceData
 // Needed for updating bounding boxes
 struct InstanceMap
 {
+	// Pointing to modelSSBO_
 	uint32_t modelMatrixIndex;
+
+	// List of global instance indices that share the same model matrix
 	std::vector<uint32_t> instanceDataIndices;
 };
 
 struct ModelCreateInfo
 {
 	std::string filename = {};
-	uint32_t instanceCount = 1; // Allows instancing
+
+	// Allows multiple draw calls 
+	uint32_t instanceCount = 1u; 
+	
+	// No effect if the model does not have animation
 	bool playAnimation = false;
+
+	bool clickable = false;
 };
 
 // Skinning
 struct BoneInfo
 {
 	// ID is index in finalBoneMatrices
-	int id = 0; // The first matrix (zero index) is identity
+	int id = 0; // The first matrix is identity
 
 	// Offset matrix transforms vertex from model space to bone space
 	glm::mat4 offsetMatrix = glm::mat4(1.0);

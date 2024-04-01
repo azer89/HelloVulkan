@@ -7,16 +7,22 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_vulkan.h"
+#include "ImGuizmo.h"
+#include <glm/gtc/type_ptr.hpp>
 
 PipelineImGui::PipelineImGui(
 	VulkanContext& ctx,
 	VkInstance vulkanInstance,
-	GLFWwindow* glfwWindow) :
+	GLFWwindow* glfwWindow,
+	Scene* scene,
+	const Camera* camera) :
 	PipelineBase(ctx,
 		{
 			.type_ = PipelineType::GraphicsOnScreen
 		}
-	)
+	),
+	scene_(scene),
+	camera_(camera)
 {
 	// Create render pass
 	renderPass_.CreateOnScreenColorOnlyRenderPass(ctx);
@@ -40,6 +46,10 @@ PipelineImGui::PipelineImGui(
 	ImVec4* colors = style->Colors;
 	colors[ImGuiCol_WindowBg] = ImVec4(0.06f, 0.06f, 0.06f, 0.7f);
 	colors[ImGuiCol_PlotLines] = ImVec4(0.21f, 0.61f, 0.61f, 1.00f);
+
+	ImGuiIO& io = ImGui::GetIO();
+	const std::string filename = AppConfig::FontFolder + "Roboto-Medium.ttf";
+	io.Fonts->AddFontFromFileTTF(filename.c_str(), 18.0f);
 
 	// Known issue when using both ImGui and volk
 	// github.com/ocornut/imgui/issues/4854
@@ -84,6 +94,7 @@ void PipelineImGui::ImGuiStart()
 
 void PipelineImGui::ImGuiSetWindow(const char* title, int width, int height, float fontSize)
 {
+	//ImGui::SetNextWindowSizeConstraints();
 	ImGui::SetNextWindowSize(ImVec2(static_cast<float>(width), static_cast<float>(height)));
 	ImGui::Begin(title);
 	ImGui::SetWindowFontScale(fontSize);
@@ -100,7 +111,7 @@ void PipelineImGui::ImGuiShowFrameData(FrameCounter* frameCounter)
 		nullptr,
 		FLT_MAX,
 		FLT_MAX,
-		ImVec2(450, 50));
+		ImVec2(350, 50));
 }
 
 void PipelineImGui::ImGuiShowPBRConfig(PushConstPBR* pc, float mipmapCount)
@@ -110,6 +121,82 @@ void PipelineImGui::ImGuiShowPBRConfig(PushConstPBR* pc, float mipmapCount)
 	ImGui::SliderFloat("Albedo", &(pc->albedoMultipler), 0.0f, 1.0f);
 	ImGui::SliderFloat("Reflectivity", &(pc->baseReflectivity), 0.01f, 1.f);
 	ImGui::SliderFloat("Max Lod", &(pc->maxReflectionLod), 0.1f, mipmapCount);
+}
+
+void PipelineImGui::ImGuizmoStart()
+{
+	ImGuizmo::SetOrthographic(false);
+	ImGuizmo::BeginFrame();
+	ImGuizmo::SetGizmoSizeClipSpace(0.15f);
+}
+
+void PipelineImGui::ImGuizmoShowOption(int* editMode)
+{
+	ImGui::Text("Edit Mode ");
+	ImGui::RadioButton("None", editMode, 0); ImGui::SameLine();
+	ImGui::RadioButton("Translate", editMode, 1); ImGui::SameLine();
+	ImGui::RadioButton("Rotate", editMode, 2); ImGui::SameLine();
+	ImGui::RadioButton("Scale", editMode, 3);
+}
+
+void PipelineImGui::ImGuizmoShow(glm::mat4& modelMatrix, const int editMode)
+{
+	if (editMode == EditMode::None)
+	{
+		return;
+	}
+
+	static ImGuizmo::OPERATION gizmoOperation = ImGuizmo::TRANSLATE;
+
+	gizmoOperation = editMode == EditMode::Translate ? ImGuizmo::TRANSLATE :
+		(editMode == EditMode::Rotate ? ImGuizmo::ROTATE : ImGuizmo::SCALE);
+
+	ImGuiIO& io = ImGui::GetIO();
+	ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+
+	glm::mat4 view = camera_->GetViewMatrix();
+	glm::mat4 projection = camera_->GetProjectionMatrix();
+	projection[1][1] *= -1;
+
+	// Note that modelMatrix is modified by the function below
+	ImGuizmo::Manipulate(
+		glm::value_ptr(view),
+		glm::value_ptr(projection),
+		gizmoOperation,
+		ImGuizmo::WORLD,
+		glm::value_ptr(modelMatrix));
+}
+
+void PipelineImGui::ImGuizmoManipulateScene(VulkanContext& ctx, UIData* uiData)
+{
+	if (!scene_ || !camera_)
+	{
+		return;
+	}
+
+	if (uiData->CanSelectObject())
+	{
+		Ray r = camera_->GetRayFromScreenToWorld(uiData->mousePositionX, uiData->mousePositionY);
+		int i = scene_->GetClickedInstanceIndex(r);
+		if (i >= 0)
+		{
+			InstanceData& iData = scene_->instanceDataArray_[i];
+			uiData->selectedModelIndex = iData.meshData.modelMatrixIndex_;
+			uiData->selectedInstanceIndex = i;
+		}
+	}
+
+	if (uiData->ShowGizmo())
+	{
+		ImGuizmoStart();
+		ImGuizmoShow(
+			scene_->modelSSBOs_[uiData->selectedModelIndex].model,
+			uiData->editMode_);
+
+		// TODO Code smell because UI directly manipulates the scene
+		const InstanceData& iData = scene_->instanceDataArray_[uiData->selectedInstanceIndex];
+		scene_->UpdateModelMatrixBuffer(ctx, iData.modelIndex, iData.perModelInstanceIndex);
+	}
 }
 
 void PipelineImGui::ImGuiEnd()

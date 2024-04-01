@@ -28,14 +28,14 @@ void AppSimpleRaytracing::Init()
 
 void AppSimpleRaytracing::UpdateUI()
 {
-	if (!showImgui_)
+	if (!ShowImGui())
 	{
 		imguiPtr_->ImGuiDrawEmpty();
 		return;
 	}
 
 	imguiPtr_->ImGuiStart();
-	imguiPtr_->ImGuiSetWindow("Raytracing", 500, 150);
+	imguiPtr_->ImGuiSetWindow("Raytracing", 450, 150);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 	imguiPtr_->ImGuiEnd();
 }

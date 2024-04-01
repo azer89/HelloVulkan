@@ -281,8 +281,8 @@ void Scene::CreateDataStructures()
 				instanceDataArray_.push_back(
 				{
 					.modelIndex = m,
-					.meshIndex = j,
 					.perModelInstanceIndex = i,
+					.perModelMeshIndex = j,
 					.meshData = models_[m].meshes_[j].GetMeshData(textureCounter, matrixCounter),
 					.originalBoundingBox = tempOriArray[j] // Copy bounding box from temporary
 				}
@@ -344,7 +344,7 @@ void Scene::CreateDataStructures()
 void Scene::UpdateModelMatrix(VulkanContext& ctx,
 	const ModelUBO& modelUBO,
 	const uint32_t modelIndex,
-	const uint32_t instanceIndex)
+	const uint32_t perModelInstanceIndex)
 {
 	if (modelIndex < 0 || modelIndex >= models_.size())
 	{
@@ -353,29 +353,41 @@ void Scene::UpdateModelMatrix(VulkanContext& ctx,
 	}
 
 	const uint32_t instanceCount = models_[modelIndex].modelInfo_.instanceCount;
-	if (instanceIndex < 0 || instanceIndex >= instanceCount)
+	if (perModelInstanceIndex < 0 || perModelInstanceIndex >= instanceCount)
 	{
-		std::cerr << "Cannot update ModelUBO because of invalid instanceIndex " << instanceIndex << "\n";
+		std::cerr << "Cannot update ModelUBO because of invalid instanceIndex " << perModelInstanceIndex << "\n";
 		return;
 	}
 
-	const uint32_t matrixIndex = instanceMapArray_[modelIndex][instanceIndex].modelMatrixIndex;
+	const uint32_t matrixIndex = instanceMapArray_[modelIndex][perModelInstanceIndex].modelMatrixIndex;
 
 	// Update transformation matrix
 	modelSSBOs_[matrixIndex] = modelUBO;
+
+	// Update the buffer
+	UpdateModelMatrixBuffer(ctx, modelIndex, perModelInstanceIndex);
+}
+
+void Scene::UpdateModelMatrixBuffer(
+	VulkanContext& ctx,
+	const uint32_t modelIndex,
+	const uint32_t perModelInstanceIndex)
+{
+	const uint32_t matrixIndex = instanceMapArray_[modelIndex][perModelInstanceIndex].modelMatrixIndex;
+	const ModelUBO& modelUBO = modelSSBOs_[matrixIndex];
 
 	// Update SSBO
 	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
 	{
 		modelSSBOBuffers_[i].UploadOffsetBufferData(
 			ctx,
-			&modelUBO,
+			&(modelSSBOs_[matrixIndex]),
 			sizeof(ModelUBO) * matrixIndex,
 			sizeof(ModelUBO));
 	}
 
 	// Update bounding box buffer
-	const std::vector<uint32_t>& mappedIndices = instanceMapArray_[modelIndex][instanceIndex].instanceDataIndices;
+	const std::vector<uint32_t>& mappedIndices = instanceMapArray_[modelIndex][perModelInstanceIndex].instanceDataIndices;
 	if (!mappedIndices.empty())
 	{
 		for (uint32_t i : mappedIndices)
@@ -403,11 +415,11 @@ void Scene::CreateIndirectBuffer(
 	for (uint32_t i = 0; i < instanceCount; ++i)
 	{
 		const uint32_t modelIndex = instanceDataArray_[i].modelIndex;
-		const uint32_t meshIndex = instanceDataArray_[i].meshIndex;
+		const uint32_t perModelMeshIndex = instanceDataArray_[i].perModelMeshIndex;
 
 		iCommands[i] =
 		{
-			.vertexCount = models_[modelIndex].meshes_[meshIndex].GetIndexCount(),
+			.vertexCount = models_[modelIndex].meshes_[perModelMeshIndex].GetIndexCount(),
 			.instanceCount = 1u,
 			.firstVertex = 0,
 			.firstInstance = i
@@ -430,4 +442,39 @@ std::vector<VkDescriptorImageInfo> Scene::GetImageInfos() const
 		}
 	}
 	return textureInfoArray;
+}
+
+// This is currently a brute force but can be improved with BVH or pixel perfect technique
+int Scene::GetClickedInstanceIndex(const Ray& ray)
+{
+	float tMin = FLT_MAX;
+	//int modelIndex = -1; // Debug
+	int instanceIndex = -1;
+
+	for (size_t i = 0; i < transformedBoundingBoxes_.size(); ++i)
+	{
+		InstanceData& iData = instanceDataArray_[i];
+		Model& m = models_[iData.modelIndex];
+		if (!m.modelInfo_.clickable) { continue; }
+
+		float t;
+		if (transformedBoundingBoxes_[i].Hit(ray, t))
+		{
+			if (t < tMin)
+			{
+				tMin = t;
+				//modelIndex = iData.modelIndex;
+				instanceIndex = static_cast<int>(i);
+			}
+		}
+	}
+
+	// Debug 
+	/*if (modelIndex >= 0)
+	{
+		Model& m = models_[modelIndex];
+		std::cout << m.filepath_ << '\n';
+	}*/
+
+	return instanceIndex;
 }

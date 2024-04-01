@@ -3,6 +3,7 @@
 
 #include "Utility.h"
 #include "VertexData.h"
+#include "Ray.h"
 
 #include "glm/glm.hpp"
 
@@ -25,6 +26,8 @@ public:
 	
 	void Transform(const glm::mat4& t);
 	[[nodiscard]] BoundingBox GetTransformed(const glm::mat4& t) const;
+
+	bool Hit(const Ray& r, float &t);
 };
 
 #endif

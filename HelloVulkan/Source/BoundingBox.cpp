@@ -57,3 +57,34 @@ BoundingBox BoundingBox::GetTransformed(const glm::mat4& t) const
 	b.Transform(t);
 	return b;
 }
+
+// gamedev.stackexchange.com/questions/18436/most-efficient-aabb-vs-ray-collision-algorithms
+bool BoundingBox::Hit(const Ray& r, float& t)
+{
+	float t1 = (min_.x - r.origin_.x) * r.dirFrac_.x;
+	float t2 = (max_.x - r.origin_.x) * r.dirFrac_.x;
+	float t3 = (min_.y - r.origin_.y) * r.dirFrac_.y;
+	float t4 = (max_.y - r.origin_.y) * r.dirFrac_.y;
+	float t5 = (min_.z - r.origin_.z) * r.dirFrac_.z;
+	float t6 = (max_.z - r.origin_.z) * r.dirFrac_.z;
+
+	float tmin = std::max(std::max(std::min(t1, t2), std::min(t3, t4)), std::min(t5, t6));
+	float tmax = std::min(std::min(std::max(t1, t2), std::max(t3, t4)), std::max(t5, t6));
+
+	// if tmax < 0, ray (line) is intersecting AABB, but the whole AABB is behind us
+	if (tmax < 0)
+	{
+		t = tmax;
+		return false;
+	}
+
+	// if tmin > tmax, ray doesn't intersect AABB
+	if (tmin > tmax)
+	{
+		t = tmax;
+		return false;
+	}
+
+	t = tmin;
+	return true;
+}

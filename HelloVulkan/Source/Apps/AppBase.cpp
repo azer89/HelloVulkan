@@ -4,11 +4,8 @@
 #include "VulkanCheck.h"
 
 #include "volk.h"
-
-// Init GLSLang
-#include <glslang/Include/glslang_c_interface.h>
-
 #include "imgui_impl_vulkan.h"
+#include "glslang/Include/glslang_c_interface.h"
 
 #include <iostream>
 #include <array>
@@ -18,7 +15,6 @@ AppBase::AppBase() :
 {
 	InitGLFW();
 	InitGLSLang();
-	InitImGui();
 	InitCamera();
 }
 
@@ -74,35 +70,25 @@ void AppBase::InitGLFW()
 
 	glfwSetWindowUserPointer(glfwWindow_, this);
 	
-	auto FuncFramebuffer = [](GLFWwindow* window, int width, int height)
-	{
-		static_cast<AppBase*>(glfwGetWindowUserPointer(window))->FrameBufferSizeCallback(window, width, height);
-	};
-	glfwSetFramebufferSizeCallback(glfwWindow_, FuncFramebuffer);
+	auto funcFramebuffer = [](GLFWwindow* window, int width, int height)
+		{ static_cast<AppBase*>(glfwGetWindowUserPointer(window))->FrameBufferSizeCallback(window, width, height); };
+	glfwSetFramebufferSizeCallback(glfwWindow_, funcFramebuffer);
 
-	auto FuncCursor = [](GLFWwindow* window, double x, double y)
-	{
-		static_cast<AppBase*>(glfwGetWindowUserPointer(window))->MouseCallback(window, x, y);
-	};
-	glfwSetCursorPosCallback(glfwWindow_, FuncCursor);
+	auto funcCursor = [](GLFWwindow* window, double x, double y)
+		{ static_cast<AppBase*>(glfwGetWindowUserPointer(window))->MouseCallback(window, x, y); };
+	glfwSetCursorPosCallback(glfwWindow_, funcCursor);
 
-	auto FuncMouse = [](GLFWwindow* window, int button, int action, int mods)
-	{
-		static_cast<AppBase*>(glfwGetWindowUserPointer(window))->MouseButtonCallback(window, button, action, mods);
-	};
-	glfwSetMouseButtonCallback(glfwWindow_, FuncMouse);
+	auto funcMouse = [](GLFWwindow* window, int button, int action, int mods)
+		{ static_cast<AppBase*>(glfwGetWindowUserPointer(window))->MouseButtonCallback(window, button, action, mods); };
+	glfwSetMouseButtonCallback(glfwWindow_, funcMouse);
 
-	auto FuncScroll = [](GLFWwindow* window, double xOffset, double yOffset)
-	{
-		static_cast<AppBase*>(glfwGetWindowUserPointer(window))->ScrollCallback(window, xOffset, yOffset);
-	};
-	glfwSetScrollCallback(glfwWindow_, FuncScroll);
+	auto funcScroll = [](GLFWwindow* window, double xOffset, double yOffset)
+		{ static_cast<AppBase*>(glfwGetWindowUserPointer(window))->ScrollCallback(window, xOffset, yOffset); };
+	glfwSetScrollCallback(glfwWindow_, funcScroll);
 
-	auto FuncKey = [](GLFWwindow* window, int key, int scancode, int action, int mods)
-	{
-		static_cast<AppBase*>(glfwGetWindowUserPointer(window))->KeyCallback(window, key, scancode, action, mods);
-	};
-	glfwSetKeyCallback(glfwWindow_, FuncKey);
+	auto funcKey = [](GLFWwindow* window, int key, int scancode, int action, int mods)
+		{ static_cast<AppBase*>(glfwGetWindowUserPointer(window))->KeyCallback(window, key, scancode, action, mods); };
+	glfwSetKeyCallback(glfwWindow_, funcKey);
 }
 
 // TODO Analyzie this function for possible performance improvement
@@ -201,6 +187,14 @@ void AppBase::DrawFrame()
 	// Do this after the end of the draw
 	vulkanContext_.IncrementFrameIndex();
 
+	// Mouse input
+	if (uiData_.leftMousePressed_)
+	{
+		uiData_.leftMousePressed_ = false;
+		uiData_.leftMouseHold_ = true;
+	}
+
+	// End Tracy frame
 	FrameMark;
 }
 
@@ -266,17 +260,9 @@ void AppBase::OnWindowResized()
 	shouldRecreateSwapchain_ = false;
 }
 
-void AppBase::InitImGui()
-{
-	showImgui_ = true;
-}
-
 void AppBase::InitCamera()
 {
 	camera_ = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 3.0f));
-	lastX_ = static_cast<float>(windowWidth_) / 2.0f;
-	lastY_ = static_cast<float>(windowHeight_) / 2.0f;
-	firstMouse_ = true;
 }
 
 void AppBase::ProcessTiming()
@@ -284,6 +270,11 @@ void AppBase::ProcessTiming()
 	// Per-frame time
 	float currentFrame = static_cast<float>(glfwGetTime());
 	frameCounter_.Update(currentFrame);
+}
+
+bool AppBase::ShowImGui()
+{
+	return uiData_.showImgui_;
 }
 
 bool AppBase::StillRunning()
@@ -303,14 +294,8 @@ void AppBase::PollEvents()
 
 void AppBase::DestroyResources()
 {
-	for (auto& res : resources_)
-	{
-		res.reset();
-	}
-	for (auto& pip : pipelines_)
-	{
-		pip.reset();
-	}
+	for (auto& res : resources_) { res.reset(); }
+	for (auto& pip : pipelines_) { pip.reset(); }
 
 	glfwDestroyWindow(glfwWindow_);
 	glfwTerminate();
@@ -334,41 +319,39 @@ void AppBase::FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
 
 void AppBase::MouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 {
-	if (!leftMousePressed_)
+	const float xPos = static_cast<float>(xposIn);
+	const float yPos = static_cast<float>(yposIn);
+	if (uiData_.firstMouse_)
 	{
+		uiData_.mousePositionX = xPos;
+		uiData_.mousePositionY = yPos;
+		uiData_.firstMouse_ = false;
 		return;
 	}
 
-	const float xPos = static_cast<float>(xposIn);
-	const float yPos = static_cast<float>(yposIn);
-	if (firstMouse_)
+	if (uiData_.leftMousePressed_ || uiData_.leftMouseHold_)
 	{
-		lastX_ = xPos;
-		lastY_ = yPos;
-		firstMouse_ = false;
+		const float xOffset = xPos - uiData_.mousePositionX;
+		const float yOffset = uiData_.mousePositionY - yPos; // Reversed since y-coordinates go from bottom to top
+		camera_->ProcessMouseMovement(xOffset, yOffset);
 	}
-	const float xOffset = xPos - lastX_;
-	const float yOffset = lastY_ - yPos; // reversed since y-coordinates go from bottom to top
-	lastX_ = xPos;
-	lastY_ = yPos;
-	camera_->ProcessMouseMovement(xOffset, yOffset);
+
+	uiData_.mousePositionX = xPos;
+	uiData_.mousePositionY = yPos;
+	
 }
 
 void AppBase::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
-	if (const auto& io = ImGui::GetIO(); io.WantCaptureMouse)
+	if (!ImGui::GetIO().WantCaptureMouse && button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
 	{
-		return;
-	}
-
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
-	{
-		leftMousePressed_ = true;
+		uiData_.leftMousePressed_ = true;
 	}
 	else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
 	{
-		leftMousePressed_ = false;
-		firstMouse_ = true;
+		uiData_.leftMousePressed_ = false;
+		uiData_.leftMouseHold_ = false;
+		uiData_.firstMouse_ = true;
 	}
 }
 
@@ -381,40 +364,36 @@ void AppBase::KeyCallback(GLFWwindow* window, int key, int scancode, int action,
 {
 	if (key == GLFW_KEY_I && action == GLFW_PRESS)
 	{
-		// Toggle imgui window
-		showImgui_ = !showImgui_;
+		uiData_.showImgui_ = !uiData_.showImgui_;
 	}
 }
 
 // Process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 void AppBase::ProcessInput()
 {
-	if (glfwGetKey(glfwWindow_, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	if (glfwGetKey(glfwWindow_, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS ||
+		glfwGetKey(glfwWindow_, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS)
 	{
-		glfwSetWindowShouldClose(glfwWindow_, true);
+		if (glfwGetKey(glfwWindow_, GLFW_KEY_N) == GLFW_PRESS) { uiData_.editMode_ = 0; }
+		else if (glfwGetKey(glfwWindow_, GLFW_KEY_T) == GLFW_PRESS) { uiData_.editMode_ = 1; }
+		else if (glfwGetKey(glfwWindow_, GLFW_KEY_R) == GLFW_PRESS) { uiData_.editMode_ = 2; }
+		else if (glfwGetKey(glfwWindow_, GLFW_KEY_S) == GLFW_PRESS) { uiData_.editMode_ = 3; }
 	}
-
-	if (glfwGetKey(glfwWindow_, GLFW_KEY_W) == GLFW_PRESS)
+	else
 	{
-		camera_->ProcessKeyboard(CameraMovement::Forward, frameCounter_.GetDeltaSecond());
-	}
-
-	if (glfwGetKey(glfwWindow_, GLFW_KEY_S) == GLFW_PRESS)
-	{
-		camera_->ProcessKeyboard(CameraMovement::Backward, frameCounter_.GetDeltaSecond());
-	}
-
-	if (glfwGetKey(glfwWindow_, GLFW_KEY_A) == GLFW_PRESS)
-	{
-		camera_->ProcessKeyboard(CameraMovement::Left, frameCounter_.GetDeltaSecond());
-	}
-
-	if (glfwGetKey(glfwWindow_, GLFW_KEY_D) == GLFW_PRESS)
-	{
-		camera_->ProcessKeyboard(CameraMovement::Right, frameCounter_.GetDeltaSecond());
+		if (glfwGetKey(glfwWindow_, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+			{ glfwSetWindowShouldClose(glfwWindow_, true); }
+		
+		if (glfwGetKey(glfwWindow_, GLFW_KEY_W) == GLFW_PRESS)
+			{ camera_->ProcessKeyboard(CameraMovement::Forward, frameCounter_.GetDeltaSecond()); }
+		else if (glfwGetKey(glfwWindow_, GLFW_KEY_S) == GLFW_PRESS)
+			{ camera_->ProcessKeyboard(CameraMovement::Backward, frameCounter_.GetDeltaSecond()); }
+		else if (glfwGetKey(glfwWindow_, GLFW_KEY_A) == GLFW_PRESS)
+			{ camera_->ProcessKeyboard(CameraMovement::Left, frameCounter_.GetDeltaSecond()); }
+		else if (glfwGetKey(glfwWindow_, GLFW_KEY_D) == GLFW_PRESS)
+			{ camera_->ProcessKeyboard(CameraMovement::Right, frameCounter_.GetDeltaSecond()); }
 	}
 }
-
 
 void AppBase::InitSharedResources()
 {

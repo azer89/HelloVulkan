@@ -3,12 +3,12 @@
 
 #include "VulkanInstance.h"
 #include "VulkanContext.h"
+#include "ResourcesShared.h"
+#include "ResourcesIBL.h"
 #include "PipelineBase.h"
 #include "FrameCounter.h"
 #include "Camera.h"
-#include "ResourcesShared.h"
-#include "ResourcesIBL.h"
-#include "InputContext.h"
+#include "UIData.h"
 
 #define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
@@ -38,7 +38,6 @@ protected:
 
 	// Init functions
 	void InitVulkan(ContextConfig config);
-	void InitImGui();
 	void InitGLSLang();
 	void InitGLFW();
 	void InitCamera();
@@ -48,6 +47,9 @@ protected:
 	void PollEvents();
 	void ProcessTiming();
 	void ProcessInput();
+
+	// ImGui
+	bool ShowImGui();
 
 	void DestroyResources();
 
@@ -79,11 +81,6 @@ protected:
 
 	// Camera
 	std::unique_ptr<Camera> camera_ = nullptr;
-	float lastX_;
-	float lastY_;
-	bool firstMouse_;
-	bool leftMousePressed_;
-	bool showImgui_;
 
 	// Timing
 	FrameCounter frameCounter_;
@@ -106,7 +103,7 @@ protected:
 	ResourcesShared* resourcesShared_ = nullptr;
 	ResourcesIBL* resourcesIBL_ = nullptr;
 
-	InputContext inputContext_ = {};
+	UIData uiData_ = {};
 };
 
 #endif

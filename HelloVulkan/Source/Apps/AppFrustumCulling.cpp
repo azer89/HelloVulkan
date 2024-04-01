@@ -19,7 +19,7 @@ AppFrustumCulling::AppFrustumCulling() :
 
 void AppFrustumCulling::Init()
 {
-	inputContext_.pbrPC_.albedoMultipler = 0.5f;
+	uiData_.pbrPC_.albedoMultipler = 0.5f;
 	camera_->SetPositionAndTarget(glm::vec3(0.0f, 10.0f, 5.0f), glm::vec3(0.0, 0.0, -20));
 
 	InitLights();
@@ -59,7 +59,7 @@ void AppFrustumCulling::Init()
 	AddPipeline<PipelineResolveMS>(vulkanContext_, resourcesShared_);
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
 	AddPipeline<PipelineTonemap>(vulkanContext_, &(resourcesShared_->singleSampledColorImage_));
-	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
+	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_, scene_.get(), camera_.get());
 	// Present swapchain image
 	AddPipeline<PipelineFinish>(vulkanContext_);
 }
@@ -109,7 +109,7 @@ void AppFrustumCulling::InitLights()
 
 void AppFrustumCulling::UpdateUI()
 {
-	if (!showImgui_)
+	if (!ShowImGui())
 	{
 		imguiPtr_->ImGuiDrawEmpty();
 		return;
@@ -118,19 +118,19 @@ void AppFrustumCulling::UpdateUI()
 	static bool staticUpdateFrustum = true;
 
 	imguiPtr_->ImGuiStart();
-	imguiPtr_->ImGuiSetWindow("Compute-Based Frustum Culling", 500, 350);
+	imguiPtr_->ImGuiSetWindow("Compute-Based Frustum Culling", 450, 375);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
-	ImGui::Checkbox("Render Lights", &inputContext_.renderLights_);
-	ImGui::Checkbox("Render Frustum and Bounding Boxes", &inputContext_.renderDebug_);
+	ImGui::Checkbox("Render Lights", &uiData_.renderLights_);
+	ImGui::Checkbox("Render Frustum and Bounding Boxes", &uiData_.renderDebug_);
 	ImGui::Checkbox("Update Frustum", &staticUpdateFrustum);
-	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
+	imguiPtr_->ImGuiShowPBRConfig(&uiData_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
 	imguiPtr_->ImGuiEnd();
 
 	updateFrustum_ = staticUpdateFrustum;
 
 	for (auto& pipeline : pipelines_)
 	{
-		pipeline->UpdateFromInputContext(vulkanContext_, inputContext_);
+		pipeline->UpdateFromIUData(vulkanContext_, uiData_);
 	}
 }
 

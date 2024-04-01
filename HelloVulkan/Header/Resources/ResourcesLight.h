@@ -65,10 +65,10 @@ public:
 		};
 	}
 
-	void UpdateFromInputContext(VulkanContext& ctx, InputContext& inputContext) override
+	void UpdateFromUIData(VulkanContext& ctx, UIData& uiData) override
 	{
 		// Shadow caster
-		UpdateLightPosition(ctx, 0, inputContext.shadowCasterPosition_);
+		UpdateLightPosition(ctx, 0, uiData.shadowCasterPosition_);
 	}
 
 public:

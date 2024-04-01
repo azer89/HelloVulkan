@@ -6,6 +6,7 @@
 
 #include "Configs.h"
 #include "UBOs.h"
+#include "Ray.h"
 
 enum class CameraMovement : uint8_t
 {
@@ -39,6 +40,7 @@ public:
 	[[nodiscard]] ClusterForwardUBO GetClusterForwardUBO() const;
 	[[nodiscard]] RaytracingCameraUBO GetRaytracingCameraUBO() const;
 	[[nodiscard]] FrustumUBO GetFrustumUBO() const;
+	[[nodiscard]] Ray GetRayFromScreenToWorld(float screenPosX, float screenPosY) const;
 
 private:
 	glm::mat4 projectionMatrix_;

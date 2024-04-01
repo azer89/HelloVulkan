@@ -19,11 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\ImGuizmo\ImGuizmo.h" />
     <ClInclude Include="..\..\ImGui\backends\imgui_impl_glfw.h" />
     <ClInclude Include="..\..\ImGui\backends\imgui_impl_vulkan.h" />
     <ClInclude Include="..\..\ImGui\imgui.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\ImGuizmo\ImGuizmo.cpp" />
     <ClCompile Include="..\..\ImGui\backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="..\..\ImGui\backends\imgui_impl_vulkan.cpp" />
     <ClCompile Include="..\..\ImGui\imgui.cpp" />
@@ -84,6 +86,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)\$(Configuration)\</OutDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
