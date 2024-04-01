@@ -218,7 +218,6 @@
     <ClInclude Include="Header\Configs.h" />
     <ClInclude Include="Header\FrameCounter.h" />
     <ClInclude Include="Header\Ray.h" />
-    <ClInclude Include="Header\Scene\ClickableScene.h" />
     <ClInclude Include="Header\Utility.h" />
     <ClInclude Include="Header\UIData.h" />
     <ClInclude Include="Header\Pipelines\PipelineAABBGenerator.h" />
@@ -327,7 +326,6 @@
     <ClCompile Include="Source\Scene\Animation.cpp" />
     <ClCompile Include="Source\Scene\Animator.cpp" />
     <ClCompile Include="Source\Scene\Bone.cpp" />
-    <ClCompile Include="Source\Scene\ClickableScene.cpp" />
     <ClCompile Include="Source\Scene\Mesh.cpp" />
     <ClCompile Include="Source\Scene\Model.cpp" />
     <ClCompile Include="Source\Scene\Scene.cpp" />

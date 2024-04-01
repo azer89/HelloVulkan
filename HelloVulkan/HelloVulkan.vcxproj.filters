@@ -422,9 +422,6 @@
     <ClInclude Include="Header\Vulkan\VulkanSpecialization.h">
       <Filter>Header Files\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="Header\InputContext.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Resources\ResourcesBase.h">
       <Filter>Header Files\Resources</Filter>
     </ClInclude>
@@ -461,10 +458,10 @@
     <ClInclude Include="Header\Utility.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Scene\ClickableScene.h">
-      <Filter>Header Files\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Ray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\UIData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -651,9 +648,6 @@
     </ClCompile>
     <ClCompile Include="Source\Resources\ResourcesShared.cpp">
       <Filter>Source Files\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Scene\ClickableScene.cpp">
-      <Filter>Source Files\Scene</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
