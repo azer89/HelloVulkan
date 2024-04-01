@@ -13,6 +13,9 @@ namespace EditMode
 	constexpr int Scale = 3;
 };
 
+/*
+Variables used by ImGui and used by pipelines and resources
+*/
 struct UIData
 {
 public:
@@ -57,15 +60,8 @@ public:
 	bool renderLights_ = true;
 
 public:
-	bool CanSelectObject() const
-	{
-		return leftMousePressed_ && editMode_ != 0;
-	}
-
-	bool ShowGizmo() const
-	{
-		return selectedModelIndex > 0 && selectedInstanceIndex > 0;
-	}
+	bool CanSelectObject() const { return leftMousePressed_ && editMode_ != 0; }
+	bool ShowGizmo() const { return selectedModelIndex > 0 && selectedInstanceIndex > 0; }
 };
 
 #endif
