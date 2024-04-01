@@ -1,6 +1,7 @@
 #ifndef PIPELINE_IMGUI
 #define PIPELINE_IMGUI
 
+#include "Scene.h"
 #include "Camera.h"
 #include "PipelineBase.h"
 #include "FrameCounter.h"
@@ -10,10 +11,13 @@
 class PipelineImGui final : public PipelineBase
 {
 public:
+	// ImGuizmo only works if scene and camera are provided
 	PipelineImGui(
 		VulkanContext& ctx, 
 		VkInstance vulkanInstance,
-		GLFWwindow* glfwWindow);
+		GLFWwindow* glfwWindow,
+		Scene* scene = nullptr,
+		const Camera* camera = nullptr);
 	~PipelineImGui();
 
 	void ImGuiStart();
@@ -24,11 +28,16 @@ public:
 	void ImGuiDrawEmpty();
 
 	void ImGuizmoStart();
-	void ImGuizmoShow(const Camera* camera, glm::mat4& matrix, const int editMode);
+	void ImGuizmoShow(glm::mat4& modelMatrix, const int editMode);
 	void ImGuizmoShowOption(int* editMode);
+	void ImGuizmoManipulateScene(VulkanContext& ctx, InputContext* inputContext);
 
 	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override {}
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
+
+private:
+	Scene* scene_ = nullptr;
+	const Camera* camera_ = nullptr;
 };
 
 #endif

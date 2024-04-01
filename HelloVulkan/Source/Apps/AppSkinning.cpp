@@ -72,7 +72,7 @@ void AppSkinning::Init()
 	AddPipeline<PipelineResolveMS>(vulkanContext_, resourcesShared_);
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
 	AddPipeline<PipelineTonemap>(vulkanContext_, &(resourcesShared_->singleSampledColorImage_));
-	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
+	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_, scene_.get(), camera_.get());
 	// Present swapchain image
 	AddPipeline<PipelineFinish>(vulkanContext_);
 }
@@ -82,10 +82,7 @@ void AppSkinning::InitScene()
 	// Scene
 	std::vector<ModelCreateInfo> dataArray = 
 	{{
-		.filename = AppConfig::ModelFolder + "Sponza/Sponza.gltf",
-		.instanceCount = 1,
-		.playAnimation = false,
-		.clickable = false
+		.filename = AppConfig::ModelFolder + "Sponza/Sponza.gltf"
 	},
 	{
 		.filename = AppConfig::ModelFolder + "DancingStormtrooper01/DancingStormtrooper01.gltf",
@@ -132,8 +129,7 @@ void AppSkinning::InitLights()
 	resourcesLight_ = AddResources<ResourcesLight>();
 	resourcesLight_->AddLights(vulkanContext_,
 	{
-		// The first light is used to generate the shadow map
-		// and its position is set by ImGui
+		// The first light is a shadow caster
 		{.color_ = glm::vec4(1.f), .radius_ = 1.0f },
 
 		// Add additional lights so that the scene is not too dark
@@ -175,30 +171,7 @@ void AppSkinning::UpdateUI()
 	ImGui::SliderFloat("Y", &(inputContext_.shadowCasterPosition_[1]), 5.0f, 60.0f);
 	ImGui::SliderFloat("Z", &(inputContext_.shadowCasterPosition_[2]), -10.0f, 10.0f);
 
-	// Gizmo
-	if (inputContext_.CanSelectObject())
-	{
-		Ray r = camera_->GetRayFromScreenToWorld(inputContext_.mousePositionX, inputContext_.mousePositionY);
-		int i = scene_->GetClickedInstanceIndex(r);
-		if (i >= 0)
-		{
-			InstanceData& iData = scene_->instanceDataArray_[i];
-			inputContext_.selectedModelIndex = iData.meshData.modelMatrixIndex_;
-			inputContext_.selectedInstanceIndex = i;
-		}
-	}
-
-	// Gizmo
-	if (inputContext_.ShowGizmo())
-	{
-		imguiPtr_->ImGuizmoStart();
-		imguiPtr_->ImGuizmoShow(camera_.get(), 
-			scene_->modelSSBOs_[inputContext_.selectedModelIndex].model,
-			inputContext_.editMode_);
-
-		const InstanceData& iData = scene_->instanceDataArray_[inputContext_.selectedInstanceIndex];
-		scene_->UpdateModelMatrixBuffer(vulkanContext_, iData.modelIndex, iData.perModelInstanceIndex);
-	}
+	imguiPtr_->ImGuizmoManipulateScene(vulkanContext_, &inputContext_);
 	
 	// End
 	imguiPtr_->ImGuiEnd();

@@ -35,18 +35,14 @@ void AppPBRShadow::Init()
 	std::vector<ModelCreateInfo> dataArray = {
 		{
 			.filename = AppConfig::ModelFolder + "Sponza/Sponza.gltf",
-			.instanceCount = 1,
-			.playAnimation = false
 		},
 		{
 			.filename = AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf",
-			.instanceCount = 1,
-			.playAnimation = false
+			.clickable = true
 		},
 		{
 			.filename = AppConfig::ModelFolder + "Hexapod/Hexapod.gltf",
-			.instanceCount = 1,
-			.playAnimation = false
+			.clickable = true
 		}
 	};
 	bool supportDeviceAddress = true;
@@ -97,7 +93,7 @@ void AppPBRShadow::Init()
 	AddPipeline<PipelineResolveMS>(vulkanContext_, resourcesShared_);
 	// This is on-screen render pass that transfers singleSampledColorImage_ to swapchain image
 	AddPipeline<PipelineTonemap>(vulkanContext_, &(resourcesShared_->singleSampledColorImage_));
-	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
+	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_, scene_.get(), camera_.get());
 	// Present swapchain image
 	AddPipeline<PipelineFinish>(vulkanContext_);
 }
@@ -134,6 +130,7 @@ void AppPBRShadow::UpdateUI()
 
 	ImGui::Text("Triangle Count: %i", scene_->triangleCount_);
 	ImGui::Checkbox("Render Lights", &inputContext_.renderLights_);
+	imguiPtr_->ImGuizmoShowOption(&inputContext_.editMode_);
 	ImGui::SeparatorText("Shading");
 	imguiPtr_->ImGuiShowPBRConfig(&inputContext_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
 
@@ -148,6 +145,8 @@ void AppPBRShadow::UpdateUI()
 	ImGui::SliderFloat("X", &(inputContext_.shadowCasterPosition_[0]), -10.0f, 10.0f);
 	ImGui::SliderFloat("Y", &(inputContext_.shadowCasterPosition_[1]), 15.0f, 60.0f);
 	ImGui::SliderFloat("Z", &(inputContext_.shadowCasterPosition_[2]), -10.0f, 10.0f);
+
+	imguiPtr_->ImGuizmoManipulateScene(vulkanContext_, &inputContext_);
 
 	imguiPtr_->ImGuiEnd();
 

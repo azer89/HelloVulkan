@@ -13,12 +13,16 @@
 PipelineImGui::PipelineImGui(
 	VulkanContext& ctx,
 	VkInstance vulkanInstance,
-	GLFWwindow* glfwWindow) :
+	GLFWwindow* glfwWindow,
+	Scene* scene,
+	const Camera* camera) :
 	PipelineBase(ctx,
 		{
 			.type_ = PipelineType::GraphicsOnScreen
 		}
-	)
+	),
+	scene_(scene),
+	camera_(camera)
 {
 	// Create render pass
 	renderPass_.CreateOnScreenColorOnlyRenderPass(ctx);
@@ -40,7 +44,7 @@ PipelineImGui::PipelineImGui(
 
 	ImGuiStyle* style = &ImGui::GetStyle();
 	ImVec4* colors = style->Colors;
-	colors[ImGuiCol_WindowBg] = ImVec4(0.06f, 0.06f, 0.06f, 0.7f);
+	colors[ImGuiCol_WindowBg] = ImVec4(0.06f, 0.06f, 0.06f, 0.5f);
 	colors[ImGuiCol_PlotLines] = ImVec4(0.21f, 0.61f, 0.61f, 1.00f);
 
 	ImGuiIO& io = ImGui::GetIO();
@@ -107,7 +111,7 @@ void PipelineImGui::ImGuiShowFrameData(FrameCounter* frameCounter)
 		nullptr,
 		FLT_MAX,
 		FLT_MAX,
-		ImVec2(425, 50));
+		ImVec2(400, 50));
 }
 
 void PipelineImGui::ImGuiShowPBRConfig(PushConstPBR* pc, float mipmapCount)
@@ -135,7 +139,7 @@ void PipelineImGui::ImGuizmoShowOption(int* editMode)
 	ImGui::RadioButton("Scale", editMode, 3);
 }
 
-void PipelineImGui::ImGuizmoShow(const Camera* camera, glm::mat4& matrix, const int editMode)
+void PipelineImGui::ImGuizmoShow(glm::mat4& modelMatrix, const int editMode)
 {
 	if (editMode == EditMode::None)
 	{
@@ -150,16 +154,49 @@ void PipelineImGui::ImGuizmoShow(const Camera* camera, glm::mat4& matrix, const 
 	ImGuiIO& io = ImGui::GetIO();
 	ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
 
-	glm::mat4 view = camera->GetViewMatrix();
-	glm::mat4 projection = camera->GetProjectionMatrix();
+	glm::mat4 view = camera_->GetViewMatrix();
+	glm::mat4 projection = camera_->GetProjectionMatrix();
 	projection[1][1] *= -1;
 
+	// Note that modelMatrix is modified by the function below
 	ImGuizmo::Manipulate(
 		glm::value_ptr(view),
 		glm::value_ptr(projection),
 		gizmoOperation,
 		ImGuizmo::WORLD,
-		glm::value_ptr(matrix));
+		glm::value_ptr(modelMatrix));
+}
+
+void PipelineImGui::ImGuizmoManipulateScene(VulkanContext& ctx, InputContext* inputContext)
+{
+	if (!scene_ || !camera_)
+	{
+		return;
+	}
+
+	if (inputContext->CanSelectObject())
+	{
+		Ray r = camera_->GetRayFromScreenToWorld(inputContext->mousePositionX, inputContext->mousePositionY);
+		int i = scene_->GetClickedInstanceIndex(r);
+		if (i >= 0)
+		{
+			InstanceData& iData = scene_->instanceDataArray_[i];
+			inputContext->selectedModelIndex = iData.meshData.modelMatrixIndex_;
+			inputContext->selectedInstanceIndex = i;
+		}
+	}
+
+	if (inputContext->ShowGizmo())
+	{
+		ImGuizmoStart();
+		ImGuizmoShow(
+			scene_->modelSSBOs_[inputContext->selectedModelIndex].model,
+			inputContext->editMode_);
+
+		// TODO Code smell because UI directly manipulates the scene
+		const InstanceData& iData = scene_->instanceDataArray_[inputContext->selectedInstanceIndex];
+		scene_->UpdateModelMatrixBuffer(ctx, iData.modelIndex, iData.perModelInstanceIndex);
+	}
 }
 
 void PipelineImGui::ImGuiEnd()
