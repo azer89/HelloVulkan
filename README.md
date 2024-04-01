@@ -25,7 +25,7 @@ A 3D rendering engine built from scratch using Vulkan API and C++.
 * Tonemap postprocessing.
 * Automatic runtime compilation from GLSL to SPIR-V using `glslang`.
 * Lightweight abstraction layer on top of Vulkan for faster development.
-* Minor features: skybox, infinite grid, line rendering, and ImGui / ImGuizmo.
+* Additional features: skybox, infinite grid, line rendering, and ImGui / ImGuizmo.
 
 </br>
 
