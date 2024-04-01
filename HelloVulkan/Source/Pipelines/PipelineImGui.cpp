@@ -167,34 +167,34 @@ void PipelineImGui::ImGuizmoShow(glm::mat4& modelMatrix, const int editMode)
 		glm::value_ptr(modelMatrix));
 }
 
-void PipelineImGui::ImGuizmoManipulateScene(VulkanContext& ctx, UIData* inputContext)
+void PipelineImGui::ImGuizmoManipulateScene(VulkanContext& ctx, UIData* uiData)
 {
 	if (!scene_ || !camera_)
 	{
 		return;
 	}
 
-	if (inputContext->CanSelectObject())
+	if (uiData->CanSelectObject())
 	{
-		Ray r = camera_->GetRayFromScreenToWorld(inputContext->mousePositionX, inputContext->mousePositionY);
+		Ray r = camera_->GetRayFromScreenToWorld(uiData->mousePositionX, uiData->mousePositionY);
 		int i = scene_->GetClickedInstanceIndex(r);
 		if (i >= 0)
 		{
 			InstanceData& iData = scene_->instanceDataArray_[i];
-			inputContext->selectedModelIndex = iData.meshData.modelMatrixIndex_;
-			inputContext->selectedInstanceIndex = i;
+			uiData->selectedModelIndex = iData.meshData.modelMatrixIndex_;
+			uiData->selectedInstanceIndex = i;
 		}
 	}
 
-	if (inputContext->ShowGizmo())
+	if (uiData->ShowGizmo())
 	{
 		ImGuizmoStart();
 		ImGuizmoShow(
-			scene_->modelSSBOs_[inputContext->selectedModelIndex].model,
-			inputContext->editMode_);
+			scene_->modelSSBOs_[uiData->selectedModelIndex].model,
+			uiData->editMode_);
 
 		// TODO Code smell because UI directly manipulates the scene
-		const InstanceData& iData = scene_->instanceDataArray_[inputContext->selectedInstanceIndex];
+		const InstanceData& iData = scene_->instanceDataArray_[uiData->selectedInstanceIndex];
 		scene_->UpdateModelMatrixBuffer(ctx, iData.modelIndex, iData.perModelInstanceIndex);
 	}
 }

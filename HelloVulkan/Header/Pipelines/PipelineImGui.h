@@ -30,7 +30,7 @@ public:
 	void ImGuizmoStart();
 	void ImGuizmoShow(glm::mat4& modelMatrix, const int editMode);
 	void ImGuizmoShowOption(int* editMode);
-	void ImGuizmoManipulateScene(VulkanContext& ctx, UIData* inputContext);
+	void ImGuizmoManipulateScene(VulkanContext& ctx, UIData* uiData);
 
 	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override {}
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
