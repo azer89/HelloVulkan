@@ -166,10 +166,13 @@ CameraUBO Camera::GetCameraUBO() const
 
 RaytracingCameraUBO Camera::GetRaytracingCameraUBO() const
 {
+	static uint32_t frameCounter = 0;
+
 	return
 	{
 		.projectionInverse = glm::inverse(projectionMatrix_),
 		.viewInverse = glm::inverse(viewMatrix_),
+		.frame = frameCounter++
 	};
 }
 

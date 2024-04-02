@@ -21,6 +21,8 @@ struct RaytracingCameraUBO
 	glm::mat4 projectionInverse;
 	alignas(16)
 	glm::mat4 viewInverse;
+	alignas(4)
+	uint32_t frame;
 };
 
 struct ShadowMapUBO

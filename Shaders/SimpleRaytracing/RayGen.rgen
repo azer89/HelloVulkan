@@ -9,6 +9,7 @@ layout(set = 0, binding = 2) uniform CameraProperties
 {
 	mat4 projInverse;
 	mat4 viewInverse;
+	uint frame;
 }
 cam;
 
@@ -16,7 +17,12 @@ layout(location = 0) rayPayloadEXT vec3 hitValue;
 
 void main()
 {
-	const vec2 pixelCenter = vec2(gl_LaunchIDEXT.xy) + vec2(0.5);
+	uint seed = TEA(gl_LaunchIDEXT.y * gl_LaunchSizeEXT.x + gl_LaunchIDEXT.x, cam.frame);
+	float r1 = RND(seed);
+	float r2 = RND(seed);
+
+	vec2 subpixelJitter = cam.frame == 0 ? vec2(0.5f, 0.5f) : vec2(r1, r2);
+	const vec2 pixelCenter = vec2(gl_LaunchIDEXT.xy) + subpixelJitter;
 	const vec2 inUV = pixelCenter/vec2(gl_LaunchSizeEXT.xy);
 	vec2 d = inUV * 2.0 - 1.0;
 
