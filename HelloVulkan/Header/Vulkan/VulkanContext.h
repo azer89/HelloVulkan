@@ -163,62 +163,59 @@ private:
 		VkFormatFeatureFlags features) const;
 
 private:
-	VkSwapchainKHR swapchain_;
-	std::vector<VkImage> swapchainImages_;
-	std::vector<VkImageView> swapchainImageViews_;
-	VkFormat swapchainImageFormat_;
-	uint32_t currentSwapchainImageIndex_; // Current image index
-	uint32_t swapchainWidth_;
-	uint32_t swapchainHeight_;
+	VkSwapchainKHR swapchain_ = nullptr;
+	std::vector<VkImage> swapchainImages_ = {};
+	std::vector<VkImageView> swapchainImageViews_ = {};
+	VkFormat swapchainImageFormat_ = VK_FORMAT_UNDEFINED;
+	uint32_t currentSwapchainImageIndex_ = 0; // Current image index
+	uint32_t swapchainWidth_ = 0;
+	uint32_t swapchainHeight_ = 0;
 	
-	VkFormat depthFormat_;
-	VkSampleCountFlagBits msaaSampleCount_;
+	VkFormat depthFormat_ = VK_FORMAT_UNDEFINED;
+	VkSampleCountFlagBits msaaSampleCount_ = VK_SAMPLE_COUNT_1_BIT;
 
-	VkDevice device_;
-	VkPhysicalDevice physicalDevice_;
-	VkPhysicalDeviceMemoryProperties memoryProperties_;
+	VkDevice device_ = nullptr;
+	VkPhysicalDevice physicalDevice_ = nullptr;;
+	VkPhysicalDeviceMemoryProperties memoryProperties_ = {};
 
 	// Graphics
-	VkQueue graphicsQueue_;
-	uint32_t graphicsFamily_;
-	// Note that all graphics command buffers are created from this command pool below.
-	// So you need to create multiple command pools if you want to use vkResetCommandPool().
-	VkCommandPool graphicsCommandPool_;
+	uint32_t graphicsFamily_ = 0;
+	VkQueue graphicsQueue_ = nullptr;
+	VkCommandPool graphicsCommandPool_ = nullptr;
 
 	// Compute
-	VkQueue computeQueue_;
-	uint32_t computeFamily_;
-	VkCommandPool computeCommandPool_;
+	uint32_t computeFamily_ = 0;
+	VkQueue computeQueue_ = nullptr;
+	VkCommandPool computeCommandPool_ = nullptr;
 
-	std::vector<uint32_t> deviceQueueIndices_;
+	std::vector<uint32_t> deviceQueueIndices_ = {};
 
-	uint32_t frameIndex_;
-	std::array<FrameData, AppConfig::FrameCount> frameDataArray_;
+	uint32_t frameIndex_ = 0;
+	std::array<FrameData, AppConfig::FrameCount> frameDataArray_ = {};
 
-	VmaAllocator vmaAllocator_;
+	VmaAllocator vmaAllocator_ = nullptr;
 
-	ContextConfig config_;
+	ContextConfig config_ = {};
 
 	// Raytracing and bindless
-	VkPhysicalDeviceBufferDeviceAddressFeatures deviceAddressEnabledFeatures_;
+	VkPhysicalDeviceBufferDeviceAddressFeatures deviceAddressEnabledFeatures_ = {};
 
 	// Raytracing
-	VkPhysicalDeviceRayTracingPipelinePropertiesKHR rtPipelineProperties_;
-	VkPhysicalDeviceAccelerationStructureFeaturesKHR rtASFeatures_;
+	VkPhysicalDeviceRayTracingPipelinePropertiesKHR rtPipelineProperties_ = {};
+	VkPhysicalDeviceAccelerationStructureFeaturesKHR rtASFeatures_ = {};
 	
-	VkPhysicalDeviceRayTracingPipelineFeaturesKHR rtPipelineEnabledFeatures_;
-	VkPhysicalDeviceAccelerationStructureFeaturesKHR rtASEnabledFeatures;
+	VkPhysicalDeviceRayTracingPipelineFeaturesKHR rtPipelineEnabledFeatures_ = {};
+	VkPhysicalDeviceAccelerationStructureFeaturesKHR rtASEnabledFeatures = {};
 
 	// Bindless Textures
-	VkPhysicalDeviceDescriptorIndexingFeaturesEXT descriptorIndexingFeatures_;
-	//VkPhysicalDeviceShaderDrawParametersFeatures shaderDrawFeatures_;
+	VkPhysicalDeviceDescriptorIndexingFeaturesEXT descriptorIndexingFeatures_ = {};
 
 	// Features
 	// NOTE features2_ and features13_ are always created
-	VkPhysicalDeviceVulkan13Features features13_;
-	VkPhysicalDeviceVulkan11Features features11_;
-	VkPhysicalDeviceFeatures2 features2_;
-	VkPhysicalDeviceFeatures features_;
+	VkPhysicalDeviceVulkan13Features features13_ = {};
+	VkPhysicalDeviceVulkan11Features features11_ = {};
+	VkPhysicalDeviceFeatures2 features2_ = {};
+	VkPhysicalDeviceFeatures features_ = {};
 };
 
 #endif
