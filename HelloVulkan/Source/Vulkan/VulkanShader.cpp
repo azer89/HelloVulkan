@@ -224,66 +224,31 @@ VkShaderStageFlagBits GLSLangShaderStageToVulkan(glslang_stage_t sh)
 {
 	switch (sh)
 	{
-	case GLSLANG_STAGE_VERTEX:
-		return VK_SHADER_STAGE_VERTEX_BIT;
-	case GLSLANG_STAGE_FRAGMENT:
-		return VK_SHADER_STAGE_FRAGMENT_BIT;
-	case GLSLANG_STAGE_GEOMETRY:
-		return VK_SHADER_STAGE_GEOMETRY_BIT;
-	case GLSLANG_STAGE_TESSCONTROL:
-		return VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
-	case GLSLANG_STAGE_TESSEVALUATION:
-		return VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
-	case GLSLANG_STAGE_COMPUTE:
-		return VK_SHADER_STAGE_COMPUTE_BIT;
-	case GLSLANG_STAGE_CLOSESTHIT:
-		return VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR;
-	case GLSLANG_STAGE_MISS:
-		return VK_SHADER_STAGE_MISS_BIT_KHR;
-	case GLSLANG_STAGE_RAYGEN:
-		return VK_SHADER_STAGE_RAYGEN_BIT_KHR;
+	case GLSLANG_STAGE_VERTEX: return VK_SHADER_STAGE_VERTEX_BIT;
+	case GLSLANG_STAGE_FRAGMENT: return VK_SHADER_STAGE_FRAGMENT_BIT;
+	case GLSLANG_STAGE_GEOMETRY: return VK_SHADER_STAGE_GEOMETRY_BIT;
+	case GLSLANG_STAGE_TESSCONTROL: return VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
+	case GLSLANG_STAGE_TESSEVALUATION: return VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
+	case GLSLANG_STAGE_COMPUTE: return VK_SHADER_STAGE_COMPUTE_BIT;
+	case GLSLANG_STAGE_CLOSESTHIT: return VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR;
+	case GLSLANG_STAGE_ANYHIT: return VK_SHADER_STAGE_ANY_HIT_BIT_KHR;
+	case GLSLANG_STAGE_MISS: return VK_SHADER_STAGE_MISS_BIT_KHR;
+	case GLSLANG_STAGE_RAYGEN: return VK_SHADER_STAGE_RAYGEN_BIT_KHR;
 	}
-
 	return VK_SHADER_STAGE_VERTEX_BIT;
 }
 
 glslang_stage_t GLSLangShaderStageFromFileName(const char* fileName)
 {
-	if (EndsWith(fileName, ".vert"))
-	{
-		return GLSLANG_STAGE_VERTEX;
-	}
-	if (EndsWith(fileName, ".frag"))
-	{
-		return GLSLANG_STAGE_FRAGMENT;
-	}
-	if (EndsWith(fileName, ".comp"))
-	{
-		return GLSLANG_STAGE_COMPUTE;
-	}
-	if (EndsWith(fileName, ".rchit"))
-	{
-		return GLSLANG_STAGE_CLOSESTHIT;
-	}
-	if (EndsWith(fileName, ".rmiss"))
-	{
-		return GLSLANG_STAGE_MISS;
-	}
-	if (EndsWith(fileName, ".rgen"))
-	{
-		return GLSLANG_STAGE_RAYGEN;
-	}
-	if (EndsWith(fileName, ".geom"))
-	{
-		return GLSLANG_STAGE_GEOMETRY;
-	}
-	if (EndsWith(fileName, ".tesc"))
-	{
-		return GLSLANG_STAGE_TESSCONTROL;
-	}
-	if (EndsWith(fileName, ".tese"))
-	{
-		return GLSLANG_STAGE_TESSEVALUATION;
-	}
+	if (EndsWith(fileName, ".vert")) { return GLSLANG_STAGE_VERTEX; }
+	if (EndsWith(fileName, ".frag")) { return GLSLANG_STAGE_FRAGMENT; }
+	if (EndsWith(fileName, ".comp")) { return GLSLANG_STAGE_COMPUTE; }
+	if (EndsWith(fileName, ".rchit")) { return GLSLANG_STAGE_CLOSESTHIT; }
+	if (EndsWith(fileName, ".rahit")) { return GLSLANG_STAGE_ANYHIT; }
+	if (EndsWith(fileName, ".rmiss")) { return GLSLANG_STAGE_MISS; }
+	if (EndsWith(fileName, ".rgen")) { return GLSLANG_STAGE_RAYGEN; }
+	if (EndsWith(fileName, ".geom")) { return GLSLANG_STAGE_GEOMETRY; }
+	if (EndsWith(fileName, ".tesc")) { return GLSLANG_STAGE_TESSCONTROL; }
+	if (EndsWith(fileName, ".tese")) { return GLSLANG_STAGE_TESSEVALUATION; }
 	return GLSLANG_STAGE_VERTEX;
 }
