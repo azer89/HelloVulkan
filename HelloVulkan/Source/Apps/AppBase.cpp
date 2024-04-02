@@ -373,10 +373,10 @@ void AppBase::ProcessInput()
 	if (glfwGetKey(glfwWindow_, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS ||
 		glfwGetKey(glfwWindow_, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS)
 	{
-		if (glfwGetKey(glfwWindow_, GLFW_KEY_N) == GLFW_PRESS) { uiData_.gizmoMode_ = 0; }
-		else if (glfwGetKey(glfwWindow_, GLFW_KEY_T) == GLFW_PRESS) { uiData_.gizmoMode_ = 1; }
-		else if (glfwGetKey(glfwWindow_, GLFW_KEY_R) == GLFW_PRESS) { uiData_.gizmoMode_ = 2; }
-		else if (glfwGetKey(glfwWindow_, GLFW_KEY_S) == GLFW_PRESS) { uiData_.gizmoMode_ = 3; }
+		if (glfwGetKey(glfwWindow_, GLFW_KEY_N) == GLFW_PRESS) { uiData_.gizmoMode_ = GizmoMode::None; }
+		else if (glfwGetKey(glfwWindow_, GLFW_KEY_T) == GLFW_PRESS) { uiData_.gizmoMode_ = GizmoMode::Translate; }
+		else if (glfwGetKey(glfwWindow_, GLFW_KEY_R) == GLFW_PRESS) { uiData_.gizmoMode_ = GizmoMode::Rotate; }
+		else if (glfwGetKey(glfwWindow_, GLFW_KEY_S) == GLFW_PRESS) { uiData_.gizmoMode_ = GizmoMode::Scale; }
 	}
 	else
 	{
