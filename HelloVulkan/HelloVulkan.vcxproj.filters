@@ -240,6 +240,9 @@
     <None Include="..\Shaders\Skinning.comp">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\Shaders\SimpleRaytracing\Random.glsl">
+      <Filter>Shaders\SimpleRaytracing</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Camera.h">
