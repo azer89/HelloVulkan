@@ -49,12 +49,12 @@ void Animation::AddBones(const aiAnimation* animation)
 		// Add additional bones if not found
 		if (!model_->boneInfoMap_.contains(boneName))
 		{
-			model_->boneInfoMap_[boneName].id = boneCounter;
+			model_->boneInfoMap_[boneName].id_ = boneCounter;
 			boneCounter++;
 		}
 
 		// Add the bone to map
-		boneMap_[boneName] = Bone(boneName, model_->boneInfoMap_[boneName].id, channel);
+		boneMap_[boneName] = Bone(boneName, model_->boneInfoMap_[boneName].id_, channel);
 	}
 }
 
@@ -62,15 +62,15 @@ void Animation::CreateHierarchy(AnimationNode& dest, const aiNode* src)
 {
 	assert(src);
 
-	dest.name = src->mName.data;
-	dest.transformation = CastToGLMMat4(src->mTransformation);
-	dest.childrenCount = src->mNumChildren;
+	dest.name_ = src->mName.data;
+	dest.transformation_ = CastToGLMMat4(src->mTransformation);
+	dest.childrenCount_ = src->mNumChildren;
 
 	for (uint32_t i = 0; i < src->mNumChildren; i++)
 	{
 		AnimationNode newData;
 		CreateHierarchy(newData, src->mChildren[i]);
-		dest.children.push_back(newData);
+		dest.children_.push_back(newData);
 	}
 }
 
@@ -78,8 +78,8 @@ bool Animation::GetIndexAndOffsetMatrix(const std::string& name, int& index, glm
 {
 	if (model_->boneInfoMap_.contains(name))
 	{
-		index = model_->boneInfoMap_[name].id;
-		offsetMatrix = model_->boneInfoMap_[name].offsetMatrix;
+		index = model_->boneInfoMap_[name].id_;
+		offsetMatrix = model_->boneInfoMap_[name].offsetMatrix_;
 		return true;
 	}
 	return false;

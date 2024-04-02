@@ -6,9 +6,9 @@
 struct Ray
 {
 public:
-	glm::vec3 origin_;
-	glm::vec3 direction_;
-	glm::vec3 dirFrac_;
+	glm::vec3 origin_ = {};
+	glm::vec3 direction_ = {};
+	glm::vec3 dirFrac_ = {};
 
 public:
 	Ray(glm::vec3 origin, glm::vec3 direction) :

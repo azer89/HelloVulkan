@@ -28,8 +28,8 @@ Bone::Bone(const std::string& name, int id, const aiNodeAnim* channel) :
 		float timeStamp = static_cast<float>(channel->mPositionKeys[positionIndex].mTime);
 		KeyPosition data =
 		{
-			.position = CastToGLMVec3(aiPosition),
-			.timeStamp = timeStamp
+			.position_ = CastToGLMVec3(aiPosition),
+			.timeStamp_ = timeStamp
 		};
 		positions_.push_back(data);
 	}
@@ -41,8 +41,8 @@ Bone::Bone(const std::string& name, int id, const aiNodeAnim* channel) :
 		float timeStamp = static_cast<float>(channel->mRotationKeys[rotationIndex].mTime);
 		KeyRotation data =
 		{
-			.orientation = CastToGLMQuat(aiOrientation),
-			.timeStamp = timeStamp
+			.orientation_ = CastToGLMQuat(aiOrientation),
+			.timeStamp_ = timeStamp
 		};
 		rotations_.push_back(data);
 	}
@@ -54,8 +54,8 @@ Bone::Bone(const std::string& name, int id, const aiNodeAnim* channel) :
 		float timeStamp = static_cast<float>(channel->mScalingKeys[keyIndex].mTime);
 		KeyScale data =
 		{
-			.scale = CastToGLMVec3(scale),
-			.timeStamp = timeStamp
+			.scale_ = CastToGLMVec3(scale),
+			.timeStamp_ = timeStamp
 		};
 		scales_.push_back(data);
 	}
@@ -73,7 +73,7 @@ int Bone::GetPositionIndex(float animationTime) const
 {
 	for (uint32_t index = 0; index < positionCount_ - 1; ++index)
 	{
-		if (animationTime < positions_[index + 1].timeStamp)
+		if (animationTime < positions_[index + 1].timeStamp_)
 		{
 			return static_cast<int>(index);
 		}
@@ -86,7 +86,7 @@ int Bone::GetRotationIndex(float animationTime) const
 {
 	for (uint32_t index = 0; index < rotationCount_ - 1; ++index)
 	{
-		if (animationTime < rotations_[index + 1].timeStamp)
+		if (animationTime < rotations_[index + 1].timeStamp_)
 		{
 			return static_cast<int>(index);
 		}
@@ -99,7 +99,7 @@ int Bone::GetScaleIndex(float animationTime) const
 {
 	for (uint32_t index = 0; index < scalingCount_ - 1; ++index)
 	{
-		if (animationTime < scales_[index + 1].timeStamp)
+		if (animationTime < scales_[index + 1].timeStamp_)
 		{
 			return static_cast<int>(index);
 		}
@@ -119,16 +119,16 @@ glm::mat4 Bone::InterpolatePosition(float animationTime)
 {
 	if (positionCount_ == 1)
 	{
-		return glm::translate(glm::mat4(1.0f), positions_[0].position);
+		return glm::translate(glm::mat4(1.0f), positions_[0].position_);
 	}
 
 	const int p0Index = GetPositionIndex(animationTime);
 	const int p1Index = p0Index + 1;
-	const float scaleFactor = GetScaleFactor(positions_[p0Index].timeStamp,
-		positions_[p1Index].timeStamp, animationTime);
+	const float scaleFactor = GetScaleFactor(positions_[p0Index].timeStamp_,
+		positions_[p1Index].timeStamp_, animationTime);
 	const glm::vec3 finalPosition =
-		glm::mix(positions_[p0Index].position,
-			positions_[p1Index].position,
+		glm::mix(positions_[p0Index].position_,
+			positions_[p1Index].position_,
 			scaleFactor);
 	return glm::translate(glm::mat4(1.0f), finalPosition);
 }
@@ -137,17 +137,17 @@ glm::mat4 Bone::InterpolateRotation(float animationTime)
 {
 	if (rotationCount_ == 1)
 	{
-		const auto rotation = glm::normalize(rotations_[0].orientation);
+		const auto rotation = glm::normalize(rotations_[0].orientation_);
 		return glm::toMat4(rotation);
 	}
 
 	const int p0Index = GetRotationIndex(animationTime);
 	const int p1Index = p0Index + 1;
-	const float scaleFactor = GetScaleFactor(rotations_[p0Index].timeStamp,
-		rotations_[p1Index].timeStamp, animationTime);
+	const float scaleFactor = GetScaleFactor(rotations_[p0Index].timeStamp_,
+		rotations_[p1Index].timeStamp_, animationTime);
 	glm::quat finalRotation =
-		glm::slerp(rotations_[p0Index].orientation,
-			rotations_[p1Index].orientation,
+		glm::slerp(rotations_[p0Index].orientation_,
+			rotations_[p1Index].orientation_,
 			scaleFactor);
 	finalRotation = glm::normalize(finalRotation);
 	return glm::toMat4(finalRotation);
@@ -158,16 +158,16 @@ glm::mat4 Bone::InterpolateScaling(float animationTime)
 {
 	if (scalingCount_ == 1)
 	{
-		return glm::scale(glm::mat4(1.0f), scales_[0].scale);
+		return glm::scale(glm::mat4(1.0f), scales_[0].scale_);
 	}
 
 	const int p0Index = GetScaleIndex(animationTime);
 	const int p1Index = p0Index + 1;
-	const float scaleFactor = GetScaleFactor(scales_[p0Index].timeStamp,
-		scales_[p1Index].timeStamp, animationTime);
+	const float scaleFactor = GetScaleFactor(scales_[p0Index].timeStamp_,
+		scales_[p1Index].timeStamp_, animationTime);
 	const glm::vec3 finalScale =
-		glm::mix(scales_[p0Index].scale,
-			scales_[p1Index].scale,
+		glm::mix(scales_[p0Index].scale_,
+			scales_[p1Index].scale_,
 			scaleFactor);
 	return glm::scale(glm::mat4(1.0f), finalScale);
 }

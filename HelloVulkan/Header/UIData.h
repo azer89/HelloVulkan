@@ -5,7 +5,7 @@
 
 #include <array>
 
-namespace EditMode
+namespace GizmoMode
 {
 	constexpr int None = 0;
 	constexpr int Translate = 1;
@@ -13,6 +13,9 @@ namespace EditMode
 	constexpr int Scale = 3;
 };
 
+/*
+Variables used by ImGui and used by pipelines and resources
+*/
 struct UIData
 {
 public:
@@ -33,10 +36,9 @@ public:
 	float shadowMaxBias_ = 0.001f;
 
 	// Mouse-related
-	bool firstMouse_ = true;
-	bool leftMousePressed_ = false;
-	bool leftMouseHold_ = false;
-	bool showImgui_ = true;
+	bool mouseFirstUse_ = true;
+	bool mouseLeftPressed_ = false; // Left button pressed
+	bool mouseLeftHold_ = false; // Left button hold
 
 	// Mouse position at all times
 	float mousePositionX = 0;
@@ -46,10 +48,11 @@ public:
 	float mousePressX = 0;
 	float mousePressY = 0;
 
-	// Gizmo
-	int editMode_ = 0;
-	int selectedModelIndex = -1;
-	int selectedInstanceIndex = -1;
+	bool imguiShow_ = true;
+
+	int gizmoMode_ = 0;
+	int gizmoModelIndex = -1;
+	int gizmoInstanceIndex = -1;
 
 	bool renderInfiniteGrid_ = true;
 	bool renderDebug_ = false;
@@ -57,15 +60,8 @@ public:
 	bool renderLights_ = true;
 
 public:
-	bool CanSelectObject() const
-	{
-		return leftMousePressed_ && editMode_ != 0;
-	}
-
-	bool ShowGizmo() const
-	{
-		return selectedModelIndex > 0 && selectedInstanceIndex > 0;
-	}
+	bool GizmoCanSelect() const { return mouseLeftPressed_ && gizmoMode_ != 0; }
+	bool GizmoActive() const { return gizmoModelIndex > 0 && gizmoInstanceIndex > 0; }
 };
 
 #endif

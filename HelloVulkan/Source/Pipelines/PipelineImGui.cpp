@@ -141,15 +141,15 @@ void PipelineImGui::ImGuizmoShowOption(int* editMode)
 
 void PipelineImGui::ImGuizmoShow(glm::mat4& modelMatrix, const int editMode)
 {
-	if (editMode == EditMode::None)
+	if (editMode == GizmoMode::None)
 	{
 		return;
 	}
 
 	static ImGuizmo::OPERATION gizmoOperation = ImGuizmo::TRANSLATE;
 
-	gizmoOperation = editMode == EditMode::Translate ? ImGuizmo::TRANSLATE :
-		(editMode == EditMode::Rotate ? ImGuizmo::ROTATE : ImGuizmo::SCALE);
+	gizmoOperation = editMode == GizmoMode::Translate ? ImGuizmo::TRANSLATE :
+		(editMode == GizmoMode::Rotate ? ImGuizmo::ROTATE : ImGuizmo::SCALE);
 
 	ImGuiIO& io = ImGui::GetIO();
 	ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
@@ -174,28 +174,28 @@ void PipelineImGui::ImGuizmoManipulateScene(VulkanContext& ctx, UIData* uiData)
 		return;
 	}
 
-	if (uiData->CanSelectObject())
+	if (uiData->GizmoCanSelect())
 	{
 		Ray r = camera_->GetRayFromScreenToWorld(uiData->mousePositionX, uiData->mousePositionY);
 		int i = scene_->GetClickedInstanceIndex(r);
 		if (i >= 0)
 		{
 			InstanceData& iData = scene_->instanceDataArray_[i];
-			uiData->selectedModelIndex = iData.meshData.modelMatrixIndex_;
-			uiData->selectedInstanceIndex = i;
+			uiData->gizmoModelIndex = iData.meshData_.modelMatrixIndex_;
+			uiData->gizmoInstanceIndex = i;
 		}
 	}
 
-	if (uiData->ShowGizmo())
+	if (uiData->GizmoActive())
 	{
 		ImGuizmoStart();
 		ImGuizmoShow(
-			scene_->modelSSBOs_[uiData->selectedModelIndex].model,
-			uiData->editMode_);
+			scene_->modelSSBOs_[uiData->gizmoModelIndex].model,
+			uiData->gizmoMode_);
 
 		// TODO Code smell because UI directly manipulates the scene
-		const InstanceData& iData = scene_->instanceDataArray_[uiData->selectedInstanceIndex];
-		scene_->UpdateModelMatrixBuffer(ctx, iData.modelIndex, iData.perModelInstanceIndex);
+		const InstanceData& iData = scene_->instanceDataArray_[uiData->gizmoInstanceIndex];
+		scene_->UpdateModelMatrixBuffer(ctx, iData.modelIndex_, iData.perModelInstanceIndex_);
 	}
 }
 

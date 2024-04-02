@@ -42,7 +42,7 @@ void PipelineSkinning::Execute(VulkanContext& ctx, VkCommandBuffer commandBuffer
 	ctx.InsertDebugLabel(commandBuffer, "PipelineSkinning", 0xffff9999);
 
 	constexpr float workgroupSize = 256.f;
-	const float vertexSize = static_cast<float>(scene_->sceneData_.vertices.size());
+	const float vertexSize = static_cast<float>(scene_->sceneData_.vertices_.size());
 	const uint32_t groupSizeX = static_cast<uint32_t>(std::ceil(vertexSize / workgroupSize));
 	vkCmdDispatch(commandBuffer, groupSizeX, 1, 1);
 

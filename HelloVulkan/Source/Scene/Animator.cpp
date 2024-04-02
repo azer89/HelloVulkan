@@ -34,8 +34,8 @@ void Animator::CalculateBoneTransform(
 	const glm::mat4& parentTransform,
 	std::vector<glm::mat4>& skinningMatrices)
 {
-	const std::string nodeName = node->name;
-	glm::mat4 nodeTransform = node->transformation;
+	const std::string nodeName = node->name_;
+	glm::mat4 nodeTransform = node->transformation_;
 	Bone* bone = animation->GetBone(nodeName);
 
 	if (bone)
@@ -61,11 +61,11 @@ void Animator::CalculateBoneTransform(
 		}
 	}
 
-	for (uint32_t i = 0; i < node->childrenCount; ++i)
+	for (uint32_t i = 0; i < node->childrenCount_; ++i)
 	{
 		CalculateBoneTransform(
 			animation,
-			&node->children[i],
+			&node->children_[i],
 			globalTransformation,
 			skinningMatrices);
 	}

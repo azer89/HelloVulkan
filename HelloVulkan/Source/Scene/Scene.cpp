@@ -109,21 +109,21 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 	
 	// Vertices
 	// NOTE This may contain post-skinning vertices
-	const VkDeviceSize vertexBufferSize = sizeof(VertexData) * sceneData_.vertices.size();
+	const VkDeviceSize vertexBufferSize = sizeof(VertexData) * sceneData_.vertices_.size();
 	vertexBuffer_.CreateGPUOnlyBuffer(
 		ctx,
 		vertexBufferSize,
-		sceneData_.vertices.data(),
+		sceneData_.vertices_.data(),
 		bufferUsage);
 
 	// Indices
-	const VkDeviceSize indexBufferSize = sizeof(uint32_t) * sceneData_.indices.size();
+	const VkDeviceSize indexBufferSize = sizeof(uint32_t) * sceneData_.indices_.size();
 	indexBuffer_.CreateGPUOnlyBuffer(
 		ctx,
 		indexBufferSize,
-		sceneData_.indices.data(),
+		sceneData_.indices_.data(),
 		bufferUsage);
-	triangleCount_ = static_cast<uint32_t>(sceneData_.indices.size()) / 3u; // TODO This somehow can be wrong
+	triangleCount_ = static_cast<uint32_t>(sceneData_.indices_.size()) / 3u; // TODO This somehow can be wrong
 
 	// Mesh Data
 	const VkDeviceSize meshDataBufferSize = sizeof(MeshData) * meshDataArray_.size();
@@ -190,8 +190,8 @@ void Scene::CreateAnimationResources(VulkanContext& ctx)
 		return;
 	}
 
-	skinningMatrices_.reserve(sceneData_.boneMatrixCount + 1);
-	for (uint32_t i = 0; i < sceneData_.boneMatrixCount; i++)
+	skinningMatrices_.reserve(sceneData_.boneMatrixCount_ + 1);
+	for (uint32_t i = 0; i < sceneData_.boneMatrixCount_; i++)
 	{
 		skinningMatrices_.emplace_back(1.0f);
 	}
@@ -211,35 +211,35 @@ void Scene::CreateAnimationResources(VulkanContext& ctx)
 	if (supportDeviceAddress_) { bufferUsage |= VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT; }
 
 	// Bone IDs
-	const VkDeviceSize boneIDBufferSize = sizeof(iSVec) * sceneData_.boneIDArray.size();
+	const VkDeviceSize boneIDBufferSize = sizeof(iSVec) * sceneData_.boneIDArray_.size();
 	boneIDBuffer_.CreateGPUOnlyBuffer(
 		ctx,
 		boneIDBufferSize,
-		sceneData_.boneIDArray.data(),
+		sceneData_.boneIDArray_.data(),
 		bufferUsage);
 	
 	// Bone weights
-	const VkDeviceSize boneWeightBufferSize = sizeof(fSVec) * sceneData_.boneWeightArray.size();
+	const VkDeviceSize boneWeightBufferSize = sizeof(fSVec) * sceneData_.boneWeightArray_.size();
 	boneWeightBuffer_.CreateGPUOnlyBuffer(
 		ctx,
 		boneWeightBufferSize,
-		sceneData_.boneWeightArray.data(),
+		sceneData_.boneWeightArray_.data(),
 		bufferUsage);
 
 	// Map from preSkinningVertices to vertices
-	const VkDeviceSize skinningIndicesBufferSize = sizeof(uint32_t) * sceneData_.skinningIndices.size();
+	const VkDeviceSize skinningIndicesBufferSize = sizeof(uint32_t) * sceneData_.skinningIndices_.size();
 	skinningIndicesBuffer_.CreateGPUOnlyBuffer(
 		ctx,
 		skinningIndicesBufferSize,
-		sceneData_.skinningIndices.data(),
+		sceneData_.skinningIndices_.data(),
 		bufferUsage);
 
 	// Pre-skinned vertex buffer
-	const VkDeviceSize vertexBufferSize = sizeof(VertexData) * sceneData_.preSkinningVertices.size();
+	const VkDeviceSize vertexBufferSize = sizeof(VertexData) * sceneData_.preSkinningVertices_.size();
 	preSkinningVertexBuffer_.CreateGPUOnlyBuffer(
 		ctx,
 		vertexBufferSize,
-		sceneData_.preSkinningVertices.data(),
+		sceneData_.preSkinningVertices_.data(),
 		bufferUsage);
 
 	// Bone matrices buffers
@@ -270,7 +270,7 @@ void Scene::CreateDataStructures()
 		{
 			const uint32_t vertexStart = models_[m].meshes_[i].GetVertexOffset();
 			const uint32_t vertexCount = models_[m].meshes_[i].GetVertexCount();
-			tempOriArray[i] = BoundingBox(Utility::Slide(std::span{ sceneData_.vertices }, vertexStart, vertexCount));
+			tempOriArray[i] = BoundingBox(Utility::Slide(std::span{ sceneData_.vertices_ }, vertexStart, vertexCount));
 		}
 
 		// Create the actual InstanceData
@@ -280,11 +280,11 @@ void Scene::CreateDataStructures()
 			{
 				instanceDataArray_.push_back(
 				{
-					.modelIndex = m,
-					.perModelInstanceIndex = i,
-					.perModelMeshIndex = j,
-					.meshData = models_[m].meshes_[j].GetMeshData(textureCounter, matrixCounter),
-					.originalBoundingBox = tempOriArray[j] // Copy bounding box from temporary
+					.modelIndex_ = m,
+					.perModelInstanceIndex_ = i,
+					.perModelMeshIndex_ = j,
+					.meshData_ = models_[m].meshes_[j].GetMeshData(textureCounter, matrixCounter),
+					.originalBoundingBox_ = tempOriArray[j] // Copy bounding box from temporary
 				}
 				);
 				++globalInstanceCounter;
@@ -300,7 +300,7 @@ void Scene::CreateDataStructures()
 		std::end(instanceDataArray_),
 		[](InstanceData a, InstanceData b)
 		{
-			return a.meshData.material_ < b.meshData.material_;
+			return a.meshData_.material_ < b.meshData_.material_;
 		});
 
 	// Matrices
@@ -310,7 +310,7 @@ void Scene::CreateDataStructures()
 	meshDataArray_.resize(globalInstanceCounter);
 	for (uint32_t i = 0; i < instanceDataArray_.size(); ++i)
 	{
-		meshDataArray_[i] = instanceDataArray_[i].meshData;
+		meshDataArray_[i] = instanceDataArray_[i].meshData_;
 	}
 
 	// Prepare bounding boxes for frustum culling
@@ -318,7 +318,7 @@ void Scene::CreateDataStructures()
 	for (uint32_t i = 0; i < globalInstanceCounter; ++i)
 	{
 		// Equal the original bb because at this point modelSSBOs_ only has identity matrix
-		transformedBoundingBoxes_[i] = instanceDataArray_[i].originalBoundingBox;
+		transformedBoundingBoxes_[i] = instanceDataArray_[i].originalBoundingBox_;
 	}
 
 	// Create a map
@@ -330,14 +330,14 @@ void Scene::CreateDataStructures()
 		instanceMapArray_[i].resize(instanceCount);
 		for (uint32_t j = 0; j < instanceCount; ++j)
 		{
-			instanceMapArray_[i][j].modelMatrixIndex = matrixCounter++;
+			instanceMapArray_[i][j].modelMatrixIndex_ = matrixCounter++;
 		}
 	}
 	for (uint32_t i = 0; i < globalInstanceCounter; ++i)
 	{
-		const uint32_t modelIndex = instanceDataArray_[i].modelIndex;
-		const uint32_t perModelInstanceIndex = instanceDataArray_[i].perModelInstanceIndex;
-		instanceMapArray_[modelIndex][perModelInstanceIndex].instanceDataIndices.push_back(i);
+		const uint32_t modelIndex = instanceDataArray_[i].modelIndex_;
+		const uint32_t perModelInstanceIndex = instanceDataArray_[i].perModelInstanceIndex_;
+		instanceMapArray_[modelIndex][perModelInstanceIndex].instanceDataIndices_.push_back(i);
 	}
 }
 
@@ -359,7 +359,7 @@ void Scene::UpdateModelMatrix(VulkanContext& ctx,
 		return;
 	}
 
-	const uint32_t matrixIndex = instanceMapArray_[modelIndex][perModelInstanceIndex].modelMatrixIndex;
+	const uint32_t matrixIndex = instanceMapArray_[modelIndex][perModelInstanceIndex].modelMatrixIndex_;
 
 	// Update transformation matrix
 	modelSSBOs_[matrixIndex] = modelUBO;
@@ -373,7 +373,7 @@ void Scene::UpdateModelMatrixBuffer(
 	const uint32_t modelIndex,
 	const uint32_t perModelInstanceIndex)
 {
-	const uint32_t matrixIndex = instanceMapArray_[modelIndex][perModelInstanceIndex].modelMatrixIndex;
+	const uint32_t matrixIndex = instanceMapArray_[modelIndex][perModelInstanceIndex].modelMatrixIndex_;
 	const ModelUBO& modelUBO = modelSSBOs_[matrixIndex];
 
 	// Update SSBO
@@ -387,12 +387,12 @@ void Scene::UpdateModelMatrixBuffer(
 	}
 
 	// Update bounding box buffer
-	const std::vector<uint32_t>& mappedIndices = instanceMapArray_[modelIndex][perModelInstanceIndex].instanceDataIndices;
+	const std::vector<uint32_t>& mappedIndices = instanceMapArray_[modelIndex][perModelInstanceIndex].instanceDataIndices_;
 	if (!mappedIndices.empty())
 	{
 		for (uint32_t i : mappedIndices)
 		{
-			transformedBoundingBoxes_[i] = instanceDataArray_[i].originalBoundingBox.GetTransformed(modelUBO.model);
+			transformedBoundingBoxes_[i] = instanceDataArray_[i].originalBoundingBox_.GetTransformed(modelUBO.model);
 		}
 		// Update bounding box buffers
 		const uint32_t firstIndex = mappedIndices[0];
@@ -414,8 +414,8 @@ void Scene::CreateIndirectBuffer(
 	std::vector<VkDrawIndirectCommand> iCommands(instanceCount);
 	for (uint32_t i = 0; i < instanceCount; ++i)
 	{
-		const uint32_t modelIndex = instanceDataArray_[i].modelIndex;
-		const uint32_t perModelMeshIndex = instanceDataArray_[i].perModelMeshIndex;
+		const uint32_t modelIndex = instanceDataArray_[i].modelIndex_;
+		const uint32_t perModelMeshIndex = instanceDataArray_[i].perModelMeshIndex_;
 
 		iCommands[i] =
 		{
@@ -447,14 +447,14 @@ std::vector<VkDescriptorImageInfo> Scene::GetImageInfos() const
 // This is currently a brute force but can be improved with BVH or pixel perfect technique
 int Scene::GetClickedInstanceIndex(const Ray& ray)
 {
-	float tMin = FLT_MAX;
+	float tMin = std::numeric_limits<float>::max();
 	//int modelIndex = -1; // Debug
 	int instanceIndex = -1;
 
 	for (size_t i = 0; i < transformedBoundingBoxes_.size(); ++i)
 	{
 		InstanceData& iData = instanceDataArray_[i];
-		Model& m = models_[iData.modelIndex];
+		Model& m = models_[iData.modelIndex_];
 		if (!m.modelInfo_.clickable) { continue; }
 
 		float t;

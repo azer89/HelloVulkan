@@ -148,9 +148,9 @@ void PipelineLine::ProcessScene()
 	}*/
 	for (size_t i = 0; i < scene_->instanceDataArray_.size(); ++i)
 	{
-		MeshData& mData = scene_->instanceDataArray_[i].meshData;
+		MeshData& mData = scene_->instanceDataArray_[i].meshData_;
 		glm::mat4& mat = scene_->modelSSBOs_[mData.modelMatrixIndex_].model;
-		BoundingBox& box = scene_->instanceDataArray_[i].originalBoundingBox;
+		BoundingBox& box = scene_->instanceDataArray_[i].originalBoundingBox_;
 		AddBox(
 			mat * glm::translate(glm::mat4(1.f), 0.5f * glm::vec3(box.min_ + box.max_)), // mat
 			0.5f * glm::vec3(box.max_ - box.min_), // size

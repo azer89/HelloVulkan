@@ -188,10 +188,10 @@ void AppBase::DrawFrame()
 	vulkanContext_.IncrementFrameIndex();
 
 	// Mouse input
-	if (uiData_.leftMousePressed_)
+	if (uiData_.mouseLeftPressed_)
 	{
-		uiData_.leftMousePressed_ = false;
-		uiData_.leftMouseHold_ = true;
+		uiData_.mouseLeftPressed_ = false;
+		uiData_.mouseLeftHold_ = true;
 	}
 
 	// End Tracy frame
@@ -274,7 +274,7 @@ void AppBase::ProcessTiming()
 
 bool AppBase::ShowImGui()
 {
-	return uiData_.showImgui_;
+	return uiData_.imguiShow_;
 }
 
 bool AppBase::StillRunning()
@@ -321,15 +321,15 @@ void AppBase::MouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 {
 	const float xPos = static_cast<float>(xposIn);
 	const float yPos = static_cast<float>(yposIn);
-	if (uiData_.firstMouse_)
+	if (uiData_.mouseFirstUse_)
 	{
 		uiData_.mousePositionX = xPos;
 		uiData_.mousePositionY = yPos;
-		uiData_.firstMouse_ = false;
+		uiData_.mouseFirstUse_ = false;
 		return;
 	}
 
-	if (uiData_.leftMousePressed_ || uiData_.leftMouseHold_)
+	if (uiData_.mouseLeftPressed_ || uiData_.mouseLeftHold_)
 	{
 		const float xOffset = xPos - uiData_.mousePositionX;
 		const float yOffset = uiData_.mousePositionY - yPos; // Reversed since y-coordinates go from bottom to top
@@ -345,13 +345,12 @@ void AppBase::MouseButtonCallback(GLFWwindow* window, int button, int action, in
 {
 	if (!ImGui::GetIO().WantCaptureMouse && button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
 	{
-		uiData_.leftMousePressed_ = true;
+		uiData_.mouseLeftPressed_ = true;
 	}
 	else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
 	{
-		uiData_.leftMousePressed_ = false;
-		uiData_.leftMouseHold_ = false;
-		uiData_.firstMouse_ = true;
+		uiData_.mouseLeftPressed_ = false;
+		uiData_.mouseLeftHold_ = false;
 	}
 }
 
@@ -364,7 +363,7 @@ void AppBase::KeyCallback(GLFWwindow* window, int key, int scancode, int action,
 {
 	if (key == GLFW_KEY_I && action == GLFW_PRESS)
 	{
-		uiData_.showImgui_ = !uiData_.showImgui_;
+		uiData_.imguiShow_ = !uiData_.imguiShow_;
 	}
 }
 
@@ -374,10 +373,10 @@ void AppBase::ProcessInput()
 	if (glfwGetKey(glfwWindow_, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS ||
 		glfwGetKey(glfwWindow_, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS)
 	{
-		if (glfwGetKey(glfwWindow_, GLFW_KEY_N) == GLFW_PRESS) { uiData_.editMode_ = 0; }
-		else if (glfwGetKey(glfwWindow_, GLFW_KEY_T) == GLFW_PRESS) { uiData_.editMode_ = 1; }
-		else if (glfwGetKey(glfwWindow_, GLFW_KEY_R) == GLFW_PRESS) { uiData_.editMode_ = 2; }
-		else if (glfwGetKey(glfwWindow_, GLFW_KEY_S) == GLFW_PRESS) { uiData_.editMode_ = 3; }
+		if (glfwGetKey(glfwWindow_, GLFW_KEY_N) == GLFW_PRESS) { uiData_.gizmoMode_ = GizmoMode::None; }
+		else if (glfwGetKey(glfwWindow_, GLFW_KEY_T) == GLFW_PRESS) { uiData_.gizmoMode_ = GizmoMode::Translate; }
+		else if (glfwGetKey(glfwWindow_, GLFW_KEY_R) == GLFW_PRESS) { uiData_.gizmoMode_ = GizmoMode::Rotate; }
+		else if (glfwGetKey(glfwWindow_, GLFW_KEY_S) == GLFW_PRESS) { uiData_.gizmoMode_ = GizmoMode::Scale; }
 	}
 	else
 	{
