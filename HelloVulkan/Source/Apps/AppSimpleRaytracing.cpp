@@ -23,6 +23,7 @@ void AppSimpleRaytracing::Init()
 	AddPipeline<PipelineClear>(vulkanContext_);
 	rtxPtr_ = AddPipeline<PipelineSimpleRaytracing>(vulkanContext_, scene_.get());
 	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
+	// TODO Add tonemapping
 	AddPipeline<PipelineFinish>(vulkanContext_);
 }
 
@@ -49,7 +50,8 @@ void AppSimpleRaytracing::MainLoop()
 {
 	InitVulkan({
 		.supportRaytracing_ = true,
-		.supportMSAA_ = true
+		.supportMSAA_ = true,
+		.supportBindlessTextures_ = true,
 		});
 
 	Init();

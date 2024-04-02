@@ -1,5 +1,5 @@
-#ifndef ACCELERATION_STRUCTURE
-#define ACCELERATION_STRUCTURE
+#ifndef RAYTRACING_ACCELERATION_STRUCTURE
+#define RAYTRACING_ACCELERATION_STRUCTURE
 
 #include "VulkanBuffer.h"
 #include "vk_mem_alloc.h"

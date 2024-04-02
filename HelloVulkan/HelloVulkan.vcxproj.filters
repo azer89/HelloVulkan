@@ -243,6 +243,9 @@
     <None Include="..\Shaders\SimpleRaytracing\Random.glsl">
       <Filter>Shaders\SimpleRaytracing</Filter>
     </None>
+    <None Include="..\Shaders\SimpleRaytracing\GeometryNode.glsl">
+      <Filter>Shaders\SimpleRaytracing</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Camera.h">
@@ -466,6 +469,9 @@
     </ClInclude>
     <ClInclude Include="Header\UIData.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Raytracing\GeometryNode.h">
+      <Filter>Header Files\Raytracing</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

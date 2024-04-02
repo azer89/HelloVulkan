@@ -183,6 +183,7 @@
     <None Include="..\Shaders\Radiance.glsl" />
     <None Include="..\Shaders\ShadowMapping\Depth.frag" />
     <None Include="..\Shaders\ShadowMapping\Poisson.glsl" />
+    <None Include="..\Shaders\SimpleRaytracing\GeometryNode.glsl" />
     <None Include="..\Shaders\SimpleRaytracing\Random.glsl" />
     <None Include="..\Shaders\Skinning.comp" />
     <None Include="..\Shaders\SlotBased\Mesh.frag" />
@@ -219,6 +220,7 @@
     <ClInclude Include="Header\Configs.h" />
     <ClInclude Include="Header\FrameCounter.h" />
     <ClInclude Include="Header\Ray.h" />
+    <ClInclude Include="Header\Raytracing\GeometryNode.h" />
     <ClInclude Include="Header\Utility.h" />
     <ClInclude Include="Header\UIData.h" />
     <ClInclude Include="Header\Pipelines\PipelineAABBGenerator.h" />
