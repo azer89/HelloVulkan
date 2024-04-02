@@ -14,6 +14,7 @@
 #include "GLFW/glfw3.h"
 
 #include <memory>
+#include <type_traits>
 
 class AppBase
 {
@@ -57,6 +58,7 @@ protected:
 	void InitSharedResources();
 
 	template<class T, class... U>
+	requires (std::is_base_of<PipelineBase, T>::value)
 	T* AddPipeline(U&&... u)
 	{
 		// Create std::unique_ptr of Pipeline
@@ -67,6 +69,7 @@ protected:
 	}
 
 	template<class T, class... U>
+	requires (std::is_base_of<ResourcesBase, T>::value)
 	T* AddResources(U&&... u)
 	{
 		// Create std::unique_ptr of Resources
@@ -83,11 +86,11 @@ protected:
 	std::unique_ptr<Camera> camera_ = nullptr;
 
 	// Timing
-	FrameCounter frameCounter_;
+	FrameCounter frameCounter_ = {};
 
 	// These two are not copyable or movable
-	VulkanInstance vulkanInstance_;
-	VulkanContext vulkanContext_;
+	VulkanInstance vulkanInstance_ = {};
+	VulkanContext vulkanContext_ = {};
 
 	// A list of pipelines (graphics, compute, or raytracing)
 	std::vector<std::unique_ptr<PipelineBase>> pipelines_ = {};
@@ -96,9 +99,9 @@ protected:
 	std::vector<std::unique_ptr<ResourcesBase>> resources_ = {};
 
 	// Window size
-	uint32_t windowWidth_;
-	uint32_t windowHeight_;
-	bool shouldRecreateSwapchain_;
+	uint32_t windowWidth_ = 0;
+	uint32_t windowHeight_ = 0;
+	bool shouldRecreateSwapchain_ = true;
 
 	ResourcesShared* resourcesShared_ = nullptr;
 	ResourcesIBL* resourcesIBL_ = nullptr;
