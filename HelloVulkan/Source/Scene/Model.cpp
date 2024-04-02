@@ -146,7 +146,7 @@ void Model::LoadModel(VulkanContext& ctx,
 	directory_ = filepath_.substr(0, filepath_.find_last_of('/'));
 
 	processAnimation_ = modelInfo_.playAnimation && scene_->mAnimations;
-	if (processAnimation_) { boneCounter_ = static_cast<int>(sceneData.boneMatrixCount); }
+	if (processAnimation_) { boneCounter_ = static_cast<int>(sceneData.boneMatrixCount_); }
 
 	// Process assimp's root node recursively
 	ProcessNode(
@@ -155,7 +155,7 @@ void Model::LoadModel(VulkanContext& ctx,
 		scene_->mRootNode,
 		glm::mat4(1.0));
 
-	if (processAnimation_) { sceneData.boneMatrixCount += AppConfig::MaxSkinningMatrices; }
+	if (processAnimation_) { sceneData.boneMatrixCount_ += AppConfig::MaxSkinningMatrices; }
 }
 
 // Processes a node in a recursive fashion.
@@ -220,15 +220,15 @@ void Model::ProcessMesh(
 
 	if (bindlessTexture_)
 	{
-		sceneData.vertices.insert(std::end(sceneData.vertices), std::begin(vertices), std::end(vertices));
-		sceneData.indices.insert(std::end(sceneData.indices), std::begin(indices), std::end(indices));
+		sceneData.vertices_.insert(std::end(sceneData.vertices_), std::begin(vertices), std::end(vertices));
+		sceneData.indices_.insert(std::end(sceneData.indices_), std::begin(indices), std::end(indices));
 
 		if (processAnimation_)
 		{
-			sceneData.boneIDArray.insert(std::end(sceneData.boneIDArray), std::begin(boneIDArray), std::end(boneIDArray));
-			sceneData.boneWeightArray.insert(std::end(sceneData.boneWeightArray), std::begin(boneWeightArray), std::end(boneWeightArray));
-			sceneData.preSkinningVertices.insert(std::end(sceneData.preSkinningVertices), std::begin(vertices), std::end(vertices));
-			sceneData.skinningIndices.insert(std::end(sceneData.skinningIndices), std::begin(skinningIndices), std::end(skinningIndices));
+			sceneData.boneIDArray_.insert(std::end(sceneData.boneIDArray_), std::begin(boneIDArray), std::end(boneIDArray));
+			sceneData.boneWeightArray_.insert(std::end(sceneData.boneWeightArray_), std::begin(boneWeightArray), std::end(boneWeightArray));
+			sceneData.preSkinningVertices_.insert(std::end(sceneData.preSkinningVertices_), std::begin(vertices), std::end(vertices));
+			sceneData.skinningIndices_.insert(std::end(sceneData.skinningIndices_), std::begin(skinningIndices), std::end(skinningIndices));
 		}
 
 		// If Bindless textures, we do not move vertices and indices
@@ -246,8 +246,8 @@ void Model::ProcessMesh(
 		const uint32_t currIndexOffset = static_cast<uint32_t>(indices.size());
 
 		// Update offsets
-		sceneData.vertexOffsets.emplace_back(currVertexOffset + prevVertexOffset);
-		sceneData.indexOffsets.emplace_back(currIndexOffset + prevIndexOffset);
+		sceneData.vertexOffsets_.emplace_back(currVertexOffset + prevVertexOffset);
+		sceneData.indexOffsets_.emplace_back(currIndexOffset + prevIndexOffset);
 	}
 	else
 	{
@@ -305,15 +305,15 @@ void Model::ExtractBoneWeight(
 		{
 			boneInfoMap_[boneName] =
 			{
-				.id = boneCounter_,
-				.offsetMatrix = CastToGLMMat4(mesh->mBones[b]->mOffsetMatrix)
+				.id_ = boneCounter_,
+				.offsetMatrix_ = CastToGLMMat4(mesh->mBones[b]->mOffsetMatrix)
 			};
 			boneID = boneCounter_;
 			++boneCounter_;
 		}
 		else
 		{
-			boneID = boneInfoMap_[boneName].id;
+			boneID = boneInfoMap_[boneName].id_;
 		}
 
 		if (boneID < 0)

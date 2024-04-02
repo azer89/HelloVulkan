@@ -107,12 +107,12 @@ void AppSkinning::InitScene()
 	constexpr float yPos = -0.33f;
 	const glm::vec3 scale = glm::vec3(0.5f, 0.5f, 0.5f);
 
-	for (int x = 0; x < xCount; ++x)
+	for (uint32_t x = 0; x < xCount; ++x)
 	{
-		for (int z = 0; z < zCount; ++z)
+		for (uint32_t z = 0; z < zCount; ++z)
 		{
-			float xPos = x * dist - xMidPos;
-			float zPos = -(z * dist) + zMidPos;
+			float xPos = static_cast<float>(x) * dist - xMidPos;
+			float zPos = -(static_cast<float>(z) * dist) + zMidPos;
 			glm::mat4 modelMatrix(1.f);
 			modelMatrix = glm::translate(modelMatrix, glm::vec3(xPos, yPos, zPos));
 			modelMatrix = glm::scale(modelMatrix, scale);
@@ -155,7 +155,7 @@ void AppSkinning::UpdateUI()
 
 	ImGui::Text("Triangle Count: %i", scene_->triangleCount_);
 	ImGui::Checkbox("Render Lights", &uiData_.renderLights_);
-	imguiPtr_->ImGuizmoShowOption(&uiData_.editMode_);
+	imguiPtr_->ImGuizmoShowOption(&uiData_.gizmoMode_);
 	ImGui::SeparatorText("Shading");
 	imguiPtr_->ImGuiShowPBRConfig(&uiData_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
 

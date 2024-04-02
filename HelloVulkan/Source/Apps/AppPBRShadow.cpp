@@ -130,7 +130,7 @@ void AppPBRShadow::UpdateUI()
 
 	ImGui::Text("Triangle Count: %i", scene_->triangleCount_);
 	ImGui::Checkbox("Render Lights", &uiData_.renderLights_);
-	imguiPtr_->ImGuizmoShowOption(&uiData_.editMode_);
+	imguiPtr_->ImGuizmoShowOption(&uiData_.gizmoMode_);
 	ImGui::SeparatorText("Shading");
 	imguiPtr_->ImGuiShowPBRConfig(&uiData_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
 

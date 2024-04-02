@@ -23,7 +23,7 @@ public:
 
 protected:
 	virtual void UpdateUI();
-	virtual void UpdateUBOs() = 0;
+	virtual void UpdateUBOs() = 0; // TODO Rename to something else
 	void FillCommandBuffer(VkCommandBuffer commandBuffer);
 	
 	void OnWindowResized();
@@ -59,7 +59,7 @@ protected:
 	template<class T, class... U>
 	T* AddPipeline(U&&... u)
 	{
-		// Create std::unique_ptr of pipeline
+		// Create std::unique_ptr of Pipeline
 		std::unique_ptr<T> pipeline = std::make_unique<T>(std::forward<U>(u)...);
 		T* ptr = pipeline.get();
 		pipelines_.push_back(std::move(pipeline)); // Put it in std::vector
@@ -69,7 +69,7 @@ protected:
 	template<class T, class... U>
 	T* AddResources(U&&... u)
 	{
-		// Create std::unique_ptr of resources
+		// Create std::unique_ptr of Resources
 		std::unique_ptr<T> resources = std::make_unique<T>(std::forward<U>(u)...);
 		T* ptr = resources.get();
 		resources_.push_back(std::move(resources)); // Put it in std::vector

@@ -12,8 +12,7 @@
 #include "glm/ext.hpp"
 #include "imgui_impl_vulkan.h"
 
-AppFrustumCulling::AppFrustumCulling() :
-	updateFrustum_(true)
+AppFrustumCulling::AppFrustumCulling()
 {
 }
 
@@ -80,13 +79,13 @@ void AppFrustumCulling::InitScene()
 	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
 	uint32_t iter = 0;
 
-	for (int x = 0; x < xCount; ++x)
+	for (uint32_t x = 0; x < xCount; ++x)
 	{
-		for (int z = 0; z < zCount; ++z)
+		for (uint32_t z = 0; z < zCount; ++z)
 		{
-			float xPos = x * dist - xMidPos;
+			float xPos = static_cast<float>(x) * dist - xMidPos;
 			float yPos = 0.0f;
-			float zPos = -(z * dist) + zMidPos;
+			float zPos = -(static_cast<float>(z) * dist) + zMidPos;
 			glm::mat4 modelMatrix(1.f);
 			modelMatrix = glm::translate(modelMatrix, glm::vec3(xPos, yPos, zPos));
 			scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 0, iter++);

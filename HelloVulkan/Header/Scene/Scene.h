@@ -76,7 +76,7 @@ public:
 	void UpdateAnimation(VulkanContext& ctx, float deltaTime);
 
 private:
-	[[nodiscard]] bool HasAnimation() const { return !sceneData_.boneIDArray.empty(); }
+	[[nodiscard]] bool HasAnimation() const { return !sceneData_.boneIDArray_.empty(); }
 
 	void CreateAnimationResources(VulkanContext& ctx);
 	void CreateBindlessResources(VulkanContext& ctx);
