@@ -8,15 +8,15 @@
 class VulkanBuffer
 {
 public:
-	VkBuffer buffer_;
-	VmaAllocation vmaAllocation_;
-	VmaAllocationInfo vmaInfo_;
-	VkDeviceSize size_;
+	VkBuffer buffer_ = nullptr;
+	VmaAllocation vmaAllocation_ = nullptr;
+	VmaAllocationInfo vmaInfo_ = {};
+	VkDeviceSize size_ = 0;
 
 	// Only used for raytracing
-	uint64_t deviceAddress_;
+	uint64_t deviceAddress_ = 0;
 
-	VmaAllocator vmaAllocator_;
+	VmaAllocator vmaAllocator_ = nullptr;
 
 public:
 	VulkanBuffer() :

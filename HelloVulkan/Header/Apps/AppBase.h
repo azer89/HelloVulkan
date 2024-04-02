@@ -14,6 +14,7 @@
 #include "GLFW/glfw3.h"
 
 #include <memory>
+#include <type_traits>
 
 class AppBase
 {
@@ -59,6 +60,8 @@ protected:
 	template<class T, class... U>
 	T* AddPipeline(U&&... u)
 	{
+		static_assert(std::is_base_of<PipelineBase, T>::value, "T must be the derived class of PipelineBase");
+
 		// Create std::unique_ptr of Pipeline
 		std::unique_ptr<T> pipeline = std::make_unique<T>(std::forward<U>(u)...);
 		T* ptr = pipeline.get();
@@ -69,6 +72,8 @@ protected:
 	template<class T, class... U>
 	T* AddResources(U&&... u)
 	{
+		static_assert(std::is_base_of<ResourcesBase, T>::value, "T must be the derived class of ResourcesBase");
+
 		// Create std::unique_ptr of Resources
 		std::unique_ptr<T> resources = std::make_unique<T>(std::forward<U>(u)...);
 		T* ptr = resources.get();
