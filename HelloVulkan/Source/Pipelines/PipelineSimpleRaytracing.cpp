@@ -30,7 +30,11 @@ PipelineSimpleRaytracing::~PipelineSimpleRaytracing()
 	storageImage_.Destroy();
 	blas_.Destroy();
 	tlas_.Destroy();
-	rtModelData_.Destroy();
+	//rtModelData_.Destroy();
+	for (auto& mData : modelDataArray_)
+	{
+		mData.Destroy();
+	}
 	sbt_.Destroy();
 }
 
@@ -239,7 +243,11 @@ void PipelineSimpleRaytracing::CreateRayTracingPipeline(VulkanContext& ctx)
 
 void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 {
-	RaytracingBuilder::PopulateRTModelData(ctx,
+	RaytracingBuilder::CreateRTModelDataArray(ctx, scene_, modelDataArray_);
+
+	RaytracingBuilder::CreateBLASMultipleMeshes(ctx, modelDataArray_, &blas_);
+
+	/*RaytracingBuilder::PopulateRTModelData(ctx,
 		scene_->sceneData_.vertices_,
 		scene_->sceneData_.indices_,
 		glm::mat4(1.0f),
@@ -257,7 +265,7 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 		triangleCount,
 		vertexCount,
 		vertexStride,
-		&blas_);
+		&blas_);*/
 }
 
 void PipelineSimpleRaytracing::CreateTLAS(VulkanContext& ctx)

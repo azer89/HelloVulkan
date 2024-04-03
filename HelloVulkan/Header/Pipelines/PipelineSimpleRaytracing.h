@@ -38,16 +38,17 @@ private:
 	void CreateRayTracingPipeline(VulkanContext& ctx);
 
 private:
-	VulkanImage storageImage_;
-	VulkanDescriptorInfo descriptorInfo_;
-	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;
+	VulkanImage storageImage_ = {};
+	VulkanDescriptorInfo descriptorInfo_ = {};
+	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_ = {};
 
-	Scene* scene_;
-	AccelStructure blas_;
-	AccelStructure tlas_;
-	ShaderBindingTables sbt_;
-	RTModelData rtModelData_;
-	ShaderGroups sg_;
+	Scene* scene_ = nullptr;
+	AccelStructure blas_ = {};
+	AccelStructure tlas_ = {};
+	ShaderBindingTables sbt_ = {};
+	//RTModelData rtModelData_;
+	std::vector<RTModelData> modelDataArray_ = {};
+	ShaderGroups sg_ = {};
 };
 
 #endif
