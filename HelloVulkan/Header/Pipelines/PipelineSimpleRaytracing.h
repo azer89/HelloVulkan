@@ -5,6 +5,7 @@
 #include "AccelStructure.h"
 #include "RTModelData.h"
 #include "ShaderBindingTables.h"
+#include "ShaderGroups.h"
 #include "VulkanBuffer.h"
 #include "VulkanImage.h"
 #include "Scene.h"
@@ -30,15 +31,10 @@ public:
 
 private:
 	void CreateBLAS(VulkanContext& ctx);
-
 	void CreateTLAS(VulkanContext& ctx);
-
 	void CreateStorageImage(VulkanContext& ctx);
-
 	void CreateDescriptor(VulkanContext& ctx);
-
 	void UpdateDescriptor(VulkanContext& ctx);
-
 	void CreateRayTracingPipeline(VulkanContext& ctx);
 
 private:
@@ -46,15 +42,12 @@ private:
 	VulkanDescriptorInfo descriptorInfo_;
 	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;
 
-	// Acceleration structures
 	Scene* scene_;
 	AccelStructure blas_;
 	AccelStructure tlas_;
 	ShaderBindingTables sbt_;
 	RTModelData rtModelData_;
-
-	// Shader related
-	std::vector<VkRayTracingShaderGroupCreateInfoKHR> shaderGroups_;
+	ShaderGroups sg_;
 };
 
 #endif

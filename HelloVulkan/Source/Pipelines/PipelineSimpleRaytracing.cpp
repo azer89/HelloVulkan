@@ -18,12 +18,11 @@ PipelineSimpleRaytracing::PipelineSimpleRaytracing(VulkanContext& ctx, Scene* sc
 
 	CreateBLAS(ctx);
 	CreateTLAS(ctx);
-
 	CreateStorageImage(ctx);
 	CreateDescriptor(ctx);
+	sg_.Create();
 	CreateRayTracingPipeline(ctx);
-	
-	sbt_.Create(ctx, pipeline_, shaderGroups_.size());
+	sbt_.Create(ctx, pipeline_, sg_.Count());
 }
 
 PipelineSimpleRaytracing::~PipelineSimpleRaytracing()
@@ -212,42 +211,14 @@ void PipelineSimpleRaytracing::CreateRayTracingPipeline(VulkanContext& ctx)
 		shaderStages[i] = shaderModules[i].GetShaderStageInfo(stage, "main");
 	}
 
-	shaderGroups_ =
-	{
-		{
-			.sType = VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_KHR,
-			.type = VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_KHR,
-			.generalShader = 0u,
-			.closestHitShader = VK_SHADER_UNUSED_KHR,
-			.anyHitShader = VK_SHADER_UNUSED_KHR,
-			.intersectionShader = VK_SHADER_UNUSED_KHR
-		},
-		{
-			.sType = VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_KHR,
-			.type = VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_KHR,
-			.generalShader = 1u,
-			.closestHitShader = VK_SHADER_UNUSED_KHR,
-			.anyHitShader = VK_SHADER_UNUSED_KHR,
-			.intersectionShader = VK_SHADER_UNUSED_KHR,
-		},
-		{
-			.sType = VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_KHR,
-			.type = VK_RAY_TRACING_SHADER_GROUP_TYPE_TRIANGLES_HIT_GROUP_KHR,
-			.generalShader = VK_SHADER_UNUSED_KHR,
-			.closestHitShader = 2u,
-			.anyHitShader = VK_SHADER_UNUSED_KHR,
-			.intersectionShader = VK_SHADER_UNUSED_KHR
-		}
-	};
-
 	// Pipeline
 	const VkRayTracingPipelineCreateInfoKHR rayTracingPipelineCI =
 	{
 		.sType = VK_STRUCTURE_TYPE_RAY_TRACING_PIPELINE_CREATE_INFO_KHR,
 		.stageCount = static_cast<uint32_t>(shaderStages.size()),
 		.pStages = shaderStages.data(),
-		.groupCount = static_cast<uint32_t>(shaderGroups_.size()),
-		.pGroups = shaderGroups_.data(),
+		.groupCount = sg_.Count(),
+		.pGroups = sg_.Data(),
 		.maxPipelineRayRecursionDepth = 1,
 		.layout = pipelineLayout_
 	};
