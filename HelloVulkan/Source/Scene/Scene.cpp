@@ -5,7 +5,7 @@
 #include <iostream>
 
 Scene::Scene(VulkanContext& ctx,
-	const std::span<ModelCreateInfo> modelDataArray,
+	const std::span<ModelCreateInfo> modelDataArray, // TODO Rename to modelInfoArray
 	const bool supportDeviceAddress) :
 	supportDeviceAddress_(supportDeviceAddress)
 {

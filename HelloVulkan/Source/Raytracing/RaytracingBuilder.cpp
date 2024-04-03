@@ -1,6 +1,78 @@
 #include "RaytracingBuilder.h"
-#include "AccelStructure.h"
 #include "VulkanCheck.h"
+
+void RaytracingBuilder::CreateRTModelData(
+	VulkanContext& ctx,
+	const std::span<VertexData> vertices,
+	const std::span<uint32_t> indices,
+	const glm::mat4 modelMatrix,
+	RTModelData* modelData)
+{
+	// Vertices
+	modelData->vertexBuffer_.CreateBufferWithDeviceAddress(
+		ctx,
+		vertices.size() * sizeof(VertexData),
+		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
+		VMA_MEMORY_USAGE_CPU_TO_GPU
+	);
+	modelData->vertexBuffer_.UploadBufferData(ctx, vertices.data(), vertices.size() * sizeof(VertexData));
+
+	// Indices
+	modelData->indexBuffer_.CreateBufferWithDeviceAddress(
+		ctx,
+		indices.size() * sizeof(uint32_t),
+		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
+		VMA_MEMORY_USAGE_CPU_TO_GPU
+	);
+	modelData->indexBuffer_.UploadBufferData(ctx, indices.data(), indices.size() * sizeof(uint32_t));
+
+	// Model matrix
+	VkTransformMatrixKHR transformMatrix{};
+	auto m = glm::mat3x4(glm::transpose(modelMatrix));
+	memcpy(&transformMatrix, (void*)&m, sizeof(glm::mat3x4));
+
+	modelData->transformBuffer_.CreateBufferWithDeviceAddress(
+		ctx,
+		sizeof(VkTransformMatrixKHR),
+		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
+		VMA_MEMORY_USAGE_CPU_TO_GPU
+	);
+	modelData->transformBuffer_.UploadBufferData(ctx, &transformMatrix, sizeof(VkTransformMatrixKHR));
+}
+
+void RaytracingBuilder::CreateTransformBuffer(
+	VulkanContext& ctx, 
+	const std::span<ModelUBO> uboArray, 
+	VulkanBuffer& transformBuffer)
+{
+	std::vector<VkTransformMatrixKHR> transformMatrices(uboArray.size());
+
+	for (uint32_t i = 0; i < uboArray.size(); ++i)
+	{
+		VkTransformMatrixKHR transformMatrix{};
+		auto m = glm::mat3x4(glm::transpose(uboArray[i].model));
+		memcpy(&transformMatrix, (void*)&m, sizeof(glm::mat3x4));
+		transformMatrices[i] = transformMatrix;
+	}
+
+	transformBuffer.CreateBufferWithDeviceAddress(
+		ctx,
+		sizeof(VkTransformMatrixKHR),
+		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
+		VMA_MEMORY_USAGE_CPU_TO_GPU
+	);
+	transformBuffer.UploadBufferData(ctx, 
+		transformMatrices.data(), 
+		static_cast<uint32_t>(transformMatrices.size()) * sizeof(VkTransformMatrixKHR));
+}
+
+void RaytracingBuilder::CreateBLASMultiMesh(
+	VulkanContext& ctx,
+	const VulkanBuffer& transformBuffer,
+	const Scene* scene,
+	AccelStructure* blas)
+{
+}
 
 // TODO Currently can only handle a single vertex buffer
 void RaytracingBuilder::CreateBLAS(VulkanContext& ctx, 

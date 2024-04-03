@@ -2,14 +2,33 @@
 #define RAYTRACING_BUILDER
 
 #include "VulkanContext.h"
+#include "AccelStructure.h"
+#include "VulkanBuffer.h"
+#include "RTModelData.h"
+#include "Scene.h"
 
-class AccelStructure;
-class VulkanBuffer;
+#include <span>
 
 class RaytracingBuilder
 {
 public:
-	static void CreateBLASMultiMesh(VulkanContext& ctx, AccelStructure* blas);
+
+	static void CreateRTModelData(VulkanContext& ctx,
+		const std::span<VertexData> vertices,
+		const std::span<uint32_t> indices,
+		const glm::mat4 modelMatrix,
+		RTModelData* modelData);
+
+	static void CreateTransformBuffer(
+		VulkanContext& ctx,
+		const std::span<ModelUBO> uboArray,
+		VulkanBuffer& transformBuffer);
+
+	static void CreateBLASMultiMesh(
+		VulkanContext& ctx, 
+		const VulkanBuffer& transformBuffer,
+		const Scene* scene, 
+		AccelStructure* blas);
 
 	static void CreateBLAS(VulkanContext& ctx, 
 		const VulkanBuffer& vertexBuffer,

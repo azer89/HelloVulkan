@@ -223,6 +223,7 @@
     <ClInclude Include="Header\FrameCounter.h" />
     <ClInclude Include="Header\Ray.h" />
     <ClInclude Include="Header\Raytracing\GeometryNode.h" />
+    <ClInclude Include="Header\Raytracing\RTModelData.h" />
     <ClInclude Include="Header\Utility.h" />
     <ClInclude Include="Header\UIData.h" />
     <ClInclude Include="Header\Pipelines\PipelineAABBGenerator.h" />
