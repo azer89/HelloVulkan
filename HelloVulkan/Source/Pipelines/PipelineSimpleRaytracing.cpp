@@ -30,9 +30,7 @@ PipelineSimpleRaytracing::~PipelineSimpleRaytracing()
 	storageImage_.Destroy();
 	blas_.Destroy();
 	tlas_.Destroy();
-	vertexBuffer_.Destroy();
-	indexBuffer_.Destroy();
-	transformBuffer_.Destroy();
+	rtModelData_.Destroy();
 	raygenShaderBindingTable_.Destroy();
 	missShaderBindingTable_.Destroy();
 	hitShaderBindingTable_.Destroy();
@@ -297,7 +295,7 @@ void PipelineSimpleRaytracing::CreateRayTracingPipeline(VulkanContext& ctx)
 void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 {	
 	// Setup identity transform matrix
-	VkTransformMatrixKHR transformMatrix = {
+	/*VkTransformMatrixKHR transformMatrix = {
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f
@@ -329,13 +327,32 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 	VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
 		VMA_MEMORY_USAGE_CPU_TO_GPU
 	);
-	transformBuffer_.UploadBufferData(ctx, &transformMatrix, sizeof(VkTransformMatrixKHR));
+	transformBuffer_.UploadBufferData(ctx, &transformMatrix, sizeof(VkTransformMatrixKHR));*/
+	RaytracingBuilder::CreateRTModelData(ctx,
+		scene_->sceneData_.vertices_,
+		scene_->sceneData_.indices_,
+		glm::mat4(1.0f),
+		&rtModelData_);
 
-	RaytracingBuilder::CreateBLAS(
+	/*RaytracingBuilder::CreateBLAS(
 		ctx,
 		vertexBuffer_,
 		indexBuffer_,
 		transformBuffer_,
+		triangleCount,
+		vertexCount,
+		vertexStride,
+		&blas_);*/
+
+	uint32_t triangleCount = static_cast<uint32_t>(scene_->sceneData_.indices_.size()) / 3;
+	uint32_t vertexCount = static_cast<uint32_t>(scene_->sceneData_.vertices_.size());
+	VkDeviceSize vertexStride = sizeof(VertexData);
+
+	RaytracingBuilder::CreateBLAS(
+		ctx,
+		rtModelData_.vertexBuffer_,
+		rtModelData_.indexBuffer_,
+		rtModelData_.transformBuffer_,
 		triangleCount,
 		vertexCount,
 		vertexStride,

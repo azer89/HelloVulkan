@@ -3,6 +3,7 @@
 
 #include "PipelineBase.h"
 #include "AccelStructure.h"
+#include "RTModelData.h"
 #include "VulkanBuffer.h"
 #include "VulkanImage.h"
 #include "Scene.h"
@@ -50,9 +51,10 @@ private:
 	Scene* scene_;
 	AccelStructure blas_;
 	AccelStructure tlas_;
-	VulkanBuffer vertexBuffer_;
-	VulkanBuffer indexBuffer_;
-	VulkanBuffer transformBuffer_;
+	//VulkanBuffer vertexBuffer_;
+	//VulkanBuffer indexBuffer_;
+	//VulkanBuffer transformBuffer_;
+	RTModelData rtModelData_;
 
 	// Shader related
 	std::vector<VkRayTracingShaderGroupCreateInfoKHR> shaderGroups_;

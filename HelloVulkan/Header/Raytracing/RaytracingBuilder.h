@@ -12,7 +12,6 @@
 class RaytracingBuilder
 {
 public:
-
 	static void CreateRTModelData(VulkanContext& ctx,
 		const std::span<VertexData> vertices,
 		const std::span<uint32_t> indices,

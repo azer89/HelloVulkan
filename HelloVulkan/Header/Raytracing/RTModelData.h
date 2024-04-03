@@ -8,6 +8,13 @@ struct RTModelData
 	VulkanBuffer vertexBuffer_;
 	VulkanBuffer indexBuffer_;
 	VulkanBuffer transformBuffer_;
+
+	void Destroy()
+	{
+		vertexBuffer_.Destroy();
+		indexBuffer_.Destroy();
+		transformBuffer_.Destroy();
+	}
 };
 
 #endif
