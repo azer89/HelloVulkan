@@ -29,7 +29,7 @@ public:
 		const std::span<ModelUBO> uboArray,
 		VulkanBuffer& transformBuffer);*/
 
-	static void CreateBLASMultiMesh(
+	static void CreateBLASMultipleMeshes(
 		VulkanContext& ctx, 
 		const std::span<RTModelData> modelDataArray,
 		AccelStructure* blas);
