@@ -482,6 +482,9 @@
     <ClInclude Include="Header\Raytracing\RTModelData.h">
       <Filter>Header Files\Raytracing</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Raytracing\ShaderBindingTables.h">
+      <Filter>Header Files\Raytracing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">

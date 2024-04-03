@@ -22,7 +22,8 @@ PipelineSimpleRaytracing::PipelineSimpleRaytracing(VulkanContext& ctx, Scene* sc
 	CreateStorageImage(ctx);
 	CreateDescriptor(ctx);
 	CreateRayTracingPipeline(ctx);
-	CreateShaderBindingTable(ctx);
+	
+	sbt_.Create(ctx, pipeline_, shaderGroups_.size());
 }
 
 PipelineSimpleRaytracing::~PipelineSimpleRaytracing()
@@ -31,39 +32,12 @@ PipelineSimpleRaytracing::~PipelineSimpleRaytracing()
 	blas_.Destroy();
 	tlas_.Destroy();
 	rtModelData_.Destroy();
-	raygenShaderBindingTable_.Destroy();
-	missShaderBindingTable_.Destroy();
-	hitShaderBindingTable_.Destroy();
+	sbt_.Destroy();
 }
 
 void PipelineSimpleRaytracing::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
 	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "Simple_Raytracing", tracy::Color::Orange1);
-
-	const VkPhysicalDeviceRayTracingPipelinePropertiesKHR properties = ctx.GetRayTracingPipelineProperties();
-	const uint32_t handleSizeAligned = Utility::AlignedSize(properties.shaderGroupHandleSize, properties.shaderGroupHandleAlignment);
-
-	VkStridedDeviceAddressRegionKHR raygenShaderSbtEntry =
-	{
-		.deviceAddress = raygenShaderBindingTable_.deviceAddress_,
-		.stride = handleSizeAligned,
-		.size = handleSizeAligned
-	};
-
-	const VkStridedDeviceAddressRegionKHR missShaderSbtEntry =
-	{
-		.deviceAddress = missShaderBindingTable_.deviceAddress_,
-		.stride = handleSizeAligned,
-		.size = handleSizeAligned,
-	};
-
-	const VkStridedDeviceAddressRegionKHR hitShaderSbtEntry =
-	{
-		.deviceAddress = hitShaderBindingTable_.deviceAddress_,
-		.stride = handleSizeAligned,
-		.size = handleSizeAligned
-	};
-	const VkStridedDeviceAddressRegionKHR callableShaderSbtEntry{};
 
 	const uint32_t frameIndex = ctx.GetFrameIndex();
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, pipeline_);
@@ -77,10 +51,10 @@ void PipelineSimpleRaytracing::FillCommandBuffer(VulkanContext& ctx, VkCommandBu
 
 	vkCmdTraceRaysKHR(
 		commandBuffer,
-		&raygenShaderSbtEntry,
-		&missShaderSbtEntry,
-		&hitShaderSbtEntry,
-		&callableShaderSbtEntry,
+		&sbt_.raygenShaderSbtEntry_,
+		&sbt_.missShaderSbtEntry_,
+		&sbt_.hitShaderSbtEntry_,
+		&sbt_.callableShaderSbtEntry_,
 		ctx.GetSwapchainWidth(),
 		ctx.GetSwapchainHeight(),
 		1);
@@ -293,56 +267,12 @@ void PipelineSimpleRaytracing::CreateRayTracingPipeline(VulkanContext& ctx)
 }
 
 void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
-{	
-	// Setup identity transform matrix
-	/*VkTransformMatrixKHR transformMatrix = {
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f
-	};
-	
-	uint32_t triangleCount = static_cast<uint32_t>(scene_->sceneData_.indices_.size()) / 3;
-	uint32_t vertexCount = static_cast<uint32_t>(scene_->sceneData_.vertices_.size());
-	VkDeviceSize vertexStride = sizeof(VertexData);
-	
-	vertexBuffer_.CreateBufferWithDeviceAddress(
-		ctx,
-		scene_->sceneData_.vertices_.size() * sizeof(VertexData),
-		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
-		VMA_MEMORY_USAGE_CPU_TO_GPU
-	);
-	vertexBuffer_.UploadBufferData(ctx, scene_->sceneData_.vertices_.data(), scene_->sceneData_.vertices_.size() * sizeof(VertexData));
-
-	indexBuffer_.CreateBufferWithDeviceAddress(
-		ctx,
-		scene_->sceneData_.indices_.size() * sizeof(uint32_t),
-		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
-		VMA_MEMORY_USAGE_CPU_TO_GPU
-	);
-	indexBuffer_.UploadBufferData(ctx, scene_->sceneData_.indices_.data(), scene_->sceneData_.indices_.size() * sizeof(uint32_t));
-
-	transformBuffer_.CreateBufferWithDeviceAddress(
-		ctx,
-		sizeof(VkTransformMatrixKHR),
-	VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
-		VMA_MEMORY_USAGE_CPU_TO_GPU
-	);
-	transformBuffer_.UploadBufferData(ctx, &transformMatrix, sizeof(VkTransformMatrixKHR));*/
+{
 	RaytracingBuilder::CreateRTModelData(ctx,
 		scene_->sceneData_.vertices_,
 		scene_->sceneData_.indices_,
 		glm::mat4(1.0f),
 		&rtModelData_);
-
-	/*RaytracingBuilder::CreateBLAS(
-		ctx,
-		vertexBuffer_,
-		indexBuffer_,
-		transformBuffer_,
-		triangleCount,
-		vertexCount,
-		vertexStride,
-		&blas_);*/
 
 	uint32_t triangleCount = static_cast<uint32_t>(scene_->sceneData_.indices_.size()) / 3;
 	uint32_t vertexCount = static_cast<uint32_t>(scene_->sceneData_.vertices_.size());
@@ -367,34 +297,4 @@ void PipelineSimpleRaytracing::CreateTLAS(VulkanContext& ctx)
 		0.0f, 0.0f, 1.0f, 0.0f };
 
 	RaytracingBuilder::CreateTLAS(ctx, transformMatrix, blas_.deviceAddress_, &tlas_);
-}
-
-void PipelineSimpleRaytracing::CreateShaderBindingTable(VulkanContext& ctx)
-{
-	VkPhysicalDeviceRayTracingPipelinePropertiesKHR properties = ctx.GetRayTracingPipelineProperties();
-	const uint32_t handleSizeAligned = Utility::AlignedSize(properties.shaderGroupHandleSize, properties.shaderGroupHandleAlignment);
-
-	const uint32_t handleSize = properties.shaderGroupHandleSize;
-	const uint32_t groupCount = static_cast<uint32_t>(shaderGroups_.size());
-	const uint32_t sbtSize = groupCount * handleSizeAligned;
-
-	std::vector<uint8_t> shaderHandleStorage(sbtSize);
-	VK_CHECK(vkGetRayTracingShaderGroupHandlesKHR(
-		ctx.GetDevice(), 
-		pipeline_, 
-		0, 
-		groupCount, 
-		sbtSize, 
-		shaderHandleStorage.data()));
-
-	const VkBufferUsageFlags bufferUsage = VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR;
-	const VmaMemoryUsage memoryUsage = VMA_MEMORY_USAGE_CPU_TO_GPU;
-	raygenShaderBindingTable_.CreateBufferWithDeviceAddress(ctx, handleSize, bufferUsage, memoryUsage);
-	missShaderBindingTable_.CreateBufferWithDeviceAddress(ctx, handleSize, bufferUsage, memoryUsage);
-	hitShaderBindingTable_.CreateBufferWithDeviceAddress(ctx, handleSize, bufferUsage, memoryUsage);
-
-	// Copy handles
-	raygenShaderBindingTable_.UploadBufferData(ctx, shaderHandleStorage.data(), handleSize);
-	missShaderBindingTable_.UploadBufferData(ctx, shaderHandleStorage.data() + handleSizeAligned, handleSize);
-	hitShaderBindingTable_.UploadBufferData(ctx, shaderHandleStorage.data() + handleSizeAligned * 2, handleSize);
 }

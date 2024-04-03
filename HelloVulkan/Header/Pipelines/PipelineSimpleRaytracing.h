@@ -4,6 +4,7 @@
 #include "PipelineBase.h"
 #include "AccelStructure.h"
 #include "RTModelData.h"
+#include "ShaderBindingTables.h"
 #include "VulkanBuffer.h"
 #include "VulkanImage.h"
 #include "Scene.h"
@@ -40,8 +41,6 @@ private:
 
 	void CreateRayTracingPipeline(VulkanContext& ctx);
 
-	void CreateShaderBindingTable(VulkanContext& ctx);
-
 private:
 	VulkanImage storageImage_;
 	VulkanDescriptorInfo descriptorInfo_;
@@ -51,16 +50,11 @@ private:
 	Scene* scene_;
 	AccelStructure blas_;
 	AccelStructure tlas_;
-	//VulkanBuffer vertexBuffer_;
-	//VulkanBuffer indexBuffer_;
-	//VulkanBuffer transformBuffer_;
+	ShaderBindingTables sbt_;
 	RTModelData rtModelData_;
 
 	// Shader related
 	std::vector<VkRayTracingShaderGroupCreateInfoKHR> shaderGroups_;
-	VulkanBuffer raygenShaderBindingTable_;
-	VulkanBuffer missShaderBindingTable_;
-	VulkanBuffer hitShaderBindingTable_;
 };
 
 #endif
