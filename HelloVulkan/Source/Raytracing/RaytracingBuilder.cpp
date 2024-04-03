@@ -70,7 +70,7 @@ void RaytracingBuilder::CreateBLAS(VulkanContext& ctx,
 
 	// Create a small scratch buffer used during build of the bottom level acceleration structure
 	VulkanBuffer scratchBuffer;
-	scratchBuffer.CreateBufferWithShaderDeviceAddress(ctx,
+	scratchBuffer.CreateBufferWithDeviceAddress(ctx,
 		accelStructureBuildSizesInfo.buildScratchSize,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VMA_MEMORY_USAGE_GPU_ONLY);
@@ -134,7 +134,7 @@ void RaytracingBuilder::CreateTLAS(VulkanContext& ctx,
 	};
 
 	VulkanBuffer instancesBuffer;
-	instancesBuffer.CreateBufferWithShaderDeviceAddress(ctx,
+	instancesBuffer.CreateBufferWithDeviceAddress(ctx,
 		sizeof(VkAccelerationStructureInstanceKHR),
 		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
 		VMA_MEMORY_USAGE_CPU_TO_GPU);
@@ -200,7 +200,7 @@ void RaytracingBuilder::CreateTLAS(VulkanContext& ctx,
 
 	// Create a small scratch buffer used during build of the top level acceleration structure
 	VulkanBuffer scratchBuffer;
-	scratchBuffer.CreateBufferWithShaderDeviceAddress(ctx,
+	scratchBuffer.CreateBufferWithDeviceAddress(ctx,
 		accelStructureBuildSizesInfo.buildScratchSize,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VMA_MEMORY_USAGE_GPU_ONLY);

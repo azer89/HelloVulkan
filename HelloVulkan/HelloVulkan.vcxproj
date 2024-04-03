@@ -183,8 +183,10 @@
     <None Include="..\Shaders\Radiance.glsl" />
     <None Include="..\Shaders\ShadowMapping\Depth.frag" />
     <None Include="..\Shaders\ShadowMapping\Poisson.glsl" />
+    <None Include="..\Shaders\SimpleRaytracing\AnyHit.rahit" />
     <None Include="..\Shaders\SimpleRaytracing\GeometryNode.glsl" />
     <None Include="..\Shaders\SimpleRaytracing\Random.glsl" />
+    <None Include="..\Shaders\SimpleRaytracing\Shadow.rmiss" />
     <None Include="..\Shaders\Skinning.comp" />
     <None Include="..\Shaders\SlotBased\Mesh.frag" />
     <None Include="..\Shaders\SlotBased\Mesh.vert" />

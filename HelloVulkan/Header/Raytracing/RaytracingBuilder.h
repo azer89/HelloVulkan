@@ -9,6 +9,8 @@ class VulkanBuffer;
 class RaytracingBuilder
 {
 public:
+	static void CreateBLASMultiMesh(VulkanContext& ctx, AccelStructure* blas);
+
 	static void CreateBLAS(VulkanContext& ctx, 
 		const VulkanBuffer& vertexBuffer,
 		const VulkanBuffer& indexBuffer,

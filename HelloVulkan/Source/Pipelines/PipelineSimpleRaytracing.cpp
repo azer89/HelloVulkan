@@ -307,7 +307,7 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 	uint32_t vertexCount = static_cast<uint32_t>(scene_->sceneData_.vertices_.size());
 	VkDeviceSize vertexStride = sizeof(VertexData);
 	
-	vertexBuffer_.CreateBufferWithShaderDeviceAddress(
+	vertexBuffer_.CreateBufferWithDeviceAddress(
 		ctx,
 		scene_->sceneData_.vertices_.size() * sizeof(VertexData),
 		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
@@ -315,7 +315,7 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 	);
 	vertexBuffer_.UploadBufferData(ctx, scene_->sceneData_.vertices_.data(), scene_->sceneData_.vertices_.size() * sizeof(VertexData));
 
-	indexBuffer_.CreateBufferWithShaderDeviceAddress(
+	indexBuffer_.CreateBufferWithDeviceAddress(
 		ctx,
 		scene_->sceneData_.indices_.size() * sizeof(uint32_t),
 		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
@@ -323,7 +323,7 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 	);
 	indexBuffer_.UploadBufferData(ctx, scene_->sceneData_.indices_.data(), scene_->sceneData_.indices_.size() * sizeof(uint32_t));
 
-	transformBuffer_.CreateBufferWithShaderDeviceAddress(
+	transformBuffer_.CreateBufferWithDeviceAddress(
 		ctx,
 		sizeof(VkTransformMatrixKHR),
 	VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
@@ -372,9 +372,9 @@ void PipelineSimpleRaytracing::CreateShaderBindingTable(VulkanContext& ctx)
 
 	const VkBufferUsageFlags bufferUsage = VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR;
 	const VmaMemoryUsage memoryUsage = VMA_MEMORY_USAGE_CPU_TO_GPU;
-	raygenShaderBindingTable_.CreateBufferWithShaderDeviceAddress(ctx, handleSize, bufferUsage, memoryUsage);
-	missShaderBindingTable_.CreateBufferWithShaderDeviceAddress(ctx, handleSize, bufferUsage, memoryUsage);
-	hitShaderBindingTable_.CreateBufferWithShaderDeviceAddress(ctx, handleSize, bufferUsage, memoryUsage);
+	raygenShaderBindingTable_.CreateBufferWithDeviceAddress(ctx, handleSize, bufferUsage, memoryUsage);
+	missShaderBindingTable_.CreateBufferWithDeviceAddress(ctx, handleSize, bufferUsage, memoryUsage);
+	hitShaderBindingTable_.CreateBufferWithDeviceAddress(ctx, handleSize, bufferUsage, memoryUsage);
 
 	// Copy handles
 	raygenShaderBindingTable_.UploadBufferData(ctx, shaderHandleStorage.data(), handleSize);

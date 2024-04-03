@@ -246,6 +246,12 @@
     <None Include="..\Shaders\SimpleRaytracing\GeometryNode.glsl">
       <Filter>Shaders\SimpleRaytracing</Filter>
     </None>
+    <None Include="..\Shaders\SimpleRaytracing\AnyHit.rahit">
+      <Filter>Shaders\SimpleRaytracing</Filter>
+    </None>
+    <None Include="..\Shaders\SimpleRaytracing\Shadow.rmiss">
+      <Filter>Shaders\SimpleRaytracing</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Camera.h">
