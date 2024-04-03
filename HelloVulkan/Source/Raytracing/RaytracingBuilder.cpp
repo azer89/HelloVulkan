@@ -1,5 +1,26 @@
 #include "RaytracingBuilder.h"
 #include "VulkanCheck.h"
+#include "Utility.h"
+
+void RaytracingBuilder::CreateRTModelDataArray(
+	VulkanContext& ctx,
+	Scene* scene,
+	std::vector<RTModelData>& modelDataArray)
+{
+	uint32_t instanceCount = static_cast<uint32_t>(scene->instanceDataArray_.size());
+	modelDataArray.resize(instanceCount);
+
+	for (uint32_t i = 0; i < instanceCount; ++i)
+	{
+		CreateRTModelData(
+			ctx,
+			scene->GetVertices(i),
+			scene->GetIndices(i),
+			scene->modelSSBOs_[i].model,
+			&modelDataArray[i]
+		);
+	}
+}
 
 void RaytracingBuilder::CreateRTModelData(
 	VulkanContext& ctx,
@@ -40,38 +61,15 @@ void RaytracingBuilder::CreateRTModelData(
 	modelData->transformBuffer_.UploadBufferData(ctx, &transformMatrix, sizeof(VkTransformMatrixKHR));
 }
 
-void RaytracingBuilder::CreateTransformBuffer(
-	VulkanContext& ctx, 
-	const std::span<ModelUBO> uboArray, 
-	VulkanBuffer& transformBuffer)
-{
-	std::vector<VkTransformMatrixKHR> transformMatrices(uboArray.size());
-
-	for (uint32_t i = 0; i < uboArray.size(); ++i)
-	{
-		VkTransformMatrixKHR transformMatrix{};
-		auto m = glm::mat3x4(glm::transpose(uboArray[i].model));
-		memcpy(&transformMatrix, (void*)&m, sizeof(glm::mat3x4));
-		transformMatrices[i] = transformMatrix;
-	}
-
-	transformBuffer.CreateBufferWithDeviceAddress(
-		ctx,
-		sizeof(VkTransformMatrixKHR),
-		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
-		VMA_MEMORY_USAGE_CPU_TO_GPU
-	);
-	transformBuffer.UploadBufferData(ctx, 
-		transformMatrices.data(), 
-		static_cast<uint32_t>(transformMatrices.size()) * sizeof(VkTransformMatrixKHR));
-}
-
 void RaytracingBuilder::CreateBLASMultiMesh(
 	VulkanContext& ctx,
-	const VulkanBuffer& transformBuffer,
-	const Scene* scene,
+	const std::span<RTModelData> modelDataArray,
 	AccelStructure* blas)
 {
+	for (uint32_t i = 0; i < modelDataArray.size(); ++i)
+	{
+
+	}
 }
 
 // TODO Currently can only handle a single vertex buffer
@@ -319,3 +317,29 @@ void RaytracingBuilder::CreateTLAS(VulkanContext& ctx,
 	scratchBuffer.Destroy();
 	instancesBuffer.Destroy();
 }
+
+/*void RaytracingBuilder::CreateTransformBuffer(
+	VulkanContext& ctx,
+	const std::span<ModelUBO> uboArray,
+	VulkanBuffer& transformBuffer)
+{
+	std::vector<VkTransformMatrixKHR> transformMatrices(uboArray.size());
+
+	for (uint32_t i = 0; i < uboArray.size(); ++i)
+	{
+		VkTransformMatrixKHR transformMatrix{};
+		auto m = glm::mat3x4(glm::transpose(uboArray[i].model));
+		memcpy(&transformMatrix, (void*)&m, sizeof(glm::mat3x4));
+		transformMatrices[i] = transformMatrix;
+	}
+
+	transformBuffer.CreateBufferWithDeviceAddress(
+		ctx,
+		sizeof(VkTransformMatrixKHR),
+		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
+		VMA_MEMORY_USAGE_CPU_TO_GPU
+	);
+	transformBuffer.UploadBufferData(ctx,
+		transformMatrices.data(),
+		static_cast<uint32_t>(transformMatrices.size()) * sizeof(VkTransformMatrixKHR));
+}*/

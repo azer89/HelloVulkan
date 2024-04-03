@@ -45,7 +45,7 @@ namespace Utility
 	}
 
 	template<class T, std::size_t N>
-	auto Slide(std::span<T, N> s, std::size_t offset, std::size_t width)
+	auto SubSpan(std::span<T, N> s, std::size_t offset, std::size_t width)
 	{
 		return s.subspan(offset, offset + width <= s.size() ? width : 0u);
 	}

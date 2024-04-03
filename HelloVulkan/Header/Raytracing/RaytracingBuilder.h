@@ -8,25 +8,30 @@
 #include "Scene.h"
 
 #include <span>
+#include <vector>
 
 class RaytracingBuilder
 {
 public:
+	static void CreateRTModelDataArray(
+		VulkanContext& ctx, 
+		Scene* scene,
+		std::vector<RTModelData>& modelDataArray);
+
 	static void CreateRTModelData(VulkanContext& ctx,
 		const std::span<VertexData> vertices,
 		const std::span<uint32_t> indices,
 		const glm::mat4 modelMatrix,
 		RTModelData* modelData);
 
-	static void CreateTransformBuffer(
+	/*static void CreateTransformBuffer(
 		VulkanContext& ctx,
 		const std::span<ModelUBO> uboArray,
-		VulkanBuffer& transformBuffer);
+		VulkanBuffer& transformBuffer);*/
 
 	static void CreateBLASMultiMesh(
 		VulkanContext& ctx, 
-		const VulkanBuffer& transformBuffer,
-		const Scene* scene, 
+		const std::span<RTModelData> modelDataArray,
 		AccelStructure* blas);
 
 	static void CreateBLAS(VulkanContext& ctx, 

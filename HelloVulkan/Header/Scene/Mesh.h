@@ -57,6 +57,7 @@ public:
 	void SetupSlotBased(VulkanContext& ctx);
 	void Destroy();
 
+	[[nodiscard]] uint32_t GetIndexOffset() const { return indexOffset_; }
 	[[nodiscard]] uint32_t GetIndexCount() const { return indexCount_; }
 	[[nodiscard]] uint32_t GetVertexOffset() const { return vertexOffset_; }
 	[[nodiscard]] uint32_t GetVertexCount() const { return vertexCount_; }
