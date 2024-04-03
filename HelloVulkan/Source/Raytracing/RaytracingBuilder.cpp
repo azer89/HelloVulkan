@@ -30,6 +30,7 @@ void RaytracingBuilder::CreateRTModelData(
 	RTModelData* modelData)
 {
 	// Vertices
+	modelData->vertexCount_ = static_cast<uint32_t>(vertices.size());
 	modelData->vertexBuffer_.CreateBufferWithDeviceAddress(
 		ctx,
 		vertices.size() * sizeof(VertexData),
@@ -39,6 +40,7 @@ void RaytracingBuilder::CreateRTModelData(
 	modelData->vertexBuffer_.UploadBufferData(ctx, vertices.data(), vertices.size() * sizeof(VertexData));
 
 	// Indices
+	modelData->indexCount_ = static_cast<uint32_t>(indices.size());
 	modelData->indexBuffer_.CreateBufferWithDeviceAddress(
 		ctx,
 		indices.size() * sizeof(uint32_t),
@@ -68,7 +70,13 @@ void RaytracingBuilder::CreateBLASMultiMesh(
 {
 	for (uint32_t i = 0; i < modelDataArray.size(); ++i)
 	{
+		VkDeviceOrHostAddressConstKHR vAddress = {};
+		VkDeviceOrHostAddressConstKHR iAddress = {};
+		VkDeviceOrHostAddressConstKHR tAddress = {};
 
+		vAddress.deviceAddress = modelDataArray[i].vertexBuffer_.deviceAddress_;
+		iAddress.deviceAddress = modelDataArray[i].indexBuffer_.deviceAddress_;
+		tAddress.deviceAddress = modelDataArray[i].transformBuffer_.deviceAddress_;
 	}
 }
 
