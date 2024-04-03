@@ -15,7 +15,7 @@ const vec3 DEFAULT_COLOR = vec3(0.447, 0.741, 0.639);
 
 void main()
 {
-	ivec3 index = ivec3(indices[3 * gl_PrimitiveID],
+	/*ivec3 index = ivec3(indices[3 * gl_PrimitiveID],
 		indices[3 * gl_PrimitiveID + 1],
 		indices[3 * gl_PrimitiveID + 2]);
 
@@ -31,5 +31,7 @@ void main()
 
 	vec3 L = normalize(LIGHT_POS);
 	float NoL = max(dot(N, L), 0.2);
-	hitValue = DEFAULT_COLOR * NoL;
+	hitValue = DEFAULT_COLOR * NoL;*/
+
+	hitValue = DEFAULT_COLOR;
 }

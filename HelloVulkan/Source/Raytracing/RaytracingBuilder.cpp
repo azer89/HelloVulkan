@@ -12,11 +12,14 @@ void RaytracingBuilder::CreateRTModelDataArray(
 
 	for (uint32_t i = 0; i < instanceCount; ++i)
 	{
+		InstanceData& iData = scene->instanceDataArray_[i];
+		uint32_t m = iData.meshData_.modelMatrixIndex_;
+
 		PopulateRTModelData(
 			ctx,
 			scene->GetVertices(i),
 			scene->GetIndices(i),
-			scene->modelSSBOs_[i].model,
+			scene->modelSSBOs_[m].model,
 			&modelDataArray[i]
 		);
 	}
