@@ -12,7 +12,7 @@ void RaytracingBuilder::CreateRTModelDataArray(
 
 	for (uint32_t i = 0; i < instanceCount; ++i)
 	{
-		CreateRTModelData(
+		PopulateRTModelData(
 			ctx,
 			scene->GetVertices(i),
 			scene->GetIndices(i),
@@ -22,7 +22,7 @@ void RaytracingBuilder::CreateRTModelDataArray(
 	}
 }
 
-void RaytracingBuilder::CreateRTModelData(
+void RaytracingBuilder::PopulateRTModelData(
 	VulkanContext& ctx,
 	const std::span<VertexData> vertices,
 	const std::span<uint32_t> indices,

@@ -18,7 +18,7 @@ public:
 		Scene* scene,
 		std::vector<RTModelData>& modelDataArray);
 
-	static void CreateRTModelData(VulkanContext& ctx,
+	static void PopulateRTModelData(VulkanContext& ctx,
 		const std::span<VertexData> vertices,
 		const std::span<uint32_t> indices,
 		const glm::mat4 modelMatrix,

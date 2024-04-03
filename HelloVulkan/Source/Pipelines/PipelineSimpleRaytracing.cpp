@@ -239,7 +239,7 @@ void PipelineSimpleRaytracing::CreateRayTracingPipeline(VulkanContext& ctx)
 
 void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 {
-	RaytracingBuilder::CreateRTModelData(ctx,
+	RaytracingBuilder::PopulateRTModelData(ctx,
 		scene_->sceneData_.vertices_,
 		scene_->sceneData_.indices_,
 		glm::mat4(1.0f),
