@@ -25,6 +25,11 @@ struct ShaderBindingTables
 		hitShaderBindingTable_.Destroy();
 	}
 
+	/*
+	Group 1 : Raygen
+	Group 2 : Miss + Shadow
+	Group 3 : Closest Hit + Any Hit
+	*/
 	void Create(VulkanContext& ctx, VkPipeline pipeline, const uint32_t groupCount)
 	{
 		VkPhysicalDeviceRayTracingPipelinePropertiesKHR properties = ctx.GetRayTracingPipelineProperties();
@@ -45,13 +50,13 @@ struct ShaderBindingTables
 		const VkBufferUsageFlags bufferUsage = VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR;
 		const VmaMemoryUsage memoryUsage = VMA_MEMORY_USAGE_CPU_TO_GPU;
 		raygenShaderBindingTable_.CreateBufferWithDeviceAddress(ctx, handleSize, bufferUsage, memoryUsage);
-		missShaderBindingTable_.CreateBufferWithDeviceAddress(ctx, handleSize, bufferUsage, memoryUsage);
+		missShaderBindingTable_.CreateBufferWithDeviceAddress(ctx, handleSize * 2, bufferUsage, memoryUsage);
 		hitShaderBindingTable_.CreateBufferWithDeviceAddress(ctx, handleSize, bufferUsage, memoryUsage);
 
 		// Copy handles
 		raygenShaderBindingTable_.UploadBufferData(ctx, shaderHandleStorage.data(), handleSize);
-		missShaderBindingTable_.UploadBufferData(ctx, shaderHandleStorage.data() + handleSizeAligned, handleSize);
-		hitShaderBindingTable_.UploadBufferData(ctx, shaderHandleStorage.data() + handleSizeAligned * 2, handleSize);
+		missShaderBindingTable_.UploadBufferData(ctx, shaderHandleStorage.data() + handleSizeAligned, handleSize * 2);
+		hitShaderBindingTable_.UploadBufferData(ctx, shaderHandleStorage.data() + handleSizeAligned * 3, handleSize);
 
 		// Entries
 		raygenShaderSbtEntry_ =

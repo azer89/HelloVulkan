@@ -3,6 +3,7 @@
 
 #include <cstdint>
 
+// TODO Probably delete this
 struct GeometryNode
 {
 	uint64_t vertexBufferDeviceAddress = 0;

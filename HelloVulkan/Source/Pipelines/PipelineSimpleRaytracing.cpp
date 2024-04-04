@@ -30,7 +30,6 @@ PipelineSimpleRaytracing::~PipelineSimpleRaytracing()
 	storageImage_.Destroy();
 	blas_.Destroy();
 	tlas_.Destroy();
-	//rtModelData_.Destroy();
 	for (auto& mData : modelDataArray_)
 	{
 		mData.Destroy();
@@ -203,7 +202,9 @@ void PipelineSimpleRaytracing::CreateRayTracingPipeline(VulkanContext& ctx)
 	{
 		AppConfig::ShaderFolder + "SimpleRaytracing/RayGen.rgen",
 		AppConfig::ShaderFolder + "SimpleRaytracing/Miss.rmiss",
-		AppConfig::ShaderFolder + "SimpleRaytracing/ClosestHit.rchit"
+		AppConfig::ShaderFolder + "SimpleRaytracing/Shadow.rmiss",
+		AppConfig::ShaderFolder + "SimpleRaytracing/ClosestHit.rchit",
+		AppConfig::ShaderFolder + "SimpleRaytracing/AnyHit.rahit"
 	};
 
 	std::vector<VulkanShader> shaderModules(shaderFiles.size());
@@ -247,26 +248,6 @@ void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
 	RaytracingBuilder::CreateRTModelDataArray(ctx, scene_, modelDataArray_);
 
 	RaytracingBuilder::CreateBLASMultipleMeshes(ctx, modelDataArray_, &blas_);
-
-	/*RaytracingBuilder::PopulateRTModelData(ctx,
-		scene_->sceneData_.vertices_,
-		scene_->sceneData_.indices_,
-		glm::mat4(1.0f),
-		&rtModelData_);
-
-	uint32_t triangleCount = static_cast<uint32_t>(scene_->sceneData_.indices_.size()) / 3;
-	uint32_t vertexCount = static_cast<uint32_t>(scene_->sceneData_.vertices_.size());
-	VkDeviceSize vertexStride = sizeof(VertexData);
-
-	RaytracingBuilder::CreateBLAS(
-		ctx,
-		rtModelData_.vertexBuffer_,
-		rtModelData_.indexBuffer_,
-		rtModelData_.transformBuffer_,
-		triangleCount,
-		vertexCount,
-		vertexStride,
-		&blas_);*/
 }
 
 void PipelineSimpleRaytracing::CreateTLAS(VulkanContext& ctx)
