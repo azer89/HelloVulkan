@@ -13,7 +13,7 @@ void AppSimpleRaytracing::Init()
 	// Scene
 	std::vector<ModelCreateInfo> dataArray = {
 		{ 
-			.filename = AppConfig::ModelFolder + "Tachikoma/Tachikoma.gltf",
+			.filename = AppConfig::ModelFolder + "Hexapod/Hexapod.gltf",
 			.instanceCount = 1,
 			.playAnimation = false
 		}
