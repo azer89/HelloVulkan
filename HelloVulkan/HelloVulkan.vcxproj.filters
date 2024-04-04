@@ -28,9 +28,6 @@
     <Filter Include="Shaders\ClusteredForward">
       <UniqueIdentifier>{20cd7c14-216f-4f3a-841a-5875546ac38f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders\SimpleRaytracing">
-      <UniqueIdentifier>{cf84cfb1-6675-4214-b93b-2033515180c3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders\ShadowMapping">
       <UniqueIdentifier>{c0f7c7d6-309b-4695-b723-a302677825d5}</UniqueIdentifier>
     </Filter>
@@ -73,6 +70,9 @@
     <Filter Include="Source Files\Scene">
       <UniqueIdentifier>{5844965a-9532-4789-9019-c0634fa4c058}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Raytracing">
+      <UniqueIdentifier>{cf84cfb1-6675-4214-b93b-2033515180c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\Skybox.vert">
@@ -110,15 +110,6 @@
     </None>
     <None Include="..\Shaders\ClusteredForward\LightCullingBatch.comp">
       <Filter>Shaders\ClusteredForward</Filter>
-    </None>
-    <None Include="..\Shaders\SimpleRaytracing\ClosestHit.rchit">
-      <Filter>Shaders\SimpleRaytracing</Filter>
-    </None>
-    <None Include="..\Shaders\SimpleRaytracing\Miss.rmiss">
-      <Filter>Shaders\SimpleRaytracing</Filter>
-    </None>
-    <None Include="..\Shaders\SimpleRaytracing\RayGen.rgen">
-      <Filter>Shaders\SimpleRaytracing</Filter>
     </None>
     <None Include="..\Shaders\ShadowMapping\Scene.frag">
       <Filter>Shaders\ShadowMapping</Filter>
@@ -240,17 +231,26 @@
     <None Include="..\Shaders\Skinning.comp">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\SimpleRaytracing\Random.glsl">
-      <Filter>Shaders\SimpleRaytracing</Filter>
+    <None Include="..\Shaders\Raytracing\AnyHit.rahit">
+      <Filter>Shaders\Raytracing</Filter>
     </None>
-    <None Include="..\Shaders\SimpleRaytracing\GeometryNode.glsl">
-      <Filter>Shaders\SimpleRaytracing</Filter>
+    <None Include="..\Shaders\Raytracing\ClosestHit.rchit">
+      <Filter>Shaders\Raytracing</Filter>
     </None>
-    <None Include="..\Shaders\SimpleRaytracing\AnyHit.rahit">
-      <Filter>Shaders\SimpleRaytracing</Filter>
+    <None Include="..\Shaders\Raytracing\Miss.rmiss">
+      <Filter>Shaders\Raytracing</Filter>
     </None>
-    <None Include="..\Shaders\SimpleRaytracing\Shadow.rmiss">
-      <Filter>Shaders\SimpleRaytracing</Filter>
+    <None Include="..\Shaders\Raytracing\Random.glsl">
+      <Filter>Shaders\Raytracing</Filter>
+    </None>
+    <None Include="..\Shaders\Raytracing\RayGen.rgen">
+      <Filter>Shaders\Raytracing</Filter>
+    </None>
+    <None Include="..\Shaders\Raytracing\Shadow.rmiss">
+      <Filter>Shaders\Raytracing</Filter>
+    </None>
+    <None Include="..\Shaders\Raytracing\Triangle.glsl">
+      <Filter>Shaders\Raytracing</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -200,11 +200,11 @@ void PipelineSimpleRaytracing::CreateRayTracingPipeline(VulkanContext& ctx)
 	// Shaders
 	const std::vector<std::string> shaderFiles =
 	{
-		AppConfig::ShaderFolder + "SimpleRaytracing/RayGen.rgen",
-		AppConfig::ShaderFolder + "SimpleRaytracing/Miss.rmiss",
-		AppConfig::ShaderFolder + "SimpleRaytracing/Shadow.rmiss",
-		AppConfig::ShaderFolder + "SimpleRaytracing/ClosestHit.rchit",
-		AppConfig::ShaderFolder + "SimpleRaytracing/AnyHit.rahit"
+		AppConfig::ShaderFolder + "Raytracing/RayGen.rgen",
+		AppConfig::ShaderFolder + "Raytracing/Miss.rmiss",
+		AppConfig::ShaderFolder + "Raytracing/Shadow.rmiss",
+		AppConfig::ShaderFolder + "Raytracing/ClosestHit.rchit",
+		AppConfig::ShaderFolder + "Raytracing/AnyHit.rahit"
 	};
 
 	std::vector<VulkanShader> shaderModules(shaderFiles.size());
