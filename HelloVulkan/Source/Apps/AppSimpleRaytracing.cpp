@@ -8,17 +8,21 @@ AppSimpleRaytracing::AppSimpleRaytracing()
 
 void AppSimpleRaytracing::Init()
 {
-	camera_->SetPositionAndTarget(glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3(0.0f, 0.0f, -3.5f));
+	camera_->SetPositionAndTarget(glm::vec3(0.0f, 3.0f, 3.0f), glm::vec3(0.0, 0.0, -1.0f));
 
 	// Scene
 	std::vector<ModelCreateInfo> dataArray = {
-		{ 
+		{
 			.filename = AppConfig::ModelFolder + "Hexapod/Hexapod.gltf",
-			.instanceCount = 1,
-			.playAnimation = false
 		}
 	};
 	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray);
+
+	// Model matrix for Hexapod
+	glm::mat4 modelMatrix = glm::mat4(1.f);
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.62f, 0.0f));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f));
+	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 0, 0);
 
 	AddPipeline<PipelineClear>(vulkanContext_);
 	rtxPtr_ = AddPipeline<PipelineSimpleRaytracing>(vulkanContext_, scene_.get());
