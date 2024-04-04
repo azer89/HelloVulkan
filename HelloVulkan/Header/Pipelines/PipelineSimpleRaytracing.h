@@ -9,6 +9,7 @@
 #include "VulkanBuffer.h"
 #include "VulkanImage.h"
 #include "Scene.h"
+#include "ResourcesLight.h"
 #include "Configs.h"
 
 #include <array>
@@ -16,7 +17,7 @@
 class PipelineSimpleRaytracing final : public PipelineBase
 {
 public:
-	PipelineSimpleRaytracing(VulkanContext& ctx, Scene* scene);
+	PipelineSimpleRaytracing(VulkanContext& ctx, Scene* scene, ResourcesLight* resourcesLight);
 	~PipelineSimpleRaytracing();
 
 	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override {}
@@ -43,10 +44,11 @@ private:
 	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_ = {};
 
 	Scene* scene_ = nullptr;
+	ResourcesLight* resourcesLight_ = nullptr;
+
 	AccelStructure blas_ = {};
 	AccelStructure tlas_ = {};
 	ShaderBindingTables sbt_ = {};
-	//RTModelData rtModelData_;
 	std::vector<RTModelData> modelDataArray_ = {};
 	std::vector<VkDescriptorImageInfo> textureInfoArray_ = {};
 	ShaderGroups sg_ = {};

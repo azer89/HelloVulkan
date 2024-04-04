@@ -6,13 +6,14 @@
 #include "Configs.h"
 #include "Utility.h"
 
-PipelineSimpleRaytracing::PipelineSimpleRaytracing(VulkanContext& ctx, Scene* scene) :
+PipelineSimpleRaytracing::PipelineSimpleRaytracing(VulkanContext& ctx, Scene* scene, ResourcesLight* resourcesLight) :
 	PipelineBase(
 		ctx,
 		{
 			.type_ = PipelineType::GraphicsOnScreen
 		}),
-	scene_(scene)
+	scene_(scene),
+	resourcesLight_(resourcesLight)
 {
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(RaytracingCameraUBO), AppConfig::FrameCount);
 
@@ -123,6 +124,7 @@ void PipelineSimpleRaytracing::CreateDescriptor(VulkanContext& ctx)
 	descriptorInfo_.AddBuffer(&(scene_->vertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
 	descriptorInfo_.AddBuffer(&(scene_->indexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
 	descriptorInfo_.AddBuffer(&(scene_->meshDataBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
+	descriptorInfo_.AddBuffer(resourcesLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
 	descriptorInfo_.AddImageArray(textureInfoArray_, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
 
 	// Create pool and layout

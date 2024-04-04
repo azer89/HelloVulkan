@@ -10,6 +10,8 @@ void AppSimpleRaytracing::Init()
 {
 	camera_->SetPositionAndTarget(glm::vec3(0.0f, 3.0f, 3.0f), glm::vec3(0.0, 0.0, -1.0f));
 
+	InitLights();
+
 	// Scene
 	std::vector<ModelCreateInfo> dataArray = {
 		{
@@ -25,10 +27,23 @@ void AppSimpleRaytracing::Init()
 	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 0, 0);
 
 	AddPipeline<PipelineClear>(vulkanContext_);
-	rtxPtr_ = AddPipeline<PipelineSimpleRaytracing>(vulkanContext_, scene_.get());
+	rtxPtr_ = AddPipeline<PipelineSimpleRaytracing>(vulkanContext_, scene_.get(), resourcesLight_);
 	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// TODO Add tonemapping
 	AddPipeline<PipelineFinish>(vulkanContext_);
+}
+
+void AppSimpleRaytracing::InitLights()
+{
+	// Lights (SSBO)
+	resourcesLight_ = AddResources<ResourcesLight>();
+	resourcesLight_->AddLights(vulkanContext_,
+		{
+			{.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
+			{.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
+			{.position_ = glm::vec4(-1.5f, 0.7f, -1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
+			{.position_ = glm::vec4(1.5f, 0.7f, -1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f }
+		});
 }
 
 void AppSimpleRaytracing::UpdateUI()
