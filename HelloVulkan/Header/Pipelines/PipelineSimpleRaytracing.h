@@ -48,6 +48,7 @@ private:
 	ShaderBindingTables sbt_ = {};
 	//RTModelData rtModelData_;
 	std::vector<RTModelData> modelDataArray_ = {};
+	std::vector<VkDescriptorImageInfo> textureInfoArray_ = {};
 	ShaderGroups sg_ = {};
 };
 

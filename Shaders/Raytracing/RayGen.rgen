@@ -14,6 +14,7 @@ layout(set = 0, binding = 2) uniform CameraProperties
 cam;
 
 layout(location = 0) rayPayloadEXT vec3 hitValue;
+//layout(location = 3) rayPayloadEXT uint payloadSeed;
 
 void main()
 {
@@ -39,6 +40,7 @@ void main()
 	const int samples = 4;
 	for (int smpl = 0; smpl < samples; smpl++)
 	{
+		//payloadSeed = TEA(gl_LaunchIDEXT.y * gl_LaunchSizeEXT.x + gl_LaunchIDEXT.x, cam.frame);
 		traceRayEXT(topLevelAS, gl_RayFlagsOpaqueEXT, 0xff, 0, 0, 0, origin.xyz, tmin, direction.xyz, tmax, 0);
 		hitValues += hitValue;
 	}

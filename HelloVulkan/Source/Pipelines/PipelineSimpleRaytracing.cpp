@@ -114,6 +114,7 @@ void PipelineSimpleRaytracing::OnWindowResized(VulkanContext& ctx)
 
 void PipelineSimpleRaytracing::CreateDescriptor(VulkanContext& ctx)
 {
+	textureInfoArray_ = scene_->GetImageInfos();
 	constexpr uint32_t frameCount = AppConfig::FrameCount;
 
 	descriptorInfo_.AddAccelerationStructure();
@@ -122,6 +123,7 @@ void PipelineSimpleRaytracing::CreateDescriptor(VulkanContext& ctx)
 	descriptorInfo_.AddBuffer(&(scene_->vertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
 	descriptorInfo_.AddBuffer(&(scene_->indexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
 	descriptorInfo_.AddBuffer(&(scene_->meshDataBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
+	descriptorInfo_.AddImageArray(textureInfoArray_, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
 
 	// Create pool and layout
 	descriptor_.CreatePoolAndLayout(ctx, descriptorInfo_, frameCount, 1u);
