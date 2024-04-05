@@ -3,6 +3,7 @@ struct Triangle
 {
 	VertexData vertices[3];
 	vec3 normal;
+	vec3 fragPosition;
 	vec2 uv;
 };
 
@@ -29,6 +30,11 @@ Triangle GetTriangle(uint primitiveID, uint geometryIndex)
 		tri.vertices[0].normal.xyz * bary.x +
 		tri.vertices[1].normal.xyz * bary.y +
 		tri.vertices[2].normal.xyz * bary.z);
+
+	tri.fragPosition = normalize(
+		tri.vertices[0].position.xyz * bary.x +
+		tri.vertices[1].position.xyz * bary.y +
+		tri.vertices[2].position.xyz * bary.z);
 
 	tri.uv =
 		vec2(tri.vertices[0].uvX, tri.vertices[0].uvY) * bary.x +

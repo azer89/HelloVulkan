@@ -252,6 +252,9 @@
     <None Include="..\Shaders\Raytracing\Triangle.glsl">
       <Filter>Shaders\Raytracing</Filter>
     </None>
+    <None Include="..\Shaders\Raytracing\CameraProperties.glsl">
+      <Filter>Shaders\Raytracing</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Camera.h">

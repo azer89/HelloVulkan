@@ -35,14 +35,17 @@ void AppSimpleRaytracing::Init()
 
 void AppSimpleRaytracing::InitLights()
 {
+	constexpr float lightIntensity = 15.f;
+	constexpr float lightPositionY = 1.75f;
+
 	// Lights (SSBO)
 	resourcesLight_ = AddResources<ResourcesLight>();
 	resourcesLight_->AddLights(vulkanContext_,
 		{
-			{.position_ = glm::vec4(-1.5f, 0.7f,  1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
-			{.position_ = glm::vec4(1.5f, 0.7f,  1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
-			{.position_ = glm::vec4(-1.5f, 0.7f, -1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f },
-			{.position_ = glm::vec4(1.5f, 0.7f, -1.5f, 1.f), .color_ = glm::vec4(1.f), .radius_ = 10.0f }
+			{.position_ = glm::vec4(-1.5f, lightPositionY,  1.5f, 1.f), .color_ = glm::vec4(lightIntensity), .radius_ = 10.0f },
+			{.position_ = glm::vec4(1.5f, lightPositionY,  1.5f, 1.f), .color_ = glm::vec4(lightIntensity), .radius_ = 10.0f },
+			{.position_ = glm::vec4(-1.5f, lightPositionY, -1.5f, 1.f), .color_ = glm::vec4(lightIntensity), .radius_ = 10.0f },
+			{.position_ = glm::vec4(1.5f, lightPositionY, -1.5f, 1.f), .color_ = glm::vec4(lightIntensity), .radius_ = 10.0f }
 		});
 }
 

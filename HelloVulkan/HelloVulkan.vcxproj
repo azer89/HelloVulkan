@@ -182,6 +182,7 @@
     <None Include="..\Shaders\PBRPushConstants.glsl" />
     <None Include="..\Shaders\Radiance.glsl" />
     <None Include="..\Shaders\Raytracing\AnyHit.rahit" />
+    <None Include="..\Shaders\Raytracing\CameraProperties.glsl" />
     <None Include="..\Shaders\Raytracing\ClosestHit.rchit" />
     <None Include="..\Shaders\Raytracing\Miss.rmiss" />
     <None Include="..\Shaders\Raytracing\Random.glsl" />

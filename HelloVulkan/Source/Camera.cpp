@@ -171,6 +171,7 @@ RaytracingCameraUBO Camera::GetRaytracingCameraUBO() const
 	{
 		.projectionInverse = glm::inverse(projectionMatrix_),
 		.viewInverse = glm::inverse(viewMatrix_),
+		.position = glm::vec4(position_, 1.f),
 		.frame = frameCounter++
 	};
 }
