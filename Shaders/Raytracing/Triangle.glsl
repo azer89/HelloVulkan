@@ -1,9 +1,8 @@
-
 struct Triangle
 {
 	VertexData vertices[3];
 	vec3 normal;
-	vec3 fragPosition;
+	vec3 fragPosition; // Position where the light hits
 	vec2 uv;
 };
 
@@ -31,6 +30,7 @@ Triangle GetTriangle(uint primitiveID, uint geometryIndex)
 		tri.vertices[1].normal.xyz * bary.y +
 		tri.vertices[2].normal.xyz * bary.z);
 
+	// Position where the light hits
 	tri.fragPosition = normalize(
 		tri.vertices[0].position.xyz * bary.x +
 		tri.vertices[1].position.xyz * bary.y +

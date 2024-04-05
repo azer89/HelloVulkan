@@ -38,7 +38,7 @@ public:
 	[[nodiscard]] glm::vec3 Position() const;
 	[[nodiscard]] CameraUBO GetCameraUBO() const;
 	[[nodiscard]] ClusterForwardUBO GetClusterForwardUBO() const;
-	[[nodiscard]] RaytracingCameraUBO GetRaytracingCameraUBO() const;
+	[[nodiscard]] RaytracingCameraUBO GetRaytracingCameraUBO(bool resetCounter) const;
 	[[nodiscard]] FrustumUBO GetFrustumUBO() const;
 	[[nodiscard]] Ray GetRayFromScreenToWorld(float screenPosX, float screenPosY) const;
 

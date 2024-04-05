@@ -65,7 +65,7 @@ void AppSimpleRaytracing::UpdateUI()
 
 void AppSimpleRaytracing::UpdateUBOs()
 {
-	rtxPtr_->SetRaytracingCameraUBO(vulkanContext_, camera_->GetRaytracingCameraUBO());
+	rtxPtr_->SetRaytracingCameraUBO(vulkanContext_, camera_->GetRaytracingCameraUBO(uiData_.cameraChanged_));
 }
 
 void AppSimpleRaytracing::MainLoop()
