@@ -77,7 +77,6 @@ void RaytracingBuilder::CreateBLASMultipleMeshes(
 	std::vector<VkAccelerationStructureGeometryKHR> geometries(instanceCount);
 	std::vector<VkAccelerationStructureBuildRangeInfoKHR> buildRangeInfos(instanceCount);
 	std::vector<VkAccelerationStructureBuildRangeInfoKHR*> pBuildRangeInfos(instanceCount);
-	//std::vector<GeometryNode> geometryNodes{};
 
 	for (uint32_t i = 0; i < modelDataArray.size(); ++i)
 	{
@@ -109,7 +108,7 @@ void RaytracingBuilder::CreateBLASMultipleMeshes(
 		VkAccelerationStructureBuildRangeInfoKHR buildRangeInfo =
 		{
 			.primitiveCount = mData.indexCount_ / 3,
-			.primitiveOffset = 0, // primitive->firstIndex * sizeof(uint32_t);
+			.primitiveOffset = 0,
 			.firstVertex = 0,
 			.transformOffset = 0
 		};
@@ -429,29 +428,3 @@ void RaytracingBuilder::CreateTLAS(VulkanContext& ctx,
 	scratchBuffer.Destroy();
 	instancesBuffer.Destroy();
 }
-
-/*void RaytracingBuilder::CreateTransformBuffer(
-	VulkanContext& ctx,
-	const std::span<ModelUBO> uboArray,
-	VulkanBuffer& transformBuffer)
-{
-	std::vector<VkTransformMatrixKHR> transformMatrices(uboArray.size());
-
-	for (uint32_t i = 0; i < uboArray.size(); ++i)
-	{
-		VkTransformMatrixKHR transformMatrix{};
-		auto m = glm::mat3x4(glm::transpose(uboArray[i].model));
-		memcpy(&transformMatrix, (void*)&m, sizeof(glm::mat3x4));
-		transformMatrices[i] = transformMatrix;
-	}
-
-	transformBuffer.CreateBufferWithDeviceAddress(
-		ctx,
-		sizeof(VkTransformMatrixKHR),
-		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
-		VMA_MEMORY_USAGE_CPU_TO_GPU
-	);
-	transformBuffer.UploadBufferData(ctx,
-		transformMatrices.data(),
-		static_cast<uint32_t>(transformMatrices.size()) * sizeof(VkTransformMatrixKHR));
-}*/
