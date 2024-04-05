@@ -48,10 +48,10 @@ private:
 
 	AccelStructure blas_ = {};
 	AccelStructure tlas_ = {};
-	ShaderBindingTables sbt_ = {};
+	ShaderGroups shaderGroups_ = {};
+	ShaderBindingTables shaderBindingTables_ = {};
 	std::vector<RTModelData> modelDataArray_ = {};
 	std::vector<VkDescriptorImageInfo> textureInfoArray_ = {};
-	ShaderGroups sg_ = {};
 };
 
 #endif

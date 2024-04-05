@@ -1,7 +1,7 @@
 #ifndef RAYTRACING_ACCELERATION_STRUCTURE
 #define RAYTRACING_ACCELERATION_STRUCTURE
 
-#include "VulkanBuffer.h"
+#include "VulkanContext.h"
 #include "vk_mem_alloc.h"
 
 // For TLAS and BLAS

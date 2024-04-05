@@ -3,9 +3,8 @@
 
 #include "VulkanContext.h"
 #include "VulkanBuffer.h"
-
 #include "VulkanCheck.h"
-#include "utility.h"
+#include "Utility.h"
 
 struct ShaderBindingTables
 {
@@ -47,8 +46,8 @@ struct ShaderBindingTables
 			sbtSize,
 			shaderHandleStorage.data()));
 
-		const VkBufferUsageFlags bufferUsage = VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR;
-		const VmaMemoryUsage memoryUsage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+		constexpr VkBufferUsageFlags bufferUsage = VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR;
+		constexpr VmaMemoryUsage memoryUsage = VMA_MEMORY_USAGE_CPU_TO_GPU;
 		raygenShaderBindingTable_.CreateBufferWithDeviceAddress(ctx, handleSize, bufferUsage, memoryUsage);
 		missShaderBindingTable_.CreateBufferWithDeviceAddress(ctx, handleSize * 2, bufferUsage, memoryUsage);
 		hitShaderBindingTable_.CreateBufferWithDeviceAddress(ctx, handleSize, bufferUsage, memoryUsage);

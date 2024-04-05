@@ -27,8 +27,8 @@ public:
 private:
 	PipelineImGui* imguiPtr_ = nullptr;
 	PipelineRaytracing* rtxPtr_ = nullptr;
-	std::unique_ptr<Scene> scene_ = nullptr;
 	ResourcesLight* resourcesLight_ = nullptr;
+	std::unique_ptr<Scene> scene_ = nullptr;
 };
 
 #endif

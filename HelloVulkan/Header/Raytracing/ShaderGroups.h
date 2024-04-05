@@ -11,7 +11,7 @@ struct ShaderGroups
 
 	VkRayTracingShaderGroupCreateInfoKHR* Data() { return shaderGroups_.data(); }
 
-	uint32_t Count() { return static_cast<uint32_t>(shaderGroups_.size()); }
+	uint32_t Count() const { return static_cast<uint32_t>(shaderGroups_.size()); }
 
 	void Create()
 	{

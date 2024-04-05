@@ -21,9 +21,9 @@ PipelineRaytracing::PipelineRaytracing(VulkanContext& ctx, Scene* scene, Resourc
 	CreateTLAS(ctx);
 	CreateStorageImage(ctx);
 	CreateDescriptor(ctx);
-	sg_.Create();
+	shaderGroups_.Create();
 	CreateRayTracingPipeline(ctx);
-	sbt_.Create(ctx, pipeline_, sg_.Count());
+	shaderBindingTables_.Create(ctx, pipeline_, shaderGroups_.Count());
 }
 
 PipelineRaytracing::~PipelineRaytracing()
@@ -35,7 +35,7 @@ PipelineRaytracing::~PipelineRaytracing()
 	{
 		mData.Destroy();
 	}
-	sbt_.Destroy();
+	shaderBindingTables_.Destroy();
 }
 
 void PipelineRaytracing::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
@@ -54,10 +54,10 @@ void PipelineRaytracing::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer c
 
 	vkCmdTraceRaysKHR(
 		commandBuffer,
-		&sbt_.raygenShaderSbtEntry_,
-		&sbt_.missShaderSbtEntry_,
-		&sbt_.hitShaderSbtEntry_,
-		&sbt_.callableShaderSbtEntry_,
+		&shaderBindingTables_.raygenShaderSbtEntry_,
+		&shaderBindingTables_.missShaderSbtEntry_,
+		&shaderBindingTables_.hitShaderSbtEntry_,
+		&shaderBindingTables_.callableShaderSbtEntry_,
 		ctx.GetSwapchainWidth(),
 		ctx.GetSwapchainHeight(),
 		1);
@@ -227,8 +227,8 @@ void PipelineRaytracing::CreateRayTracingPipeline(VulkanContext& ctx)
 		.sType = VK_STRUCTURE_TYPE_RAY_TRACING_PIPELINE_CREATE_INFO_KHR,
 		.stageCount = static_cast<uint32_t>(shaderStages.size()),
 		.pStages = shaderStages.data(),
-		.groupCount = sg_.Count(),
-		.pGroups = sg_.Data(),
+		.groupCount = shaderGroups_.Count(),
+		.pGroups = shaderGroups_.Data(),
 		.maxPipelineRayRecursionDepth = 1,
 		.layout = pipelineLayout_
 	};
@@ -250,7 +250,6 @@ void PipelineRaytracing::CreateRayTracingPipeline(VulkanContext& ctx)
 void PipelineRaytracing::CreateBLAS(VulkanContext& ctx)
 {
 	RaytracingBuilder::CreateRTModelDataArray(ctx, scene_, modelDataArray_);
-
 	RaytracingBuilder::CreateBLASMultipleMeshes(ctx, modelDataArray_, &blas_);
 }
 
@@ -260,6 +259,5 @@ void PipelineRaytracing::CreateTLAS(VulkanContext& ctx)
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f };
-
 	RaytracingBuilder::CreateTLAS(ctx, transformMatrix, blas_.deviceAddress_, &tlas_);
 }

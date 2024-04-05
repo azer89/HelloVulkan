@@ -24,11 +24,6 @@ public:
 		const glm::mat4 modelMatrix,
 		RTModelData* modelData);
 
-	/*static void CreateTransformBuffer(
-		VulkanContext& ctx,
-		const std::span<ModelUBO> uboArray,
-		VulkanBuffer& transformBuffer);*/
-
 	static void CreateBLASMultipleMeshes(
 		VulkanContext& ctx, 
 		const std::span<RTModelData> modelDataArray,
