@@ -187,12 +187,13 @@ void AppBase::DrawFrame()
 	// Do this after the end of the draw
 	vulkanContext_.IncrementFrameIndex();
 
-	// Mouse input
+	// UI Data
 	if (uiData_.mouseLeftPressed_)
 	{
 		uiData_.mouseLeftPressed_ = false;
 		uiData_.mouseLeftHold_ = true;
 	}
+	uiData_.cameraChanged_ = false;
 
 	// End Tracy frame
 	FrameMark;
@@ -334,6 +335,7 @@ void AppBase::MouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 		const float xOffset = xPos - uiData_.mousePositionX;
 		const float yOffset = uiData_.mousePositionY - yPos; // Reversed since y-coordinates go from bottom to top
 		camera_->ProcessMouseMovement(xOffset, yOffset);
+		uiData_.cameraChanged_ = true;
 	}
 
 	uiData_.mousePositionX = xPos;
@@ -357,6 +359,7 @@ void AppBase::MouseButtonCallback(GLFWwindow* window, int button, int action, in
 void AppBase::ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	camera_->ProcessMouseScroll(static_cast<float>(yoffset));
+	uiData_.cameraChanged_ = true;
 }
 
 void AppBase::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -384,13 +387,13 @@ void AppBase::ProcessInput()
 			{ glfwSetWindowShouldClose(glfwWindow_, true); }
 		
 		if (glfwGetKey(glfwWindow_, GLFW_KEY_W) == GLFW_PRESS)
-			{ camera_->ProcessKeyboard(CameraMovement::Forward, frameCounter_.GetDeltaSecond()); }
+			{ camera_->ProcessKeyboard(CameraMovement::Forward, frameCounter_.GetDeltaSecond()); uiData_.cameraChanged_ = true; }
 		else if (glfwGetKey(glfwWindow_, GLFW_KEY_S) == GLFW_PRESS)
-			{ camera_->ProcessKeyboard(CameraMovement::Backward, frameCounter_.GetDeltaSecond()); }
+			{ camera_->ProcessKeyboard(CameraMovement::Backward, frameCounter_.GetDeltaSecond()); uiData_.cameraChanged_ = true; }
 		else if (glfwGetKey(glfwWindow_, GLFW_KEY_A) == GLFW_PRESS)
-			{ camera_->ProcessKeyboard(CameraMovement::Left, frameCounter_.GetDeltaSecond()); }
+			{ camera_->ProcessKeyboard(CameraMovement::Left, frameCounter_.GetDeltaSecond()); uiData_.cameraChanged_ = true; }
 		else if (glfwGetKey(glfwWindow_, GLFW_KEY_D) == GLFW_PRESS)
-			{ camera_->ProcessKeyboard(CameraMovement::Right, frameCounter_.GetDeltaSecond()); }
+			{ camera_->ProcessKeyboard(CameraMovement::Right, frameCounter_.GetDeltaSecond()); uiData_.cameraChanged_ = true; }
 	}
 }
 

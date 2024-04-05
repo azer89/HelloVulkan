@@ -48,6 +48,8 @@ public:
 	float mousePressX = 0;
 	float mousePressY = 0;
 
+	bool cameraChanged_ = false;
+
 	bool imguiShow_ = true;
 
 	int gizmoMode_ = 0;

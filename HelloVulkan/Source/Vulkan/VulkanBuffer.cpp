@@ -85,7 +85,7 @@ void VulkanBuffer::UnmapIndirectBuffer()
 	vmaUnmapMemory(vmaAllocator_, vmaAllocation_);
 }
 
-void VulkanBuffer::CreateBufferWithShaderDeviceAddress(VulkanContext& ctx,
+void VulkanBuffer::CreateBufferWithDeviceAddress(VulkanContext& ctx,
 	VkDeviceSize size,
 	VkBufferUsageFlags bufferUsage,
 	VmaMemoryUsage memoryUsage,

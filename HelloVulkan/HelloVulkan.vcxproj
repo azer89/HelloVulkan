@@ -181,6 +181,14 @@
     <None Include="..\Shaders\ModelUBO.glsl" />
     <None Include="..\Shaders\PBRPushConstants.glsl" />
     <None Include="..\Shaders\Radiance.glsl" />
+    <None Include="..\Shaders\Raytracing\AnyHit.rahit" />
+    <None Include="..\Shaders\Raytracing\CameraProperties.glsl" />
+    <None Include="..\Shaders\Raytracing\ClosestHit.rchit" />
+    <None Include="..\Shaders\Raytracing\Miss.rmiss" />
+    <None Include="..\Shaders\Raytracing\Random.glsl" />
+    <None Include="..\Shaders\Raytracing\RayGen.rgen" />
+    <None Include="..\Shaders\Raytracing\Shadow.rmiss" />
+    <None Include="..\Shaders\Raytracing\Triangle.glsl" />
     <None Include="..\Shaders\ShadowMapping\Depth.frag" />
     <None Include="..\Shaders\ShadowMapping\Poisson.glsl" />
     <None Include="..\Shaders\Skinning.comp" />
@@ -198,9 +206,6 @@
     <None Include="..\Shaders\ShadowMapping\Shadow.glsl" />
     <None Include="..\Shaders\ShadowMapping\Scene.frag" />
     <None Include="..\Shaders\ShadowMapping\Scene.vert" />
-    <None Include="..\Shaders\SimpleRaytracing\ClosestHit.rchit" />
-    <None Include="..\Shaders\SimpleRaytracing\Miss.rmiss" />
-    <None Include="..\Shaders\SimpleRaytracing\RayGen.rgen" />
     <None Include="..\Shaders\Tonemap.frag" />
   </ItemGroup>
   <ItemGroup>
@@ -211,13 +216,16 @@
     <ClInclude Include="Header\Apps\AppPBRClusterForward.h" />
     <ClInclude Include="Header\Apps\AppPBRShadow.h" />
     <ClInclude Include="Header\Apps\AppPBRSlotBased.h" />
-    <ClInclude Include="Header\Apps\AppSimpleRaytracing.h" />
+    <ClInclude Include="Header\Apps\AppRaytracing.h" />
     <ClInclude Include="Header\Apps\AppSkinning.h" />
     <ClInclude Include="Header\BoundingBox.h" />
     <ClInclude Include="Header\Camera.h" />
     <ClInclude Include="Header\Configs.h" />
     <ClInclude Include="Header\FrameCounter.h" />
     <ClInclude Include="Header\Ray.h" />
+    <ClInclude Include="Header\Raytracing\RTModelData.h" />
+    <ClInclude Include="Header\Raytracing\ShaderBindingTables.h" />
+    <ClInclude Include="Header\Raytracing\ShaderGroups.h" />
     <ClInclude Include="Header\Utility.h" />
     <ClInclude Include="Header\UIData.h" />
     <ClInclude Include="Header\Pipelines\PipelineAABBGenerator.h" />
@@ -241,7 +249,7 @@
     <ClInclude Include="Header\Pipelines\PipelinePBRShadow.h" />
     <ClInclude Include="Header\Pipelines\PipelineResolveMS.h" />
     <ClInclude Include="Header\Pipelines\PipelineShadow.h" />
-    <ClInclude Include="Header\Pipelines\PipelineSimpleRaytracing.h" />
+    <ClInclude Include="Header\Pipelines\PipelineRaytracing.h" />
     <ClInclude Include="Header\Pipelines\PipelineSkinning.h" />
     <ClInclude Include="Header\Pipelines\PipelineSkybox.h" />
     <ClInclude Include="Header\Pipelines\PipelineTonemap.h" />
@@ -286,7 +294,7 @@
     <ClCompile Include="Source\Apps\AppPBRClusterForward.cpp" />
     <ClCompile Include="Source\Apps\AppPBRShadow.cpp" />
     <ClCompile Include="Source\Apps\AppPBRSlotBased.cpp" />
-    <ClCompile Include="Source\Apps\AppSimpleRaytracing.cpp" />
+    <ClCompile Include="Source\Apps\AppRaytracing.cpp" />
     <ClCompile Include="Source\Apps\AppSkinning.cpp" />
     <ClCompile Include="Source\BoundingBox.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
@@ -312,7 +320,7 @@
     <ClCompile Include="Source\Pipelines\PipelinePBRShadow.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineResolveMS.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineShadow.cpp" />
-    <ClCompile Include="Source\Pipelines\PipelineSimpleRaytracing.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelineRaytracing.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineSkinning.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineSkybox.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineTonemap.cpp" />

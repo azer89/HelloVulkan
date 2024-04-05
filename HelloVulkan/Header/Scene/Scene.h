@@ -48,7 +48,13 @@ public:
 	[[nodiscard]] BDA GetBDA() const;
 	[[nodiscard]] int GetClickedInstanceIndex(const Ray& ray);
 
+	// TODO rename to GetDrawOffsetAndCount
 	void GetOffsetAndDrawCount(MaterialType matType, VkDeviceSize& offset, uint32_t& drawCount) const;
+	void GetVertexOffsetAndCount(const uint32_t instanceIndex, uint32_t& vertexStart, uint32_t& vertexCount) const;
+	void GetIndexOffsetAndCount(const uint32_t instanceIndex, uint32_t& indexStart, uint32_t& indexCount) const;
+
+	const std::span<VertexData> GetVertices(const uint32_t instanceIndex);
+	const std::span<uint32_t> GetIndices(const uint32_t instanceIndex);
 
 	/*Update model matrix and update the buffer
 	Need two indices to access instanceMapArray_

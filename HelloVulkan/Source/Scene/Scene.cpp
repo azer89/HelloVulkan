@@ -5,7 +5,7 @@
 #include <iostream>
 
 Scene::Scene(VulkanContext& ctx,
-	const std::span<ModelCreateInfo> modelDataArray,
+	const std::span<ModelCreateInfo> modelDataArray, // TODO Rename to modelInfoArray
 	const bool supportDeviceAddress) :
 	supportDeviceAddress_(supportDeviceAddress)
 {
@@ -97,6 +97,49 @@ void Scene::GetOffsetAndDrawCount(MaterialType matType, VkDeviceSize& offset, ui
 
 	drawCount = right - left + 1;
 	offset = left * sizeof(VkDrawIndirectCommand);
+}
+
+void Scene::GetVertexOffsetAndCount(
+	const uint32_t instanceIndex,
+	uint32_t& vertexStart,
+	uint32_t& vertexCount) const
+{
+	const InstanceData& iData = instanceDataArray_[instanceIndex];
+	const uint32_t modelIndex = iData.modelIndex_;
+	const uint32_t perModelMeshIndex = iData.perModelMeshIndex_;
+
+	vertexStart = models_[modelIndex].meshes_[perModelMeshIndex].GetVertexOffset();
+	vertexCount = models_[modelIndex].meshes_[perModelMeshIndex].GetVertexCount();
+}
+
+void Scene::GetIndexOffsetAndCount(
+	const uint32_t instanceIndex,
+	uint32_t& indexStart,
+	uint32_t& indexCount) const
+{
+	const InstanceData& iData = instanceDataArray_[instanceIndex];
+	const uint32_t modelIndex = iData.modelIndex_;
+	const uint32_t perModelMeshIndex = iData.perModelMeshIndex_;
+
+	indexStart = models_[modelIndex].meshes_[perModelMeshIndex].GetIndexOffset();
+	indexCount = models_[modelIndex].meshes_[perModelMeshIndex].GetIndexCount();
+}
+
+const std::span<VertexData> Scene::GetVertices(const uint32_t instanceIndex)
+{
+	uint32_t vertexStart = 0u;
+	uint32_t vertexCount = 0u;
+	GetVertexOffsetAndCount(instanceIndex, vertexStart, vertexCount);
+	return Utility::SubSpan(std::span{ sceneData_.vertices_ }, vertexStart, vertexCount);
+}
+
+// TODO Make this function const
+const std::span<uint32_t> Scene::GetIndices(const uint32_t instanceIndex)
+{
+	uint32_t indexStart = 0u;
+	uint32_t indexCount = 0u;
+	GetIndexOffsetAndCount(instanceIndex, indexStart, indexCount);
+	return Utility::SubSpan(std::span{ sceneData_.indices_ }, indexStart, indexCount);
 }
 
 void Scene::CreateBindlessResources(VulkanContext& ctx)
@@ -270,7 +313,7 @@ void Scene::CreateDataStructures()
 		{
 			const uint32_t vertexStart = models_[m].meshes_[i].GetVertexOffset();
 			const uint32_t vertexCount = models_[m].meshes_[i].GetVertexCount();
-			tempOriArray[i] = BoundingBox(Utility::Slide(std::span{ sceneData_.vertices_ }, vertexStart, vertexCount));
+			tempOriArray[i] = BoundingBox(Utility::SubSpan(std::span{ sceneData_.vertices_ }, vertexStart, vertexCount));
 		}
 
 		// Create the actual InstanceData

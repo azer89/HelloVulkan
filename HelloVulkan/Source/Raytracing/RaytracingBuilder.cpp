@@ -1,6 +1,187 @@
 #include "RaytracingBuilder.h"
-#include "AccelStructure.h"
 #include "VulkanCheck.h"
+#include "Utility.h"
+
+void RaytracingBuilder::CreateRTModelDataArray(
+	VulkanContext& ctx,
+	Scene* scene,
+	std::vector<RTModelData>& modelDataArray)
+{
+	uint32_t instanceCount = static_cast<uint32_t>(scene->instanceDataArray_.size());
+	modelDataArray.resize(instanceCount);
+
+	for (uint32_t i = 0; i < instanceCount; ++i)
+	{
+		InstanceData& iData = scene->instanceDataArray_[i];
+		uint32_t m = iData.meshData_.modelMatrixIndex_;
+
+		PopulateRTModelData(
+			ctx,
+			scene->GetVertices(i),
+			scene->GetIndices(i),
+			scene->modelSSBOs_[m].model,
+			&modelDataArray[i]
+		);
+	}
+}
+
+void RaytracingBuilder::PopulateRTModelData(
+	VulkanContext& ctx,
+	const std::span<VertexData> vertices,
+	const std::span<uint32_t> indices,
+	const glm::mat4 modelMatrix,
+	RTModelData* modelData)
+{
+	// Vertices
+	modelData->vertexCount_ = static_cast<uint32_t>(vertices.size());
+	modelData->vertexBuffer_.CreateBufferWithDeviceAddress(
+		ctx,
+		vertices.size() * sizeof(VertexData),
+		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
+		VMA_MEMORY_USAGE_CPU_TO_GPU
+	);
+	modelData->vertexBuffer_.UploadBufferData(ctx, vertices.data(), vertices.size() * sizeof(VertexData));
+
+	// Indices
+	modelData->indexCount_ = static_cast<uint32_t>(indices.size());
+	modelData->indexBuffer_.CreateBufferWithDeviceAddress(
+		ctx,
+		indices.size() * sizeof(uint32_t),
+		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
+		VMA_MEMORY_USAGE_CPU_TO_GPU
+	);
+	modelData->indexBuffer_.UploadBufferData(ctx, indices.data(), indices.size() * sizeof(uint32_t));
+
+	// Model matrix
+	VkTransformMatrixKHR transformMatrix{};
+	auto m = glm::mat3x4(glm::transpose(modelMatrix));
+	memcpy(&transformMatrix, (void*)&m, sizeof(glm::mat3x4));
+
+	modelData->transformBuffer_.CreateBufferWithDeviceAddress(
+		ctx,
+		sizeof(VkTransformMatrixKHR),
+		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
+		VMA_MEMORY_USAGE_CPU_TO_GPU
+	);
+	modelData->transformBuffer_.UploadBufferData(ctx, &transformMatrix, sizeof(VkTransformMatrixKHR));
+}
+
+void RaytracingBuilder::CreateBLASMultipleMeshes(
+	VulkanContext& ctx,
+	const std::span<RTModelData> modelDataArray,
+	AccelStructure* blas)
+{
+	uint32_t instanceCount = static_cast<uint32_t>(modelDataArray.size());
+
+	std::vector<uint32_t> maxPrimitiveCounts(instanceCount, 0);
+	std::vector<VkAccelerationStructureGeometryKHR> geometries(instanceCount);
+	std::vector<VkAccelerationStructureBuildRangeInfoKHR> buildRangeInfos(instanceCount);
+	std::vector<VkAccelerationStructureBuildRangeInfoKHR*> pBuildRangeInfos(instanceCount);
+
+	for (uint32_t i = 0; i < modelDataArray.size(); ++i)
+	{
+		RTModelData& mData = modelDataArray[i];
+
+		VkDeviceOrHostAddressConstKHR vAddress = {};
+		VkDeviceOrHostAddressConstKHR iAddress = {};
+		VkDeviceOrHostAddressConstKHR tAddress = {};
+
+		vAddress.deviceAddress = mData.vertexBuffer_.deviceAddress_;
+		iAddress.deviceAddress = mData.indexBuffer_.deviceAddress_;
+		tAddress.deviceAddress = mData.transformBuffer_.deviceAddress_;
+
+		VkAccelerationStructureGeometryKHR geometry{};
+		geometry.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR;
+		geometry.geometryType = VK_GEOMETRY_TYPE_TRIANGLES_KHR;
+		geometry.geometry.triangles.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR;
+		geometry.geometry.triangles.vertexFormat = VK_FORMAT_R32G32B32_SFLOAT;
+		geometry.geometry.triangles.vertexData = vAddress;
+		geometry.geometry.triangles.maxVertex = mData.vertexCount_;
+		geometry.geometry.triangles.vertexStride = sizeof(VertexData);
+		geometry.geometry.triangles.indexType = VK_INDEX_TYPE_UINT32;
+		geometry.geometry.triangles.indexData = iAddress;
+		geometry.geometry.triangles.transformData = tAddress;
+	
+		geometries[i] = geometry;
+		maxPrimitiveCounts[i] = mData.indexCount_ / 3;
+
+		VkAccelerationStructureBuildRangeInfoKHR buildRangeInfo =
+		{
+			.primitiveCount = mData.indexCount_ / 3,
+			.primitiveOffset = 0,
+			.firstVertex = 0,
+			.transformOffset = 0
+		};
+		
+		buildRangeInfos[i] = buildRangeInfo;
+	}
+
+	for (uint32_t i = 0; i < modelDataArray.size(); ++i)
+	{
+		pBuildRangeInfos[i] = &(buildRangeInfos[i]);
+	}
+
+	VkAccelerationStructureBuildGeometryInfoKHR accelerationStructureBuildGeometryInfo =
+	{
+		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR,
+		.type = VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR,
+		.flags = VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR,
+		.geometryCount = static_cast<uint32_t>(geometries.size()),
+		.pGeometries = geometries.data()
+	};
+
+	VkAccelerationStructureBuildSizesInfoKHR accelerationStructureBuildSizesInfo{};
+	accelerationStructureBuildSizesInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR;
+	vkGetAccelerationStructureBuildSizesKHR(
+		ctx.GetDevice(),
+		VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR,
+		&accelerationStructureBuildGeometryInfo,
+		maxPrimitiveCounts.data(),
+		&accelerationStructureBuildSizesInfo);
+	
+	blas->Create(ctx, accelerationStructureBuildSizesInfo);
+
+	VkAccelerationStructureCreateInfoKHR accelerationStructureCreateInfo =
+	{
+		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR,
+		.buffer = blas->buffer_,
+		.size = accelerationStructureBuildSizesInfo.accelerationStructureSize,
+		.type = VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR
+	};
+	VK_CHECK(vkCreateAccelerationStructureKHR(ctx.GetDevice(), &accelerationStructureCreateInfo, nullptr, &(blas->handle_)));
+
+	// Create a small scratch buffer used during build of the bottom level acceleration structure
+	VulkanBuffer scratchBuffer;
+	scratchBuffer.CreateBufferWithDeviceAddress(ctx,
+		accelerationStructureBuildSizesInfo.buildScratchSize,
+		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+		VMA_MEMORY_USAGE_GPU_ONLY);
+
+	accelerationStructureBuildGeometryInfo.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR;
+	accelerationStructureBuildGeometryInfo.dstAccelerationStructure = blas->handle_;
+	accelerationStructureBuildGeometryInfo.scratchData.deviceAddress = scratchBuffer.deviceAddress_;
+
+	const VkAccelerationStructureBuildRangeInfoKHR* buildOffsetInfo = buildRangeInfos.data();
+
+	// Build the acceleration structure on the device via a one-time command buffer submission
+		// Some implementations may support acceleration structure building on the host (VkPhysicalDeviceAccelerationStructureFeaturesKHR->accelerationStructureHostCommands), but we prefer device builds
+	VkCommandBuffer commandBuffer = ctx.BeginOneTimeGraphicsCommand();
+	vkCmdBuildAccelerationStructuresKHR(
+		commandBuffer,
+		1,
+		&accelerationStructureBuildGeometryInfo,
+		pBuildRangeInfos.data());
+	ctx.EndOneTimeGraphicsCommand(commandBuffer);
+
+	VkAccelerationStructureDeviceAddressInfoKHR accelerationDeviceAddressInfo =
+	{
+		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_DEVICE_ADDRESS_INFO_KHR,
+		.accelerationStructure = blas->handle_
+	};
+	blas->deviceAddress_ = vkGetAccelerationStructureDeviceAddressKHR(ctx.GetDevice(), &accelerationDeviceAddressInfo);
+
+	scratchBuffer.Destroy();
+}
 
 // TODO Currently can only handle a single vertex buffer
 void RaytracingBuilder::CreateBLAS(VulkanContext& ctx, 
@@ -30,7 +211,7 @@ void RaytracingBuilder::CreateBLAS(VulkanContext& ctx,
 	accelStructureGeometry.geometry.triangles.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR;
 	accelStructureGeometry.geometry.triangles.vertexFormat = VK_FORMAT_R32G32B32_SFLOAT;
 	accelStructureGeometry.geometry.triangles.vertexData = vertexBufferDeviceAddress;
-	accelStructureGeometry.geometry.triangles.maxVertex = vertexCount - 1; // Highest index
+	accelStructureGeometry.geometry.triangles.maxVertex = vertexCount; // Highest index
 	accelStructureGeometry.geometry.triangles.vertexStride = vertexStride;
 	accelStructureGeometry.geometry.triangles.indexType = VK_INDEX_TYPE_UINT32;
 	accelStructureGeometry.geometry.triangles.indexData = indexBufferDeviceAddress;
@@ -70,7 +251,7 @@ void RaytracingBuilder::CreateBLAS(VulkanContext& ctx,
 
 	// Create a small scratch buffer used during build of the bottom level acceleration structure
 	VulkanBuffer scratchBuffer;
-	scratchBuffer.CreateBufferWithShaderDeviceAddress(ctx,
+	scratchBuffer.CreateBufferWithDeviceAddress(ctx,
 		accelStructureBuildSizesInfo.buildScratchSize,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VMA_MEMORY_USAGE_GPU_ONLY);
@@ -134,7 +315,7 @@ void RaytracingBuilder::CreateTLAS(VulkanContext& ctx,
 	};
 
 	VulkanBuffer instancesBuffer;
-	instancesBuffer.CreateBufferWithShaderDeviceAddress(ctx,
+	instancesBuffer.CreateBufferWithDeviceAddress(ctx,
 		sizeof(VkAccelerationStructureInstanceKHR),
 		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
 		VMA_MEMORY_USAGE_CPU_TO_GPU);
@@ -200,7 +381,7 @@ void RaytracingBuilder::CreateTLAS(VulkanContext& ctx,
 
 	// Create a small scratch buffer used during build of the top level acceleration structure
 	VulkanBuffer scratchBuffer;
-	scratchBuffer.CreateBufferWithShaderDeviceAddress(ctx,
+	scratchBuffer.CreateBufferWithDeviceAddress(ctx,
 		accelStructureBuildSizesInfo.buildScratchSize,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VMA_MEMORY_USAGE_GPU_ONLY);

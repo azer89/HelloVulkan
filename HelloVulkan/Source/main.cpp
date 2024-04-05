@@ -3,7 +3,7 @@
 #include "AppPBRShadow.h" // Shadow demo, using draw indirect, buffer device address, and descriptor indexing
 #include "AppFrustumCulling.h"
 #include "AppPBRClusterForward.h"
-#include "AppSimpleRaytracing.h"
+#include "AppRaytracing.h"
 #include "AppSkinning.h"
 
 // Entry point

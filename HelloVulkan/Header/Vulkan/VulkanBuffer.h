@@ -55,7 +55,7 @@ public:
 	VkDrawIndirectCommand* MapIndirectBuffer();
 	void UnmapIndirectBuffer();
 
-	void CreateBufferWithShaderDeviceAddress(
+	void CreateBufferWithDeviceAddress(
 		VulkanContext& ctx,
 		VkDeviceSize size,
 		VkBufferUsageFlags bufferUsage,

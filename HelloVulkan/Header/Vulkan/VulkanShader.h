@@ -20,7 +20,7 @@ Adapted from
 class VulkanShader
 {
 public:
-	VkShaderModule GetShaderModule() const { return shaderModule_; }
+	[[nodiscard]] VkShaderModule GetShaderModule() const { return shaderModule_; }
 
 	VkResult Create(VkDevice device, const char* fileName);
 
@@ -31,14 +31,14 @@ public:
 		const char* entryPoint);
 
 private:
-	std::vector<unsigned int> spirv_;
+	std::vector<unsigned int> spirv_ = {};
 	VkShaderModule shaderModule_ = nullptr;
 	VkDevice device_ = nullptr;
 
 private:
-	size_t CompileShaderFile(const char* file);
-	std::string ReadShaderFile(const char* fileName);
-	size_t CompileShader(glslang_stage_t stage, const char* shaderSource);
+	[[nodiscard]] size_t CompileShaderFile(const char* file);
+	[[nodiscard]] std::string ReadShaderFile(const char* fileName);
+	[[nodiscard]] size_t CompileShader(glslang_stage_t stage, const char* shaderSource);
 	void PrintShaderSource(const char* text);
 };
 
