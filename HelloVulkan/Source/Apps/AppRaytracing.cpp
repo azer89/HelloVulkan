@@ -18,8 +18,7 @@ void AppRaytracing::Init()
 			.filename = AppConfig::ModelFolder + "Hexapod/Hexapod.gltf",
 		}
 	};
-	bool supportDeviceAddress = true;
-	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
+	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray);
 
 	// Model matrix for Hexapod
 	glm::mat4 modelMatrix = glm::mat4(1.f);

@@ -165,7 +165,7 @@ void VulkanContext::ChainFeatures()
 		chainPtr = &descriptorIndexingFeatures_;
 	}
 
-	if (config_.supportRaytracing_ || config_.suportBufferDeviceAddress_)
+	if (config_.suportBufferDeviceAddress_ || config_.supportRaytracing_)
 	{
 		deviceAddressEnabledFeatures_ =
 		{

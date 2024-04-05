@@ -40,8 +40,7 @@ void AppPBRClusterForward::Init()
 			.playAnimation = false
 		}
 	};
-	bool supportDeviceAddress = true;
-	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
+	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray);
 
 	// Pipelines
 	AddPipeline<PipelineClear>(vulkanContext_); // This is responsible to clear swapchain image

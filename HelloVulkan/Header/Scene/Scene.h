@@ -37,10 +37,7 @@ Instances only duplicate the draw call of a mesh, so this is different than hard
 class Scene
 {
 public:
-	Scene(
-		VulkanContext& ctx,
-		const std::span<ModelCreateInfo> modelDataArray,
-		const bool supportDeviceAddress = false);
+	Scene(VulkanContext& ctx, const std::span<ModelCreateInfo> modelDataArray);
 	~Scene();
 
 	[[nodiscard]] uint32_t GetInstanceCount() const { return static_cast<uint32_t>(meshDataArray_.size()); }
@@ -116,8 +113,6 @@ public:
 	VulkanBuffer transformedBoundingBoxBuffer_ = {}; // TODO No Frame-in-flight but somenow not giving error
 	
 private:
-	bool supportDeviceAddress_ = false;
-
 	std::vector<Model> models_ = {};
 
 	/*Update model matrix and update the buffer
