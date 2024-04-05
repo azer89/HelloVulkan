@@ -102,16 +102,18 @@ void PipelineImGui::ImGuiSetWindow(const char* title, int width, int height, flo
 
 void PipelineImGui::ImGuiShowFrameData(FrameCounter* frameCounter)
 {
+	ImVec2 wSize = ImGui::GetWindowSize();
+	
 	ImGui::Text("FPS: %.0f", frameCounter->GetCurrentFPS());
 	ImGui::Text("Delta: %.0f ms", frameCounter->GetDelayedDeltaMillisecond());
-	ImGui::PlotLines("FPS",
+	ImGui::PlotLines("",
 		frameCounter->GetGraph(),
 		frameCounter->GetGraphLength(),
 		0,
 		nullptr,
 		FLT_MAX,
 		FLT_MAX,
-		ImVec2(350, 50));
+		ImVec2(static_cast<float>(wSize.x - 15), 50));
 }
 
 void PipelineImGui::ImGuiShowPBRConfig(PushConstPBR* pc, float mipmapCount)
