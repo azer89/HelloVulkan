@@ -18,7 +18,8 @@ void AppRaytracing::Init()
 			.filename = AppConfig::ModelFolder + "Hexapod/Hexapod.gltf",
 		}
 	};
-	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray);
+	bool supportDeviceAddress = true;
+	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
 
 	// Model matrix for Hexapod
 	glm::mat4 modelMatrix = glm::mat4(1.f);
@@ -82,6 +83,7 @@ void AppRaytracing::MainLoop()
 {
 	InitVulkan({
 		.supportRaytracing_ = true,
+		.suportBufferDeviceAddress_ = true,
 		.supportMSAA_ = true,
 		.supportBindlessTextures_ = true,
 		});
