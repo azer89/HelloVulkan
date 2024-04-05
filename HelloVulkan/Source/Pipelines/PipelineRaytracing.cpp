@@ -111,18 +111,15 @@ void PipelineRaytracing::OnWindowResized(VulkanContext& ctx)
 	storageImage_.Destroy();
 	CreateStorageImage(ctx);
 	UpdateDescriptor(ctx);
-	frameCounter_ = 0;
+	ResetFrameCounter();
 }
 
 void PipelineRaytracing::SetRaytracingCameraUBO(
 	VulkanContext& ctx,
 	const glm::mat4& inverseProjection,
 	const glm::mat4& inverseView,
-	const glm::vec3& cameraPosition,
-	bool resetCounter)
+	const glm::vec3& cameraPosition)
 {
-	if (resetCounter) { frameCounter_ = 0; }
-
 	RaytracingCameraUBO ubo =
 	{
 		.projectionInverse = inverseProjection,

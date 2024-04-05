@@ -221,6 +221,7 @@
     <ClInclude Include="Header\BoundingBox.h" />
     <ClInclude Include="Header\Camera.h" />
     <ClInclude Include="Header\Configs.h" />
+    <ClInclude Include="Header\Event.h" />
     <ClInclude Include="Header\FrameCounter.h" />
     <ClInclude Include="Header\Ray.h" />
     <ClInclude Include="Header\Raytracing\RTModelData.h" />

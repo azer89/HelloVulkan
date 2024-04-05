@@ -23,13 +23,13 @@ public:
 	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override {}
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 	void OnWindowResized(VulkanContext& ctx) override;
+	void ResetFrameCounter() { frameCounter_ = 0; }
 
 	void SetRaytracingCameraUBO(
 		VulkanContext& ctx,
 		const glm::mat4& inverseProjection,
 		const glm::mat4& inverseView,
-		const glm::vec3& cameraPosition,
-		bool resetCounter);
+		const glm::vec3& cameraPosition);
 
 private:
 	void CreateBLAS(VulkanContext& ctx);

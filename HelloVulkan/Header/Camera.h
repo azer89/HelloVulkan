@@ -5,6 +5,7 @@
 #include "glm/glm.hpp"
 
 #include "Configs.h"
+#include "Event.h"
 #include "UBOs.h"
 #include "Ray.h"
 
@@ -42,6 +43,9 @@ public:
 	[[nodiscard]] ClusterForwardUBO GetClusterForwardUBO() const;
 	[[nodiscard]] FrustumUBO GetFrustumUBO() const;
 	[[nodiscard]] Ray GetRayFromScreenToWorld(float screenPosX, float screenPosY) const;
+
+public:
+	Event<> ChangedEvent_;
 
 private:
 	glm::mat4 projectionMatrix_;
