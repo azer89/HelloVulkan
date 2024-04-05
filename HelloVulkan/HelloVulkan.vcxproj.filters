@@ -479,9 +479,6 @@
     <ClInclude Include="Header\UIData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Raytracing\GeometryNode.h">
-      <Filter>Header Files\Raytracing</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Raytracing\RTModelData.h">
       <Filter>Header Files\Raytracing</Filter>
     </ClInclude>

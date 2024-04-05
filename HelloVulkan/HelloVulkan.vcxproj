@@ -223,7 +223,6 @@
     <ClInclude Include="Header\Configs.h" />
     <ClInclude Include="Header\FrameCounter.h" />
     <ClInclude Include="Header\Ray.h" />
-    <ClInclude Include="Header\Raytracing\GeometryNode.h" />
     <ClInclude Include="Header\Raytracing\RTModelData.h" />
     <ClInclude Include="Header\Raytracing\ShaderBindingTables.h" />
     <ClInclude Include="Header\Raytracing\ShaderGroups.h" />
