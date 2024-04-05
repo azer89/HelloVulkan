@@ -1,5 +1,5 @@
-#ifndef PIPELINE_SIMPLE_RAYTRACING
-#define PIPELINE_SIMPLE_RAYTRACING
+#ifndef PIPELINE_RAYTRACING
+#define PIPELINE_RAYTRACING
 
 #include "PipelineBase.h"
 #include "AccelStructure.h"
@@ -14,11 +14,11 @@
 
 #include <array>
 
-class PipelineSimpleRaytracing final : public PipelineBase
+class PipelineRaytracing final : public PipelineBase
 {
 public:
-	PipelineSimpleRaytracing(VulkanContext& ctx, Scene* scene, ResourcesLight* resourcesLight);
-	~PipelineSimpleRaytracing();
+	PipelineRaytracing(VulkanContext& ctx, Scene* scene, ResourcesLight* resourcesLight);
+	~PipelineRaytracing();
 
 	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override {}
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;

@@ -1,12 +1,12 @@
-#include "AppSimpleRaytracing.h"
+#include "AppRaytracing.h"
 #include "PipelineClear.h"
 #include "PipelineFinish.h"
 
-AppSimpleRaytracing::AppSimpleRaytracing()
+AppRaytracing::AppRaytracing()
 {
 }
 
-void AppSimpleRaytracing::Init()
+void AppRaytracing::Init()
 {
 	camera_->SetPositionAndTarget(glm::vec3(0.0f, 3.0f, 3.0f), glm::vec3(0.0, 0.0, -1.0f));
 
@@ -27,13 +27,13 @@ void AppSimpleRaytracing::Init()
 	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 0, 0);
 
 	AddPipeline<PipelineClear>(vulkanContext_);
-	rtxPtr_ = AddPipeline<PipelineSimpleRaytracing>(vulkanContext_, scene_.get(), resourcesLight_);
+	rtxPtr_ = AddPipeline<PipelineRaytracing>(vulkanContext_, scene_.get(), resourcesLight_);
 	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// TODO Add tonemapping
 	AddPipeline<PipelineFinish>(vulkanContext_);
 }
 
-void AppSimpleRaytracing::InitLights()
+void AppRaytracing::InitLights()
 {
 	constexpr float lightIntensity = 15.f;
 	constexpr float lightPositionY = 1.75f;
@@ -49,7 +49,7 @@ void AppSimpleRaytracing::InitLights()
 		});
 }
 
-void AppSimpleRaytracing::UpdateUI()
+void AppRaytracing::UpdateUI()
 {
 	if (!ShowImGui())
 	{
@@ -63,12 +63,12 @@ void AppSimpleRaytracing::UpdateUI()
 	imguiPtr_->ImGuiEnd();
 }
 
-void AppSimpleRaytracing::UpdateUBOs()
+void AppRaytracing::UpdateUBOs()
 {
 	rtxPtr_->SetRaytracingCameraUBO(vulkanContext_, camera_->GetRaytracingCameraUBO(uiData_.cameraChanged_));
 }
 
-void AppSimpleRaytracing::MainLoop()
+void AppRaytracing::MainLoop()
 {
 	InitVulkan({
 		.supportRaytracing_ = true,

@@ -1,10 +1,10 @@
-#ifndef APP_SIMPLE_RAYTRACING
-#define APP_SIMPLE_RAYTRACING
+#ifndef APP_RAYTRACING
+#define APP_RAYTRACING
 
 #include "AppBase.h"
 #include "Scene.h"
 #include "PipelineImGui.h"
-#include "PipelineSimpleRaytracing.h"
+#include "PipelineRaytracing.h"
 #include "ResourcesLight.h"
 
 // STL
@@ -12,10 +12,10 @@
 
 class Scene;
 
-class AppSimpleRaytracing final : AppBase
+class AppRaytracing final : AppBase
 {
 public:
-	AppSimpleRaytracing();
+	AppRaytracing();
 	
 	void MainLoop() override;
 	void UpdateUBOs() override;
@@ -26,7 +26,7 @@ public:
 
 private:
 	PipelineImGui* imguiPtr_ = nullptr;
-	PipelineSimpleRaytracing* rtxPtr_ = nullptr;
+	PipelineRaytracing* rtxPtr_ = nullptr;
 	std::unique_ptr<Scene> scene_ = nullptr;
 	ResourcesLight* resourcesLight_ = nullptr;
 };

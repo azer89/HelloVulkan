@@ -323,12 +323,6 @@
     <ClInclude Include="Header\Apps\AppPBRClusterForward.h">
       <Filter>Header Files\Apps</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Apps\AppSimpleRaytracing.h">
-      <Filter>Header Files\Apps</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\Pipelines\PipelineSimpleRaytracing.h">
-      <Filter>Header Files\Pipelines</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Pipelines\PipelineShadow.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
@@ -488,6 +482,12 @@
     <ClInclude Include="Header\Raytracing\ShaderGroups.h">
       <Filter>Header Files\Raytracing</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Apps\AppRaytracing.h">
+      <Filter>Header Files\Apps</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineRaytracing.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">
@@ -550,11 +550,8 @@
     <ClCompile Include="Source\Apps\AppPBRClusterForward.cpp">
       <Filter>Source Files\Apps</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Apps\AppSimpleRaytracing.cpp">
+    <ClCompile Include="Source\Apps\AppRaytracing.cpp">
       <Filter>Source Files\Apps</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Pipelines\PipelineSimpleRaytracing.cpp">
-      <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
     <ClCompile Include="Source\Pipelines\PipelineShadow.cpp">
       <Filter>Source Files\Pipelines</Filter>
@@ -672,6 +669,9 @@
     </ClCompile>
     <ClCompile Include="Source\Resources\ResourcesShared.cpp">
       <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineRaytracing.cpp">
+      <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

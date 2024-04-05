@@ -1,4 +1,4 @@
-#include "PipelineSimpleRaytracing.h"
+#include "PipelineRaytracing.h"
 #include "RaytracingBuilder.h"
 #include "VulkanShader.h"
 #include "VulkanCheck.h"
@@ -6,7 +6,7 @@
 #include "Configs.h"
 #include "Utility.h"
 
-PipelineSimpleRaytracing::PipelineSimpleRaytracing(VulkanContext& ctx, Scene* scene, ResourcesLight* resourcesLight) :
+PipelineRaytracing::PipelineRaytracing(VulkanContext& ctx, Scene* scene, ResourcesLight* resourcesLight) :
 	PipelineBase(
 		ctx,
 		{
@@ -26,7 +26,7 @@ PipelineSimpleRaytracing::PipelineSimpleRaytracing(VulkanContext& ctx, Scene* sc
 	sbt_.Create(ctx, pipeline_, sg_.Count());
 }
 
-PipelineSimpleRaytracing::~PipelineSimpleRaytracing()
+PipelineRaytracing::~PipelineRaytracing()
 {
 	storageImage_.Destroy();
 	blas_.Destroy();
@@ -38,7 +38,7 @@ PipelineSimpleRaytracing::~PipelineSimpleRaytracing()
 	sbt_.Destroy();
 }
 
-void PipelineSimpleRaytracing::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
+void PipelineRaytracing::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
 {
 	TracyVkZoneC(ctx.GetTracyContext(), commandBuffer, "Simple_Raytracing", tracy::Color::Orange1);
 
@@ -106,14 +106,14 @@ void PipelineSimpleRaytracing::FillCommandBuffer(VulkanContext& ctx, VkCommandBu
 		VK_IMAGE_LAYOUT_GENERAL);
 }
 
-void PipelineSimpleRaytracing::OnWindowResized(VulkanContext& ctx)
+void PipelineRaytracing::OnWindowResized(VulkanContext& ctx)
 {
 	storageImage_.Destroy();
 	CreateStorageImage(ctx);
 	UpdateDescriptor(ctx);
 }
 
-void PipelineSimpleRaytracing::CreateDescriptor(VulkanContext& ctx)
+void PipelineRaytracing::CreateDescriptor(VulkanContext& ctx)
 {
 	textureInfoArray_ = scene_->GetImageInfos();
 	constexpr uint32_t frameCount = AppConfig::FrameCount;
@@ -140,7 +140,7 @@ void PipelineSimpleRaytracing::CreateDescriptor(VulkanContext& ctx)
 }
 
 // Rebuild the entire descriptor sets
-void PipelineSimpleRaytracing::UpdateDescriptor(VulkanContext& ctx)
+void PipelineRaytracing::UpdateDescriptor(VulkanContext& ctx)
 {
 	VkWriteDescriptorSetAccelerationStructureKHR asInfo =
 	{
@@ -160,7 +160,7 @@ void PipelineSimpleRaytracing::UpdateDescriptor(VulkanContext& ctx)
 	}
 }
 
-void PipelineSimpleRaytracing::CreateStorageImage(VulkanContext& ctx)
+void PipelineRaytracing::CreateStorageImage(VulkanContext& ctx)
 {
 	storageImage_.CreateImage(
 		ctx,
@@ -190,7 +190,7 @@ void PipelineSimpleRaytracing::CreateStorageImage(VulkanContext& ctx)
 		VK_IMAGE_LAYOUT_GENERAL);
 }
 
-void PipelineSimpleRaytracing::CreateRayTracingPipeline(VulkanContext& ctx)
+void PipelineRaytracing::CreateRayTracingPipeline(VulkanContext& ctx)
 {
 	// Pipeline layout
 	const VkPipelineLayoutCreateInfo pipelineLayoutCI =
@@ -247,14 +247,14 @@ void PipelineSimpleRaytracing::CreateRayTracingPipeline(VulkanContext& ctx)
 	}
 }
 
-void PipelineSimpleRaytracing::CreateBLAS(VulkanContext& ctx)
+void PipelineRaytracing::CreateBLAS(VulkanContext& ctx)
 {
 	RaytracingBuilder::CreateRTModelDataArray(ctx, scene_, modelDataArray_);
 
 	RaytracingBuilder::CreateBLASMultipleMeshes(ctx, modelDataArray_, &blas_);
 }
 
-void PipelineSimpleRaytracing::CreateTLAS(VulkanContext& ctx)
+void PipelineRaytracing::CreateTLAS(VulkanContext& ctx)
 {
 	VkTransformMatrixKHR transformMatrix = {
 		1.0f, 0.0f, 0.0f, 0.0f,
