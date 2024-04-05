@@ -94,11 +94,11 @@ The left image below is a rendering that uses four cascade shadow maps, resultin
 </br>
 </br>
 
-### Hardware Raytracing
+### Hardware-Accelerated Raytracing
 
-The engine also features a basic ray tracing pipeline. This process begins with building Bottom Level Acceleration Structures (BLAS) and Top Level Acceleration Structures (TLAS). For each pixel on the screen, a ray is cast and intersected with the acceleration structures to determine the final color.
+The engine also features a raytracing pipeline. This process begins with building Bottom Level Acceleration Structures (BLAS) containing muitple geometries, then followed by creating Top Level Acceleration Structures (TLAS). For each pixel on the screen, a ray is cast and intersected with the acceleration structures to determine the final color.
 
-<img width="425" alt="hardware_raytracing" src="https://github.com/azer89/HelloVulkan/assets/790432/7f6771b3-ab52-41c4-89d4-b3bed05e724e">
+<img width="425" alt="hardware_raytracing" src="https://github.com/azer89/HelloVulkan/assets/790432/4f6653c9-3bac-40d7-bf84-a37ff6bead2c">
 
 </br>
 </br>
