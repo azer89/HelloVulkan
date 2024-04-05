@@ -9,6 +9,7 @@
 #include "FrameCounter.h"
 #include "Camera.h"
 #include "UIData.h"
+#include "Event.h"
 
 #define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"

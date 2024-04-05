@@ -31,6 +31,12 @@ void AppRaytracing::Init()
 	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	// TODO Add tonemapping
 	AddPipeline<PipelineFinish>(vulkanContext_);
+
+	// Add a listener when the camera is changed
+	camera_->ChangedEvent_.AddListener([this]()
+	{
+		this->rtxPtr_->ResetFrameCounter();
+	});
 }
 
 void AppRaytracing::InitLights()
@@ -68,8 +74,7 @@ void AppRaytracing::UpdateUBOs()
 	rtxPtr_->SetRaytracingCameraUBO(vulkanContext_,
 		camera_->GetInverseProjectionMatrix(),
 		camera_->GetInverseViewMatrix(),
-		camera_->Position(),
-		uiData_.cameraChanged_
+		camera_->Position()
 	);
 }
 

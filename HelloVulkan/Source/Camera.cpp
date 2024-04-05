@@ -137,6 +137,9 @@ void Camera::UpdateInternal()
 
 	// View matrix
 	viewMatrix_ = glm::lookAt(position_, position_ + front_, up_);
+
+	// Tell the listeners the camera has changed
+	ChangedEvent_.Invoke();
 }
 
 glm::mat4 Camera::GetProjectionMatrix() const
