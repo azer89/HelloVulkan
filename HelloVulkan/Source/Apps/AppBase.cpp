@@ -91,7 +91,7 @@ void AppBase::InitGLFW()
 	glfwSetKeyCallback(glfwWindow_, funcKey);
 }
 
-// TODO Analyzie this function for possible performance improvement
+// TODO Analyze this function for possible performance improvement
 void AppBase::DrawFrame()
 {
 	//ZoneScopedC(tracy::Color::LawnGreen);

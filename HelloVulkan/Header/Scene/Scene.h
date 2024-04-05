@@ -37,7 +37,7 @@ Instances only duplicate the draw call of a mesh, so this is different than hard
 class Scene
 {
 public:
-	Scene(VulkanContext& ctx, const std::span<ModelCreateInfo> modelDataArray);
+	Scene(VulkanContext& ctx, const std::span<ModelCreateInfo> modelInfoArray);
 	~Scene();
 
 	[[nodiscard]] uint32_t GetInstanceCount() const { return static_cast<uint32_t>(meshDataArray_.size()); }
