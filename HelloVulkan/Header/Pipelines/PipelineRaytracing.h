@@ -34,6 +34,7 @@ public:
 private:
 	void CreateBLAS(VulkanContext& ctx);
 	void CreateTLAS(VulkanContext& ctx);
+	void PrepareBDA(VulkanContext& ctx);
 	void CreateDescriptor(VulkanContext& ctx);
 	void UpdateDescriptor(VulkanContext& ctx);
 	void CreateStorageImage(VulkanContext& ctx);
@@ -43,6 +44,7 @@ private:
 	uint32_t frameCounter_ = 0;
 
 	VulkanImage storageImage_ = {};
+	VulkanBuffer bdaBuffer_;
 	VulkanDescriptorInfo descriptorInfo_ = {};
 	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_ = {};
 

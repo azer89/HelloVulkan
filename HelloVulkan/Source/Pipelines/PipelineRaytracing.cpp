@@ -20,6 +20,7 @@ PipelineRaytracing::PipelineRaytracing(VulkanContext& ctx, Scene* scene, Resourc
 	CreateBLAS(ctx);
 	CreateTLAS(ctx);
 	CreateStorageImage(ctx);
+	PrepareBDA(ctx); // Buffer device address
 	CreateDescriptor(ctx);
 	shaderGroups_.Create();
 	CreateRayTracingPipeline(ctx);
@@ -28,6 +29,7 @@ PipelineRaytracing::PipelineRaytracing(VulkanContext& ctx, Scene* scene, Resourc
 
 PipelineRaytracing::~PipelineRaytracing()
 {
+	bdaBuffer_.Destroy();
 	storageImage_.Destroy();
 	blas_.Destroy();
 	tlas_.Destroy();
@@ -131,6 +133,19 @@ void PipelineRaytracing::SetRaytracingCameraUBO(
 	cameraUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(RaytracingCameraUBO));
 }
 
+void PipelineRaytracing::PrepareBDA(VulkanContext& ctx)
+{
+	BDA bda = scene_->GetBDA();
+	VkDeviceSize bdaSize = sizeof(BDA);
+	bdaBuffer_.CreateBuffer(
+		ctx,
+		bdaSize,
+		VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+		VMA_MEMORY_USAGE_CPU_TO_GPU
+	);
+	bdaBuffer_.UploadBufferData(ctx, &bda, bdaSize);
+}
+
 void PipelineRaytracing::CreateDescriptor(VulkanContext& ctx)
 {
 	textureInfoArray_ = scene_->GetImageInfos();
@@ -139,9 +154,7 @@ void PipelineRaytracing::CreateDescriptor(VulkanContext& ctx)
 	descriptorInfo_.AddAccelerationStructure();
 	descriptorInfo_.AddImage(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
 	descriptorInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
-	descriptorInfo_.AddBuffer(&(scene_->vertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
-	descriptorInfo_.AddBuffer(&(scene_->indexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
-	descriptorInfo_.AddBuffer(&(scene_->meshDataBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
+	descriptorInfo_.AddBuffer(&bdaBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
 	descriptorInfo_.AddBuffer(resourcesLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
 	descriptorInfo_.AddImageArray(textureInfoArray_, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
 
