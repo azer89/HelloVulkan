@@ -144,9 +144,19 @@ glm::mat4 Camera::GetProjectionMatrix() const
 	return projectionMatrix_;
 }
 
+glm::mat4 Camera::GetInverseProjectionMatrix() const
+{
+	return inverseProjectionMatrix_;
+}
+
 glm::mat4 Camera::GetViewMatrix() const
 {
 	return viewMatrix_;
+}
+
+glm::mat4 Camera::GetInverseViewMatrix() const
+{
+	return glm::inverse(viewMatrix_);
 }
 
 glm::vec3 Camera::Position() const
@@ -161,24 +171,6 @@ CameraUBO Camera::GetCameraUBO() const
 		.projection = projectionMatrix_,
 		.view = viewMatrix_,
 		.position = glm::vec4(position_, 1.f)
-	};
-}
-
-RaytracingCameraUBO Camera::GetRaytracingCameraUBO(bool resetCounter) const
-{
-	static uint32_t frameCounter = 0;
-
-	if (resetCounter)
-	{
-		frameCounter = 0;
-	}
-
-	return
-	{
-		.projectionInverse = glm::inverse(projectionMatrix_),
-		.viewInverse = glm::inverse(viewMatrix_),
-		.position = glm::vec4(position_, 1.f),
-		.frame = frameCounter++
 	};
 }
 

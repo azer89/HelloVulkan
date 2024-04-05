@@ -24,21 +24,24 @@ public:
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 	void OnWindowResized(VulkanContext& ctx) override;
 
-	void SetRaytracingCameraUBO(VulkanContext& ctx, const RaytracingCameraUBO& ubo)
-	{
-		const uint32_t frameIndex = ctx.GetFrameIndex();
-		cameraUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(RaytracingCameraUBO));
-	}
+	void SetRaytracingCameraUBO(
+		VulkanContext& ctx,
+		const glm::mat4& inverseProjection,
+		const glm::mat4& inverseView,
+		const glm::vec3& cameraPosition,
+		bool resetCounter);
 
 private:
 	void CreateBLAS(VulkanContext& ctx);
 	void CreateTLAS(VulkanContext& ctx);
-	void CreateStorageImage(VulkanContext& ctx);
 	void CreateDescriptor(VulkanContext& ctx);
 	void UpdateDescriptor(VulkanContext& ctx);
+	void CreateStorageImage(VulkanContext& ctx);
 	void CreateRayTracingPipeline(VulkanContext& ctx);
 
 private:
+	uint32_t frameCounter_ = 0;
+
 	VulkanImage storageImage_ = {};
 	VulkanDescriptorInfo descriptorInfo_ = {};
 	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_ = {};

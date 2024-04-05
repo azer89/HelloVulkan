@@ -111,6 +111,27 @@ void PipelineRaytracing::OnWindowResized(VulkanContext& ctx)
 	storageImage_.Destroy();
 	CreateStorageImage(ctx);
 	UpdateDescriptor(ctx);
+	frameCounter_ = 0;
+}
+
+void PipelineRaytracing::SetRaytracingCameraUBO(
+	VulkanContext& ctx,
+	const glm::mat4& inverseProjection,
+	const glm::mat4& inverseView,
+	const glm::vec3& cameraPosition,
+	bool resetCounter)
+{
+	if (resetCounter) { frameCounter_ = 0; }
+
+	RaytracingCameraUBO ubo =
+	{
+		.projectionInverse = inverseProjection,
+		.viewInverse = inverseView,
+		.position = glm::vec4(cameraPosition, 1.0),
+		.frame = frameCounter_++
+	};
+	const uint32_t frameIndex = ctx.GetFrameIndex();
+	cameraUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(RaytracingCameraUBO));
 }
 
 void PipelineRaytracing::CreateDescriptor(VulkanContext& ctx)

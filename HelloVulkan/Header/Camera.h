@@ -34,11 +34,12 @@ public:
 	void ProcessMouseScroll(float yoffset);
 
 	[[nodiscard]] glm::mat4 GetProjectionMatrix() const;
+	[[nodiscard]] glm::mat4 GetInverseProjectionMatrix() const;
 	[[nodiscard]] glm::mat4 GetViewMatrix() const;
+	[[nodiscard]] glm::mat4 GetInverseViewMatrix() const;
 	[[nodiscard]] glm::vec3 Position() const;
 	[[nodiscard]] CameraUBO GetCameraUBO() const;
 	[[nodiscard]] ClusterForwardUBO GetClusterForwardUBO() const;
-	[[nodiscard]] RaytracingCameraUBO GetRaytracingCameraUBO(bool resetCounter) const;
 	[[nodiscard]] FrustumUBO GetFrustumUBO() const;
 	[[nodiscard]] Ray GetRayFromScreenToWorld(float screenPosX, float screenPosY) const;
 
