@@ -96,8 +96,7 @@ void AppSkinning::InitScene()
 		.playAnimation = true,
 		.clickable = true
 	}};
-	bool supportDeviceAddress = true;
-	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
+	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray);
 
 	constexpr uint32_t xCount = 2;
 	constexpr uint32_t zCount = 4;

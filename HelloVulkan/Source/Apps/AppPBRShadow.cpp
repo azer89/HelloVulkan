@@ -45,8 +45,7 @@ void AppPBRShadow::Init()
 			.clickable = true
 		}
 	};
-	bool supportDeviceAddress = true;
-	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
+	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray);
 
 	// Model matrix for Tachikoma
 	glm::mat4 modelMatrix(1.f);

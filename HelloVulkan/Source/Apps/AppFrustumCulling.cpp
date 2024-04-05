@@ -75,8 +75,7 @@ void AppFrustumCulling::InitScene()
 		.instanceCount = xCount * zCount,
 		.playAnimation = false
 	}};
-	bool supportDeviceAddress = true;
-	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray, supportDeviceAddress);
+	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray);
 	uint32_t iter = 0;
 
 	for (uint32_t x = 0; x < xCount; ++x)

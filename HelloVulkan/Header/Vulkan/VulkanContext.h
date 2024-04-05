@@ -100,9 +100,7 @@ public:
 	[[nodiscard]] VkQueue GetComputeQueue() const { return computeQueue_; }
 	[[nodiscard]] VkFormat GetDepthFormat() const { return depthFormat_; };
 	[[nodiscard]] VmaAllocator GetVMAAllocator() const { return vmaAllocator_; }
-
-	// Raytracing getters
-	[[nodiscard]] VkPhysicalDeviceRayTracingPipelinePropertiesKHR GetRayTracingPipelineProperties() const { return rtPipelineProperties_; }
+	[[nodiscard]] bool SupportBufferDeviceAddress() const { return config_.supportRaytracing_ || config_.suportBufferDeviceAddress_; }
 
 	// Getters related to swapchain
 	[[nodiscard]] VkSwapchainKHR GetSwapChain() const { return swapchain_; }
@@ -112,12 +110,15 @@ public:
 	[[nodiscard]] VkImageView GetSwapchainImageView(size_t i) const { return swapchainImageViews_[i]; }
 	[[nodiscard]] uint32_t GetCurrentSwapchainImageIndex() const { return currentSwapchainImageIndex_; }
 
+	// Raytracing getters
+	[[nodiscard]] VkPhysicalDeviceRayTracingPipelinePropertiesKHR GetRayTracingPipelineProperties() const { return rtPipelineProperties_; }
+
 	// Pointer getters
-	VkSwapchainKHR* GetSwapchainPtr() { return &swapchain_; }
+	[[nodiscard]] VkSwapchainKHR* GetSwapchainPtr() { return &swapchain_; }
 
 	// Sync objects and render command buffer
 	void IncrementFrameIndex();
-	FrameData& GetCurrentFrameData();
+	[[nodiscard]] FrameData& GetCurrentFrameData();
 	[[nodiscard]] uint32_t GetFrameIndex() const;
 	[[nodiscard]] TracyVkCtx GetTracyContext() const { return frameDataArray_[GetFrameIndex()].tracyContext_; }
 

@@ -9,7 +9,7 @@
 // Entry point
 int main()
 {
-	AppRaytracing app;
+	AppPBRShadow app;
 	app.MainLoop();
 	return 0;
 }

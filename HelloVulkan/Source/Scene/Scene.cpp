@@ -5,9 +5,7 @@
 #include <iostream>
 
 Scene::Scene(VulkanContext& ctx,
-	const std::span<ModelCreateInfo> modelDataArray, // TODO Rename to modelInfoArray
-	const bool supportDeviceAddress) :
-	supportDeviceAddress_(supportDeviceAddress)
+	const std::span<ModelCreateInfo> modelDataArray) // TODO Rename to modelInfoArray
 {
 	uint32_t vertexOffset = 0u;
 	uint32_t indexOffset = 0u;
@@ -148,7 +146,7 @@ void Scene::CreateBindlessResources(VulkanContext& ctx)
 
 	// Support for bindless rendering
 	VkBufferUsageFlags bufferUsage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
-	if (supportDeviceAddress_) { bufferUsage |= VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT; }
+	if (ctx.SupportBufferDeviceAddress()) { bufferUsage |= VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT; }
 	
 	// Vertices
 	// NOTE This may contain post-skinning vertices
@@ -251,7 +249,7 @@ void Scene::CreateAnimationResources(VulkanContext& ctx)
 
 	// Support for bindless rendering
 	VkBufferUsageFlags bufferUsage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
-	if (supportDeviceAddress_) { bufferUsage |= VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT; }
+	if (ctx.SupportBufferDeviceAddress()) { bufferUsage |= VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT; }
 
 	// Bone IDs
 	const VkDeviceSize boneIDBufferSize = sizeof(iSVec) * sceneData_.boneIDArray_.size();
