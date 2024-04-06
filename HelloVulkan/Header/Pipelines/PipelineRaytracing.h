@@ -47,7 +47,7 @@ private:
 private:
 	uint32_t frameCounter_ = 0;
 	uint32_t currentSampleCount_ = 0;
-	uint32_t maxSampleCount_ = 8u;
+	uint32_t maxSampleCount_ = 8u; // TODO Should be adjustable via ImGui
 
 	VulkanBuffer bdaBuffer_ = {};
 	VulkanImage storageImage_ = {};

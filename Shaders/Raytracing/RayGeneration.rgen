@@ -20,6 +20,10 @@ const float T_MAX = 10000.0;
 
 void main()
 {
+	uint rngState = uint(uint(gl_LaunchIDEXT.x) * uint(1973) + uint(gl_LaunchIDEXT.y) * uint(9277) + uint(ubo.currentSampleCount) * uint(26699)) | uint(1);
+	rayPayload.randomSeed = rngState;
+
+	// Old code
 	uint seed = TEA(gl_LaunchIDEXT.y * gl_LaunchSizeEXT.x + gl_LaunchIDEXT.x, ubo.frame);
 	vec2 random2 = vec2(RND(seed), RND(seed)) * RANDOM_RADIUS;
 
