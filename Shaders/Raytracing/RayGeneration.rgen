@@ -10,10 +10,8 @@ layout(set = 0, binding = 1, rgba8) uniform image2D outputImage;
 layout(set = 0, binding = 2, rgba32f) uniform image2D accumulationImage;
 layout(set = 0, binding = 3) uniform RTUBO { RaytracingUBO ubo; };
 
-layout(location = 0) rayPayloadEXT vec3 hitValue;
-layout(location = 1) rayPayloadEXT RayPayload rayPayload;
+layout(location = 0) rayPayloadEXT RayPayload rayPayload;
 
-const float RANDOM_RADIUS = 1.0;
 const float T_MIN = 0.001;
 const float T_MAX = 10000.0;
 
@@ -71,33 +69,4 @@ void main()
 	color = pow(color, vec3(1.0 / 2.2));
 
 	imageStore(outputImage, ivec2(gl_LaunchIDEXT.xy), vec4(color, 0));
-
-	// Old code
-	/*uint seed = TEA(gl_LaunchIDEXT.y * gl_LaunchSizeEXT.x + gl_LaunchIDEXT.x, ubo.frame);
-	vec2 random2 = vec2(RND(seed), RND(seed)) * RANDOM_RADIUS;
-
-	vec2 subpixelJitter = ubo.frame == 0 ? vec2(0.5f, 0.5f) : random2;
-	const vec2 pixelCenter = vec2(gl_LaunchIDEXT.xy) + subpixelJitter;
-	const vec2 inUV = pixelCenter / vec2(gl_LaunchSizeEXT.xy);
-	vec2 d = inUV * 2.0 - 1.0;
-
-	vec4 origin = ubo.viewInverse * vec4(0, 0, 0, 1);
-	vec4 target = ubo.projInverse * vec4(d.x, d.y, 1, 1);
-	vec4 direction = ubo.viewInverse * vec4(normalize(target.xyz), 0);
-
-	hitValue = vec3(0.0);
-
-	traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, 0xff, 0, 0, 0, origin.xyz, T_MIN, direction.xyz, T_MAX, 0);
-
-	if (ubo.frame > 0)
-	{
-		float a = 1.0f / float(ubo.frame + 1);
-		vec3 oldColor = imageLoad(storageImage, ivec2(gl_LaunchIDEXT.xy)).xyz;
-		imageStore(storageImage, ivec2(gl_LaunchIDEXT.xy), vec4(mix(oldColor, hitValue, a), 1.f));
-	}
-	else
-	{
-		// First frame, replace the value in the buffer
-		imageStore(storageImage, ivec2(gl_LaunchIDEXT.xy), vec4(hitValue, 1.f));
-	}*/
 }

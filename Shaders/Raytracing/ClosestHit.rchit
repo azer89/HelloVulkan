@@ -11,9 +11,9 @@
 #include <Bindless/BDA.glsl>
 #include <LightData.glsl>
 
-layout(location = 0) rayPayloadInEXT vec3 hitValue;
-layout(location = 1) rayPayloadEXT RayPayload rayPayload;
-layout(location = 2) rayPayloadEXT bool shadowed;
+//layout(location = 0) rayPayloadInEXT vec3 hitValue;
+layout(location = 0) rayPayloadInEXT RayPayload rayPayload;
+//layout(location = 2) rayPayloadEXT bool shadowed;
 
 hitAttributeEXT vec2 attribs;
 

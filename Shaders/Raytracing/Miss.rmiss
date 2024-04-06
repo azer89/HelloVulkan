@@ -3,10 +3,9 @@
 
 #include <Raytracing/RayPayload.glsl>
 
-layout(location = 0) rayPayloadInEXT vec3 hitValue;
-layout(location = 1) rayPayloadEXT RayPayload rayPayload;
+layout(location = 0) rayPayloadInEXT RayPayload rayPayload;
 
-const float SKY_INTENSITY = 7.5;
+const float SKY_INTENSITY = 1.0;
 
 void main()
 {
@@ -18,7 +17,4 @@ void main()
 
 	rayPayload.color = skyColor * SKY_INTENSITY;
 	rayPayload.distance = -1.0;
-
-	// Old code
-	//hitValue = vec3(1.0, 1.0, 1.0);
 }
