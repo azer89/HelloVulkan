@@ -13,10 +13,10 @@ layout(location = 0) rayPayloadInEXT vec3 hitValue;
 layout(location = 2) rayPayloadEXT bool shadowed;
 hitAttributeEXT vec2 attribs;
 
-layout(set = 0, binding = 2) uniform Camera { CameraProperties cam; };
-layout(set = 0, binding = 3) uniform BDABlock { BDA bda; };
-layout(set = 0, binding = 4) readonly buffer Lights { LightData lights []; };
-layout(set = 0, binding = 5) uniform sampler2D pbrTextures[] ;
+layout(set = 0, binding = 3) uniform Camera { CameraProperties cam; };
+layout(set = 0, binding = 4) uniform BDABlock { BDA bda; }; // Buffer device address
+layout(set = 0, binding = 5) readonly buffer Lights { LightData lights []; };
+layout(set = 0, binding = 6) uniform sampler2D pbrTextures[] ;
 
 #include <Raytracing/Triangle.glsl>
 

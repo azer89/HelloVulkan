@@ -4,9 +4,10 @@
 #include <Raytracing/Random.glsl>
 #include <Raytracing/CameraProperties.glsl>
 
-layout(set = 0, binding = 0) uniform accelerationStructureEXT topLevelAS;
+layout(set = 0, binding = 0) uniform accelerationStructureEXT tlas;
 layout(set = 0, binding = 1, rgba8) uniform image2D storageImage;
-layout(set = 0, binding = 2) uniform Camera { CameraProperties cam; };
+layout(set = 0, binding = 2, rgba32f) uniform image2D accumulationImage;
+layout(set = 0, binding = 3) uniform Camera { CameraProperties cam; };
 
 layout(location = 0) rayPayloadEXT vec3 hitValue;
 //layout(location = 3) rayPayloadEXT uint payloadSeed;
@@ -31,7 +32,7 @@ void main()
 
 	hitValue = vec3(0.0);
 	
-	traceRayEXT(topLevelAS, gl_RayFlagsOpaqueEXT, 0xff, 0, 0, 0, origin.xyz, T_MIN, direction.xyz, T_MAX, 0);
+	traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, 0xff, 0, 0, 0, origin.xyz, T_MIN, direction.xyz, T_MAX, 0);
 
 	if (cam.frame > 0)
 	{

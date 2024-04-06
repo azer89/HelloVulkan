@@ -157,6 +157,7 @@ void PipelineRaytracing::CreateDescriptor(VulkanContext& ctx)
 
 	descriptorInfo_.AddAccelerationStructure();
 	descriptorInfo_.AddImage(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
+	descriptorInfo_.AddImage(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
 	descriptorInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
 	descriptorInfo_.AddBuffer(&bdaBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
 	descriptorInfo_.AddBuffer(resourcesLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
@@ -186,11 +187,12 @@ void PipelineRaytracing::UpdateDescriptor(VulkanContext& ctx)
 	descriptorInfo_.UpdateAccelerationStructure(&asInfo, 0);
 
 	descriptorInfo_.UpdateStorageImage(&storageImage_, 1);
+	descriptorInfo_.UpdateStorageImage(&accumulationImage_, 2);
 
 	constexpr auto frameCount = AppConfig::FrameCount;
 	for (size_t i = 0; i < frameCount; i++)
 	{
-		descriptorInfo_.UpdateBuffer(&(cameraUBOBuffers_[i]), 2);
+		descriptorInfo_.UpdateBuffer(&(cameraUBOBuffers_[i]), 3);
 		descriptor_.UpdateSet(ctx, descriptorInfo_, &(descriptorSets_[i]));
 	}
 }
