@@ -48,7 +48,12 @@ void main()
 	Triangle tri = GetTriangle(gl_PrimitiveID, gl_GeometryIndexEXT);
 
 	MeshData mData = bda.meshReference.meshes[gl_GeometryIndexEXT];
-	vec3 albedo = texture(pbrTextures[nonuniformEXT(mData.albedo)], tri.uv).xyz;
+
+	// RayPayload Scatter(MeshData mData, Triangle tri, vec3 direction, float t, uint seed)
+	rayPayload = Scatter(mData, tri, gl_WorldRayDirectionEXT, gl_HitTEXT, rayPayload.randomSeed);
+
+	// Old code
+	/*vec3 albedo = texture(pbrTextures[nonuniformEXT(mData.albedo)], tri.uv).xyz;
 	float specular = 0.299 * albedo.r + 0.587 * albedo.g + 0.114 * albedo.b;
 
 	vec3 color = vec3(0.0);
@@ -76,5 +81,5 @@ void main()
 		color += diffuse + specular;
 	}
 
-	hitValue = color;
+	hitValue = color;*/
 }

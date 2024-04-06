@@ -15,8 +15,10 @@ void main()
 	const vec3 gradientStart = vec3(0.5, 0.6, 1.0);
 	const vec3 gradientEnd = vec3(1.0);
 	const vec3 skyColor = mix(gradientEnd, gradientStart, t);
+
 	rayPayload.color = skyColor * SKY_INTENSITY;
+	rayPayload.distance = -1.0;
 
 	// Old code
-	hitValue = vec3(1.0, 1.0, 1.0);
+	//hitValue = vec3(1.0, 1.0, 1.0);
 }

@@ -48,7 +48,7 @@ private:
 	uint32_t frameCounter_ = 0;
 	uint32_t currentSampleCount_ = 0;
 	uint32_t sampleCountPerFrame_ = 4;
-	uint32_t maxSampleCount_ = 8u; // TODO Should be adjustable via ImGui
+	//uint32_t maxSampleCount_ = 8u; // TODO Should be adjustable via ImGui
 	uint32_t rayBounceCount_ = 8u; // TODO Should be adjustable via ImGui
 
 	VulkanBuffer bdaBuffer_ = {};
