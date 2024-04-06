@@ -12,7 +12,9 @@
 #include <LightData.glsl>
 
 layout(location = 0) rayPayloadInEXT vec3 hitValue;
+layout(location = 1) rayPayloadEXT RayPayload rayPayload;
 layout(location = 2) rayPayloadEXT bool shadowed;
+
 hitAttributeEXT vec2 attribs;
 
 layout(set = 0, binding = 3) uniform RTUBO { RaytracingUBO ubo; };
@@ -22,7 +24,20 @@ layout(set = 0, binding = 6) uniform sampler2D pbrTextures[] ;
 
 #include <Raytracing/Triangle.glsl>
 
+RayPayload Scatter(MeshData mData, Triangle tri, vec3 direction, float t, uint seed)
+{
+	RayPayload payload;
+	payload.distance = t;
 
+	// Lambertian
+	vec4 color = texture(pbrTextures[nonuniformEXT(mData.albedo)], tri.uv);
+	payload.color = color.xyz;
+	payload.scatterDir = tri.normal + RandomInUnitSphere(seed);
+	payload.doScatter = true;
+	payload.randomSeed = seed;
+
+	return payload;
+}
 
 // Blinn-Phong
 const float LINEAR = 2.9f;
