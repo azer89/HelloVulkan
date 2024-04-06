@@ -34,7 +34,7 @@ public:
 private:
 	void CreateBLAS(VulkanContext& ctx);
 	void CreateTLAS(VulkanContext& ctx);
-	void PrepareBDA(VulkanContext& ctx);
+	void CreateBDABuffer(VulkanContext& ctx);
 	void CreateDescriptor(VulkanContext& ctx);
 	void UpdateDescriptor(VulkanContext& ctx);
 	void CreateStorageImage(VulkanContext& ctx);

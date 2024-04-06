@@ -34,7 +34,7 @@ PipelinePBRBindless::PipelinePBRBindless(
 	useSkinning_(useSkinning)
 {
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
-	PrepareBDA(ctx); // Buffer device address
+	CreateBDABuffer(ctx); // Buffer device address
 	CreateDescriptor(ctx);
 	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
 	framebuffer_.CreateResizeable(
@@ -101,10 +101,10 @@ void PipelinePBRBindless::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer 
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelinePBRBindless::PrepareBDA(VulkanContext& ctx)
+void PipelinePBRBindless::CreateBDABuffer(VulkanContext& ctx)
 {
-	BDA bda = scene_->GetBDA();
-	VkDeviceSize bdaSize = sizeof(BDA);
+	const BDA bda = scene_->GetBDA();
+	const VkDeviceSize bdaSize = sizeof(BDA);
 	bdaBuffer_.CreateBuffer(
 		ctx,
 		bdaSize,

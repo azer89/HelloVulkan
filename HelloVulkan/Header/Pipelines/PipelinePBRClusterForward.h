@@ -43,7 +43,7 @@ public:
 	}
 
 private:
-	void PrepareBDA(VulkanContext& ctx);
+	void CreateBDABuffer(VulkanContext& ctx);
 	void CreateDescriptor(VulkanContext& ctx);
 	void CreateSpecializationConstants();
 
