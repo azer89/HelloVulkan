@@ -120,36 +120,6 @@ void PipelineRaytracing::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer c
 		VK_IMAGE_LAYOUT_GENERAL);
 }
 
-void PipelineRaytracing::SetRaytracingCameraUBO(
-	VulkanContext& ctx,
-	const glm::mat4& inverseProjection,
-	const glm::mat4& inverseView,
-	const glm::vec3& cameraPosition)
-{
-	RaytracingCameraUBO ubo =
-	{
-		.projectionInverse = inverseProjection,
-		.viewInverse = inverseView,
-		.position = glm::vec4(cameraPosition, 1.0),
-		.frame = frameCounter_++
-	};
-	const uint32_t frameIndex = ctx.GetFrameIndex();
-	cameraUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(RaytracingCameraUBO));
-}
-
-void PipelineRaytracing::CreateBDABuffer(VulkanContext& ctx)
-{
-	BDA bda = scene_->GetBDA();
-	VkDeviceSize bdaSize = sizeof(BDA);
-	bdaBuffer_.CreateBuffer(
-		ctx,
-		bdaSize,
-		VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-		VMA_MEMORY_USAGE_CPU_TO_GPU
-	);
-	bdaBuffer_.UploadBufferData(ctx, &bda, bdaSize);
-}
-
 void PipelineRaytracing::CreateDescriptor(VulkanContext& ctx)
 {
 	textureInfoArray_ = scene_->GetImageInfos();
@@ -186,6 +156,7 @@ void PipelineRaytracing::UpdateDescriptor(VulkanContext& ctx)
 	};
 	descriptorInfo_.UpdateAccelerationStructure(&asInfo, 0);
 
+	// TODO Currently storage images need to be readded
 	descriptorInfo_.UpdateStorageImage(&storageImage_, 1);
 	descriptorInfo_.UpdateStorageImage(&accumulationImage_, 2);
 
@@ -195,39 +166,6 @@ void PipelineRaytracing::UpdateDescriptor(VulkanContext& ctx)
 		descriptorInfo_.UpdateBuffer(&(cameraUBOBuffers_[i]), 3);
 		descriptor_.UpdateSet(ctx, descriptorInfo_, &(descriptorSets_[i]));
 	}
-}
-
-void PipelineRaytracing::CreateStorageImage(VulkanContext& ctx, VkFormat imageFormat, VulkanImage* image)
-{
-	const uint32_t imageWidth = ctx.GetSwapchainWidth();
-	const uint32_t imageHeight = ctx.GetSwapchainHeight();
-
-	image->CreateImage(
-		ctx,
-		imageWidth,
-		imageHeight,
-		1u,
-		1u,
-		imageFormat,
-		VK_IMAGE_TILING_OPTIMAL,
-		VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_STORAGE_BIT,
-		VMA_MEMORY_USAGE_GPU_ONLY
-	);
-
-	image->CreateImageView(
-		ctx,
-		imageFormat,
-		VK_IMAGE_ASPECT_COLOR_BIT,
-		VK_IMAGE_VIEW_TYPE_2D,
-		0u,
-		1u,
-		0u,
-		1u);
-
-	image->TransitionLayout(ctx,
-		imageFormat,
-		VK_IMAGE_LAYOUT_UNDEFINED, 
-		VK_IMAGE_LAYOUT_GENERAL);
 }
 
 void PipelineRaytracing::CreateRayTracingPipeline(VulkanContext& ctx)
@@ -287,12 +225,60 @@ void PipelineRaytracing::CreateRayTracingPipeline(VulkanContext& ctx)
 	}
 }
 
+void PipelineRaytracing::CreateStorageImage(VulkanContext& ctx, VkFormat imageFormat, VulkanImage* image)
+{
+	const uint32_t imageWidth = ctx.GetSwapchainWidth();
+	const uint32_t imageHeight = ctx.GetSwapchainHeight();
+
+	image->CreateImage(
+		ctx,
+		imageWidth,
+		imageHeight,
+		1u,
+		1u,
+		imageFormat,
+		VK_IMAGE_TILING_OPTIMAL,
+		VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_STORAGE_BIT,
+		VMA_MEMORY_USAGE_GPU_ONLY
+	);
+
+	image->CreateImageView(
+		ctx,
+		imageFormat,
+		VK_IMAGE_ASPECT_COLOR_BIT,
+		VK_IMAGE_VIEW_TYPE_2D,
+		0u,
+		1u,
+		0u,
+		1u);
+
+	image->TransitionLayout(ctx,
+		imageFormat,
+		VK_IMAGE_LAYOUT_UNDEFINED,
+		VK_IMAGE_LAYOUT_GENERAL);
+}
+
+void PipelineRaytracing::CreateBDABuffer(VulkanContext& ctx)
+{
+	BDA bda = scene_->GetBDA();
+	VkDeviceSize bdaSize = sizeof(BDA);
+	bdaBuffer_.CreateBuffer(
+		ctx,
+		bdaSize,
+		VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+		VMA_MEMORY_USAGE_CPU_TO_GPU
+	);
+	bdaBuffer_.UploadBufferData(ctx, &bda, bdaSize);
+}
+
+// Bottom Level Acceleration Structure
 void PipelineRaytracing::CreateBLAS(VulkanContext& ctx)
 {
 	RaytracingBuilder::CreateRTModelDataArray(ctx, scene_, modelDataArray_);
 	RaytracingBuilder::CreateBLASMultipleMeshes(ctx, modelDataArray_, &blas_);
 }
 
+// Top Level Acceleration Structure
 void PipelineRaytracing::CreateTLAS(VulkanContext& ctx)
 {
 	VkTransformMatrixKHR transformMatrix = {
@@ -300,4 +286,21 @@ void PipelineRaytracing::CreateTLAS(VulkanContext& ctx)
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f };
 	RaytracingBuilder::CreateTLAS(ctx, transformMatrix, blas_.deviceAddress_, &tlas_);
+}
+
+void PipelineRaytracing::SetRaytracingCameraUBO(
+	VulkanContext& ctx,
+	const glm::mat4& inverseProjection,
+	const glm::mat4& inverseView,
+	const glm::vec3& cameraPosition)
+{
+	RaytracingCameraUBO ubo =
+	{
+		.projectionInverse = inverseProjection,
+		.viewInverse = inverseView,
+		.position = glm::vec4(cameraPosition, 1.0),
+		.frame = frameCounter_++
+	};
+	const uint32_t frameIndex = ctx.GetFrameIndex();
+	cameraUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(RaytracingCameraUBO));
 }
