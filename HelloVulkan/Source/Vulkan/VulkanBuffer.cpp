@@ -69,7 +69,7 @@ void VulkanBuffer::CreateMappedIndirectBuffer(
 	CreateBuffer(ctx,
 		size,
 		VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-		VMA_MEMORY_USAGE_CPU_TO_GPU, // TODO Is it possible to be GPU only?
+		VMA_MEMORY_USAGE_CPU_TO_GPU,
 		VMA_ALLOCATION_CREATE_MAPPED_BIT);
 }
 

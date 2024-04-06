@@ -5,16 +5,16 @@
 #include <iostream>
 
 Scene::Scene(VulkanContext& ctx,
-	const std::span<ModelCreateInfo> modelDataArray) // TODO Rename to modelInfoArray
+	const std::span<ModelCreateInfo> modelInfoArray)
 {
 	uint32_t vertexOffset = 0u;
 	uint32_t indexOffset = 0u;
-	for (const ModelCreateInfo& mData : modelDataArray)
+	for (const ModelCreateInfo& mInfo : modelInfoArray)
 	{
 		Model m;
 		m.LoadBindless(
 			ctx,
-			mData,
+			mInfo,
 			sceneData_);
 		models_.push_back(m);
 	}
