@@ -76,9 +76,4 @@ namespace ShadowConfig
 	constexpr uint32_t DepthSize = 4096;
 }
 
-namespace RaytracingConfig
-{
-	constexpr uint32_t SampleCountPerFrame = 4;
-}
-
 #endif

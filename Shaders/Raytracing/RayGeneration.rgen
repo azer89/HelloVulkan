@@ -23,6 +23,18 @@ void main()
 	uint rngState = uint(uint(gl_LaunchIDEXT.x) * uint(1973) + uint(gl_LaunchIDEXT.y) * uint(9277) + uint(ubo.currentSampleCount) * uint(26699)) | uint(1);
 	rayPayload.randomSeed = rngState;
 
+	/*vec3 color = vec3(0.0);
+
+	for (uint i = 0; i < ubo.sampleCountPerFrame; i++)
+	{
+		vec4 origin = ubo.viewInverse * vec4(0.0, 0.0, 0.0, 1.0);
+
+		// Apply jitter to anti alias
+		vec2 jitter = vec2(RandomFloat01(rngState), RandomFloat01(rngState)) - 0.5;
+		vec4 target = ubo.projInverse * vec4((gl_LaunchIDEXT.xy + jitter) / gl_LaunchSizeEXT.xy * 2.0 - 1.0, 0.0, 1.0);
+		vec4 direction = ubo.viewInverse * vec4(normalize(target.xyz), 0.0);
+	}*/
+
 	// Old code
 	uint seed = TEA(gl_LaunchIDEXT.y * gl_LaunchSizeEXT.x + gl_LaunchIDEXT.x, ubo.frame);
 	vec2 random2 = vec2(RND(seed), RND(seed)) * RANDOM_RADIUS;
@@ -37,7 +49,7 @@ void main()
 	vec4 direction = ubo.viewInverse * vec4(normalize(target.xyz), 0);
 
 	hitValue = vec3(0.0);
-	
+
 	traceRayEXT(tlas, gl_RayFlagsOpaqueEXT, 0xff, 0, 0, 0, origin.xyz, T_MIN, direction.xyz, T_MAX, 0);
 
 	if (ubo.frame > 0)

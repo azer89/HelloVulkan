@@ -6,4 +6,5 @@ struct RaytracingUBO
 	uint frame; // Used for blending/Anti aliasing
 	uint sampleCountPerFrame;
 	uint currentSampleCount;
+	uint rayBounceCount;
 };

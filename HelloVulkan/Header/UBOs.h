@@ -29,6 +29,8 @@ struct RaytracingUBO
 	uint32_t sampleCountPerFrame;
 	alignas(4)
 	uint32_t currentSampleCount;
+	alignas(4)
+	uint32_t rayBounceCount;
 };
 
 struct ShadowMapUBO

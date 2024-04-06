@@ -294,7 +294,7 @@ void PipelineRaytracing::SetRaytracingUBO(
 	const glm::mat4& inverseView,
 	const glm::vec3& cameraPosition)
 {
-	currentSampleCount_ = std::max(currentSampleCount_ + RaytracingConfig::SampleCountPerFrame, maxSampleCount_);
+	currentSampleCount_ = std::max(currentSampleCount_ + sampleCountPerFrame_, maxSampleCount_);
 
 	RaytracingUBO ubo =
 	{
@@ -302,7 +302,9 @@ void PipelineRaytracing::SetRaytracingUBO(
 		.viewInverse = inverseView,
 		.cameraPosition = glm::vec4(cameraPosition, 1.0),
 		.frame = frameCounter_++,
-		.currentSampleCount = currentSampleCount_
+		.sampleCountPerFrame = sampleCountPerFrame_,
+		.currentSampleCount = currentSampleCount_,
+		.rayBounceCount = rayBounceCount_
 	};
 	const uint32_t frameIndex = ctx.GetFrameIndex();
 	cameraUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(RaytracingUBO));
