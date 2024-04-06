@@ -4,6 +4,8 @@
 #extension GL_EXT_nonuniform_qualifier : require
 
 #include <Raytracing/RaytracingUBO.glsl>
+#include <Raytracing/RayPayload.glsl>
+#include <Raytracing/Random.glsl>
 #include <Bindless/VertexData.glsl>
 #include <Bindless/MeshData.glsl>
 #include <Bindless/BDA.glsl>
@@ -19,6 +21,8 @@ layout(set = 0, binding = 5) readonly buffer Lights { LightData lights []; };
 layout(set = 0, binding = 6) uniform sampler2D pbrTextures[] ;
 
 #include <Raytracing/Triangle.glsl>
+
+
 
 // Blinn-Phong
 const float LINEAR = 2.9f;

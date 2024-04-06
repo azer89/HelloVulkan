@@ -12,7 +12,6 @@ layout(set = 0, binding = 3) uniform RTUBO { RaytracingUBO ubo; };
 
 layout(location = 0) rayPayloadEXT vec3 hitValue;
 layout(location = 1) rayPayloadEXT RayPayload rayPayload;
-//layout(location = 3) rayPayloadEXT uint payloadSeed;
 
 const float RANDOM_RADIUS = 1.0;
 const float T_MIN = 0.001;
