@@ -19,8 +19,9 @@ PipelineRaytracing::PipelineRaytracing(VulkanContext& ctx, Scene* scene, Resourc
 
 	CreateBLAS(ctx);
 	CreateTLAS(ctx);
-	CreateStorageImage(ctx, ctx.GetSwapchainImageFormat(), &storageImage_);
 	CreateBDABuffer(ctx); // Buffer device address
+	CreateStorageImage(ctx, ctx.GetSwapchainImageFormat(), &storageImage_);
+	CreateStorageImage(ctx, VK_FORMAT_R32G32B32A32_SFLOAT, &accumulationImage_);
 	CreateDescriptor(ctx);
 	shaderGroups_.Create();
 	CreateRayTracingPipeline(ctx);
@@ -29,15 +30,26 @@ PipelineRaytracing::PipelineRaytracing(VulkanContext& ctx, Scene* scene, Resourc
 
 PipelineRaytracing::~PipelineRaytracing()
 {
-	bdaBuffer_.Destroy();
-	storageImage_.Destroy();
 	blas_.Destroy();
 	tlas_.Destroy();
+	bdaBuffer_.Destroy();
+	storageImage_.Destroy();
+	accumulationImage_.Destroy();
+	shaderBindingTables_.Destroy();
 	for (auto& mData : modelDataArray_)
 	{
 		mData.Destroy();
-	}
-	shaderBindingTables_.Destroy();
+	}	
+}
+
+void PipelineRaytracing::OnWindowResized(VulkanContext& ctx)
+{
+	storageImage_.Destroy();
+	accumulationImage_.Destroy();
+	CreateStorageImage(ctx, ctx.GetSwapchainImageFormat(), &storageImage_);
+	CreateStorageImage(ctx, VK_FORMAT_R32G32B32A32_SFLOAT, &accumulationImage_);
+	UpdateDescriptor(ctx);
+	ResetFrameCounter();
 }
 
 void PipelineRaytracing::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer)
@@ -106,14 +118,6 @@ void PipelineRaytracing::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer c
 		storageImage_.imageFormat_,
 		VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 		VK_IMAGE_LAYOUT_GENERAL);
-}
-
-void PipelineRaytracing::OnWindowResized(VulkanContext& ctx)
-{
-	storageImage_.Destroy();
-	CreateStorageImage(ctx, ctx.GetSwapchainImageFormat(), &storageImage_);
-	UpdateDescriptor(ctx);
-	ResetFrameCounter();
 }
 
 void PipelineRaytracing::SetRaytracingCameraUBO(

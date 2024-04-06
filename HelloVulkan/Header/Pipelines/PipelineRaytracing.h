@@ -43,8 +43,9 @@ private:
 private:
 	uint32_t frameCounter_ = 0;
 
+	VulkanBuffer bdaBuffer_ = {};
 	VulkanImage storageImage_ = {};
-	VulkanBuffer bdaBuffer_;
+	VulkanImage accumulationImage_ = {};
 	VulkanDescriptorInfo descriptorInfo_ = {};
 	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_ = {};
 
