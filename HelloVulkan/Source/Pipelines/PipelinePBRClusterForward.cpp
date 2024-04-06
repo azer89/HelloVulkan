@@ -49,7 +49,7 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 			&(resourcesShared->depthImage_)
 		},
 		IsOffscreen());
-	PrepareBDA(ctx); // Buffer device address
+	CreateBDABuffer(ctx); // Buffer device address
 	CreateDescriptor(ctx);
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(PushConstPBR), VK_SHADER_STAGE_FRAGMENT_BIT);
 	CreateSpecializationConstants();
@@ -112,7 +112,7 @@ void PipelinePBRClusterForward::FillCommandBuffer(VulkanContext& ctx, VkCommandB
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void PipelinePBRClusterForward::PrepareBDA(VulkanContext& ctx)
+void PipelinePBRClusterForward::CreateBDABuffer(VulkanContext& ctx)
 {
 	BDA bda = scene_->GetBDA();
 	VkDeviceSize bdaSize = sizeof(BDA);

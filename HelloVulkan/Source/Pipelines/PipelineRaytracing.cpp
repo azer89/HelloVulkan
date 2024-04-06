@@ -20,7 +20,7 @@ PipelineRaytracing::PipelineRaytracing(VulkanContext& ctx, Scene* scene, Resourc
 	CreateBLAS(ctx);
 	CreateTLAS(ctx);
 	CreateStorageImage(ctx);
-	PrepareBDA(ctx); // Buffer device address
+	CreateBDABuffer(ctx); // Buffer device address
 	CreateDescriptor(ctx);
 	shaderGroups_.Create();
 	CreateRayTracingPipeline(ctx);
@@ -133,7 +133,7 @@ void PipelineRaytracing::SetRaytracingCameraUBO(
 	cameraUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(RaytracingCameraUBO));
 }
 
-void PipelineRaytracing::PrepareBDA(VulkanContext& ctx)
+void PipelineRaytracing::CreateBDABuffer(VulkanContext& ctx)
 {
 	BDA bda = scene_->GetBDA();
 	VkDeviceSize bdaSize = sizeof(BDA);
