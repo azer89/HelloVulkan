@@ -37,7 +37,7 @@ private:
 	void CreateBDABuffer(VulkanContext& ctx);
 	void CreateDescriptor(VulkanContext& ctx);
 	void UpdateDescriptor(VulkanContext& ctx);
-	void CreateStorageImage(VulkanContext& ctx);
+	void CreateStorageImage(VulkanContext& ctx, VkFormat imageFormat, VulkanImage* image);
 	void CreateRayTracingPipeline(VulkanContext& ctx);
 
 private:

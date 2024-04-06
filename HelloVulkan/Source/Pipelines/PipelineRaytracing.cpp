@@ -19,7 +19,7 @@ PipelineRaytracing::PipelineRaytracing(VulkanContext& ctx, Scene* scene, Resourc
 
 	CreateBLAS(ctx);
 	CreateTLAS(ctx);
-	CreateStorageImage(ctx);
+	CreateStorageImage(ctx, ctx.GetSwapchainImageFormat(), &storageImage_);
 	CreateBDABuffer(ctx); // Buffer device address
 	CreateDescriptor(ctx);
 	shaderGroups_.Create();
@@ -111,7 +111,7 @@ void PipelineRaytracing::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer c
 void PipelineRaytracing::OnWindowResized(VulkanContext& ctx)
 {
 	storageImage_.Destroy();
-	CreateStorageImage(ctx);
+	CreateStorageImage(ctx, ctx.GetSwapchainImageFormat(), &storageImage_);
 	UpdateDescriptor(ctx);
 	ResetFrameCounter();
 }
@@ -191,23 +191,26 @@ void PipelineRaytracing::UpdateDescriptor(VulkanContext& ctx)
 	}
 }
 
-void PipelineRaytracing::CreateStorageImage(VulkanContext& ctx)
+void PipelineRaytracing::CreateStorageImage(VulkanContext& ctx, VkFormat imageFormat, VulkanImage* image)
 {
-	storageImage_.CreateImage(
+	const uint32_t imageWidth = ctx.GetSwapchainWidth();
+	const uint32_t imageHeight = ctx.GetSwapchainHeight();
+
+	image->CreateImage(
 		ctx,
-		ctx.GetSwapchainWidth(),
-		ctx.GetSwapchainHeight(),
+		imageWidth,
+		imageHeight,
 		1u,
 		1u,
-		ctx.GetSwapchainImageFormat(),
+		imageFormat,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_STORAGE_BIT,
 		VMA_MEMORY_USAGE_GPU_ONLY
 	);
 
-	storageImage_.CreateImageView(
+	image->CreateImageView(
 		ctx,
-		ctx.GetSwapchainImageFormat(),
+		imageFormat,
 		VK_IMAGE_ASPECT_COLOR_BIT,
 		VK_IMAGE_VIEW_TYPE_2D,
 		0u,
@@ -215,8 +218,8 @@ void PipelineRaytracing::CreateStorageImage(VulkanContext& ctx)
 		0u,
 		1u);
 
-	storageImage_.TransitionLayout(ctx, 
-		storageImage_.imageFormat_, 
+	image->TransitionLayout(ctx,
+		imageFormat,
 		VK_IMAGE_LAYOUT_UNDEFINED, 
 		VK_IMAGE_LAYOUT_GENERAL);
 }
