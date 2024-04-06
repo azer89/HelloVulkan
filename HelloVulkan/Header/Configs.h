@@ -13,7 +13,7 @@ namespace AppConfig
 	// Number of frame in flight
 	constexpr uint32_t FrameCount = 2;
 	
-	// TODO: Abstract to a Graphics Settings struct
+	// TODO: Abstract to a graphics settings struct
 	constexpr VkSampleCountFlagBits MSAACount = VK_SAMPLE_COUNT_4_BIT;
 	// VK_PRESENT_MODE_FIFO_KHR --> Lock to screen FPS
 	// VK_PRESENT_MODE_MAILBOX_KHR --> Triple buffering
@@ -74,6 +74,11 @@ namespace IBLConfig
 namespace ShadowConfig
 {
 	constexpr uint32_t DepthSize = 4096;
+}
+
+namespace RaytracingConfig
+{
+	constexpr uint32_t SampleCountPerFrame = 4;
 }
 
 #endif

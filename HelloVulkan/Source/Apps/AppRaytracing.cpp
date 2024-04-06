@@ -71,7 +71,7 @@ void AppRaytracing::UpdateUI()
 
 void AppRaytracing::UpdateUBOs()
 {
-	rtxPtr_->SetRaytracingCameraUBO(vulkanContext_,
+	rtxPtr_->SetRaytracingUBO(vulkanContext_,
 		camera_->GetInverseProjectionMatrix(),
 		camera_->GetInverseViewMatrix(),
 		camera_->Position()

@@ -23,9 +23,13 @@ public:
 	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override {}
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 	void OnWindowResized(VulkanContext& ctx) override;
-	void ResetFrameCounter() { frameCounter_ = 0; }
+	void ResetFrameCounter() 
+	{ 
+		frameCounter_ = 0; 
+		currentSampleCount_ = 0;
+	}
 
-	void SetRaytracingCameraUBO(
+	void SetRaytracingUBO(
 		VulkanContext& ctx,
 		const glm::mat4& inverseProjection,
 		const glm::mat4& inverseView,
@@ -42,6 +46,8 @@ private:
 
 private:
 	uint32_t frameCounter_ = 0;
+	uint32_t currentSampleCount_ = 0;
+	uint32_t maxSampleCount_ = 8u;
 
 	VulkanBuffer bdaBuffer_ = {};
 	VulkanImage storageImage_ = {};

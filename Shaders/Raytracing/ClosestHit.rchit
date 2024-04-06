@@ -3,7 +3,7 @@
 #extension GL_EXT_buffer_reference : require
 #extension GL_EXT_nonuniform_qualifier : require
 
-#include <Raytracing/CameraProperties.glsl>
+#include <Raytracing/RaytracingUBO.glsl>
 #include <Bindless/VertexData.glsl>
 #include <Bindless/MeshData.glsl>
 #include <Bindless/BDA.glsl>
@@ -13,7 +13,7 @@ layout(location = 0) rayPayloadInEXT vec3 hitValue;
 layout(location = 2) rayPayloadEXT bool shadowed;
 hitAttributeEXT vec2 attribs;
 
-layout(set = 0, binding = 3) uniform Camera { CameraProperties cam; };
+layout(set = 0, binding = 3) uniform RTUBO { RaytracingUBO ubo; };
 layout(set = 0, binding = 4) uniform BDABlock { BDA bda; }; // Buffer device address
 layout(set = 0, binding = 5) readonly buffer Lights { LightData lights []; };
 layout(set = 0, binding = 6) uniform sampler2D pbrTextures[] ;
@@ -33,7 +33,7 @@ void main()
 	float specular = 0.299 * albedo.r + 0.587 * albedo.g + 0.114 * albedo.b;
 
 	vec3 color = vec3(0.0);
-	vec3 viewDir = normalize(cam.position.xyz - tri.fragPosition);
+	vec3 viewDir = normalize(ubo.cameraPosition.xyz - tri.fragPosition);
 	for (int i = 0; i < lights.length(); ++i)
 	{
 		LightData light = lights[i];

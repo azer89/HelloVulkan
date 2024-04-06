@@ -15,7 +15,7 @@ PipelineRaytracing::PipelineRaytracing(VulkanContext& ctx, Scene* scene, Resourc
 	scene_(scene),
 	resourcesLight_(resourcesLight)
 {
-	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(RaytracingCameraUBO), AppConfig::FrameCount);
+	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(RaytracingUBO), AppConfig::FrameCount);
 
 	CreateBLAS(ctx);
 	CreateTLAS(ctx);
@@ -182,7 +182,7 @@ void PipelineRaytracing::CreateRayTracingPipeline(VulkanContext& ctx)
 	// Shaders
 	const std::vector<std::string> shaderFiles =
 	{
-		AppConfig::ShaderFolder + "Raytracing/RayGen.rgen",
+		AppConfig::ShaderFolder + "Raytracing/RayGeneration.rgen",
 		AppConfig::ShaderFolder + "Raytracing/Miss.rmiss",
 		AppConfig::ShaderFolder + "Raytracing/Shadow.rmiss",
 		AppConfig::ShaderFolder + "Raytracing/ClosestHit.rchit",
@@ -288,19 +288,22 @@ void PipelineRaytracing::CreateTLAS(VulkanContext& ctx)
 	RaytracingBuilder::CreateTLAS(ctx, transformMatrix, blas_.deviceAddress_, &tlas_);
 }
 
-void PipelineRaytracing::SetRaytracingCameraUBO(
+void PipelineRaytracing::SetRaytracingUBO(
 	VulkanContext& ctx,
 	const glm::mat4& inverseProjection,
 	const glm::mat4& inverseView,
 	const glm::vec3& cameraPosition)
 {
-	RaytracingCameraUBO ubo =
+	currentSampleCount_ = std::max(currentSampleCount_ + RaytracingConfig::SampleCountPerFrame, maxSampleCount_);
+
+	RaytracingUBO ubo =
 	{
 		.projectionInverse = inverseProjection,
 		.viewInverse = inverseView,
-		.position = glm::vec4(cameraPosition, 1.0),
-		.frame = frameCounter_++
+		.cameraPosition = glm::vec4(cameraPosition, 1.0),
+		.frame = frameCounter_++,
+		.currentSampleCount = currentSampleCount_
 	};
 	const uint32_t frameIndex = ctx.GetFrameIndex();
-	cameraUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(RaytracingCameraUBO));
+	cameraUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(RaytracingUBO));
 }
