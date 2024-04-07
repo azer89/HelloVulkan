@@ -17,7 +17,7 @@
 class PipelineRaytracing final : public PipelineBase
 {
 public:
-	PipelineRaytracing(VulkanContext& ctx, Scene* scene, ResourcesLight* resourcesLight);
+	PipelineRaytracing(VulkanContext& ctx, Scene* scene);
 	~PipelineRaytracing();
 
 	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override {}
@@ -64,19 +64,17 @@ private:
 private:
 	uint32_t frameCounter_ = 0;
 	uint32_t currentSampleCount_ = 0;
-	uint32_t sampleCountPerFrame_ = 4;
-	uint32_t rayBounceCount_ = 8u; // TODO Should be adjustable via ImGui
-	float skyIntensity_ = 1.0f;
+	uint32_t sampleCountPerFrame_ = 0;
+	uint32_t rayBounceCount_ = 0;
+	float skyIntensity_ = 0.0f;
 
+	Scene* scene_ = nullptr;
 	VulkanBuffer bdaBuffer_ = {};
 	VulkanImage storageImage_ = {};
 	VulkanImage accumulationImage_ = {};
 	VulkanDescriptorInfo descriptorInfo_ = {};
-	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_ = {};
 	std::vector<VulkanBuffer> rtUBOBuffers_;
-
-	Scene* scene_ = nullptr;
-	ResourcesLight* resourcesLight_ = nullptr;
+	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_ = {};
 
 	AccelStructure blas_ = {};
 	AccelStructure tlas_ = {};

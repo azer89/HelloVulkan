@@ -12,8 +12,6 @@ void AppRaytracing::Init()
 {
 	camera_->SetPositionAndTarget(glm::vec3(0.0f, 3.0f, 3.0f), glm::vec3(0.0, 0.0, -1.0f));
 
-	InitLights();
-
 	// Scene
 	std::vector<ModelCreateInfo> dataArray = {
 		{
@@ -23,7 +21,7 @@ void AppRaytracing::Init()
 	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray);
 
 	AddPipeline<PipelineClear>(vulkanContext_);
-	rtxPtr_ = AddPipeline<PipelineRaytracing>(vulkanContext_, scene_.get(), resourcesLight_);
+	rtxPtr_ = AddPipeline<PipelineRaytracing>(vulkanContext_, scene_.get());
 	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
 	AddPipeline<PipelineFinish>(vulkanContext_);
 
@@ -31,22 +29,6 @@ void AppRaytracing::Init()
 	camera_->ChangedEvent_.AddListener([this]()
 	{
 		this->rtxPtr_->ResetFrameCounter();
-	});
-}
-
-void AppRaytracing::InitLights()
-{
-	constexpr float lightIntensity = 15.f;
-	constexpr float lightPositionY = 1.75f;
-
-	// Lights (SSBO)
-	resourcesLight_ = AddResources<ResourcesLight>();
-	resourcesLight_->AddLights(vulkanContext_,
-	{
-		{.position_ = glm::vec4(-1.5f, lightPositionY,  1.5f, 1.f), .color_ = glm::vec4(lightIntensity), .radius_ = 10.0f },
-		{.position_ = glm::vec4(1.5f, lightPositionY,  1.5f, 1.f), .color_ = glm::vec4(lightIntensity), .radius_ = 10.0f },
-		{.position_ = glm::vec4(-1.5f, lightPositionY, -1.5f, 1.f), .color_ = glm::vec4(lightIntensity), .radius_ = 10.0f },
-		{.position_ = glm::vec4(1.5f, lightPositionY, -1.5f, 1.f), .color_ = glm::vec4(lightIntensity), .radius_ = 10.0f }
 	});
 }
 

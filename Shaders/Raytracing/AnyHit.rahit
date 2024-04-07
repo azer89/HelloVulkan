@@ -10,7 +10,7 @@
 hitAttributeEXT vec3 attribs;
 
 layout(set = 0, binding = 4) uniform BDABlock { BDA bda; }; // Buffer device address
-layout(set = 0, binding = 7) uniform sampler2D pbrTextures[] ;
+layout(set = 0, binding = 6) uniform sampler2D pbrTextures[] ;
 
 void main()
 {

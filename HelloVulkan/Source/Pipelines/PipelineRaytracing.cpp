@@ -6,14 +6,13 @@
 #include "Configs.h"
 #include "Utility.h"
 
-PipelineRaytracing::PipelineRaytracing(VulkanContext& ctx, Scene* scene, ResourcesLight* resourcesLight) :
+PipelineRaytracing::PipelineRaytracing(VulkanContext& ctx, Scene* scene) :
 	PipelineBase(
 		ctx,
 		{
 			.type_ = PipelineType::GraphicsOnScreen
 		}),
-	scene_(scene),
-	resourcesLight_(resourcesLight)
+	scene_(scene)
 {
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, rtUBOBuffers_, sizeof(RaytracingUBO), AppConfig::FrameCount);
 
@@ -134,7 +133,6 @@ void PipelineRaytracing::CreateDescriptor(VulkanContext& ctx)
 	descriptorInfo_.AddImage(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
 	descriptorInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_MISS_BIT_KHR);
 	descriptorInfo_.AddBuffer(&bdaBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_ANY_HIT_BIT_KHR);
-	descriptorInfo_.AddBuffer(resourcesLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
 	descriptorInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
 	descriptorInfo_.AddImageArray(textureInfoArray_, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_ANY_HIT_BIT_KHR);
 
@@ -169,7 +167,7 @@ void PipelineRaytracing::UpdateDescriptor(VulkanContext& ctx)
 	for (size_t i = 0; i < frameCount; i++)
 	{
 		descriptorInfo_.UpdateBuffer(&(rtUBOBuffers_[i]), 3);
-		descriptorInfo_.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 6);
+		descriptorInfo_.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 5);
 		descriptor_.UpdateSet(ctx, descriptorInfo_, &(descriptorSets_[i]));
 	}
 }
