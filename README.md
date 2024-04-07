@@ -7,21 +7,14 @@ A 3D rendering engine built from scratch using Vulkan API and C++.
 ### Features
 
 * __Clustered forward shading__ for efficient light culling.
-* __Physically-Based Rendering__ (PBR) with Cook-Torrance microfacet.
-* __Image-Based Lighting__ (IBL) pipelines that generate:
-    * A cubemap from an equirectangular HDR image.
-    * Specular and diffuse cubemaps.
-    * BRDF lookup table.
-* __Bindless__:
-    * A single __indirect draw call__ per render pass. 
-    * __Descriptor indexing__ that allows all textures in the scene to be bound just once at the start of the frame.
-    * __Buffer device address__ for direct shader access to buffers without the need to create descriptors.
+* __Physically-Based Rendering__ (PBR) with Cook-Torrance microfacet and_Image-Based Lighting__ (IBL).
+* __Hardward-Accelerated Raytracing__ that can simulate indirect shading, reflections, and soft shadow.
+* __Bindless__ techniques using __indirect draw call__, __Descriptor indexing__, and __Buffer device address__.
 * __Compute-based Frustum Culling__.
 * __Compute-based Skinning__ for skeletal animation.
 * __Shadow maps__ with Poisson Disk or PCF.
 * glTF mesh/texture support.
 * Multisample anti-aliasing (MSAA).
-* Simple __raytracing__ pipeline with basic intersection testing.
 * Tonemap postprocessing.
 * Automatic runtime compilation from GLSL to SPIR-V using `glslang`.
 * Lightweight abstraction layer on top of Vulkan for faster development.
@@ -37,20 +30,11 @@ Next, the engine takes advantage of __indirect draw__ API. This means the CPU on
 
 Finally, the engine pushes the concept of "bindless" even further by utilizing __buffer device addresses__. Instead of creating descriptors, device addresses act as _pointers_ so that the shaders can have direct access to buffers.
 
-The images below showcase the implementations of PBR, IBL, and PCF shadow mapping.
+The image below showcases the implementations of PBR, IBL, and PCF shadow mapping.
 
 <img width="850" alt="bindless_shadow_mapping_1" src="https://github.com/azer89/HelloVulkan/assets/790432/c926d003-8df2-464e-a8f7-e04b66494214">
 
-<img width="850" alt="bindless_shadow_mapping_2" src="https://github.com/azer89/HelloVulkan/assets/790432/7111e3f7-51e2-47fa-9fad-a0a19b4a1f1b">
-
 </br>
-</br>
-</br>
-
-The video below is another example of realistic rendering of the damaged helmet demonstrating PBR and IBL techniques.
-
-https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d130bf910
-
 </br>
 
 ### Clustered Forward Shading
