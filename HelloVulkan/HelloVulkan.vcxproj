@@ -178,6 +178,7 @@
     <None Include="..\Shaders\LightData.glsl" />
     <None Include="..\Shaders\Line.frag" />
     <None Include="..\Shaders\Line.vert" />
+    <None Include="..\Shaders\MaterialType.glsl" />
     <None Include="..\Shaders\ModelUBO.glsl" />
     <None Include="..\Shaders\PBRPushConstants.glsl" />
     <None Include="..\Shaders\Radiance.glsl" />

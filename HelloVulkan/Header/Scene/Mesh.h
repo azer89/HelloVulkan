@@ -85,6 +85,10 @@ public:
 		{
 			return MaterialType::Transparent;
 		}
+		else if (meshName_.find("specular") != meshName_.npos)
+		{
+			return MaterialType::Specular;
+		}
 		return MaterialType::Opaque;
 	}
 

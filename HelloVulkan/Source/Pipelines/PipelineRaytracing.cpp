@@ -15,7 +15,7 @@ PipelineRaytracing::PipelineRaytracing(VulkanContext& ctx, Scene* scene, Resourc
 	scene_(scene),
 	resourcesLight_(resourcesLight)
 {
-	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(RaytracingUBO), AppConfig::FrameCount);
+	VulkanBuffer::CreateMultipleUniformBuffers(ctx, rtUBOBuffers_, sizeof(RaytracingUBO), AppConfig::FrameCount);
 
 	CreateBLAS(ctx);
 	CreateTLAS(ctx);
@@ -39,7 +39,11 @@ PipelineRaytracing::~PipelineRaytracing()
 	for (auto& mData : modelDataArray_)
 	{
 		mData.Destroy();
-	}	
+	}
+	for (auto& buffer : rtUBOBuffers_)
+	{
+		buffer.Destroy();
+	}
 }
 
 void PipelineRaytracing::OnWindowResized(VulkanContext& ctx)
@@ -128,7 +132,7 @@ void PipelineRaytracing::CreateDescriptor(VulkanContext& ctx)
 	descriptorInfo_.AddAccelerationStructure();
 	descriptorInfo_.AddImage(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
 	descriptorInfo_.AddImage(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
-	descriptorInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
+	descriptorInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_MISS_BIT_KHR);
 	descriptorInfo_.AddBuffer(&bdaBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_ANY_HIT_BIT_KHR);
 	descriptorInfo_.AddBuffer(resourcesLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
 	descriptorInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
@@ -164,7 +168,7 @@ void PipelineRaytracing::UpdateDescriptor(VulkanContext& ctx)
 	constexpr auto frameCount = AppConfig::FrameCount;
 	for (size_t i = 0; i < frameCount; i++)
 	{
-		descriptorInfo_.UpdateBuffer(&(cameraUBOBuffers_[i]), 3);
+		descriptorInfo_.UpdateBuffer(&(rtUBOBuffers_[i]), 3);
 		descriptorInfo_.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 6);
 		descriptor_.UpdateSet(ctx, descriptorInfo_, &(descriptorSets_[i]));
 	}
@@ -306,11 +310,12 @@ void PipelineRaytracing::SetRaytracingUBO(
 		.frame = frameCounter_,
 		.sampleCountPerFrame = sampleCountPerFrame_,
 		.currentSampleCount = currentSampleCount_,
-		.rayBounceCount = rayBounceCount_
+		.rayBounceCount = rayBounceCount_,
+		.skyIntensity = skyIntensity_
 	};
 
 	++frameCounter_;
 
 	const uint32_t frameIndex = ctx.GetFrameIndex();
-	cameraUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(RaytracingUBO));
+	rtUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(RaytracingUBO));
 }

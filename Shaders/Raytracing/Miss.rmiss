@@ -2,10 +2,11 @@
 #extension GL_EXT_ray_tracing : enable
 
 #include <Raytracing/RayPayload.glsl>
+#include <Raytracing/RaytracingUBO.glsl>
 
 layout(location = 0) rayPayloadInEXT RayPayload rayPayload;
 
-const float SKY_INTENSITY = 1.0;
+layout(set = 0, binding = 3) uniform RTUBO { RaytracingUBO ubo; };
 
 void main()
 {
@@ -14,6 +15,6 @@ void main()
 	const vec3 gradientEnd = vec3(1.0);
 	const vec3 skyColor = mix(gradientEnd, gradientStart, t);
 
-	rayPayload.color = skyColor * SKY_INTENSITY;
+	rayPayload.color = skyColor * ubo.skyIntensity;
 	rayPayload.distance = -1.0;
 }

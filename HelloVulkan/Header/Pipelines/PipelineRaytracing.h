@@ -29,6 +29,23 @@ public:
 		currentSampleCount_ = 0;
 	}
 
+	void SetParams(
+		uint32_t sampleCountPerFrame,
+		uint32_t rayBounceCount,
+		float skyIntensity)
+	{
+		if (sampleCountPerFrame_ != sampleCountPerFrame ||
+			rayBounceCount_ != rayBounceCount ||
+			abs(skyIntensity_ - skyIntensity) > 0.01)
+		{
+			ResetFrameCounter();
+		}
+
+		sampleCountPerFrame_ = sampleCountPerFrame;
+		rayBounceCount_ = rayBounceCount;
+		skyIntensity_ = skyIntensity;
+	}
+
 	void SetRaytracingUBO(
 		VulkanContext& ctx,
 		const glm::mat4& inverseProjection,
@@ -49,12 +66,14 @@ private:
 	uint32_t currentSampleCount_ = 0;
 	uint32_t sampleCountPerFrame_ = 4;
 	uint32_t rayBounceCount_ = 8u; // TODO Should be adjustable via ImGui
+	float skyIntensity_ = 1.0f;
 
 	VulkanBuffer bdaBuffer_ = {};
 	VulkanImage storageImage_ = {};
 	VulkanImage accumulationImage_ = {};
 	VulkanDescriptorInfo descriptorInfo_ = {};
 	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_ = {};
+	std::vector<VulkanBuffer> rtUBOBuffers_;
 
 	Scene* scene_ = nullptr;
 	ResourcesLight* resourcesLight_ = nullptr;

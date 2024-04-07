@@ -2,6 +2,8 @@
 #include "PipelineClear.h"
 #include "PipelineFinish.h"
 
+#include "imgui.h"
+
 AppRaytracing::AppRaytracing()
 {
 }
@@ -23,7 +25,6 @@ void AppRaytracing::Init()
 	AddPipeline<PipelineClear>(vulkanContext_);
 	rtxPtr_ = AddPipeline<PipelineRaytracing>(vulkanContext_, scene_.get(), resourcesLight_);
 	imguiPtr_ = AddPipeline<PipelineImGui>(vulkanContext_, vulkanInstance_.GetInstance(), glfwWindow_);
-	// TODO Add tonemapping
 	AddPipeline<PipelineFinish>(vulkanContext_);
 
 	// Add a listener when the camera is changed
@@ -41,12 +42,12 @@ void AppRaytracing::InitLights()
 	// Lights (SSBO)
 	resourcesLight_ = AddResources<ResourcesLight>();
 	resourcesLight_->AddLights(vulkanContext_,
-		{
-			{.position_ = glm::vec4(-1.5f, lightPositionY,  1.5f, 1.f), .color_ = glm::vec4(lightIntensity), .radius_ = 10.0f },
-			{.position_ = glm::vec4(1.5f, lightPositionY,  1.5f, 1.f), .color_ = glm::vec4(lightIntensity), .radius_ = 10.0f },
-			{.position_ = glm::vec4(-1.5f, lightPositionY, -1.5f, 1.f), .color_ = glm::vec4(lightIntensity), .radius_ = 10.0f },
-			{.position_ = glm::vec4(1.5f, lightPositionY, -1.5f, 1.f), .color_ = glm::vec4(lightIntensity), .radius_ = 10.0f }
-		});
+	{
+		{.position_ = glm::vec4(-1.5f, lightPositionY,  1.5f, 1.f), .color_ = glm::vec4(lightIntensity), .radius_ = 10.0f },
+		{.position_ = glm::vec4(1.5f, lightPositionY,  1.5f, 1.f), .color_ = glm::vec4(lightIntensity), .radius_ = 10.0f },
+		{.position_ = glm::vec4(-1.5f, lightPositionY, -1.5f, 1.f), .color_ = glm::vec4(lightIntensity), .radius_ = 10.0f },
+		{.position_ = glm::vec4(1.5f, lightPositionY, -1.5f, 1.f), .color_ = glm::vec4(lightIntensity), .radius_ = 10.0f }
+	});
 }
 
 void AppRaytracing::UpdateUI()
@@ -57,10 +58,23 @@ void AppRaytracing::UpdateUI()
 		return;
 	}
 
+	static int sampleCountPerFrame = 4;
+	static int rayBounceCount = 8;
+	static float skyIntensity = 1.0f;
+
 	imguiPtr_->ImGuiStart();
 	imguiPtr_->ImGuiSetWindow("Raytracing", 450, 150);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
+	ImGui::SliderInt("Sample count", &sampleCountPerFrame, 1, 32);
+	ImGui::SliderInt("Ray bounce", &rayBounceCount, 1, 32);
+	ImGui::SliderFloat("Sky intensity", &skyIntensity, 0.1f, 10.0f);
 	imguiPtr_->ImGuiEnd();
+
+	rtxPtr_->SetParams(
+		static_cast<uint32_t>(sampleCountPerFrame),
+		static_cast<uint32_t>(rayBounceCount),
+		skyIntensity
+	);
 }
 
 void AppRaytracing::UpdateUBOs()

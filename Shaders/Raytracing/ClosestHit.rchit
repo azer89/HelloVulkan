@@ -9,6 +9,7 @@
 #include <Bindless/VertexData.glsl>
 #include <Bindless/MeshData.glsl>
 #include <Bindless/BDA.glsl>
+#include <MaterialType.glsl>
 #include <LightData.glsl>
 #include <ModelUBO.glsl>
 
@@ -36,8 +37,17 @@ RayPayload Scatter(MeshData mData, Triangle tri, vec3 direction, float t, uint s
 
 	vec4 color = texture(pbrTextures[nonuniformEXT(mData.albedo)], tri.uv);
 	payload.color = color.xyz + tri.color.xyz; // Add texture color with vertex color
-	//payload.scatterDir = tri.normal  + normalize(RandomInUnitSphere(seed)) * 0.1f; // Lambertian
-	payload.scatterDir = Reflect(direction, tri.normal)  + normalize(RandomInUnitSphere(seed)) * 0.75; // Specular
+
+	if (mData.material == MAT_SPECULAR)
+	{
+		payload.scatterDir = Reflect(direction, tri.normal)  + normalize(RandomInUnitSphere(seed)) * 0.2; // Specular
+	}
+	else
+	{
+		payload.scatterDir = Reflect(direction, tri.normal)  + normalize(RandomInUnitSphere(seed)) * 0.85;
+		//payload.scatterDir = tri.normal  + normalize(RandomInUnitSphere(seed)); // Lambertian
+	}
+	
 	payload.doScatter = true;
 	payload.randomSeed = seed;
 

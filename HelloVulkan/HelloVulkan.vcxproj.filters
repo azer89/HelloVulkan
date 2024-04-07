@@ -258,6 +258,9 @@
     <None Include="..\Shaders\Raytracing\RayPayload.glsl">
       <Filter>Shaders\Raytracing</Filter>
     </None>
+    <None Include="..\Shaders\MaterialType.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Camera.h">
