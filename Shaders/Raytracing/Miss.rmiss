@@ -9,7 +9,6 @@ const float SKY_INTENSITY = 1.0;
 
 void main()
 {
-	// New code
 	const float t = 0.5 * (normalize(gl_WorldRayDirectionEXT).y + 1.0);
 	const vec3 gradientStart = vec3(0.5, 0.6, 1.0);
 	const vec3 gradientEnd = vec3(1.0);

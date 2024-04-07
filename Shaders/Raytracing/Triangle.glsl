@@ -28,6 +28,7 @@ Triangle GetTriangle(uint primitiveID, uint geometryIndex)
 	tri.vertices[1] = bda.vertexReference.vertices[index.y];
 	tri.vertices[2] = bda.vertexReference.vertices[index.z];
 
+	// Multiply vertex position with model matrix
 	tri.vertices[0].position = (model * vec4(tri.vertices[0].position, 1.0)).xyz;
 	tri.vertices[1].position = (model * vec4(tri.vertices[1].position, 1.0)).xyz;
 	tri.vertices[2].position = (model * vec4(tri.vertices[2].position, 1.0)).xyz;
@@ -44,6 +45,7 @@ Triangle GetTriangle(uint primitiveID, uint geometryIndex)
 		(tri.vertices[1].normal * bary.y) +
 		(tri.vertices[2].normal * bary.z));
 
+	// Multiply normal vector with normal matrix
 	tri.normal = normalMatrix * normal3;
 
 	// Point where the ray hits

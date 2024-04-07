@@ -34,8 +34,8 @@ void main()
 		vec2(v1.uvX, v1.uvY) * bary.y +
 		vec2(v2.uvX, v2.uvY) * bary.z;
 
+	// Check based on albedo texture
 	vec4 albedo4 = texture(pbrTextures[nonuniformEXT(mData.albedo)], uv).rgba;
-
 	if (albedo4.a < 0.5)
 	{
 		ignoreIntersectionEXT;

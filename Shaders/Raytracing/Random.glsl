@@ -3,9 +3,6 @@
 Adapted from github.com/SaschaWillems
 */
 
-const float PI = 3.14159265359;
-const float PI_2 = 2.0 * PI;
-
 uint WangHash(inout uint seed)
 {
 	seed = uint(seed ^ uint(61)) ^ uint(seed >> uint(16));

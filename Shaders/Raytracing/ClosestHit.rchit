@@ -12,9 +12,7 @@
 #include <LightData.glsl>
 #include <ModelUBO.glsl>
 
-//layout(location = 0) rayPayloadInEXT vec3 hitValue;
 layout(location = 0) rayPayloadInEXT RayPayload rayPayload;
-//layout(location = 2) rayPayloadEXT bool shadowed;
 
 hitAttributeEXT vec2 attribs;
 
@@ -36,27 +34,19 @@ RayPayload Scatter(MeshData mData, Triangle tri, vec3 direction, float t, uint s
 	RayPayload payload;
 	payload.distance = t;
 
-	// Lambertian
 	vec4 color = texture(pbrTextures[nonuniformEXT(mData.albedo)], tri.uv);
-	payload.color = color.xyz + tri.color.xyz;
-	//payload.scatterDir = tri.normal  + normalize(RandomInUnitSphere(seed)) * 0.1f;
-	payload.scatterDir = Reflect(direction, tri.normal)  + normalize(RandomInUnitSphere(seed)) * 0.75;
+	payload.color = color.xyz + tri.color.xyz; // Add texture color with vertex color
+	//payload.scatterDir = tri.normal  + normalize(RandomInUnitSphere(seed)) * 0.1f; // Lambertian
+	payload.scatterDir = Reflect(direction, tri.normal)  + normalize(RandomInUnitSphere(seed)) * 0.75; // Specular
 	payload.doScatter = true;
 	payload.randomSeed = seed;
 
 	return payload;
 }
 
-// Blinn-Phong
-const float LINEAR = 2.9f;
-const float QUADRATIC = 3.8f;
-
 void main()
 {
 	Triangle tri = GetTriangle(gl_PrimitiveID, gl_GeometryIndexEXT);
-
 	MeshData mData = bda.meshReference.meshes[gl_GeometryIndexEXT];
-
-	// RayPayload Scatter(MeshData mData, Triangle tri, vec3 direction, float t, uint seed)
 	rayPayload = Scatter(mData, tri, gl_WorldRayDirectionEXT, gl_HitTEXT, rayPayload.randomSeed);
 }
