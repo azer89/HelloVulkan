@@ -2,6 +2,8 @@
 #extension GL_EXT_ray_tracing : enable
 #extension GL_EXT_buffer_reference : require
 #extension GL_EXT_nonuniform_qualifier : require
+#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require
+#extension GL_EXT_scalar_block_layout : enable
 
 #include <Raytracing/RaytracingUBO.glsl>
 #include <Raytracing/RayPayload.glsl>
@@ -32,7 +34,7 @@ RayPayload Scatter(MeshData mData, Triangle tri, vec3 direction, float t, uint s
 	// Lambertian
 	vec4 color = texture(pbrTextures[nonuniformEXT(mData.albedo)], tri.uv);
 	payload.color = color.xyz;
-	payload.scatterDir = tri.normal + RandomInUnitSphere(seed);
+	payload.scatterDir = tri.normal + normalize(RandomInUnitSphere(seed));
 	payload.doScatter = true;
 	payload.randomSeed = seed;
 

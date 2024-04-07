@@ -24,11 +24,12 @@ Triangle GetTriangle(uint primitiveID, uint geometryIndex)
 	tri.vertices[1] = bda.vertexReference.vertices[index.y];
 	tri.vertices[2] = bda.vertexReference.vertices[index.z];
 
-	const vec3 bary = vec3(1.0f - attribs.x - attribs.y, attribs.x, attribs.y);
+	vec3 bary = vec3(1.0f - attribs.x - attribs.y, attribs.x, attribs.y);
+
 	tri.normal = normalize(
-		tri.vertices[0].normal.xyz * bary.x +
-		tri.vertices[1].normal.xyz * bary.y +
-		tri.vertices[2].normal.xyz * bary.z);
+		(tri.vertices[0].normal * bary.x) +
+		(tri.vertices[1].normal * bary.y) +
+		(tri.vertices[2].normal * bary.z));
 
 	// Point where the ray hits
 	tri.fragPosition = normalize(
