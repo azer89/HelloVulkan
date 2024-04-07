@@ -5,7 +5,7 @@
 
 layout(location = 0) rayPayloadInEXT RayPayload rayPayload;
 
-const float SKY_INTENSITY = 5.0;
+const float SKY_INTENSITY = 1.0;
 
 void main()
 {

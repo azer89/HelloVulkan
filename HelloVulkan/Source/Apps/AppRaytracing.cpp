@@ -15,16 +15,16 @@ void AppRaytracing::Init()
 	// Scene
 	std::vector<ModelCreateInfo> dataArray = {
 		{
-			.filename = AppConfig::ModelFolder + "Hexapod/Hexapod.gltf",
+			.filename = AppConfig::ModelFolder + "MacrossFactory/MacrossFactory.gltf",
 		}
 	};
 	scene_ = std::make_unique<Scene>(vulkanContext_, dataArray);
 
 	// Model matrix for Hexapod
-	glm::mat4 modelMatrix = glm::mat4(1.f);
+	/*glm::mat4 modelMatrix = glm::mat4(1.f);
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.62f, 0.0f));
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f));
-	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 0, 0);
+	scene_->UpdateModelMatrix(vulkanContext_, { .model = modelMatrix }, 0, 0);*/
 
 	AddPipeline<PipelineClear>(vulkanContext_);
 	rtxPtr_ = AddPipeline<PipelineRaytracing>(vulkanContext_, scene_.get(), resourcesLight_);

@@ -1,6 +1,7 @@
 struct Triangle
 {
 	VertexData vertices[3];
+	vec4 color;
 	vec3 normal;
 	vec3 fragPosition; // Point where the ray hits
 	vec2 uv;
@@ -32,6 +33,11 @@ Triangle GetTriangle(uint primitiveID, uint geometryIndex)
 	tri.vertices[2].position = (model * vec4(tri.vertices[2].position, 1.0)).xyz;
 
 	vec3 bary = vec3(1.0f - attribs.x - attribs.y, attribs.x, attribs.y);
+
+	tri.color = 
+		(tri.vertices[0].color * bary.x) +
+		(tri.vertices[1].color * bary.y) +
+		(tri.vertices[2].color * bary.z);
 
 	vec3 normal3 = normalize
 		((tri.vertices[0].normal * bary.x) +
