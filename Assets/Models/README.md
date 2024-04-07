@@ -4,4 +4,5 @@
 * [Hexapod](https://sketchfab.com/3d-models/gd55-brennanmcgreevy-mod2-129bf05394264915ac804496a2aa3d47)
 * [Tachikoma](https://sketchfab.com/3d-models/tachikoma-7ec03deb78de4a1b908d2bc736ff0f15)
 * [glTF Assets](https://github.com/KhronosGroup/glTF-Sample-Assets)
+* [Macross Factory](https://sketchfab.com/3d-models/sd-macross-factory-a65a3750c68a4e9b885c81c84485cb63)
 * [Dancing Stormtrooper](https://sketchfab.com/3d-models/dancing-stormtrooper-12bd08d66fe04a84be446e583d6663ac)
