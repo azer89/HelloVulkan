@@ -37,6 +37,15 @@ The image below showcases the implementations of PBR, IBL, and PCF shadow mappin
 </br>
 </br>
 
+### Hardware-Accelerated Raytracing
+
+The engine also features a raytracing pipeline. This process begins with building acceleration structures containing multiple geometries. The ray simulation involves several shaders. Ray generation shader is responsible to generate rays, and store the hit color into an accumulator image. The final rendering is obtained by averaging the accumulator image. The next one is Closest hit shader that determines the hit color and scatter the ray for the next recursive bounce. Any hit shader is used to render transparent material such as foliage textures. 
+
+<img width="425" alt="hardware_raytracing" src="https://github.com/azer89/HelloVulkan/assets/790432/4f6653c9-3bac-40d7-bf84-a37ff6bead2c">
+
+</br>
+</br>
+
 ### Clustered Forward Shading
 
 The technique consists of two steps that are executed in compute shaders. The first step is to subdivide the view frustum into AABB clusters.
@@ -74,15 +83,6 @@ https://github.com/azer89/HelloVulkan/assets/790432/51f097f5-b361-4de9-9f04-99c5
 The left image below is a rendering that uses four cascade shadow maps, resulting in sharper shadows. The right image above showcases the individual cascades with color coding. Poisson disk sampling helps to reduce projective aliasing artifacts, but can create more noticeable seams between cascades with excessive blurring. 
 
 <img width="850" alt="cascade_shadow_mapping" src="https://github.com/azer89/HelloVulkan/assets/790432/1634a491-ea8f-49f0-8214-766a038bedd1">
-
-</br>
-</br>
-
-### Hardware-Accelerated Raytracing
-
-The engine also features a raytracing pipeline. This process begins with building Bottom Level Acceleration Structures (BLAS) containing muitple geometries, then followed by creating Top Level Acceleration Structures (TLAS). For each pixel on the screen, a ray is cast and intersected with the acceleration structures to determine the final color.
-
-<img width="425" alt="hardware_raytracing" src="https://github.com/azer89/HelloVulkan/assets/790432/4f6653c9-3bac-40d7-bf84-a37ff6bead2c">
 
 </br>
 </br>
