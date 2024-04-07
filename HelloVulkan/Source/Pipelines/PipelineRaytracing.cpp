@@ -131,6 +131,7 @@ void PipelineRaytracing::CreateDescriptor(VulkanContext& ctx)
 	descriptorInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
 	descriptorInfo_.AddBuffer(&bdaBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
 	descriptorInfo_.AddBuffer(resourcesLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
+	descriptorInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
 	descriptorInfo_.AddImageArray(textureInfoArray_, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
 
 	// Create pool and layout
@@ -164,6 +165,7 @@ void PipelineRaytracing::UpdateDescriptor(VulkanContext& ctx)
 	for (size_t i = 0; i < frameCount; i++)
 	{
 		descriptorInfo_.UpdateBuffer(&(cameraUBOBuffers_[i]), 3);
+		descriptorInfo_.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 6);
 		descriptor_.UpdateSet(ctx, descriptorInfo_, &(descriptorSets_[i]));
 	}
 }

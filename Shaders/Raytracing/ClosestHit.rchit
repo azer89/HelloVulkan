@@ -12,6 +12,7 @@
 #include <Bindless/MeshData.glsl>
 #include <Bindless/BDA.glsl>
 #include <LightData.glsl>
+#include <ModelUBO.glsl>
 
 //layout(location = 0) rayPayloadInEXT vec3 hitValue;
 layout(location = 0) rayPayloadInEXT RayPayload rayPayload;
@@ -22,7 +23,8 @@ hitAttributeEXT vec2 attribs;
 layout(set = 0, binding = 3) uniform RTUBO { RaytracingUBO ubo; };
 layout(set = 0, binding = 4) uniform BDABlock { BDA bda; }; // Buffer device address
 layout(set = 0, binding = 5) readonly buffer Lights { LightData lights []; };
-layout(set = 0, binding = 6) uniform sampler2D pbrTextures[] ;
+layout(set = 0, binding = 6) readonly buffer ModelUBOs { ModelUBO modelUBOs []; };
+layout(set = 0, binding = 7) uniform sampler2D pbrTextures[] ;
 
 #include <Raytracing/Triangle.glsl>
 
