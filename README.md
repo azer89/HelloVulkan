@@ -6,9 +6,9 @@ A 3D rendering engine built from scratch using Vulkan API and C++.
 
 ### Features
 
-* __Clustered forward shading__ for efficient light culling.
+* __Clustered Forward Shading__ for efficient light culling.
 * __Physically-Based Rendering__ (PBR) with Cook-Torrance microfacet and_Image-Based Lighting__ (IBL).
-* __Hardward-Accelerated Raytracing__ that can simulate indirect shading, reflections, and soft shadow.
+* __Hardward-Accelerated Path Tracing__ that can simulate indirect shading, reflections, and soft shadow.
 * __Bindless__ techniques using __indirect draw call__, __Descriptor indexing__, and __Buffer device address__.
 * __Compute-based Frustum Culling__.
 * __Compute-based Skinning__ for skeletal animation.
@@ -37,9 +37,9 @@ The image below showcases the implementations of PBR, IBL, and PCF shadow mappin
 </br>
 </br>
 
-### Hardware-Accelerated Raytracing
+### Hardware-Accelerated Path Tracing
 
-The engine also features a raytracing pipeline. This process begins with building acceleration structures containing multiple geometries. The ray simulation involves several shaders. __Ray generation shader__ is responsible to generate rays, and store the hit color into an accumulator image. The final rendering is obtained by averaging the accumulator image. The next one is __Closest hit shader__ that determines the color when a ray intersects an object and can also scatter the ray for further bounces. Optionally, __Any hit shader__ is used to render transparent material such as foliage textures. 
+The path tracing process begins with building acceleration structures containing multiple geometries. The ray simulation involves several shaders. __Ray generation shader__ is responsible to generate rays, and store the hit color into an accumulator image. The final rendering is obtained by averaging the accumulator image. The next one is __Closest hit shader__ that determines the color when a ray intersects an object and can also scatter the ray for further bounces. Optionally, __Any hit shader__ is used to discard a ray hit in order to render transparent materials such as foliage textures. 
 
 <img width="425" alt="hardware_raytracing" src="https://github.com/azer89/HelloVulkan/assets/790432/4f6653c9-3bac-40d7-bf84-a37ff6bead2c">
 
