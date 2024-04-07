@@ -11,6 +11,7 @@ Scene::Scene(VulkanContext& ctx,
 	uint32_t indexOffset = 0u;
 	for (const ModelCreateInfo& mInfo : modelInfoArray)
 	{
+		std::cout << "Load " << mInfo.filename << '\n';
 		Model m;
 		m.LoadBindless(
 			ctx,
@@ -18,8 +19,10 @@ Scene::Scene(VulkanContext& ctx,
 			sceneData_);
 		models_.push_back(m);
 	}
+	std::cout << "Prepare scene\n";
 	CreateBindlessResources(ctx);
 	CreateAnimationResources(ctx);
+	std::cout << "Scene loaded\n";
 }
 
 Scene::~Scene()

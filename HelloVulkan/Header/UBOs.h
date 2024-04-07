@@ -15,16 +15,24 @@ struct CameraUBO
 };
 
 // Needed for generating rays
-struct RaytracingCameraUBO
+struct RaytracingUBO
 {
 	alignas(16)
 	glm::mat4 projectionInverse;
 	alignas(16)
 	glm::mat4 viewInverse;
 	alignas(16)
-	glm::vec4 position;
+	glm::vec4 cameraPosition;
 	alignas(4)
 	uint32_t frame;
+	alignas(4)
+	uint32_t sampleCountPerFrame;
+	alignas(4)
+	uint32_t currentSampleCount;
+	alignas(4)
+	uint32_t rayBounceCount;
+	alignas(4)
+	float skyIntensity;
 };
 
 struct ShadowMapUBO

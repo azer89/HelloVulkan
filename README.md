@@ -6,22 +6,15 @@ A 3D rendering engine built from scratch using Vulkan API and C++.
 
 ### Features
 
-* __Clustered forward shading__ for efficient light culling.
-* __Physically-Based Rendering__ (PBR) with Cook-Torrance microfacet.
-* __Image-Based Lighting__ (IBL) pipelines that generate:
-    * A cubemap from an equirectangular HDR image.
-    * Specular and diffuse cubemaps.
-    * BRDF lookup table.
-* __Bindless__:
-    * A single __indirect draw call__ per render pass. 
-    * __Descriptor indexing__ that allows all textures in the scene to be bound just once at the start of the frame.
-    * __Buffer device address__ for direct shader access to buffers without the need to create descriptors.
+* __Clustered Forward Shading__ for efficient light culling.
+* __Physically-Based Rendering__ (PBR) with Cook-Torrance microfacet and __Image-Based Lighting__ (IBL).
+* __Hardward-Accelerated Path Tracing__ that can simulate indirect shading, reflections, and soft shadow.
+* __Bindless__ techniques using __Indirect Draw Call__, __Descriptor Indexing__, and __Buffer Device Address__.
 * __Compute-based Frustum Culling__.
 * __Compute-based Skinning__ for skeletal animation.
 * __Shadow maps__ with Poisson Disk or PCF.
 * glTF mesh/texture support.
 * Multisample anti-aliasing (MSAA).
-* Simple __raytracing__ pipeline with basic intersection testing.
 * Tonemap postprocessing.
 * Automatic runtime compilation from GLSL to SPIR-V using `glslang`.
 * Lightweight abstraction layer on top of Vulkan for faster development.
@@ -37,20 +30,22 @@ Next, the engine takes advantage of __indirect draw__ API. This means the CPU on
 
 Finally, the engine pushes the concept of "bindless" even further by utilizing __buffer device addresses__. Instead of creating descriptors, device addresses act as _pointers_ so that the shaders can have direct access to buffers.
 
-The images below showcase the implementations of PBR, IBL, and PCF shadow mapping.
+The image below showcases the implementations of PBR, IBL, and PCF shadow mapping.
 
 <img width="850" alt="bindless_shadow_mapping_1" src="https://github.com/azer89/HelloVulkan/assets/790432/c926d003-8df2-464e-a8f7-e04b66494214">
 
-<img width="850" alt="bindless_shadow_mapping_2" src="https://github.com/azer89/HelloVulkan/assets/790432/7111e3f7-51e2-47fa-9fad-a0a19b4a1f1b">
-
-</br>
 </br>
 </br>
 
-The video below is another example of realistic rendering of the damaged helmet demonstrating PBR and IBL techniques.
+### Hardware-Accelerated Path Tracing
 
-https://github.com/azer89/HelloVulkan/assets/790432/2f6ff30b-9276-4998-b6fd-259d130bf910
+The path tracing process begins with building acceleration structures containing multiple geometries. After creating a raytracing pipeline, the ray simulation requires several shaders. __Ray generation shader__ is responsible to generate rays, and store the hit color into an accumulator image. The final rendering is obtained by averaging the accumulator image. The next one is __Closest hit shader__ that determines the color when a ray intersects an object and can also scatter the ray for further bounces. Optionally, __Any hit shader__ is used to discard a ray hit in order to render transparent materials such as foliage textures. 
 
+<img width="850" alt="hardware_raytracing" src="https://github.com/azer89/HelloVulkan/assets/790432/abff62e7-d791-4767-9f7c-8d0604f7a261">
+
+<img width="850" alt="hardware_raytracing" src="https://github.com/azer89/HelloVulkan/assets/790432/c4fd83e1-d4ff-40fd-8c85-aedddb909a8a">
+
+</br>
 </br>
 
 ### Clustered Forward Shading
@@ -90,15 +85,6 @@ https://github.com/azer89/HelloVulkan/assets/790432/51f097f5-b361-4de9-9f04-99c5
 The left image below is a rendering that uses four cascade shadow maps, resulting in sharper shadows. The right image above showcases the individual cascades with color coding. Poisson disk sampling helps to reduce projective aliasing artifacts, but can create more noticeable seams between cascades with excessive blurring. 
 
 <img width="850" alt="cascade_shadow_mapping" src="https://github.com/azer89/HelloVulkan/assets/790432/1634a491-ea8f-49f0-8214-766a038bedd1">
-
-</br>
-</br>
-
-### Hardware-Accelerated Raytracing
-
-The engine also features a raytracing pipeline. This process begins with building Bottom Level Acceleration Structures (BLAS) containing muitple geometries, then followed by creating Top Level Acceleration Structures (TLAS). For each pixel on the screen, a ray is cast and intersected with the acceleration structures to determine the final color.
-
-<img width="425" alt="hardware_raytracing" src="https://github.com/azer89/HelloVulkan/assets/790432/4f6653c9-3bac-40d7-bf84-a37ff6bead2c">
 
 </br>
 </br>

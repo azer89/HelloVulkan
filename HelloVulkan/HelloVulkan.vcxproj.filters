@@ -243,7 +243,7 @@
     <None Include="..\Shaders\Raytracing\Random.glsl">
       <Filter>Shaders\Raytracing</Filter>
     </None>
-    <None Include="..\Shaders\Raytracing\RayGen.rgen">
+    <None Include="..\Shaders\Raytracing\RayGeneration.rgen">
       <Filter>Shaders\Raytracing</Filter>
     </None>
     <None Include="..\Shaders\Raytracing\Shadow.rmiss">
@@ -252,8 +252,14 @@
     <None Include="..\Shaders\Raytracing\Triangle.glsl">
       <Filter>Shaders\Raytracing</Filter>
     </None>
-    <None Include="..\Shaders\Raytracing\CameraProperties.glsl">
+    <None Include="..\Shaders\Raytracing\RaytracingUBO.glsl">
       <Filter>Shaders\Raytracing</Filter>
+    </None>
+    <None Include="..\Shaders\Raytracing\RayPayload.glsl">
+      <Filter>Shaders\Raytracing</Filter>
+    </None>
+    <None Include="..\Shaders\MaterialType.glsl">
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

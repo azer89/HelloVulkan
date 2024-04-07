@@ -8,6 +8,7 @@
 
 struct VertexData
 {
+
 	glm::vec3 position;
 	float uvX;
 	glm::vec3 normal;

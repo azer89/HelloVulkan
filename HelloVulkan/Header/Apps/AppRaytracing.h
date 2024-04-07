@@ -22,12 +22,10 @@ public:
 	void UpdateUI() override;
 
 	void Init();
-	void InitLights();
 
 private:
 	PipelineImGui* imguiPtr_ = nullptr;
 	PipelineRaytracing* rtxPtr_ = nullptr;
-	ResourcesLight* resourcesLight_ = nullptr;
 	std::unique_ptr<Scene> scene_ = nullptr;
 };
 
