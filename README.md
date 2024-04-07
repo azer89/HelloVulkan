@@ -39,7 +39,7 @@ The image below showcases the implementations of PBR, IBL, and PCF shadow mappin
 
 ### Hardware-Accelerated Raytracing
 
-The engine also features a raytracing pipeline. This process begins with building acceleration structures containing multiple geometries. The ray simulation involves several shaders. Ray generation shader is responsible to generate rays, and store the hit color into an accumulator image. The final rendering is obtained by averaging the accumulator image. The next one is Closest hit shader that determines the hit color and scatter the ray for the next recursive bounce. Any hit shader is used to render transparent material such as foliage textures. 
+The engine also features a raytracing pipeline. This process begins with building acceleration structures containing multiple geometries. The ray simulation involves several shaders. `Ray generation shader` is responsible to generate rays, and store the hit color into an accumulator image. The final rendering is obtained by averaging the accumulator image. The next one is `Slosest hit shader` that determines the color when a ray intersects an object and can also scatter the ray for further bounces. Optionally, `Any hit shader` is used to render transparent material such as foliage textures. 
 
 <img width="425" alt="hardware_raytracing" src="https://github.com/azer89/HelloVulkan/assets/790432/4f6653c9-3bac-40d7-bf84-a37ff6bead2c">
 
