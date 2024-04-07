@@ -37,7 +37,7 @@ void main()
 			traceRayEXT(tlas, gl_RayFlagsNoneEXT, 0xff, 0, 0, 0, origin.xyz, T_MIN, direction.xyz, T_MAX, 0);
 			sampleColor *= rayPayload.color;
 
-			// End of trace if the ray didn't hit anything or is no longer supposed to scatter
+			// Terminate if the ray didn't hit anything or did not scatter
 			if (rayPayload.distance < 0 || !rayPayload.doScatter)
 			{
 				break;
@@ -51,18 +51,18 @@ void main()
 		color += sampleColor;
 	}
 
-	// Check if we need to fetch values from the last frame
+	// Get color from accumulator
 	vec3 lastFrameColor = vec3(0.0);
 	if (ubo.frame > 0 )
 	{
 		lastFrameColor = imageLoad(accumulationImage, ivec2(gl_LaunchIDEXT.xy)).rgb;
 	};
 
-	// Add current frame's color to accumulated color and store
+	// Store accumulator
 	vec3 accumulatedColor = lastFrameColor + color;
 	imageStore(accumulationImage, ivec2(gl_LaunchIDEXT.xy), vec4(accumulatedColor, 0.0));
 
-	// Get display color
+	// Display color
 	color = accumulatedColor / ubo.currentSampleCount;
 
 	// Gamma correction
