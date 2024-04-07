@@ -7,7 +7,7 @@ A 3D rendering engine built from scratch using Vulkan API and C++.
 ### Features
 
 * __Clustered Forward Shading__ for efficient light culling.
-* __Physically-Based Rendering__ (PBR) with Cook-Torrance microfacet and_Image-Based Lighting__ (IBL).
+* __Physically-Based Rendering__ (PBR) with Cook-Torrance microfacet and __Image-Based Lighting__ (IBL).
 * __Hardward-Accelerated Path Tracing__ that can simulate indirect shading, reflections, and soft shadow.
 * __Bindless__ techniques using __indirect draw call__, __Descriptor indexing__, and __Buffer device address__.
 * __Compute-based Frustum Culling__.
