@@ -132,10 +132,7 @@ void Model::LoadModel(VulkanContext& ctx,
 	Assimp::Importer importer;
 	scene_ = importer.ReadFile(
 		filepath_,
-		aiProcess_Triangulate |
-		aiProcess_GenSmoothNormals |
-		aiProcess_FlipUVs |
-		aiProcess_CalcTangentSpace);
+		aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs);
 	// Check for errors
 	if (!scene_ || scene_->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene_->mRootNode) // if is Not Zero
 	{
