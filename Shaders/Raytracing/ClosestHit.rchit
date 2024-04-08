@@ -26,26 +26,28 @@ layout(set = 0, binding = 6) uniform sampler2D pbrTextures[] ;
 #include <Raytracing/Header/Triangle.glsl>
 
 vec3 Reflect(vec3 V, vec3 N);
-RayPayload Scatter(MeshData mData, Triangle tri, vec3 direction, float t, uint seed);
+RayPayload Scatter(MeshData mData, Triangle tri, vec3 direction, float t, float shadowFactor, uint seed);
 
 void main()
 {
-	Triangle tri = GetTriangle(gl_PrimitiveID, gl_GeometryIndexEXT);
-	MeshData mData = bda.meshReference.meshes[gl_GeometryIndexEXT];
-	rayPayload = Scatter(mData, tri, gl_WorldRayDirectionEXT, gl_HitTEXT, rayPayload.randomSeed);
-
-	vec3 lightVector = normalize(ubo.shadowCasterPosition.xyz);
 	// Shadow casting
+	vec3 lightVector = normalize(ubo.shadowCasterPosition.xyz);
+	
 	float tmin = 0.001;
 	float tmax = 10000.0;
 	vec3 origin = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
 	shadowed = true;
-	// Trace shadow ray and offset indices to match shadow hit/miss shader group indices
+	float shadowFactor = 1.0;
 	traceRayEXT(tlas, gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT, 0xFF, 0, 0, 1, origin, tmin, lightVector, tmax, 1);
 	if (shadowed)
 	{
-		rayPayload.color *= 0.5;
+		shadowFactor = 0.5;
 	}
+
+	// Payload
+	Triangle tri = GetTriangle(gl_PrimitiveID, gl_GeometryIndexEXT);
+	MeshData mData = bda.meshReference.meshes[gl_GeometryIndexEXT];
+	rayPayload = Scatter(mData, tri, gl_WorldRayDirectionEXT, gl_HitTEXT, shadowFactor, rayPayload.randomSeed);
 }
 
 vec3 Reflect(vec3 V, vec3 N)
@@ -53,16 +55,16 @@ vec3 Reflect(vec3 V, vec3 N)
 	return V - 2.0 * dot(V, N) * N;
 }
 
-RayPayload Scatter(MeshData mData, Triangle tri, vec3 direction, float t, uint seed)
+RayPayload Scatter(MeshData mData, Triangle tri, vec3 direction, float t, float shadowFactor, uint seed)
 {
 	RayPayload payload;
 	payload.distance = t;
-
 	vec4 color = texture(pbrTextures[nonuniformEXT(mData.albedo)], tri.uv);
 
 	if (mData.material == MAT_SPECULAR)
 	{
 		payload.color = color.xyz + tri.color.xyz; // Add texture color with vertex color
+		payload.color *= shadowFactor;
 		payload.scatterDir = Reflect(direction, tri.normal) + 
 			normalize(RandomInUnitSphere(seed)) * ubo.specularFuzziness; // Specular
 		payload.doScatter = true;
@@ -75,6 +77,7 @@ RayPayload Scatter(MeshData mData, Triangle tri, vec3 direction, float t, uint s
 	else
 	{
 		payload.color = color.xyz + tri.color.xyz; // Add texture color with vertex color
+		payload.color *= shadowFactor;
 		payload.scatterDir = Reflect(direction, tri.normal) + 
 			normalize(RandomInUnitSphere(seed)) * 0.85;
 		payload.doScatter = true;
@@ -82,6 +85,5 @@ RayPayload Scatter(MeshData mData, Triangle tri, vec3 direction, float t, uint s
 	}
 
 	payload.randomSeed = seed;
-
 	return payload;
 }
