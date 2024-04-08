@@ -76,32 +76,11 @@
     <Filter Include="Shaders\Raytracing\Header">
       <UniqueIdentifier>{48ad3607-ff0a-4977-8dcc-2dfdeecb3db2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Common">
+      <UniqueIdentifier>{83dbd895-2636-4d62-8528-f4c3f4fd40dd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Shaders\Skybox.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\FullscreenTriangle.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\Skybox.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\PBRHeader.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\Hammersley.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\Tonemap.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\LightOrb.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\LightOrb.vert">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\Shaders\ClusteredForward\AABBGenerator.comp">
       <Filter>Shaders\ClusteredForward</Filter>
     </None>
@@ -126,15 +105,6 @@
     <None Include="..\Shaders\ShadowMapping\Shadow.glsl">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
-    <None Include="..\Shaders\TangentNormalToWorld.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\PBRPushConstants.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\CameraUBO.glsl">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\Shaders\Bindless\Scene.frag">
       <Filter>Shaders\Bindless</Filter>
     </None>
@@ -156,20 +126,11 @@
     <None Include="..\Shaders\ClusteredForward\Radiance.glsl">
       <Filter>Shaders\ClusteredForward</Filter>
     </None>
-    <None Include="..\Shaders\Ambient.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\Radiance.glsl">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\Shaders\ShadowMapping\Poisson.glsl">
       <Filter>Shaders\ShadowMapping</Filter>
     </None>
     <None Include="..\Shaders\ShadowMapping\Depth.frag">
       <Filter>Shaders\ShadowMapping</Filter>
-    </None>
-    <None Include="..\Shaders\ModelUBO.glsl">
-      <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\IBL\CubeFilterDiffuse.frag">
       <Filter>Shaders\IBL</Filter>
@@ -186,15 +147,6 @@
     <None Include="..\Shaders\Bindless\BDA.glsl">
       <Filter>Shaders\Bindless</Filter>
     </None>
-    <None Include="..\Shaders\Line.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\Line.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\LightData.glsl">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\Shaders\InfiniteGrid\Grid.frag">
       <Filter>Shaders\InfiniteGrid</Filter>
     </None>
@@ -207,9 +159,6 @@
     <None Include="..\Shaders\InfiniteGrid\Params.glsl">
       <Filter>Shaders\InfiniteGrid</Filter>
     </None>
-    <None Include="..\Shaders\Cube.glsl">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\Shaders\AABB\AABB.glsl">
       <Filter>Shaders\AABB</Filter>
     </None>
@@ -219,20 +168,8 @@
     <None Include="..\Shaders\AABB\AABBRender.vert">
       <Filter>Shaders\AABB</Filter>
     </None>
-    <None Include="..\Shaders\FrustumCulling.comp">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\DrawIndirectCommand.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\Frustum.glsl">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\Shaders\ClusteredForward\Scene.frag">
       <Filter>Shaders\ClusteredForward</Filter>
-    </None>
-    <None Include="..\Shaders\Skinning.comp">
-      <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\Raytracing\AnyHit.rahit">
       <Filter>Shaders\Raytracing</Filter>
@@ -249,9 +186,6 @@
     <None Include="..\Shaders\Raytracing\Shadow.rmiss">
       <Filter>Shaders\Raytracing</Filter>
     </None>
-    <None Include="..\Shaders\MaterialType.glsl">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\Shaders\Raytracing\Header\Random.glsl">
       <Filter>Shaders\Raytracing\Header</Filter>
     </None>
@@ -263,6 +197,30 @@
     </None>
     <None Include="..\Shaders\Raytracing\Header\Triangle.glsl">
       <Filter>Shaders\Raytracing\Header</Filter>
+    </None>
+    <None Include="..\Shaders\Common\FullscreenTriangle.vert">
+      <Filter>Shaders\Common</Filter>
+    </None>
+    <None Include="..\Shaders\Common\LightOrb.frag">
+      <Filter>Shaders\Common</Filter>
+    </None>
+    <None Include="..\Shaders\Common\LightOrb.vert">
+      <Filter>Shaders\Common</Filter>
+    </None>
+    <None Include="..\Shaders\Common\Line.frag">
+      <Filter>Shaders\Common</Filter>
+    </None>
+    <None Include="..\Shaders\Common\Line.vert">
+      <Filter>Shaders\Common</Filter>
+    </None>
+    <None Include="..\Shaders\Common\Skybox.frag">
+      <Filter>Shaders\Common</Filter>
+    </None>
+    <None Include="..\Shaders\Common\Skybox.vert">
+      <Filter>Shaders\Common</Filter>
+    </None>
+    <None Include="..\Shaders\Common\Tonemap.frag">
+      <Filter>Shaders\Common</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

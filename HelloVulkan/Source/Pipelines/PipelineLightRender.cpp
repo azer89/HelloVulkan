@@ -38,8 +38,8 @@ PipelineLightRender::PipelineLightRender(
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
-			AppConfig::ShaderFolder + "LightOrb.vert",
-			AppConfig::ShaderFolder + "LightOrb.frag",
+			AppConfig::ShaderFolder + "Common/LightOrb.vert",
+			AppConfig::ShaderFolder + "Common/LightOrb.frag",
 		},
 		&pipeline_
 		);
