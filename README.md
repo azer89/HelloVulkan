@@ -41,9 +41,9 @@ The image below showcases the implementations of PBR, IBL, and PCF shadow mappin
 
 The path tracing process begins with building acceleration structures containing multiple geometries. After creating a raytracing pipeline, the ray simulation requires several shaders. __Ray generation shader__ is responsible to generate rays, and store the hit color into an accumulator image. The final rendering is obtained by averaging the accumulator image. The next one is __Closest hit shader__ that determines the color when a ray intersects an object and can also scatter the ray for further bounces. Optionally, __Any hit shader__ is used to discard a ray hit in order to render transparent materials such as foliage textures. 
 
-<img width="850" alt="hardware_raytracing" src="https://github.com/azer89/HelloVulkan/assets/790432/abff62e7-d791-4767-9f7c-8d0604f7a261">
+<img width="850" alt="hardware_raytracing" src="https://github.com/azer89/HelloVulkan/assets/790432/dbceebb4-496b-40ce-9ac7-f71e1c5a0453">
 
-<img width="850" alt="hardware_raytracing" src="https://github.com/azer89/HelloVulkan/assets/790432/c4fd83e1-d4ff-40fd-8c85-aedddb909a8a">
+<img width="850" alt="hardware_raytracing" src="https://github.com/azer89/HelloVulkan/assets/790432/a03874b8-52e7-45b3-87a8-1299119d49d2">
 
 </br>
 </br>

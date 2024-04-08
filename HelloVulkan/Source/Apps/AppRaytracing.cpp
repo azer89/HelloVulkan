@@ -11,6 +11,7 @@ AppRaytracing::AppRaytracing()
 void AppRaytracing::Init()
 {
 	camera_->SetPositionAndTarget(glm::vec3(0.0f, 3.0f, 3.0f), glm::vec3(0.0, 0.0, -1.0f));
+	uiData_.shadowCasterPosition_ = { 1.0f, 1.0f, -0.3f };
 
 	// Scene
 	std::vector<ModelCreateInfo> dataArray = {
@@ -41,8 +42,10 @@ void AppRaytracing::UpdateUI()
 	}
 
 	static int sampleCountPerFrame = 4;
-	static int rayBounceCount = 8;
+	static int rayBounceCount = 4;
 	static float skyIntensity = 1.0f;
+	static float lightIntensity = 2.5f;
+	static float specularFuzziness = 0.05f;
 
 	imguiPtr_->ImGuiStart();
 	imguiPtr_->ImGuiSetWindow("Raytracing", 450, 150);
@@ -50,12 +53,21 @@ void AppRaytracing::UpdateUI()
 	ImGui::SliderInt("Sample count", &sampleCountPerFrame, 1, 32);
 	ImGui::SliderInt("Ray bounce", &rayBounceCount, 1, 32);
 	ImGui::SliderFloat("Sky intensity", &skyIntensity, 0.1f, 10.0f);
+	ImGui::SliderFloat("Light intensity", &lightIntensity, 1.0f, 10.0f);
+	ImGui::SliderFloat("Specular fuzzyness", &specularFuzziness, 0.01f, 1.0f);
+	ImGui::SeparatorText("Shadow caster direction");
+	ImGui::SliderFloat("X", &(uiData_.shadowCasterPosition_[0]), -1.0f, 1.0f);
+	ImGui::SliderFloat("Y", &(uiData_.shadowCasterPosition_[1]),  0.0f, 1.0f);
+	ImGui::SliderFloat("Z", &(uiData_.shadowCasterPosition_[2]), -1.0f, 1.0f);
 	imguiPtr_->ImGuiEnd();
 
 	rtxPtr_->SetParams(
+		uiData_.shadowCasterPosition_,
 		static_cast<uint32_t>(sampleCountPerFrame),
 		static_cast<uint32_t>(rayBounceCount),
-		skyIntensity
+		skyIntensity,
+		lightIntensity,
+		specularFuzziness
 	);
 }
 

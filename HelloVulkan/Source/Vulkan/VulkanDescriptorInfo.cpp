@@ -68,25 +68,26 @@ void VulkanDescriptorInfo::AddImageArray(
 }
 
 // Raytracing
-void VulkanDescriptorInfo::AddAccelerationStructure()
+void VulkanDescriptorInfo::AddAccelerationStructure(VkShaderStageFlags stageFlags)
 {
 	writes_.push_back
 	({
 		.descriptorCount_ = 1u,
 		.descriptorType_ = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
-		.shaderStage_ = VK_SHADER_STAGE_RAYGEN_BIT_KHR
+		.shaderStage_ = stageFlags
 		});
 }
 
 // Raytracing
-void VulkanDescriptorInfo::AddAccelerationStructure(VkWriteDescriptorSetAccelerationStructureKHR* asInfo)
+void VulkanDescriptorInfo::AddAccelerationStructure(VkWriteDescriptorSetAccelerationStructureKHR* asInfo,
+	VkShaderStageFlags stageFlags)
 {
 	writes_.push_back
 	({
 		.pNext_ = asInfo,
 		.descriptorCount_ = 1u,
 		.descriptorType_ = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
-		.shaderStage_ = VK_SHADER_STAGE_RAYGEN_BIT_KHR
+		.shaderStage_ = stageFlags
 		});
 }
 

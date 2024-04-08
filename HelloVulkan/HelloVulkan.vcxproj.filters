@@ -73,6 +73,9 @@
     <Filter Include="Shaders\Raytracing">
       <UniqueIdentifier>{cf84cfb1-6675-4214-b93b-2033515180c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Raytracing\Header">
+      <UniqueIdentifier>{48ad3607-ff0a-4977-8dcc-2dfdeecb3db2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\Skybox.vert">
@@ -240,26 +243,26 @@
     <None Include="..\Shaders\Raytracing\Miss.rmiss">
       <Filter>Shaders\Raytracing</Filter>
     </None>
-    <None Include="..\Shaders\Raytracing\Random.glsl">
-      <Filter>Shaders\Raytracing</Filter>
-    </None>
     <None Include="..\Shaders\Raytracing\RayGeneration.rgen">
       <Filter>Shaders\Raytracing</Filter>
     </None>
     <None Include="..\Shaders\Raytracing\Shadow.rmiss">
       <Filter>Shaders\Raytracing</Filter>
     </None>
-    <None Include="..\Shaders\Raytracing\Triangle.glsl">
-      <Filter>Shaders\Raytracing</Filter>
-    </None>
-    <None Include="..\Shaders\Raytracing\RaytracingUBO.glsl">
-      <Filter>Shaders\Raytracing</Filter>
-    </None>
-    <None Include="..\Shaders\Raytracing\RayPayload.glsl">
-      <Filter>Shaders\Raytracing</Filter>
-    </None>
     <None Include="..\Shaders\MaterialType.glsl">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\Raytracing\Header\Random.glsl">
+      <Filter>Shaders\Raytracing\Header</Filter>
+    </None>
+    <None Include="..\Shaders\Raytracing\Header\RayPayload.glsl">
+      <Filter>Shaders\Raytracing\Header</Filter>
+    </None>
+    <None Include="..\Shaders\Raytracing\Header\RaytracingUBO.glsl">
+      <Filter>Shaders\Raytracing\Header</Filter>
+    </None>
+    <None Include="..\Shaders\Raytracing\Header\Triangle.glsl">
+      <Filter>Shaders\Raytracing\Header</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

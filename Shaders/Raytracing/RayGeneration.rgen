@@ -1,9 +1,9 @@
 #version 460
 #extension GL_EXT_ray_tracing : enable
 
-#include <Raytracing/Random.glsl>
-#include <Raytracing/RayPayload.glsl>
-#include <Raytracing/RaytracingUBO.glsl>
+#include <Raytracing/Header/Random.glsl>
+#include <Raytracing/Header/RayPayload.glsl>
+#include <Raytracing/Header/RaytracingUBO.glsl>
 
 layout(set = 0, binding = 0) uniform accelerationStructureEXT tlas;
 layout(set = 0, binding = 1, rgba8) uniform image2D outputImage;
@@ -32,8 +32,15 @@ void main()
 
 		vec3 sampleColor = vec3(1.0);
 
-		for (uint j = 0; j < ubo.rayBounceCount; j++)
+		for (uint j = 0; j <= ubo.rayBounceCount; j++)
 		{
+			// Cannot find a light source
+			if (j == ubo.rayBounceCount)
+			{
+				sampleColor = vec3(0.0);
+				break;
+			}
+
 			traceRayEXT(tlas, gl_RayFlagsNoneEXT, 0xff, 0, 0, 0, origin.xyz, T_MIN, direction.xyz, T_MAX, 0);
 			sampleColor *= rayPayload.color;
 

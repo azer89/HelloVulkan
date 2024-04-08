@@ -128,7 +128,7 @@ void PipelineRaytracing::CreateDescriptor(VulkanContext& ctx)
 	textureInfoArray_ = scene_->GetImageInfos();
 	constexpr uint32_t frameCount = AppConfig::FrameCount;
 
-	descriptorInfo_.AddAccelerationStructure();
+	descriptorInfo_.AddAccelerationStructure(VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
 	descriptorInfo_.AddImage(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
 	descriptorInfo_.AddImage(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
 	descriptorInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_MISS_BIT_KHR);
@@ -298,22 +298,48 @@ void PipelineRaytracing::SetRaytracingUBO(
 	const glm::mat4& inverseView,
 	const glm::vec3& cameraPosition)
 {
-	currentSampleCount_ = currentSampleCount_ + sampleCountPerFrame_;
-
-	RaytracingUBO ubo =
-	{
-		.projectionInverse = inverseProjection,
-		.viewInverse = inverseView,
-		.cameraPosition = glm::vec4(cameraPosition, 1.0),
-		.frame = frameCounter_,
-		.sampleCountPerFrame = sampleCountPerFrame_,
-		.currentSampleCount = currentSampleCount_,
-		.rayBounceCount = rayBounceCount_,
-		.skyIntensity = skyIntensity_
-	};
-
-	++frameCounter_;
+	ubo_.projectionInverse = inverseProjection;
+	ubo_.viewInverse = inverseView;
+	ubo_.cameraPosition = glm::vec4(cameraPosition, 1.0);
+	ubo_.frame = frameCounter_++;
+	ubo_.currentSampleCount += ubo_.sampleCountPerFrame;
 
 	const uint32_t frameIndex = ctx.GetFrameIndex();
-	rtUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(RaytracingUBO));
+	rtUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo_, sizeof(RaytracingUBO));
+}
+
+void PipelineRaytracing::SetParams(
+	std::array<float, 3> shadowCasterPosition,
+	uint32_t sampleCountPerFrame,
+	uint32_t rayBounceCount,
+	float skyIntensity,
+	float lightIntensity,
+	float specularFuzziness)
+{
+	constexpr float eps = std::numeric_limits<float>::epsilon();
+
+	if (
+		ubo_.sampleCountPerFrame != sampleCountPerFrame ||
+		ubo_.rayBounceCount != rayBounceCount ||
+		abs(ubo_.skyIntensity - skyIntensity) > eps ||
+		abs(ubo_.lightIntensity - lightIntensity) > eps ||
+		abs(ubo_.specularFuzziness - specularFuzziness) > eps ||
+
+		abs(ubo_.shadowCasterPosition.x - shadowCasterPosition[0]) > eps ||
+		abs(ubo_.shadowCasterPosition.y - shadowCasterPosition[1]) > eps ||
+		abs(ubo_.shadowCasterPosition.z - shadowCasterPosition[2]) > eps
+		)
+	{
+		ResetFrameCounter();
+	}
+
+	ubo_.sampleCountPerFrame = sampleCountPerFrame;
+	ubo_.rayBounceCount = rayBounceCount;
+	ubo_.skyIntensity = skyIntensity;
+	ubo_.lightIntensity = lightIntensity;
+	ubo_.specularFuzziness = specularFuzziness;
+
+	ubo_.shadowCasterPosition.x = shadowCasterPosition[0];
+	ubo_.shadowCasterPosition.y = shadowCasterPosition[1];
+	ubo_.shadowCasterPosition.z = shadowCasterPosition[2];
 }
