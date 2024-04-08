@@ -1,8 +1,8 @@
 #version 460
 #extension GL_EXT_ray_tracing : enable
 
-#include <Raytracing/RayPayload.glsl>
-#include <Raytracing/RaytracingUBO.glsl>
+#include <Raytracing/Header/RayPayload.glsl>
+#include <Raytracing/Header/RaytracingUBO.glsl>
 
 layout(location = 0) rayPayloadInEXT RayPayload rayPayload;
 

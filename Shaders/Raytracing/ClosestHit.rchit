@@ -3,9 +3,9 @@
 #extension GL_EXT_buffer_reference : require
 #extension GL_EXT_nonuniform_qualifier : require
 
-#include <Raytracing/RaytracingUBO.glsl>
-#include <Raytracing/RayPayload.glsl>
-#include <Raytracing/Random.glsl>
+#include <Raytracing/Header/RaytracingUBO.glsl>
+#include <Raytracing/Header/RayPayload.glsl>
+#include <Raytracing/Header/Random.glsl>
 #include <Bindless/VertexData.glsl>
 #include <Bindless/MeshData.glsl>
 #include <Bindless/BDA.glsl>
@@ -21,7 +21,7 @@ layout(set = 0, binding = 4) uniform BDABlock { BDA bda; }; // Buffer device add
 layout(set = 0, binding = 5) readonly buffer ModelUBOs { ModelUBO modelUBOs []; };
 layout(set = 0, binding = 6) uniform sampler2D pbrTextures[] ;
 
-#include <Raytracing/Triangle.glsl>
+#include <Raytracing/Header/Triangle.glsl>
 
 vec3 Reflect(vec3 V, vec3 N)
 {
