@@ -8,4 +8,5 @@ struct RaytracingUBO
 	uint currentSampleCount;
 	uint rayBounceCount;
 	float skyIntensity;
+	float lightIntensity;
 };

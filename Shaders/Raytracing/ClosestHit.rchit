@@ -34,19 +34,28 @@ RayPayload Scatter(MeshData mData, Triangle tri, vec3 direction, float t, uint s
 	payload.distance = t;
 
 	vec4 color = texture(pbrTextures[nonuniformEXT(mData.albedo)], tri.uv);
-	payload.color = color.xyz + tri.color.xyz; // Add texture color with vertex color
+	
 
 	if (mData.material == MAT_SPECULAR)
 	{
+		payload.color = color.xyz + tri.color.xyz; // Add texture color with vertex color
 		payload.scatterDir = Reflect(direction, tri.normal)  + normalize(RandomInUnitSphere(seed)) * 0.2; // Specular
+		payload.doScatter = true;
+	}
+	else if (mData.material == MAT_LIGHT)
+	{
+		payload.color = color.xyz + tri.color.xyz * ubo.lightIntensity;
+		payload.doScatter = false;
 	}
 	else
 	{
+		payload.color = color.xyz + tri.color.xyz; // Add texture color with vertex color
 		payload.scatterDir = Reflect(direction, tri.normal)  + normalize(RandomInUnitSphere(seed)) * 0.85;
+		payload.doScatter = true;
 		//payload.scatterDir = tri.normal  + normalize(RandomInUnitSphere(seed)); // Lambertian
 	}
 	
-	payload.doScatter = true;
+	
 	payload.randomSeed = seed;
 
 	return payload;

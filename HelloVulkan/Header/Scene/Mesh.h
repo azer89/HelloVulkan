@@ -89,6 +89,10 @@ public:
 		{
 			return MaterialType::Specular;
 		}
+		else if (meshName_.find("light") != meshName_.npos)
+		{
+			return MaterialType::Light;
+		}
 		return MaterialType::Opaque;
 	}
 

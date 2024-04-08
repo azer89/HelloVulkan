@@ -309,7 +309,8 @@ void PipelineRaytracing::SetRaytracingUBO(
 		.sampleCountPerFrame = sampleCountPerFrame_,
 		.currentSampleCount = currentSampleCount_,
 		.rayBounceCount = rayBounceCount_,
-		.skyIntensity = skyIntensity_
+		.skyIntensity = skyIntensity_,
+		.lightIntensity = 2.5f
 	};
 
 	++frameCounter_;

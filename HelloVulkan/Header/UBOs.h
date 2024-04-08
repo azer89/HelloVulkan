@@ -33,6 +33,8 @@ struct RaytracingUBO
 	uint32_t rayBounceCount;
 	alignas(4)
 	float skyIntensity;
+	alignas(4)
+	float lightIntensity;
 };
 
 struct ShadowMapUBO

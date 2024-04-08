@@ -49,6 +49,7 @@ enum class MaterialType : uint32_t
 	Opaque = 0,
 	Transparent = 1,
 	Specular = 2,
+	Light = 3,
 };
 
 // For bindless textures
