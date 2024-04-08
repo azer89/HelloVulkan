@@ -30,6 +30,7 @@ public:
 	}
 
 	void SetParams(
+		std::array<float, 3> shadowCasterPosition,
 		uint32_t sampleCountPerFrame,
 		uint32_t rayBounceCount,
 		float skyIntensity,
@@ -38,11 +39,17 @@ public:
 	{
 		constexpr float eps = std::numeric_limits<float>::epsilon();
 
-		if (ubo_.sampleCountPerFrame != sampleCountPerFrame ||
+		if (
+			ubo_.sampleCountPerFrame != sampleCountPerFrame ||
 			ubo_.rayBounceCount != rayBounceCount ||
 			abs(ubo_.skyIntensity - skyIntensity) > eps ||
 			abs(ubo_.lightIntensity - lightIntensity) > eps ||
-			abs(ubo_.specularFuzziness - specularFuzziness) > eps)
+			abs(ubo_.specularFuzziness - specularFuzziness) > eps ||
+
+			abs(ubo_.shadowCasterPosition.x - shadowCasterPosition[0]) > eps ||
+			abs(ubo_.shadowCasterPosition.y - shadowCasterPosition[1]) > eps ||
+			abs(ubo_.shadowCasterPosition.z - shadowCasterPosition[2]) > eps
+			)
 		{
 			ResetFrameCounter();
 		}
@@ -52,6 +59,10 @@ public:
 		ubo_.skyIntensity = skyIntensity;
 		ubo_.lightIntensity = lightIntensity;
 		ubo_.specularFuzziness = specularFuzziness;
+
+		ubo_.shadowCasterPosition.x = shadowCasterPosition[0];
+		ubo_.shadowCasterPosition.y = shadowCasterPosition[1];
+		ubo_.shadowCasterPosition.z = shadowCasterPosition[2];
 	}
 
 	void SetRaytracingUBO(

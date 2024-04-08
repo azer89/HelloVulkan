@@ -53,8 +53,8 @@ public:
 		VkShaderStageFlags stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT);
 
 	// Raytracing
-	void AddAccelerationStructure();
-	void AddAccelerationStructure(VkWriteDescriptorSetAccelerationStructureKHR* asInfo);
+	void AddAccelerationStructure(VkShaderStageFlags stageFlags);
+	void AddAccelerationStructure(VkWriteDescriptorSetAccelerationStructureKHR* asInfo, VkShaderStageFlags stageFlags);
 	void UpdateStorageImage(const VulkanImage* image, size_t bindingIndex);
 	// TODO asInfo is not stored so you need to supply it again if you update the descriptors
 	void UpdateAccelerationStructure(VkWriteDescriptorSetAccelerationStructureKHR* asInfo, size_t bindingIndex);

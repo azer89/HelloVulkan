@@ -128,7 +128,7 @@ void PipelineRaytracing::CreateDescriptor(VulkanContext& ctx)
 	textureInfoArray_ = scene_->GetImageInfos();
 	constexpr uint32_t frameCount = AppConfig::FrameCount;
 
-	descriptorInfo_.AddAccelerationStructure();
+	descriptorInfo_.AddAccelerationStructure(VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
 	descriptorInfo_.AddImage(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
 	descriptorInfo_.AddImage(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
 	descriptorInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_MISS_BIT_KHR);

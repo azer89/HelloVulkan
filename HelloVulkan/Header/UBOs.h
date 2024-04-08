@@ -23,6 +23,8 @@ struct RaytracingUBO
 	glm::mat4 viewInverse;
 	alignas(16)
 	glm::vec4 cameraPosition;
+	alignas(16)
+	glm::vec4 shadowCasterPosition;
 	alignas(4)
 	uint32_t frame;
 	alignas(4)

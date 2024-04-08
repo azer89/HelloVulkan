@@ -4,8 +4,9 @@
 
 #include <Raytracing/Header/RayPayload.glsl>
 
-layout(location = 0) rayPayloadInEXT RayPayload rayPayload;
+layout(location = 1) rayPayloadInEXT bool shadowed;
 
 void main()
 {
+	shadowed = false;
 }
