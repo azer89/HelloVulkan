@@ -9,4 +9,5 @@ struct RaytracingUBO
 	uint rayBounceCount;
 	float skyIntensity;
 	float lightIntensity;
+	float specularFuzziness;
 };

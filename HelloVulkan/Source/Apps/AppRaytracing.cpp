@@ -44,6 +44,7 @@ void AppRaytracing::UpdateUI()
 	static int rayBounceCount = 8;
 	static float skyIntensity = 1.0f;
 	static float lightIntensity = 2.5f;
+	static float specularFuzziness = 0.2f;
 
 	imguiPtr_->ImGuiStart();
 	imguiPtr_->ImGuiSetWindow("Raytracing", 450, 150);
@@ -52,13 +53,15 @@ void AppRaytracing::UpdateUI()
 	ImGui::SliderInt("Ray bounce", &rayBounceCount, 1, 32);
 	ImGui::SliderFloat("Sky intensity", &skyIntensity, 0.1f, 10.0f);
 	ImGui::SliderFloat("Light intensity", &lightIntensity, 1.0f, 10.0f);
+	ImGui::SliderFloat("Specular fuzzyness", &specularFuzziness, 0.01f, 1.0f);
 	imguiPtr_->ImGuiEnd();
 
 	rtxPtr_->SetParams(
 		static_cast<uint32_t>(sampleCountPerFrame),
 		static_cast<uint32_t>(rayBounceCount),
 		skyIntensity,
-		lightIntensity
+		lightIntensity,
+		specularFuzziness
 	);
 }
 

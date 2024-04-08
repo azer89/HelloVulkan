@@ -48,7 +48,8 @@ RayPayload Scatter(MeshData mData, Triangle tri, vec3 direction, float t, uint s
 	if (mData.material == MAT_SPECULAR)
 	{
 		payload.color = color.xyz + tri.color.xyz; // Add texture color with vertex color
-		payload.scatterDir = Reflect(direction, tri.normal)  + normalize(RandomInUnitSphere(seed)) * 0.2; // Specular
+		payload.scatterDir = Reflect(direction, tri.normal) + 
+			normalize(RandomInUnitSphere(seed)) * ubo.specularFuzziness; // Specular
 		payload.doScatter = true;
 	}
 	else if (mData.material == MAT_LIGHT)
@@ -59,7 +60,8 @@ RayPayload Scatter(MeshData mData, Triangle tri, vec3 direction, float t, uint s
 	else
 	{
 		payload.color = color.xyz + tri.color.xyz; // Add texture color with vertex color
-		payload.scatterDir = Reflect(direction, tri.normal)  + normalize(RandomInUnitSphere(seed)) * 0.85;
+		payload.scatterDir = Reflect(direction, tri.normal) + 
+			normalize(RandomInUnitSphere(seed)) * 0.85;
 		payload.doScatter = true;
 		//payload.scatterDir = tri.normal  + normalize(RandomInUnitSphere(seed)); // Lambertian
 	}

@@ -35,6 +35,8 @@ struct RaytracingUBO
 	float skyIntensity;
 	alignas(4)
 	float lightIntensity;
+	alignas(4)
+	float specularFuzziness;
 };
 
 struct ShadowMapUBO
