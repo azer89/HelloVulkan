@@ -32,11 +32,15 @@ public:
 	void SetParams(
 		uint32_t sampleCountPerFrame,
 		uint32_t rayBounceCount,
-		float skyIntensity)
+		float skyIntensity,
+		float lightIntensity)
 	{
+		constexpr float eps = std::numeric_limits<float>::epsilon();
+
 		if (ubo_.sampleCountPerFrame != sampleCountPerFrame ||
 			ubo_.rayBounceCount != rayBounceCount ||
-			abs(ubo_.skyIntensity - skyIntensity) > 0.01)
+			abs(ubo_.skyIntensity - skyIntensity) > eps ||
+			abs(ubo_.lightIntensity - lightIntensity) > eps)
 		{
 			ResetFrameCounter();
 		}
@@ -44,6 +48,7 @@ public:
 		ubo_.sampleCountPerFrame = sampleCountPerFrame;
 		ubo_.rayBounceCount = rayBounceCount;
 		ubo_.skyIntensity = skyIntensity;
+		ubo_.lightIntensity = lightIntensity;
 	}
 
 	void SetRaytracingUBO(
