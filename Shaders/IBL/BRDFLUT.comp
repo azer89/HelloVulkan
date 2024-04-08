@@ -19,8 +19,8 @@ layout(push_constant) uniform PushConstantsBRDFLUT
 }
 pc;
 
-#include <PBRHeader.glsl>
-#include <Hammersley.glsl>
+#include <PBR/PBRHeader.glsl>
+#include <PBR/Hammersley.glsl>
 
 vec2 BRDF(float NoV, float roughness)
 {

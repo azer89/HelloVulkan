@@ -20,8 +20,8 @@ layout(location = 5) out vec4 cubeFace5;
 
 layout(set = 0, binding = 0) uniform samplerCube cubeMap;
 
-#include <Hammersley.glsl>
-#include <PBRHeader.glsl>
+#include <PBR/Hammersley.glsl>
+#include <PBR/PBRHeader.glsl>
 
 layout(push_constant) uniform PushConstantCubeFilter
 {

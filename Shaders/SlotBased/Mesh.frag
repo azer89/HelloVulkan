@@ -9,10 +9,10 @@ Fragment shader for PBR+IBL, naive forward shading (non clustered)
 // Include files
 #include <LightData.glsl>
 #include <CameraUBO.glsl>
-#include <PBRHeader.glsl>
-#include <PBRPushConstants.glsl>
-#include <Hammersley.glsl>
-#include <TangentNormalToWorld.glsl>
+#include <PBR/PBRHeader.glsl>
+#include <PBR/PBRPushConstants.glsl>
+#include <PBR/Hammersley.glsl>
+#include <PBR/TangentNormalToWorld.glsl>
 
 layout(location = 0) in vec3 worldPos;
 layout(location = 1) in vec2 texCoord;
@@ -35,8 +35,8 @@ layout(set = 0, binding = 9) uniform samplerCube specularMap;
 layout(set = 0, binding = 10) uniform samplerCube diffuseMap;
 layout(set = 0, binding = 11) uniform sampler2D brdfLUT;
 
-#include <Radiance.glsl>
-#include <Ambient.glsl>
+#include <PBR/Radiance.glsl>
+#include <PBR/Ambient.glsl>
 
 // stackoverflow.com/questions/51108596/linearize-depth
 float LinearDepth(float z, float near, float far)
