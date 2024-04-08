@@ -79,6 +79,9 @@
     <Filter Include="Shaders\Common">
       <UniqueIdentifier>{83dbd895-2636-4d62-8528-f4c3f4fd40dd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\PBR">
+      <UniqueIdentifier>{34511090-b392-46f2-9583-428a217952e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\ClusteredForward\AABBGenerator.comp">
@@ -221,6 +224,51 @@
     </None>
     <None Include="..\Shaders\Common\Tonemap.frag">
       <Filter>Shaders\Common</Filter>
+    </None>
+    <None Include="..\Shaders\CameraUBO.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\Cube.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\DrawIndirectCommand.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\Frustum.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\FrustumCulling.comp">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\LightData.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\MaterialType.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\ModelUBO.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\Skinning.comp">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\PBR\Ambient.glsl">
+      <Filter>Shaders\PBR</Filter>
+    </None>
+    <None Include="..\Shaders\PBR\Hammersley.glsl">
+      <Filter>Shaders\PBR</Filter>
+    </None>
+    <None Include="..\Shaders\PBR\PBRHeader.glsl">
+      <Filter>Shaders\PBR</Filter>
+    </None>
+    <None Include="..\Shaders\PBR\PBRPushConstants.glsl">
+      <Filter>Shaders\PBR</Filter>
+    </None>
+    <None Include="..\Shaders\PBR\Radiance.glsl">
+      <Filter>Shaders\PBR</Filter>
+    </None>
+    <None Include="..\Shaders\PBR\TangentNormalToWorld.glsl">
+      <Filter>Shaders\PBR</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
