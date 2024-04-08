@@ -23,6 +23,16 @@ layout(set = 0, binding = 6) uniform sampler2D pbrTextures[] ;
 
 #include <Raytracing/Header/Triangle.glsl>
 
+vec3 Reflect(vec3 V, vec3 N);
+RayPayload Scatter(MeshData mData, Triangle tri, vec3 direction, float t, uint seed);
+
+void main()
+{
+	Triangle tri = GetTriangle(gl_PrimitiveID, gl_GeometryIndexEXT);
+	MeshData mData = bda.meshReference.meshes[gl_GeometryIndexEXT];
+	rayPayload = Scatter(mData, tri, gl_WorldRayDirectionEXT, gl_HitTEXT, rayPayload.randomSeed);
+}
+
 vec3 Reflect(vec3 V, vec3 N)
 {
 	return V - 2.0 * dot(V, N) * N;
@@ -34,7 +44,6 @@ RayPayload Scatter(MeshData mData, Triangle tri, vec3 direction, float t, uint s
 	payload.distance = t;
 
 	vec4 color = texture(pbrTextures[nonuniformEXT(mData.albedo)], tri.uv);
-	
 
 	if (mData.material == MAT_SPECULAR)
 	{
@@ -54,16 +63,8 @@ RayPayload Scatter(MeshData mData, Triangle tri, vec3 direction, float t, uint s
 		payload.doScatter = true;
 		//payload.scatterDir = tri.normal  + normalize(RandomInUnitSphere(seed)); // Lambertian
 	}
-	
-	
+
 	payload.randomSeed = seed;
 
 	return payload;
-}
-
-void main()
-{
-	Triangle tri = GetTriangle(gl_PrimitiveID, gl_GeometryIndexEXT);
-	MeshData mData = bda.meshReference.meshes[gl_GeometryIndexEXT];
-	rayPayload = Scatter(mData, tri, gl_WorldRayDirectionEXT, gl_HitTEXT, rayPayload.randomSeed);
 }
