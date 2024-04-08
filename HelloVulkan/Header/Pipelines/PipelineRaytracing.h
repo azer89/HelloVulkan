@@ -26,7 +26,6 @@ public:
 	void ResetFrameCounter() 
 	{ 
 		frameCounter_ = 0; 
-		//currentSampleCount_ = 0;
 		ubo_.currentSampleCount = 0;
 	}
 
