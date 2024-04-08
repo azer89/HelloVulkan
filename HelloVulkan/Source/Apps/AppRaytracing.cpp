@@ -55,7 +55,7 @@ void AppRaytracing::UpdateUI()
 	ImGui::SliderFloat("Sky intensity", &skyIntensity, 0.1f, 10.0f);
 	ImGui::SliderFloat("Light intensity", &lightIntensity, 1.0f, 10.0f);
 	ImGui::SliderFloat("Specular fuzzyness", &specularFuzziness, 0.01f, 1.0f);
-	ImGui::SeparatorText("Light position");
+	ImGui::SeparatorText("Shadow caster direction");
 	ImGui::SliderFloat("X", &(uiData_.shadowCasterPosition_[0]), -1.0f, 1.0f);
 	ImGui::SliderFloat("Y", &(uiData_.shadowCasterPosition_[1]),  0.0f, 1.0f);
 	ImGui::SliderFloat("Z", &(uiData_.shadowCasterPosition_[2]), -1.0f, 1.0f);
