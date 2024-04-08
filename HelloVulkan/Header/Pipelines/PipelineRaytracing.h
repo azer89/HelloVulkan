@@ -26,7 +26,8 @@ public:
 	void ResetFrameCounter() 
 	{ 
 		frameCounter_ = 0; 
-		currentSampleCount_ = 0;
+		//currentSampleCount_ = 0;
+		ubo_.currentSampleCount = 0;
 	}
 
 	void SetParams(
@@ -35,15 +36,15 @@ public:
 		float skyIntensity)
 	{
 		if (sampleCountPerFrame_ != sampleCountPerFrame ||
-			rayBounceCount_ != rayBounceCount ||
-			abs(skyIntensity_ - skyIntensity) > 0.01)
+			ubo_.rayBounceCount != rayBounceCount ||
+			abs(ubo_.skyIntensity - skyIntensity) > 0.01)
 		{
 			ResetFrameCounter();
 		}
 
 		sampleCountPerFrame_ = sampleCountPerFrame;
-		rayBounceCount_ = rayBounceCount;
-		skyIntensity_ = skyIntensity;
+		ubo_.rayBounceCount = rayBounceCount;
+		ubo_.skyIntensity = skyIntensity;
 	}
 
 	void SetRaytracingUBO(
@@ -63,10 +64,8 @@ private:
 
 private:
 	uint32_t frameCounter_ = 0;
-	uint32_t currentSampleCount_ = 0;
 	uint32_t sampleCountPerFrame_ = 0;
-	uint32_t rayBounceCount_ = 0;
-	float skyIntensity_ = 0.0f;
+	RaytracingUBO ubo_;
 
 	Scene* scene_ = nullptr;
 	VulkanBuffer bdaBuffer_ = {};

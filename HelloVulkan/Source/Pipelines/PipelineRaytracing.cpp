@@ -298,23 +298,14 @@ void PipelineRaytracing::SetRaytracingUBO(
 	const glm::mat4& inverseView,
 	const glm::vec3& cameraPosition)
 {
-	currentSampleCount_ = currentSampleCount_ + sampleCountPerFrame_;
-
-	RaytracingUBO ubo =
-	{
-		.projectionInverse = inverseProjection,
-		.viewInverse = inverseView,
-		.cameraPosition = glm::vec4(cameraPosition, 1.0),
-		.frame = frameCounter_,
-		.sampleCountPerFrame = sampleCountPerFrame_,
-		.currentSampleCount = currentSampleCount_,
-		.rayBounceCount = rayBounceCount_,
-		.skyIntensity = skyIntensity_,
-		.lightIntensity = 2.5f
-	};
-
-	++frameCounter_;
+	ubo_.projectionInverse = inverseProjection;
+	ubo_.viewInverse = inverseView;
+	ubo_.cameraPosition = glm::vec4(cameraPosition, 1.0);
+	ubo_.frame = frameCounter_++;
+	ubo_.sampleCountPerFrame = sampleCountPerFrame_;
+	ubo_.currentSampleCount += sampleCountPerFrame_;
+	ubo_.lightIntensity = 2.5f;
 
 	const uint32_t frameIndex = ctx.GetFrameIndex();
-	rtUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(RaytracingUBO));
+	rtUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo_, sizeof(RaytracingUBO));
 }
