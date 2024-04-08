@@ -34,14 +34,14 @@ public:
 		uint32_t rayBounceCount,
 		float skyIntensity)
 	{
-		if (sampleCountPerFrame_ != sampleCountPerFrame ||
+		if (ubo_.sampleCountPerFrame != sampleCountPerFrame ||
 			ubo_.rayBounceCount != rayBounceCount ||
 			abs(ubo_.skyIntensity - skyIntensity) > 0.01)
 		{
 			ResetFrameCounter();
 		}
 
-		sampleCountPerFrame_ = sampleCountPerFrame;
+		ubo_.sampleCountPerFrame = sampleCountPerFrame;
 		ubo_.rayBounceCount = rayBounceCount;
 		ubo_.skyIntensity = skyIntensity;
 	}
@@ -63,7 +63,6 @@ private:
 
 private:
 	uint32_t frameCounter_ = 0;
-	uint32_t sampleCountPerFrame_ = 0;
 	RaytracingUBO ubo_;
 
 	Scene* scene_ = nullptr;

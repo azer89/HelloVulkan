@@ -302,8 +302,7 @@ void PipelineRaytracing::SetRaytracingUBO(
 	ubo_.viewInverse = inverseView;
 	ubo_.cameraPosition = glm::vec4(cameraPosition, 1.0);
 	ubo_.frame = frameCounter_++;
-	ubo_.sampleCountPerFrame = sampleCountPerFrame_;
-	ubo_.currentSampleCount += sampleCountPerFrame_;
+	ubo_.currentSampleCount += ubo_.sampleCountPerFrame;
 	ubo_.lightIntensity = 2.5f;
 
 	const uint32_t frameIndex = ctx.GetFrameIndex();
