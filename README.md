@@ -8,11 +8,11 @@ A 3D rendering engine built from scratch using Vulkan API and C++.
 
 * __Clustered Forward Shading__ for efficient light culling.
 * __Physically-Based Rendering__ (PBR) with Cook-Torrance microfacet and __Image-Based Lighting__ (IBL).
-* __Hardward-Accelerated Path Tracing__ that can simulate indirect shading, reflections, and soft shadow.
+* __Hardware-Accelerated Path Tracing__ that can simulate indirect shading, reflections, and soft shadow.
 * __Bindless__ techniques using __Indirect Draw Call__, __Descriptor Indexing__, and __Buffer Device Address__.
-* __Compute-based Frustum Culling__.
-* __Compute-based Skinning__ for skeletal animation.
-* __Shadow maps__ with Poisson Disk or PCF.
+* __Compute-Based Frustum Culling__.
+* __Compute-Based Skinning__ for skeletal animation.
+* __Shadow Maps__ with Poisson Disk or PCF.
 * glTF mesh/texture support.
 * Multisample anti-aliasing (MSAA).
 * Tonemap postprocessing.
@@ -26,7 +26,7 @@ A 3D rendering engine built from scratch using Vulkan API and C++.
 
 The engine leverages several modern GPU features to optimize rendering performance. First, bindless textures is achieved by utilizing __descriptor Indexing__. This enables the storage of all scene textures inside an unbounded array, which allows texture descriptors to be bound once at the start of a frame. 
 
-Next, the engine takes advantage of __indirect draw__ API. This means the CPU only calls a single indirect draw command. By sorting draw calls based on material type, it is now possible to have separate render passes for each material. For each render pass, the GPU only processes a draw call batch of objects sharing the same material. This significantly improves efficiency because shader branching can now be avoided.
+Next, the engine takes advantage of __indirect draw__ API. This means the CPU only calls a single indirect draw command to render an entire scene. The actual draw commands are stored inside an indirect buffer which are then sorted based on material type, which allows the rendering to have separate render passes for each material. For each render pass, the GPU only processes a draw call batch of objects sharing the same material. This significantly improves efficiency because shader branching can now be avoided.
 
 Finally, the engine pushes the concept of "bindless" even further by utilizing __buffer device addresses__. Instead of creating descriptors, device addresses act as _pointers_ so that the shaders can have direct access to buffers.
 
