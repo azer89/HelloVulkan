@@ -14,10 +14,10 @@ Fragment shader for
 // Include files
 #include <CameraUBO.glsl>
 #include <LightData.glsl>
-#include <PBRHeader.glsl>
-#include <PBRPushConstants.glsl>
-#include <Hammersley.glsl>
-#include <TangentNormalToWorld.glsl>
+#include <PBR/PBRHeader.glsl>
+#include <PBR/PBRPushConstants.glsl>
+#include <PBR/Hammersley.glsl>
+#include <PBR/TangentNormalToWorld.glsl>
 #include <Bindless/VertexData.glsl>
 #include <Bindless/MeshData.glsl>
 #include <Bindless/BDA.glsl>
@@ -43,8 +43,8 @@ layout(set = 0, binding = 6) uniform sampler2D brdfLUT;
 // NOTE This requires descriptor indexing feature
 layout(set = 0, binding = 7) uniform sampler2D pbrTextures[];
 
-#include <Radiance.glsl>
-#include <Ambient.glsl>
+#include <PBR/Radiance.glsl>
+#include <PBR/Ambient.glsl>
 
 float LinearDepth(float z, float near, float far)
 {

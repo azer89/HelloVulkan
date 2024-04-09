@@ -10,7 +10,7 @@ AppRaytracing::AppRaytracing()
 
 void AppRaytracing::Init()
 {
-	camera_->SetPositionAndTarget(glm::vec3(0.0f, 3.0f, 3.0f), glm::vec3(0.0, 0.0, -1.0f));
+	camera_->SetPositionAndTarget(glm::vec3(0.5f, 1.0f, 7.0f), glm::vec3(-3.0, 1.0, 3.5f));
 	uiData_.shadowCasterPosition_ = { 1.0f, 1.0f, -0.3f };
 
 	// Scene

@@ -19,8 +19,8 @@ PipelineTonemap::PipelineTonemap(VulkanContext& ctx,
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
-			AppConfig::ShaderFolder + "FullscreenTriangle.vert",
-			AppConfig::ShaderFolder + "Tonemap.frag",
+			AppConfig::ShaderFolder + "Common/FullscreenTriangle.vert",
+			AppConfig::ShaderFolder + "Common/Tonemap.frag",
 		},
 		&pipeline_);
 }

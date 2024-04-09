@@ -19,10 +19,10 @@ Fragment shader for
 // Include files
 #include <CameraUBO.glsl>
 #include <LightData.glsl>
-#include <PBRHeader.glsl>
-#include <PBRPushConstants.glsl>
-#include <Hammersley.glsl>
-#include <TangentNormalToWorld.glsl>
+#include <PBR/PBRHeader.glsl>
+#include <PBR/PBRPushConstants.glsl>
+#include <PBR/Hammersley.glsl>
+#include <PBR/TangentNormalToWorld.glsl>
 #include <Bindless/VertexData.glsl>
 #include <Bindless/MeshData.glsl>
 #include <ShadowMapping/UBO.glsl>
@@ -57,8 +57,8 @@ layout(set = 0, binding = 9) uniform sampler2D pbrTextures[];
 #include <ShadowMapping/Shadow.glsl>
 
 // PBR and IBL
-#include <Radiance.glsl>
-#include <Ambient.glsl>
+#include <PBR/Radiance.glsl>
+#include <PBR/Ambient.glsl>
 
 void main()
 {

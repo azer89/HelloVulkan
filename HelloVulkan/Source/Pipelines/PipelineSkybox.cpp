@@ -42,8 +42,8 @@ PipelineSkybox::PipelineSkybox(VulkanContext& ctx,
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
-			AppConfig::ShaderFolder + "Skybox.vert",
-			AppConfig::ShaderFolder + "Skybox.frag",
+			AppConfig::ShaderFolder + "Common/Skybox.vert",
+			AppConfig::ShaderFolder + "Common/Skybox.frag",
 		},
 		&pipeline_
 		); 

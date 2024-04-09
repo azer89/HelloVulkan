@@ -51,8 +51,8 @@ PipelineLine::PipelineLine(
 		renderPass_.GetHandle(),
 		pipelineLayout_,
 		{
-			AppConfig::ShaderFolder + "Line.vert",
-			AppConfig::ShaderFolder + "Line.frag",
+			AppConfig::ShaderFolder + "Common/Line.vert",
+			AppConfig::ShaderFolder + "Common/Line.frag",
 		},
 		&pipeline_
 	);
