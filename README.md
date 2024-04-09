@@ -9,7 +9,7 @@ A 3D rendering engine built from scratch using Vulkan API and C++.
 * __Clustered Forward Shading__ for efficient light culling.
 * __Physically-Based Rendering__ (PBR) with Cook-Torrance microfacet and __Image-Based Lighting__ (IBL).
 * __Hardware-Accelerated Path Tracing__ that can simulate indirect shading, reflections, and soft shadow.
-* __Bindless__ techniques using __Indirect Draw Call__, __Descriptor Indexing__, and __Buffer Device Address__.
+* __Bindless__ techniques using __Indirect Draw__, __Descriptor Indexing__, and __Buffer Device Address__.
 * __Compute-Based Frustum Culling__.
 * __Compute-Based Skinning__ for skeletal animation.
 * __Shadow Maps__ with Poisson Disk or PCF.
@@ -26,7 +26,7 @@ A 3D rendering engine built from scratch using Vulkan API and C++.
 
 The engine leverages several modern GPU features to optimize rendering performance. First, bindless textures is achieved by utilizing __descriptor Indexing__. This enables the storage of all scene textures inside an unbounded array, which allows texture descriptors to be bound once at the start of a frame. 
 
-Next, the engine takes advantage of __indirect draw__ API. This means the CPU only calls a single indirect draw command to render an entire scene. The actual draw commands are stored inside an indirect buffer which are then sorted based on material type, which allows the rendering to have separate render passes for each material. For each render pass, the GPU only processes a draw call batch of objects sharing the same material. This significantly improves efficiency because shader branching can now be avoided.
+Next, the engine takes advantage of __indirect draw__ API. The CPU prepares indirect draw commands and stores them in an indirect buffer. These draw commands are then sorted by material type. This allows the rendering process to be divided into separate render passes for each material. During each render pass, the GPU processes a batch of draw commands for objects that share the same material. This improves efficiency by avoiding shader branching.
 
 Finally, the engine pushes the concept of "bindless" even further by utilizing __buffer device addresses__. Instead of creating descriptors, device addresses act as _pointers_ so that the shaders can have direct access to buffers.
 
@@ -39,7 +39,7 @@ The image below showcases the implementations of PBR, IBL, and PCF shadow mappin
 
 ### Hardware-Accelerated Path Tracing
 
-The path tracing process begins with building acceleration structures containing multiple geometries. After creating a raytracing pipeline, the ray simulation requires several shaders. __Ray generation shader__ is responsible to generate rays, and store the hit color into an accumulator image. The final rendering is obtained by averaging the accumulator image. The next one is __Closest hit shader__ that determines the color when a ray intersects an object and can also scatter the ray for further bounces. Optionally, __Any hit shader__ is used to discard a ray hit in order to render transparent materials such as foliage textures. 
+The path tracing process begins with building acceleration structures containing multiple geometries. After creating a raytracing pipeline, the ray simulation requires several shaders. __Ray generation shader__ is responsible to generate rays, and add the hit color into an accumulator image. The final rendering is obtained by averaging the accumulator image. The next one is __Closest hit shader__ that determines the color when a ray intersects an object and can also scatter the ray for further bounces. Optionally, __Any hit shader__ is used to discard a ray hit in order to render transparent materials such as foliage textures. 
 
 <img width="850" alt="hardware_raytracing" src="https://github.com/azer89/HelloVulkan/assets/790432/dbceebb4-496b-40ce-9ac7-f71e1c5a0453">
 
@@ -62,7 +62,7 @@ https://github.com/azer89/HelloVulkan/assets/790432/13a4426f-deec-40f5-816a-5594
 
 ### Compute-Based Frustum Culling
 
-Since the engine uses indirect draw, frustum culling can now be done entirely on the compute shader by modifying draw calls within an indirect buffer. If an object's AABB falls outside the camera frustum, the compute shader will deactivate the draw call for that object. Consequently, the CPU is unaware of the number of objects actually drawn. Using Tracy profiler, an intersection test with 10,000 AABBs only takes less than 25 microseconds (0.025 milliseconds).
+Since the engine uses indirect draw, frustum culling can now be done entirely on the compute shader by modifying draw commands within an indirect buffer. If an object's AABB falls outside the camera frustum, the compute shader will deactivate the draw command for that object. Consequently, the CPU is unaware of the number of objects actually drawn. Using Tracy profiler, an intersection test with 10,000 AABBs only takes less than 25 microseconds (0.025 milliseconds).
 
 The left image below shows a rendering of all objects inside the frustum. The right image shows visualizations of AABBs as translucent boxes and the frustum drawn as orange lines.
 
