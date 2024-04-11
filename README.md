@@ -26,7 +26,7 @@ A 3D rendering engine built from scratch using Vulkan API and C++.
 
 The engine leverages several modern GPU features to optimize rendering performance. First, bindless textures is achieved by utilizing __descriptor Indexing__. This enables the storage of all scene textures inside an unbounded array, which allows texture descriptors to be bound once at the start of a frame. 
 
-Next, the engine takes advantage of __indirect draw__ API. The CPU prepares indirect draw commands and stores them in an indirect buffer. These draw commands are then sorted by material type. This allows the rendering process to be divided into separate render passes for each material. During each render pass, the GPU processes a batch of draw commands for objects that share the same material. This improves efficiency by avoiding shader branching.
+Next, the engine takes advantage of __indirect draw__ API. The CPU prepares indirect draw commands and stores them in an indirect buffer. These draw commands are then sorted by material type. This allows the rendering process to be divided into separate render passes for each material. This improves efficiency by avoiding shader branching.
 
 Finally, the engine pushes the concept of "bindless" even further by utilizing __buffer device addresses__. Instead of creating descriptors, device addresses act as _pointers_ so that the shaders can have direct access to buffers.
 
@@ -41,9 +41,9 @@ The image below showcases the implementations of PBR, IBL, and PCF shadow mappin
 
 The path tracing process begins with building acceleration structures containing multiple geometries. After creating a raytracing pipeline, the ray simulation requires several shaders. __Ray generation shader__ is responsible to generate rays, and add the hit color into an accumulator image. The final rendering is obtained by averaging the accumulator image. The next one is __Closest hit shader__ that determines the color when a ray intersects an object and can also scatter the ray for further bounces. Optionally, __Any hit shader__ is used to discard a ray hit in order to render transparent materials such as foliage textures. 
 
-<img width="850" alt="hardware_raytracing" src="https://github.com/azer89/HelloVulkan/assets/790432/dbceebb4-496b-40ce-9ac7-f71e1c5a0453">
+<img width="850" alt="hardware_raytracing" src="https://github.com/azer89/HelloVulkan/assets/790432/a4c69b83-82d4-46bc-bd07-55945c43c3d6">
 
-<img width="850" alt="hardware_raytracing" src="https://github.com/azer89/HelloVulkan/assets/790432/a8bd5f08-3d5e-4384-8b2b-e6b30b3191b5">
+<img width="850" alt="hardware_raytracing" src="https://github.com/azer89/HelloVulkan/assets/790432/6d3c392d-e783-4975-8dab-595e3497e6c9">
 
 </br>
 </br>

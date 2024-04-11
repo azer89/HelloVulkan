@@ -52,7 +52,7 @@ void AppRaytracing::UpdateUI()
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 	ImGui::SliderInt("Sample count", &sampleCountPerFrame, 1, 32);
 	ImGui::SliderInt("Ray bounce", &rayBounceCount, 1, 32);
-	ImGui::SliderFloat("Sky intensity", &skyIntensity, 0.1f, 10.0f);
+	ImGui::SliderFloat("Sky intensity", &skyIntensity, 0.1f, 20.0f);
 	ImGui::SliderFloat("Light intensity", &lightIntensity, 1.0f, 10.0f);
 	ImGui::SliderFloat("Specular fuzzyness", &specularFuzziness, 0.01f, 1.0f);
 	ImGui::SeparatorText("Shadow caster direction");
