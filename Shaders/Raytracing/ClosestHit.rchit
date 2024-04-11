@@ -74,14 +74,13 @@ RayPayload Scatter(MeshData mData, Triangle tri, vec3 direction, float t, float 
 		payload.color = color.xyz + tri.color.xyz * ubo.lightIntensity;
 		payload.doScatter = false;
 	}
-	else
+	else // Lambertian
 	{
 		payload.color = color.xyz + tri.color.xyz; // Add texture color with vertex color
 		payload.color *= shadowFactor;
-		payload.scatterDir = Reflect(direction, tri.normal) + 
-			normalize(RandomInUnitSphere(seed)) * 0.85;
+		payload.scatterDir = tri.normal  + normalize(RandomInUnitSphere(seed));
 		payload.doScatter = true;
-		//payload.scatterDir = tri.normal  + normalize(RandomInUnitSphere(seed)); // Lambertian
+		
 	}
 
 	payload.randomSeed = seed;
