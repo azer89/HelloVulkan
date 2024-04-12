@@ -8,23 +8,23 @@
 class VulkanImage
 {
 public:
-	VkImage image_;
-	VkImageView imageView_;
-	VmaAllocation vmaAllocation_ ;
+	VkImage image_ = nullptr;
+	VkImageView imageView_ = nullptr;
+	VmaAllocation vmaAllocation_ = nullptr;
 
 	// A reusable sampler which can be accessed by multiple Renderers
-	VkSampler defaultImageSampler_;
+	VkSampler defaultImageSampler_ = nullptr;
 
 	// Cached for Destroy()
-	VkDevice device_;
-	VmaAllocator vmaAllocator_;
+	VkDevice device_ = nullptr;
+	VmaAllocator vmaAllocator_ = nullptr;
 
-	uint32_t width_;
-	uint32_t height_;
-	uint32_t mipCount_;
-	uint32_t layerCount_;
-	VkFormat imageFormat_;
-	VkSampleCountFlagBits multisampleCount_;
+	uint32_t width_ = 0;
+	uint32_t height_ = 0;
+	uint32_t mipCount_ = 0;
+	uint32_t layerCount_ = 0;
+	VkFormat imageFormat_ = VK_FORMAT_UNDEFINED;
+	VkSampleCountFlagBits multisampleCount_ = VK_SAMPLE_COUNT_1_BIT;
 
 public:
 	VulkanImage() :
