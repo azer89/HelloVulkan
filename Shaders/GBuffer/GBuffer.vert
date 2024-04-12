@@ -25,7 +25,7 @@ void main()
 	mat3 normalMatrix = transpose(inverse(mat3(model)));
 
 	// Output
-	vec3 worldPos4 = model * vec4(vertexData.position, 1.0);
+	vec4 worldPos4 = model * vec4(vertexData.position, 1.0);
 	vec4 viewPos4 = camUBO.view * worldPos4;
 	viewPos = viewPos4.xyz;
 	normal = normalMatrix * vertexData.normal;

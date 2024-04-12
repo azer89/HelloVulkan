@@ -62,11 +62,18 @@ protected:
 	VkPipelineLayout pipelineLayout_ = nullptr;
 	VkPipeline pipeline_ = nullptr;
 
+	// Multiple render target
+	std::vector<VkPipelineColorBlendAttachmentState> overridingColorBlendAttachments = {};
+
 protected:
 	bool IsOffscreen() const
 	{
 		return config_.type_ == PipelineType::GraphicsOffScreen;
 	}
+
+	void AddOverridingColorBlendAttachment(
+		VkColorComponentFlags colorWriteMask,
+		VkBool32 blendEnable);
 
 	void BindPipeline(VulkanContext& ctx, VkCommandBuffer commandBuffer);
 

@@ -547,6 +547,9 @@ void VulkanRenderPass::CreateOffScreenMultipleRenderTargets(
 	};
 
 	VK_CHECK(vkCreateRenderPass(ctx.GetDevice(), &createInfo, nullptr, &handle_));
+
+	// Cache VkRenderPassBeginInfo
+	CreateBeginInfo();
 }
 
 void VulkanRenderPass::CreateBeginInfo()
