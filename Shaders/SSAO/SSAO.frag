@@ -24,4 +24,33 @@ void main()
 	vec3 tangent = normalize(randomVec - normal * dot(randomVec, normal));
 	vec3 bitangent = cross(normal, tangent);
 	mat3 TBN = mat3(tangent, bitangent, normal);
+
+	float occlusion = 0.0;
+
+	for (int i = 0; i < kernels.length(); ++i)
+	{
+		// Get sample position
+		vec3 samplePos = TBN * kernels[i]; // From tangent to view-space
+		samplePos = fragPos.xyz + samplePos * ubo.radius;
+
+		// Project sample position (to sample texture) (to get position on screen/texture)
+		vec4 offset = vec4(samplePos, 1.0);
+		offset = ubo.projection * offset; // From view to clip-space
+		offset.xyz /= offset.w; // Perspective divide
+		offset.xyz = offset.xyz * 0.5 + 0.5; // Transform to range 0.0 - 1.0
+
+		// Get sample depth
+		float sampleDepth = texture(gPosition, offset.xy).z; // Get depth value of kernel sample
+
+		// w = 1.0 if background, 0.0 if foreground
+		float discardFactor = 1.0 - fragPos.w;
+
+		// Range check & accumulate
+		float rangeCheck = smoothstep(0.0, 1.0, ubo.radius / abs(fragPos.z - sampleDepth)) * discardFactor;
+		occlusion += (sampleDepth >= samplePos.z + ubo.bias ? 1.0 : 0.0) * rangeCheck;
+	}
+
+	occlusion = 1.0 - (occlusion / kernels.length());
+
+	fragColor = occlusion;
 }
