@@ -15,4 +15,13 @@ layout(set = 0, binding = 4) uniform sampler2D texNoise;
 
 void main()
 {
+	vec2 noiseScale = vec2(ubo.screenWidth / ubo.noiseSize, ubo.screenHeight / ubo.noiseSize);
+
+	vec4 fragPos = texture(gPosition, texCoord).xyzw;
+	vec3 normal = normalize(texture(gNormal, texCoord).rgb);
+	vec3 randomVec = normalize(texture(texNoise, texCoord * noiseScale).xyz);
+
+	vec3 tangent = normalize(randomVec - normal * dot(randomVec, normal));
+	vec3 bitangent = cross(normal, tangent);
+	mat3 TBN = mat3(tangent, bitangent, normal);
 }

@@ -4,11 +4,11 @@
 layout(location = 0) in vec3 viewPos;
 layout(location = 1) in vec3 normal;
 
-layout(location = 0) out vec3 gPosition;
+layout(location = 0) out vec4 gPosition;
 layout(location = 1) out vec3 gNormal;
 
 void main()
 {
-	gPosition = viewPos;
+	gPosition = vec4(viewPos, 1.0);
 	gNormal = normalize(normal);
 }
