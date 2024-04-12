@@ -16,6 +16,7 @@ public:
 
 	void Create(VulkanContext& ctx);
 	void Destroy() override;
+	void OnWindowResized(VulkanContext& ctx) override;
 
 	void UpdateFromUIData(VulkanContext& ctx, UIData& uiData) override
 	{

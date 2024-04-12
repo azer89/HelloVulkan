@@ -9,6 +9,11 @@ public:
 	virtual ~ResourcesBase() = default;
 	virtual void Destroy() = 0;
 
+	// If the window is resized
+	virtual void OnWindowResized(VulkanContext& ctx)
+	{
+	}
+
 	virtual void UpdateFromUIData(VulkanContext& ctx, UIData& uiData)
 	{
 	}

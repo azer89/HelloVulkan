@@ -492,8 +492,8 @@ void VulkanRenderPass::CreateOffScreenCubemapRenderPass(
 void VulkanRenderPass::CreateOffScreenMultipleRenderTargets(
 	VulkanContext& ctx,
 	const std::vector<VkFormat>& formats,
-	uint8_t renderPassBit = 0u,
-	VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT)
+	uint8_t renderPassBit,
+	VkSampleCountFlagBits msaaSamples)
 {
 	device_ = ctx.GetDevice();
 

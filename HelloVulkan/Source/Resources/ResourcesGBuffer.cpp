@@ -23,6 +23,11 @@ void ResourcesGBuffer::Destroy()
 	kernel_.Destroy();
 }
 
+void ResourcesGBuffer::OnWindowResized(VulkanContext& ctx)
+{
+
+}
+
 void ResourcesGBuffer::Create(VulkanContext& ctx)
 {
 	const uint32_t width = ctx.GetSwapchainWidth();

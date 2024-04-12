@@ -51,3 +51,8 @@ void ResourcesShared::Destroy()
 	multiSampledColorImage_.Destroy();
 	singleSampledColorImage_.Destroy();
 }
+
+void ResourcesShared::OnWindowResized(VulkanContext& ctx)
+{
+	Create(ctx);
+}

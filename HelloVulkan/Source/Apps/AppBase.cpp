@@ -250,7 +250,10 @@ void AppBase::OnWindowResized()
 		windowHeight_
 	);
 
-	InitSharedResources();
+	for (const auto& res : resources_)
+	{
+		res->OnWindowResized(vulkanContext_);
+	}
 
 	for (const auto& pip : pipelines_)
 	{
@@ -394,6 +397,7 @@ void AppBase::ProcessInput()
 	}
 }
 
+// TODO Remove this function
 void AppBase::InitSharedResources()
 {
 	if (!resourcesShared_)
