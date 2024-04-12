@@ -149,6 +149,10 @@ void AppPBRShadow::UpdateUI()
 	ImGui::SliderFloat("Y", &(uiData_.shadowCasterPosition_[1]), 15.0f, 60.0f);
 	ImGui::SliderFloat("Z", &(uiData_.shadowCasterPosition_[2]), -10.0f, 10.0f);
 
+	ImGui::SeparatorText("SSAO");
+	ImGui::SliderFloat("Radius", &uiData_.ssaoRadius_, 0.0f, 10.0f);
+	ImGui::SliderFloat("Bias", &uiData_.ssaoBias_, 0.0f, 0.5f);
+
 	imguiPtr_->ImGuizmoManipulateScene(vulkanContext_, &uiData_);
 
 	imguiPtr_->ImGuiEnd();

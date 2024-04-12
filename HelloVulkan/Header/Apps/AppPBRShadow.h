@@ -8,6 +8,7 @@
 #include "ResourcesShadow.h"
 #include "ResourcesGBuffer.h"
 #include "PipelineGBuffer.h"
+#include "PipelineSSAO.h"
 #include "PipelineShadow.h"
 #include "PipelinePBRShadow.h"
 #include "PipelineLightRender.h"
@@ -32,6 +33,7 @@ private:
 	PipelineImGui* imguiPtr_ = nullptr;
 	PipelineShadow* shadowPtr_ = nullptr;
 	PipelineGBuffer* gPtr_ = nullptr;
+	PipelineSSAO* ssaoPtr_ = nullptr;
 	PipelinePBRShadow* pbrOpaquePtr_ = nullptr;
 	PipelinePBRShadow* pbrTransparentPtr_ = nullptr;
 	PipelineLightRender* lightPtr_ = nullptr;

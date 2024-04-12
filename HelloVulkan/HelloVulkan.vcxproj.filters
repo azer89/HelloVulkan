@@ -285,7 +285,7 @@
     <None Include="..\Shaders\SSAO\SSAO.frag">
       <Filter>Shaders\SSAO</Filter>
     </None>
-    <None Include="..\Shaders\SSAO\SSAO.vert">
+    <None Include="..\Shaders\SSAO\UBO.glsl">
       <Filter>Shaders\SSAO</Filter>
     </None>
   </ItemGroup>

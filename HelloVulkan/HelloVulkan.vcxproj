@@ -212,7 +212,7 @@
     <None Include="..\Shaders\ShadowMapping\Scene.frag" />
     <None Include="..\Shaders\ShadowMapping\Scene.vert" />
     <None Include="..\Shaders\SSAO\SSAO.frag" />
-    <None Include="..\Shaders\SSAO\SSAO.vert" />
+    <None Include="..\Shaders\SSAO\UBO.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Shaders\ShadowMapping\UBO.glsl" />

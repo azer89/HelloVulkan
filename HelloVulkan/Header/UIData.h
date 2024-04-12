@@ -59,6 +59,10 @@ public:
 	bool renderAABB_ = false;
 	bool renderLights_ = true;
 
+	// SSAO
+	float ssaoRadius_ = 0.5f;
+	float ssaoBias_ = 0.025f;
+
 public:
 	bool GizmoCanSelect() const { return mouseLeftPressed_ && gizmoMode_ != 0; }
 	bool GizmoActive() const { return gizmoModelIndex > 0 && gizmoInstanceIndex > 0; }
