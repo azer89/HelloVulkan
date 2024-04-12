@@ -225,10 +225,13 @@
     <ClInclude Include="Header\Configs.h" />
     <ClInclude Include="Header\Event.h" />
     <ClInclude Include="Header\FrameCounter.h" />
+    <ClInclude Include="Header\Pipelines\PipelineGBuffer.h" />
+    <ClInclude Include="Header\Pipelines\PipelineSSAO.h" />
     <ClInclude Include="Header\Ray.h" />
     <ClInclude Include="Header\Raytracing\RTModelData.h" />
     <ClInclude Include="Header\Raytracing\ShaderBindingTables.h" />
     <ClInclude Include="Header\Raytracing\ShaderGroups.h" />
+    <ClInclude Include="Header\Resources\ResourcesGBuffer.h" />
     <ClInclude Include="Header\Utility.h" />
     <ClInclude Include="Header\UIData.h" />
     <ClInclude Include="Header\Pipelines\PipelineAABBGenerator.h" />
@@ -312,6 +315,7 @@
     <ClCompile Include="Source\Pipelines\PipelineEquirect2Cube.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineFinish.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineFrustumCulling.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelineGBuffer.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineImGui.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineInfiniteGrid.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineLightRender.cpp" />
@@ -326,9 +330,11 @@
     <ClCompile Include="Source\Pipelines\PipelineRaytracing.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineSkinning.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineSkybox.cpp" />
+    <ClCompile Include="Source\Pipelines\PipelineSSAO.cpp" />
     <ClCompile Include="Source\Pipelines\PipelineTonemap.cpp" />
     <ClCompile Include="Source\Raytracing\AccelStructure.cpp" />
     <ClCompile Include="Source\Raytracing\RaytracingBuilder.cpp" />
+    <ClCompile Include="Source\Resources\ResourcesGBuffer.cpp" />
     <ClCompile Include="Source\Resources\ResourcesLight.cpp" />
     <ClCompile Include="Source\Resources\ResourcesClusterForward.cpp" />
     <ClCompile Include="Source\Resources\ResourcesIBL.cpp" />

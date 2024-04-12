@@ -506,6 +506,15 @@
     <ClInclude Include="Header\Event.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Resources\ResourcesGBuffer.h">
+      <Filter>Header Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineGBuffer.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineSSAO.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">
@@ -689,6 +698,15 @@
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Source\Pipelines\PipelineRaytracing.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Resources\ResourcesGBuffer.cpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineGBuffer.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineSSAO.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
   </ItemGroup>
