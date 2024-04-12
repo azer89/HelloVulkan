@@ -13,6 +13,7 @@ void VulkanRenderPass::CreateResolveMSRenderPass(
 {
 	device_ = ctx.GetDevice();
 	renderPassBit_ = renderPassBit;
+	colorAttachmentCount_ = 2u;
 
 	const VkAttachmentDescription multisampledAttachment =
 	{
@@ -93,6 +94,7 @@ void VulkanRenderPass::CreateOffScreenRenderPass(
 {
 	device_ = ctx.GetDevice();
 	renderPassBit_ = renderPassBit;
+	colorAttachmentCount_ = 1u;
 
 	const bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
 	const bool clearDepth = renderPassBit_ & RenderPassBit::DepthClear;
@@ -199,6 +201,7 @@ void VulkanRenderPass::CreateOnScreenRenderPass(
 {
 	device_ = ctx.GetDevice();
 	renderPassBit_ = renderPassBit;
+	colorAttachmentCount_ = 1u;
 
 	const bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
 	const bool clearDepth = renderPassBit_ & RenderPassBit::DepthClear;
@@ -297,6 +300,7 @@ void VulkanRenderPass::CreateDepthOnlyRenderPass(
 {
 	device_ = ctx.GetDevice();
 	renderPassBit_ = renderPassBit;
+	colorAttachmentCount_ = 0u;
 
 	const bool clearDepth = renderPassBit_ & RenderPassBit::DepthClear;
 	const bool depthShaderReadOnly = renderPassBit_ & RenderPassBit::DepthShaderReadOnly;
@@ -362,6 +366,7 @@ void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(
 {
 	device_ = ctx.GetDevice();
 	renderPassBit_ = renderPassBit;
+	colorAttachmentCount_ = 1u;
 
 	const bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
 	const bool presentColor = renderPassBit_ & RenderPassBit::ColorPresent;
@@ -444,7 +449,7 @@ void VulkanRenderPass::CreateOffScreenCubemapRenderPass(
 	std::vector<VkAttachmentDescription> m_attachments;
 	std::vector<VkAttachmentReference> m_attachmentRefs;
 
-	for (int face = 0; face < colorAttachmentCount_; ++face)
+	for (uint32_t face = 0; face < colorAttachmentCount_; ++face)
 	{
 		VkAttachmentDescription info =
 		{
@@ -461,7 +466,7 @@ void VulkanRenderPass::CreateOffScreenCubemapRenderPass(
 
 		VkAttachmentReference ref =
 		{
-			.attachment = static_cast<uint32_t>(face),
+			.attachment = face,
 			.layout = finalLayout
 		};
 

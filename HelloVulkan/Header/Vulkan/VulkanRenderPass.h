@@ -98,7 +98,7 @@ private:
 	uint8_t renderPassBit_;
 
 	// TODO Refactor this
-	uint32_t colorAttachmentCount_ = 1;
+	uint32_t colorAttachmentCount_ = 0;
 
 	// Cache for starting the render pass
 	std::vector<VkClearValue> clearValues_;
