@@ -29,10 +29,11 @@ public:
 	VulkanImage position_;
 	VulkanImage normal_;
 	VulkanImage noise_;
+	VulkanImage ssao_;
 	VulkanBuffer kernel_;
 
 	// Needed for depth test
-	VulkanImage depthImage_;
+	VulkanImage depth_;
 
 private:
 	std::vector<glm::vec3> ssaoKernel_ = {};

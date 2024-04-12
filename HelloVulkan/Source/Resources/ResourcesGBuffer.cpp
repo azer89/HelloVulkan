@@ -20,7 +20,8 @@ void ResourcesGBuffer::Destroy()
 	position_.Destroy();
 	normal_.Destroy();
 	noise_.Destroy();
-	depthImage_.Destroy();
+	ssao_.Destroy();
+	depth_.Destroy();
 	kernel_.Destroy();
 }
 
@@ -36,7 +37,7 @@ void ResourcesGBuffer::Create(VulkanContext& ctx)
 
 	position_.Destroy();
 	normal_.Destroy();
-	depthImage_.Destroy();
+	depth_.Destroy();
 
 	// Position buffer
 	position_.CreateImage(
@@ -62,7 +63,7 @@ void ResourcesGBuffer::Create(VulkanContext& ctx)
 		1u);
 	CreateSampler(ctx, &(position_.defaultImageSampler_));
 	position_.SetDebugName(ctx, "G_Buffer_Position");
-	position_.TransitionLayout(ctx, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+	//position_.TransitionLayout(ctx, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
 	// Normal buffer
 	normal_.CreateImage(
@@ -88,17 +89,42 @@ void ResourcesGBuffer::Create(VulkanContext& ctx)
 		1u);
 	CreateSampler(ctx, &(normal_.defaultImageSampler_));
 	normal_.SetDebugName(ctx, "G_Buffer_Normal");
-	normal_.TransitionLayout(ctx, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+	//normal_.TransitionLayout(ctx, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+
+	// Normal buffer
+	ssao_.CreateImage(
+		ctx,
+		width,
+		height,
+		1u, // mip
+		1u, // layer
+		VK_FORMAT_R8_UNORM,
+		VK_IMAGE_TILING_OPTIMAL,
+		VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+		VMA_MEMORY_USAGE_GPU_ONLY,
+		0u,
+		VK_SAMPLE_COUNT_1_BIT);
+	ssao_.CreateImageView(
+		ctx,
+		VK_FORMAT_R8_UNORM,
+		VK_IMAGE_ASPECT_COLOR_BIT,
+		VK_IMAGE_VIEW_TYPE_2D,
+		0u,
+		1u,
+		0u,
+		1u);
+	CreateSampler(ctx, &(ssao_.defaultImageSampler_));
+	ssao_.SetDebugName(ctx, "G_Buffer_SSAO");
 
 	// Needed for depth test
-	depthImage_.CreateDepthResources(
+	depth_.CreateDepthResources(
 		ctx,
 		width,
 		height,
 		1u, // layerCount
 		VK_SAMPLE_COUNT_1_BIT);
-	depthImage_.SetDebugName(ctx, "Depth_Image");
-	depthImage_.TransitionLayout(ctx, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+	depth_.SetDebugName(ctx, "Depth_Image");
+	//depth_.TransitionLayout(ctx, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
 	// Noise texture
 	if (noise_.image_ == nullptr)

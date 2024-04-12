@@ -93,4 +93,20 @@ struct FrustumUBO
 	glm::vec4 corners[8];
 };
 
+struct SSAOUBO
+{
+	alignas(16)
+	glm::mat4 projection;
+	alignas(4)
+	float radius;
+	alignas(4)
+	float bias;
+	alignas(4)
+	float screenWidth;
+	alignas(4)
+	float screenHeight;
+	alignas(4)
+	float noiseSize;
+};
+
 #endif

@@ -28,7 +28,7 @@ PipelineGBuffer::PipelineGBuffer(VulkanContext& ctx,
 		{
 			&(resourcesGBuffer_->position_),
 			&(resourcesGBuffer_->normal_),
-			&(resourcesGBuffer_->depthImage_)
+			&(resourcesGBuffer_->depth_)
 		},
 		IsOffscreen());
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
