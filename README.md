@@ -43,7 +43,7 @@ The path tracing process begins with building acceleration structures containing
 
 <img width="850" alt="hardware_raytracing" src="https://github.com/azer89/HelloVulkan/assets/790432/c678d37a-d808-425b-830f-82ec24df7d8d">
 
-<img width="850" alt="hardware_raytracing" src="https://github.com/azer89/HelloVulkan/assets/790432/6d3c392d-e783-4975-8dab-595e3497e6c9">
+<img width="850" alt="hardware_raytracing" src="https://github.com/azer89/HelloVulkan/assets/790432/0b6f368f-943d-4f24-b129-6d8f9af9763b">
 
 </br>
 </br>
