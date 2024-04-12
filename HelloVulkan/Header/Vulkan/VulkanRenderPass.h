@@ -60,7 +60,8 @@ public:
 		uint8_t renderPassBit = 0u,
 		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT);
 
-	void CreateOffScreenMultipleRenderTargets(
+	// Multi Render Target for G Buffer
+	void CreateOffScreenGBuffer(
 		VulkanContext& ctx,
 		const std::vector<VkFormat>& formats,
 		uint8_t renderPassBit = 0u,
@@ -95,6 +96,9 @@ private:
 	VkDevice device_ = nullptr;
 	VkRenderPass handle_ = nullptr;
 	uint8_t renderPassBit_;
+
+	// TODO Refactor this
+	uint32_t colorAttachmentCount_ = 1;
 
 	// Cache for starting the render pass
 	std::vector<VkClearValue> clearValues_;

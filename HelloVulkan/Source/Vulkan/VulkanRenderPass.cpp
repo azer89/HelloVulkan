@@ -436,13 +436,15 @@ void VulkanRenderPass::CreateOffScreenCubemapRenderPass(
 	VkSampleCountFlagBits msaaSamples)
 {
 	device_ = ctx.GetDevice();
+	renderPassBit_ = renderPassBit;
+	colorAttachmentCount_ = 6u;
 
 	constexpr VkImageLayout finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
 	std::vector<VkAttachmentDescription> m_attachments;
 	std::vector<VkAttachmentReference> m_attachmentRefs;
 
-	for (int face = 0; face < 6; ++face)
+	for (int face = 0; face < colorAttachmentCount_; ++face)
 	{
 		VkAttachmentDescription info =
 		{
@@ -489,15 +491,18 @@ void VulkanRenderPass::CreateOffScreenCubemapRenderPass(
 	VK_CHECK(vkCreateRenderPass(ctx.GetDevice(), &createInfo, nullptr, &handle_));
 }
 
-void VulkanRenderPass::CreateOffScreenMultipleRenderTargets(
+void VulkanRenderPass::CreateOffScreenGBuffer(
 	VulkanContext& ctx,
 	const std::vector<VkFormat>& formats,
 	uint8_t renderPassBit,
 	VkSampleCountFlagBits msaaSamples)
 {
 	device_ = ctx.GetDevice();
+	renderPassBit_ = renderPassBit;
+	colorAttachmentCount_ = static_cast<uint32_t>(formats.size());
 
-	constexpr VkImageLayout finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+	const bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
+	const bool clearDepth = renderPassBit_ & RenderPassBit::DepthClear;
 
 	std::vector<VkAttachmentDescription> attachments;
 	std::vector<VkAttachmentReference> attachmentRefs;
@@ -509,30 +514,61 @@ void VulkanRenderPass::CreateOffScreenMultipleRenderTargets(
 			.flags = 0u,
 			.format = formats[i],
 			.samples = msaaSamples,
-			.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+			.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
 			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 			.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 			.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-			.finalLayout = finalLayout,
+			.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+			.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 		};
 
 		VkAttachmentReference ref =
 		{
 			.attachment = static_cast<uint32_t>(i),
-			.layout = finalLayout
+			.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 		};
 
 		attachments.push_back(info);
 		attachmentRefs.push_back(ref);
 	}
 
-	VkSubpassDescription subpassDesc =
+	const VkAttachmentDescription depthAttachment = {
+		.flags = 0,
+		.format = ctx.GetDepthFormat(),
+		.samples = msaaSamples,
+		.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+		.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+		.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+	};
+
+	const VkAttachmentReference depthAttachmentRef = {
+		.attachment = static_cast<uint32_t>(attachments.size()),
+		.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+	};
+
+	attachments.push_back(depthAttachment);
+
+	VkSubpassDependency dependency =
+	{
+		.srcSubpass = VK_SUBPASS_EXTERNAL,
+		.dstSubpass = 0,
+		.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+		.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+		.srcAccessMask = 0,
+		.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+		.dependencyFlags = 0
+	};
+
+	VkSubpassDescription subpass =
 	{
 		.flags = 0u,
 		.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
 		.colorAttachmentCount = static_cast<uint32_t>(attachmentRefs.size()),
 		.pColorAttachments = attachmentRefs.data(),
+		.pDepthStencilAttachment = &depthAttachmentRef,
 	};
 
 	const VkRenderPassCreateInfo createInfo =
@@ -543,7 +579,9 @@ void VulkanRenderPass::CreateOffScreenMultipleRenderTargets(
 		.attachmentCount = static_cast<uint32_t>(attachments.size()),
 		.pAttachments = attachments.data(),
 		.subpassCount = 1u,
-		.pSubpasses = &subpassDesc,
+		.pSubpasses = &subpass,
+		.dependencyCount = 1u,
+		.pDependencies = &dependency
 	};
 
 	VK_CHECK(vkCreateRenderPass(ctx.GetDevice(), &createInfo, nullptr, &handle_));
@@ -559,7 +597,10 @@ void VulkanRenderPass::CreateBeginInfo()
 
 	if (clearColor)
 	{
-		clearValues_.push_back({ .color = { 1.0f, 1.0f, 1.0f, 1.0f} });
+		for (uint32_t i = 0; i < colorAttachmentCount_; ++i)
+		{
+			clearValues_.push_back({ .color = { 1.0f, 1.0f, 1.0f, 1.0f} });
+		}
 	}
 
 	if (clearDepth)

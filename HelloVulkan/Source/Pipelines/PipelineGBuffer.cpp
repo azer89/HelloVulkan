@@ -5,29 +5,30 @@ PipelineGBuffer::PipelineGBuffer(VulkanContext& ctx,
 	ResourcesGBuffer* resourcesGBuffer,
 	uint8_t renderBit) :
 	PipelineBase(ctx,
-	{
-		.type_ = PipelineType::GraphicsOffScreen,
-		.vertexBufferBind_ = false,
-	}),
-	scene_(scene),
-	resourcesGBuffer_(resourcesGBuffer)
+		{
+			.type_ = PipelineType::GraphicsOffScreen,
+			.vertexBufferBind_ = false,
+		}),
+		scene_(scene),
+		resourcesGBuffer_(resourcesGBuffer)
 {
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
 	CreateBDABuffer(ctx); // Buffer device address
 	CreateDescriptor(ctx);
-	renderPass_.CreateOffScreenMultipleRenderTargets(
+	renderPass_.CreateOffScreenGBuffer(
 		ctx,
 		{
 			resourcesGBuffer_->position_.imageFormat_,
 			resourcesGBuffer_->normal_.imageFormat_
 		},
-		renderBit);
+		renderBit | RenderPassBit::ColorClear | RenderPassBit::DepthClear);
 	framebuffer_.CreateResizeable(
 		ctx,
 		renderPass_.GetHandle(),
 		{
 			&(resourcesGBuffer_->position_),
-			&(resourcesGBuffer_->normal_)
+			&(resourcesGBuffer_->normal_),
+			&(resourcesGBuffer_->depthImage_)
 		},
 		IsOffscreen());
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);

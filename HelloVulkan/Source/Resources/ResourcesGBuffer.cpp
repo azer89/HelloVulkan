@@ -20,6 +20,7 @@ void ResourcesGBuffer::Destroy()
 	position_.Destroy();
 	normal_.Destroy();
 	noise_.Destroy();
+	depthImage_.Destroy();
 	kernel_.Destroy();
 }
 
@@ -61,6 +62,7 @@ void ResourcesGBuffer::Create(VulkanContext& ctx)
 		1u);
 	CreateSampler(ctx, &(position_.defaultImageSampler_));
 	position_.SetDebugName(ctx, "G_Buffer_Position");
+	position_.TransitionLayout(ctx, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
 	// Normal buffer
 	normal_.CreateImage(
@@ -86,6 +88,7 @@ void ResourcesGBuffer::Create(VulkanContext& ctx)
 		1u);
 	CreateSampler(ctx, &(normal_.defaultImageSampler_));
 	normal_.SetDebugName(ctx, "G_Buffer_Normal");
+	normal_.TransitionLayout(ctx, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
 	// Needed for depth test
 	depthImage_.CreateDepthResources(
@@ -95,6 +98,7 @@ void ResourcesGBuffer::Create(VulkanContext& ctx)
 		1u, // layerCount
 		VK_SAMPLE_COUNT_1_BIT);
 	depthImage_.SetDebugName(ctx, "Depth_Image");
+	depthImage_.TransitionLayout(ctx, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
 	// Noise texture
 	if (noise_.image_ == nullptr)
