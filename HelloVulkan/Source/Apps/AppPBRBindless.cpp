@@ -108,7 +108,7 @@ void AppPBRBindless::UpdateUI()
 
 	for (auto& pipeline : pipelines_)
 	{
-		pipeline->UpdateFromIUData(vulkanContext_, uiData_);
+		pipeline->UpdateFromUIData(vulkanContext_, uiData_);
 	}
 }
 

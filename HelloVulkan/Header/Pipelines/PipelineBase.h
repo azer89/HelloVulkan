@@ -38,7 +38,7 @@ public:
 		VulkanContext& ctx, 
 		VkCommandBuffer commandBuffer) = 0;
 
-	virtual void UpdateFromIUData(VulkanContext& ctx, UIData& uiData)
+	virtual void UpdateFromUIData(VulkanContext& ctx, UIData& uiData)
 	{
 	}
 
