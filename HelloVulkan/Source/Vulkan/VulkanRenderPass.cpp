@@ -489,6 +489,66 @@ void VulkanRenderPass::CreateOffScreenCubemapRenderPass(
 	VK_CHECK(vkCreateRenderPass(ctx.GetDevice(), &createInfo, nullptr, &handle_));
 }
 
+void VulkanRenderPass::CreateOffScreenMultipleRenderTargets(
+	VulkanContext& ctx,
+	const std::vector<VkFormat>& formats,
+	uint8_t renderPassBit = 0u,
+	VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT)
+{
+	device_ = ctx.GetDevice();
+
+	constexpr VkImageLayout finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+	std::vector<VkAttachmentDescription> attachments;
+	std::vector<VkAttachmentReference> attachmentRefs;
+
+	for (int i = 0; i < formats.size(); ++i)
+	{
+		VkAttachmentDescription info =
+		{
+			.flags = 0u,
+			.format = formats[i],
+			.samples = msaaSamples,
+			.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+			.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+			.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+			.finalLayout = finalLayout,
+		};
+
+		VkAttachmentReference ref =
+		{
+			.attachment = static_cast<uint32_t>(i),
+			.layout = finalLayout
+		};
+
+		attachments.push_back(info);
+		attachmentRefs.push_back(ref);
+	}
+
+	VkSubpassDescription subpassDesc =
+	{
+		.flags = 0u,
+		.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+		.colorAttachmentCount = static_cast<uint32_t>(attachmentRefs.size()),
+		.pColorAttachments = attachmentRefs.data(),
+	};
+
+	const VkRenderPassCreateInfo createInfo =
+	{
+		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0u,
+		.attachmentCount = static_cast<uint32_t>(attachments.size()),
+		.pAttachments = attachments.data(),
+		.subpassCount = 1u,
+		.pSubpasses = &subpassDesc,
+	};
+
+	VK_CHECK(vkCreateRenderPass(ctx.GetDevice(), &createInfo, nullptr, &handle_));
+}
+
 void VulkanRenderPass::CreateBeginInfo()
 {
 	const bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;

@@ -27,6 +27,8 @@ public:
 	VulkanRenderPass() = default;
 	~VulkanRenderPass() = default;
 
+	// TODO Remove "RenderPass" wording at the end of the functions  
+
 	void CreateOnScreenRenderPass(
 		VulkanContext& ctx, 
 		uint8_t renderPassBit = 0u,
@@ -55,6 +57,12 @@ public:
 	void CreateOffScreenCubemapRenderPass(
 		VulkanContext& ctx, 
 		VkFormat cubeFormat,
+		uint8_t renderPassBit = 0u,
+		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT);
+
+	void CreateOffScreenMultipleRenderTargets(
+		VulkanContext& ctx,
+		const std::vector<VkFormat>& formats,
 		uint8_t renderPassBit = 0u,
 		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT);
 
