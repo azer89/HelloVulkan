@@ -6,11 +6,11 @@
 #include "PipelineImGui.h"
 #include "ResourcesLight.h"
 #include "ResourcesShadow.h"
+#include "ResourcesGBuffer.h"
 #include "PipelineShadow.h"
 #include "PipelinePBRShadow.h"
 #include "PipelineLightRender.h"
 
-// STL
 #include <memory>
 
 /*
@@ -37,6 +37,7 @@ private:
 	std::unique_ptr<Scene> scene_ = nullptr;
 	ResourcesLight* resourcesLight_ = nullptr;
 	ResourcesShadow* resourcesShadow_ = nullptr;
+	ResourcesGBuffer* resourcesGBuffer_ = nullptr;
 };
 
 #endif

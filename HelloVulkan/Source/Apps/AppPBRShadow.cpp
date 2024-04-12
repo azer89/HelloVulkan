@@ -24,6 +24,9 @@ void AppPBRShadow::Init()
 	resourcesShadow_ = AddResources<ResourcesShadow>();
 	resourcesShadow_->CreateSingleShadowMap(vulkanContext_);
 
+	resourcesGBuffer_ = AddResources<ResourcesGBuffer>();
+	resourcesGBuffer_->Create(vulkanContext_);
+
 	InitLights();
 
 	// Initialize attachments

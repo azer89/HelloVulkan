@@ -4,6 +4,7 @@
 #include "glm/glm.hpp"
 
 #include "VulkanContext.h"
+#include "VulkanImage.h"
 #include "VulkanBuffer.h"
 #include "ResourcesBase.h"
 
@@ -19,6 +20,18 @@ public:
 	void UpdateFromUIData(VulkanContext& ctx, UIData& uiData) override
 	{
 	}
+
+private:
+	void CreateSampler(VulkanContext& ctx, VkSampler* sampler);
+
+public:
+	VulkanImage position_;
+	VulkanImage normal_;
+	VulkanImage noise_;
+	VulkanBuffer kernel_;
+
+private:
+	std::vector<glm::vec3> ssaoKernel_ = {};
 };
 
 #endif
