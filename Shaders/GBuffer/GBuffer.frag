@@ -38,5 +38,5 @@ void main()
 
 	// TODO gl_FragCoord.z is always 1.0 for some reason
 	gPosition = vec4(viewPos, LinearDepth(fragPos.z, camUBO.cameraNear, camUBO.cameraFar));
-	gNormal = normalize(normal);
+	gNormal = normalize(normal) * 0.5 + 0.5;
 }
