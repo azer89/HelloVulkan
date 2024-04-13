@@ -43,6 +43,7 @@ void ResourcesGBuffer::Create(VulkanContext& ctx)
 	position_.Destroy();
 	normal_.Destroy();
 	depth_.Destroy();
+	ssao_.Destroy();
 
 	// Position buffer
 	position_.CreateImage(
