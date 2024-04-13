@@ -19,7 +19,7 @@ void main()
 
 	vec4 fragPos = texture(gPosition, texCoord).xyzw;
 	vec3 normal = normalize(texture(gNormal, texCoord).rgb);
-	vec3 randomVec = normalize(texture(texNoise, texCoord * noiseScale).xyz);
+	vec3 randomVec = normalize(vec3(texture(texNoise, texCoord * noiseScale).xy, 0.0));
 
 	vec3 tangent = normalize(randomVec - normal * dot(randomVec, normal));
 	vec3 bitangent = cross(normal, tangent);

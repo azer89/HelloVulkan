@@ -69,7 +69,6 @@ void ResourcesGBuffer::Create(VulkanContext& ctx)
 		1u);
 	CreateSampler(ctx, &(position_.defaultImageSampler_));
 	position_.SetDebugName(ctx, "G_Buffer_Position");
-	//position_.TransitionLayout(ctx, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
 	// Normal buffer
 	normal_.CreateImage(
@@ -95,7 +94,6 @@ void ResourcesGBuffer::Create(VulkanContext& ctx)
 		1u);
 	CreateSampler(ctx, &(normal_.defaultImageSampler_));
 	normal_.SetDebugName(ctx, "G_Buffer_Normal");
-	//normal_.TransitionLayout(ctx, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
 	// Normal buffer
 	ssao_.CreateImage(
@@ -130,19 +128,16 @@ void ResourcesGBuffer::Create(VulkanContext& ctx)
 		1u, // layerCount
 		VK_SAMPLE_COUNT_1_BIT);
 	depth_.SetDebugName(ctx, "Depth_Image");
-	//depth_.TransitionLayout(ctx, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
 	// Noise texture
 	if (noise_.image_ == nullptr)
 	{
-		std::vector<glm::vec4> ssaoNoise(SSAO_NOISE_LENGTH);
+		std::vector<glm::vec2> ssaoNoise(SSAO_NOISE_LENGTH);
 		for (uint32_t i = 0; i < SSAO_NOISE_LENGTH; ++i)
 		{
-			ssaoNoise[i] = glm::vec4(
+			ssaoNoise[i] = glm::vec2(
 				Utility::RandomNumber() * 2.0 - 1.0,
-				Utility::RandomNumber() * 2.0 - 1.0,
-				0.0f,
-				0.0f);
+				Utility::RandomNumber() * 2.0 - 1.0);
 		}
 		noise_.CreateImageFromData(
 			ctx,
@@ -151,10 +146,10 @@ void ResourcesGBuffer::Create(VulkanContext& ctx)
 			SSAO_NOISE_DIM, // texHeight
 			1u, // mipmapCount
 			1u, // layerCount
-			VK_FORMAT_R32G32B32A32_SFLOAT);
+			VK_FORMAT_R32G32_SFLOAT);
 		noise_.CreateImageView(
 			ctx,
-			VK_FORMAT_R32G32B32A32_SFLOAT,
+			VK_FORMAT_R32G32_SFLOAT,
 			VK_IMAGE_ASPECT_COLOR_BIT,
 			VK_IMAGE_VIEW_TYPE_2D,
 			0u,
