@@ -140,14 +140,14 @@ void AppPBRShadow::UpdateUI()
 	ImGui::SeparatorText("Shading");
 	imguiPtr_->ImGuiShowPBRConfig(&uiData_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
 
-	ImGui::SeparatorText("Shadow mapping");
+	ImGui::SeparatorText("Shadow map");
 	ImGui::SliderFloat("Min Bias", &uiData_.shadowMinBias_, 0.f, 0.01f);
 	ImGui::SliderFloat("Max Bias", &uiData_.shadowMaxBias_, 0.f, 0.01f);
 	ImGui::SliderFloat("Near Plane", &uiData_.shadowNearPlane_, 0.1f, 50.0f);
 	ImGui::SliderFloat("Far Plane", &uiData_.shadowFarPlane_, 10.0f, 150.0f);
 	ImGui::SliderFloat("Ortho Size", &uiData_.shadowOrthoSize_, 10.0f, 30.0f);
 
-	ImGui::SeparatorText("Light position");
+	ImGui::SeparatorText("Shadow caster");
 	ImGui::SliderFloat("X", &(uiData_.shadowCasterPosition_[0]), -10.0f, 10.0f);
 	ImGui::SliderFloat("Y", &(uiData_.shadowCasterPosition_[1]), 15.0f, 60.0f);
 	ImGui::SliderFloat("Z", &(uiData_.shadowCasterPosition_[2]), -10.0f, 10.0f);
@@ -155,6 +155,7 @@ void AppPBRShadow::UpdateUI()
 	ImGui::SeparatorText("SSAO");
 	ImGui::SliderFloat("Radius", &uiData_.ssaoRadius_, 0.0f, 10.0f);
 	ImGui::SliderFloat("Bias", &uiData_.ssaoBias_, 0.0f, 0.5f);
+	ImGui::SliderFloat("Power", &uiData_.ssaoPower_, 0.1f, 5.0f);
 
 	imguiPtr_->ImGuizmoManipulateScene(vulkanContext_, &uiData_);
 

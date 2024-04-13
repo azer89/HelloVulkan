@@ -16,15 +16,16 @@ public:
 		uint8_t renderBit = 0u);
 	~PipelineSSAO();
 
-	void SetRadiusAndBias(float radius, float bias)
+	void SetParameters(float radius, float bias, float power)
 	{
 		radius_ = radius;
 		bias_ = bias;
+		power_ = power;
 	}
 
 	void UpdateFromUIData(VulkanContext& ctx, UIData& uiData) override
 	{
-		SetRadiusAndBias(uiData.ssaoRadius_, uiData.ssaoBias_);
+		SetParameters(uiData.ssaoRadius_, uiData.ssaoBias_, uiData.ssaoPower_);
 	}
 
 	void OnWindowResized(VulkanContext& ctx) override;
@@ -36,6 +37,7 @@ public:
 			.projection = ubo.projection,
 			.radius = radius_,
 			.bias = bias_,
+			.power = power_,
 			.screenWidth = static_cast<float>(ctx.GetSwapchainWidth()),
 			.screenHeight = static_cast<float>(ctx.GetSwapchainHeight()),
 			.noiseSize = resourcesGBuffer_->GetNoiseDimension()
@@ -54,6 +56,7 @@ private:
 private:
 	float radius_ = 0.0f;
 	float bias_ = 0.0f;
+	float power_ = 0.0f;
 
 	ResourcesGBuffer* resourcesGBuffer_ = nullptr;
 	std::vector<VulkanBuffer> ssaoUboBuffers_ = {};

@@ -106,6 +106,8 @@ struct SSAOUBO
 	alignas(4)
 	float bias;
 	alignas(4)
+	float power;
+	alignas(4)
 	float screenWidth;
 	alignas(4)
 	float screenHeight;

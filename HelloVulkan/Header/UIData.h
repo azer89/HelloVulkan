@@ -62,6 +62,7 @@ public:
 	// SSAO
 	float ssaoRadius_ = 0.5f;
 	float ssaoBias_ = 0.025f;
+	float ssaoPower_ = 1.0f;
 
 public:
 	bool GizmoCanSelect() const { return mouseLeftPressed_ && gizmoMode_ != 0; }

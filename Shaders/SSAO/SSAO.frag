@@ -52,5 +52,5 @@ void main()
 
 	occlusion = 1.0 - (occlusion / kernels.length());
 
-	fragColor = occlusion;
+	fragColor = pow(occlusion, ubo.power);
 }
