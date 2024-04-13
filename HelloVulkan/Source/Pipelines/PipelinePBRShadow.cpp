@@ -192,7 +192,8 @@ void PipelinePBRShadow::UpdateDescriptorSets(VulkanContext& ctx)
 	descriptorInfo_.UpdateImage(&(resourcesGBuffer_->ssao_), 9); // 9
 	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
 	{
-		// Need to update everything because VulkanDescriptorInfo::writes_ is not double buffered
+		// Need to update all double-buffered resources because 
+		// VulkanDescriptorInfo::writes_ itself is not double buffered
 		descriptorInfo_.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
 		descriptorInfo_.UpdateBuffer(&(shadowMapConfigUBOBuffers_[i]), 1);
 		descriptorInfo_.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 2);

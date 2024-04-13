@@ -92,7 +92,6 @@ void PipelineSSAO::AllocateDescriptorSets(VulkanContext& ctx)
 	descriptorSets_.resize(AppConfig::FrameCount);
 	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
 	{
-		
 		descriptor_.AllocateSet(ctx, &(descriptorSets_[i]));
 	}
 }
@@ -104,6 +103,8 @@ void PipelineSSAO::UpdateDescriptorSets(VulkanContext& ctx)
 	descriptorInfo_.UpdateImage(&(resourcesGBuffer_->normal_), 3); // 3
 	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
 	{
+		// Need to update all double-buffered resources because 
+		// VulkanDescriptorInfo::writes_ itself is not double buffered
 		descriptorInfo_.UpdateBuffer(&(ssaoUboBuffers_[i]), 0);
 		descriptor_.UpdateSet(ctx, descriptorInfo_, &(descriptorSets_[i]));
 	}
