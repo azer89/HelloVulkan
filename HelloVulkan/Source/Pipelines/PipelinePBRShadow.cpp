@@ -183,18 +183,19 @@ void PipelinePBRShadow::AllocateDescriptorSets(VulkanContext& ctx)
 	descriptorSets_.resize(AppConfig::FrameCount);
 	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
 	{
-		descriptorInfo_.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
-		descriptorInfo_.UpdateBuffer(&(shadowMapConfigUBOBuffers_[i]), 1);
-		descriptorInfo_.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 2);
 		descriptor_.AllocateSet(ctx, &(descriptorSets_[i]));
 	}
 }
 
 void PipelinePBRShadow::UpdateDescriptorSets(VulkanContext& ctx)
 {
-	descriptorInfo_.UpdateImage(&(resourcesGBuffer_->ssao_), 9);
+	descriptorInfo_.UpdateImage(&(resourcesGBuffer_->ssao_), 9); // 9
 	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
 	{
+		// Need to update everything because VulkanDescriptorInfo::writes_ is not double buffered
+		descriptorInfo_.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
+		descriptorInfo_.UpdateBuffer(&(shadowMapConfigUBOBuffers_[i]), 1);
+		descriptorInfo_.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 2);
 		descriptor_.UpdateSet(ctx, descriptorInfo_, &(descriptorSets_[i]));
 	}
 }
