@@ -18,6 +18,8 @@ public:
 	void Destroy() override;
 	void OnWindowResized(VulkanContext& ctx) override;
 
+	float GetNoiseDimension() const;
+
 	void UpdateFromUIData(VulkanContext& ctx, UIData& uiData) override
 	{
 	}

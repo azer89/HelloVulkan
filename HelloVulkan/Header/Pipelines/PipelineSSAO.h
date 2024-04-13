@@ -4,6 +4,9 @@
 #include "PipelineBase.h"
 #include "ResourcesGBuffer.h"
 #include "Scene.h"
+#include "UBOs.h"
+
+#include <array>
 
 class PipelineSSAO final : public PipelineBase
 {
@@ -24,17 +27,33 @@ public:
 		SetRadiusAndBias(uiData.ssaoRadius_, uiData.ssaoBias_);
 	}
 
+	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override 
+	{
+		SSAOUBO ssaoUbo =
+		{
+			.projection = ubo.projection,
+			.radius = radius_,
+			.bias = bias_,
+			.screenWidth = static_cast<float>(ctx.GetSwapchainWidth()),
+			.screenHeight = static_cast<float>(ctx.GetSwapchainHeight()),
+			.noiseSize = resourcesGBuffer_->GetNoiseDimension()
+		};
+		const uint32_t frameIndex = ctx.GetFrameIndex();
+		ssaoUboBuffers_[frameIndex].UploadBufferData(ctx, &ssaoUbo, sizeof(SSAOUBO));
+	}
+
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
 private:
 	void CreateDescriptor(VulkanContext& ctx);
 
 private:
-	float radius_;
-	float bias_;
+	float radius_ = 0.0f;
+	float bias_ = 0.0f;
 
-	ResourcesGBuffer* resourcesGBuffer_;
-	std::vector<VkDescriptorSet> descriptorSets_;
+	ResourcesGBuffer* resourcesGBuffer_ = nullptr;
+	std::vector<VulkanBuffer> ssaoUboBuffers_ = {};
+	std::vector<VkDescriptorSet> descriptorSets_ = {};
 };
 
 #endif

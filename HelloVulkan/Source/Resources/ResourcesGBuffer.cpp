@@ -25,6 +25,11 @@ void ResourcesGBuffer::Destroy()
 	kernel_.Destroy();
 }
 
+float ResourcesGBuffer::GetNoiseDimension() const
+{
+	return static_cast<float>(SSAO_NOISE_DIM);
+}
+
 void ResourcesGBuffer::OnWindowResized(VulkanContext& ctx)
 {
 	Create(ctx);
