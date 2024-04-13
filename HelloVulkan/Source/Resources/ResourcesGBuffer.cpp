@@ -181,12 +181,12 @@ void ResourcesGBuffer::Create(VulkanContext& ctx)
 			// Scale samples s.t. they're more aligned to center of kernel
 			scale = Utility::Lerp(0.1f, 1.0f, scale * scale);
 			sample *= scale;
-			ssaoKernel_[i] = sample;
+			ssaoKernel_[i] = glm::vec4(sample, 0.0); // vec4 because need padding
 		}
-		const VkDeviceSize meshDataBufferSize = sizeof(glm::vec3) * ssaoKernel_.size();
+		const VkDeviceSize kernelBufferSize = sizeof(glm::vec4) * ssaoKernel_.size();
 		kernel_.CreateGPUOnlyBuffer(
 			ctx,
-			meshDataBufferSize,
+			kernelBufferSize,
 			ssaoKernel_.data(),
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT);
 	}
