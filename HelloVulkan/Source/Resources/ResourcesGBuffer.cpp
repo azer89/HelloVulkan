@@ -2,7 +2,7 @@
 #include "Utility.h"
 #include "VulkanCheck.h"
 
-constexpr uint32_t SSAO_NOISE_DIM = 4;
+constexpr uint32_t SSAO_NOISE_DIM = 16;
 constexpr uint32_t SSAO_NOISE_LENGTH = SSAO_NOISE_DIM * SSAO_NOISE_DIM;
 constexpr uint32_t SSAO_KERNEL_SIZE = 64;
 
