@@ -72,6 +72,7 @@ void AppPBRShadow::Init()
 		// This is the first offscreen render pass so we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
 	gPtr_ = AddPipeline<PipelineGBuffer>(vulkanContext_, scene_.get(), resourcesGBuffer_);
+	ssaoPtr_ = AddPipeline<PipelineSSAO>(vulkanContext_, resourcesGBuffer_);
 	shadowPtr_ = AddPipeline<PipelineShadow>(vulkanContext_, scene_.get(), resourcesShadow_);
 	// Opaque pass
 	pbrOpaquePtr_ = AddPipeline<PipelinePBRShadow>(

@@ -49,6 +49,12 @@ public:
 		uint8_t renderPassBit = 0u,
 		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT);
 
+	void CreateOffScreenColorOnly(
+		VulkanContext& ctx,
+		VkFormat imageFormat,
+		uint8_t renderPassBit = 0u,
+		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT);
+
 	void CreateOffScreenRenderPass(
 		VulkanContext& ctx,
 		uint8_t renderPassBit = 0u,

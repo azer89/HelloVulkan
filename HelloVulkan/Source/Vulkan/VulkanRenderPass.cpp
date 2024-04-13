@@ -434,6 +434,79 @@ void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(
 	CreateBeginInfo();
 }
 
+void VulkanRenderPass::CreateOffScreenColorOnly(
+	VulkanContext& ctx,
+	VkFormat imageFormat,
+	uint8_t renderPassBit,
+	VkSampleCountFlagBits msaaSamples)
+{
+	device_ = ctx.GetDevice();
+	renderPassBit_ = renderPassBit;
+	colorAttachmentCount_ = 1u;
+
+	const bool clearColor = renderPassBit_ & RenderPassBit::ColorClear;
+
+	VkAttachmentDescription colorAttachment = {
+		.flags = 0,
+		.format = imageFormat,
+		.samples = msaaSamples,
+		.loadOp = clearColor ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD,
+		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+		.initialLayout = clearColor ?
+			VK_IMAGE_LAYOUT_UNDEFINED :
+			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+	};
+
+	constexpr VkAttachmentReference colorAttachmentRef = {
+		.attachment = 0,
+		.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+	};
+
+	VkSubpassDependency dependency =
+	{
+		.srcSubpass = VK_SUBPASS_EXTERNAL,
+		.dstSubpass = 0,
+		.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+		.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+		.srcAccessMask = 0,
+		.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+		.dependencyFlags = 0
+	};
+
+	VkSubpassDescription subpass = {
+		.flags = 0,
+		.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+		.inputAttachmentCount = 0,
+		.pInputAttachments = nullptr,
+		.colorAttachmentCount = 1,
+		.pColorAttachments = &colorAttachmentRef,
+		.pResolveAttachments = nullptr,
+		.pDepthStencilAttachment = nullptr,
+		.preserveAttachmentCount = 0,
+		.pPreserveAttachments = nullptr
+	};
+
+	const VkRenderPassCreateInfo renderPassInfo = {
+		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0,
+		.attachmentCount = 1u,
+		.pAttachments = &colorAttachment,
+		.subpassCount = 1,
+		.pSubpasses = &subpass,
+		.dependencyCount = 1u,
+		.pDependencies = &dependency
+	};
+
+	VK_CHECK(vkCreateRenderPass(ctx.GetDevice(), &renderPassInfo, nullptr, &handle_));
+
+	// Cache VkRenderPassBeginInfo
+	CreateBeginInfo();
+}
+
 void VulkanRenderPass::CreateOffScreenCubemapRenderPass(
 	VulkanContext& ctx,
 	VkFormat cubeFormat,

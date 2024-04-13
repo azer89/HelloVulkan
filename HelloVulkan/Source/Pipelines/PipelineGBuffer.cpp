@@ -80,6 +80,23 @@ void PipelineGBuffer::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comm
 		sizeof(VkDrawIndirectCommand));
 
 	vkCmdEndRenderPass(commandBuffer);
+
+	//resourcesGBuffer_->position_.TransitionLayout(ctx, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+	//resourcesGBuffer_->normal_.TransitionLayout(ctx, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+	VulkanImage::TransitionLayoutCommand(
+		commandBuffer,
+		resourcesGBuffer_->position_.image_,
+		resourcesGBuffer_->position_.imageFormat_,
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+	VulkanImage::TransitionLayoutCommand(
+		commandBuffer,
+		resourcesGBuffer_->normal_.image_,
+		resourcesGBuffer_->normal_.imageFormat_,
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 }
 
 void PipelineGBuffer::CreateBDABuffer(VulkanContext& ctx)
