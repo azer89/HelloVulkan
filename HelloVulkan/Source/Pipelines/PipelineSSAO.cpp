@@ -57,6 +57,13 @@ void PipelineSSAO::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer command
 	ctx.InsertDebugLabel(commandBuffer, "PipelineSSAO", 0xff9999ff);
 	vkCmdDraw(commandBuffer, 3, 1, 0, 0);
 	vkCmdEndRenderPass(commandBuffer);
+
+	VulkanImage::TransitionLayoutCommand(
+		commandBuffer,
+		resourcesGBuffer_->ssao_.image_,
+		resourcesGBuffer_->ssao_.imageFormat_,
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 }
 
 void PipelineSSAO::CreateDescriptor(VulkanContext& ctx)

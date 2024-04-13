@@ -35,7 +35,8 @@ layout(location = 0) in vec3 worldPos;
 layout(location = 1) in vec2 texCoord;
 layout(location = 2) in vec3 normal;
 layout(location = 3) in vec4 shadowPos;
-layout(location = 4) in flat uint meshIndex;
+layout(location = 4) in vec4 fragPos;
+layout(location = 5) in flat uint meshIndex;
 
 layout(location = 0) out vec4 fragColor;
 
@@ -49,9 +50,10 @@ layout(set = 0, binding = 5) uniform samplerCube specularMap;
 layout(set = 0, binding = 6) uniform samplerCube diffuseMap;
 layout(set = 0, binding = 7) uniform sampler2D brdfLUT;
 layout(set = 0, binding = 8) uniform sampler2D shadowMap;
+layout(set = 0, binding = 9) uniform sampler2D ssaoTex;
 
 // NOTE This requires descriptor indexing feature
-layout(set = 0, binding = 9) uniform sampler2D pbrTextures[];
+layout(set = 0, binding = 10) uniform sampler2D pbrTextures[];
 
 // PCF or Poisson
 #include <ShadowMapping/Shadow.glsl>
@@ -85,6 +87,10 @@ void main()
 	float roughness = texture(pbrTextures[nonuniformEXT(mData.roughness)], texCoord).g;
 	float ao = texture(pbrTextures[nonuniformEXT(mData.ao)], texCoord).r;
 	float alphaRoughness = AlphaDirectLighting(roughness);
+
+	vec2 fragCoord = (fragPos.xy / fragPos.w);
+	vec2 screenCoord = fragCoord * 0.5 + 0.5;
+	float ssao = texture(ssaoTex, screenCoord).r;
 
 	vec3 N = normal;
 	if (length(tangentNormal) > 0)
@@ -132,7 +138,7 @@ void main()
 
 	float shadow = ShadowPoisson(shadowPos / shadowPos.w);
 
-	vec3 color = ambient + emissive + (Lo * shadow);
+	vec3 color = (ambient) + emissive + (Lo * shadow);
 
 	fragColor = vec4(color, 1.0);
 }

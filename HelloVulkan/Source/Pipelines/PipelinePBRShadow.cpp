@@ -20,6 +20,7 @@ PipelinePBRShadow::PipelinePBRShadow(
 	ResourcesIBL* resourcesIBL,
 	ResourcesShadow* resourcesShadow,
 	ResourcesShared* resourcesShared,
+	ResourcesGBuffer* resourcesGBuffer,
 	MaterialType materialType,
 	uint8_t renderBit) :
 	PipelineBase(ctx, 
@@ -33,6 +34,7 @@ PipelinePBRShadow::PipelinePBRShadow(
 	resourcesLight_(resourcesLight),
 	resourcesIBL_(resourcesIBL),
 	resourcesShadow_(resourcesShadow),
+	resourcesGBuffer_(resourcesGBuffer),
 	materialType_(materialType),
 	materialOffset_(0),
 	materialDrawCount_(0)
@@ -162,7 +164,8 @@ void PipelinePBRShadow::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddImage(&(resourcesIBL_->diffuseCubemap_)); // 6
 	dsInfo.AddImage(&(resourcesIBL_->brdfLut_)); // 7
 	dsInfo.AddImage(&(resourcesShadow_->shadowMap_)); // 8
-	dsInfo.AddImageArray(scene_->GetImageInfos()); // 9
+	dsInfo.AddImage(&(resourcesGBuffer_->ssao_)); // 9
+	dsInfo.AddImageArray(scene_->GetImageInfos()); // 10
 
 	// Pool and layout
 	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);

@@ -81,9 +81,6 @@ void PipelineGBuffer::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer comm
 
 	vkCmdEndRenderPass(commandBuffer);
 
-	//resourcesGBuffer_->position_.TransitionLayout(ctx, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-	//resourcesGBuffer_->normal_.TransitionLayout(ctx, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
 	VulkanImage::TransitionLayoutCommand(
 		commandBuffer,
 		resourcesGBuffer_->position_.image_,

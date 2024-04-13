@@ -57,6 +57,7 @@ void AppSkinning::Init()
 		resourcesIBL_,
 		resourcesShadow_,
 		resourcesShared_,
+		nullptr, // TODO
 		MaterialType::Opaque);
 	// Transparent pass
 	pbrTransparentPtr_ = AddPipeline<PipelinePBRShadow>(
@@ -66,6 +67,7 @@ void AppSkinning::Init()
 		resourcesIBL_,
 		resourcesShadow_,
 		resourcesShared_,
+		nullptr, // TODO
 		MaterialType::Transparent);
 	lightPtr_ = AddPipeline<PipelineLightRender>(vulkanContext_, resourcesLight_, resourcesShared_);
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_

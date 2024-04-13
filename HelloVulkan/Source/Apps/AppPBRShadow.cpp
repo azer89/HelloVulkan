@@ -82,6 +82,7 @@ void AppPBRShadow::Init()
 		resourcesIBL_,
 		resourcesShadow_,
 		resourcesShared_,
+		resourcesGBuffer_,
 		MaterialType::Opaque);
 	// Transparent pass
 	pbrTransparentPtr_ = AddPipeline<PipelinePBRShadow>(
@@ -91,6 +92,7 @@ void AppPBRShadow::Init()
 		resourcesIBL_,
 		resourcesShadow_,
 		resourcesShared_,
+		resourcesGBuffer_,
 		MaterialType::Transparent);
 	lightPtr_ = AddPipeline<PipelineLightRender>(vulkanContext_, resourcesLight_, resourcesShared_);
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
