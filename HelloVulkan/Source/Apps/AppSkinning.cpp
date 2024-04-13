@@ -156,7 +156,7 @@ void AppSkinning::UpdateUI()
 
 	// Start
 	imguiPtr_->ImGuiStart();
-	imguiPtr_->ImGuiSetWindow("Compute-based Skinning", 450, 700);
+	imguiPtr_->ImGuiSetWindow("Compute-based Skinning", 450, 750);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 
 	ImGui::Text("Triangle Count: %i", scene_->triangleCount_);

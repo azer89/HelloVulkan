@@ -131,7 +131,7 @@ void AppPBRShadow::UpdateUI()
 	}
 
 	imguiPtr_->ImGuiStart();
-	imguiPtr_->ImGuiSetWindow("Shadow Mapping", 450, 700);
+	imguiPtr_->ImGuiSetWindow("Shadow Mapping", 450, 750);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 
 	ImGui::Text("Triangle Count: %i", scene_->triangleCount_);
