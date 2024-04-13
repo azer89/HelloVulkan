@@ -28,6 +28,9 @@ void AppSkinning::Init()
 	resourcesShadow_ = AddResources<ResourcesShadow>();
 	resourcesShadow_->CreateSingleShadowMap(vulkanContext_);
 
+	resourcesGBuffer_ = AddResources<ResourcesGBuffer>();
+	resourcesGBuffer_->Create(vulkanContext_);
+
 	InitLights();
 
 	// Initialize attachments
@@ -48,6 +51,8 @@ void AppSkinning::Init()
 		// This is the first offscreen render pass so we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
 	AddPipeline<PipelineSkinning>(vulkanContext_, scene_.get());
+	gPtr_ = AddPipeline<PipelineGBuffer>(vulkanContext_, scene_.get(), resourcesGBuffer_);
+	ssaoPtr_ = AddPipeline<PipelineSSAO>(vulkanContext_, resourcesGBuffer_);
 	shadowPtr_ = AddPipeline<PipelineShadow>(vulkanContext_, scene_.get(), resourcesShadow_);
 	// Opaque pass
 	pbrOpaquePtr_ = AddPipeline<PipelinePBRShadow>(
@@ -57,7 +62,7 @@ void AppSkinning::Init()
 		resourcesIBL_,
 		resourcesShadow_,
 		resourcesShared_,
-		nullptr, // TODO
+		resourcesGBuffer_,
 		MaterialType::Opaque);
 	// Transparent pass
 	pbrTransparentPtr_ = AddPipeline<PipelinePBRShadow>(
@@ -67,7 +72,7 @@ void AppSkinning::Init()
 		resourcesIBL_,
 		resourcesShadow_,
 		resourcesShared_,
-		nullptr, // TODO
+		resourcesGBuffer_,
 		MaterialType::Transparent);
 	lightPtr_ = AddPipeline<PipelineLightRender>(vulkanContext_, resourcesLight_, resourcesShared_);
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
@@ -171,6 +176,10 @@ void AppSkinning::UpdateUI()
 	ImGui::SliderFloat("X", &(uiData_.shadowCasterPosition_[0]), -10.0f, 10.0f);
 	ImGui::SliderFloat("Y", &(uiData_.shadowCasterPosition_[1]), 5.0f, 60.0f);
 	ImGui::SliderFloat("Z", &(uiData_.shadowCasterPosition_[2]), -10.0f, 10.0f);
+
+	ImGui::SeparatorText("SSAO");
+	ImGui::SliderFloat("Radius", &uiData_.ssaoRadius_, 0.0f, 10.0f);
+	ImGui::SliderFloat("Bias", &uiData_.ssaoBias_, 0.0f, 0.5f);
 
 	imguiPtr_->ImGuizmoManipulateScene(vulkanContext_, &uiData_);
 	

@@ -9,7 +9,7 @@
 // Entry point
 int main()
 {
-	AppPBRShadow app;
+	AppSkinning app;
 	app.MainLoop();
 	return 0;
 }

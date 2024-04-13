@@ -5,6 +5,9 @@
 #include "Scene.h"
 #include "ResourcesLight.h"
 #include "ResourcesShadow.h"
+#include "ResourcesGBuffer.h"
+#include "PipelineGBuffer.h"
+#include "PipelineSSAO.h"
 #include "PipelineImGui.h"
 #include "PipelineShadow.h"
 #include "PipelinePBRShadow.h"
@@ -28,6 +31,8 @@ public:
 private:
 	PipelineImGui* imguiPtr_ = nullptr;
 	PipelineShadow* shadowPtr_ = nullptr;
+	PipelineGBuffer* gPtr_ = nullptr;
+	PipelineSSAO* ssaoPtr_ = nullptr;
 	PipelinePBRShadow* pbrOpaquePtr_ = nullptr;
 	PipelinePBRShadow* pbrTransparentPtr_ = nullptr;
 	PipelineLightRender* lightPtr_ = nullptr;
@@ -35,6 +40,7 @@ private:
 	std::unique_ptr<Scene> scene_ = nullptr;
 	ResourcesLight* resourcesLight_ = nullptr;
 	ResourcesShadow* resourcesShadow_ = nullptr;
+	ResourcesGBuffer* resourcesGBuffer_ = nullptr;
 };
 
 #endif
