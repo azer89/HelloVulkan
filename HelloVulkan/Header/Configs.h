@@ -14,7 +14,7 @@ namespace AppConfig
 	constexpr uint32_t FrameCount = 2;
 	
 	// TODO: Abstract to a graphics settings struct
-	constexpr VkSampleCountFlagBits MSAACount = VK_SAMPLE_COUNT_4_BIT;
+	constexpr VkSampleCountFlagBits MSAACount = VK_SAMPLE_COUNT_8_BIT;
 	// VK_PRESENT_MODE_FIFO_KHR --> Lock to screen FPS
 	// VK_PRESENT_MODE_MAILBOX_KHR --> Triple buffering
 	constexpr VkPresentModeKHR PresentMode = VK_PRESENT_MODE_FIFO_KHR;
