@@ -120,6 +120,7 @@ void PipelineGBuffer::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 1
 	dsInfo.AddBuffer(&bdaBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 2
+	dsInfo.AddImageArray(scene_->GetImageInfos());
 
 	// Pool and layout
 	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);

@@ -12,6 +12,10 @@ struct CameraUBO
 	glm::mat4 view;
 	alignas(16)
 	glm::vec4 position;
+	alignas(4)
+	float cameraNear;
+	alignas(4)
+	float cameraFar;
 };
 
 // Needed for generating rays

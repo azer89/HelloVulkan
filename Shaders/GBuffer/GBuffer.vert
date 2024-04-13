@@ -8,7 +8,10 @@
 #include <Bindless/BDA.glsl>
 
 layout(location = 0) out vec3 viewPos;
-layout(location = 1) out vec3 normal;
+layout(location = 1) out vec3 fragPos;
+layout(location = 2) out vec3 normal;
+layout(location = 3) out vec2 texCoord;
+layout(location = 4) out flat uint meshIndex;
 
 layout(set = 0, binding = 0) uniform CameraBlock { CameraUBO camUBO; }; // UBO
 layout(set = 0, binding = 1) readonly buffer ModelUBOs { ModelUBO modelUBOs[]; }; // SSBO
@@ -29,5 +32,9 @@ void main()
 	vec4 viewPos4 = camUBO.view * worldPos4;
 	viewPos = viewPos4.xyz;
 	normal = normalMatrix * vertexData.normal;
-	gl_Position =  camUBO.projection * viewPos4;
+	texCoord = vec2(vertexData.uvX, vertexData.uvY);
+	meshIndex = gl_BaseInstance;
+	vec4 fragPos4 = camUBO.projection * viewPos4;
+	fragPos = fragPos.xyz;
+	gl_Position =  fragPos4;
 }
