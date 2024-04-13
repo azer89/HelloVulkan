@@ -27,6 +27,8 @@ public:
 		SetRadiusAndBias(uiData.ssaoRadius_, uiData.ssaoBias_);
 	}
 
+	void OnWindowResized(VulkanContext& ctx) override;
+
 	void SetCameraUBO(VulkanContext& ctx, CameraUBO& ubo) override 
 	{
 		SSAOUBO ssaoUbo =
@@ -46,6 +48,8 @@ public:
 
 private:
 	void CreateDescriptor(VulkanContext& ctx);
+	void AllocateDescriptorSets(VulkanContext& ctx);
+	void UpdateDescriptorSets(VulkanContext& ctx);
 
 private:
 	float radius_ = 0.0f;
@@ -53,6 +57,7 @@ private:
 
 	ResourcesGBuffer* resourcesGBuffer_ = nullptr;
 	std::vector<VulkanBuffer> ssaoUboBuffers_ = {};
+	VulkanDescriptorInfo descriptorInfo_;
 	std::vector<VkDescriptorSet> descriptorSets_ = {};
 };
 

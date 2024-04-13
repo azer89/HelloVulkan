@@ -151,32 +151,50 @@ void PipelinePBRShadow::CreateBDABuffer(VulkanContext& ctx)
 	bdaBuffer_.UploadBufferData(ctx, &bda, bdaSize);
 }
 
+void PipelinePBRShadow::OnWindowResized(VulkanContext& ctx)
+{
+	PipelineBase::OnWindowResized(ctx);
+	UpdateDescriptorSets(ctx);
+}
+
 void PipelinePBRShadow::CreateDescriptor(VulkanContext& ctx)
 {
-	constexpr uint32_t frameCount = AppConfig::FrameCount;
-	VulkanDescriptorInfo dsInfo;
-	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
-	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 1
-	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 2
-	dsInfo.AddBuffer(&bdaBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 3
-	dsInfo.AddBuffer(resourcesLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
-	dsInfo.AddImage(&(resourcesIBL_->specularCubemap_)); // 5
-	dsInfo.AddImage(&(resourcesIBL_->diffuseCubemap_)); // 6
-	dsInfo.AddImage(&(resourcesIBL_->brdfLut_)); // 7
-	dsInfo.AddImage(&(resourcesShadow_->shadowMap_)); // 8
-	dsInfo.AddImage(&(resourcesGBuffer_->ssao_)); // 9
-	dsInfo.AddImageArray(scene_->GetImageInfos()); // 10
+	descriptorInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
+	descriptorInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 1
+	descriptorInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 2
+	descriptorInfo_.AddBuffer(&bdaBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 3
+	descriptorInfo_.AddBuffer(resourcesLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
+	descriptorInfo_.AddImage(&(resourcesIBL_->specularCubemap_)); // 5
+	descriptorInfo_.AddImage(&(resourcesIBL_->diffuseCubemap_)); // 6
+	descriptorInfo_.AddImage(&(resourcesIBL_->brdfLut_)); // 7
+	descriptorInfo_.AddImage(&(resourcesShadow_->shadowMap_)); // 8
+	descriptorInfo_.AddImage(nullptr); // 9
+	descriptorInfo_.AddImageArray(scene_->GetImageInfos()); // 10
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
+	descriptor_.CreatePoolAndLayout(ctx, descriptorInfo_, AppConfig::FrameCount, 1u);
 
-	// Sets
-	descriptorSets_.resize(frameCount);
-	for (uint32_t i = 0; i < frameCount; ++i)
+	AllocateDescriptorSets(ctx);
+	UpdateDescriptorSets(ctx);
+}
+
+void PipelinePBRShadow::AllocateDescriptorSets(VulkanContext& ctx)
+{
+	descriptorSets_.resize(AppConfig::FrameCount);
+	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
 	{
-		dsInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
-		dsInfo.UpdateBuffer(&(shadowMapConfigUBOBuffers_[i]), 1);
-		dsInfo.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 2);
-		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
+		descriptorInfo_.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
+		descriptorInfo_.UpdateBuffer(&(shadowMapConfigUBOBuffers_[i]), 1);
+		descriptorInfo_.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 2);
+		descriptor_.AllocateSet(ctx, &(descriptorSets_[i]));
+	}
+}
+
+void PipelinePBRShadow::UpdateDescriptorSets(VulkanContext& ctx)
+{
+	descriptorInfo_.UpdateImage(&(resourcesGBuffer_->ssao_), 9);
+	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
+	{
+		descriptor_.UpdateSet(ctx, descriptorInfo_, &(descriptorSets_[i]));
 	}
 }

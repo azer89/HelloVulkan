@@ -1,6 +1,6 @@
 #include <ShadowMapping/Poisson.glsl>
 
-const float SHADOW_AMBIENT = 0.1;
+const float SHADOW_AMBIENT = 0.15;
 const int BLUR_RANGE = 1;
 const float PCF_SCALE = 0.5;
 const float POISSON_RADIUS = 5000.0; // Smaller means blurrier

@@ -66,25 +66,44 @@ void PipelineSSAO::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer command
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 }
 
+void PipelineSSAO::OnWindowResized(VulkanContext& ctx)
+{
+	PipelineBase::OnWindowResized(ctx);
+	UpdateDescriptorSets(ctx);
+}
+
 void PipelineSSAO::CreateDescriptor(VulkanContext& ctx)
 {
-	constexpr uint32_t frameCount = AppConfig::FrameCount;
-
-	VulkanDescriptorInfo dsInfo;
-	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-	dsInfo.AddBuffer(&(resourcesGBuffer_->kernel_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
-	dsInfo.AddImage(&(resourcesGBuffer_->position_));
-	dsInfo.AddImage(&(resourcesGBuffer_->normal_));
-	dsInfo.AddImage(&(resourcesGBuffer_->noise_));
+	descriptorInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
+	descriptorInfo_.AddBuffer(&(resourcesGBuffer_->kernel_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 1
+	descriptorInfo_.AddImage(nullptr); // 2
+	descriptorInfo_.AddImage(nullptr); // 3
+	descriptorInfo_.AddImage(&(resourcesGBuffer_->noise_)); // 4
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
+	descriptor_.CreatePoolAndLayout(ctx, descriptorInfo_, AppConfig::FrameCount, 1u);
 
-	// Sets
-	descriptorSets_.resize(frameCount);
-	for (uint32_t i = 0; i < frameCount; ++i)
+	AllocateDescriptorSets(ctx);
+	UpdateDescriptorSets(ctx);
+}
+
+void PipelineSSAO::AllocateDescriptorSets(VulkanContext& ctx)
+{
+	descriptorSets_.resize(AppConfig::FrameCount);
+	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
 	{
-		dsInfo.UpdateBuffer(&(ssaoUboBuffers_[i]), 0);
-		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
+		descriptorInfo_.UpdateBuffer(&(ssaoUboBuffers_[i]), 0);
+		descriptor_.AllocateSet(ctx, &(descriptorSets_[i]));
+	}
+}
+
+void PipelineSSAO::UpdateDescriptorSets(VulkanContext& ctx)
+{
+	constexpr uint32_t frameCount = AppConfig::FrameCount;
+	descriptorInfo_.UpdateImage(&(resourcesGBuffer_->position_), 2); // 2
+	descriptorInfo_.UpdateImage(&(resourcesGBuffer_->normal_), 3); // 3
+	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
+	{
+		descriptor_.UpdateSet(ctx, descriptorInfo_, &(descriptorSets_[i]));
 	}
 }

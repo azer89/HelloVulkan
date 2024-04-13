@@ -30,7 +30,7 @@ public:
 	 ~PipelinePBRShadow();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
-
+	void OnWindowResized(VulkanContext& ctx) override;
 	void SetPBRPushConstants(const PushConstPBR& pbrPC) { pc_ = pbrPC; };
 	
 	void SetShadowMapConfigUBO(VulkanContext& ctx, ShadowMapUBO& ubo)
@@ -46,8 +46,10 @@ public:
 
 private:
 	void CreateBDABuffer(VulkanContext& ctx);
-	void CreateDescriptor(VulkanContext& ctx);
 	void CreateSpecializationConstants();
+	void CreateDescriptor(VulkanContext& ctx);
+	void AllocateDescriptorSets(VulkanContext& ctx);
+	void UpdateDescriptorSets(VulkanContext& ctx);
 
 private:
 	PushConstPBR pc_;
@@ -59,6 +61,7 @@ private:
 	ResourcesGBuffer* resourcesGBuffer_;
 	std::vector<VkDescriptorSet> descriptorSets_;
 	std::vector<VulkanBuffer> shadowMapConfigUBOBuffers_;
+	VulkanDescriptorInfo descriptorInfo_;
 
 	// Material pass
 	MaterialType materialType_;
