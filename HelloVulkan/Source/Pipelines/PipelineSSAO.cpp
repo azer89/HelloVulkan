@@ -6,7 +6,6 @@ PipelineSSAO::PipelineSSAO(VulkanContext& ctx,
 	PipelineBase(ctx,
 	{
 		.type_ = PipelineType::GraphicsOffScreen,
-		.vertexBufferBind_ = false,
 	}),
 	resourcesGBuffer_(resourcesGBuffer)
 {
@@ -15,6 +14,7 @@ PipelineSSAO::PipelineSSAO(VulkanContext& ctx,
 	renderPass_.CreateOffScreenColorOnly(ctx, resourcesGBuffer_->ssao_.imageFormat_, renderBit | RenderPassBit::ColorClear);
 	framebuffer_.CreateResizeable(ctx, renderPass_.GetHandle(), { &(resourcesGBuffer_->ssao_), }, IsOffscreen());
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
+	AddOverridingColorBlendAttachment(0xf, VK_FALSE);
 	CreateGraphicsPipeline(
 		ctx,
 		renderPass_.GetHandle(),
