@@ -12,7 +12,7 @@ A 3D rendering engine built from scratch using Vulkan API and C++.
 * __Bindless__ techniques using __Indirect Draw__, __Descriptor Indexing__, and __Buffer Device Address__.
 * __Compute-Based Frustum Culling__.
 * __Compute-Based Skinning__ for skeletal animation.
-* __Shadow Maps__ with Poisson Disk or PCF.
+* Shadow Maps with Poisson Disk or PCF.
 * Screen Space Ambient Occlusion (SSAO).
 * Multisample anti-aliasing (MSAA).
 * Tonemap postprocessing.
