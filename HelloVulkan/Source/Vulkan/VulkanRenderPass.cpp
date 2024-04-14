@@ -5,7 +5,7 @@
 #include <vector>
 
 // Resolve multi-sampled image to single-sampled image
-void VulkanRenderPass::CreateResolveMSRenderPass(
+void VulkanRenderPass::CreateResolveMS(
 	VulkanContext& ctx,
 	uint8_t renderPassBit,
 	VkSampleCountFlagBits msaaSamples
@@ -87,7 +87,7 @@ void VulkanRenderPass::CreateResolveMSRenderPass(
 	CreateBeginInfo();
 }
 
-void VulkanRenderPass::CreateOffScreenRenderPass(
+void VulkanRenderPass::CreateOffScreen(
 	VulkanContext& ctx, 
 	uint8_t renderPassBit,
 	VkSampleCountFlagBits msaaSamples)
@@ -194,7 +194,7 @@ void VulkanRenderPass::CreateOffScreenRenderPass(
 	CreateBeginInfo();
 }
 
-void VulkanRenderPass::CreateOnScreenRenderPass(
+void VulkanRenderPass::CreateOnScreen(
 	VulkanContext& ctx, 
 	uint8_t renderPassBit,
 	VkSampleCountFlagBits msaaSamples)
@@ -293,7 +293,7 @@ void VulkanRenderPass::CreateOnScreenRenderPass(
 	CreateBeginInfo();
 }
 
-void VulkanRenderPass::CreateDepthOnlyRenderPass(
+void VulkanRenderPass::CreateDepthOnly(
 	VulkanContext& ctx,
 	uint8_t renderPassBit,
 	VkSampleCountFlagBits msaaSamples)
@@ -359,7 +359,7 @@ void VulkanRenderPass::CreateDepthOnlyRenderPass(
 	CreateBeginInfo();
 }
 
-void VulkanRenderPass::CreateOnScreenColorOnlyRenderPass(
+void VulkanRenderPass::CreateOnScreenColorOnly(
 	VulkanContext& ctx,
 	uint8_t renderPassBit,
 	VkSampleCountFlagBits msaaSamples)
@@ -507,7 +507,7 @@ void VulkanRenderPass::CreateOffScreenColorOnly(
 	CreateBeginInfo();
 }
 
-void VulkanRenderPass::CreateOffScreenCubemapRenderPass(
+void VulkanRenderPass::CreateOffScreenCubemap(
 	VulkanContext& ctx,
 	VkFormat cubeFormat,
 	uint8_t renderPassBit,

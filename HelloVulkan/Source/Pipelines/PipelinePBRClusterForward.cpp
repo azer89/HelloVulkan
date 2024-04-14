@@ -40,7 +40,7 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 
 	scene_->GetOffsetAndDrawCount(materialType_, materialOffset_, materialDrawCount_);
 
-	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
+	renderPass_.CreateOffScreen(ctx, renderBit, config_.msaaSamples_);
 	framebuffer_.CreateResizeable(
 		ctx,
 		renderPass_.GetHandle(),

@@ -11,7 +11,7 @@ PipelineTonemap::PipelineTonemap(VulkanContext& ctx,
 	// Need to store a pointer for window resizing
 	singleSampledColorImage_(singleSampledColorImage)
 {
-	renderPass_.CreateOnScreenColorOnlyRenderPass(ctx);
+	renderPass_.CreateOnScreenColorOnly(ctx);
 	framebuffer_.CreateResizeable(ctx, renderPass_.GetHandle(), {}, IsOffscreen());
 	CreateDescriptor(ctx);
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);

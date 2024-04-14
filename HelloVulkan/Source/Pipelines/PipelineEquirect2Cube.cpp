@@ -18,7 +18,7 @@ PipelineEquirect2Cube::PipelineEquirect2Cube(
 	)
 {
 	InitializeHDRImage(ctx, hdrFile);
-	renderPass_.CreateOffScreenCubemapRenderPass(ctx, IBLConfig::CubeFormat);
+	renderPass_.CreateOffScreenCubemap(ctx, IBLConfig::CubeFormat);
 	CreateDescriptor(ctx);
 	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
 	CreateOffscreenGraphicsPipeline(

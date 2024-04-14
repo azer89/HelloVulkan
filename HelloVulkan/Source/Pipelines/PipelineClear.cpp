@@ -7,7 +7,7 @@ PipelineClear::PipelineClear(VulkanContext& ctx) :
 			.type_ = PipelineType::GraphicsOnScreen
 		})
 {
-	renderPass_.CreateOnScreenColorOnlyRenderPass(ctx, RenderPassBit::ColorClear);
+	renderPass_.CreateOnScreenColorOnly(ctx, RenderPassBit::ColorClear);
 	framebuffer_.CreateResizeable(ctx, renderPass_.GetHandle(), {}, IsOffscreen());
 }
 
