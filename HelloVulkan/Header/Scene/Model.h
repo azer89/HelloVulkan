@@ -57,6 +57,7 @@ public:
 		const ModelCreateInfo& modelInfo,
 		SceneData& sceneData
 	);
+	void CreateDefaultTextures(VulkanContext& ctx);
 
 	[[nodiscard]] const aiScene* GetAssimpScene() const { return scene_; }
 	[[nodiscard]] VulkanImage* GetTexture(uint32_t textureIndex);

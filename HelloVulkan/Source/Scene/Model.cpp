@@ -10,6 +10,7 @@
 #include <ranges>
 
 static const std::string BLACK_TEXTURE = "DefaultBlackTexture";
+static const std::string NORMAL_TEXTURE = "DefaultNormalTexture";
 
 inline glm::mat4 CastToGLMMat4(const aiMatrix4x4& m)
 {
@@ -20,9 +21,7 @@ void Model::LoadSlotBased(VulkanContext& ctx, const std::string& path)
 {
 	bindlessTexture_ = false;
 
-	// In case a texture type cannot be found, replace it with a black 1x1 texture
-	uint32_t black = 0xff000000;
-	AddTexture(ctx, BLACK_TEXTURE, (void*)&black, 1, 1);
+	CreateDefaultTextures(ctx);
 
 	// Load model here
 	SceneData dummySceneData = {};
@@ -43,9 +42,7 @@ void Model::LoadBindless(
 	bindlessTexture_ = true;
 	modelInfo_ = modelInfo;
 
-	// In case a texture type cannot be found, replace it with a black 1x1 texture
-	uint32_t black = 0xff000000;
-	AddTexture(ctx, BLACK_TEXTURE, (void*)&black, 1, 1);
+	CreateDefaultTextures(ctx);
 
 	// Load model here
 	LoadModel(
@@ -68,6 +65,15 @@ void Model::Destroy()
 	{
 		tex.Destroy();
 	}
+}
+
+void Model::CreateDefaultTextures(VulkanContext& ctx)
+{
+	uint32_t black = 0xff000000;
+	AddTexture(ctx, BLACK_TEXTURE, (void*)&black, 1, 1);
+
+	uint32_t normal = 0xffff8888;
+	AddTexture(ctx, NORMAL_TEXTURE, (void*)&normal, 1, 1);
 }
 
 void Model::CreateModelUBOBuffers(VulkanContext& ctx)
@@ -453,7 +459,7 @@ std::unordered_map<TextureType, uint32_t> Model::GetMeshTextures(
 	}
 	if (!textures.contains(TextureType::Normal))
 	{
-		textures[TextureType::Normal] = textureMap_[BLACK_TEXTURE];
+		textures[TextureType::Normal] = textureMap_[NORMAL_TEXTURE];
 	}
 	if (!textures.contains(TextureType::Metalness))
 	{
