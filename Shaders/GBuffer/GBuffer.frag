@@ -28,8 +28,6 @@ float LinearDepth(float z, float near, float far)
 void main()
 {
 	MeshData mData = bda.meshReference.meshes[meshIndex];
-
-	// TODO This kills performance
 	float alpha = texture(pbrTextures[nonuniformEXT(mData.albedo)], texCoord).a;
 	if (alpha < 0.5)
 	{
