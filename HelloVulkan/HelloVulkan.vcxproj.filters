@@ -82,6 +82,12 @@
     <Filter Include="Shaders\PBR">
       <UniqueIdentifier>{34511090-b392-46f2-9583-428a217952e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\GBuffer">
+      <UniqueIdentifier>{c97ceb1d-7cdb-469d-a122-b1cbc927918b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\SSAO">
+      <UniqueIdentifier>{f7c8236f-e06b-4b52-b661-3e958ed96229}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\ClusteredForward\AABBGenerator.comp">
@@ -269,6 +275,18 @@
     </None>
     <None Include="..\Shaders\PBR\TangentNormalToWorld.glsl">
       <Filter>Shaders\PBR</Filter>
+    </None>
+    <None Include="..\Shaders\GBuffer\GBuffer.frag">
+      <Filter>Shaders\GBuffer</Filter>
+    </None>
+    <None Include="..\Shaders\GBuffer\GBuffer.vert">
+      <Filter>Shaders\GBuffer</Filter>
+    </None>
+    <None Include="..\Shaders\SSAO\SSAO.frag">
+      <Filter>Shaders\SSAO</Filter>
+    </None>
+    <None Include="..\Shaders\SSAO\UBO.glsl">
+      <Filter>Shaders\SSAO</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -506,6 +524,15 @@
     <ClInclude Include="Header\Event.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Resources\ResourcesGBuffer.h">
+      <Filter>Header Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineGBuffer.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Pipelines\PipelineSSAO.h">
+      <Filter>Header Files\Pipelines</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">
@@ -689,6 +716,15 @@
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Source\Pipelines\PipelineRaytracing.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Resources\ResourcesGBuffer.cpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineGBuffer.cpp">
+      <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Pipelines\PipelineSSAO.cpp">
       <Filter>Source Files\Pipelines</Filter>
     </ClCompile>
   </ItemGroup>

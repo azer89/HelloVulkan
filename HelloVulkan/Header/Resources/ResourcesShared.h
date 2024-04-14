@@ -13,6 +13,7 @@ public:
 
 	void Create(VulkanContext& ctx);
 	void Destroy() override;
+	void OnWindowResized(VulkanContext& ctx) override;
 
 public:
 	VulkanImage multiSampledColorImage_;

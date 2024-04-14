@@ -24,6 +24,11 @@ namespace Utility
 		return (value + alignment - 1) & ~(alignment - 1);
 	}
 
+	inline float Lerp(float a, float b, float f)
+	{
+		return a + f * (b - a);
+	}
+
 	inline int MipMapCount(int w, int h)
 	{
 		int levels = 1;

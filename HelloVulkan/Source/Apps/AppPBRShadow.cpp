@@ -24,6 +24,9 @@ void AppPBRShadow::Init()
 	resourcesShadow_ = AddResources<ResourcesShadow>();
 	resourcesShadow_->CreateSingleShadowMap(vulkanContext_);
 
+	resourcesGBuffer_ = AddResources<ResourcesGBuffer>();
+	resourcesGBuffer_->Create(vulkanContext_);
+
 	InitLights();
 
 	// Initialize attachments
@@ -68,6 +71,8 @@ void AppPBRShadow::Init()
 		resourcesShared_,
 		// This is the first offscreen render pass so we need to clear the color attachment and depth attachment
 		RenderPassBit::ColorClear | RenderPassBit::DepthClear);
+	gPtr_ = AddPipeline<PipelineGBuffer>(vulkanContext_, scene_.get(), resourcesGBuffer_);
+	ssaoPtr_ = AddPipeline<PipelineSSAO>(vulkanContext_, resourcesGBuffer_);
 	shadowPtr_ = AddPipeline<PipelineShadow>(vulkanContext_, scene_.get(), resourcesShadow_);
 	// Opaque pass
 	pbrOpaquePtr_ = AddPipeline<PipelinePBRShadow>(
@@ -77,6 +82,7 @@ void AppPBRShadow::Init()
 		resourcesIBL_,
 		resourcesShadow_,
 		resourcesShared_,
+		resourcesGBuffer_,
 		MaterialType::Opaque);
 	// Transparent pass
 	pbrTransparentPtr_ = AddPipeline<PipelinePBRShadow>(
@@ -86,6 +92,7 @@ void AppPBRShadow::Init()
 		resourcesIBL_,
 		resourcesShadow_,
 		resourcesShared_,
+		resourcesGBuffer_,
 		MaterialType::Transparent);
 	lightPtr_ = AddPipeline<PipelineLightRender>(vulkanContext_, resourcesLight_, resourcesShared_);
 	// Resolve multiSampledColorImage_ to singleSampledColorImage_
@@ -124,7 +131,7 @@ void AppPBRShadow::UpdateUI()
 	}
 
 	imguiPtr_->ImGuiStart();
-	imguiPtr_->ImGuiSetWindow("Shadow Mapping", 450, 700);
+	imguiPtr_->ImGuiSetWindow("Shadow Mapping", 450, 750);
 	imguiPtr_->ImGuiShowFrameData(&frameCounter_);
 
 	ImGui::Text("Triangle Count: %i", scene_->triangleCount_);
@@ -133,17 +140,22 @@ void AppPBRShadow::UpdateUI()
 	ImGui::SeparatorText("Shading");
 	imguiPtr_->ImGuiShowPBRConfig(&uiData_.pbrPC_, resourcesIBL_->cubemapMipmapCount_);
 
-	ImGui::SeparatorText("Shadow mapping");
+	ImGui::SeparatorText("Shadow map");
 	ImGui::SliderFloat("Min Bias", &uiData_.shadowMinBias_, 0.f, 0.01f);
 	ImGui::SliderFloat("Max Bias", &uiData_.shadowMaxBias_, 0.f, 0.01f);
 	ImGui::SliderFloat("Near Plane", &uiData_.shadowNearPlane_, 0.1f, 50.0f);
 	ImGui::SliderFloat("Far Plane", &uiData_.shadowFarPlane_, 10.0f, 150.0f);
 	ImGui::SliderFloat("Ortho Size", &uiData_.shadowOrthoSize_, 10.0f, 30.0f);
 
-	ImGui::SeparatorText("Light position");
+	ImGui::SeparatorText("Shadow caster");
 	ImGui::SliderFloat("X", &(uiData_.shadowCasterPosition_[0]), -10.0f, 10.0f);
 	ImGui::SliderFloat("Y", &(uiData_.shadowCasterPosition_[1]), 15.0f, 60.0f);
 	ImGui::SliderFloat("Z", &(uiData_.shadowCasterPosition_[2]), -10.0f, 10.0f);
+
+	ImGui::SeparatorText("SSAO");
+	ImGui::SliderFloat("Radius", &uiData_.ssaoRadius_, 0.0f, 10.0f);
+	ImGui::SliderFloat("Bias", &uiData_.ssaoBias_, 0.0f, 0.5f);
+	ImGui::SliderFloat("Power", &uiData_.ssaoPower_, 0.1f, 5.0f);
 
 	imguiPtr_->ImGuizmoManipulateScene(vulkanContext_, &uiData_);
 
@@ -151,7 +163,7 @@ void AppPBRShadow::UpdateUI()
 
 	for (auto& pipeline : pipelines_)
 	{
-		pipeline->UpdateFromIUData(vulkanContext_, uiData_);
+		pipeline->UpdateFromUIData(vulkanContext_, uiData_);
 	}
 
 	for (auto& resources : resources_)

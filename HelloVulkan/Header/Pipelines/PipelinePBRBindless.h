@@ -1,5 +1,5 @@
-#ifndef PIPELINE_PBR_BINDLESS_TEXTURES
-#define PIPELINE_PBR_BINDLESS_TEXTURES
+#ifndef PIPELINE_PBR_BINDLESS
+#define PIPELINE_PBR_BINDLESS
 
 #include "PipelineBase.h"
 #include "Scene.h"
@@ -11,7 +11,7 @@
 #include <vector>
 
 /*
-Render a scene using PBR materials, naive forward renderer, and bindless textures
+Render a scene using PBR materials, naive forward renderer, and bindless techniques
 */
 class PipelinePBRBindless final : public PipelineBase
 {
@@ -29,7 +29,7 @@ public:
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 	
-	void UpdateFromIUData(VulkanContext& ctx, UIData& uiData) override
+	void UpdateFromUIData(VulkanContext& ctx, UIData& uiData) override
 	{
 		SetPBRPushConstants(uiData.pbrPC_);
 	}

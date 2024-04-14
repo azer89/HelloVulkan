@@ -27,6 +27,8 @@ public:
 	VulkanRenderPass() = default;
 	~VulkanRenderPass() = default;
 
+	// TODO Remove "RenderPass" wording at the end of the functions  
+
 	void CreateOnScreenRenderPass(
 		VulkanContext& ctx, 
 		uint8_t renderPassBit = 0u,
@@ -47,6 +49,12 @@ public:
 		uint8_t renderPassBit = 0u,
 		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT);
 
+	void CreateOffScreenColorOnly(
+		VulkanContext& ctx,
+		VkFormat imageFormat,
+		uint8_t renderPassBit = 0u,
+		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT);
+
 	void CreateOffScreenRenderPass(
 		VulkanContext& ctx,
 		uint8_t renderPassBit = 0u,
@@ -55,6 +63,13 @@ public:
 	void CreateOffScreenCubemapRenderPass(
 		VulkanContext& ctx, 
 		VkFormat cubeFormat,
+		uint8_t renderPassBit = 0u,
+		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT);
+
+	// Multi Render Target for G Buffer
+	void CreateOffScreenGBuffer(
+		VulkanContext& ctx,
+		const std::vector<VkFormat>& formats,
 		uint8_t renderPassBit = 0u,
 		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT);
 
@@ -87,6 +102,9 @@ private:
 	VkDevice device_ = nullptr;
 	VkRenderPass handle_ = nullptr;
 	uint8_t renderPassBit_;
+
+	// TODO Refactor this
+	uint32_t colorAttachmentCount_ = 0;
 
 	// Cache for starting the render pass
 	std::vector<VkClearValue> clearValues_;

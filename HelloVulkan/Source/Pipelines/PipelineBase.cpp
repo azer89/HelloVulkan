@@ -150,8 +150,16 @@ void PipelineBase::CreateGraphicsPipeline(
 	
 	pInfo.inputAssembly.topology = config_.topology_;
 
-	pInfo.colorBlendAttachment.srcAlphaBlendFactor = 
-		config_.useBlending_ ? VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA : VK_BLEND_FACTOR_ONE;
+	if (overridingColorBlendAttachments.empty())
+	{
+		pInfo.colorBlendAttachment.srcAlphaBlendFactor =
+			config_.useBlending_ ? VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA : VK_BLEND_FACTOR_ONE;
+	}
+	else
+	{
+		pInfo.colorBlending.attachmentCount = overridingColorBlendAttachments.size();
+		pInfo.colorBlending.pAttachments = overridingColorBlendAttachments.data();
+	}
 
 	pInfo.depthStencil.depthTestEnable = static_cast<VkBool32>(config_.depthTest_ ? VK_TRUE : VK_FALSE);
 	pInfo.depthStencil.depthWriteEnable = static_cast<VkBool32>(config_.depthWrite_ ? VK_TRUE : VK_FALSE);
@@ -237,4 +245,16 @@ void PipelineBase::CreateComputePipeline(
 	VK_CHECK(vkCreateComputePipelines(ctx.GetDevice(), 0, 1, &computePipelineCreateInfo, nullptr, &pipeline_));
 
 	shader.Destroy();
+}
+
+void PipelineBase::AddOverridingColorBlendAttachment(
+	VkColorComponentFlags colorWriteMask,
+	VkBool32 blendEnable)
+{
+	VkPipelineColorBlendAttachmentState attachment =
+	{
+		.blendEnable = blendEnable,
+		.colorWriteMask = colorWriteMask,
+	};
+	overridingColorBlendAttachments.push_back(attachment);
 }

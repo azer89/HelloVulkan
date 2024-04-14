@@ -21,7 +21,7 @@ struct UIData
 public:
 	PushConstPBR pbrPC_ = 
 	{
-		.lightIntensity = 1.5f,
+		.lightIntensity = 1.75f,
 		.baseReflectivity = 0.01f,
 		.maxReflectionLod = 1.f,
 		.lightFalloff = 0.1f,
@@ -58,6 +58,11 @@ public:
 	bool renderDebug_ = false;
 	bool renderAABB_ = false;
 	bool renderLights_ = true;
+
+	// SSAO
+	float ssaoRadius_ = 0.5f;
+	float ssaoBias_ = 0.05f;
+	float ssaoPower_ = 1.0f;
 
 public:
 	bool GizmoCanSelect() const { return mouseLeftPressed_ && gizmoMode_ != 0; }

@@ -19,7 +19,7 @@ public:
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
-	void UpdateFromIUData(VulkanContext& ctx, UIData& uiData) override
+	void UpdateFromUIData(VulkanContext& ctx, UIData& uiData) override
 	{
 		shouldRender_ = uiData.renderDebug_;
 	}

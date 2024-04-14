@@ -5,6 +5,7 @@
 #include "ResourcesLight.h"
 #include "ResourcesShadow.h"
 #include "ResourcesShared.h"
+#include "ResourcesGBuffer.h"
 #include "ResourcesIBL.h"
 #include "Scene.h"
 #include "PushConstants.h"
@@ -23,12 +24,13 @@ public:
 		ResourcesIBL* resourcesIBL,
 		ResourcesShadow* resourcesShadow,
 		ResourcesShared* resourcesShared,
+		ResourcesGBuffer* resourcesGBuffer,
 		MaterialType materialType,
 		uint8_t renderBit = 0u);
 	 ~PipelinePBRShadow();
 
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
-
+	void OnWindowResized(VulkanContext& ctx) override;
 	void SetPBRPushConstants(const PushConstPBR& pbrPC) { pc_ = pbrPC; };
 	
 	void SetShadowMapConfigUBO(VulkanContext& ctx, ShadowMapUBO& ubo)
@@ -37,15 +39,17 @@ public:
 		shadowMapConfigUBOBuffers_[frameIndex].UploadBufferData(ctx, &ubo, sizeof(ShadowMapUBO));
 	}
 	
-	void UpdateFromIUData(VulkanContext& ctx, UIData& uiData) override
+	void UpdateFromUIData(VulkanContext& ctx, UIData& uiData) override
 	{
 		SetPBRPushConstants(uiData.pbrPC_);
 	}
 
 private:
 	void CreateBDABuffer(VulkanContext& ctx);
-	void CreateDescriptor(VulkanContext& ctx);
 	void CreateSpecializationConstants();
+	void CreateDescriptor(VulkanContext& ctx);
+	void AllocateDescriptorSets(VulkanContext& ctx);
+	void UpdateDescriptorSets(VulkanContext& ctx);
 
 private:
 	PushConstPBR pc_;
@@ -54,8 +58,10 @@ private:
 	ResourcesLight* resourcesLight_;
 	ResourcesIBL* resourcesIBL_;
 	ResourcesShadow* resourcesShadow_;
+	ResourcesGBuffer* resourcesGBuffer_;
 	std::vector<VkDescriptorSet> descriptorSets_;
 	std::vector<VulkanBuffer> shadowMapConfigUBOBuffers_;
+	VulkanDescriptorInfo descriptorInfo_;
 
 	// Material pass
 	MaterialType materialType_;

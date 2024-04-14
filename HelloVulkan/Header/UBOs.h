@@ -12,6 +12,10 @@ struct CameraUBO
 	glm::mat4 view;
 	alignas(16)
 	glm::vec4 position;
+	alignas(4)
+	float cameraNear;
+	alignas(4)
+	float cameraFar;
 };
 
 // Needed for generating rays
@@ -91,6 +95,24 @@ struct FrustumUBO
 	glm::vec4 planes[6];
 	alignas(16)
 	glm::vec4 corners[8];
+};
+
+struct SSAOUBO
+{
+	alignas(16)
+	glm::mat4 projection;
+	alignas(4)
+	float radius;
+	alignas(4)
+	float bias;
+	alignas(4)
+	float power;
+	alignas(4)
+	float screenWidth;
+	alignas(4)
+	float screenHeight;
+	alignas(4)
+	float noiseSize;
 };
 
 #endif
