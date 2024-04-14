@@ -9,8 +9,8 @@
 #include <iostream>
 #include <ranges>
 
-static const std::string BLACK_TEXTURE = "DefaultBlackTexture";
-static const std::string NORMAL_TEXTURE = "DefaultNormalTexture";
+static const std::string DEFAULT_BLACK_TEXTURE = "DefaultBlackTexture";
+static const std::string DEFAULT_NORMAL_TEXTURE = "DefaultNormalTexture";
 
 inline glm::mat4 CastToGLMMat4(const aiMatrix4x4& m)
 {
@@ -70,10 +70,10 @@ void Model::Destroy()
 void Model::CreateDefaultTextures(VulkanContext& ctx)
 {
 	uint32_t black = 0xff000000;
-	AddTexture(ctx, BLACK_TEXTURE, (void*)&black, 1, 1);
+	AddTexture(ctx, DEFAULT_BLACK_TEXTURE, (void*)&black, 1, 1);
 
 	uint32_t normal = 0xffff8888;
-	AddTexture(ctx, NORMAL_TEXTURE, (void*)&normal, 1, 1);
+	AddTexture(ctx, DEFAULT_NORMAL_TEXTURE, (void*)&normal, 1, 1);
 }
 
 void Model::CreateModelUBOBuffers(VulkanContext& ctx)
@@ -454,29 +454,17 @@ std::unordered_map<TextureType, uint32_t> Model::GetMeshTextures(
 
 	// Replace missing PBR textures with a black 1x1 texture
 	if (!textures.contains(TextureType::Albedo))
-	{
-		textures[TextureType::Albedo] = textureMap_[BLACK_TEXTURE];
-	}
+		{ textures[TextureType::Albedo] = textureMap_[DEFAULT_BLACK_TEXTURE]; }
 	if (!textures.contains(TextureType::Normal))
-	{
-		textures[TextureType::Normal] = textureMap_[NORMAL_TEXTURE];
-	}
+		{ textures[TextureType::Normal] = textureMap_[DEFAULT_NORMAL_TEXTURE]; }
 	if (!textures.contains(TextureType::Metalness))
-	{
-		textures[TextureType::Metalness] = textureMap_[BLACK_TEXTURE];
-	}
+		{ textures[TextureType::Metalness] = textureMap_[DEFAULT_BLACK_TEXTURE]; }
 	if (!textures.contains(TextureType::Roughness))
-	{
-		textures[TextureType::Roughness] = textureMap_[BLACK_TEXTURE];
-	}
+		{ textures[TextureType::Roughness] = textureMap_[DEFAULT_BLACK_TEXTURE]; }
 	if (!textures.contains(TextureType::AmbientOcclusion))
-	{
-		textures[TextureType::AmbientOcclusion] = textureMap_[BLACK_TEXTURE];
-	}
+		{ textures[TextureType::AmbientOcclusion] = textureMap_[DEFAULT_BLACK_TEXTURE]; }
 	if (!textures.contains(TextureType::Emissive))
-	{
-		textures[TextureType::Emissive] = textureMap_[BLACK_TEXTURE];
-	}
+		{ textures[TextureType::Emissive] = textureMap_[DEFAULT_BLACK_TEXTURE]; }
 
 	return textures;
 }
