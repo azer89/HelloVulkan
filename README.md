@@ -13,7 +13,7 @@ A 3D rendering engine built from scratch using Vulkan API and C++.
 * __Compute-Based Frustum Culling__.
 * __Compute-Based Skinning__ for skeletal animation.
 * __Shadow Maps__ with Poisson Disk or PCF.
-* glTF mesh/texture support.
+* Screen Space Ambient Occlusion (SSAO).
 * Multisample anti-aliasing (MSAA).
 * Tonemap postprocessing.
 * Automatic runtime compilation from GLSL to SPIR-V using `glslang`.
@@ -30,9 +30,7 @@ Next, the engine takes advantage of __indirect draw__ API. The CPU prepares indi
 
 Finally, the engine pushes the concept of "bindless" even further by utilizing __buffer device addresses__. Instead of creating descriptors, device addresses act as _pointers_ so that the shaders can have direct access to buffers.
 
-The image below showcases the implementations of PBR, IBL, and PCF shadow mapping.
-
-<img width="850" alt="bindless_shadow_mapping_1" src="https://github.com/azer89/HelloVulkan/assets/790432/c926d003-8df2-464e-a8f7-e04b66494214">
+<img width="850" alt="bindless_shadow_mapping_1" src="https://github.com/azer89/HelloVulkan/assets/790432/6f732319-2a54-41fc-83cb-aa57d7cc062c">
 
 </br>
 </br>
