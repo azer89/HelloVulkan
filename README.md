@@ -30,7 +30,7 @@ Next, the engine takes advantage of __indirect draw__ API. The CPU prepares indi
 
 Finally, the engine pushes the concept of "bindless" even further by utilizing __buffer device addresses__. Instead of creating descriptors, device addresses act as _pointers_ so that the shaders can have direct access to buffers.
 
-<img width="850" alt="bindless_shadow_mapping_1" src="https://github.com/azer89/HelloVulkan/assets/790432/6f732319-2a54-41fc-83cb-aa57d7cc062c">
+<img width="850" alt="bindless_shadow_mapping_1" src="https://github.com/azer89/HelloVulkan/assets/790432/03200177-9bc7-45c3-be0a-093286c6eef9">
 
 </br>
 </br>
