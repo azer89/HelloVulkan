@@ -36,7 +36,7 @@ PipelinePBRBindless::PipelinePBRBindless(
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
 	CreateBDABuffer(ctx); // Buffer device address
 	CreateDescriptor(ctx);
-	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
+	renderPass_.CreateOffScreen(ctx, renderBit, config_.msaaSamples_);
 	framebuffer_.CreateResizeable(
 		ctx, 
 		renderPass_.GetHandle(), 

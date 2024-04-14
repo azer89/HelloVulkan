@@ -18,7 +18,7 @@ PipelineAABBRender::PipelineAABBRender(
 	shouldRender_(false)
 {
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
-	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
+	renderPass_.CreateOffScreen(ctx, renderBit, config_.msaaSamples_);
 	framebuffer_.CreateResizeable(
 		ctx,
 		renderPass_.GetHandle(),

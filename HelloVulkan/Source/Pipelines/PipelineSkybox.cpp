@@ -23,7 +23,7 @@ PipelineSkybox::PipelineSkybox(VulkanContext& ctx,
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cameraUBOBuffers_, sizeof(CameraUBO), AppConfig::FrameCount);
 
 	// Note that this pipeline is offscreen rendering
-	renderPass_.CreateOffScreenRenderPass(ctx, renderBit, config_.msaaSamples_);
+	renderPass_.CreateOffScreen(ctx, renderBit, config_.msaaSamples_);
 	framebuffer_.CreateResizeable(
 		ctx,
 		renderPass_.GetHandle(),

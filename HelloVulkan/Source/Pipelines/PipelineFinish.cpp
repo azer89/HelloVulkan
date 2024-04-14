@@ -10,7 +10,7 @@ PipelineFinish::PipelineFinish(VulkanContext& ctx) :
 		}
 	)
 {
-	renderPass_.CreateOnScreenColorOnlyRenderPass(
+	renderPass_.CreateOnScreenColorOnly(
 		ctx, 
 		// Present swapchain image 
 		RenderPassBit::ColorPresent);

@@ -25,7 +25,7 @@ PipelineImGui::PipelineImGui(
 	camera_(camera)
 {
 	// Create render pass
-	renderPass_.CreateOnScreenColorOnlyRenderPass(ctx);
+	renderPass_.CreateOnScreenColorOnly(ctx);
 
 	// Create framebuffer
 	framebuffer_.CreateResizeable(ctx, renderPass_.GetHandle(), {}, IsOffscreen());

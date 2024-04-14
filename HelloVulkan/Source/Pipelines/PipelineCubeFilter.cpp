@@ -17,7 +17,7 @@ PipelineCubeFilter::PipelineCubeFilter(
 	) 
 {
 	// Create cube render pass
-	renderPass_.CreateOffScreenCubemapRenderPass(ctx, IBLConfig::CubeFormat);
+	renderPass_.CreateOffScreenCubemap(ctx, IBLConfig::CubeFormat);
 
 	// Input cubemap
 	const uint32_t inputNumMipmap = Utility::MipMapCount(IBLConfig::InputCubeSideLength);

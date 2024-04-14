@@ -29,22 +29,22 @@ public:
 
 	// TODO Remove "RenderPass" wording at the end of the functions  
 
-	void CreateOnScreenRenderPass(
+	void CreateOnScreen(
 		VulkanContext& ctx, 
 		uint8_t renderPassBit = 0u,
 		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT);
 
-	void CreateDepthOnlyRenderPass(
+	void CreateDepthOnly(
 		VulkanContext& ctx,
 		uint8_t renderPassBit = 0u,
 		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT);
 
-	void CreateResolveMSRenderPass(
+	void CreateResolveMS(
 		VulkanContext& ctx,
 		uint8_t renderPassBit = 0u,
 		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT);
 
-	void CreateOnScreenColorOnlyRenderPass(
+	void CreateOnScreenColorOnly(
 		VulkanContext& ctx, 
 		uint8_t renderPassBit = 0u,
 		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT);
@@ -55,12 +55,12 @@ public:
 		uint8_t renderPassBit = 0u,
 		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT);
 
-	void CreateOffScreenRenderPass(
+	void CreateOffScreen(
 		VulkanContext& ctx,
 		uint8_t renderPassBit = 0u,
 		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT);
 
-	void CreateOffScreenCubemapRenderPass(
+	void CreateOffScreenCubemap(
 		VulkanContext& ctx, 
 		VkFormat cubeFormat,
 		uint8_t renderPassBit = 0u,

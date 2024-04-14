@@ -23,7 +23,7 @@ PipelineShadow::PipelineShadow(
 	resourcesShadow_(resourcesShadow)
 {
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, shadowMapUBOBuffers_, sizeof(ShadowMapUBO), AppConfig::FrameCount);
-	renderPass_.CreateDepthOnlyRenderPass(ctx, 
+	renderPass_.CreateDepthOnly(ctx, 
 		RenderPassBit::DepthClear | RenderPassBit::DepthShaderReadOnly);
 	framebuffer_.CreateUnresizeable(
 		ctx,

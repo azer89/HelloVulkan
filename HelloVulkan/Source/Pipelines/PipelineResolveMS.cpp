@@ -11,7 +11,7 @@ PipelineResolveMS::PipelineResolveMS(
 		{ .type_ = PipelineType::GraphicsOffScreen }
 	)
 {
-	renderPass_.CreateResolveMSRenderPass(
+	renderPass_.CreateResolveMS(
 		ctx,
 		0u,
 		resourcesShared->multiSampledColorImage_.multisampleCount_);
