@@ -326,21 +326,21 @@ void AppBase::MouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 	const float yPos = static_cast<float>(yposIn);
 	if (uiData_.mouseFirstUse_)
 	{
-		uiData_.mousePositionX = xPos;
-		uiData_.mousePositionY = yPos;
+		uiData_.mousePositionX_ = xPos;
+		uiData_.mousePositionY_ = yPos;
 		uiData_.mouseFirstUse_ = false;
 		return;
 	}
 
 	if (uiData_.mouseLeftPressed_ || uiData_.mouseLeftHold_)
 	{
-		const float xOffset = xPos - uiData_.mousePositionX;
-		const float yOffset = uiData_.mousePositionY - yPos; // Reversed since y-coordinates go from bottom to top
+		const float xOffset = xPos - uiData_.mousePositionX_;
+		const float yOffset = uiData_.mousePositionY_ - yPos; // Reversed since y-coordinates go from bottom to top
 		camera_->ProcessMouseMovement(xOffset, yOffset);
 	}
 
-	uiData_.mousePositionX = xPos;
-	uiData_.mousePositionY = yPos;
+	uiData_.mousePositionX_ = xPos;
+	uiData_.mousePositionY_ = yPos;
 	
 }
 

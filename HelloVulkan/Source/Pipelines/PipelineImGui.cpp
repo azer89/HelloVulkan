@@ -177,7 +177,7 @@ void PipelineImGui::ImGuizmoManipulateScene(VulkanContext& ctx, UIData* uiData)
 
 	if (uiData->GizmoCanSelect())
 	{
-		Ray r = camera_->GetRayFromScreenToWorld(uiData->mousePositionX, uiData->mousePositionY);
+		Ray r = camera_->GetRayFromScreenToWorld(uiData->mousePositionX_, uiData->mousePositionY_);
 		int i = scene_->GetClickedInstanceIndex(r);
 		if (i >= 0)
 		{
