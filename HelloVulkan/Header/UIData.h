@@ -41,12 +41,12 @@ public:
 	bool mouseLeftHold_ = false; // Left button hold
 
 	// Mouse position at all times
-	float mousePositionX = 0;
-	float mousePositionY = 0;
+	float mousePositionX_ = 0;
+	float mousePositionY_ = 0;
 
 	// Mouse position only when clicked
-	float mousePressX = 0;
-	float mousePressY = 0;
+	float mousePressX_ = 0;
+	float mousePressY_ = 0;
 
 	bool imguiShow_ = true;
 
