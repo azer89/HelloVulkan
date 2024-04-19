@@ -10,7 +10,7 @@ add_executable(HelloVulkan
     ${SHADER_FILES}
 )
 
-source_group(TREE "${PROJECT_SOURCE_DIR}/Shaders" PREFIX "Shaders" FILES ${SHADER_FILES})
+source_group(TREE "${CMAKE_CURRENT_LIST_DIR}/Shaders" PREFIX "Shaders" FILES ${SHADER_FILES})
 source_group(TREE "${CMAKE_CURRENT_LIST_DIR}/Header" PREFIX "Header Files" FILES ${H_FILES})
 source_group(TREE "${CMAKE_CURRENT_LIST_DIR}/Source" PREFIX "Source Files" FILES ${CPP_FILES})
 
