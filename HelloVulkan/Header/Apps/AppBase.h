@@ -58,7 +58,7 @@ protected:
 	void InitSharedResources();
 
 	template<class T, class... U>
-	requires (std::is_base_of<PipelineBase, T>::value)
+	requires (std::is_base_of_v<PipelineBase, T>)
 	T* AddPipeline(U&&... u)
 	{
 		// Create std::unique_ptr of Pipeline
@@ -69,7 +69,7 @@ protected:
 	}
 
 	template<class T, class... U>
-	requires (std::is_base_of<ResourcesBase, T>::value)
+	requires (std::is_base_of_v<ResourcesBase, T>)
 	T* AddResources(U&&... u)
 	{
 		// Create std::unique_ptr of Resources
