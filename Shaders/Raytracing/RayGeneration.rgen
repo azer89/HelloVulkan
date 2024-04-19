@@ -17,7 +17,8 @@ const float T_MAX = 10000.0;
 
 void main()
 {
-	uint rngState = uint(uint(gl_LaunchIDEXT.x) * uint(1973) + uint(gl_LaunchIDEXT.y) * uint(9277) + uint(ubo.currentSampleCount) * uint(26699)) | uint(1);
+	//uint rngState = uint(uint(gl_LaunchIDEXT.x) * uint(1973) + uint(gl_LaunchIDEXT.y) * uint(9277) + uint(ubo.currentSampleCount) * uint(26699)) | uint(1);
+	uint rngState = InitRandomSeed(InitRandomSeed(gl_LaunchIDEXT.x, gl_LaunchIDEXT.y), ubo.currentSampleCount);
 	rayPayload.randomSeed = rngState;
 
 	vec3 color = vec3(0.0, 0.0, 0.0);

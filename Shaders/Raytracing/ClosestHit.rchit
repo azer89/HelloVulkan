@@ -50,11 +50,6 @@ void main()
 	rayPayload = Scatter(mData, tri, gl_WorldRayDirectionEXT, gl_HitTEXT, shadowFactor, rayPayload.randomSeed);
 }
 
-vec3 Reflect(vec3 V, vec3 N)
-{
-	return V - 2.0 * dot(V, N) * N;
-}
-
 RayPayload Scatter(MeshData mData, Triangle tri, vec3 direction, float t, float shadowFactor, uint seed)
 {
 	RayPayload payload;
@@ -65,8 +60,8 @@ RayPayload Scatter(MeshData mData, Triangle tri, vec3 direction, float t, float 
 	{
 		payload.color = color.xyz + tri.color.xyz; // Add texture color with vertex color
 		payload.color *= shadowFactor;
-		payload.scatterDir = Reflect(direction, tri.normal) + 
-			normalize(RandomInUnitSphere(seed)) * ubo.specularFuzziness; // Specular
+		payload.scatterDir = reflect(direction, tri.normal) + 
+			RandomInUnitSphere(seed) * ubo.specularFuzziness; // Specular
 		payload.doScatter = true;
 	}
 	else if (mData.material == MAT_LIGHT)
