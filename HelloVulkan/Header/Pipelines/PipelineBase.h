@@ -21,6 +21,7 @@ A pipeline can be either
 	* Offscreen graphics (draw to an image)
 	* Onscreen graphics (draw to a swapchain image)
 	* Compute
+	* Raytracing
  */
 class PipelineBase
 {

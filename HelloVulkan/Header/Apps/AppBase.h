@@ -52,9 +52,8 @@ protected:
 	// ImGui
 	bool ShowImGui();
 
-	void DestroyResources();
-
 	// Resources
+	void DestroyResources();
 	void InitSharedResources();
 
 	template<class T, class... U>

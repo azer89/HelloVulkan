@@ -89,7 +89,6 @@ void PipelineSSAO::CreateDescriptor(VulkanContext& ctx)
 
 void PipelineSSAO::AllocateDescriptorSets(VulkanContext& ctx)
 {
-	descriptorSets_.resize(AppConfig::FrameCount);
 	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
 	{
 		descriptor_.AllocateSet(ctx, &(descriptorSets_[i]));

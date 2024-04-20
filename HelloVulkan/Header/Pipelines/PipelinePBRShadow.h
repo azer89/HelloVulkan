@@ -59,7 +59,7 @@ private:
 	ResourcesIBL* resourcesIBL_;
 	ResourcesShadow* resourcesShadow_;
 	ResourcesGBuffer* resourcesGBuffer_;
-	std::vector<VkDescriptorSet> descriptorSets_;
+	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;
 	std::vector<VulkanBuffer> shadowMapConfigUBOBuffers_;
 	VulkanDescriptorInfo descriptorInfo_;
 

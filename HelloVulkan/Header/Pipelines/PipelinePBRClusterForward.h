@@ -55,7 +55,7 @@ private:
 	std::vector<VulkanBuffer> cfUBOBuffers_;
 	VulkanBuffer bdaBuffer_;
 	Scene* scene_;
-	std::vector<VkDescriptorSet> descriptorSets_;
+	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;
 
 	// Material pass
 	MaterialType materialType_;

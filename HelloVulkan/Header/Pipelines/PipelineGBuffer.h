@@ -23,7 +23,7 @@ private:
 	Scene* scene_;
 	ResourcesGBuffer* resourcesGBuffer_;
 	VulkanBuffer bdaBuffer_;
-	std::vector<VkDescriptorSet> descriptorSets_;
+	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;
 };
 
 #endif

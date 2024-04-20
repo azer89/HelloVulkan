@@ -22,8 +22,8 @@ struct PipelineConfig
 	bool useBlending_ = true;
 
 	bool customViewportSize_ = false;
-	float viewportWidth_ = 0;
-	float viewportHeight_ = 0;
+	float viewportWidth_ = 0.0f;
+	float viewportHeight_ = 0.0f;
 	float lineWidth_ = 1.0f;
 };
 

@@ -123,7 +123,6 @@ void PipelineGBuffer::CreateDescriptor(VulkanContext& ctx)
 	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 
 	// Sets
-	descriptorSets_.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
 		dsInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);

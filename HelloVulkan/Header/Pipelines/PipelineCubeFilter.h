@@ -9,11 +9,9 @@ class VulkanImage;
 
 enum class CubeFilterType : uint8_t
 {
-	// Iradiance / diffuse map
-	Diffuse = 0u,
-
-	// Prefilter / specular map (mipmapped)
-	Specular = 1u, 
+	
+	Diffuse = 0u, // Iradiance / diffuse map
+	Specular = 1u, // Prefilter / specular map (mipmapped)
 };
 
 /*

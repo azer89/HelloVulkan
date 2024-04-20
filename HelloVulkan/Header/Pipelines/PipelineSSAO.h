@@ -61,7 +61,7 @@ private:
 	ResourcesGBuffer* resourcesGBuffer_ = nullptr;
 	std::vector<VulkanBuffer> ssaoUboBuffers_ = {};
 	VulkanDescriptorInfo descriptorInfo_;
-	std::vector<VkDescriptorSet> descriptorSets_ = {};
+	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_ = {};
 };
 
 #endif

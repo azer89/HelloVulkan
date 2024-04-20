@@ -180,7 +180,6 @@ void PipelinePBRShadow::CreateDescriptor(VulkanContext& ctx)
 
 void PipelinePBRShadow::AllocateDescriptorSets(VulkanContext& ctx)
 {
-	descriptorSets_.resize(AppConfig::FrameCount);
 	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
 	{
 		descriptor_.AllocateSet(ctx, &(descriptorSets_[i]));

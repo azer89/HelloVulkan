@@ -23,7 +23,6 @@ public:
 private:
 	VkDescriptorSet descriptorSet_;
 	VulkanImage inputHDRImage_;
-	// TODO replace this below with framebuffer_
 	VkFramebuffer cubeFramebuffer_;
 
 private:
