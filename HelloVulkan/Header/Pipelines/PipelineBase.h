@@ -13,8 +13,6 @@
 
 #include <string>
 
-class Scene;
-
 /*
 This mainly encapsulates a graphics pipeline, framebuffers, and a render pass.
 A pipeline can be either

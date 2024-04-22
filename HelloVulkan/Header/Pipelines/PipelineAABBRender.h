@@ -4,6 +4,7 @@
 #include "VulkanContext.h"
 #include "PipelineBase.h"
 #include "ResourcesShared.h"
+#include "Scene.h"
 #include "Configs.h"
 
 class PipelineAABBRender final : public PipelineBase
