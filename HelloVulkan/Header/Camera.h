@@ -48,30 +48,30 @@ public:
 	Event<> ChangedEvent_;
 
 private:
-	glm::mat4 projectionMatrix_;
-	glm::mat4 inverseProjectionMatrix_;
-	glm::mat4 viewMatrix_;
+	glm::mat4 projectionMatrix_ = {};
+	glm::mat4 inverseProjectionMatrix_ = {};
+	glm::mat4 viewMatrix_ = {};
 
-	glm::vec3 position_;
-	glm::vec3 worldUp_;
+	glm::vec3 position_ = {};
+	glm::vec3 worldUp_ = {};
 
 	// Orthogonal axes
-	glm::vec3 front_;
-	glm::vec3 up_;
-	glm::vec3 right_;
+	glm::vec3 front_ = {};
+	glm::vec3 up_ = {};
+	glm::vec3 right_ = {};
 
 	// Euler Angles
-	float yaw_;
-	float pitch_;
+	float yaw_ = 0;
+	float pitch_ = 0;
 
 	// Options
-	float movementSpeed_;
-	float mouseSensitivity_;
-	float zoom_;
+	float movementSpeed_ = 0;
+	float mouseSensitivity_ = 0;
+	float zoom_ = 0;
 
 	// Screen size
-	float screenWidth_;
-	float screenHeight_;
+	float screenWidth_ = 0;
+	float screenHeight_ = 0;
 
 private:
 	void UpdateInternal();
