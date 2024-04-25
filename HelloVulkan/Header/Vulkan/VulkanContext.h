@@ -129,9 +129,9 @@ public:
 private:
 	void CreateDevice();
 	VkResult CreatePhysicalDevice(VkInstance instance);
-	uint32_t FindQueueFamilies(VkQueueFlags desiredFlags);
 	bool IsDeviceSuitable(VkPhysicalDevice d);
-	void CheckSurfaceSupport(VulkanInstance& instance);
+	uint32_t FindQueueFamilies(VkQueueFlags desiredFlags) const;
+	void CheckSurfaceSupport(VulkanInstance& instance) const;
 	VkSampleCountFlagBits GetMaxUsableSampleCount(VkPhysicalDevice d);
 
 	// Swapchain
@@ -167,7 +167,7 @@ private:
 	VkSwapchainKHR swapchain_ = nullptr;
 	std::vector<VkImage> swapchainImages_ = {};
 	std::vector<VkImageView> swapchainImageViews_ = {};
-	VkFormat swapchainImageFormat_ = VK_FORMAT_UNDEFINED;
+	VkFormat swapchainImageFormat_ = VK_FORMAT_B8G8R8A8_UNORM;
 	uint32_t currentSwapchainImageIndex_ = 0; // Current image index
 	uint32_t swapchainWidth_ = 0;
 	uint32_t swapchainHeight_ = 0;

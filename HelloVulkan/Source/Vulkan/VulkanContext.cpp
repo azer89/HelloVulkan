@@ -14,6 +14,7 @@ void VulkanContext::Create(VulkanInstance& instance, ContextConfig config)
 	swapchainWidth_ = AppConfig::InitialScreenWidth;
 	swapchainHeight_ = AppConfig::InitialScreenHeight;
 
+	// Enable features
 	ChainFeatures();
 
 	VK_CHECK(CreatePhysicalDevice(instance.GetInstance()));
@@ -102,7 +103,7 @@ void VulkanContext::AllocateVMA(VulkanInstance& instance)
 	vmaCreateAllocator(&allocatorInfo, &vmaAllocator_);
 }
 
-void VulkanContext::CheckSurfaceSupport(VulkanInstance& instance)
+void VulkanContext::CheckSurfaceSupport(VulkanInstance& instance) const
 {
 	VkBool32 presentSupported = 0;
 	vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice_, graphicsFamily_, instance.GetSurface(), &presentSupported);
@@ -264,8 +265,8 @@ void VulkanContext::CreateDevice()
 	}
 
 	const bool sameFamily = graphicsFamily_ == computeFamily_;
-	const float priorityOne = 1.f;
-	const float priorityZero = 0.f;
+	constexpr float priorityOne = 1.f;
+	constexpr float priorityZero = 0.f;
 
 	std::vector<VkDeviceQueueCreateInfo> queueInfoArray;
 	const VkDeviceQueueCreateInfo graphicsQueueInfo =
@@ -367,7 +368,7 @@ VkResult VulkanContext::CreatePhysicalDevice(VkInstance instance)
 	return VK_ERROR_INITIALIZATION_FAILED;
 }
 
-uint32_t VulkanContext::FindQueueFamilies(VkQueueFlags desiredFlags)
+uint32_t VulkanContext::FindQueueFamilies(VkQueueFlags desiredFlags) const
 {
 	uint32_t familyCount = 0;
 	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice_, &familyCount, nullptr);
@@ -375,7 +376,7 @@ uint32_t VulkanContext::FindQueueFamilies(VkQueueFlags desiredFlags)
 	std::vector<VkQueueFamilyProperties> families(familyCount);
 	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice_, &familyCount, families.data());
 
-	for (uint32_t i = 0; i != families.size(); i++)
+	for (uint32_t i = 0; i != families.size(); ++i)
 	{
 		if (families[i].queueCount > 0 && families[i].queueFlags & desiredFlags)
 		{
@@ -388,9 +389,6 @@ uint32_t VulkanContext::FindQueueFamilies(VkQueueFlags desiredFlags)
 
 VkResult VulkanContext::CreateSwapchain(VkSurfaceKHR surface)
 {
-	// TODO We manually select a swapchain format.
-	// Note that if you use VK_FORMAT_B8G8R8A8_SRGB you don't need to perform gamma correction.
-	swapchainImageFormat_ = VK_FORMAT_B8G8R8A8_UNORM;
 	const VkSurfaceFormatKHR surfaceFormat = { swapchainImageFormat_, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
 	const SwapchainSupportDetails swapchainSupport = QuerySwapchainSupport(surface);
 	const VkPresentModeKHR presentMode = ChooseSwapPresentMode(swapchainSupport.presentModes_);
@@ -554,13 +552,12 @@ VkResult VulkanContext::CreateSemaphore(VkSemaphore* outSemaphore) const
 	{
 		.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
 	};
-
 	return vkCreateSemaphore(device_, &ci, nullptr, outSemaphore);
 }
 
 VkResult VulkanContext::CreateFence(VkFence* fence) const
 {
-	const VkFenceCreateInfo fenceInfo =
+	constexpr VkFenceCreateInfo fenceInfo =
 	{
 		.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
 		.flags = VK_FENCE_CREATE_SIGNALED_BIT
@@ -768,10 +765,10 @@ void VulkanContext::InsertDebugLabel(VkCommandBuffer commandBuffer, const char* 
 	 .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
 	 .pNext = nullptr,
 	 .pLabelName = label,
-	 .color = {float((colorRGBA >> 0) & 0xff) / 255.0f,
-				float((colorRGBA >> 8) & 0xff) / 255.0f,
-				float((colorRGBA >> 16) & 0xff) / 255.0f,
-				float((colorRGBA >> 24) & 0xff) / 255.0f},
+	 .color = {static_cast<float>((colorRGBA >> 0) & 0xff) / 255.0f,
+				static_cast<float>((colorRGBA >> 8) & 0xff) / 255.0f,
+				static_cast<float>((colorRGBA >> 16) & 0xff) / 255.0f,
+				static_cast<float>((colorRGBA >> 24) & 0xff) / 255.0f},
 	};
 	vkCmdInsertDebugUtilsLabelEXT(commandBuffer, &utilsLabel);
 }
