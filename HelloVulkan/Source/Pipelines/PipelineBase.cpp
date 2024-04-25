@@ -21,7 +21,7 @@ PipelineBase::PipelineBase(
 // Destructor
 PipelineBase::~PipelineBase()
 {
-	for (auto uboBuffer : cameraUBOBuffers_)
+	for (auto& uboBuffer : cameraUBOBuffers_)
 	{
 		uboBuffer.Destroy();
 	}
@@ -89,7 +89,7 @@ void PipelineBase::CreatePipelineLayout(VulkanContext& ctx,
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.setLayoutCount = 1,
+		.setLayoutCount = 1, // Currently only one set per pipeline
 		.pSetLayouts = &dsLayout,
 		.pushConstantRangeCount = 0,
 		.pPushConstantRanges = nullptr
