@@ -24,11 +24,11 @@ A 3D rendering engine built from scratch using Vulkan API and C++.
 
 ### Engine Overview
 
-The engine leverages several modern GPU features to optimize rendering performance. First, bindless textures is achieved by utilizing __descriptor Indexing__. This enables the storage of all scene textures inside an unbounded array, which allows texture descriptors to be bound once at the start of a frame. 
+Inspired by GPU-driven rendering, the engine leverages several modern GPU features. First, bindless textures is achieved by utilizing __descriptor Indexing__. This enables the storage of all scene textures inside an unbounded array, which allows texture descriptors to be bound once at the start of a frame. 
 
-Next, the engine takes advantage of __indirect draw__ API. The CPU prepares indirect draw commands and stores them in an indirect buffer. These draw commands are then sorted by material type. This allows the rendering process to be divided into separate render passes for each material.
+Next, the engine takes advantage of __indirect draw__ API. The CPU prepares indirect draw commands and stores them in an indirect buffer. These draw commands are then sorted by material type. This allows the rendering process to be divided into separate render passes based on material type. Currently, there are two passes: opaque and transparent.
 
-Finally, the engine pushes the concept of "bindless" even further by utilizing __buffer device addresses__. Instead of creating descriptors, device addresses act as _pointers_ so that the shaders can have direct access to buffers.
+Finally, the engine leverages bindless concept using __buffer device addresses__, allowing shaders to directly access buffers without creating descriptors.
 
 <img width="850" alt="bindless_shadow_mapping_1" src="https://github.com/azer89/HelloVulkan/assets/790432/03200177-9bc7-45c3-be0a-093286c6eef9">
 
@@ -71,7 +71,7 @@ The left image below shows a rendering of all objects inside the frustum. The ri
 
 ### Compute-Based Skinning
 
-The compute-based skinning approach is much simpler than the traditional vertex shader skinning. This is because the skinning computation is done only once using a compute shader at the beginning of the frame. The resulting skinned vertices are then stored in a buffer, enabling reuse for subsequent render passes like shadow mapping and lighting. Consequently, there is no need to modify existing pipelines and no extra shader permutations.
+The compute-based skinning approach is much simpler than the traditional vertex shader skinning. This is because the skinning computation is done only once using a compute shader at the beginning of the frame. The resulting skinned vertices are then stored in a buffer, which are then read in subsequent render passes like shadow mapping, SSAO, and lighting. Consequently, there is no need to modify existing pipelines and no extra shader permutations.
 
 https://github.com/azer89/HelloVulkan/assets/790432/51f097f5-b361-4de9-9f04-99c511900f8d
 
