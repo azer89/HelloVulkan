@@ -69,8 +69,8 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset)
 	xoffset *= mouseSensitivity_;
 	yoffset *= mouseSensitivity_;
 
-	yaw_ += xoffset;
-	pitch_ += yoffset;
+	yaw_ += glm::radians(xoffset);
+	pitch_ += glm::radians(yoffset);
 	
 	ConstrainPitch();
 
@@ -86,10 +86,6 @@ void Camera::SetPositionAndTarget(glm::vec3 cameraPosition, glm::vec3 cameraTarg
 	pitch_ = asin(direction.y);
 	yaw_ = atan2(direction.z, direction.x);
 
-	// TODO Inefficient because keep converting back-and-forth between degrees and radians
-	pitch_ = glm::degrees(pitch_);
-	yaw_ = glm::degrees(yaw_);
-
 	ConstrainPitch();
 
 	// Update orthogonal axes and matrices
@@ -99,7 +95,7 @@ void Camera::SetPositionAndTarget(glm::vec3 cameraPosition, glm::vec3 cameraTarg
 void Camera::ConstrainPitch()
 {
 	// Make sure that when pitch is out of bounds, screen doesn't get flipped
-	constexpr float pitchLimit = 89.f;
+	constexpr float pitchLimit = 1.55334; // 89 degree
 	pitch_ = glm::clamp(pitch_, -pitchLimit, pitchLimit);
 }
 
@@ -108,7 +104,7 @@ void Camera::ConstrainPitch()
 void Camera::ProcessMouseScroll(float yoffset)
 {
 	zoom_ -= (float)yoffset;
-	zoom_ = glm::clamp(zoom_, 1.f, 45.f);
+	zoom_ = glm::clamp(zoom_, 1.f, CameraConfig::Zoom);
 
 	// Update orthogonal axes and matrices
 	UpdateInternal();
@@ -118,9 +114,9 @@ void Camera::UpdateInternal()
 {
 	// Calculate the new Front vector
 	glm::vec3 front;
-	front.x = cos(glm::radians(yaw_)) * cos(glm::radians(pitch_));
-	front.y = sin(glm::radians(pitch_));
-	front.z = sin(glm::radians(yaw_)) * cos(glm::radians(pitch_));
+	front.x = cos(yaw_) * cos(pitch_);
+	front.y = sin(pitch_);
+	front.z = sin(yaw_) * cos(pitch_);
 	front_ = glm::normalize(front);
 
 	// Calculate three orthogonal axes
@@ -128,7 +124,7 @@ void Camera::UpdateInternal()
 	up_ = glm::normalize(glm::cross(right_, front_));
 
 	// Projection matrix
-	projectionMatrix_ = glm::perspective(glm::radians(zoom_),
+	projectionMatrix_ = glm::perspective(zoom_,
 		static_cast<float>(screenWidth_) / static_cast<float>(screenHeight_),
 		CameraConfig::Near,
 		CameraConfig::Far);

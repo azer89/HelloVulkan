@@ -33,12 +33,13 @@ namespace AppConfig
 
 namespace CameraConfig
 {
-	constexpr float Yaw = -90.0f;
+	// These three below are in radian
+	constexpr float Yaw = -1.5708; // -90 degree
 	constexpr float Pitch = 0.0f;
+	constexpr float Zoom = 0.785398; // 45 degree
+
 	constexpr float Speed = 2.5f;
 	constexpr float Sensitivity = 0.1f;
-	constexpr float Zoom = 45.0f;
-
 	constexpr float Near = 0.1f;
 	constexpr float Far = 100.0f;
 }
