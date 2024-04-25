@@ -28,7 +28,7 @@ Inspired by GPU-driven rendering, the engine leverages several modern GPU featur
 
 Next, the engine takes advantage of __indirect draw__ API. The CPU prepares indirect draw commands and stores them in an indirect buffer. These draw commands are then sorted by material type. This allows the rendering process to be divided into separate render passes based on material type. Currently, there are two passes: opaque and transparent.
 
-Finally, the engine pushes the concept of "bindless" even further by utilizing __buffer device addresses__. Instead of creating descriptors, device addresses act as _pointers_ so that the shaders can have direct access to buffers.
+Finally, the engine uses the concept of "bindless" by utilizing __buffer device addresses__. Instead of creating descriptors, device addresses act as _pointers_ so that the shaders can have direct access to buffers.
 
 <img width="850" alt="bindless_shadow_mapping_1" src="https://github.com/azer89/HelloVulkan/assets/790432/03200177-9bc7-45c3-be0a-093286c6eef9">
 
