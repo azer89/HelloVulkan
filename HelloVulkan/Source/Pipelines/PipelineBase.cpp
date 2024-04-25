@@ -157,7 +157,7 @@ void PipelineBase::CreateGraphicsPipeline(
 	}
 	else
 	{
-		pInfo.colorBlending.attachmentCount = overridingColorBlendAttachments.size();
+		pInfo.colorBlending.attachmentCount = static_cast<uint32_t>(overridingColorBlendAttachments.size());
 		pInfo.colorBlending.pAttachments = overridingColorBlendAttachments.data();
 	}
 

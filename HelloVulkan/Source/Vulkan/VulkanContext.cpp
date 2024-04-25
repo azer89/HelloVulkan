@@ -334,7 +334,9 @@ VkSampleCountFlagBits VulkanContext::GetMaxUsableSampleCount(VkPhysicalDevice d)
 	if (counts & VK_SAMPLE_COUNT_4_BIT) { max = VK_SAMPLE_COUNT_4_BIT; }
 	if (counts & VK_SAMPLE_COUNT_2_BIT) { max = VK_SAMPLE_COUNT_2_BIT; }
 
-	return AppConfig::MSAACount > max ? max : AppConfig::MSAACount;
+	VkSampleCountFlagBits msaaCount = static_cast<VkSampleCountFlagBits>(AppConfig::MSAACount);
+
+	return msaaCount > max ? max : msaaCount;
 }
 
 VkResult VulkanContext::CreatePhysicalDevice(VkInstance instance)

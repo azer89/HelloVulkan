@@ -95,7 +95,7 @@ void Camera::SetPositionAndTarget(glm::vec3 cameraPosition, glm::vec3 cameraTarg
 void Camera::ConstrainPitch()
 {
 	// Make sure that when pitch is out of bounds, screen doesn't get flipped
-	constexpr float pitchLimit = 1.55334; // 89 degree
+	constexpr float pitchLimit = 1.55334f; // 89 degree
 	pitch_ = glm::clamp(pitch_, -pitchLimit, pitchLimit);
 }
 

@@ -12,9 +12,8 @@ namespace AppConfig
 
 	// Number of frame in flight
 	constexpr uint32_t FrameCount = 2;
-	
-	// TODO: Abstract to a graphics settings struct
-	constexpr VkSampleCountFlagBits MSAACount = VK_SAMPLE_COUNT_4_BIT;
+
+	constexpr uint32_t MSAACount = 4;
 	// VK_PRESENT_MODE_FIFO_KHR --> Lock to screen FPS
 	// VK_PRESENT_MODE_MAILBOX_KHR --> Triple buffering
 	constexpr VkPresentModeKHR PresentMode = VK_PRESENT_MODE_FIFO_KHR;
@@ -34,9 +33,9 @@ namespace AppConfig
 namespace CameraConfig
 {
 	// These three below are in radian
-	constexpr float Yaw = -1.5708; // -90 degree
+	constexpr float Yaw = -1.5708f; // -90 degree
 	constexpr float Pitch = 0.0f;
-	constexpr float Zoom = 0.785398; // 45 degree
+	constexpr float Zoom = 0.785398f; // 45 degree
 
 	constexpr float Speed = 2.5f;
 	constexpr float Sensitivity = 0.1f;
