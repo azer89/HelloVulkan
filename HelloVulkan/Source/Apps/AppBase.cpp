@@ -24,7 +24,7 @@ void AppBase::InitVulkan(ContextConfig config)
 	const VkResult res = volkInitialize();
 	if (res != VK_SUCCESS)
 	{
-		std::cerr << "Volk Cannot be initialized\n";
+		throw std::runtime_error("Volk Cannot be initialized");
 	}
 
 	// Initialize Vulkan instance
@@ -94,8 +94,6 @@ void AppBase::InitGLFW()
 // TODO Analyze this function for possible performance improvement
 void AppBase::DrawFrame()
 {
-	//ZoneScopedC(tracy::Color::LawnGreen);
-
 	FrameData& frameData = vulkanContext_.GetCurrentFrameData();
 	{
 		ZoneScopedNC("WaitForFences", tracy::Color::GreenYellow);
