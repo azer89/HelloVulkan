@@ -17,11 +17,11 @@ private:
 	void SetDebugNames(VulkanContext& ctx);
 
 public:
-	float cubemapMipmapCount_;
-	VulkanImage environmentCubemap_;
-	VulkanImage diffuseCubemap_;
-	VulkanImage specularCubemap_;
-	VulkanImage brdfLut_;
+	float cubemapMipmapCount_ = 0.0f;
+	VulkanImage environmentCubemap_ = {};
+	VulkanImage diffuseCubemap_ = {};
+	VulkanImage specularCubemap_ = {};
+	VulkanImage brdfLut_ = {};
 
 };
 
