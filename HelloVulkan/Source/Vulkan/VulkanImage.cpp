@@ -132,12 +132,13 @@ void VulkanImage::CreateFromHDR(
 		throw std::runtime_error(ss.str());
 	}
 
+	constexpr uint32_t mipmapCount = 1;
 	CreateImageFromData(
 		ctx,
 		pixels,
 		texWidth,
 		texHeight,
-		Utility::MipMapCount(texWidth, texHeight),
+		mipmapCount,
 		1,
 		VK_FORMAT_R32G32B32A32_SFLOAT);
 	stbi_image_free(pixels);
