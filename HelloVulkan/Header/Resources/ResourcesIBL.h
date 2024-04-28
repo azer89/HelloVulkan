@@ -22,7 +22,6 @@ public:
 	VulkanImage diffuseCubemap_ = {};
 	VulkanImage specularCubemap_ = {};
 	VulkanImage brdfLut_ = {};
-
 };
 
 #endif
