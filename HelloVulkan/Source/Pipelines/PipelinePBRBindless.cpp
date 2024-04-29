@@ -1,5 +1,5 @@
 #include "PipelinePBRBindless.h"
-#include "..\..\Header\Vulkan\VulkanDescriptorSetInfo.h"
+#include "VulkanDescriptorSetInfo.h"
 #include "ResourcesShared.h"
 #include "ResourcesLight.h"
 #include "ResourcesIBL.h"

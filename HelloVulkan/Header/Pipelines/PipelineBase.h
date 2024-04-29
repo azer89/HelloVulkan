@@ -5,7 +5,7 @@
 #include "VulkanBuffer.h"
 #include "VulkanRenderPass.h"
 #include "VulkanFramebuffer.h"
-#include "..\Vulkan\VulkanDescriptorHandler.h"
+#include "VulkanDescriptorHandler.h"
 #include "VulkanSpecialization.h"
 #include "PipelineConfig.h"
 #include "UIData.h"

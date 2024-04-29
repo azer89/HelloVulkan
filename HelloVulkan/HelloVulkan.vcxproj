@@ -353,8 +353,8 @@
     <ClCompile Include="Source\Vulkan\VulkanBarrier.cpp" />
     <ClCompile Include="Source\Vulkan\VulkanBuffer.cpp" />
     <ClCompile Include="Source\Vulkan\VulkanContext.cpp" />
-    <ClCompile Include="Source\Vulkan\VulkanDescriptor.cpp" />
-    <ClCompile Include="Source\Vulkan\VulkanDescriptorInfo.cpp" />
+    <ClCompile Include="Source\Vulkan\VulkanDescriptorHandler.cpp" />
+    <ClCompile Include="Source\Vulkan\VulkanDescriptorSetInfo.cpp" />
     <ClCompile Include="Source\Vulkan\VulkanFramebuffer.cpp" />
     <ClCompile Include="Source\Vulkan\VulkanImage.cpp" />
     <ClCompile Include="Source\Vulkan\VulkanInstance.cpp" />
