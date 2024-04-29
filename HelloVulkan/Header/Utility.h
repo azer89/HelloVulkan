@@ -29,9 +29,9 @@ namespace Utility
 		return a + f * (b - a);
 	}
 
-	inline int MipMapCount(int w, int h)
+	inline uint32_t MipMapCount(uint32_t w, uint32_t h)
 	{
-		int levels = 1;
+		uint32_t levels = 1;
 		while ((w | h) >> levels)
 		{
 			levels += 1;
@@ -39,9 +39,9 @@ namespace Utility
 		return levels;
 	}
 
-	inline int MipMapCount(int size)
+	inline uint32_t MipMapCount(uint32_t size)
 	{
-		int levels = 1;
+		uint32_t levels = 1;
 		while (size >> levels)
 		{
 			levels += 1;
