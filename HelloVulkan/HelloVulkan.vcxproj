@@ -287,8 +287,8 @@
     <ClInclude Include="Header\Vulkan\VulkanBarrier.h" />
     <ClInclude Include="Header\Vulkan\VulkanBuffer.h" />
     <ClInclude Include="Header\Vulkan\VulkanContext.h" />
-    <ClInclude Include="Header\Vulkan\VulkanDescriptor.h" />
-    <ClInclude Include="Header\Vulkan\VulkanDescriptorInfo.h" />
+    <ClInclude Include="Header\Vulkan\VulkanDescriptorHandler.h" />
+    <ClInclude Include="Header\Vulkan\VulkanDescriptorSetInfo.h" />
     <ClInclude Include="Header\Vulkan\VulkanFramebuffer.h" />
     <ClInclude Include="Header\Vulkan\VulkanImage.h" />
     <ClInclude Include="Header\Vulkan\VulkanInstance.h" />

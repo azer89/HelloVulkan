@@ -78,7 +78,7 @@ void PipelineInfiniteGrid::FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer
 void PipelineInfiniteGrid::CreateDescriptor(VulkanContext& ctx)
 {
 	constexpr uint32_t frameCount = AppConfig::FrameCount;
-	VulkanDescriptorInfo dsInfo;
+	VulkanDescriptorSetInfo dsInfo;
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
 	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 	for (size_t i = 0; i < frameCount; ++i)

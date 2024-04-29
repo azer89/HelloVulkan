@@ -61,7 +61,7 @@ private:
 	ResourcesGBuffer* resourcesGBuffer_;
 	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;
 	std::vector<VulkanBuffer> shadowMapConfigUBOBuffers_;
-	VulkanDescriptorInfo descriptorInfo_;
+	VulkanDescriptorSetInfo descriptorInfo_;
 
 	// Material pass
 	MaterialType materialType_;

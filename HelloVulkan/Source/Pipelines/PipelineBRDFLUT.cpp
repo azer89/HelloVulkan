@@ -109,7 +109,7 @@ void PipelineBRDFLUT::Execute(VulkanContext& ctx)
 
 void PipelineBRDFLUT::CreateDescriptor(VulkanContext& ctx)
 {
-	VulkanDescriptorInfo dsInfo;
+	VulkanDescriptorSetInfo dsInfo;
 	dsInfo.AddBuffer(&outBuffer_, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT);
 	descriptor_.CreatePoolAndLayout(ctx, dsInfo, 1u, 1u);
 	descriptor_.CreateSet(ctx, dsInfo, &descriptorSet_);
