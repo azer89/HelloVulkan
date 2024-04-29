@@ -30,7 +30,7 @@ private:
 private:
 	VulkanImage* singleSampledColorImage_;
 
-	VulkanDescriptorSetInfo descriptorInfo_;
+	VulkanDescriptorSetInfo descriptorSetInfo_;
 	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;
 };
 

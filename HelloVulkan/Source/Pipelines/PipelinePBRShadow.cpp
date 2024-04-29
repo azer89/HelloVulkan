@@ -159,20 +159,20 @@ void PipelinePBRShadow::OnWindowResized(VulkanContext& ctx)
 
 void PipelinePBRShadow::CreateDescriptor(VulkanContext& ctx)
 {
-	descriptorInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
-	descriptorInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 1
-	descriptorInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 2
-	descriptorInfo_.AddBuffer(&bdaBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 3
-	descriptorInfo_.AddBuffer(resourcesLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
-	descriptorInfo_.AddImage(&(resourcesIBL_->specularCubemap_)); // 5
-	descriptorInfo_.AddImage(&(resourcesIBL_->diffuseCubemap_)); // 6
-	descriptorInfo_.AddImage(&(resourcesIBL_->brdfLut_)); // 7
-	descriptorInfo_.AddImage(&(resourcesShadow_->shadowMap_)); // 8
-	descriptorInfo_.AddImage(nullptr); // 9
-	descriptorInfo_.AddImageArray(scene_->GetImageInfos()); // 10
+	descriptorSetInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
+	descriptorSetInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 1
+	descriptorSetInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 2
+	descriptorSetInfo_.AddBuffer(&bdaBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 3
+	descriptorSetInfo_.AddBuffer(resourcesLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 4
+	descriptorSetInfo_.AddImage(&(resourcesIBL_->specularCubemap_)); // 5
+	descriptorSetInfo_.AddImage(&(resourcesIBL_->diffuseCubemap_)); // 6
+	descriptorSetInfo_.AddImage(&(resourcesIBL_->brdfLut_)); // 7
+	descriptorSetInfo_.AddImage(&(resourcesShadow_->shadowMap_)); // 8
+	descriptorSetInfo_.AddImage(nullptr); // 9
+	descriptorSetInfo_.AddImageArray(scene_->GetImageInfos()); // 10
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, descriptorInfo_, AppConfig::FrameCount, 1u);
+	descriptor_.CreatePoolAndLayout(ctx, descriptorSetInfo_, AppConfig::FrameCount, 1u);
 
 	AllocateDescriptorSets(ctx);
 	UpdateDescriptorSets(ctx);
@@ -188,14 +188,14 @@ void PipelinePBRShadow::AllocateDescriptorSets(VulkanContext& ctx)
 
 void PipelinePBRShadow::UpdateDescriptorSets(VulkanContext& ctx)
 {
-	descriptorInfo_.UpdateImage(&(resourcesGBuffer_->ssao_), 9); // 9
+	descriptorSetInfo_.UpdateImage(&(resourcesGBuffer_->ssao_), 9); // 9
 	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
 	{
 		// Need to update all double-buffered resources because 
 		// VulkanDescriptorInfo::writes_ itself is not double buffered
-		descriptorInfo_.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
-		descriptorInfo_.UpdateBuffer(&(shadowMapConfigUBOBuffers_[i]), 1);
-		descriptorInfo_.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 2);
-		descriptor_.UpdateSet(ctx, descriptorInfo_, &(descriptorSets_[i]));
+		descriptorSetInfo_.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
+		descriptorSetInfo_.UpdateBuffer(&(shadowMapConfigUBOBuffers_[i]), 1);
+		descriptorSetInfo_.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 2);
+		descriptor_.UpdateSet(ctx, descriptorSetInfo_, &(descriptorSets_[i]));
 	}
 }

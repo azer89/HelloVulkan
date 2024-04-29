@@ -74,14 +74,14 @@ void PipelineSSAO::OnWindowResized(VulkanContext& ctx)
 
 void PipelineSSAO::CreateDescriptor(VulkanContext& ctx)
 {
-	descriptorInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
-	descriptorInfo_.AddBuffer(&(resourcesGBuffer_->kernel_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 1
-	descriptorInfo_.AddImage(nullptr); // 2
-	descriptorInfo_.AddImage(nullptr); // 3
-	descriptorInfo_.AddImage(&(resourcesGBuffer_->noise_)); // 4
+	descriptorSetInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); // 0
+	descriptorSetInfo_.AddBuffer(&(resourcesGBuffer_->kernel_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 1
+	descriptorSetInfo_.AddImage(nullptr); // 2
+	descriptorSetInfo_.AddImage(nullptr); // 3
+	descriptorSetInfo_.AddImage(&(resourcesGBuffer_->noise_)); // 4
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, descriptorInfo_, AppConfig::FrameCount, 1u);
+	descriptor_.CreatePoolAndLayout(ctx, descriptorSetInfo_, AppConfig::FrameCount, 1u);
 
 	AllocateDescriptorSets(ctx);
 	UpdateDescriptorSets(ctx);
@@ -98,13 +98,13 @@ void PipelineSSAO::AllocateDescriptorSets(VulkanContext& ctx)
 void PipelineSSAO::UpdateDescriptorSets(VulkanContext& ctx)
 {
 	constexpr uint32_t frameCount = AppConfig::FrameCount;
-	descriptorInfo_.UpdateImage(&(resourcesGBuffer_->position_), 2); // 2
-	descriptorInfo_.UpdateImage(&(resourcesGBuffer_->normal_), 3); // 3
+	descriptorSetInfo_.UpdateImage(&(resourcesGBuffer_->position_), 2); // 2
+	descriptorSetInfo_.UpdateImage(&(resourcesGBuffer_->normal_), 3); // 3
 	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
 	{
 		// Need to update all double-buffered resources because 
 		// VulkanDescriptorInfo::writes_ itself is not double buffered
-		descriptorInfo_.UpdateBuffer(&(ssaoUboBuffers_[i]), 0);
-		descriptor_.UpdateSet(ctx, descriptorInfo_, &(descriptorSets_[i]));
+		descriptorSetInfo_.UpdateBuffer(&(ssaoUboBuffers_[i]), 0);
+		descriptor_.UpdateSet(ctx, descriptorSetInfo_, &(descriptorSets_[i]));
 	}
 }
