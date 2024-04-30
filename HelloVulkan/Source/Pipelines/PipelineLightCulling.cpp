@@ -123,7 +123,7 @@ void PipelineLightCulling::CreateDescriptor(VulkanContext& ctx)
 	const uint32_t frameCount = static_cast<uint32_t>(AppConfig::FrameCount);
 	constexpr VkShaderStageFlags stageFlag = VK_SHADER_STAGE_COMPUTE_BIT;
 
-	VulkanDescriptorInfo dsInfo;
+	VulkanDescriptorSetInfo dsInfo;
 	dsInfo.AddBuffer(&(resourcesCF_->aabbBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 0
 	dsInfo.AddBuffer(resourcesLight_->GetVulkanBufferPtr(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 1
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 2

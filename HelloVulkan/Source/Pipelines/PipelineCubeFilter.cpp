@@ -117,7 +117,7 @@ void PipelineCubeFilter::InitializeOutputCubemap(
 
 void PipelineCubeFilter::CreateDescriptor(VulkanContext& ctx, VulkanImage* inputCubemap)
 {
-	VulkanDescriptorInfo dsInfo;
+	VulkanDescriptorSetInfo dsInfo;
 	dsInfo.AddImage(inputCubemap);
 	descriptor_.CreatePoolAndLayout(ctx, dsInfo, 1u, 1u);
 	descriptor_.CreateSet(ctx, dsInfo, &descriptorSet_);

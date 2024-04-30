@@ -21,7 +21,7 @@ struct DescriptorWrite
 	VkShaderStageFlags shaderStage_;
 };
 
-class VulkanDescriptorInfo
+class VulkanDescriptorSetInfo
 {
 public:
 	std::vector<DescriptorWrite> writes_;

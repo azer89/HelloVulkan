@@ -2,23 +2,23 @@
 #define VULKAN_DESCRIPTOR
 
 #include "VulkanContext.h"
-#include "VulkanDescriptorInfo.h"
+#include "VulkanDescriptorSetInfo.h"
 
-class VulkanDescriptor
+class VulkanDescriptorHandler
 {
 public:
 	void CreatePoolAndLayout(
 		VulkanContext& ctx, 
-		const VulkanDescriptorInfo& descriptorInfo,
+		const VulkanDescriptorSetInfo& descriptorInfo,
 		uint32_t frameCount,
 		uint32_t setCountPerFrame,
 		VkDescriptorPoolCreateFlags poolFlags = 0);
 
-	void CreateSet(VulkanContext& ctx, const VulkanDescriptorInfo& descriptorInfo, VkDescriptorSet* set);
+	void CreateSet(VulkanContext& ctx, const VulkanDescriptorSetInfo& descriptorInfo, VkDescriptorSet* set);
 
 	void AllocateSet(VulkanContext& ctx, VkDescriptorSet* set);
 
-	void UpdateSet(VulkanContext& ctx, const VulkanDescriptorInfo& descriptorInfo, VkDescriptorSet* set);
+	void UpdateSet(VulkanContext& ctx, const VulkanDescriptorSetInfo& descriptorInfo, VkDescriptorSet* set);
 
 	void Destroy();
 

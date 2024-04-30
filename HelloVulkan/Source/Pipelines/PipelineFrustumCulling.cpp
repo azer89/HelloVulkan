@@ -71,7 +71,7 @@ void PipelineFrustumCulling::CreateDescriptor(VulkanContext& ctx)
 	constexpr uint32_t frameCount = AppConfig::FrameCount;
 	constexpr VkShaderStageFlags stageFlag = VK_SHADER_STAGE_COMPUTE_BIT;
 
-	VulkanDescriptorInfo dsInfo;
+	VulkanDescriptorSetInfo dsInfo;
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, stageFlag); // 0
 	dsInfo.AddBuffer(&(scene_->transformedBoundingBoxBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 1
 	dsInfo.AddBuffer(&(scene_->indirectBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 2

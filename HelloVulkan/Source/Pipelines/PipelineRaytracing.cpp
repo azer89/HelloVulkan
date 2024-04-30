@@ -128,16 +128,16 @@ void PipelineRaytracing::CreateDescriptor(VulkanContext& ctx)
 	textureInfoArray_ = scene_->GetImageInfos();
 	constexpr uint32_t frameCount = AppConfig::FrameCount;
 
-	descriptorInfo_.AddAccelerationStructure(VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
-	descriptorInfo_.AddImage(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
-	descriptorInfo_.AddImage(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
-	descriptorInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_MISS_BIT_KHR);
-	descriptorInfo_.AddBuffer(&bdaBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_ANY_HIT_BIT_KHR);
-	descriptorInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
-	descriptorInfo_.AddImageArray(textureInfoArray_, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_ANY_HIT_BIT_KHR);
+	descriptorSetInfo_.AddAccelerationStructure(VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
+	descriptorSetInfo_.AddImage(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
+	descriptorSetInfo_.AddImage(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR);
+	descriptorSetInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_MISS_BIT_KHR);
+	descriptorSetInfo_.AddBuffer(&bdaBuffer_, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_ANY_HIT_BIT_KHR);
+	descriptorSetInfo_.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
+	descriptorSetInfo_.AddImageArray(textureInfoArray_, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_ANY_HIT_BIT_KHR);
 
 	// Create pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, descriptorInfo_, frameCount, 1u);
+	descriptor_.CreatePoolAndLayout(ctx, descriptorSetInfo_, frameCount, 1u);
 
 	for (size_t i = 0; i < frameCount; i++)
 	{
@@ -157,18 +157,18 @@ void PipelineRaytracing::UpdateDescriptor(VulkanContext& ctx)
 		.accelerationStructureCount = 1u,
 		.pAccelerationStructures = &tlas_.handle_,
 	};
-	descriptorInfo_.UpdateAccelerationStructure(&asInfo, 0);
+	descriptorSetInfo_.UpdateAccelerationStructure(&asInfo, 0);
 
 	// TODO Currently storage images need to be readded
-	descriptorInfo_.UpdateStorageImage(&storageImage_, 1);
-	descriptorInfo_.UpdateStorageImage(&accumulationImage_, 2);
+	descriptorSetInfo_.UpdateStorageImage(&storageImage_, 1);
+	descriptorSetInfo_.UpdateStorageImage(&accumulationImage_, 2);
 
 	constexpr auto frameCount = AppConfig::FrameCount;
 	for (size_t i = 0; i < frameCount; i++)
 	{
-		descriptorInfo_.UpdateBuffer(&(rtUBOBuffers_[i]), 3);
-		descriptorInfo_.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 5);
-		descriptor_.UpdateSet(ctx, descriptorInfo_, &(descriptorSets_[i]));
+		descriptorSetInfo_.UpdateBuffer(&(rtUBOBuffers_[i]), 3);
+		descriptorSetInfo_.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 5);
+		descriptor_.UpdateSet(ctx, descriptorSetInfo_, &(descriptorSets_[i]));
 	}
 }
 

@@ -86,7 +86,7 @@ void PipelineEquirect2Cube::InitializeHDRImage(VulkanContext& ctx, const std::st
 
 void PipelineEquirect2Cube::CreateDescriptor(VulkanContext& ctx)
 {
-	VulkanDescriptorInfo dsInfo;
+	VulkanDescriptorSetInfo dsInfo;
 	dsInfo.AddImage(&inputHDRImage_);
 	descriptor_.CreatePoolAndLayout(ctx, dsInfo, 1u, 1u);
 	descriptor_.CreateSet(ctx, dsInfo, &descriptorSet_);

@@ -1,11 +1,11 @@
-#include "VulkanDescriptor.h"
+#include "VulkanDescriptorHandler.h"
 #include "VulkanCheck.h"
 
 #include <iostream>
 
-void VulkanDescriptor::CreatePoolAndLayout(
+void VulkanDescriptorHandler::CreatePoolAndLayout(
 	VulkanContext& ctx, 
-	const VulkanDescriptorInfo& descriptorInfo,
+	const VulkanDescriptorSetInfo& descriptorInfo,
 	uint32_t frameCount,
 	uint32_t setCountPerFrame,
 	VkDescriptorPoolCreateFlags poolFlags)
@@ -139,9 +139,9 @@ void VulkanDescriptor::CreatePoolAndLayout(
 	VK_CHECK(vkCreateDescriptorSetLayout(ctx.GetDevice(), &layoutInfo, nullptr, &layout_));
 }
 
-void VulkanDescriptor::CreateSet(
+void VulkanDescriptorHandler::CreateSet(
 	VulkanContext& ctx, 
-	const VulkanDescriptorInfo& descriptorInfo,
+	const VulkanDescriptorSetInfo& descriptorInfo,
 	VkDescriptorSet* set)
 {
 	AllocateSet(ctx, set);
@@ -149,7 +149,7 @@ void VulkanDescriptor::CreateSet(
 	UpdateSet(ctx, descriptorInfo, set);
 }
 
-void VulkanDescriptor::AllocateSet(VulkanContext& ctx, VkDescriptorSet* set)
+void VulkanDescriptorHandler::AllocateSet(VulkanContext& ctx, VkDescriptorSet* set)
 {
 	const VkDescriptorSetAllocateInfo allocInfo = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
@@ -162,9 +162,9 @@ void VulkanDescriptor::AllocateSet(VulkanContext& ctx, VkDescriptorSet* set)
 	VK_CHECK(vkAllocateDescriptorSets(ctx.GetDevice(), &allocInfo, set));
 }
 
-void VulkanDescriptor::UpdateSet(
+void VulkanDescriptorHandler::UpdateSet(
 	VulkanContext& ctx, 
-	const VulkanDescriptorInfo& descriptorInfo,
+	const VulkanDescriptorSetInfo& descriptorInfo,
 	VkDescriptorSet* set)
 {
 	std::vector<VkWriteDescriptorSet> descriptorWrites;
@@ -198,7 +198,7 @@ void VulkanDescriptor::UpdateSet(
 	);
 }
 
-void VulkanDescriptor::Destroy()
+void VulkanDescriptorHandler::Destroy()
 {
 	if (layout_)
 	{
@@ -213,7 +213,7 @@ void VulkanDescriptor::Destroy()
 	}
 }
 
-VkDescriptorSetLayoutBinding VulkanDescriptor::CreateDescriptorSetLayoutBinding(
+VkDescriptorSetLayoutBinding VulkanDescriptorHandler::CreateDescriptorSetLayoutBinding(
 	uint32_t binding,
 	VkDescriptorType descriptorType,
 	VkShaderStageFlags stageFlags,

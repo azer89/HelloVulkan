@@ -56,10 +56,10 @@ void PipelineTonemap::CreateDescriptor(VulkanContext& ctx)
 {
 	constexpr uint32_t frameCount = AppConfig::FrameCount;
 
-	descriptorInfo_.AddImage(nullptr);
+	descriptorSetInfo_.AddImage(nullptr);
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, descriptorInfo_, frameCount, 1u);
+	descriptor_.CreatePoolAndLayout(ctx, descriptorSetInfo_, frameCount, 1u);
 
 	// Sets
 	AllocateDescriptorSets(ctx);
@@ -79,9 +79,9 @@ void PipelineTonemap::AllocateDescriptorSets(VulkanContext& ctx)
 void PipelineTonemap::UpdateDescriptorSets(VulkanContext& ctx)
 {
 	constexpr auto frameCount = AppConfig::FrameCount;
-	descriptorInfo_.UpdateImage(singleSampledColorImage_, 0);
+	descriptorSetInfo_.UpdateImage(singleSampledColorImage_, 0);
 	for (size_t i = 0; i < frameCount; ++i)
 	{
-		descriptor_.UpdateSet(ctx, descriptorInfo_, &(descriptorSets_[i]));
+		descriptor_.UpdateSet(ctx, descriptorSetInfo_, &(descriptorSets_[i]));
 	}
 }

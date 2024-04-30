@@ -1,10 +1,10 @@
-#include "VulkanDescriptorInfo.h"
+#include "VulkanDescriptorSetInfo.h"
 #include "VulkanBuffer.h"
 #include "VulkanImage.h"
 
 #include <iostream>
 
-void VulkanDescriptorInfo::AddBuffer(
+void VulkanDescriptorSetInfo::AddBuffer(
 	const VulkanBuffer* buffer,
 	VkDescriptorType dsType,
 	VkShaderStageFlags stageFlags
@@ -27,7 +27,7 @@ void VulkanDescriptorInfo::AddBuffer(
 		});
 }
 
-void VulkanDescriptorInfo::AddImage(
+void VulkanDescriptorSetInfo::AddImage(
 	const VulkanImage* image,
 	VkDescriptorType dsType,
 	VkShaderStageFlags stageFlags
@@ -51,7 +51,7 @@ void VulkanDescriptorInfo::AddImage(
 }
 
 // Special case for descriptor indexing
-void VulkanDescriptorInfo::AddImageArray(
+void VulkanDescriptorSetInfo::AddImageArray(
 	const std::vector<VkDescriptorImageInfo>& imageArray,
 	VkDescriptorType dsType,
 	VkShaderStageFlags stageFlags)
@@ -68,7 +68,7 @@ void VulkanDescriptorInfo::AddImageArray(
 }
 
 // Raytracing
-void VulkanDescriptorInfo::AddAccelerationStructure(VkShaderStageFlags stageFlags)
+void VulkanDescriptorSetInfo::AddAccelerationStructure(VkShaderStageFlags stageFlags)
 {
 	writes_.push_back
 	({
@@ -79,7 +79,7 @@ void VulkanDescriptorInfo::AddAccelerationStructure(VkShaderStageFlags stageFlag
 }
 
 // Raytracing
-void VulkanDescriptorInfo::AddAccelerationStructure(VkWriteDescriptorSetAccelerationStructureKHR* asInfo,
+void VulkanDescriptorSetInfo::AddAccelerationStructure(VkWriteDescriptorSetAccelerationStructureKHR* asInfo,
 	VkShaderStageFlags stageFlags)
 {
 	writes_.push_back
@@ -91,7 +91,7 @@ void VulkanDescriptorInfo::AddAccelerationStructure(VkWriteDescriptorSetAccelera
 		});
 }
 
-void VulkanDescriptorInfo::UpdateBuffer(const VulkanBuffer* buffer, size_t bindingIndex)
+void VulkanDescriptorSetInfo::UpdateBuffer(const VulkanBuffer* buffer, size_t bindingIndex)
 {
 	CheckBound(bindingIndex);
 
@@ -105,7 +105,7 @@ void VulkanDescriptorInfo::UpdateBuffer(const VulkanBuffer* buffer, size_t bindi
 	writes_[bindingIndex].bufferInfoPtr_ = bufferInfo;
 }
 
-void VulkanDescriptorInfo::UpdateImage(const VulkanImage* image, size_t bindingIndex)
+void VulkanDescriptorSetInfo::UpdateImage(const VulkanImage* image, size_t bindingIndex)
 {
 	CheckBound(bindingIndex);
 
@@ -120,7 +120,7 @@ void VulkanDescriptorInfo::UpdateImage(const VulkanImage* image, size_t bindingI
 }
 
 // Special case for raytracing
-void VulkanDescriptorInfo::UpdateStorageImage(const VulkanImage* image, size_t bindingIndex)
+void VulkanDescriptorSetInfo::UpdateStorageImage(const VulkanImage* image, size_t bindingIndex)
 {
 	CheckBound(bindingIndex);
 
@@ -139,7 +139,7 @@ void VulkanDescriptorInfo::UpdateStorageImage(const VulkanImage* image, size_t b
 }
 
 // Special case for raytracing
-void VulkanDescriptorInfo::UpdateAccelerationStructure(
+void VulkanDescriptorSetInfo::UpdateAccelerationStructure(
 	VkWriteDescriptorSetAccelerationStructureKHR* asInfo, 
 	size_t bindingIndex)
 {
@@ -147,7 +147,7 @@ void VulkanDescriptorInfo::UpdateAccelerationStructure(
 	writes_[bindingIndex].pNext_ = asInfo;
 }
 
-void VulkanDescriptorInfo::CheckBound(size_t bindingIndex) const
+void VulkanDescriptorSetInfo::CheckBound(size_t bindingIndex) const
 {
 	if (bindingIndex < 0 || bindingIndex >= writes_.size())
 	{

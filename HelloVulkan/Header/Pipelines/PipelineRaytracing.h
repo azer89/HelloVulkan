@@ -60,7 +60,7 @@ private:
 	VulkanBuffer bdaBuffer_ = {};
 	VulkanImage storageImage_ = {};
 	VulkanImage accumulationImage_ = {};
-	VulkanDescriptorInfo descriptorInfo_ = {};
+	VulkanDescriptorSetInfo descriptorSetInfo_ = {};
 	std::vector<VulkanBuffer> rtUBOBuffers_;
 	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_ = {};
 
