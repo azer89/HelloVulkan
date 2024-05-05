@@ -42,7 +42,7 @@ PipelinePBRSlotBased::PipelinePBRSlotBased(
 		}, 
 		IsOffscreen());
 	CreateDescriptor(ctx);
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(PushConstPBR), VK_SHADER_STAGE_FRAGMENT_BIT);
+	CreatePipelineLayout(ctx, descriptorManager_.layout_, &pipelineLayout_, sizeof(PushConstPBR), VK_SHADER_STAGE_FRAGMENT_BIT);
 	CreateGraphicsPipeline(
 		ctx,
 		renderPass_.GetHandle(),
@@ -129,7 +129,7 @@ void PipelinePBRSlotBased::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddImage(&(resourcesIBL_->brdfLut_));
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, dsInfo, AppConfig::FrameCount, meshCount);
+	descriptorManager_.CreatePoolAndLayout(ctx, dsInfo, AppConfig::FrameCount, meshCount);
 
 	// Sets
 	constexpr uint32_t bindingOffset = static_cast<size_t>(UBO_COUNT + SSBO_COUNT);
@@ -152,7 +152,7 @@ void PipelinePBRSlotBased::CreateDescriptor(VulkanContext& ctx)
 					const VulkanImage* texture = model->GetTexture(textureIndex);
 					dsInfo.UpdateImage(texture, bindingOffset + typeIndex);
 				}
-				descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i][meshIndex]));
+				descriptorManager_.CreateSet(ctx, dsInfo, &(descriptorSets_[i][meshIndex]));
 				meshIndex++;
 			}
 		}

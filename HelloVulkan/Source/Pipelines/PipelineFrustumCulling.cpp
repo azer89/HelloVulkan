@@ -11,7 +11,7 @@ PipelineFrustumCulling::PipelineFrustumCulling(VulkanContext& ctx, Scene* scene)
 {
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, frustumBuffers_, sizeof(FrustumUBO), AppConfig::FrameCount);
 	CreateDescriptor(ctx);
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
+	CreatePipelineLayout(ctx, descriptorManager_.layout_, &pipelineLayout_);
 	CreateComputePipeline(ctx, AppConfig::ShaderFolder + "FrustumCulling.comp");
 }
 
@@ -75,10 +75,10 @@ void PipelineFrustumCulling::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, stageFlag); // 0
 	dsInfo.AddBuffer(&(scene_->transformedBoundingBoxBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 1
 	dsInfo.AddBuffer(&(scene_->indirectBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 2
-	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
+	descriptorManager_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 	for (size_t i = 0; i < frameCount; ++i)
 	{
 		dsInfo.UpdateBuffer(&(frustumBuffers_[i]), 0);
-		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
+		descriptorManager_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}
 }

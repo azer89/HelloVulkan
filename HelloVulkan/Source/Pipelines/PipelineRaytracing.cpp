@@ -137,11 +137,11 @@ void PipelineRaytracing::CreateDescriptor(VulkanContext& ctx)
 	descriptorSetInfo_.AddImageArray(textureInfoArray_, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_ANY_HIT_BIT_KHR);
 
 	// Create pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, descriptorSetInfo_, frameCount, 1u);
+	descriptorManager_.CreatePoolAndLayout(ctx, descriptorSetInfo_, frameCount, 1u);
 
 	for (size_t i = 0; i < frameCount; i++)
 	{
-		descriptor_.AllocateSet(ctx, &(descriptorSets_[i]));
+		descriptorManager_.AllocateSet(ctx, &(descriptorSets_[i]));
 	}
 
 	// Rebuild descriptor sets
@@ -168,7 +168,7 @@ void PipelineRaytracing::UpdateDescriptor(VulkanContext& ctx)
 	{
 		descriptorSetInfo_.UpdateBuffer(&(rtUBOBuffers_[i]), 3);
 		descriptorSetInfo_.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 5);
-		descriptor_.UpdateSet(ctx, descriptorSetInfo_, &(descriptorSets_[i]));
+		descriptorManager_.UpdateSet(ctx, descriptorSetInfo_, &(descriptorSets_[i]));
 	}
 }
 
@@ -179,7 +179,7 @@ void PipelineRaytracing::CreateRayTracingPipeline(VulkanContext& ctx)
 	{
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
 		.setLayoutCount = 1,
-		.pSetLayouts = &descriptor_.layout_
+		.pSetLayouts = &descriptorManager_.layout_
 	};
 	VK_CHECK(vkCreatePipelineLayout(ctx.GetDevice(), &pipelineLayoutCI, nullptr, &pipelineLayout_));
 

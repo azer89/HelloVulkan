@@ -38,7 +38,7 @@ PipelineCubeFilter::PipelineCubeFilter(
 	CreateDescriptor(ctx, inputCubemap);
 
 	// Pipeline layout
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(PushConstCubeFilter), VK_SHADER_STAGE_FRAGMENT_BIT);
+	CreatePipelineLayout(ctx, descriptorManager_.layout_, &pipelineLayout_, sizeof(PushConstCubeFilter), VK_SHADER_STAGE_FRAGMENT_BIT);
 
 	// Diffuse pipeline
 	graphicsPipelines_.emplace_back(VK_NULL_HANDLE);
@@ -119,8 +119,8 @@ void PipelineCubeFilter::CreateDescriptor(VulkanContext& ctx, VulkanImage* input
 {
 	VulkanDescriptorSetInfo dsInfo;
 	dsInfo.AddImage(inputCubemap);
-	descriptor_.CreatePoolAndLayout(ctx, dsInfo, 1u, 1u);
-	descriptor_.CreateSet(ctx, dsInfo, &descriptorSet_);
+	descriptorManager_.CreatePoolAndLayout(ctx, dsInfo, 1u, 1u);
+	descriptorManager_.CreateSet(ctx, dsInfo, &descriptorSet_);
 }
 
 void PipelineCubeFilter::CreateOutputCubemapViews(VulkanContext& ctx,

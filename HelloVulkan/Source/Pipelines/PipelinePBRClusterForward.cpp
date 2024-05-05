@@ -51,7 +51,7 @@ PipelinePBRClusterForward::PipelinePBRClusterForward(
 		IsOffscreen());
 	CreateBDABuffer(ctx); // Buffer device address
 	CreateDescriptor(ctx);
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(PushConstPBR), VK_SHADER_STAGE_FRAGMENT_BIT);
+	CreatePipelineLayout(ctx, descriptorManager_.layout_, &pipelineLayout_, sizeof(PushConstPBR), VK_SHADER_STAGE_FRAGMENT_BIT);
 	CreateSpecializationConstants();
 	CreateGraphicsPipeline(
 		ctx,
@@ -160,7 +160,7 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddImageArray(scene_->GetImageInfos()); // 10
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
+	descriptorManager_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 
 	// Sets
 	for (uint32_t i = 0; i < frameCount; ++i)
@@ -168,6 +168,6 @@ void PipelinePBRClusterForward::CreateDescriptor(VulkanContext& ctx)
 		dsInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
 		dsInfo.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 1);
 		dsInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 3);
-		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
+		descriptorManager_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}
 }

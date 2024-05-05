@@ -13,7 +13,7 @@ PipelineSSAO::PipelineSSAO(VulkanContext& ctx,
 	CreateDescriptor(ctx);
 	renderPass_.CreateOffScreenColorOnly(ctx, resourcesGBuffer_->ssao_.imageFormat_, renderBit | RenderPassBit::ColorClear);
 	framebuffer_.CreateResizeable(ctx, renderPass_.GetHandle(), { &(resourcesGBuffer_->ssao_), }, IsOffscreen());
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
+	CreatePipelineLayout(ctx, descriptorManager_.layout_, &pipelineLayout_);
 	AddOverridingColorBlendAttachment(0xf, VK_FALSE);
 	CreateGraphicsPipeline(
 		ctx,
@@ -81,7 +81,7 @@ void PipelineSSAO::CreateDescriptor(VulkanContext& ctx)
 	descriptorSetInfo_.AddImage(&(resourcesGBuffer_->noise_)); // 4
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, descriptorSetInfo_, AppConfig::FrameCount, 1u);
+	descriptorManager_.CreatePoolAndLayout(ctx, descriptorSetInfo_, AppConfig::FrameCount, 1u);
 
 	AllocateDescriptorSets(ctx);
 	UpdateDescriptorSets(ctx);
@@ -91,7 +91,7 @@ void PipelineSSAO::AllocateDescriptorSets(VulkanContext& ctx)
 {
 	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
 	{
-		descriptor_.AllocateSet(ctx, &(descriptorSets_[i]));
+		descriptorManager_.AllocateSet(ctx, &(descriptorSets_[i]));
 	}
 }
 
@@ -103,8 +103,8 @@ void PipelineSSAO::UpdateDescriptorSets(VulkanContext& ctx)
 	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
 	{
 		// Need to update all double-buffered resources because 
-		// VulkanDescriptorInfo::writes_ itself is not double buffered
+		// VulkanDescriptorSetInfo::writes_ itself is not double buffered
 		descriptorSetInfo_.UpdateBuffer(&(ssaoUboBuffers_[i]), 0);
-		descriptor_.UpdateSet(ctx, descriptorSetInfo_, &(descriptorSets_[i]));
+		descriptorManager_.UpdateSet(ctx, descriptorSetInfo_, &(descriptorSets_[i]));
 	}
 }

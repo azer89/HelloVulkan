@@ -55,7 +55,7 @@ protected:
 	std::vector<VulkanBuffer> cameraUBOBuffers_;
 
 	VulkanFramebuffer framebuffer_;
-	VulkanDescriptorManager descriptor_;
+	VulkanDescriptorManager descriptorManager_;
 	VulkanRenderPass renderPass_;
 	VulkanSpecialization specializationConstants_;
 	VkPipelineLayout pipelineLayout_ = nullptr;

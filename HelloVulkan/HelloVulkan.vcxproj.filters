@@ -531,7 +531,7 @@
       <Filter>Header Files\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="Header\Vulkan\VulkanDescriptorManager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Vulkan</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

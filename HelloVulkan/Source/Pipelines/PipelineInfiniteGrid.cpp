@@ -28,7 +28,7 @@ PipelineInfiniteGrid::PipelineInfiniteGrid(
 		IsOffscreen()
 	);
 	CreateDescriptor(ctx);
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(float), VK_SHADER_STAGE_VERTEX_BIT);
+	CreatePipelineLayout(ctx, descriptorManager_.layout_, &pipelineLayout_, sizeof(float), VK_SHADER_STAGE_VERTEX_BIT);
 	CreateGraphicsPipeline(ctx,
 		renderPass_.GetHandle(),
 		pipelineLayout_,
@@ -80,10 +80,10 @@ void PipelineInfiniteGrid::CreateDescriptor(VulkanContext& ctx)
 	constexpr uint32_t frameCount = AppConfig::FrameCount;
 	VulkanDescriptorSetInfo dsInfo;
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
-	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
+	descriptorManager_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 	for (size_t i = 0; i < frameCount; ++i)
 	{
 		dsInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
-		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
+		descriptorManager_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}
 }

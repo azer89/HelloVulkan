@@ -16,7 +16,7 @@ PipelineAABBGenerator::PipelineAABBGenerator(
 {
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cfUBOBuffers_, sizeof(ClusterForwardUBO), AppConfig::FrameCount);
 	CreateDescriptor(ctx);
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
+	CreatePipelineLayout(ctx, descriptorManager_.layout_, &pipelineLayout_);
 	CreateComputePipeline(ctx, AppConfig::ShaderFolder + "ClusteredForward/AABBGenerator.comp");
 }
 
@@ -91,13 +91,13 @@ void PipelineAABBGenerator::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT); // 1
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
+	descriptorManager_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 
 	// Sets
 	for (size_t i = 0; i < frameCount; ++i)
 	{
 		dsInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 1);
 
-		descriptor_.CreateSet(ctx, dsInfo, &descriptorSets_[i]);
+		descriptorManager_.CreateSet(ctx, dsInfo, &descriptorSets_[i]);
 	}
 }

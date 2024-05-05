@@ -20,7 +20,7 @@ PipelineEquirect2Cube::PipelineEquirect2Cube(
 	InitializeHDRImage(ctx, hdrFile);
 	renderPass_.CreateOffScreenCubemap(ctx, IBLConfig::CubeFormat);
 	CreateDescriptor(ctx);
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
+	CreatePipelineLayout(ctx, descriptorManager_.layout_, &pipelineLayout_);
 	CreateOffscreenGraphicsPipeline(
 		ctx,
 		renderPass_.GetHandle(),
@@ -88,8 +88,8 @@ void PipelineEquirect2Cube::CreateDescriptor(VulkanContext& ctx)
 {
 	VulkanDescriptorSetInfo dsInfo;
 	dsInfo.AddImage(&inputHDRImage_);
-	descriptor_.CreatePoolAndLayout(ctx, dsInfo, 1u, 1u);
-	descriptor_.CreateSet(ctx, dsInfo, &descriptorSet_);
+	descriptorManager_.CreatePoolAndLayout(ctx, dsInfo, 1u, 1u);
+	descriptorManager_.CreateSet(ctx, dsInfo, &descriptorSet_);
 }
 
 void PipelineEquirect2Cube::CreateOffscreenGraphicsPipeline(

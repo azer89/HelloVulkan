@@ -1,5 +1,5 @@
-#ifndef VULKAN_DESCRIPTOR
-#define VULKAN_DESCRIPTOR
+#ifndef VULKAN_DESCRIPTOR_MANAGER
+#define VULKAN_DESCRIPTOR_MANAGER
 
 #include "VulkanContext.h"
 #include "VulkanDescriptorSetInfo.h"

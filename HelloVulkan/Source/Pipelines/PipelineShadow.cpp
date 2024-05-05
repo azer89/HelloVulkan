@@ -36,7 +36,7 @@ PipelineShadow::PipelineShadow(
 		resourcesShadow_->shadowMap_.height_);
 	scene_->CreateIndirectBuffer(ctx, indirectBuffer_);
 	CreateDescriptor(ctx);
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(BDA), VK_SHADER_STAGE_VERTEX_BIT);
+	CreatePipelineLayout(ctx, descriptorManager_.layout_, &pipelineLayout_, sizeof(BDA), VK_SHADER_STAGE_VERTEX_BIT);
 	CreateGraphicsPipeline(
 		ctx,
 		renderPass_.GetHandle(),
@@ -134,13 +134,13 @@ void PipelineShadow::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // 1
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
+	descriptorManager_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 
 	// Sets
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
 		dsInfo.UpdateBuffer(&(shadowMapUBOBuffers_[i]), 0);
 		dsInfo.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 1);
-		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
+		descriptorManager_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}
 }

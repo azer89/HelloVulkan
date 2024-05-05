@@ -19,7 +19,7 @@ PipelineLightCulling::PipelineLightCulling(
 {
 	VulkanBuffer::CreateMultipleUniformBuffers(ctx, cfUBOBuffers_, sizeof(ClusterForwardUBO), AppConfig::FrameCount);
 	CreateDescriptor(ctx);
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
+	CreatePipelineLayout(ctx, descriptorManager_.layout_, &pipelineLayout_);
 
 	std::string shaderFile = AppConfig::ShaderFolder + "ClusteredForward/LightCulling.comp";
 	//std::string shaderFile = AppConfig::ShaderFolder + "ClusteredForward/LightCullingBatch.comp";
@@ -131,12 +131,12 @@ void PipelineLightCulling::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddBuffer(&(resourcesCF_->lightIndicesBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 4
 	dsInfo.AddBuffer(nullptr, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, stageFlag); // 5
 
-	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
+	descriptorManager_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 
 	for (size_t i = 0; i < frameCount; ++i)
 	{
 		dsInfo.UpdateBuffer(&(resourcesCF_->globalIndexCountBuffers_[i]), 2);
 		dsInfo.UpdateBuffer(&(cfUBOBuffers_[i]), 5);
-		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
+		descriptorManager_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}
 }

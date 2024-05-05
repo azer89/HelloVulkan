@@ -9,7 +9,7 @@ PipelineSkinning::PipelineSkinning(VulkanContext& ctx, Scene* scene) :
 	scene_(scene)
 {
 	CreateDescriptor(ctx);
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
+	CreatePipelineLayout(ctx, descriptorManager_.layout_, &pipelineLayout_);
 	CreateComputePipeline(ctx, AppConfig::ShaderFolder + "Skinning.comp");
 }
 
@@ -76,11 +76,11 @@ void PipelineSkinning::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddBuffer(&(scene_->preSkinningVertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 4 Input
 	dsInfo.AddBuffer(&(scene_->vertexBuffer_), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, stageFlag); // 5 Output
 
-	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
+	descriptorManager_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 
 	for (size_t i = 0; i < frameCount; ++i)
 	{
 		dsInfo.UpdateBuffer(&(scene_->boneMatricesBuffers_[i]), 0);
-		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
+		descriptorManager_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}
 }

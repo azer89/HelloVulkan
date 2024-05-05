@@ -14,7 +14,7 @@ PipelineTonemap::PipelineTonemap(VulkanContext& ctx,
 	renderPass_.CreateOnScreenColorOnly(ctx);
 	framebuffer_.CreateResizeable(ctx, renderPass_.GetHandle(), {}, IsOffscreen());
 	CreateDescriptor(ctx);
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
+	CreatePipelineLayout(ctx, descriptorManager_.layout_, &pipelineLayout_);
 	CreateGraphicsPipeline(ctx,
 		renderPass_.GetHandle(),
 		pipelineLayout_,
@@ -59,7 +59,7 @@ void PipelineTonemap::CreateDescriptor(VulkanContext& ctx)
 	descriptorSetInfo_.AddImage(nullptr);
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, descriptorSetInfo_, frameCount, 1u);
+	descriptorManager_.CreatePoolAndLayout(ctx, descriptorSetInfo_, frameCount, 1u);
 
 	// Sets
 	AllocateDescriptorSets(ctx);
@@ -72,7 +72,7 @@ void PipelineTonemap::AllocateDescriptorSets(VulkanContext& ctx)
 
 	for (size_t i = 0; i < frameCount; i++)
 	{
-		descriptor_.AllocateSet(ctx, &(descriptorSets_[i]));
+		descriptorManager_.AllocateSet(ctx, &(descriptorSets_[i]));
 	}
 }
 
@@ -82,6 +82,6 @@ void PipelineTonemap::UpdateDescriptorSets(VulkanContext& ctx)
 	descriptorSetInfo_.UpdateImage(singleSampledColorImage_, 0);
 	for (size_t i = 0; i < frameCount; ++i)
 	{
-		descriptor_.UpdateSet(ctx, descriptorSetInfo_, &(descriptorSets_[i]));
+		descriptorManager_.UpdateSet(ctx, descriptorSetInfo_, &(descriptorSets_[i]));
 	}
 }

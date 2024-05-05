@@ -34,7 +34,7 @@ PipelineImGui::PipelineImGui(
 	constexpr uint32_t imageCount = AppConfig::FrameCount;
 	VulkanDescriptorSetInfo dsInfo;
 	dsInfo.AddImage(nullptr); // NOTE According to Sascha Willems, we only need one image, if error, then we need to use vkguide.dev code
-	descriptor_.CreatePoolAndLayout(ctx, dsInfo, imageCount, 1u, VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT);
+	descriptorManager_.CreatePoolAndLayout(ctx, dsInfo, imageCount, 1u, VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT);
 
 	// ImGui
 	IMGUI_CHECKVERSION();
@@ -67,7 +67,7 @@ PipelineImGui::PipelineImGui(
 		.QueueFamily = ctx.GetGraphicsFamily(),
 		.Queue = ctx.GetGraphicsQueue(),
 		.PipelineCache = nullptr,
-		.DescriptorPool = descriptor_.pool_,
+		.DescriptorPool = descriptorManager_.pool_,
 		.Subpass = 0,
 		.MinImageCount = imageCount,
 		.ImageCount = imageCount,

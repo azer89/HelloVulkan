@@ -36,7 +36,7 @@ PipelineSkybox::PipelineSkybox(VulkanContext& ctx,
 
 	CreateDescriptor(ctx);
 	
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_);
+	CreatePipelineLayout(ctx, descriptorManager_.layout_, &pipelineLayout_);
 
 	CreateGraphicsPipeline(ctx,
 		renderPass_.GetHandle(),
@@ -82,12 +82,12 @@ void PipelineSkybox::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddImage(envCubemap_); // 1
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
+	descriptorManager_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 
 	// Sets
 	for (uint32_t i = 0; i < frameCount; ++i)
 	{
 		dsInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
-		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
+		descriptorManager_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}
 }

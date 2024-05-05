@@ -45,7 +45,7 @@ PipelinePBRBindless::PipelinePBRBindless(
 			&(resourcesShared->depthImage_)
 		}, 
 		IsOffscreen());
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(PushConstPBR), VK_SHADER_STAGE_FRAGMENT_BIT);
+	CreatePipelineLayout(ctx, descriptorManager_.layout_, &pipelineLayout_, sizeof(PushConstPBR), VK_SHADER_STAGE_FRAGMENT_BIT);
 	CreateGraphicsPipeline(
 		ctx,
 		renderPass_.GetHandle(),
@@ -129,7 +129,7 @@ void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
 	dsInfo.AddImageArray(scene_->GetImageInfos()); // 7
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
+	descriptorManager_.CreatePoolAndLayout(ctx, dsInfo, frameCount, 1u);
 
 	// Sets
 	descriptorSets_.resize(frameCount);
@@ -137,6 +137,6 @@ void PipelinePBRBindless::CreateDescriptor(VulkanContext& ctx)
 	{
 		dsInfo.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
 		dsInfo.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 1);
-		descriptor_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
+		descriptorManager_.CreateSet(ctx, dsInfo, &(descriptorSets_[i]));
 	}
 }

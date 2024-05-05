@@ -55,7 +55,7 @@ PipelinePBRShadow::PipelinePBRShadow(
 		IsOffscreen());
 	CreateBDABuffer(ctx);
 	CreateDescriptor(ctx);
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(PushConstPBR), VK_SHADER_STAGE_FRAGMENT_BIT);
+	CreatePipelineLayout(ctx, descriptorManager_.layout_, &pipelineLayout_, sizeof(PushConstPBR), VK_SHADER_STAGE_FRAGMENT_BIT);
 	CreateSpecializationConstants();
 	CreateGraphicsPipeline(
 		ctx,
@@ -172,7 +172,7 @@ void PipelinePBRShadow::CreateDescriptor(VulkanContext& ctx)
 	descriptorSetInfo_.AddImageArray(scene_->GetImageInfos()); // 10
 
 	// Pool and layout
-	descriptor_.CreatePoolAndLayout(ctx, descriptorSetInfo_, AppConfig::FrameCount, 1u);
+	descriptorManager_.CreatePoolAndLayout(ctx, descriptorSetInfo_, AppConfig::FrameCount, 1u);
 
 	AllocateDescriptorSets(ctx);
 	UpdateDescriptorSets(ctx);
@@ -182,7 +182,7 @@ void PipelinePBRShadow::AllocateDescriptorSets(VulkanContext& ctx)
 {
 	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
 	{
-		descriptor_.AllocateSet(ctx, &(descriptorSets_[i]));
+		descriptorManager_.AllocateSet(ctx, &(descriptorSets_[i]));
 	}
 }
 
@@ -192,10 +192,10 @@ void PipelinePBRShadow::UpdateDescriptorSets(VulkanContext& ctx)
 	for (uint32_t i = 0; i < AppConfig::FrameCount; ++i)
 	{
 		// Need to update all double-buffered resources because 
-		// VulkanDescriptorInfo::writes_ itself is not double buffered
+		// VulkanDescriptorSetInfo::writes_ itself is not double buffered
 		descriptorSetInfo_.UpdateBuffer(&(cameraUBOBuffers_[i]), 0);
 		descriptorSetInfo_.UpdateBuffer(&(shadowMapConfigUBOBuffers_[i]), 1);
 		descriptorSetInfo_.UpdateBuffer(&(scene_->modelSSBOBuffers_[i]), 2);
-		descriptor_.UpdateSet(ctx, descriptorSetInfo_, &(descriptorSets_[i]));
+		descriptorManager_.UpdateSet(ctx, descriptorSetInfo_, &(descriptorSets_[i]));
 	}
 }

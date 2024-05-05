@@ -16,7 +16,7 @@ PipelineBRDFLUT::PipelineBRDFLUT(
 		VMA_MEMORY_USAGE_AUTO,
 		VMA_ALLOCATION_CREATE_HOST_ACCESS_RANDOM_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT);
 	CreateDescriptor(ctx);
-	CreatePipelineLayout(ctx, descriptor_.layout_, &pipelineLayout_, sizeof(PushConstBRDFLUT), VK_SHADER_STAGE_COMPUTE_BIT);
+	CreatePipelineLayout(ctx, descriptorManager_.layout_, &pipelineLayout_, sizeof(PushConstBRDFLUT), VK_SHADER_STAGE_COMPUTE_BIT);
 	CreateComputePipeline(ctx, AppConfig::ShaderFolder + "IBL/BRDFLUT.comp");
 }
 
@@ -111,6 +111,6 @@ void PipelineBRDFLUT::CreateDescriptor(VulkanContext& ctx)
 {
 	VulkanDescriptorSetInfo dsInfo;
 	dsInfo.AddBuffer(&outBuffer_, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_COMPUTE_BIT);
-	descriptor_.CreatePoolAndLayout(ctx, dsInfo, 1u, 1u);
-	descriptor_.CreateSet(ctx, dsInfo, &descriptorSet_);
+	descriptorManager_.CreatePoolAndLayout(ctx, dsInfo, 1u, 1u);
+	descriptorManager_.CreateSet(ctx, dsInfo, &descriptorSet_);
 }
