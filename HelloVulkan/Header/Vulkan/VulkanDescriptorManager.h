@@ -4,7 +4,11 @@
 #include "VulkanContext.h"
 #include "VulkanDescriptorSetInfo.h"
 
-class VulkanDescriptorHandler
+/*
+Manages descriptor pool and layout.
+Also creates descriptor sets.
+*/
+class VulkanDescriptorManager
 {
 public:
 	void CreatePoolAndLayout(

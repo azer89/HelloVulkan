@@ -287,7 +287,7 @@
     <ClInclude Include="Header\Vulkan\VulkanBarrier.h" />
     <ClInclude Include="Header\Vulkan\VulkanBuffer.h" />
     <ClInclude Include="Header\Vulkan\VulkanContext.h" />
-    <ClInclude Include="Header\Vulkan\VulkanDescriptorHandler.h" />
+    <ClInclude Include="Header\Vulkan\VulkanDescriptorManager.h" />
     <ClInclude Include="Header\Vulkan\VulkanDescriptorSetInfo.h" />
     <ClInclude Include="Header\Vulkan\VulkanFramebuffer.h" />
     <ClInclude Include="Header\Vulkan\VulkanImage.h" />
@@ -353,7 +353,7 @@
     <ClCompile Include="Source\Vulkan\VulkanBarrier.cpp" />
     <ClCompile Include="Source\Vulkan\VulkanBuffer.cpp" />
     <ClCompile Include="Source\Vulkan\VulkanContext.cpp" />
-    <ClCompile Include="Source\Vulkan\VulkanDescriptorHandler.cpp" />
+    <ClCompile Include="Source\Vulkan\VulkanDescriptorManager.cpp" />
     <ClCompile Include="Source\Vulkan\VulkanDescriptorSetInfo.cpp" />
     <ClCompile Include="Source\Vulkan\VulkanFramebuffer.cpp" />
     <ClCompile Include="Source\Vulkan\VulkanImage.cpp" />

@@ -389,12 +389,6 @@
     <ClInclude Include="Header\Vulkan\VulkanContext.h">
       <Filter>Header Files\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Vulkan\VulkanDescriptor.h">
-      <Filter>Header Files\Vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\Vulkan\VulkanDescriptorInfo.h">
-      <Filter>Header Files\Vulkan</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Vulkan\VulkanFramebuffer.h">
       <Filter>Header Files\Vulkan</Filter>
     </ClInclude>
@@ -533,6 +527,12 @@
     <ClInclude Include="Header\Pipelines\PipelineSSAO.h">
       <Filter>Header Files\Pipelines</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Vulkan\VulkanDescriptorSetInfo.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Vulkan\VulkanDescriptorManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp">
@@ -623,12 +623,6 @@
       <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="Source\Vulkan\VulkanContext.cpp">
-      <Filter>Source Files\Vulkan</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Vulkan\VulkanDescriptor.cpp">
-      <Filter>Source Files\Vulkan</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Vulkan\VulkanDescriptorInfo.cpp">
       <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="Source\Vulkan\VulkanFramebuffer.cpp">
@@ -726,6 +720,12 @@
     </ClCompile>
     <ClCompile Include="Source\Pipelines\PipelineSSAO.cpp">
       <Filter>Source Files\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vulkan\VulkanDescriptorManager.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vulkan\VulkanDescriptorSetInfo.cpp">
+      <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

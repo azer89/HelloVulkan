@@ -5,7 +5,7 @@
 #include "VulkanBuffer.h"
 #include "VulkanRenderPass.h"
 #include "VulkanFramebuffer.h"
-#include "VulkanDescriptorHandler.h"
+#include "VulkanDescriptorManager.h"
 #include "VulkanSpecialization.h"
 #include "PipelineConfig.h"
 #include "UIData.h"
@@ -55,7 +55,7 @@ protected:
 	std::vector<VulkanBuffer> cameraUBOBuffers_;
 
 	VulkanFramebuffer framebuffer_;
-	VulkanDescriptorHandler descriptor_;
+	VulkanDescriptorManager descriptor_;
 	VulkanRenderPass renderPass_;
 	VulkanSpecialization specializationConstants_;
 	VkPipelineLayout pipelineLayout_ = nullptr;

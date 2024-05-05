@@ -1,9 +1,9 @@
-#include "VulkanDescriptorHandler.h"
+#include "VulkanDescriptorManager.h"
 #include "VulkanCheck.h"
 
 #include <iostream>
 
-void VulkanDescriptorHandler::CreatePoolAndLayout(
+void VulkanDescriptorManager::CreatePoolAndLayout(
 	VulkanContext& ctx, 
 	const VulkanDescriptorSetInfo& descriptorInfo,
 	uint32_t frameCount,
@@ -139,7 +139,7 @@ void VulkanDescriptorHandler::CreatePoolAndLayout(
 	VK_CHECK(vkCreateDescriptorSetLayout(ctx.GetDevice(), &layoutInfo, nullptr, &layout_));
 }
 
-void VulkanDescriptorHandler::CreateSet(
+void VulkanDescriptorManager::CreateSet(
 	VulkanContext& ctx, 
 	const VulkanDescriptorSetInfo& descriptorInfo,
 	VkDescriptorSet* set)
@@ -149,7 +149,7 @@ void VulkanDescriptorHandler::CreateSet(
 	UpdateSet(ctx, descriptorInfo, set);
 }
 
-void VulkanDescriptorHandler::AllocateSet(VulkanContext& ctx, VkDescriptorSet* set)
+void VulkanDescriptorManager::AllocateSet(VulkanContext& ctx, VkDescriptorSet* set)
 {
 	const VkDescriptorSetAllocateInfo allocInfo = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
@@ -162,7 +162,7 @@ void VulkanDescriptorHandler::AllocateSet(VulkanContext& ctx, VkDescriptorSet* s
 	VK_CHECK(vkAllocateDescriptorSets(ctx.GetDevice(), &allocInfo, set));
 }
 
-void VulkanDescriptorHandler::UpdateSet(
+void VulkanDescriptorManager::UpdateSet(
 	VulkanContext& ctx, 
 	const VulkanDescriptorSetInfo& descriptorInfo,
 	VkDescriptorSet* set)
@@ -198,7 +198,7 @@ void VulkanDescriptorHandler::UpdateSet(
 	);
 }
 
-void VulkanDescriptorHandler::Destroy()
+void VulkanDescriptorManager::Destroy()
 {
 	if (layout_)
 	{
@@ -213,7 +213,7 @@ void VulkanDescriptorHandler::Destroy()
 	}
 }
 
-VkDescriptorSetLayoutBinding VulkanDescriptorHandler::CreateDescriptorSetLayoutBinding(
+VkDescriptorSetLayoutBinding VulkanDescriptorManager::CreateDescriptorSetLayoutBinding(
 	uint32_t binding,
 	VkDescriptorType descriptorType,
 	VkShaderStageFlags stageFlags,
