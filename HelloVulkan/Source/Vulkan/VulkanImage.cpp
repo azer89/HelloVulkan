@@ -144,8 +144,8 @@ void VulkanImage::CreateFromHDR(
 	stbi_image_free(pixels);
 }
 
-// TODO Rename to CreateColorAttachment
-void VulkanImage::CreateColorResources(
+// Framebuffer attachment
+void VulkanImage::CreateColorAttachment(
 	VulkanContext& ctx, 
 	uint32_t width, 
 	uint32_t height,
@@ -176,8 +176,7 @@ void VulkanImage::CreateColorResources(
 	CreateDefaultSampler(ctx);
 }
 
-// TODO Rename to CreateDepthAttachment
-void VulkanImage::CreateDepthResources(
+void VulkanImage::CreateDepthAttachment(
 	VulkanContext& ctx, 
 	uint32_t width, 
 	uint32_t height,

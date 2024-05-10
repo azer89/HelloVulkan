@@ -17,7 +17,7 @@ void ResourcesShadow::Destroy()
 void ResourcesShadow::CreateSingleShadowMap(VulkanContext& ctx)
 {
 	// Init shadow map
-	shadowMap_.CreateDepthResources(
+	shadowMap_.CreateDepthAttachment(
 		ctx,
 		ShadowConfig::DepthSize,
 		ShadowConfig::DepthSize,

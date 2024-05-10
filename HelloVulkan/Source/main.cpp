@@ -9,7 +9,7 @@
 // Entry point
 int main()
 {
-	AppPBRSlotBased app;
+	AppPBRBindless app;
 	app.MainLoop();
 	return 0;
 }

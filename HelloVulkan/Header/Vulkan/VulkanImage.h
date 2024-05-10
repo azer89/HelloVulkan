@@ -106,14 +106,14 @@ public:
 		VkImageCreateFlags flags = 0);
 
 	// This is used for offscreen rendering as a color attachment
-	void CreateColorResources(
+	void CreateColorAttachment(
 		VulkanContext& ctx, 
 		uint32_t width, 
 		uint32_t height,
 		VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
 
 	// Depth attachment for onscreen/offscreen rendering
-	void CreateDepthResources(
+	void CreateDepthAttachment(
 		VulkanContext& ctx, 
 		uint32_t width, 
 		uint32_t height,

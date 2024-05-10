@@ -20,7 +20,7 @@ void ResourcesShared::Create(VulkanContext& ctx)
 	const uint32_t height = ctx.GetSwapchainHeight();
 
 	// Depth attachment (OnScreen and offscreen)
-	depthImage_.CreateDepthResources(
+	depthImage_.CreateDepthAttachment(
 		ctx,
 		width,
 		height,
@@ -30,7 +30,7 @@ void ResourcesShared::Create(VulkanContext& ctx)
 
 	// Color attachments
 	// Multi-sampled (MSAA)
-	multiSampledColorImage_.CreateColorResources(
+	multiSampledColorImage_.CreateColorAttachment(
 		ctx,
 		width,
 		height,
@@ -38,7 +38,7 @@ void ResourcesShared::Create(VulkanContext& ctx)
 	multiSampledColorImage_.SetDebugName(ctx, "Multisampled_Color_Image");
 
 	// Single-sampled
-	singleSampledColorImage_.CreateColorResources(
+	singleSampledColorImage_.CreateColorAttachment(
 		ctx,
 		width,
 		height);

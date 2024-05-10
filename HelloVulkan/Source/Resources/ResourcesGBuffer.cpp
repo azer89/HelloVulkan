@@ -121,7 +121,7 @@ void ResourcesGBuffer::Create(VulkanContext& ctx)
 	ssao_.SetDebugName(ctx, "G_Buffer_SSAO");
 
 	// Needed for depth test
-	depth_.CreateDepthResources(
+	depth_.CreateDepthAttachment(
 		ctx,
 		width,
 		height,
