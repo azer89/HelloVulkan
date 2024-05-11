@@ -67,16 +67,6 @@ void Model::Destroy()
 	}
 }
 
-void Model::CreateDefaultTextures(VulkanContext& ctx)
-{
-	uint32_t black = 0xff000000;
-	AddTexture(ctx, DEFAULT_BLACK_TEXTURE, (void*)&black, 1, 1);
-
-	// TODO Investigate a correct value for normal vector
-	uint32_t normal = 0xffff8888;
-	AddTexture(ctx, DEFAULT_NORMAL_TEXTURE, (void*)&normal, 1, 1);
-}
-
 void Model::CreateModelUBOBuffers(VulkanContext& ctx)
 {
 	constexpr uint32_t frameCount = AppConfig::FrameCount;
@@ -99,6 +89,17 @@ void Model::SetModelUBO(VulkanContext& ctx, ModelUBO ubo)
 		modelBuffers_[i].UploadBufferData(ctx, &ubo, sizeof(ModelUBO));
 	}
 }
+
+void Model::CreateDefaultTextures(VulkanContext& ctx)
+{
+	uint32_t black = 0xff000000;
+	AddTexture(ctx, DEFAULT_BLACK_TEXTURE, (void*)&black, 1, 1);
+
+	// TODO Investigate a correct value for normal vector
+	uint32_t normal = 0xffff8888;
+	AddTexture(ctx, DEFAULT_NORMAL_TEXTURE, (void*)&normal, 1, 1);
+}
+
 
 void Model::AddTexture(VulkanContext& ctx, const std::string& textureFilename)
 {
