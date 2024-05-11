@@ -57,7 +57,6 @@ public:
 		const ModelCreateInfo& modelInfo,
 		SceneData& sceneData
 	);
-	void CreateDefaultTextures(VulkanContext& ctx);
 
 	[[nodiscard]] const aiScene* GetAssimpScene() const { return scene_; }
 	[[nodiscard]] VulkanImage* GetTexture(uint32_t textureIndex);
@@ -70,6 +69,7 @@ public:
 	void SetModelUBO(VulkanContext& ctx, ModelUBO ubo);
 
 private:
+	void CreateDefaultTextures(VulkanContext& ctx);
 	void AddTexture(VulkanContext& ctx, const std::string& textureFilename);
 	void AddTexture(VulkanContext& ctx, const std::string& textureName, void* data, int width, int height);
 

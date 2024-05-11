@@ -1,7 +1,7 @@
 #ifndef TEXTURE_MAPPER
 #define TEXTURE_MAPPER
 
-#include "assimp//material.h"
+#include "assimp/material.h"
 
 #include <unordered_map>
 

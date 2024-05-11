@@ -102,16 +102,14 @@ void Model::SetModelUBO(VulkanContext& ctx, ModelUBO ubo)
 
 void Model::AddTexture(VulkanContext& ctx, const std::string& textureFilename)
 {
-	textureList_.emplace_back();
 	const std::string fullFilePath = this->directory_ + '/' + textureFilename;
-	textureList_.back().CreateImageResources(ctx, fullFilePath.c_str());
+	textureList_.emplace_back().CreateImageResources(ctx, fullFilePath.c_str());
 	textureMap_[textureFilename] = static_cast<uint32_t>(textureList_.size() - 1);
 }
 
 void Model::AddTexture(VulkanContext& ctx, const std::string& textureName, void* data, int width, int height)
 {
-	textureList_.emplace_back();
-	textureList_.back().CreateImageResources(
+	textureList_.emplace_back().CreateImageResources(
 		ctx,
 		data,
 		1,
@@ -236,8 +234,7 @@ void Model::ProcessMesh(
 		}
 
 		// If Bindless textures, we do not move vertices and indices
-		meshes_.emplace_back();
-		meshes_.back().InitBindless(
+		meshes_.emplace_back().InitBindless(
 			ctx,
 			meshName,
 			prevVertexOffset,
@@ -255,9 +252,8 @@ void Model::ProcessMesh(
 	}
 	else
 	{
-		meshes_.emplace_back();
 		// If Slot-based we move vertices and indices
-		meshes_.back().InitSlotBased(
+		meshes_.emplace_back().InitSlotBased(
 			ctx,
 			meshName,
 			prevVertexOffset,
