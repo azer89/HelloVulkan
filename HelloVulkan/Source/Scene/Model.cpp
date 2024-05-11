@@ -72,7 +72,7 @@ void Model::CreateDefaultTextures(VulkanContext& ctx)
 	uint32_t black = 0xff000000;
 	AddTexture(ctx, DEFAULT_BLACK_TEXTURE, (void*)&black, 1, 1);
 
-	// TODO Investigate good value for normal vector
+	// TODO Investigate a correct value for normal vector
 	uint32_t normal = 0xffff8888;
 	AddTexture(ctx, DEFAULT_NORMAL_TEXTURE, (void*)&normal, 1, 1);
 }
