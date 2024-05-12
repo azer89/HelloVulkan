@@ -72,6 +72,7 @@ private:
 	void CreateDefaultTextures(VulkanContext& ctx);
 	void AddTexture(VulkanContext& ctx, const std::string& textureFilename);
 	void AddTexture(VulkanContext& ctx, const std::string& textureName, void* data, int width, int height);
+	[[nodiscard]] std::unordered_map<TextureType, uint32_t> GetTextureIndices(VulkanContext& ctx, const aiMesh* mesh);
 
 	// Entry point
 	void LoadModel(
@@ -107,7 +108,6 @@ private:
 
 	[[nodiscard]] std::vector<VertexData> GetMeshVertices(const aiMesh* mesh, const glm::mat4& transform);
 	[[nodiscard]] std::vector<uint32_t> GetMeshIndices(const aiMesh* mesh);
-	[[nodiscard]] std::unordered_map<TextureType, uint32_t> GetMeshTextures(VulkanContext& ctx, const aiMesh* mesh);
 };
 
 #endif

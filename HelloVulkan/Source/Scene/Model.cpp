@@ -100,34 +100,6 @@ void Model::CreateDefaultTextures(VulkanContext& ctx)
 	AddTexture(ctx, DEFAULT_NORMAL_TEXTURE, (void*)&normal, 1, 1);
 }
 
-
-void Model::AddTexture(VulkanContext& ctx, const std::string& textureFilename)
-{
-	const std::string fullFilePath = this->directory_ + '/' + textureFilename;
-	textureList_.emplace_back().CreateImageResources(ctx, fullFilePath.c_str());
-	textureMap_[textureFilename] = static_cast<uint32_t>(textureList_.size() - 1);
-}
-
-void Model::AddTexture(VulkanContext& ctx, const std::string& textureName, void* data, int width, int height)
-{
-	textureList_.emplace_back().CreateImageResources(
-		ctx,
-		data,
-		1,
-		1);
-	textureMap_[textureName] = static_cast<uint32_t>(textureList_.size() - 1);
-}
-
-VulkanImage* Model::GetTexture(uint32_t textureIndex)
-{
-	if (textureIndex < 0 || textureIndex >= textureList_.size())
-	{
-		std::cerr << "Failed to retrieve a texture because the textureIndex is out of bound\n";
-		return nullptr;
-	}
-	return &(textureList_[textureIndex]);
-}
-
 // Loads a model with supported ASSIMP extensions from file and 
 // stores the resulting meshes in the meshes vector.
 void Model::LoadModel(VulkanContext& ctx,
@@ -202,7 +174,7 @@ void Model::ProcessMesh(
 
 	std::vector<VertexData> vertices = GetMeshVertices(mesh, processAnimation_ ? glm::mat4(1.0f) : transform);
 	std::vector<uint32_t> indices = GetMeshIndices(mesh);
-	std::unordered_map<TextureType, uint32_t> textures = GetMeshTextures(ctx, mesh);
+	std::unordered_map<TextureType, uint32_t> textureIndices = GetTextureIndices(ctx, mesh);
 
 	const uint32_t prevVertexOffset = sceneData.GetCurrentVertexOffset();
 	const uint32_t prevIndexOffset = sceneData.GetCurrentIndexOffset();
@@ -242,7 +214,7 @@ void Model::ProcessMesh(
 			prevIndexOffset,
 			static_cast<uint32_t>(vertices.size()),
 			static_cast<uint32_t>(indices.size()),
-			std::move(textures));
+			std::move(textureIndices));
 
 		const uint32_t currVertexOffset = static_cast<uint32_t>(vertices.size());
 		const uint32_t currIndexOffset = static_cast<uint32_t>(indices.size());
@@ -261,7 +233,7 @@ void Model::ProcessMesh(
 			prevIndexOffset,
 			std::move(vertices),
 			std::move(indices),
-			std::move(textures)
+			std::move(textureIndices)
 		);
 	}
 }
@@ -418,7 +390,34 @@ std::vector<uint32_t> Model::GetMeshIndices(const aiMesh* mesh)
 	return indices;
 }
 
-std::unordered_map<TextureType, uint32_t> Model::GetMeshTextures(
+void Model::AddTexture(VulkanContext& ctx, const std::string& textureFilename)
+{
+	const std::string fullFilePath = this->directory_ + '/' + textureFilename;
+	textureList_.emplace_back().CreateImageResources(ctx, fullFilePath.c_str());
+	textureMap_[textureFilename] = static_cast<uint32_t>(textureList_.size() - 1);
+}
+
+void Model::AddTexture(VulkanContext& ctx, const std::string& textureName, void* data, int width, int height)
+{
+	textureList_.emplace_back().CreateImageResources(
+		ctx,
+		data,
+		1,
+		1);
+	textureMap_[textureName] = static_cast<uint32_t>(textureList_.size() - 1);
+}
+
+VulkanImage* Model::GetTexture(uint32_t textureIndex)
+{
+	if (textureIndex < 0 || textureIndex >= textureList_.size())
+	{
+		std::cerr << "Failed to retrieve a texture because the textureIndex is out of bound\n";
+		return nullptr;
+	}
+	return &(textureList_[textureIndex]);
+}
+
+std::unordered_map<TextureType, uint32_t> Model::GetTextureIndices(
 	VulkanContext& ctx,
 	const aiMesh* mesh)
 {
