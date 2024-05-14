@@ -113,19 +113,18 @@ void VulkanDescriptorManager::CreatePoolAndLayout(
 	VK_CHECK(vkCreateDescriptorPool(ctx.GetDevice(), &poolInfo, nullptr, &pool_));
 	
 	// Create Layout
-	std::vector<VkDescriptorSetLayoutBinding> layoutBindings;
-	uint32_t bindingIndex = 0;
-	for (auto& write : descriptorInfo.writes_)
+	std::vector<VkDescriptorSetLayoutBinding> layoutBindings(descriptorInfo.writes_.size());
+	for (uint32_t i = 0; i < descriptorInfo.writes_.size(); ++i)
 	{
-		layoutBindings.emplace_back(
+		const auto& write = descriptorInfo.writes_[i];
+		layoutBindings[i] = 
 			CreateDescriptorSetLayoutBinding
 			(
-				bindingIndex++,
+				i, // Binding index
 				write.descriptorType_,
 				write.shaderStage_,
 				write.descriptorCount_
-			)
-		);
+			);
 	}
 	const VkDescriptorSetLayoutCreateInfo layoutInfo =
 	{
