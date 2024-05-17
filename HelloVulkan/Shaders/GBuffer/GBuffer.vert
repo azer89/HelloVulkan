@@ -19,7 +19,7 @@ layout(set = 0, binding = 2) uniform BDABlock { BDA bda; }; // UBO
 
 void main()
 {
-	MeshData meshData = bda.meshReference.meshes[gl_BaseInstance];
+	MeshData meshData = bda.meshReference.meshes[gl_DrawID];
 	uint vOffset = meshData.vertexOffset;
 	uint iOffset = meshData.indexOffset;
 	uint vIndex = bda.indexReference.indices[iOffset + gl_VertexIndex] + vOffset;
@@ -33,7 +33,7 @@ void main()
 	viewPos = viewPos4.xyz;
 	normal = normalMatrix * vertexData.normal;
 	texCoord = vec2(vertexData.uvX, vertexData.uvY);
-	meshIndex = gl_BaseInstance;
+	meshIndex = gl_DrawID;
 	vec4 fragPos4 = camUBO.projection * viewPos4;
 	fragPos = fragPos.xyz;
 	gl_Position =  fragPos4;

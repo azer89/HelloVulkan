@@ -141,14 +141,14 @@ void VulkanContext::ChainFeatures()
 
 	if (config_.supportBindlessTextures_)
 	{
-		// Used for gl_BaseInstance that requires Vulkan 1.1
+		// Used for gl_DrawID that requires Vulkan 1.1
 		/*shaderDrawFeatures_ =
 		{
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES,
 			.shaderDrawParameters = VK_TRUE
 		};*/
 
-		// Used for gl_BaseInstance but requires Vulkan 1.2
+		// Used for gl_DrawID but requires Vulkan 1.2
 		features11_ =
 		{
 			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES,
@@ -241,7 +241,7 @@ void VulkanContext::CreateDevice()
 	{
 		extensions.push_back(VK_KHR_MAINTENANCE3_EXTENSION_NAME);
 		extensions.push_back(VK_KHR_DRAW_INDIRECT_COUNT_EXTENSION_NAME);
-		// Used for gl_BaseInstance but deprecated
+		// Used for gl_DrawID but deprecated
 		//extensions.push_back(VK_KHR_SHADER_DRAW_PARAMETERS_EXTENSION_NAME);
 	}
 

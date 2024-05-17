@@ -9,7 +9,7 @@
 // Entry point
 int main()
 {
-	AppPBRBindless app;
+	AppSkinning app;
 	app.MainLoop();
 	return 0;
 }

@@ -41,7 +41,7 @@ const mat4 biasMat = mat4(
 
 void main()
 {
-	MeshData meshData = bda.meshReference.meshes[gl_BaseInstance];
+	MeshData meshData = bda.meshReference.meshes[gl_DrawID];
 	uint vOffset = meshData.vertexOffset;
 	uint iOffset = meshData.indexOffset;
 	uint vIndex = bda.indexReference.indices[iOffset + gl_VertexIndex] + vOffset;
@@ -54,7 +54,7 @@ void main()
 	worldPos = (model * position4).xyz;
 	texCoord = vec2(vertexData.uvX, vertexData.uvY);
 	normal = normalMatrix * vertexData.normal;
-	meshIndex = gl_BaseInstance;
+	meshIndex = gl_DrawID;
 	shadowPos = biasMat * shadowUBO.lightSpaceMatrix * model * position4;
 	fragPos = camUBO.projection * camUBO.view * vec4(worldPos, 1.0);
 	gl_Position = fragPos;
