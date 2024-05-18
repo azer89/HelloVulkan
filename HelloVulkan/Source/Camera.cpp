@@ -16,9 +16,9 @@ Camera::Camera(
 	float pitch) :
 	position_(position),
 	worldUp_(worldUp),
+	front_(glm::vec3(0.f)),
 	yaw_(yaw),
 	pitch_(pitch),
-	front_(glm::vec3(0.f)),
 	movementSpeed_(CameraConfig::Speed),
 	mouseSensitivity_(CameraConfig::Sensitivity),
 	zoom_(CameraConfig::Zoom),
@@ -38,9 +38,9 @@ void Camera::SetScreenSize(float width, float height)
 	UpdateInternal();
 }
 
-void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime_)
+void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime)
 {
-	const float velocity = movementSpeed_ * deltaTime_;
+	const float velocity = movementSpeed_ * deltaTime;
 	if (direction == CameraMovement::Forward)
 	{
 		position_ += front_ * velocity;
@@ -64,13 +64,13 @@ void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime_)
 
 // Processes input received from a mouse input system. 
 // Expects the offset value in both the x and y direction.
-void Camera::ProcessMouseMovement(float xoffset, float yoffset)
+void Camera::ProcessMouseMovement(float xOffset, float yOffset)
 {
-	xoffset *= mouseSensitivity_;
-	yoffset *= mouseSensitivity_;
+	xOffset *= mouseSensitivity_;
+	yOffset *= mouseSensitivity_;
 
-	yaw_ += glm::radians(xoffset);
-	pitch_ += glm::radians(yoffset);
+	yaw_ += glm::radians(xOffset);
+	pitch_ += glm::radians(yOffset);
 	
 	ConstrainPitch();
 
@@ -101,9 +101,9 @@ void Camera::ConstrainPitch()
 
 // Processes input received from a mouse scroll-wheel event. 
 // Only requires input on the vertical wheel-axis
-void Camera::ProcessMouseScroll(float yoffset)
+void Camera::ProcessMouseScroll(float yOffset)
 {
-	zoom_ -= (float)yoffset;
+	zoom_ -= yOffset;
 	zoom_ = glm::clamp(zoom_, 1.f, CameraConfig::Zoom);
 
 	// Update orthogonal axes and matrices

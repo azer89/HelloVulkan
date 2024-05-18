@@ -30,9 +30,9 @@ public:
 
 	void SetPositionAndTarget(glm::vec3 cameraPosition, glm::vec3 cameraTarget);
 	void SetScreenSize(float width, float height);
-	void ProcessKeyboard(CameraMovement direction, float deltaTime_);
-	void ProcessMouseMovement(float xoffset, float yoffset);
-	void ProcessMouseScroll(float yoffset);
+	void ProcessKeyboard(CameraMovement direction, float deltaTime);
+	void ProcessMouseMovement(float xOffset, float yOffset);
+	void ProcessMouseScroll(float yOffset);
 
 	[[nodiscard]] glm::mat4 GetProjectionMatrix() const;
 	[[nodiscard]] glm::mat4 GetInverseProjectionMatrix() const;
