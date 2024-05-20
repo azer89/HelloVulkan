@@ -12,7 +12,7 @@ Fragment shader for PBR+IBL, naive forward shading (non clustered)
 #include <PBR/PBRHeader.glsl>
 #include <PBR/PBRPushConstants.glsl>
 #include <PBR/Hammersley.glsl>
-#include <PBR/TangentNormalToWorld.glsl>
+#include <PBR/NormalTBN.glsl>
 
 layout(location = 0) in vec3 worldPos;
 layout(location = 1) in vec2 texCoord;
@@ -62,10 +62,10 @@ void main()
 	float ao = texture(textureAO, texCoord).r;
 
 	float alphaRoughness = AlphaDirectLighting(roughness);
-	vec3 tangentNormal = texture(textureNormal, texCoord).xyz * 2.0 - 1.0;
+	vec3 texNormalValue = texture(textureNormal, texCoord).xyz * 2.0 - 1.0;
 
 	// Input lighting data
-	vec3 N = TangentNormalToWorld(tangentNormal, worldPos, normal, texCoord);
+	vec3 N = NormalTBN(texNormalValue, worldPos, normal, texCoord);
 	vec3 V = normalize(camUBO.position.xyz - worldPos);
 	float NoV = max(dot(N, V), 0.0);
 

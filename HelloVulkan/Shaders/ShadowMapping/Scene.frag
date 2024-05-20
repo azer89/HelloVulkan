@@ -22,7 +22,7 @@ Fragment shader for
 #include <PBR/PBRHeader.glsl>
 #include <PBR/PBRPushConstants.glsl>
 #include <PBR/Hammersley.glsl>
-#include <PBR/TangentNormalToWorld.glsl>
+#include <PBR/NormalTBN.glsl>
 #include <Bindless/VertexData.glsl>
 #include <Bindless/MeshData.glsl>
 #include <ShadowMapping/UBO.glsl>
@@ -82,7 +82,7 @@ void main()
 	// Material properties
 	vec3 albedo = pow(albedo4.rgb, vec3(2.2));
 	vec3 emissive = texture(pbrTextures[nonuniformEXT(mData.emissive)], texCoord).rgb;
-	vec3 tangentNormal = texture(pbrTextures[nonuniformEXT(mData.normal)], texCoord).xyz * 2.0 - 1.0;
+	vec3 texNormalValue = texture(pbrTextures[nonuniformEXT(mData.normal)], texCoord).xyz * 2.0 - 1.0;
 	float metallic = texture(pbrTextures[nonuniformEXT(mData.metalness)], texCoord).b;
 	float roughness = texture(pbrTextures[nonuniformEXT(mData.roughness)], texCoord).g;
 	float ao = texture(pbrTextures[nonuniformEXT(mData.ao)], texCoord).r;
@@ -93,7 +93,7 @@ void main()
 	vec2 screenCoord = fragCoord * 0.5 + 0.5;
 	float ssao = texture(ssaoTex, screenCoord).r;
 
-	vec3 N = TangentNormalToWorld(tangentNormal, worldPos, normal, texCoord);
+	vec3 N = NormalTBN(texNormalValue, worldPos, normal, texCoord);
 	vec3 V = normalize(camUBO.position.xyz - worldPos);
 	float NoV = max(dot(N, V), 0.0);
 

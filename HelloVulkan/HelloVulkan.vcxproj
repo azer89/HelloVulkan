@@ -192,7 +192,7 @@
     <None Include="Shaders\PBR\PBRHeader.glsl" />
     <None Include="Shaders\PBR\PBRPushConstants.glsl" />
     <None Include="Shaders\PBR\Radiance.glsl" />
-    <None Include="Shaders\PBR\TangentNormalToWorld.glsl" />
+    <None Include="Shaders\PBR\NormalTBN.glsl" />
     <None Include="Shaders\Raytracing\AnyHit.rahit" />
     <None Include="Shaders\Raytracing\ClosestHit.rchit" />
     <None Include="Shaders\Raytracing\Header\Random.glsl" />

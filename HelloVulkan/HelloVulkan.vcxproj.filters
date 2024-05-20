@@ -273,7 +273,7 @@
     <None Include="Shaders\PBR\Radiance.glsl">
       <Filter>Shaders\PBR</Filter>
     </None>
-    <None Include="Shaders\PBR\TangentNormalToWorld.glsl">
+    <None Include="Shaders\PBR\NormalTBN.glsl">
       <Filter>Shaders\PBR</Filter>
     </None>
     <None Include="Shaders\GBuffer\GBuffer.frag">
