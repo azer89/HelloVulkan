@@ -69,10 +69,10 @@ void VulkanContext::GetQueues()
 	}
 
 	vkGetDeviceQueue(device_, graphicsFamily_, 0, &graphicsQueue_);
-	if (graphicsQueue_ == nullptr) { std::cerr << "Cannot get graphics queue\n"; }
-
+	if (graphicsQueue_ == nullptr) { throw std::runtime_error("Cannot obtain graphics queue"); }
+	
 	vkGetDeviceQueue(device_, computeFamily_, 0, &computeQueue_);
-	if (computeQueue_ == nullptr) { std::cerr << "Cannot get compute queue\n"; }
+	if (computeQueue_ == nullptr) { throw std::runtime_error("Cannot obtain compute queue"); }
 }
 
 void VulkanContext::AllocateVMA(VulkanInstance& instance)
@@ -107,7 +107,7 @@ void VulkanContext::CheckSurfaceSupport(VulkanInstance& instance) const
 {
 	VkBool32 presentSupported = 0;
 	vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice_, graphicsFamily_, instance.GetSurface(), &presentSupported);
-	if (!presentSupported) { std::cerr << "Cannot get surface support KHR\n"; }
+	if (!presentSupported) { throw std::runtime_error("Cannot obtain surface support KHR"); }
 }
 
 void VulkanContext::GetRaytracingPropertiesAndFeatures()
@@ -346,8 +346,7 @@ VkResult VulkanContext::CreatePhysicalDevice(VkInstance instance)
 
 	if (!deviceCount)
 	{
-		std::cerr << "Device count is zero\n";
-		return VK_ERROR_INITIALIZATION_FAILED;
+		throw std::runtime_error("Device count is zero");
 	}
 
 	std::vector<VkPhysicalDevice> devices(deviceCount);

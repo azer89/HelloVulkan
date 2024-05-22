@@ -151,6 +151,6 @@ void VulkanDescriptorSetInfo::CheckBound(size_t bindingIndex) const
 {
 	if (bindingIndex < 0 || bindingIndex >= writes_.size())
 	{
-		std::cerr << "Invalid bindingIndex\n";
+		std::cerr << "VulkanDescriptorSetInfo, Invalid bindingIndex\n";
 	}
 }
