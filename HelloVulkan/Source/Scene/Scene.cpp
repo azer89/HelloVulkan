@@ -466,7 +466,7 @@ void Scene::CreateIndirectBuffer(
 			.vertexCount = models_[modelIndex].meshes_[perModelMeshIndex].GetIndexCount(),
 			.instanceCount = 1u,
 			.firstVertex = 0,
-			.firstInstance = 0
+			.firstInstance = i
 		};
 	}
 

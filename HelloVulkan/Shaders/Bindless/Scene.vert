@@ -22,7 +22,7 @@ layout(set = 0, binding = 2) uniform BDABlock { BDA bda; }; // UBO
 
 void main()
 {
-	MeshData meshData = bda.meshReference.meshes[gl_DrawID];
+	MeshData meshData = bda.meshReference.meshes[gl_BaseInstance];
 	uint vOffset = meshData.vertexOffset;
 	uint iOffset = meshData.indexOffset;
 	uint vIndex = bda.indexReference.indices[iOffset + gl_VertexIndex] + vOffset;
@@ -35,6 +35,6 @@ void main()
 	texCoord = vec2(vertexData.uvX,vertexData.uvY);
 	normal = normalMatrix * vertexData.normal;
 	vertexColor = vertexData.color.xyz;
-	meshIndex = gl_DrawID;
+	meshIndex = gl_BaseInstance;
 	gl_Position =  camUBO.projection * camUBO.view * vec4(worldPos, 1.0);
 }

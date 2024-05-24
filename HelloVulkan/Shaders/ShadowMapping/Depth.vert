@@ -14,7 +14,7 @@ layout(set = 0, binding = 1) readonly buffer ModelUBOs { ModelUBO modelUBOs []; 
 
 void main()
 {
-	MeshData meshData = bda.meshReference.meshes[gl_DrawID];
+	MeshData meshData = bda.meshReference.meshes[gl_BaseInstance];
 	uint vOffset = meshData.vertexOffset;
 	uint iOffset = meshData.indexOffset;
 	uint vIndex = bda.indexReference.indices[iOffset + gl_VertexIndex] + vOffset;
