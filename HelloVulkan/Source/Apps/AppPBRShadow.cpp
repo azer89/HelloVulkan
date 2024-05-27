@@ -11,8 +11,6 @@
 #include "glm/ext.hpp"
 #include "imgui_impl_vulkan.h"
 
-#include <iostream>
-
 AppPBRShadow::AppPBRShadow()
 {
 }
@@ -161,14 +159,7 @@ void AppPBRShadow::UpdateUI()
 
 	imguiPtr_->ImGuizmoManipulateScene(vulkanContext_, &uiData_);
 
-	if (ImGui::IsAnyItemFocused())
-	{
-		std::cout << "i";
-	}
-
 	imguiPtr_->ImGuiEnd();
-
-	
 
 	for (auto& pipeline : pipelines_)
 	{
