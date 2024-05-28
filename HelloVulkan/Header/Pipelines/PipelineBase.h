@@ -62,7 +62,7 @@ protected:
 	VkPipeline pipeline_{};
 
 	// Multiple render target
-	std::vector<VkPipelineColorBlendAttachmentState> overridingColorBlendAttachments = {};
+	std::vector<VkPipelineColorBlendAttachmentState> overridingColorBlendAttachments{};
 
 protected:
 	bool IsOffscreen() const

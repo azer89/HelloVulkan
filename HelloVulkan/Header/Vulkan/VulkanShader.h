@@ -31,7 +31,7 @@ public:
 		const char* entryPoint);
 
 private:
-	std::vector<unsigned int> spirv_ = {};
+	std::vector<unsigned int> spirv_{};
 	VkShaderModule shaderModule_{};
 	VkDevice device_{};
 

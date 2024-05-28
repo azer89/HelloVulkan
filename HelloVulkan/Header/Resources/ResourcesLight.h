@@ -72,11 +72,11 @@ public:
 	}
 
 public:
-	std::vector<LightData> lights_ = {};
+	std::vector<LightData> lights_{};
 
 private:
 	uint32_t lightCount_ = 0;
-	VulkanBuffer storageBuffer_ = {};
+	VulkanBuffer storageBuffer_{};
 	VkDevice device_{};
 };
 

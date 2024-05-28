@@ -87,44 +87,44 @@ private:
 	
 public:
 	uint32_t triangleCount_ = 0;
-	SceneData sceneData_ = {}; // Containing vertices and indices
-	std::vector<ModelUBO> modelSSBOs_ = {};
+	SceneData sceneData_{}; // Containing vertices and indices
+	std::vector<ModelUBO> modelSSBOs_{};
 
 	// These three have the same length
-	std::vector<MeshData> meshDataArray_ = {}; // Content is sent to meshDataBuffer_
-	std::vector<InstanceData> instanceDataArray_ = {};
-	std::vector<BoundingBox> transformedBoundingBoxes_ = {}; // Content is sent to transformedBoundingBoxBuffer_
+	std::vector<MeshData> meshDataArray_{}; // Content is sent to meshDataBuffer_
+	std::vector<InstanceData> instanceDataArray_{};
+	std::vector<BoundingBox> transformedBoundingBoxes_{}; // Content is sent to transformedBoundingBoxBuffer_
 	
 	// Animation
-	VulkanBuffer boneIDBuffer_ = {};
-	VulkanBuffer boneWeightBuffer_ = {};
-	VulkanBuffer skinningIndicesBuffer_ = {};
-	VulkanBuffer preSkinningVertexBuffer_ = {}; // This buffer contains a subset of vertexBuffer_
-	std::array<VulkanBuffer, AppConfig::FrameCount> boneMatricesBuffers_ = {}; // Frame-in-flight
+	VulkanBuffer boneIDBuffer_{};
+	VulkanBuffer boneWeightBuffer_{};
+	VulkanBuffer skinningIndicesBuffer_{};
+	VulkanBuffer preSkinningVertexBuffer_{}; // This buffer contains a subset of vertexBuffer_
+	std::array<VulkanBuffer, AppConfig::FrameCount> boneMatricesBuffers_{}; // Frame-in-flight
 
 	// Vertex pulling
-	VulkanBuffer vertexBuffer_ = {}; 
-	VulkanBuffer indexBuffer_ = {};
-	VulkanBuffer indirectBuffer_ = {};
-	VulkanBuffer meshDataBuffer_ = {};
-	std::array<VulkanBuffer, AppConfig::FrameCount> modelSSBOBuffers_ = {}; // Frame-in-flight
+	VulkanBuffer vertexBuffer_{}; 
+	VulkanBuffer indexBuffer_{};
+	VulkanBuffer indirectBuffer_{};
+	VulkanBuffer meshDataBuffer_{};
+	std::array<VulkanBuffer, AppConfig::FrameCount> modelSSBOBuffers_{}; // Frame-in-flight
 
 	// Frustum culling
-	VulkanBuffer transformedBoundingBoxBuffer_ = {}; // TODO No Frame-in-flight but somenow not giving error
+	VulkanBuffer transformedBoundingBoxBuffer_{}; // TODO No Frame-in-flight but somenow not giving error
 	
 private:
-	std::vector<Model> models_ = {};
+	std::vector<Model> models_{};
 
 	/*Update model matrix and update the buffer
 	Need two indices to access instanceMapArray_
 		First index is modelIndex
 		Second index is perModelInstanceIndex*/
-	std::vector<std::vector<InstanceMap>> instanceMapArray_ = {};
+	std::vector<std::vector<InstanceMap>> instanceMapArray_{};
 
 	// Animation
-	std::vector<glm::mat4> skinningMatrices_ = {};
-	std::vector<Animation> animations_ = {};
-	std::vector<Animator> animators_ = {};
+	std::vector<glm::mat4> skinningMatrices_{};
+	std::vector<Animation> animations_{};
+	std::vector<Animator> animators_{};
 };
 
 #endif

@@ -12,8 +12,8 @@
 struct BoundingBox
 {
 public:
-	glm::vec4 min_ = {};
-	glm::vec4 max_ = {};
+	glm::vec4 min_{};
+	glm::vec4 max_{};
 	
 public:
 

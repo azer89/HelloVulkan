@@ -41,9 +41,9 @@ public:
 	void Recreate(VulkanContext& ctx);
 
 private:
-	std::vector<VkFramebuffer> framebuffers_ = {};
-	std::vector<VulkanImage*> attachmentImages_ = {};
-	VkFramebufferCreateInfo framebufferInfo_ = {}; // Caching creation info
+	std::vector<VkFramebuffer> framebuffers_{};
+	std::vector<VulkanImage*> attachmentImages_{};
+	VkFramebufferCreateInfo framebufferInfo_{}; // Caching creation info
 	VkDevice device_{};
 	uint32_t framebufferCount_ = 0;
 	bool offscreen_ = false;

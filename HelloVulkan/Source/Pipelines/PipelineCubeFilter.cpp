@@ -132,7 +132,7 @@ void PipelineCubeFilter::CreateOutputCubemapViews(VulkanContext& ctx,
 		std::vector<std::vector<VkImageView>>(numMip, std::vector<VkImageView>(IBLConfig::LayerCount, VK_NULL_HANDLE));
 	for (uint32_t a = 0; a < numMip; ++a)
 	{
-		outputCubemapViews[a] = {};
+		outputCubemapViews[a]{};
 		for (uint32_t b = 0; b < IBLConfig::LayerCount; ++b)
 		{
 			VkImageSubresourceRange subresourceRange{ VK_IMAGE_ASPECT_COLOR_BIT, 0u, 1u, 0u, 1u };

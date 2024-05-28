@@ -30,7 +30,7 @@ private:
 	void CreateHierarchy(AnimationNode& dest, const aiNode* src);
 
 public:
-	AnimationNode rootNode_ = {};
+	AnimationNode rootNode_{};
 
 private:
 	float duration_ = 0.0f;

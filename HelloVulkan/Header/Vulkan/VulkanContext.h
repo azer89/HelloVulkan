@@ -14,7 +14,7 @@
 
 struct SwapchainSupportDetails
 {
-	VkSurfaceCapabilitiesKHR capabilities_ = {};
+	VkSurfaceCapabilitiesKHR capabilities_{};
 	std::vector<VkSurfaceFormatKHR> formats_;
 	std::vector<VkPresentModeKHR> presentModes_;
 };
@@ -165,8 +165,8 @@ private:
 
 private:
 	VkSwapchainKHR swapchain_{};
-	std::vector<VkImage> swapchainImages_ = {};
-	std::vector<VkImageView> swapchainImageViews_ = {};
+	std::vector<VkImage> swapchainImages_{};
+	std::vector<VkImageView> swapchainImageViews_{};
 	VkFormat swapchainImageFormat_ = VK_FORMAT_B8G8R8A8_UNORM;
 	uint32_t currentSwapchainImageIndex_ = 0; // Current image index
 	uint32_t swapchainWidth_ = 0;
@@ -177,7 +177,7 @@ private:
 
 	VkDevice device_{};
 	VkPhysicalDevice physicalDevice_{};;
-	VkPhysicalDeviceMemoryProperties memoryProperties_ = {};
+	VkPhysicalDeviceMemoryProperties memoryProperties_{};
 
 	// Graphics
 	uint32_t graphicsFamily_ = 0;
@@ -189,34 +189,34 @@ private:
 	VkQueue computeQueue_{};
 	VkCommandPool computeCommandPool_{};
 
-	std::vector<uint32_t> deviceQueueIndices_ = {};
+	std::vector<uint32_t> deviceQueueIndices_{};
 
 	uint32_t frameIndex_ = 0;
-	std::array<FrameData, AppConfig::FrameCount> frameDataArray_ = {};
+	std::array<FrameData, AppConfig::FrameCount> frameDataArray_{};
 
 	VmaAllocator vmaAllocator_{};
 
-	ContextConfig config_ = {};
+	ContextConfig config_{};
 
 	// Raytracing and bindless
-	VkPhysicalDeviceBufferDeviceAddressFeatures deviceAddressEnabledFeatures_ = {};
+	VkPhysicalDeviceBufferDeviceAddressFeatures deviceAddressEnabledFeatures_{};
 
 	// Raytracing
-	VkPhysicalDeviceRayTracingPipelinePropertiesKHR rtPipelineProperties_ = {};
-	VkPhysicalDeviceAccelerationStructureFeaturesKHR rtASFeatures_ = {};
+	VkPhysicalDeviceRayTracingPipelinePropertiesKHR rtPipelineProperties_{};
+	VkPhysicalDeviceAccelerationStructureFeaturesKHR rtASFeatures_{};
 	
-	VkPhysicalDeviceRayTracingPipelineFeaturesKHR rtPipelineEnabledFeatures_ = {};
-	VkPhysicalDeviceAccelerationStructureFeaturesKHR rtASEnabledFeatures = {};
+	VkPhysicalDeviceRayTracingPipelineFeaturesKHR rtPipelineEnabledFeatures_{};
+	VkPhysicalDeviceAccelerationStructureFeaturesKHR rtASEnabledFeatures{};
 
 	// Bindless Textures
-	VkPhysicalDeviceDescriptorIndexingFeaturesEXT descriptorIndexingFeatures_ = {};
+	VkPhysicalDeviceDescriptorIndexingFeaturesEXT descriptorIndexingFeatures_{};
 
 	// Features
 	// NOTE features2_ and features13_ are always created
-	VkPhysicalDeviceVulkan13Features features13_ = {};
-	VkPhysicalDeviceVulkan11Features features11_ = {};
-	VkPhysicalDeviceFeatures2 features2_ = {};
-	VkPhysicalDeviceFeatures features_ = {};
+	VkPhysicalDeviceVulkan13Features features13_{};
+	VkPhysicalDeviceVulkan11Features features11_{};
+	VkPhysicalDeviceFeatures2 features2_{};
+	VkPhysicalDeviceFeatures features_{};
 };
 
 #endif

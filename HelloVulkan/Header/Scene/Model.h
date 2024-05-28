@@ -17,34 +17,34 @@
 class Model
 {
 public:
-	std::string filepath_ = {};
-	std::vector<Mesh> meshes_ = {};
+	std::string filepath_{};
+	std::vector<Mesh> meshes_{};
 
 	// NOTE Textures are stored in Model regardless of bindless textures or Slot-Based
-	std::vector<VulkanImage> textureList_ = {};
+	std::vector<VulkanImage> textureList_{};
 
 	// Optional per-frame buffers for model matrix
 	// TODO Maybe can be moved to pipelines
-	std::vector<VulkanBuffer> modelBuffers_ = {};
+	std::vector<VulkanBuffer> modelBuffers_{};
 
 	// This is used to store the filename and to activate instancing in bindless setup
-	ModelCreateInfo modelInfo_ = {};
+	ModelCreateInfo modelInfo_{};
 
 	// Skinning
-	std::unordered_map<std::string, BoneInfo> boneInfoMap_ = {};
+	std::unordered_map<std::string, BoneInfo> boneInfoMap_{};
 
 private:
 	const aiScene* scene_{};
 	bool bindlessTexture_ = false;
 	VkDevice device_{};
-	std::string directory_ = {};
+	std::string directory_{};
 
 	// Skinning
 	int boneCounter_ = 0;
 	bool processAnimation_ = false;
 
 	// string key is the filename, int value points to elements in textureList_
-	std::unordered_map<std::string, uint32_t> textureMap_ = {};
+	std::unordered_map<std::string, uint32_t> textureMap_{};
 
 public:
 	Model() = default;

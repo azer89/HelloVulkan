@@ -38,7 +38,7 @@ public:
 	VulkanImage depth_;
 
 private:
-	std::vector<glm::vec4> ssaoKernel_ = {};
+	std::vector<glm::vec4> ssaoKernel_{};
 };
 
 #endif

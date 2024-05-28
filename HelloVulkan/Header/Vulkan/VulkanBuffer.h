@@ -10,7 +10,7 @@ class VulkanBuffer
 public:
 	VkBuffer buffer_{};
 	VmaAllocation vmaAllocation_{};
-	VmaAllocationInfo vmaInfo_ = {};
+	VmaAllocationInfo vmaInfo_{};
 	VkDeviceSize size_ = 0;
 
 	// Only used for raytracing
