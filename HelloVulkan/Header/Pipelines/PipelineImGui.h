@@ -36,8 +36,8 @@ public:
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
 private:
-	Scene* scene_ = nullptr;
-	const Camera* camera_ = nullptr;
+	Scene* scene_{};
+	const Camera* camera_{};
 };
 
 #endif

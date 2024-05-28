@@ -35,7 +35,7 @@ public:
 private:
 	float duration_ = 0.0f;
 	float ticksPerSecond_ = 0.0f;
-	Model* model_ = nullptr;
+	Model* model_{};
 	std::unordered_map<std::string, Bone> boneMap_;
 };
 

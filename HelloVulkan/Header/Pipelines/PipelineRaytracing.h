@@ -56,7 +56,7 @@ private:
 	uint32_t frameCounter_ = 0;
 	RaytracingUBO ubo_;
 
-	Scene* scene_ = nullptr;
+	Scene* scene_{};
 	VulkanBuffer bdaBuffer_ = {};
 	VulkanImage storageImage_ = {};
 	VulkanImage accumulationImage_ = {};

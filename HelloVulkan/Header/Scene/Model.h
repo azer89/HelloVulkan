@@ -34,9 +34,9 @@ public:
 	std::unordered_map<std::string, BoneInfo> boneInfoMap_ = {};
 
 private:
-	const aiScene* scene_ = nullptr;
+	const aiScene* scene_{};
 	bool bindlessTexture_ = false;
-	VkDevice device_ = nullptr;
+	VkDevice device_{};
 	std::string directory_ = {};
 
 	// Skinning

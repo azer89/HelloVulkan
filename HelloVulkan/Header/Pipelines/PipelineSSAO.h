@@ -58,7 +58,7 @@ private:
 	float bias_ = 0.0f;
 	float power_ = 0.0f;
 
-	ResourcesGBuffer* resourcesGBuffer_ = nullptr;
+	ResourcesGBuffer* resourcesGBuffer_{};
 	std::vector<VulkanBuffer> ssaoUboBuffers_ = {};
 	VulkanDescriptorSetInfo descriptorSetInfo_;
 	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_ = {};

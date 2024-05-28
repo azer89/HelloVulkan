@@ -75,7 +75,7 @@ void VulkanBuffer::CreateMappedIndirectBuffer(
 
 VkDrawIndirectCommand* VulkanBuffer::MapIndirectBuffer()
 {
-	VkDrawIndirectCommand* mappedData = nullptr;
+	VkDrawIndirectCommand* mappedData{};
 	vmaMapMemory(vmaAllocator_, vmaAllocation_, (void**)&mappedData);
 	return mappedData;
 }
@@ -159,7 +159,7 @@ void VulkanBuffer::UploadBufferData(
 	const void* data,
 	const size_t dataSize)
 {
-	/*void* mappedData = nullptr;
+	/*void* mappedData{};
 	vmaMapMemory(vmaAllocator_, vmaAllocation_, &mappedData);
 	memcpy(mappedData, data, dataSize);
 	vmaUnmapMemory(vmaAllocator_, vmaAllocation_);*/
@@ -171,7 +171,7 @@ void VulkanBuffer::DownloadBufferData(
 	void* outData,
 	const size_t dataSize)
 {
-	void* mappedData = nullptr;
+	void* mappedData{};
 	vmaMapMemory(vmaAllocator_, vmaAllocation_, &mappedData);
 	memcpy(outData, mappedData, dataSize);
 	vmaUnmapMemory(vmaAllocator_, vmaAllocation_);

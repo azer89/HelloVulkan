@@ -137,7 +137,7 @@ void VulkanContext::GetRaytracingPropertiesAndFeatures()
 void VulkanContext::ChainFeatures()
 {
 	// This pointer is for chaining
-	void* chainPtr = nullptr;
+	void* chainPtr{};
 
 	if (config_.supportBindlessTextures_)
 	{

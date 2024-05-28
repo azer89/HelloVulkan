@@ -27,16 +27,16 @@ public:
 	void InitLights();
 
 private:
-	PipelineFrustumCulling* cullingPtr_ = nullptr;
-	PipelinePBRBindless* pbrPtr_ = nullptr;
-	PipelineImGui* imguiPtr_ = nullptr;
-	PipelineLine* linePtr_ = nullptr;
-	PipelineLightRender* lightPtr_ = nullptr;
-	PipelineInfiniteGrid* infGridPtr_ = nullptr;
-	PipelineAABBRender* boxRenderPtr_ = nullptr;
+	PipelineFrustumCulling* cullingPtr_{};
+	PipelinePBRBindless* pbrPtr_{};
+	PipelineImGui* imguiPtr_{};
+	PipelineLine* linePtr_{};
+	PipelineLightRender* lightPtr_{};
+	PipelineInfiniteGrid* infGridPtr_{};
+	PipelineAABBRender* boxRenderPtr_{};
 
-	std::unique_ptr<Scene> scene_ = nullptr;
-	ResourcesLight* resourcesLight_ = nullptr;
+	std::unique_ptr<Scene> scene_{};
+	ResourcesLight* resourcesLight_{};
 
 	bool updateFrustum_ = true;
 };

@@ -79,10 +79,10 @@ protected:
 	}
 
 protected:
-	GLFWwindow* glfwWindow_ = nullptr;
+	GLFWwindow* glfwWindow_{};
 
 	// Camera
-	std::unique_ptr<Camera> camera_ = nullptr;
+	std::unique_ptr<Camera> camera_{};
 
 	// Timing
 	FrameCounter frameCounter_ = {};
@@ -102,8 +102,8 @@ protected:
 	uint32_t windowHeight_ = 0;
 	bool shouldRecreateSwapchain_ = true;
 
-	ResourcesShared* resourcesShared_ = nullptr;
-	ResourcesIBL* resourcesIBL_ = nullptr;
+	ResourcesShared* resourcesShared_{};
+	ResourcesIBL* resourcesIBL_{};
 
 	UIData uiData_ = {};
 };

@@ -77,7 +77,7 @@ public:
 private:
 	uint32_t lightCount_ = 0;
 	VulkanBuffer storageBuffer_ = {};
-	VkDevice device_ = nullptr;
+	VkDevice device_{};
 };
 
 #endif

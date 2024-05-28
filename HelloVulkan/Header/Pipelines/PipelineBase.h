@@ -48,7 +48,7 @@ public:
 	}
 
 protected:
-	VkDevice device_ = nullptr;
+	VkDevice device_{};
 	PipelineConfig config_;
 
 	// Keep this as a vector because it can be empty when not used
@@ -58,8 +58,8 @@ protected:
 	VulkanDescriptorManager descriptorManager_;
 	VulkanRenderPass renderPass_;
 	VulkanSpecialization specializationConstants_;
-	VkPipelineLayout pipelineLayout_ = nullptr;
-	VkPipeline pipeline_ = nullptr;
+	VkPipelineLayout pipelineLayout_{};
+	VkPipeline pipeline_{};
 
 	// Multiple render target
 	std::vector<VkPipelineColorBlendAttachmentState> overridingColorBlendAttachments = {};

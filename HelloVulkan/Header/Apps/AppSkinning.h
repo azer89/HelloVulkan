@@ -29,18 +29,18 @@ public:
 	void InitLights();
 
 private:
-	PipelineImGui* imguiPtr_ = nullptr;
-	PipelineShadow* shadowPtr_ = nullptr;
-	PipelineGBuffer* gPtr_ = nullptr;
-	PipelineSSAO* ssaoPtr_ = nullptr;
-	PipelinePBRShadow* pbrOpaquePtr_ = nullptr;
-	PipelinePBRShadow* pbrTransparentPtr_ = nullptr;
-	PipelineLightRender* lightPtr_ = nullptr;
+	PipelineImGui* imguiPtr_{};
+	PipelineShadow* shadowPtr_{};
+	PipelineGBuffer* gPtr_{};
+	PipelineSSAO* ssaoPtr_{};
+	PipelinePBRShadow* pbrOpaquePtr_{};
+	PipelinePBRShadow* pbrTransparentPtr_{};
+	PipelineLightRender* lightPtr_{};
 
-	std::unique_ptr<Scene> scene_ = nullptr;
-	ResourcesLight* resourcesLight_ = nullptr;
-	ResourcesShadow* resourcesShadow_ = nullptr;
-	ResourcesGBuffer* resourcesGBuffer_ = nullptr;
+	std::unique_ptr<Scene> scene_{};
+	ResourcesLight* resourcesLight_{};
+	ResourcesShadow* resourcesShadow_{};
+	ResourcesGBuffer* resourcesGBuffer_{};
 };
 
 #endif

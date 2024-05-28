@@ -32,8 +32,8 @@ public:
 
 private:
 	std::vector<unsigned int> spirv_ = {};
-	VkShaderModule shaderModule_ = nullptr;
-	VkDevice device_ = nullptr;
+	VkShaderModule shaderModule_{};
+	VkDevice device_{};
 
 private:
 	[[nodiscard]] size_t CompileShaderFile(const char* file);

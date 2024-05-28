@@ -10,7 +10,7 @@ void VulkanDescriptorSetInfo::AddBuffer(
 	VkShaderStageFlags stageFlags
 )
 {
-	VkDescriptorBufferInfo* bufferInfo = nullptr;
+	VkDescriptorBufferInfo* bufferInfo{};
 	if (buffer)
 	{
 		const size_t index = writes_.size();
@@ -33,7 +33,7 @@ void VulkanDescriptorSetInfo::AddImage(
 	VkShaderStageFlags stageFlags
 )
 {
-	VkDescriptorImageInfo* imageInfo = nullptr;
+	VkDescriptorImageInfo* imageInfo{};
 	if (image)
 	{
 		const size_t index = writes_.size();
@@ -95,7 +95,7 @@ void VulkanDescriptorSetInfo::UpdateBuffer(const VulkanBuffer* buffer, size_t bi
 {
 	CheckBound(bindingIndex);
 
-	VkDescriptorBufferInfo* bufferInfo = nullptr;
+	VkDescriptorBufferInfo* bufferInfo{};
 	if (buffer)
 	{
 		bufferMap_[bindingIndex] = buffer->GetBufferInfo();
@@ -109,7 +109,7 @@ void VulkanDescriptorSetInfo::UpdateImage(const VulkanImage* image, size_t bindi
 {
 	CheckBound(bindingIndex);
 
-	VkDescriptorImageInfo* imageInfo = nullptr;
+	VkDescriptorImageInfo* imageInfo{};
 	if (image)
 	{
 		imageMap_[bindingIndex] = image->GetDescriptorImageInfo();
@@ -124,7 +124,7 @@ void VulkanDescriptorSetInfo::UpdateStorageImage(const VulkanImage* image, size_
 {
 	CheckBound(bindingIndex);
 
-	VkDescriptorImageInfo* imageInfo = nullptr;
+	VkDescriptorImageInfo* imageInfo{};
 	if (image)
 	{
 		imageMap_[bindingIndex] =
