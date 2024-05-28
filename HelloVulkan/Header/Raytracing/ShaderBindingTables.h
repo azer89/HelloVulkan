@@ -76,7 +76,7 @@ struct ShaderBindingTables
 			.stride = handleSizeAligned,
 			.size = handleSizeAligned
 		};
-		callableShaderSbtEntry_{};
+		callableShaderSbtEntry_ = {};
 	}
 };
 

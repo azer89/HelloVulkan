@@ -176,7 +176,7 @@ private:
 	VkSampleCountFlagBits msaaSampleCount_ = VK_SAMPLE_COUNT_1_BIT;
 
 	VkDevice device_{};
-	VkPhysicalDevice physicalDevice_{};;
+	VkPhysicalDevice physicalDevice_{};
 	VkPhysicalDeviceMemoryProperties memoryProperties_{};
 
 	// Graphics

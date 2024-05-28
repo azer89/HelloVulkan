@@ -197,7 +197,7 @@ void VulkanContext::ChainFeatures()
 		chainPtr = &rtASEnabledFeatures;
 	}
 
-	features_{};
+	features_ = {};
 	if (config_.supportMSAA_)
 	{
 		features_.sampleRateShading = VK_TRUE;
