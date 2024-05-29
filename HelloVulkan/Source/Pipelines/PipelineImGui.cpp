@@ -41,7 +41,7 @@ PipelineImGui::PipelineImGui(
 	ImGui::CreateContext();
 
 	ImGui::StyleColorsDark();
-
+	
 	ImGuiStyle* style = &ImGui::GetStyle();
 	ImVec4* colors = style->Colors;
 	colors[ImGuiCol_WindowBg] = ImVec4(0.06f, 0.06f, 0.06f, 0.7f);
