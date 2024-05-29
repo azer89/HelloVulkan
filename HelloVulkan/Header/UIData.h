@@ -60,7 +60,7 @@ public:
 	bool renderLights_ = true;
 
 	// SSAO
-	float ssaoRadius_ = 0.5f;
+	float ssaoRadius_ = 0.25f;
 	float ssaoBias_ = 0.05f;
 	float ssaoPower_ = 1.0f;
 
