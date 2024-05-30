@@ -34,11 +34,11 @@ private:
 		uint32_t descriptorCount);
 
 public:
-	VkDescriptorPool pool_ = nullptr;
-	VkDescriptorSetLayout layout_ = nullptr;
+	VkDescriptorPool pool_{};
+	VkDescriptorSetLayout layout_{};
 
 private:
-	VkDevice device_ = nullptr;
+	VkDevice device_{};
 };
 
 #endif

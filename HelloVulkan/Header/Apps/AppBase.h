@@ -79,33 +79,33 @@ protected:
 	}
 
 protected:
-	GLFWwindow* glfwWindow_ = nullptr;
+	GLFWwindow* glfwWindow_{};
 
 	// Camera
-	std::unique_ptr<Camera> camera_ = nullptr;
+	std::unique_ptr<Camera> camera_{};
 
 	// Timing
-	FrameCounter frameCounter_ = {};
+	FrameCounter frameCounter_{};
 
 	// These two are not copyable or movable
-	VulkanInstance vulkanInstance_ = {};
-	VulkanContext vulkanContext_ = {};
+	VulkanInstance vulkanInstance_{};
+	VulkanContext vulkanContext_{};
 
 	// A list of pipelines (graphics, compute, or raytracing)
-	std::vector<std::unique_ptr<PipelineBase>> pipelines_ = {};
+	std::vector<std::unique_ptr<PipelineBase>> pipelines_{};
 
 	// A list of resources containing buffers and images
-	std::vector<std::unique_ptr<ResourcesBase>> resources_ = {};
+	std::vector<std::unique_ptr<ResourcesBase>> resources_{};
 
 	// Window size
 	uint32_t windowWidth_ = 0;
 	uint32_t windowHeight_ = 0;
 	bool shouldRecreateSwapchain_ = true;
 
-	ResourcesShared* resourcesShared_ = nullptr;
-	ResourcesIBL* resourcesIBL_ = nullptr;
+	ResourcesShared* resourcesShared_{};
+	ResourcesIBL* resourcesIBL_{};
 
-	UIData uiData_ = {};
+	UIData uiData_{};
 };
 
 #endif

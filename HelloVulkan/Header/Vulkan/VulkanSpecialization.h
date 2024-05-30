@@ -11,8 +11,8 @@ public:
 	VulkanSpecialization() = default;
 
 private:
-	std::vector<VkSpecializationMapEntry> entries_ = {};
-	VkSpecializationInfo specializationInfo_ = {};
+	std::vector<VkSpecializationMapEntry> entries_{};
+	VkSpecializationInfo specializationInfo_{};
 	VkShaderStageFlags shaderStages_;
 
 public:

@@ -30,13 +30,13 @@ private:
 	void CreateHierarchy(AnimationNode& dest, const aiNode* src);
 
 public:
-	AnimationNode rootNode_ = {};
+	AnimationNode rootNode_{};
 
 private:
 	float duration_ = 0.0f;
 	float ticksPerSecond_ = 0.0f;
-	Model* model_ = nullptr;
-	std::unordered_map<std::string, Bone> boneMap_;
+	Model* model_{};
+	std::unordered_map<std::string, Bone> boneMap_{};
 };
 
 #endif

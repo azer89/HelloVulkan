@@ -14,7 +14,7 @@
 
 struct SwapchainSupportDetails
 {
-	VkSurfaceCapabilitiesKHR capabilities_ = {};
+	VkSurfaceCapabilitiesKHR capabilities_{};
 	std::vector<VkSurfaceFormatKHR> formats_;
 	std::vector<VkPresentModeKHR> presentModes_;
 };
@@ -24,11 +24,11 @@ Struct containing objects needed for every frame draw
 */
 struct FrameData
 {
-	VkSemaphore nextSwapchainImageSemaphore_ = nullptr;
-	VkSemaphore graphicsQueueSemaphore_ = nullptr;
-	VkFence queueSubmitFence_ = nullptr;
-	VkCommandBuffer graphicsCommandBuffer_ = nullptr;
-	TracyVkCtx tracyContext_ = nullptr;
+	VkSemaphore nextSwapchainImageSemaphore_{};
+	VkSemaphore graphicsQueueSemaphore_{};
+	VkFence queueSubmitFence_{};
+	VkCommandBuffer graphicsCommandBuffer_{};
+	TracyVkCtx tracyContext_{};
 
 	void Destroy(VkDevice device)
 	{
@@ -164,9 +164,9 @@ private:
 		VkFormatFeatureFlags features) const;
 
 private:
-	VkSwapchainKHR swapchain_ = nullptr;
-	std::vector<VkImage> swapchainImages_ = {};
-	std::vector<VkImageView> swapchainImageViews_ = {};
+	VkSwapchainKHR swapchain_{};
+	std::vector<VkImage> swapchainImages_{};
+	std::vector<VkImageView> swapchainImageViews_{};
 	VkFormat swapchainImageFormat_ = VK_FORMAT_B8G8R8A8_UNORM;
 	uint32_t currentSwapchainImageIndex_ = 0; // Current image index
 	uint32_t swapchainWidth_ = 0;
@@ -175,48 +175,48 @@ private:
 	VkFormat depthFormat_ = VK_FORMAT_UNDEFINED;
 	VkSampleCountFlagBits msaaSampleCount_ = VK_SAMPLE_COUNT_1_BIT;
 
-	VkDevice device_ = nullptr;
-	VkPhysicalDevice physicalDevice_ = nullptr;;
-	VkPhysicalDeviceMemoryProperties memoryProperties_ = {};
+	VkDevice device_{};
+	VkPhysicalDevice physicalDevice_{};
+	VkPhysicalDeviceMemoryProperties memoryProperties_{};
 
 	// Graphics
 	uint32_t graphicsFamily_ = 0;
-	VkQueue graphicsQueue_ = nullptr;
-	VkCommandPool graphicsCommandPool_ = nullptr;
+	VkQueue graphicsQueue_{};
+	VkCommandPool graphicsCommandPool_{};
 
 	// Compute
 	uint32_t computeFamily_ = 0;
-	VkQueue computeQueue_ = nullptr;
-	VkCommandPool computeCommandPool_ = nullptr;
+	VkQueue computeQueue_{};
+	VkCommandPool computeCommandPool_{};
 
-	std::vector<uint32_t> deviceQueueIndices_ = {};
+	std::vector<uint32_t> deviceQueueIndices_{};
 
 	uint32_t frameIndex_ = 0;
-	std::array<FrameData, AppConfig::FrameCount> frameDataArray_ = {};
+	std::array<FrameData, AppConfig::FrameCount> frameDataArray_{};
 
-	VmaAllocator vmaAllocator_ = nullptr;
+	VmaAllocator vmaAllocator_{};
 
-	ContextConfig config_ = {};
+	ContextConfig config_{};
 
 	// Raytracing and bindless
-	VkPhysicalDeviceBufferDeviceAddressFeatures deviceAddressEnabledFeatures_ = {};
+	VkPhysicalDeviceBufferDeviceAddressFeatures deviceAddressEnabledFeatures_{};
 
 	// Raytracing
-	VkPhysicalDeviceRayTracingPipelinePropertiesKHR rtPipelineProperties_ = {};
-	VkPhysicalDeviceAccelerationStructureFeaturesKHR rtASFeatures_ = {};
+	VkPhysicalDeviceRayTracingPipelinePropertiesKHR rtPipelineProperties_{};
+	VkPhysicalDeviceAccelerationStructureFeaturesKHR rtASFeatures_{};
 	
-	VkPhysicalDeviceRayTracingPipelineFeaturesKHR rtPipelineEnabledFeatures_ = {};
-	VkPhysicalDeviceAccelerationStructureFeaturesKHR rtASEnabledFeatures = {};
+	VkPhysicalDeviceRayTracingPipelineFeaturesKHR rtPipelineEnabledFeatures_{};
+	VkPhysicalDeviceAccelerationStructureFeaturesKHR rtASEnabledFeatures{};
 
 	// Bindless Textures
-	VkPhysicalDeviceDescriptorIndexingFeaturesEXT descriptorIndexingFeatures_ = {};
+	VkPhysicalDeviceDescriptorIndexingFeaturesEXT descriptorIndexingFeatures_{};
 
 	// Features
 	// NOTE features2_ and features13_ are always created
-	VkPhysicalDeviceVulkan13Features features13_ = {};
-	VkPhysicalDeviceVulkan11Features features11_ = {};
-	VkPhysicalDeviceFeatures2 features2_ = {};
-	VkPhysicalDeviceFeatures features_ = {};
+	VkPhysicalDeviceVulkan13Features features13_{};
+	VkPhysicalDeviceVulkan11Features features11_{};
+	VkPhysicalDeviceFeatures2 features2_{};
+	VkPhysicalDeviceFeatures features_{};
 };
 
 #endif

@@ -24,9 +24,9 @@ public:
 	void Init();
 
 private:
-	PipelineImGui* imguiPtr_ = nullptr;
-	PipelineRaytracing* rtxPtr_ = nullptr;
-	std::unique_ptr<Scene> scene_ = nullptr;
+	PipelineImGui* imguiPtr_{};
+	PipelineRaytracing* rtxPtr_{};
+	std::unique_ptr<Scene> scene_{};
 };
 
 #endif

@@ -30,11 +30,11 @@ private:
 	[[nodiscard]] glm::mat4 InterpolateScaling(float animationTime);
 
 private:
-	std::vector<KeyPosition> positions_ = {};
-	std::vector<KeyRotation> rotations_ = {};
-	std::vector<KeyScale> scales_ = {};
-	std::string name_ = {};
-	glm::mat4 localTransform_ = {};
+	std::vector<KeyPosition> positions_{};
+	std::vector<KeyRotation> rotations_{};
+	std::vector<KeyScale> scales_{};
+	std::string name_{};
+	glm::mat4 localTransform_{};
 	uint32_t positionCount_ = 0;
 	uint32_t rotationCount_ = 0;
 	uint32_t scalingCount_ = 0;

@@ -56,20 +56,20 @@ private:
 	uint32_t frameCounter_ = 0;
 	RaytracingUBO ubo_;
 
-	Scene* scene_ = nullptr;
-	VulkanBuffer bdaBuffer_ = {};
-	VulkanImage storageImage_ = {};
-	VulkanImage accumulationImage_ = {};
-	VulkanDescriptorSetInfo descriptorSetInfo_ = {};
+	Scene* scene_{};
+	VulkanBuffer bdaBuffer_{};
+	VulkanImage storageImage_{};
+	VulkanImage accumulationImage_{};
+	VulkanDescriptorSetInfo descriptorSetInfo_{};
 	std::vector<VulkanBuffer> rtUBOBuffers_;
-	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_ = {};
+	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_{};
 
-	AccelStructure blas_ = {};
-	AccelStructure tlas_ = {};
-	ShaderGroups shaderGroups_ = {};
-	ShaderBindingTables shaderBindingTables_ = {};
-	std::vector<RTModelData> modelDataArray_ = {};
-	std::vector<VkDescriptorImageInfo> textureInfoArray_ = {};
+	AccelStructure blas_{};
+	AccelStructure tlas_{};
+	ShaderGroups shaderGroups_{};
+	ShaderBindingTables shaderBindingTables_{};
+	std::vector<RTModelData> modelDataArray_{};
+	std::vector<VkDescriptorImageInfo> textureInfoArray_{};
 };
 
 #endif

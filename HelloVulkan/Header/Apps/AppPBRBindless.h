@@ -25,12 +25,12 @@ public:
 	void InitLights();
 
 private:
-	PipelinePBRBindless* pbrPtr_ = nullptr;
-	PipelineLightRender* lightPtr_ = nullptr;
-	PipelineImGui* imguiPtr_ = nullptr;
+	PipelinePBRBindless* pbrPtr_{};
+	PipelineLightRender* lightPtr_{};
+	PipelineImGui* imguiPtr_{};
 
-	std::unique_ptr<Scene> scene_ = nullptr;
-	ResourcesLight* resourcesLight_ = nullptr;
+	std::unique_ptr<Scene> scene_{};
+	ResourcesLight* resourcesLight_{};
 };
 
 #endif

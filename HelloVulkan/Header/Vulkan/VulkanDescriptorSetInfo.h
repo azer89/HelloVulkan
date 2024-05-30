@@ -12,9 +12,9 @@ class VulkanImage;
 struct DescriptorWrite
 {
 	// pNext_ is for raytracing pipeline
-	void* pNext_ = nullptr;
-	VkDescriptorImageInfo* imageInfoPtr_ = nullptr;
-	VkDescriptorBufferInfo* bufferInfoPtr_ = nullptr;
+	void* pNext_{};
+	VkDescriptorImageInfo* imageInfoPtr_{};
+	VkDescriptorBufferInfo* bufferInfoPtr_{};
 	// If you have an array of buffers/images, descriptorCount_ must be bigger than one
 	uint32_t descriptorCount_ = 1u;
 	VkDescriptorType descriptorType_;

@@ -29,16 +29,16 @@ public:
 	void InitLights();
 
 private:
-	PipelineLightRender* lightPtr_ = nullptr;
-	PipelineImGui* imguiPtr_ = nullptr;
-	PipelinePBRClusterForward* pbrOpaquePtr_ = nullptr;
-	PipelinePBRClusterForward* pbrTransparentPtr_ = nullptr;
-	PipelineAABBGenerator* aabbPtr_ = nullptr;
-	PipelineLightCulling* lightCullPtr_ = nullptr;
+	PipelineLightRender* lightPtr_{};
+	PipelineImGui* imguiPtr_{};
+	PipelinePBRClusterForward* pbrOpaquePtr_{};
+	PipelinePBRClusterForward* pbrTransparentPtr_{};
+	PipelineAABBGenerator* aabbPtr_{};
+	PipelineLightCulling* lightCullPtr_{};
 
-	ResourcesClusterForward* resCF_ = nullptr;
-	ResourcesLight* resourcesLight_ = nullptr;
-	std::unique_ptr<Scene> scene_ = nullptr;
+	ResourcesClusterForward* resCF_{};
+	ResourcesLight* resourcesLight_{};
+	std::unique_ptr<Scene> scene_{};
 };
 
 #endif

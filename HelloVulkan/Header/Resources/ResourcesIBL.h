@@ -18,10 +18,10 @@ private:
 
 public:
 	float cubemapMipmapCount_ = 0.0f;
-	VulkanImage environmentCubemap_ = {};
-	VulkanImage diffuseCubemap_ = {};
-	VulkanImage specularCubemap_ = {};
-	VulkanImage brdfLut_ = {};
+	VulkanImage environmentCubemap_{};
+	VulkanImage diffuseCubemap_{};
+	VulkanImage specularCubemap_{};
+	VulkanImage brdfLut_{};
 };
 
 #endif

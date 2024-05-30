@@ -58,10 +58,10 @@ private:
 	float bias_ = 0.0f;
 	float power_ = 0.0f;
 
-	ResourcesGBuffer* resourcesGBuffer_ = nullptr;
-	std::vector<VulkanBuffer> ssaoUboBuffers_ = {};
+	ResourcesGBuffer* resourcesGBuffer_{};
+	std::vector<VulkanBuffer> ssaoUboBuffers_{};
 	VulkanDescriptorSetInfo descriptorSetInfo_;
-	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_ = {};
+	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_{};
 };
 
 #endif

@@ -82,9 +82,9 @@ void RaytracingBuilder::CreateBLASMultipleMeshes(
 	{
 		RTModelData& mData = modelDataArray[i];
 
-		VkDeviceOrHostAddressConstKHR vAddress = {};
-		VkDeviceOrHostAddressConstKHR iAddress = {};
-		VkDeviceOrHostAddressConstKHR tAddress = {};
+		VkDeviceOrHostAddressConstKHR vAddress{};
+		VkDeviceOrHostAddressConstKHR iAddress{};
+		VkDeviceOrHostAddressConstKHR tAddress{};
 
 		vAddress.deviceAddress = mData.vertexBuffer_.deviceAddress_;
 		iAddress.deviceAddress = mData.indexBuffer_.deviceAddress_;

@@ -48,17 +48,17 @@ public:
 	Event<> ChangedEvent_;
 
 private:
-	glm::mat4 projectionMatrix_ = {};
-	glm::mat4 inverseProjectionMatrix_ = {};
-	glm::mat4 viewMatrix_ = {};
+	glm::mat4 projectionMatrix_{};
+	glm::mat4 inverseProjectionMatrix_{};
+	glm::mat4 viewMatrix_{};
 
-	glm::vec3 position_ = {};
-	glm::vec3 worldUp_ = {};
+	glm::vec3 position_{};
+	glm::vec3 worldUp_{};
 
 	// Orthogonal axes
-	glm::vec3 front_ = {};
-	glm::vec3 up_ = {};
-	glm::vec3 right_ = {};
+	glm::vec3 front_{};
+	glm::vec3 up_{};
+	glm::vec3 right_{};
 
 	// Euler Angles
 	float yaw_ = 0;

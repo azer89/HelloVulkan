@@ -99,8 +99,8 @@ private:
 	void CreateBeginInfo();
 
 private:
-	VkDevice device_ = nullptr;
-	VkRenderPass handle_ = nullptr;
+	VkDevice device_{};
+	VkRenderPass handle_{};
 	uint8_t renderPassBit_;
 
 	// TODO Refactor this

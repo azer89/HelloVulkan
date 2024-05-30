@@ -8,7 +8,7 @@ template<class... T>
 class Event
 {
 private:
-	std::vector<std::function<void(T...)>> listeners_ = {};
+	std::vector<std::function<void(T...)>> listeners_{};
 
 public:
 	// You can use std::bind or lambdas

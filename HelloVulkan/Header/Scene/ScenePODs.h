@@ -19,17 +19,17 @@ using fSVec = std::array<float, AppConfig::MaxSkinningBone>;
 
 struct SceneData
 {
-	std::vector<VertexData> vertices_ = {};
-	std::vector<uint32_t> indices_ = {};
-	std::vector<uint32_t> vertexOffsets_ = {};
-	std::vector<uint32_t> indexOffsets_ = {};
+	std::vector<VertexData> vertices_{};
+	std::vector<uint32_t> indices_{};
+	std::vector<uint32_t> vertexOffsets_{};
+	std::vector<uint32_t> indexOffsets_{};
 	
 	// Skinning
 	uint32_t boneMatrixCount_ = 1u; // Always has at least one matrix (identity)
-	std::vector<VertexData> preSkinningVertices_ = {}; // Subset of vertices_
-	std::vector<uint32_t> skinningIndices_ = {}; // Mapping from preSkinningVertices_ to vertices_
-	std::vector<iSVec> boneIDArray_ = {};
-	std::vector<fSVec> boneWeightArray_ = {};
+	std::vector<VertexData> preSkinningVertices_{}; // Subset of vertices_
+	std::vector<uint32_t> skinningIndices_{}; // Mapping from preSkinningVertices_ to vertices_
+	std::vector<iSVec> boneIDArray_{};
+	std::vector<fSVec> boneWeightArray_{};
 
 	uint32_t GetCurrentVertexOffset() const
 	{
@@ -70,7 +70,7 @@ struct MeshData
 	uint32_t emissive_ = 0;
 
 	// For sorting
-	MaterialType material_ = {};
+	MaterialType material_{};
 };
 
 struct InstanceData
@@ -83,8 +83,8 @@ struct InstanceData
 	// See function Scene::CreateIndirectBuffer()
 	uint32_t perModelMeshIndex_ = 0;
 
-	MeshData meshData_ = {};
-	BoundingBox originalBoundingBox_ = {};
+	MeshData meshData_{};
+	BoundingBox originalBoundingBox_{};
 };
 
 // Needed for updating bounding boxes
@@ -94,12 +94,12 @@ struct InstanceMap
 	uint32_t modelMatrixIndex_ = 0;
 
 	// List of global instance indices that share the same model matrix
-	std::vector<uint32_t> instanceDataIndices_ = {};
+	std::vector<uint32_t> instanceDataIndices_{};
 };
 
 struct ModelCreateInfo
 {
-	std::string filename = {};
+	std::string filename{};
 
 	// Allows multiple draw calls 
 	uint32_t instanceCount = 1u; 
@@ -124,29 +124,29 @@ struct BoneInfo
 struct AnimationNode
 {
 	glm::mat4 transformation_ = glm::mat4(1.0);
-	std::string name_ = {};
+	std::string name_{};
 	uint32_t childrenCount_ = 0u;
-	std::vector<AnimationNode> children_ = {};
+	std::vector<AnimationNode> children_{};
 };
 
 // Skinning
 struct KeyPosition
 {
-	glm::vec3 position_ = {};
+	glm::vec3 position_{};
 	float timeStamp_ = 0.0f;
 };
 
 // Skinning
 struct KeyRotation
 {
-	glm::quat orientation_ = {};
+	glm::quat orientation_{};
 	float timeStamp_ = 0.0f;
 };
 
 // Skinning
 struct KeyScale
 {
-	glm::vec3 scale_ = {};
+	glm::vec3 scale_{};
 	float timeStamp_ = 0.0f;
 };
 

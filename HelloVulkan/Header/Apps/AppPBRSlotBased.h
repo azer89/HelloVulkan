@@ -24,9 +24,9 @@ public:
 	void InitLights();
 
 private:
-	PipelineImGui* imguiPtr_ = nullptr;
-	ResourcesLight* resourcesLights_ = nullptr;
-	std::unique_ptr<Model> model_ = nullptr;
+	PipelineImGui* imguiPtr_{};
+	ResourcesLight* resourcesLights_{};
+	std::unique_ptr<Model> model_{};
 };
 
 #endif

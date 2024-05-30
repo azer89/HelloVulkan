@@ -24,7 +24,7 @@ void Model::LoadSlotBased(VulkanContext& ctx, const std::string& path)
 	CreateDefaultTextures(ctx);
 
 	// Load model here
-	SceneData dummySceneData = {};
+	SceneData dummySceneData{};
 	LoadModel(
 		ctx,
 		path,
