@@ -33,7 +33,7 @@ vec2 BRDF(float NoV, float roughness)
 	{
 		vec2 Xi = Hammersley(i, pc.sampleCount);
 		vec3 H = ImportanceSampleGGX(Xi, N, roughness);
-		vec3 L = 2.0 * dot(V, H) * H - V;
+		vec3 L = normalize(2.0 * dot(V, H) * H - V);
 
 		float dotNL = max(dot(N, L), 0.0);
 
