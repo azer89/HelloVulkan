@@ -288,6 +288,9 @@
     <None Include="Shaders\SSAO\UBO.glsl">
       <Filter>Shaders\SSAO</Filter>
     </None>
+    <None Include="Shaders\IBL\Header.glsl">
+      <Filter>Shaders\IBL</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Camera.h">

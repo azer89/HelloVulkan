@@ -19,6 +19,7 @@ layout(push_constant) uniform PushConstantsBRDFLUT
 }
 pc;
 
+#include <IBL/Header.glsl>
 #include <PBR/PBRHeader.glsl>
 #include <PBR/Hammersley.glsl>
 
