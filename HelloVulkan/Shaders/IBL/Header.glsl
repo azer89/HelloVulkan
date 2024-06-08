@@ -10,6 +10,7 @@ float AlphaIBL(float roughness)
 	return alpha;
 }
 
+// Used to create Specular/Prefilter Map and BRDF LUT
 vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, float roughness)
 {
 	float a = roughness * roughness; // Roughness remapping

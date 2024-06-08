@@ -8,7 +8,9 @@ This shader is based on:
 [2] https://en.wikipedia.org/wiki/Cube_mapping#Memory_addressing
 */
 
+#ifndef PI
 #define PI 3.1415926535897932384626433832795
+#endif
 
 layout(location = 0) in vec2 texCoord;
 

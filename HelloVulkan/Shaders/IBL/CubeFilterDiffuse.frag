@@ -20,7 +20,9 @@ layout(location = 5) out vec4 cubeFace5;
 
 layout(set = 0, binding = 0) uniform samplerCube cubeMap;
 
+#ifndef PI
 #define PI 3.1415926535897932384626433832795
+#endif
 
 // These push constants are only used for specular map
 layout(push_constant) uniform PushConstantCubeFilter
