@@ -132,7 +132,7 @@ void main()
 		NoV);
 
 	float shadow = ShadowPoisson(shadowPos / shadowPos.w);
-	vec3 color = (ambient) + emissive + (Lo * shadow);
+	vec3 color = ambient + emissive + (Lo * shadow);
 	color *= ssao;
 	fragColor = vec4(color, 1.0);
 }
