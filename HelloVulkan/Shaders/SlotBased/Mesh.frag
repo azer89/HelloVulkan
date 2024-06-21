@@ -55,7 +55,7 @@ void main()
 	}
 
 	// Material properties
-	vec3 albedo = pow(albedo4.rgb, vec3(2.2)); 
+	vec3 albedo = pow(albedo4.rgb, vec3(2.2)); // Conversion from SRGB (gamma corrected) to UNORM (linear)
 	vec3 emissive = texture(textureEmissive, texCoord).rgb;
 	float metallic = texture(textureMetalness, texCoord).b;
 	float roughness = texture(textureRoughness, texCoord).g;
