@@ -2,12 +2,7 @@
 
 #include <algorithm>
 
-FrameCounter::FrameCounter() :
-		fpsCurr_(0.f),
-		delayedDeltaMillisecond_(0.f),
-		deltaSecond_(0.f),
-		lastFrame_(0.f),
-		graphTimer_(0.f)
+FrameCounter::FrameCounter()
 {
 	dataForGraph_.resize(LENGTH_FOR_GRAPH, 0);
 }
