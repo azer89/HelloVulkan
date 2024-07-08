@@ -45,11 +45,11 @@ struct FrameData
 
 struct ContextConfig
 {
-	bool supportRaytracing_ = false; // If raytracing is enabled then buffer device address is also enabled
-	bool suportBufferDeviceAddress_ = false;
-	bool supportMSAA_ = true; // TODO This can be disabled but will show a validation error
-	bool supportBindlessTextures_ = true;
-	bool supportWideLines_ = false;
+	bool supportRaytracing_{ false }; // If raytracing is enabled then buffer device address is also enabled
+	bool suportBufferDeviceAddress_{ false };
+	bool supportMSAA_{ true }; // TODO This can be disabled but will show a validation error
+	bool supportBindlessTextures_{ true };
+	bool supportWideLines_{ false };
 	// TODO Set validation layer as optional
 };
 
@@ -167,31 +167,31 @@ private:
 	VkSwapchainKHR swapchain_{};
 	std::vector<VkImage> swapchainImages_{};
 	std::vector<VkImageView> swapchainImageViews_{};
-	VkFormat swapchainImageFormat_ = VK_FORMAT_B8G8R8A8_UNORM;
-	uint32_t currentSwapchainImageIndex_ = 0; // Current image index
-	uint32_t swapchainWidth_ = 0;
-	uint32_t swapchainHeight_ = 0;
+	VkFormat swapchainImageFormat_{ VK_FORMAT_B8G8R8A8_UNORM };
+	uint32_t currentSwapchainImageIndex_{ 0 }; // Current image index
+	uint32_t swapchainWidth_{ 0 };
+	uint32_t swapchainHeight_{ 0 };
 	
-	VkFormat depthFormat_ = VK_FORMAT_UNDEFINED;
-	VkSampleCountFlagBits msaaSampleCount_ = VK_SAMPLE_COUNT_1_BIT;
+	VkFormat depthFormat_{ VK_FORMAT_UNDEFINED };
+	VkSampleCountFlagBits msaaSampleCount_{ VK_SAMPLE_COUNT_1_BIT };
 
 	VkDevice device_{};
 	VkPhysicalDevice physicalDevice_{};
 	VkPhysicalDeviceMemoryProperties memoryProperties_{};
 
 	// Graphics
-	uint32_t graphicsFamily_ = 0;
+	uint32_t graphicsFamily_{ 0 };
 	VkQueue graphicsQueue_{};
 	VkCommandPool graphicsCommandPool_{};
 
 	// Compute
-	uint32_t computeFamily_ = 0;
+	uint32_t computeFamily_{ 0 };
 	VkQueue computeQueue_{};
 	VkCommandPool computeCommandPool_{};
 
 	std::vector<uint32_t> deviceQueueIndices_{};
 
-	uint32_t frameIndex_ = 0;
+	uint32_t frameIndex_{ 0 };
 	std::array<FrameData, AppConfig::FrameCount> frameDataArray_{};
 
 	VmaAllocator vmaAllocator_{};
