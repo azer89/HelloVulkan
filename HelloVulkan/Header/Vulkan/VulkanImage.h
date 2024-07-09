@@ -19,12 +19,12 @@ public:
 	VkDevice device_{};
 	VmaAllocator vmaAllocator_{};
 
-	uint32_t width_ = 0;
-	uint32_t height_ = 0;
-	uint32_t mipCount_ = 0;
-	uint32_t layerCount_ = 0;
-	VkFormat imageFormat_ = VK_FORMAT_UNDEFINED;
-	VkSampleCountFlagBits multisampleCount_ = VK_SAMPLE_COUNT_1_BIT;
+	uint32_t width_{ 0 };
+	uint32_t height_{ 0 };
+	uint32_t mipCount_{ 0 };
+	uint32_t layerCount_{ 0 };
+	VkFormat imageFormat_{ VK_FORMAT_UNDEFINED };
+	VkSampleCountFlagBits multisampleCount_{ VK_SAMPLE_COUNT_1_BIT };
 
 public:
 	VulkanImage() :
