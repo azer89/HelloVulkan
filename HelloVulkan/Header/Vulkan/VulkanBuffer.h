@@ -11,10 +11,10 @@ public:
 	VkBuffer buffer_{};
 	VmaAllocation vmaAllocation_{};
 	VmaAllocationInfo vmaInfo_{};
-	VkDeviceSize size_ = 0;
+	VkDeviceSize size_{ 0 };
 
 	// Only used for raytracing
-	uint64_t deviceAddress_ = 0;
+	uint64_t deviceAddress_{ 0 };
 
 	VmaAllocator vmaAllocator_{};
 
