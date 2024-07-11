@@ -101,14 +101,14 @@ private:
 private:
 	VkDevice device_{};
 	VkRenderPass handle_{};
-	uint8_t renderPassBit_;
+	uint8_t renderPassBit_{};
 
 	// TODO Refactor this
-	uint32_t colorAttachmentCount_ = 0;
+	uint32_t colorAttachmentCount_{};
 
 	// Cache for starting the render pass
-	std::vector<VkClearValue> clearValues_;
-	VkRenderPassBeginInfo beginInfo_;
+	std::vector<VkClearValue> clearValues_{};
+	VkRenderPassBeginInfo beginInfo_{};
 };
 
 #endif
