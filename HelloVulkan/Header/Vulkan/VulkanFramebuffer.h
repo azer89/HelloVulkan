@@ -45,9 +45,9 @@ private:
 	std::vector<VulkanImage*> attachmentImages_{};
 	VkFramebufferCreateInfo framebufferInfo_{}; // Caching creation info
 	VkDevice device_{};
-	uint32_t framebufferCount_ = 0;
-	bool offscreen_ = false;
-	bool resizeable_ = false;
+	uint32_t framebufferCount_{ 0 };
+	bool offscreen_{ false };
+	bool resizeable_{ false };
 };
 
 #endif
