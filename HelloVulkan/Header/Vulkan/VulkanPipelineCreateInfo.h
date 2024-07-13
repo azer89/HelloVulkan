@@ -6,18 +6,18 @@
 // Default pipeline create info
 struct VulkanPipelineCreateInfo
 {
-	VkPipelineVertexInputStateCreateInfo vertexInputInfo;
-	VkPipelineInputAssemblyStateCreateInfo inputAssembly;
-	VkViewport viewport;
-	VkRect2D scissor;
-	VkPipelineViewportStateCreateInfo viewportState;
-	VkPipelineRasterizationStateCreateInfo rasterizer;
-	VkPipelineMultisampleStateCreateInfo multisampling;
-	VkPipelineColorBlendAttachmentState colorBlendAttachment;
-	VkPipelineColorBlendStateCreateInfo colorBlending;
-	VkPipelineDepthStencilStateCreateInfo depthStencil;
-	VkPipelineDynamicStateCreateInfo dynamicState;
-	VkPipelineTessellationStateCreateInfo tessellationState;
+	VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+	VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
+	VkViewport viewport{};
+	VkRect2D scissor{};
+	VkPipelineViewportStateCreateInfo viewportState{};
+	VkPipelineRasterizationStateCreateInfo rasterizer{};
+	VkPipelineMultisampleStateCreateInfo multisampling{};
+	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
+	VkPipelineColorBlendStateCreateInfo colorBlending{};
+	VkPipelineDepthStencilStateCreateInfo depthStencil{};
+	VkPipelineDynamicStateCreateInfo dynamicState{};
+	VkPipelineTessellationStateCreateInfo tessellationState{};
 
 	VulkanPipelineCreateInfo(const VulkanContext& ctx) :
 		vertexInputInfo({

@@ -13,7 +13,7 @@ public:
 private:
 	std::vector<VkSpecializationMapEntry> entries_{};
 	VkSpecializationInfo specializationInfo_{};
-	VkShaderStageFlags shaderStages_;
+	VkShaderStageFlags shaderStages_{};
 
 public:
 	void ConsumeEntries(

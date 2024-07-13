@@ -27,10 +27,10 @@ public:
 	VkSurfaceKHR GetSurface() const { return surface_; }
 
 private:
-	VkInstance instance_;
-	VkSurfaceKHR surface_;
-	VkDebugUtilsMessengerEXT messenger_;
-	VkDebugReportCallbackEXT reportCallback_;
+	VkInstance instance_{};
+	VkSurfaceKHR surface_{};
+	VkDebugUtilsMessengerEXT messenger_{};
+	VkDebugReportCallbackEXT reportCallback_{};
 };
 
 #endif
