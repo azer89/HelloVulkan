@@ -29,9 +29,9 @@ private:
 	void CreateDescriptor(VulkanContext& ctx);
 
 private:
-	Scene* scene_;
-	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;
-	bool shouldRender_;
+	Scene* scene_{};
+	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_{};
+	bool shouldRender_{};
 };
 
 #endif

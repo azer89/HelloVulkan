@@ -49,15 +49,15 @@ public:
 
 protected:
 	VkDevice device_{};
-	PipelineConfig config_;
+	PipelineConfig config_{};
 
 	// Keep this as a vector because it can be empty when not used
-	std::vector<VulkanBuffer> cameraUBOBuffers_;
+	std::vector<VulkanBuffer> cameraUBOBuffers_{};
 
-	VulkanFramebuffer framebuffer_;
-	VulkanDescriptorManager descriptorManager_;
-	VulkanRenderPass renderPass_;
-	VulkanSpecialization specializationConstants_;
+	VulkanFramebuffer framebuffer_{};
+	VulkanDescriptorManager descriptorManager_{};
+	VulkanRenderPass renderPass_{};
+	VulkanSpecialization specializationConstants_{};
 	VkPipelineLayout pipelineLayout_{};
 	VkPipeline pipeline_{};
 

@@ -12,19 +12,19 @@ enum class PipelineType : uint8_t
 
 struct PipelineConfig
 {
-	PipelineType type_ = PipelineType::GraphicsOnScreen;
-	VkSampleCountFlagBits msaaSamples_ = VK_SAMPLE_COUNT_1_BIT;
-	VkPrimitiveTopology topology_ = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-	uint32_t PatchControlPointsCount_ = 0;
-	bool vertexBufferBind_ = false;
-	bool depthTest_ = true;
-	bool depthWrite_ = true;
-	bool useBlending_ = true;
+	PipelineType type_{ PipelineType::GraphicsOnScreen };
+	VkSampleCountFlagBits msaaSamples_{ VK_SAMPLE_COUNT_1_BIT };
+	VkPrimitiveTopology topology_{ VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST };
+	uint32_t PatchControlPointsCount_{ 0 };
+	bool vertexBufferBind_{ false };
+	bool depthTest_{ true };
+	bool depthWrite_{ true };
+	bool useBlending_{ true };
 
-	bool customViewportSize_ = false;
-	float viewportWidth_ = 0.0f;
-	float viewportHeight_ = 0.0f;
-	float lineWidth_ = 1.0f;
+	bool customViewportSize_{ false };
+	float viewportWidth_{ 0.0f };
+	float viewportHeight_{ 0.0f };
+	float lineWidth_{ 1.0f };
 };
 
 #endif
