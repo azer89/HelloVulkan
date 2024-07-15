@@ -21,9 +21,9 @@ public:
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
 private:
-	VkDescriptorSet descriptorSet_;
-	VulkanImage inputHDRImage_;
-	VkFramebuffer cubeFramebuffer_;
+	VkDescriptorSet descriptorSet_{ VK_NULL_HANDLE };
+	VkFramebuffer cubeFramebuffer_{ VK_NULL_HANDLE };
+	VulkanImage inputHDRImage_{};
 
 private:
 	void InitializeHDRImage(VulkanContext& ctx, const std::string& hdrFile);

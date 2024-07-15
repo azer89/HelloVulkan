@@ -25,9 +25,9 @@ private:
 	void CreateDescriptor(VulkanContext& ctx);
 
 private:
-	float yPosition_;
-	bool shouldRender_;
-	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;
+	float yPosition_{ 0 };
+	bool shouldRender_{ false };
+	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_{};
 };
 
 #endif

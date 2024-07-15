@@ -33,11 +33,11 @@ public:
 
 private:
 
-	VkDescriptorSet descriptorSet_;
-	VkSampler inputCubemapSampler_; // A sampler for the input cubemap
+	VkDescriptorSet descriptorSet_{ VK_NULL_HANDLE };
+	VkSampler inputCubemapSampler_{ VK_NULL_HANDLE }; // A sampler for the input cubemap
 
 	// Two pipelines for each of diffuse and specular maps
-	std::vector<VkPipeline> graphicsPipelines_;
+	std::vector<VkPipeline> graphicsPipelines_{};
 
 	void CreateDescriptor(VulkanContext& ctx, VulkanImage* inputCubemap);
 

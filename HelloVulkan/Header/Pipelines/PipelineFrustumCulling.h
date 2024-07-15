@@ -27,9 +27,9 @@ private:
 	void CreateDescriptor(VulkanContext& ctx);
 
 private:
-	Scene* scene_;
-	std::vector<VulkanBuffer> frustumBuffers_;
-	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;
+	Scene* scene_{};
+	std::vector<VulkanBuffer> frustumBuffers_{};
+	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_{};
 };
 
 #endif

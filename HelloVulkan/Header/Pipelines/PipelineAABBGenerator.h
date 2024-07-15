@@ -30,7 +30,7 @@ public:
 private:
 	ResourcesClusterForward* resourcesCF_{};
 
-	std::vector<VulkanBuffer> cfUBOBuffers_;
+	std::vector<VulkanBuffer> cfUBOBuffers_{};
 	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_{};
 
 private:

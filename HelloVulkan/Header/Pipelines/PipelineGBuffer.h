@@ -20,10 +20,10 @@ private:
 	void CreateBDABuffer(VulkanContext& ctx);
 	void CreateDescriptor(VulkanContext& ctx);
 
-	Scene* scene_;
-	ResourcesGBuffer* resourcesGBuffer_;
-	VulkanBuffer bdaBuffer_;
-	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;
+	Scene* scene_{};
+	ResourcesGBuffer* resourcesGBuffer_{};
+	VulkanBuffer bdaBuffer_{};
+	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_{};
 };
 
 #endif
