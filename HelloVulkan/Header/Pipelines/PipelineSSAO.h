@@ -54,9 +54,9 @@ private:
 	void UpdateDescriptorSets(VulkanContext& ctx);
 
 private:
-	float radius_ = 0.0f;
-	float bias_ = 0.0f;
-	float power_ = 0.0f;
+	float radius_{ 0.f };
+	float bias_{ 0.f };
+	float power_{ 0.f };
 
 	ResourcesGBuffer* resourcesGBuffer_{};
 	std::vector<VulkanBuffer> ssaoUboBuffers_{};

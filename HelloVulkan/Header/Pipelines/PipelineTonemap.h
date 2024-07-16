@@ -28,10 +28,10 @@ private:
 	void UpdateDescriptorSets(VulkanContext& ctx);
 
 private:
-	VulkanImage* singleSampledColorImage_;
+	VulkanImage* singleSampledColorImage_{};
 
-	VulkanDescriptorSetInfo descriptorSetInfo_;
-	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;
+	VulkanDescriptorSetInfo descriptorSetInfo_{};
+	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_{};
 };
 
 #endif

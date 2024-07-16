@@ -32,10 +32,11 @@ public:
 	void FillCommandBuffer(VulkanContext& ctx, VkCommandBuffer commandBuffer) override;
 
 private:
-	VulkanImage* envCubemap_;
+	VulkanImage* envCubemap_{};
 
-	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;
+	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_{};
 
+private:
 	void CreateDescriptor(VulkanContext& ctx);
 };
 

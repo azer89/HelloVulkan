@@ -23,15 +23,15 @@ private:
 	void CreateDescriptor(VulkanContext& ctx);
 
 private:
-	BDA bda_;
-	Scene* scene_;
-	ResourcesShadow* resourcesShadow_;
+	BDA bda_{};
+	Scene* scene_{};
+	ResourcesShadow* resourcesShadow_{};
 
-	std::vector<VulkanBuffer> shadowMapUBOBuffers_;
-	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_;
+	std::vector<VulkanBuffer> shadowMapUBOBuffers_{};
+	std::array<VkDescriptorSet, AppConfig::FrameCount> descriptorSets_{};
 
 	// Has its own buffers so that the buffers don't get culled
-	VulkanBuffer indirectBuffer_;
+	VulkanBuffer indirectBuffer_{};
 };
 
 #endif
