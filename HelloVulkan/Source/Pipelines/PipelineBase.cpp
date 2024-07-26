@@ -57,12 +57,14 @@ void PipelineBase::BindPipeline(VulkanContext& ctx, VkCommandBuffer commandBuffe
 
 	vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
 
-	VkRect2D scissor{};
-	scissor.offset = { 0, 0 };
-	scissor.extent =
+	VkRect2D scissor =
 	{
-		static_cast<uint32_t>(w),
-		static_cast<uint32_t>(h)
+		.offset = { 0, 0 },
+		.extent =
+		{
+			static_cast<uint32_t>(w),
+			static_cast<uint32_t>(h)
+		}
 	};
 	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 }
@@ -118,11 +120,8 @@ void PipelineBase::CreateGraphicsPipeline(
 	const std::vector<std::string>& shaderFiles,
 	VkPipeline* pipeline)
 {
-	std::vector<VulkanShader> shaderModules;
-	std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
-
-	shaderStages.resize(shaderFiles.size());
-	shaderModules.resize(shaderFiles.size());
+	std::vector<VulkanShader> shaderModules(shaderFiles.size(), {});
+	std::vector<VkPipelineShaderStageCreateInfo> shaderStages(shaderFiles.size(), {});
 
 	for (size_t i = 0; i < shaderFiles.size(); i++)
 	{
