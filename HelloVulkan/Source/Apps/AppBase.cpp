@@ -10,8 +10,7 @@
 #include <iostream>
 #include <array>
 
-AppBase::AppBase() :
-	shouldRecreateSwapchain_(false)
+AppBase::AppBase()
 {
 	InitGLFW();
 	InitGLSLang();
@@ -232,7 +231,8 @@ void AppBase::FillCommandBuffer(VkCommandBuffer commandBuffer)
 // Recreate resources when window is resized
 void AppBase::OnWindowResized()
 {
-	int width = 0, height = 0;
+	int width{ 0 };
+	int height{ 0 };
 	glfwGetFramebufferSize(glfwWindow_, &width, &height);
 	while (width == 0 || height == 0)
 	{

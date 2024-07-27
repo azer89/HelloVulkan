@@ -98,9 +98,9 @@ protected:
 	std::vector<std::unique_ptr<ResourcesBase>> resources_{};
 
 	// Window size
-	uint32_t windowWidth_ = 0;
-	uint32_t windowHeight_ = 0;
-	bool shouldRecreateSwapchain_ = true;
+	uint32_t windowWidth_{ 0 };
+	uint32_t windowHeight_{ 0 };
+	bool shouldRecreateSwapchain_{ false };
 
 	ResourcesShared* resourcesShared_{};
 	ResourcesIBL* resourcesIBL_{};
