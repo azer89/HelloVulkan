@@ -38,7 +38,7 @@ private:
 	std::unique_ptr<Scene> scene_{};
 	ResourcesLight* resourcesLight_{};
 
-	bool updateFrustum_ = true;
+	bool updateFrustum_{ true };
 };
 
 #endif
