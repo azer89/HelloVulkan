@@ -143,7 +143,7 @@ void AppBase::DrawFrame()
 
 		// Submit Queue
 		// TODO Set code below as a function in VulkanDevice
-		const VkSubmitInfo submitInfo =
+		const VkSubmitInfo submitInfo
 		{
 			.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
 			.pNext = nullptr,
@@ -163,7 +163,7 @@ void AppBase::DrawFrame()
 		ZoneScopedNC("QueuePresentKHR", tracy::Color::VioletRed1);
 		// Present
 		// TODO Set code below as a function in VulkanContext
-		const VkPresentInfoKHR presentInfo =
+		const VkPresentInfoKHR presentInfo
 		{
 			.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
 			.pNext = nullptr,
@@ -203,7 +203,7 @@ void AppBase::UpdateUI()
 // Fill/record command buffer
 void AppBase::FillCommandBuffer(VkCommandBuffer commandBuffer)
 {
-	constexpr VkCommandBufferBeginInfo beginInfo =
+	constexpr VkCommandBufferBeginInfo beginInfo
 	{
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
 		.pNext = nullptr,

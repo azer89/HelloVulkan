@@ -6,7 +6,7 @@ void VulkanBarrier::CreateMemoryBarrier(
 	uint32_t barrierCount
 )
 {
-	const VkDependencyInfo dependencyInfo = {
+	const VkDependencyInfo dependencyInfo{
 		.sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,
 		.memoryBarrierCount = barrierCount,
 		.pMemoryBarriers = barriers
@@ -20,7 +20,7 @@ void VulkanBarrier::CreateBufferBarrier(
 	uint32_t barrierCount
 )
 {
-	const VkDependencyInfo dependencyInfo = {
+	const VkDependencyInfo dependencyInfo{
 		.sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,
 		.bufferMemoryBarrierCount = barrierCount,
 		.pBufferMemoryBarriers = barriers
@@ -30,7 +30,7 @@ void VulkanBarrier::CreateBufferBarrier(
 
 void VulkanBarrier::CreateImageBarrier(const ImageBarrierInfo& info, const VkImageSubresourceRange& range, VkImage image)
 {
-	const VkImageMemoryBarrier2 barrier =
+	const VkImageMemoryBarrier2 barrier
 	{
 		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2,
 		.srcStageMask = info.sourceStage,
@@ -53,7 +53,7 @@ void VulkanBarrier::CreateImageBarrier(
 	uint32_t barrierCount
 )
 {
-	const VkDependencyInfo dependencyInfo =
+	const VkDependencyInfo dependencyInfo
 	{
 		.sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,
 		.pNext = nullptr ,

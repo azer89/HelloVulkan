@@ -5,15 +5,15 @@
 
 struct ImageBarrierInfo
 {
-	VkCommandBuffer commandBuffer;
+	VkCommandBuffer commandBuffer{};
 	
-	VkImageLayout oldLayout;
-	VkPipelineStageFlags2 sourceStage;
-	VkAccessFlags2 sourceAccess;
+	VkImageLayout oldLayout{};
+	VkPipelineStageFlags2 sourceStage{};
+	VkAccessFlags2 sourceAccess{};
 	
 	VkImageLayout newLayout;
-	VkPipelineStageFlags2 destinationStage;
-	VkAccessFlags2 destinationAccess;
+	VkPipelineStageFlags2 destinationStage{};
+	VkAccessFlags2 destinationAccess{};
 };
 
 // TODO this abstraction is still fairly simple
